@@ -1,0 +1,13 @@
+{
+  "extends": "@vota-comigo/tsconfig/nestjs.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@vota-comigo/shared-types": ["../../packages/shared-types/src"]
+    }
+  },
+  "include": ["src", "test"],
+  "exclude": ["node_modules", "dist"]
+}
