@@ -1,0 +1,11 @@
+# Privacidade por design na coleta do matcher
+
+A cada execução do matcher, o sistema armazena: estado informado pelo usuário, lista de eventos selecionados, voto declarado pelo usuário em cada evento ("deveria ser aprovado" / "não deveria" / "não sei") e timestamp. Não são armazenados IP, fingerprint de navegador, identificadores persistentes de qualquer natureza, nem dados pessoais. A deduplicação intra-sessão usa cookie de sessão não-persistente que expira ao fechar o navegador; duplicação entre sessões ou dispositivos diferentes é aceita.
+
+A coleta começa no dia 1 do MVP, mesmo sem a feature de exibição agregada (Termômetro de representatividade) estar exposta, para que haja volume histórico quando ela for implementada. A alternativa de só começar a coletar quando a feature subir foi rejeitada porque atrasaria a feature em meses sem ganho proporcional.
+
+A opção de fingerprint de navegador ou login obrigatório para deduplicação forte foi rejeitada por dois motivos. Primeiro, opinião política expressa no matcher é dado sensível sob LGPD: qualquer mecanismo que permita reidentificação cria risco regulatório e ético desproporcional ao ganho. Segundo, login obrigatório introduz atrito que desfaz o valor de uso público sem cadastro — o produto perderia mais usuários reais do que ganharia em qualidade estatística.
+
+A consequência aceita é que duplicação entre sessões existe nos dados agregados. Para o uso pretendido (termômetro de discordância por estado, em escala de milhares de respostas), essa duplicação é ruído pequeno comparado ao tamanho do sinal e não justifica os mecanismos que a eliminariam.
+
+O objetivo desta arquitetura é manter os dados coletados fora do regime de dado pessoal da LGPD por anonimização robusta, considerando que voto político é dado pessoal sensível sob o Art. 5º, II. A não-coleta de IP, fingerprint e identificadores persistentes é condição necessária mas não suficiente para esse objetivo. Decisões adicionais que sustentam o regime de anonimização — granularidade do timestamp armazenado, threshold mínimo de respostas para exibição agregada, política de retenção, posição quanto a logs de infraestrutura que poderiam permitir correlação — ficam para ADRs subsequentes e devem estar fechadas antes do lançamento do MVP. Validação independente por especialista em LGPD é recomendada antes do lançamento.

@@ -1,0 +1,7 @@
+# Escopo de votações ingeridas e processadas
+
+Apenas votações nominais com voto individual registrado são ingeridas. Votações por aclamação ficam fora porque não alimentam os fatores da fórmula de relevância (polarização e quebra de disciplina) nem a lógica do matcher, que compara o voto do usuário com o voto individual do deputado. A informação de que uma proposição foi aprovada por aclamação pode ser exibida no perfil dela via tramitação, sem necessidade de persistir os registros dessas votações.
+
+Votações de plenário e de comissão são ambas ingeridas, mas só plenário alimenta a fórmula de relevância e o matcher. Comissões aparecem como contexto consultável no perfil do deputado e da proposição. O motivo: em comissão, apenas deputados membros podem votar, e ausência de voto não significa ausência de comparecimento — significa não-pertencimento. Comparar deputados desiguais quanto à oportunidade de votar introduz viés sistemático nas duas engines centrais.
+
+A flag `escopo_votacao` é derivada de `siglaOrgao` com lista positiva mínima: `PLEN` ou `CN` resolvem para `plenario`; qualquer outra sigla resolve para `comissao`. A alternativa de manter uma lista positiva de siglas de comissão foi rejeitada porque comissões especiais são criadas e extintas durante o ano (geralmente nomeadas pelo número da proposição que analisam) e comissões externas surgem reativamente — manter uma lista positiva seria fonte permanente de drift, enquanto a lista positiva mínima de plenário é estável e auditável.

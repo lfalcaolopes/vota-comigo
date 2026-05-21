@@ -1,0 +1,5 @@
+# Escopo de cobertura institucional do produto
+
+O MVP cobre exclusivamente a Câmara dos Deputados. A expansão para outras casas legislativas segue a ordem Senado → ALESP (piloto estadual) → arquitetura multi-câmara aberta a contribuição da comunidade. Cargos do Executivo (presidência, governos, prefeituras) ficam permanentemente fora do escopo do produto, porque não votam e não há base de comparação para o matcher.
+
+A escolha por profundidade antes de amplitude é deliberada: aprender em profundidade a modelagem e as armadilhas dos dados de uma casa antes de replicar para outras reduz retrabalho. A alternativa considerada — cobrir Câmara e Senado em paralelo desde o MVP — foi rejeitada porque dobraria a superfície de incertezas em modelagem, fórmula e UX antes de qualquer aprendizado real com usuários.
