@@ -1,6 +1,13 @@
+import { Readable } from 'node:stream';
+
 import { resolveCsvDownloaderConfig } from './csv-downloader-config';
 import { buildCsvDownloadPlan } from './csv-download-plan';
-import { runCsvDownloader } from './csv-downloader';
+import { downloadCsvPlanItem, runCsvDownloader } from './csv-downloader';
+import type {
+  CsvDownloadPlanItem,
+  CsvDownloadTransport,
+  CsvPlanItemFileSystem,
+} from './csv-downloader.types';
 
 describe('csv downloader entrypoint', () => {
   describe('when building the download plan', () => {
@@ -61,6 +68,184 @@ describe('csv downloader entrypoint', () => {
           years: [2024, 2025],
         },
       });
+    });
+  });
+
+  describe('when downloading a single plan item', () => {
+    const item: CsvDownloadPlanItem = {
+      dataset: 'votacoes',
+      filename: 'votacoes-2025.csv',
+      url: 'https://example.test/arquivos/votacoes/csv/votacoes-2025.csv',
+      localPath: 'data/raw/votacoes/votacoes-2025.csv',
+    };
+
+    it('skips the download when the final file exists and force is disabled', async () => {
+      // Arrange
+      const fileSystem = createFileSystem({
+        exists: jest.fn().mockResolvedValue(true),
+      });
+      const transport = jest.fn();
+
+      // Act
+      const result = await downloadCsvPlanItem(item, {
+        fileSystem,
+        transport,
+      });
+
+      // Assert
+      expect(result).toEqual({
+        status: 'skipped',
+        item,
+        message: 'votacoes-2025.csv já existe, pulando.',
+      });
+      expect(transport).not.toHaveBeenCalled();
+      expect(fileSystem.remove.mock.calls).toHaveLength(0);
+      expect(fileSystem.write.mock.calls).toHaveLength(0);
+      expect(fileSystem.rename.mock.calls).toHaveLength(0);
+    });
+
+    it('downloads and replaces the final file when force is enabled', async () => {
+      // Arrange
+      const body = csvBody('id,data\n1,2025\n');
+      const fileSystem = createFileSystem({
+        exists: jest.fn().mockResolvedValue(true),
+      });
+      const transport = createTransport(body);
+
+      // Act
+      const result = await downloadCsvPlanItem(item, {
+        fileSystem,
+        force: true,
+        transport,
+      });
+
+      // Assert
+      expect(result).toEqual({
+        status: 'downloaded',
+        item,
+        message: 'votacoes-2025.csv baixado com sucesso.',
+      });
+      expect(transport).toHaveBeenCalledWith(item.url);
+      expect(fileSystem.mkdir.mock.calls).toContainEqual(['data/raw/votacoes']);
+      expect(fileSystem.remove.mock.calls).toContainEqual([
+        'data/raw/votacoes/votacoes-2025.csv.tmp',
+      ]);
+      expect(fileSystem.write.mock.calls).toContainEqual([
+        'data/raw/votacoes/votacoes-2025.csv.tmp',
+        body,
+      ]);
+      expect(fileSystem.rename.mock.calls).toContainEqual([
+        'data/raw/votacoes/votacoes-2025.csv.tmp',
+        item.localPath,
+      ]);
+    });
+
+    it('writes to a temporary file before promoting a successful download', async () => {
+      // Arrange
+      const body = csvBody('id,data\n2,2025\n');
+      const fileSystem = createFileSystem();
+      const transport = createTransport(body);
+
+      // Act
+      const result = await downloadCsvPlanItem(item, {
+        fileSystem,
+        transport,
+      });
+
+      // Assert
+      expect(result.status).toBe('downloaded');
+      expect(fileSystem.write.mock.calls).toContainEqual([
+        'data/raw/votacoes/votacoes-2025.csv.tmp',
+        body,
+      ]);
+      expect(fileSystem.rename.mock.calls).toContainEqual([
+        'data/raw/votacoes/votacoes-2025.csv.tmp',
+        item.localPath,
+      ]);
+    });
+
+    it('replaces an orphan temporary file instead of treating it as downloaded input', async () => {
+      // Arrange
+      const body = csvBody('id,data\n3,2025\n');
+      const fileSystem = createFileSystem({
+        exists: jest
+          .fn()
+          .mockImplementation((path: string) =>
+            Promise.resolve(path.endsWith('.tmp')),
+          ),
+      });
+      const transport = createTransport(body);
+
+      // Act
+      const result = await downloadCsvPlanItem(item, {
+        fileSystem,
+        transport,
+      });
+
+      // Assert
+      expect(result.status).toBe('downloaded');
+      expect(fileSystem.exists.mock.calls).toContainEqual([item.localPath]);
+      expect(fileSystem.exists.mock.calls).not.toContainEqual([
+        'data/raw/votacoes/votacoes-2025.csv.tmp',
+      ]);
+      expect(fileSystem.remove.mock.calls).toContainEqual([
+        'data/raw/votacoes/votacoes-2025.csv.tmp',
+      ]);
+      expect(fileSystem.write.mock.calls).toContainEqual([
+        'data/raw/votacoes/votacoes-2025.csv.tmp',
+        body,
+      ]);
+    });
+
+    it('does not promote the temporary file when transport fails', async () => {
+      // Arrange
+      const fileSystem = createFileSystem();
+      const transport: jest.MockedFunction<CsvDownloadTransport> = jest
+        .fn()
+        .mockResolvedValue({
+          ok: false,
+          status: 404,
+          statusText: 'Not Found',
+        });
+
+      // Act
+      const result = await downloadCsvPlanItem(item, {
+        fileSystem,
+        transport,
+      });
+
+      // Assert
+      expect(result).toEqual({
+        status: 'failed',
+        item,
+        message: 'votacoes-2025.csv: 404 Not Found',
+      });
+      expect(fileSystem.write.mock.calls).toHaveLength(0);
+      expect(fileSystem.rename.mock.calls).toHaveLength(0);
+    });
+
+    it('does not promote the temporary file when writing fails', async () => {
+      // Arrange
+      const writeError = new Error('stream interrompido');
+      const fileSystem = createFileSystem({
+        write: jest.fn().mockRejectedValue(writeError),
+      });
+      const transport = createTransport(csvBody('id,data\n4,2025\n'));
+
+      // Act
+      const result = await downloadCsvPlanItem(item, {
+        fileSystem,
+        transport,
+      });
+
+      // Assert
+      expect(result).toEqual({
+        status: 'failed',
+        item,
+        message: 'votacoes-2025.csv: stream interrompido',
+        error: writeError,
+      });
+      expect(fileSystem.rename.mock.calls).toHaveLength(0);
     });
   });
 
@@ -430,3 +615,29 @@ describe('csv downloader entrypoint', () => {
     });
   });
 });
+
+function createFileSystem(
+  overrides: Partial<jest.Mocked<CsvPlanItemFileSystem>> = {},
+): jest.Mocked<CsvPlanItemFileSystem> {
+  return {
+    exists: jest.fn().mockResolvedValue(false),
+    mkdir: jest.fn().mockResolvedValue(undefined),
+    remove: jest.fn().mockResolvedValue(undefined),
+    write: jest.fn().mockResolvedValue(undefined),
+    rename: jest.fn().mockResolvedValue(undefined),
+    ...overrides,
+  };
+}
+
+function createTransport(
+  body: AsyncIterable<Uint8Array>,
+): jest.MockedFunction<CsvDownloadTransport> {
+  return jest.fn().mockResolvedValue({
+    ok: true,
+    body,
+  });
+}
+
+function csvBody(content: string): AsyncIterable<Uint8Array> {
+  return Readable.from([Buffer.from(content)]);
+}
