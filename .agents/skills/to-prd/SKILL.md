@@ -17,7 +17,7 @@ A deep module (as opposed to a shallow module) is one which encapsulates a lot o
 
 Check with the user that these modules match their expectations. Check with the user which modules they want tests written for.
 
-3. Write the PRD using the template below, then publish it to the project issue tracker. Apply the `ready-for-agent` triage label - no need for additional triage.
+3. Write the PRD using the template below, then publish it to the project issue tracker. Do not apply triage labels unless the user explicitly asks for labels.
 
 <prd-template>
 
@@ -29,14 +29,14 @@ The problem that the user is facing, from the user's perspective.
 
 The solution to the problem, from the user's perspective.
 
-## User Stories
+## Histórias de usuário
 
-A LONG, numbered list of user stories. Each user story should be in the format of:
+A LONG, numbered list of user stories. Write the section title and every user story in the same language as the project's internal documentation. For Portuguese documentation, each user story should be in the format of:
 
-1. As an <actor>, I want a <feature>, so that <benefit>
+1. Como <ator>, quero <funcionalidade>, para que <benefício>
 
 <user-story-example>
-1. As a mobile bank customer, I want to see balance on my accounts, so that I can make better informed decisions about my spending
+1. Como cliente de banco no celular, quero ver o saldo das minhas contas, para que eu consiga tomar decisões melhores sobre meus gastos
 </user-story-example>
 
 This list of user stories should be extremely extensive and cover all aspects of the feature.
