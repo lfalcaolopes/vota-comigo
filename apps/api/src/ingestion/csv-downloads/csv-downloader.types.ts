@@ -55,10 +55,16 @@ export type CsvDownloadTransportResponse =
       ok: false;
       status: number;
       statusText: string;
+      retryAfter?: string;
     };
+
+export type CsvDownloadTransportOptions = {
+  signal: AbortSignal;
+};
 
 export type CsvDownloadTransport = (
   url: string,
+  options: CsvDownloadTransportOptions,
 ) => Promise<CsvDownloadTransportResponse>;
 
 export type CsvPlanItemFileSystem = {
@@ -73,6 +79,10 @@ export type CsvPlanItemDownloaderOptions = {
   force?: boolean;
   transport?: CsvDownloadTransport;
   fileSystem?: CsvPlanItemFileSystem;
+  inactivityTimeoutMs?: number;
+  maxAttempts?: number;
+  retryBackoffMs?: readonly number[];
+  sleep?: (durationMs: number) => Promise<void>;
 };
 
 export type CsvDownloaderConfigResolution =
