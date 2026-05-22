@@ -18,14 +18,47 @@ Todos os Csv da câmara possuem o encoding UTF-8
 
 ## Decisões tomadas
 
+### Localização e comando público
+
+O script pertence ao contexto técnico da API, em `apps/api/src/ingestion/csv-downloads/`, porque sua saída é o input direto da pipeline de ingestão que popula o banco da aplicação.
+
+O comando público deve existir na raiz do repositório para reduzir atrito operacional:
+
+```
+pnpm download:csvs -- --from=2020 --to=2025
+```
+
+Esse comando delega para o pacote `api`, mas quem executa não precisa lembrar a sintaxe de filtro do workspace.
+
 ### Configuração da janela temporal
 
-O script aceita dois mecanismos de configuração para os arquivos separados por ano:
+O script aceita três mecanismos de configuração para os arquivos separados por ano:
 
 - `--from={ano}` e `--to={ano}` para definir um intervalo. Caminho default e mais legível.
 - `--years={ano1,ano2,...}` para baixar anos específicos. Útil quando a Câmara corrige um arquivo isolado e é necessário rebaixar apenas ele.
+- `--last={quantidade}` para baixar uma janela curta até o ano corrente. Inicialmente aceita apenas `5` ou `10`.
 
-Quando `--years` é fornecido, ele sobrescreve `--from`/`--to`.
+Precedência das opções de janela temporal, da maior para a menor:
+
+1. `--years`
+2. `--from`/`--to`
+3. `--last`
+4. default completo
+
+Quando `--years` é fornecido, ele sobrescreve `--from`/`--to` e `--last`.
+
+`--last` não pode ser combinado com `--years`, `--from` ou `--to`. Essa combinação é tratada como configuração ambígua e aborta antes de qualquer download. `--force` pode ser combinado com qualquer mecanismo de janela temporal, porque não define quais arquivos entram na execução — apenas muda a política de sobrescrita.
+
+Quando nenhuma janela temporal é informada, o script baixa todos os anos válidos: `from = 2001` e `to = ano atual`.
+
+`--last=5` baixa os últimos 5 anos incluindo o ano corrente. `--last=10` baixa os últimos 10 anos incluindo o ano corrente.
+
+Quando apenas um lado do intervalo é informado, o script completa o outro lado assim:
+
+- `--from={ano}` baixa de `{ano}` até o ano corrente.
+- `--to={ano}` baixa de `2001` até `{ano}`.
+
+O script aceita apenas anos entre `2001` e o ano corrente, inclusive. Valores fora desse intervalo abortam a execução antes de qualquer download, com mensagem indicando o intervalo válido.
 
 ### Dois grupos de arquivos
 
@@ -42,6 +75,32 @@ A janela temporal só se aplica aos arquivos separados por ano. Arquivos únicos
 **Arquivos únicos** (baixados sempre):
 - `deputados.csv` (lista completa de todos os deputados que já passaram pela Câmara)
 - `legislaturas.csv` (lista completa)
+
+Não há filtro por dataset na implementação inicial. Uma execução com `--years=2025`, por exemplo, baixa todos os datasets anuais configurados para 2025 e também considera os arquivos únicos. Um filtro como `--only-dataset` fica adiado até existir necessidade real.
+
+### Catálogo de URLs
+
+O script usa um catálogo estático local com os datasets definidos nesta documentação, em vez de descobrir arquivos dinamicamente via Swagger. A lista de arquivos baixados é uma decisão de produto da ingestão, não uma consequência automática de tudo que a Câmara publica.
+
+A URL dos arquivos segue o padrão:
+
+```
+{baseUrl}/{dataset}/csv/{filename}
+```
+
+Base URL padrão:
+
+```
+https://dadosabertos.camara.leg.br/arquivos
+```
+
+Exemplo:
+
+```
+https://dadosabertos.camara.leg.br/arquivos/votacoes/csv/votacoes-2025.csv
+```
+
+A base URL pode ser sobrescrita por configuração técnica em testes, mas o uso normal do script aponta para `dadosabertos.camara.leg.br`.
 
 ### Estrutura de pastas local
 
@@ -73,11 +132,23 @@ Estratégia inicial: **existência simples do arquivo no caminho esperado**. Se 
 
 Override via flag `--force`: ignora a checagem de existência e rebaixa tudo da janela configurada, sobrescrevendo o que estiver lá.
 
+O download é escrito primeiro em arquivo temporário no mesmo diretório, com sufixo `.tmp`, e só é renomeado para o caminho final quando termina com sucesso. Assim, uma conexão interrompida não deixa um CSV parcial que seria tratado como já baixado na próxima execução.
+
+Se existir apenas um `.tmp` de execução anterior, o script ignora esse arquivo como fonte de verdade e recomeça o download do zero, substituindo o temporário. Essa limpeza não depende de `--force`, porque arquivo temporário nunca é considerado input válido para a ingestão.
+
 ### Tratamento de falhas
 
 **Estratégia: continuar e relatar no final.** Falha em um arquivo não interrompe o download dos demais. Ao final da execução, o script imprime um resumo com a contagem de sucessos, pulados e falhas, listando os arquivos que falharam e o motivo.
 
-Retry com backoff: em erros de rede transitórios (timeout, 5xx), tentar 3 vezes com espera crescente antes de marcar como falha. Erros definitivos (404) falham imediatamente sem retry.
+O downloader valida apenas o transporte: status HTTP de sucesso e conclusão do stream de escrita. Ele não valida `Content-Type`, separador, header, schema ou conteúdo do CSV. Validação de conteúdo pertence à etapa de ingestão.
+
+Quando houver uma ou mais falhas ao final, o processo termina com exit code `1`. Quando todos os arquivos da execução forem baixados ou pulados sem erro, termina com exit code `0`.
+
+Retry com backoff: em erros de rede transitórios (timeout, `429`, `5xx`), tentar 3 vezes com espera crescente antes de marcar como falha. Quando uma resposta `429` trouxer header `Retry-After`, respeitar esse valor; caso contrário, usar o backoff padrão. Erros definitivos (`404`, `4xx` exceto `429`) falham imediatamente sem retry.
+
+Timeout é medido por inatividade, não por duração total do download: se uma tentativa ficar 60 segundos sem receber bytes, ela é abortada e entra na política de retry. Downloads longos continuam válidos enquanto houver progresso.
+
+Os downloads rodam com paralelismo limitado a 3 arquivos simultâneos. Esse limite é fixo na implementação inicial: acelera o backfill completo sem pressionar excessivamente o servidor público da Câmara. Uma flag para configurar paralelismo fica adiada até existir necessidade real.
 
 ### Output do script
 
