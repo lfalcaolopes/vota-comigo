@@ -11,10 +11,6 @@ Code naming and documentation language conventions are defined in `docs/adr/0007
 
 The project's data source is the API and CSVs published at `dadosabertos.camara.leg.br`, both in Portuguese. Identifiers and field names coming from this source are preserved as-is (`siglaOrgao`, `codTipo`, `idDeputado`, `idProposicao`, `idUltimaLegislatura`, etc.) — do not translate, do not rename to "normalize". When you need to reference these fields in domain code, keep the original API spelling.
 
-## Project state
-
-The project is in a pre-code phase. There is no defined technical stack (language, framework, ORM, hosting are not yet chosen), no build configured, no tests, no execution scripts. Do not search for setup commands, build instructions, or test suites — they do not exist yet. The foundation documentation (`CONTEXT.md`, ADRs in `docs/adr/`) and this file are the artifacts available at the moment.
-
 ## Testing
 
 - Tests describe **behavior**, not implementation. Renaming a variable or extracting a method must never break a test.
