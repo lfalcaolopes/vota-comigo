@@ -1,3 +1,4 @@
+import { buildCsvDownloadPlan } from './csv-download-plan';
 import { resolveCsvDownloaderConfig } from './csv-downloader-config';
 import type {
   CsvDownloaderOptions,
@@ -24,5 +25,6 @@ export function runCsvDownloader(
     message: 'Downloader de CSVs invocado com sucesso.',
     args: downloaderArgs,
     config: resolution.config,
+    plan: buildCsvDownloadPlan(resolution.config, options),
   };
 }

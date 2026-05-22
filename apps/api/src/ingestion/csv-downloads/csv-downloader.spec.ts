@@ -1,7 +1,48 @@
 import { resolveCsvDownloaderConfig } from './csv-downloader-config';
+import { buildCsvDownloadPlan } from './csv-download-plan';
 import { runCsvDownloader } from './csv-downloader';
 
 describe('csv downloader entrypoint', () => {
+  describe('when building the download plan', () => {
+    it('includes the annual datasets and single files for the default temporal window', () => {
+      // Arrange
+      const config = {
+        force: false,
+        years: [2001, 2002, 2003],
+      };
+
+      // Act
+      const plan = buildCsvDownloadPlan(config);
+
+      // Assert
+      expect(plan).toHaveLength(20);
+      expect(plan).toContainEqual({
+        dataset: 'deputados',
+        filename: 'deputados.csv',
+        url: 'https://dadosabertos.camara.leg.br/arquivos/deputados/csv/deputados.csv',
+        localPath: 'data/raw/deputados/deputados.csv',
+      });
+      expect(plan).toContainEqual({
+        dataset: 'legislaturas',
+        filename: 'legislaturas.csv',
+        url: 'https://dadosabertos.camara.leg.br/arquivos/legislaturas/csv/legislaturas.csv',
+        localPath: 'data/raw/legislaturas/legislaturas.csv',
+      });
+      expect(plan).toContainEqual({
+        dataset: 'votacoes',
+        filename: 'votacoes-2001.csv',
+        url: 'https://dadosabertos.camara.leg.br/arquivos/votacoes/csv/votacoes-2001.csv',
+        localPath: 'data/raw/votacoes/votacoes-2001.csv',
+      });
+      expect(plan).toContainEqual({
+        dataset: 'proposicoesTemas',
+        filename: 'proposicoesTemas-2003.csv',
+        url: 'https://dadosabertos.camara.leg.br/arquivos/proposicoesTemas/csv/proposicoesTemas-2003.csv',
+        localPath: 'data/raw/proposicoesTemas/proposicoesTemas-2003.csv',
+      });
+    });
+  });
+
   describe('when resolving configuration in isolation', () => {
     it('returns the temporal window and overwrite policy without invoking the downloader entrypoint', () => {
       // Arrange
@@ -32,7 +73,7 @@ describe('csv downloader entrypoint', () => {
       const result = runCsvDownloader(args, { currentYear: 2003 });
 
       // Assert
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         ok: true,
         message: 'Downloader de CSVs invocado com sucesso.',
         args,
@@ -51,7 +92,7 @@ describe('csv downloader entrypoint', () => {
       const result = runCsvDownloader(args);
 
       // Assert
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         ok: true,
         message: 'Downloader de CSVs invocado com sucesso.',
         args,
@@ -70,7 +111,7 @@ describe('csv downloader entrypoint', () => {
       const result = runCsvDownloader(args, { currentYear: 2026 });
 
       // Assert
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         ok: true,
         message: 'Downloader de CSVs invocado com sucesso.',
         args,
@@ -89,7 +130,7 @@ describe('csv downloader entrypoint', () => {
       const result = runCsvDownloader(args, { currentYear: 2026 });
 
       // Assert
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         ok: true,
         message: 'Downloader de CSVs invocado com sucesso.',
         args,
@@ -108,7 +149,7 @@ describe('csv downloader entrypoint', () => {
       const result = runCsvDownloader(args, { currentYear: 2026 });
 
       // Assert
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         ok: true,
         message: 'Downloader de CSVs invocado com sucesso.',
         args,
@@ -119,6 +160,32 @@ describe('csv downloader entrypoint', () => {
       });
     });
 
+    it('creates a plan for explicit years resolved by the public command', () => {
+      // Arrange
+      const args = ['--years=2021,2024'];
+
+      // Act
+      const result = runCsvDownloader(args, { currentYear: 2026 });
+
+      // Assert
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.plan).toHaveLength(14);
+        expect(result.plan).toContainEqual({
+          dataset: 'votacoesVotos',
+          filename: 'votacoesVotos-2021.csv',
+          url: 'https://dadosabertos.camara.leg.br/arquivos/votacoesVotos/csv/votacoesVotos-2021.csv',
+          localPath: 'data/raw/votacoesVotos/votacoesVotos-2021.csv',
+        });
+        expect(result.plan).toContainEqual({
+          dataset: 'proposicoes',
+          filename: 'proposicoes-2024.csv',
+          url: 'https://dadosabertos.camara.leg.br/arquivos/proposicoes/csv/proposicoes-2024.csv',
+          localPath: 'data/raw/proposicoes/proposicoes-2024.csv',
+        });
+      }
+    });
+
     it('resolves the last five years including the current year', () => {
       // Arrange
       const args = ['--last=5'];
@@ -127,7 +194,7 @@ describe('csv downloader entrypoint', () => {
       const result = runCsvDownloader(args, { currentYear: 2026 });
 
       // Assert
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         ok: true,
         message: 'Downloader de CSVs invocado com sucesso.',
         args,
@@ -138,6 +205,55 @@ describe('csv downloader entrypoint', () => {
       });
     });
 
+    it('creates a plan for recent windows resolved by the public command', () => {
+      // Arrange
+      const args = ['--last=5'];
+
+      // Act
+      const result = runCsvDownloader(args, { currentYear: 2026 });
+
+      // Assert
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.plan).toHaveLength(32);
+        expect(result.plan).toContainEqual({
+          dataset: 'votacoesObjetos',
+          filename: 'votacoesObjetos-2022.csv',
+          url: 'https://dadosabertos.camara.leg.br/arquivos/votacoesObjetos/csv/votacoesObjetos-2022.csv',
+          localPath: 'data/raw/votacoesObjetos/votacoesObjetos-2022.csv',
+        });
+        expect(result.plan).toContainEqual({
+          dataset: 'votacoesProposicoes',
+          filename: 'votacoesProposicoes-2026.csv',
+          url: 'https://dadosabertos.camara.leg.br/arquivos/votacoesProposicoes/csv/votacoesProposicoes-2026.csv',
+          localPath:
+            'data/raw/votacoesProposicoes/votacoesProposicoes-2026.csv',
+        });
+      }
+    });
+
+    it('uses a custom base URL when building the plan for tests', () => {
+      // Arrange
+      const args = ['--years=2025'];
+
+      // Act
+      const result = runCsvDownloader(args, {
+        baseUrl: 'https://example.test/arquivos',
+        currentYear: 2026,
+      });
+
+      // Assert
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.plan).toContainEqual({
+          dataset: 'votacoes',
+          filename: 'votacoes-2025.csv',
+          url: 'https://example.test/arquivos/votacoes/csv/votacoes-2025.csv',
+          localPath: 'data/raw/votacoes/votacoes-2025.csv',
+        });
+      }
+    });
+
     it('resolves the last ten years including the current year', () => {
       // Arrange
       const args = ['--last=10'];
@@ -146,7 +262,7 @@ describe('csv downloader entrypoint', () => {
       const result = runCsvDownloader(args, { currentYear: 2026 });
 
       // Assert
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         ok: true,
         message: 'Downloader de CSVs invocado com sucesso.',
         args,
@@ -165,7 +281,7 @@ describe('csv downloader entrypoint', () => {
       const result = runCsvDownloader(args, { currentYear: 2026 });
 
       // Assert
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         ok: true,
         message: 'Downloader de CSVs invocado com sucesso.',
         args,
@@ -265,6 +381,7 @@ describe('csv downloader entrypoint', () => {
         message: 'Ano 2000 inválido. Use anos entre 2001 e 2026.',
         args,
       });
+      expect(result).not.toHaveProperty('plan');
     });
 
     it('rejects interval years outside the valid range', () => {

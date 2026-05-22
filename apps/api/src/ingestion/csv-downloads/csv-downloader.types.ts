@@ -7,6 +7,7 @@ export type CsvDownloaderSuccessResult = {
   message: string;
   args: readonly string[];
   config: CsvDownloaderConfig;
+  plan: readonly CsvDownloadPlanItem[];
 };
 
 export type CsvDownloaderErrorResult = {
@@ -20,6 +21,13 @@ export type CsvDownloaderConfig = {
   force: boolean;
 };
 
+export type CsvDownloadPlanItem = {
+  dataset: string;
+  filename: string;
+  url: string;
+  localPath: string;
+};
+
 export type CsvDownloaderConfigResolution =
   | {
       ok: true;
@@ -31,5 +39,6 @@ export type CsvDownloaderConfigResolution =
     };
 
 export type CsvDownloaderOptions = {
+  baseUrl?: string;
   currentYear?: number;
 };
