@@ -10,7 +10,7 @@ Princípio de escopo: uma feature só entra no MVP se sua ausência torna o prod
 
 ## Pré-requisitos
 
-O MVP só começa quando o Protótipo cumprir seu critério de saída: ranking dos 20 eventos mais relevantes de um ano considerado publicamente defensável, com dados reais da Câmara dos Deputados ingeridos e schema modelado.
+O MVP só começa quando o Protótipo cumprir seu critério de saída: ranking das 20 proposições votadas mais relevantes de um ano considerado publicamente defensável, com dados reais da Câmara dos Deputados ingeridos e schema modelado.
 
 ## Escopo do produto
 
@@ -20,9 +20,9 @@ O produto no MVP cobre exclusivamente **deputados federais com histórico de vot
 
 ## Features do MVP
 
-### MVP-1. Feed / Ranking de Eventos Importantes
+### MVP-1. Feed / Ranking de Proposições Importantes
 
-Lista pública, sem necessidade de login, dos eventos mais relevantes segundo a fórmula calibrada no Protótipo.
+Lista pública, sem necessidade de login, das proposições votadas mais relevantes segundo a fórmula calibrada no Protótipo.
 
 **Apresentação em lista:**
 - Informações enxutas: título, data, tipo de proposição, resultado
@@ -47,45 +47,45 @@ Ferramenta de compatibilidade entre usuário e deputados com base nos votos. Fra
 **Fluxo:**
 1. Usuário clica para iniciar
 2. Informa estado (obrigatório) e cidade (opcional, preparando para cobertura municipal futura)
-3. Sistema apresenta os 5 eventos mais relevantes, já pré-selecionados. Usuário pode:
-   - Expandir para ver/selecionar mais eventos
-   - Desselecionar eventos pré-selecionados
-   - Buscar eventos específicos por texto
-4. Para cada evento selecionado: contexto inicial, link para fonte, usuário vota "deveria ser aprovado", "não deveria" ou "não sei" (não entra no cálculo)
+3. Sistema apresenta as 5 proposições votadas mais relevantes, já pré-selecionadas. Usuário pode:
+   - Expandir para ver/selecionar mais proposições
+   - Desselecionar proposições pré-selecionadas
+   - Buscar proposições específicas por texto
+4. Para cada proposição selecionada: contexto inicial, link para fonte, usuário vota "deveria ser aprovada", "não deveria" ou "não sei" (não entra no cálculo)
 5. Resultado: lista ordenada por % de concordância
 
 **Tratamento de ausências:**
 - Justificada (licença médica, missão oficial): neutro, não entra no cálculo
 - Sem justificativa: conta como discordância
 
-**Tratamento de eventos fora do mandato do deputado:**
+**Tratamento de proposições fora do mandato do deputado:**
 
-Quando um deputado não estava em exercício durante uma das votações selecionadas pelo usuário, a votação específica é desconsiderada para aquele deputado (não entra no cálculo), mas o deputado continua no ranking.
+Quando um deputado não estava em exercício durante a votação nominal vinculada a uma proposição selecionada pelo usuário, essa proposição é desconsiderada para aquele deputado (não entra no cálculo), mas o deputado continua no ranking.
 
 Isso cria o problema de amostra desigual (ver abaixo), que precisa ser tratado.
 
 **Ordenação e desempate:**
 - Ordenação primária: % de concordância com o usuário
-- Desempate 1: maior % de presença nas votações selecionadas
+- Desempate 1: maior % de presença nas votações vinculadas às proposições selecionadas
 - Desempate 2: candidato em atividade tem prioridade
 
 **Casos de desempate e amostra que exigem decisão documentada antes de codar:**
 
 Esses casos foram identificados durante a discussão e precisam ser resolvidos durante a construção do MVP, não deixados implícitos:
 
-- **Amostra desigual por ausência.** Deputado que votou 3 de 5 matérias selecionadas (2 ausências injustificadas contando como discordância) pode ter o mesmo % que deputado que votou todas as 5 com 3 concordâncias. Situações diferentes sendo tratadas como iguais.
-- **Amostra desigual por mandato.** Deputado que estava em exercício em 5 de 20 eventos selecionados vs. deputado em exercício em todos os 20. O primeiro pode ter 100% de compatibilidade calculado sobre 5 votos; comparar com alguém que tem 80% sobre 20 é enganoso.
+- **Amostra desigual por ausência.** Deputado que votou em 3 de 5 proposições selecionadas (2 ausências injustificadas contando como discordância) pode ter o mesmo % que deputado que votou nas 5 com 3 concordâncias. Situações diferentes sendo tratadas como iguais.
+- **Amostra desigual por mandato.** Deputado que estava em exercício nas votações de 5 de 20 proposições selecionadas vs. deputado em exercício em todas as 20. O primeiro pode ter 100% de compatibilidade calculado sobre 5 votos; comparar com alguém que tem 80% sobre 20 é enganoso.
 - **Volume diferente.** Candidato com 100% de concordância em 2 votações vs. candidato com 90% em 20 votações. Amostra maior é estatisticamente mais confiável.
 
 **Direções de tratamento a decidir na construção:**
-- Threshold mínimo de votos efetivos (ex.: 30-50% dos eventos selecionados) para aparecer nos primeiros resultados. Abaixo disso, listar numa seção separada tipo "deputados com pouco histórico relevante".
+- Threshold mínimo de votos efetivos (ex.: 30-50% das proposições selecionadas) para aparecer nos primeiros resultados. Abaixo disso, listar numa seção separada tipo "deputados com pouco histórico relevante".
 - Exibição transparente por deputado: "100% de compatibilidade (3 de 20 votações — deputado estava em exercício em 3)". O usuário vê a confiabilidade do número.
 - Ordenação secundária que considera tamanho de amostra entre deputados empatados em %.
 
-**Decisão já tomada:** todos os eventos selecionados pelo usuário têm peso igual no cálculo de compatibilidade. O score de relevância dos eventos serve apenas para ordenar a listagem de eventos, não influencia o cálculo do matcher.
+**Decisão já tomada:** todas as proposições selecionadas pelo usuário têm peso igual no cálculo de compatibilidade. O score de relevância serve apenas para ordenar a listagem de proposições, não influencia o cálculo do matcher.
 
 **Ao clicar no candidato no resultado:**
-- % de participação nas votações selecionadas
+- % de participação nas votações vinculadas às proposições selecionadas
 - Indicação de em quais o deputado estava em exercício e em quais não
 - Justificativas de ausência quando houver
 - Para cada voto: alinhado ou contra a orientação do partido
@@ -104,7 +104,7 @@ Esses casos foram identificados durante a discussão e precisam ser resolvidos d
 
 **Entra no MVP:**
 - Dados básicos (nome, partido atual, estado, foto, cargo)
-- Votos nos eventos mais relevantes (lista com filtro)
+- Votos nas proposições mais relevantes (lista com filtro)
 - Presença: total, com justificativa, sem justificativa
 - Histórico de partidos
 
@@ -119,7 +119,7 @@ Esses casos foram identificados durante a discussão e precisam ser resolvidos d
 ### MVP-4. Perfil do Partido — versão mínima
 
 - Lista de parlamentares do partido
-- Orientação de voto nos eventos mais relevantes
+- Orientação de voto nas proposições mais relevantes
 
 Incluído no MVP por ser praticamente gratuito — os dados já estão disponíveis na ingestão.
 
@@ -130,19 +130,19 @@ Duas entradas para a mesma tela de comparação, com escopo lado a lado (inspira
 **Entrada A — Comparativo geral:**
 - Usuário busca políticos por nome/estado
 - Seleciona 2-3 políticos
-- Vê comparação de informações consolidadas (presença, partidos, votos em matérias relevantes, etc.)
+- Vê comparação de informações consolidadas (presença, partidos, votos em proposições relevantes, etc.)
 
 **Entrada B — Comparativo contextual pós-matcher:**
 - Na tela de resultado do matcher, usuário seleciona 2-3 dos resultados
 - Abre a mesma tela de comparação, com os políticos pré-selecionados
-- Default: focar nas votações escolhidas no matcher — comparação exibe as informações no contexto dessas matérias
+- Default: focar nas proposições escolhidas no matcher — comparação exibe as informações no contexto dessas proposições
 - Toggle para expandir a visualização para as informações consolidadas dos políticos (mesma visão da Entrada A)
 
 **Implementação:** a engine de comparação é a mesma. A diferença está nos pontos de entrada e no filtro padrão dos dados exibidos.
 
 ### MVP-6. Compartilhamento básico
 
-- Link compartilhável para cada página pública (perfil de político, resultado de matcher, evento específico, comparativo)
+- Link compartilhável para cada página pública (perfil de político, resultado de matcher, proposição específica, comparativo)
 - Meta tags OpenGraph básicas no `<head>` de cada tipo de página: `og:title`, `og:description`, `og:image`, `og:url`
 - Tags `twitter:card` para previews no Twitter/X
 - Imagem genérica do produto serve como `og:image` no MVP — geração dinâmica de cards por conteúdo fica para melhoria
@@ -174,7 +174,7 @@ Armazenamento de dados do matcher desde o dia 1, preparando base para feature "T
 
 **O que é armazenado por resposta do matcher:**
 - Estado do usuário
-- Lista de eventos selecionados e o voto do usuário em cada um ("deveria ser aprovado", "não deveria", "não sei")
+- Lista de proposições selecionadas e a posição do usuário em cada uma ("deveria ser aprovada", "não deveria", "não sei")
 - Timestamp
 
 **O que NÃO é armazenado:**

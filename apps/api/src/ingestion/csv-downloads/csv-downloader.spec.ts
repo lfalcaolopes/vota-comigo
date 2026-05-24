@@ -1,9 +1,6 @@
 import { resolveCsvDownloaderConfig } from './csv-downloader.config';
 import { buildCsvDownloadPlan } from './csv-download-plan';
-import {
-  executeCsvDownloader,
-  runCsvDownloader,
-} from './csv-downloader';
+import { executeCsvDownloader, runCsvDownloader } from './csv-downloader';
 import type { CsvDownloadPlanItem } from './csv-downloader.types';
 
 describe('csv downloader entrypoint', () => {
@@ -19,7 +16,7 @@ describe('csv downloader entrypoint', () => {
       const plan = buildCsvDownloadPlan(config);
 
       // Assert
-      expect(plan).toHaveLength(20);
+      expect(plan).toHaveLength(17);
       expect(plan).toContainEqual({
         dataset: 'deputados',
         filename: 'deputados.csv',
@@ -174,7 +171,7 @@ describe('csv downloader entrypoint', () => {
       // Assert
       expect(result.ok).toBe(true);
       if (result.ok) {
-        expect(result.plan).toHaveLength(14);
+        expect(result.plan).toHaveLength(12);
         expect(result.plan).toContainEqual({
           dataset: 'votacoesVotos',
           filename: 'votacoesVotos-2021.csv',
@@ -219,13 +216,7 @@ describe('csv downloader entrypoint', () => {
       // Assert
       expect(result.ok).toBe(true);
       if (result.ok) {
-        expect(result.plan).toHaveLength(32);
-        expect(result.plan).toContainEqual({
-          dataset: 'votacoesObjetos',
-          filename: 'votacoesObjetos-2022.csv',
-          url: 'https://dadosabertos.camara.leg.br/arquivos/votacoesObjetos/csv/votacoesObjetos-2022.csv',
-          localPath: 'data/raw/votacoesObjetos/votacoesObjetos-2022.csv',
-        });
+        expect(result.plan).toHaveLength(27);
         expect(result.plan).toContainEqual({
           dataset: 'votacoesProposicoes',
           filename: 'votacoesProposicoes-2026.csv',
@@ -335,13 +326,12 @@ describe('csv downloader entrypoint', () => {
       });
 
       // Assert
-      expect(downloadItem).toHaveBeenCalledTimes(8);
+      expect(downloadItem).toHaveBeenCalledTimes(7);
       expect(downloadItem.mock.calls.map(([item]) => item.filename)).toEqual([
         'deputados.csv',
         'legislaturas.csv',
         'votacoes-2025.csv',
         'votacoesVotos-2025.csv',
-        'votacoesObjetos-2025.csv',
         'votacoesProposicoes-2025.csv',
         'proposicoes-2025.csv',
         'proposicoesTemas-2025.csv',
@@ -350,7 +340,7 @@ describe('csv downloader entrypoint', () => {
         ok: true,
         exitCode: 0,
         summary: {
-          downloaded: 7,
+          downloaded: 6,
           skipped: 1,
           failed: 0,
           failures: [],
@@ -385,7 +375,7 @@ describe('csv downloader entrypoint', () => {
 
       // Assert
       expect(result.exitCode).toBe(0);
-      expect(downloadItem).toHaveBeenCalledTimes(8);
+      expect(downloadItem).toHaveBeenCalledTimes(7);
       expect(maxActiveDownloads).toBe(3);
     });
 
@@ -429,12 +419,12 @@ describe('csv downloader entrypoint', () => {
       });
 
       // Assert
-      expect(downloadItem).toHaveBeenCalledTimes(8);
+      expect(downloadItem).toHaveBeenCalledTimes(7);
       expect(result).toMatchObject({
         ok: true,
         exitCode: 1,
         summary: {
-          downloaded: 6,
+          downloaded: 5,
           skipped: 1,
           failed: 1,
           failures: [
@@ -449,7 +439,7 @@ describe('csv downloader entrypoint', () => {
         expect.arrayContaining([
           '[deputados.csv] pulado',
           '[legislaturas.csv] falhou: 404 Not Found',
-          'Resumo: 6 baixados, 1 pulados, 1 erros.',
+          'Resumo: 5 baixados, 1 pulados, 1 erros.',
           'Falhas:',
           '  - legislaturas.csv: 404 Not Found',
         ]),

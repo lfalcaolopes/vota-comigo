@@ -9,7 +9,6 @@ const defaultBaseUrl = 'https://dadosabertos.camara.leg.br/arquivos';
 const annualDatasets = [
   'votacoes',
   'votacoesVotos',
-  'votacoesObjetos',
   'votacoesProposicoes',
   'proposicoes',
   'proposicoesTemas',

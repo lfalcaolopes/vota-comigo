@@ -6,13 +6,13 @@ Validar, antes de construir qualquer interface ou backend de produto, três cois
 
 1. **Viabilidade dos dados:** o que está disponível nas fontes públicas da Câmara dos Deputados é suficiente e confiável para alimentar o produto?
 2. **Modelagem coerente:** o schema consegue representar as entidades do domínio de forma que acomode o produto completo, não apenas o MVP?
-3. **Fórmula de relevância defensável:** o ranking de eventos importantes produzido pela fórmula é publicamente defensável quando aplicado a dados reais?
+3. **Fórmula de relevância defensável:** o ranking de proposições votadas produzido pela fórmula é publicamente defensável quando aplicado a dados reais?
 
 Sem essas três validações, qualquer trabalho de frontend ou backend é especulativo.
 
 ## Critério de saída
 
-O Protótipo está concluído quando for possível olhar para o ranking dos 20 eventos mais relevantes de um ano de dados reais e considerá-lo **publicamente defensável** — isto é, alguém que acompanha política brasileira concordaria que aqueles foram, de fato, os eventos que importaram.
+O Protótipo está concluído quando for possível olhar para o ranking das 20 proposições votadas mais relevantes de um ano de dados reais e considerá-lo **publicamente defensável** — isto é, alguém que acompanha política brasileira concordaria que aquelas foram, de fato, as proposições que importaram.
 
 ---
 
@@ -41,7 +41,7 @@ A modelagem das entidades específicas será um trabalho próprio, realizado a p
 Princípios que devem guiar a modelagem:
 
 - **Escopo do produto completo, não só do Protótipo.** Mesmo que o Protótipo importe apenas um subconjunto dos dados, o schema deve acomodar tudo que o produto completo precisará. Evita retrabalho posterior.
-- **Proposição principal como unidade de exibição.** Na fonte de dados da Câmara só existe a entidade "proposição" — cada proposição tem `id` próprio, e relações como substitutivo, emenda ou apensação são expostas via `uriProposicaoPrincipal` ou `/proposicoes/{id}/relacionadas`. No produto, a proposição principal funciona como entidade de exibição (uma PEC, por exemplo, com suas múltiplas votações ao longo do tempo e em câmaras diferentes), e as proposições derivadas aparecem como contexto vinculado. Não existe entidade "matéria" separada: o critério principal/derivada vem das relações que a própria API expõe, não de decisão editorial.
+- **Proposição afetada como unidade de vínculo.** A relação votação-proposição vem exclusivamente de `votacoesProposicoes-{ano}.csv`, que lista as proposições afetadas por cada votação. A cardinalidade é N:N: uma votação pode afetar múltiplas proposições, e uma proposição pode acumular múltiplas votações ao longo da tramitação. Relações como `uriProposicaoPrincipal` ou `/proposicoes/{id}/relacionadas` continuam úteis como contexto de tramitação, mas não definem o vínculo canônico da votação.
 - **Relações temporais.** Relações como deputado↔partido e deputado↔comissão mudam ao longo do tempo. Não podem ser tratadas como chave fixa.
 
 ### 3. Ingestão mínima
@@ -49,7 +49,7 @@ Princípios que devem guiar a modelagem:
 O Protótipo importa apenas o necessário para alimentar a fórmula de relevância e um matcher de teste. Dados complementares (gastos de cota parlamentar, frentes parlamentares, estrutura de comissões do deputado, emendas, discursos) ficam **modelados no schema mas fora do escopo de ingestão do Protótipo**.
 
 - Janela temporal: 2-3 anos recentes, não histórico completo
-- Critério: o suficiente para calibrar a fórmula com volume estatisticamente relevante e diversidade de matérias
+- Critério: o suficiente para calibrar a fórmula com volume estatisticamente relevante e diversidade de proposições
 
 ### 4. Calibração da fórmula de relevância
 
@@ -63,9 +63,9 @@ A fórmula inicial tem quatro fatores com pesos definidos:
 **O que fazer nesta etapa:**
 
 1. Rodar a fórmula sobre os dados reais ingeridos
-2. Validar manualmente os top 20 eventos do ranking
+2. Validar manualmente as top 20 proposições do ranking
 3. Ajustar pesos conforme necessário
-4. Se houver buracos óbvios (eventos estruturalmente importantes ranqueando baixo), considerar sinais endógenos adicionais: presença na sessão, número de destaques e requerimentos associados, regime de urgência, etc. Todos esses sinais são auditáveis e vêm dos próprios dados da Câmara.
+4. Se houver buracos óbvios (proposições estruturalmente importantes ranqueando baixo), considerar sinais endógenos adicionais: presença na sessão, quantidade de votações associadas, regime de urgência, etc. Todos esses sinais são auditáveis e vêm dos próprios dados da Câmara.
 
 **O que NÃO fazer nesta etapa:**
 
@@ -86,7 +86,7 @@ Montar tabela de aproximadamente 80-150 apelidos de proposições conhecidas pub
 
 ### Escopo de votações
 
-Apenas votações nominais com voto individual computado (sim/não/abstenção registrados por deputado) entram no Protótipo. Votações por aclamação ficam fora porque não alimentam os dois fatores principais da fórmula de relevância — polarização e quebra de disciplina partidária — nem a lógica do matcher (que compara o voto do usuário com o voto do deputado). A informação de que uma matéria foi aprovada por aclamação pode ser exibida no perfil da matéria a partir dos endpoints de tramitação, sem necessidade de ingerir os registros dessas votações.
+Apenas votações nominais com voto individual computado (sim/não/abstenção registrados por deputado) entram no Protótipo. Votações por aclamação ficam fora porque não alimentam os dois fatores principais da fórmula de relevância — polarização e quebra de disciplina partidária — nem a lógica do matcher (que compara a posição do usuário com o voto do deputado). A informação de que uma proposição foi aprovada por aclamação pode ser exibida no perfil da proposição a partir dos endpoints de tramitação, sem necessidade de ingerir os registros dessas votações.
 
 ### Escopo de votações: plenário vs. comissão
 
@@ -95,14 +95,14 @@ Votações nominais acontecem em dois contextos: no Plenário da Câmara (todos 
 As duas categorias são ingeridas, mas tratadas de forma distinta. Cada votação recebe uma flag `escopo_votacao` derivada do `siglaOrgao`:
 
 - `escopo_votacao = plenario` quando `siglaOrgao` é `PLEN` (Plenário da Câmara) ou `CN` (Congresso Nacional em sessão conjunta com o Senado).
-- `escopo_votacao = comissao` para qualquer outro `siglaOrgao` — comissões permanentes (CCJC, CFT, CSAUDE, CE, CCOM, etc.), comissões especiais (geralmente nomeadas pelo número da matéria que analisam, ex.: `PL233823`, `PEC01825`), comissões externas (`CEX...`), grupos de trabalho (`GT...`), subcomissões (`SUB...`) e Mesa Diretora (`MESA`).
+- `escopo_votacao = comissao` para qualquer outro `siglaOrgao` — comissões permanentes (CCJC, CFT, CSAUDE, CE, CCOM, etc.), comissões especiais (geralmente nomeadas pelo número da proposição que analisam, ex.: `PL233823`, `PEC01825`), comissões externas (`CEX...`), grupos de trabalho (`GT...`), subcomissões (`SUB...`) e Mesa Diretora (`MESA`).
 
 A regra é: tudo que não é `PLEN` ou `CN` é comissão. Não há lista enumerada de siglas de comissão a manter — sua composição muda a cada legislatura, comissões especiais são criadas e extintas durante o ano, e comissões externas surgem reativamente (ex.: tragédia em Brumadinho gerou `CEXMABRU`). Manter uma lista positiva de comissões seria fonte permanente de drift; manter a lista positiva mínima de plenário (`PLEN`, `CN`) é estável e auditável.
 
 A flag é usada assim:
 
 - **Fórmula de relevância e matcher:** filtram por `escopo_votacao = plenario`. Votações em comissão ficam fora dessas duas engines centrais. Motivo: deputados que não pertencem à comissão nunca aparecem nas votações dela — não por ausência, por não pertencer. Comparar deputados desiguais introduz viés sistemático.
-- **Perfil do deputado e da matéria:** podem exibir votações em comissão como contexto consultável, segregadas das de plenário.
+- **Perfil do deputado e da proposição:** podem exibir votações em comissão como contexto consultável, segregadas das de plenário.
 
 Esta decisão pode ser revisitada em melhorias pós-MVP se houver demanda por accountability mais granular sobre o trabalho dos deputados em comissões, com modelagem que trate a desigualdade de pertencimento.
 

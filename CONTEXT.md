@@ -1,6 +1,6 @@
 # Quem Vota Comigo
 
-Plataforma de transparência política que ajuda cidadãos brasileiros a avaliar deputados federais pelo comportamento real em votações, oferecendo ranking de votações que marcaram, matcher de compatibilidade e comparativo entre políticos.
+Plataforma de transparência política que ajuda cidadãos brasileiros a avaliar deputados federais pelo comportamento real em votações, oferecendo ranking de proposições votadas, matcher de compatibilidade e comparativo entre políticos.
 
 ## Language
 
@@ -47,7 +47,9 @@ _Avoid_: Projeto, propositura.
 **Proposição principal**: Papel que uma proposição assume quando agrega proposições derivadas (substitutivos, emendas, apensações) via `uriProposicaoPrincipal`. É a unidade de exibição no produto.
 _Avoid_: Matéria.
 
-**Votação**: Sessão deliberativa em que deputados registram voto sobre uma proposição. Identificada por `idVotacao`.
+**Proposição afetada**: Proposição vinculada a uma votação pelo CSV `votacoesProposicoes-{ano}.csv`. É a fonte canônica do vínculo votação-proposição no produto.
+
+**Votação**: Sessão deliberativa em que deputados registram voto sobre uma ou mais proposições afetadas. Identificada por `idVotacao`.
 
 **Votação nominal**: Votação em que o voto individual de cada deputado é registrado.
 
@@ -82,25 +84,26 @@ _Avoid_: Liderança (ambíguo).
 
 ### Engines do produto
 
-**Fórmula de relevância**: Score composto que ranqueia votações por importância, combinando fatores objetivos auditáveis.
+**Fórmula de relevância**: Score composto que ranqueia proposições votadas por importância, combinando fatores objetivos auditáveis derivados das votações associadas.
 
-**Votações que marcaram**: Ranking público produzido pela fórmula de relevância.
+**Proposições que marcaram**: Ranking público de proposições votadas produzido pela fórmula de relevância.
 
 **Polarização**: Fator da fórmula que mede quão apertado foi o placar de uma votação.
 
 **Apelido popular**: Fator binário da fórmula indicando que a proposição tem nome coloquial reconhecido publicamente, derivado de tabela curada.
 
-**Matcher**: Engine que calcula compatibilidade entre o voto declarado pelo usuário e os votos dos deputados em um conjunto de votações selecionadas.
+**Matcher**: Engine que calcula compatibilidade entre a posição declarada pelo usuário sobre proposições selecionadas e os votos dos deputados nas votações nominais vinculadas a essas proposições.
 
-**Compatibilidade**: Percentual de concordância entre o usuário e um deputado, calculado pelo matcher sobre o conjunto de votações selecionadas.
+**Compatibilidade**: Percentual de concordância entre o usuário e um deputado, calculado pelo matcher sobre o conjunto de proposições selecionadas.
 
 ## Relationships
 
 - Uma **Legislatura** contém múltiplos **Deputados** com **Mandatos**.
 - Um **Mandato** contém um ou mais **Intervalos de exercício**.
 - Um **Deputado** pode ser **Titular** ou **Suplente** em diferentes momentos do mesmo **Mandato**.
-- Uma **Proposição principal** agrega uma ou mais **Proposições** derivadas.
-- Uma **Proposição** tem zero ou mais **Votações**.
+- Uma **Proposição principal** agrega uma ou mais **Proposições** derivadas como contexto de tramitação.
+- Uma **Votação** afeta uma ou mais **Proposições afetadas**.
+- Uma **Proposição** pode ser afetada por zero ou mais **Votações**.
 - Uma **Votação** tem **Escopo de votação** igual a `plenario` ou `comissao`.
 - Uma **Votação nominal** registra **Votos computáveis** dos **Deputados em exercício** naquela data.
 - Uma **Bancada** emite **Orientação** para uma **Votação**.

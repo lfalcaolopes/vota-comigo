@@ -28,7 +28,7 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 
 ### votacoes-{ano}.csv
 
-**Justificativa:** core da fórmula de relevância. Cada votação nominal é a unidade básica do ranking de eventos e do matcher. O campo `siglaOrgao` é usado para derivar a flag `escopo_votacao` (plenário vs. comissão). Votações não nominais (simbólicas e outras) não são ingeridas — não alimentam polarização nem o matcher. Se necessário exibir uma votação não nominal no contexto de uma proposição, buscar via API.
+**Justificativa:** core da fórmula de relevância. Cada votação nominal fornece insumos objetivos para o ranking de proposições e para o matcher. O campo `siglaOrgao` é usado para derivar a flag `escopo_votacao` (plenário vs. comissão). Votações não nominais (simbólicas e outras) não são ingeridas — não alimentam polarização nem o matcher. Se necessário exibir uma votação não nominal no contexto de uma proposição, buscar via API.
 
 **Filtro de ingestão:** apenas registros cuja `id` aparece em `votacoesVotos-{ano}.csv` (proxy para votação nominal).
 
@@ -36,7 +36,9 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 - `placar_sim` / `placar_nao` / `placar_abstencao` / `placar_obstrucao` — contagens agregadas dos votos
 - `total_votantes` — total de deputados que votaram
 - `escopo_votacao` — flag derivada: `plenario` quando `siglaOrgao` é `PLEN` ou `CN`, `comissao` para qualquer outro valor. Lógica de aplicação, não lookup de tabela.
-- `tem_apelido` — boolean indicando se a proposição canônica tem apelido popular na tabela de apelidos
+- `tem_apelido` — boolean indicando se alguma proposição afetada tem apelido popular na tabela de apelidos
+
+**Complementação via API:** os campos `descUltimaAberturaVotacao` e `descUltimaApresentacaoProposicao` não existem nos CSVs anuais. A ingestão cria o esqueleto da votação a partir do CSV e consulta `GET /votacoes/{id}` para complementar esses textos. A identidade da peça votada é preservada como texto descritivo, junto com `descricao`; não há classificação de tipo regimental por regex.
 
 O banco persiste os **insumos** do cálculo de relevância, não os scores. O `score_relevancia` e seus componentes (`score_polarizacao`, `score_tipo_proposicao`, `score_apelido`) são calculados em runtime pela aplicação usando pesos configuráveis. Isso permite ajustar pesos sem reprocessar a ingestão.
 
@@ -44,40 +46,29 @@ O banco persiste os **insumos** do cálculo de relevância, não os scores. O `s
 
 ---
 
-### votacao_materia_canonica (tabela derivada)
+### votacao_proposicao_afetada (relação derivada)
 
 | Métrica | Valor |
 |---------|-------|
-| Registros (2025) | ~550 (1 por votação nominal) |
-| Projeção 10 anos | ~5.500 |
-| Projeção 25 anos | ~13.750 |
+| Registros úteis (2025) | ~568 vínculos para votações nominais |
+| Projeção 10 anos | ~5.680 |
+| Projeção 25 anos | ~14.200 |
 
-**Justificativa:** tabela derivada durante a ingestão, não importada diretamente de um CSV. Liga cada votação nominal à sua proposição canônica — a proposição que o usuário vê como título no feed e no matcher. A fórmula de relevância precisa do `codTipo` da proposição (peso 0.20), e o feed/matcher precisam de título e ementa. Sem essa relação, a votação é um ID sem contexto.
+**Justificativa:** relação derivada durante a ingestão a partir de `votacoesProposicoes-{ano}.csv`, o CSV que lista as proposições afetadas por cada votação. Liga cada votação nominal às proposições que ela afeta. A fórmula de relevância precisa do `codTipo` da proposição (peso 0.20), e o feed/matcher precisam de título e ementa. Sem essa relação, a votação é um ID sem contexto.
 
-**Fontes de derivação (lidos na ingestão, não persistidos):**
-- `votacoesObjetos-{ano}.csv` (102.037 registros brutos em 2025, 28.206 para nominais) — possíveis objetos da votação
-- `votacoesProposicoes-{ano}.csv` (10.292 registros brutos em 2025, 568 para nominais) — proposições afetadas pela votação
+**Fonte de derivação:**
+- `votacoesProposicoes-{ano}.csv` (10.292 registros brutos em 2025, 568 para votações nominais) — proposições afetadas pela votação
 
-Esses dois arquivos são insumos do processo de derivação. O volume bruto é alto (28 mil objetos para 550 votações, média de ~52 objetos por votação nominal), mas o resultado persistido é só a relação canônica: ~550 registros por ano.
+`votacoesObjetos-{ano}.csv` não é fonte de derivação nem fallback. Ele lista possíveis objetos da votação, acumulando proposições derivadas ao longo da tramitação, e não é vínculo canônico confiável.
 
 **Campos da tabela:**
 - `votacao_id`
 - `proposicao_id`
-- `origem`: `afetada`, `objeto` ou `manual`
-- `sinais_auxiliares`: evidências usadas na escolha (ex.: `ultima_apresentacao_bate_com_objeto`)
-- `confianca`: `alta`, `media`, `baixa`
-- `criterio`: descrição da regra aplicada
-- `revisado_manualmente`: boolean
+- `ano_csv`
 
-**Regra de derivação (ordem de precedência):**
-1. Se houver exatamente uma proposição afetada, usar essa — confiança alta.
-2. Se houver várias proposições afetadas, escolher a matéria principal por tipo, descrição e vínculos entre proposições — confiança média. (Refinamento iterativo conforme o ranking revelar casos mal resolvidos.)
-3. Se não houver proposição afetada clara, usar possível objeto como fallback.
-4. Se `ultima_apresentacao_proposicao_id_proposicao` estiver entre os possíveis objetos, aumentar a confiança daquele objeto.
-5. Não usar `ultima_apresentacao_proposicao_id_proposicao` sozinho como matéria canônica.
-6. Permitir revisão manual para top eventos do ranking.
+**Regra de derivação:** para cada linha útil de `votacoesProposicoes-{ano}.csv`, persistir o par (`votacao_id`, `proposicao_id`). Se uma votação tiver várias proposições afetadas, persistir todos os pares. Não há seleção de proposição principal, confiança categórica, origem por objeto ou revisão manual do vínculo.
 
-**Exibição de detalhes completos (todos os objetos/proposições afetadas):** quando o usuário abre o detalhe de uma votação e quer ver tudo que foi afetado, buscar via API sob demanda. Não é necessário persistir os 28 mil objetos para exibir 1 título por votação.
+**Exibição de detalhes completos:** quando o usuário abre o detalhe de uma votação, os textos ricos da votação vêm de `GET /votacoes/{id}`. A relação com proposições exibidas usa as proposições afetadas persistidas; objetos possíveis da votação não são usados como fonte canônica.
 
 ---
 
@@ -86,13 +77,13 @@ Esses dois arquivos são insumos do processo de derivação. O volume bruto é a
 | Métrica | Valor |
 |---------|-------|
 | Registros brutos (2025) | 107.556 |
-| Registros úteis (canônicas de votações nominais, 2025) | ~400–500 (proposições únicas referenciadas pela tabela `votacao_materia_canonica`) |
+| Registros úteis (afetadas por votações nominais, 2025) | ~400–500 proposições únicas referenciadas por `votacao_proposicao_afetada` |
 | Projeção 10 anos (úteis) | ~4.000–5.000 |
 | Projeção 25 anos (úteis) | ~10.000–12.500 |
 
-**Justificativa:** dados da proposição (tipo, ementa, número, ano, tramitação) são necessários para exibir o feed de eventos e o contexto do matcher. O `codTipo` é usado como input do fator "tipo de proposição" (peso 0.20) na fórmula de relevância — PEC pesa mais que requerimento — mas não é usado como filtro de ingestão.
+**Justificativa:** dados da proposição (tipo, ementa, número, ano, tramitação) são necessários para exibir o feed de proposições votadas e o contexto do matcher. O `codTipo` é usado como input do fator "tipo de proposição" (peso 0.20) na fórmula de relevância — PEC pesa mais que requerimento — mas não é usado como filtro de ingestão.
 
-**Escopo refinado:** ingerir apenas as proposições que aparecem como canônica na tabela `votacao_materia_canonica`. Uma votação → uma proposição canônica → uma linha em `proposicoes`. Proposições que nunca foram selecionadas como canônica não entram. Não há filtro por `codTipo` — qualquer tipo de proposição que seja canônica de uma votação nominal é ingerido.
+**Escopo refinado:** ingerir apenas as proposições que aparecem na relação `votacao_proposicao_afetada`. Proposições que não foram afetadas por votação nominal ingerida não entram. Não há filtro por `codTipo` — qualquer tipo de proposição afetada por uma votação nominal é ingerido.
 
 **Observação:** votações de um ano podem referenciar proposições apresentadas em anos anteriores. A ingestão de `proposicoes` precisa cobrir múltiplos anos conforme necessário, não só o ano corrente.
 
@@ -111,7 +102,7 @@ Esses dois arquivos são insumos do processo de derivação. O volume bruto é a
 
 **Justificativa:** classificação temática oficial da Câmara, usada como filtro no feed e no matcher (Tier 1 de melhorias). Ingerida desde o protótipo para validar cobertura e preparar o schema.
 
-**Problema de cobertura identificado:** o arquivo `proposicoesTemas-{ano}` só traz temas de proposições apresentadas naquele ano. Muitas proposições votadas em 2025 foram apresentadas em anos anteriores. Cobertura real sobre proposições canônicas votadas em 2025: ~12,5%. Para cobertura adequada, é necessário carregar `proposicoesTemas` de múltiplos anos.
+**Problema de cobertura identificado:** o arquivo `proposicoesTemas-{ano}` só traz temas de proposições apresentadas naquele ano. Muitas proposições votadas em 2025 foram apresentadas em anos anteriores. Cobertura real sobre proposições afetadas por votações nominais de 2025: ~12,5%. Para cobertura adequada, é necessário carregar `proposicoesTemas` de múltiplos anos.
 
 **Filtro de ingestão:** apenas registros referentes a proposições efetivamente ingeridas.
 
@@ -171,14 +162,14 @@ Quando a feature entrar, revisitar se ingestão é necessária ou se busca via A
 
 Em runtime, os votos individuais são buscados via API (`GET /votacoes/{id}/votos`) sob demanda para:
 - **Matcher:** após o usuário submeter suas escolhas, buscar votos de cada votação selecionada (5-20 chamadas paralelas).
-- **Perfil do deputado (MVP-3):** "votos nos eventos mais relevantes" buscados via API.
+- **Perfil do deputado (MVP-3):** "votos nas proposições mais relevantes" buscados via API.
 - **Comparativo pós-matcher (MVP-5):** usa os dados já buscados para o matcher, sem chamadas adicionais.
 
 **Observações de qualidade (a tratar na ingestão):**
 - 421 registros com campo `voto` vazio — investigar se são erro de dados ou tipo de ausência.
 - 420 registros com valor `Artigo 17` — Art. 17 do Regimento Interno (impedimento por conflito de interesse). No matcher, tratar como ausência justificada (neutro, não entra no cálculo).
 
-**Risco documentado:** dependência da API da Câmara para o core do produto. Se a API ficar indisponível, o matcher e o perfil do deputado ficam degradados (feed de eventos e ranking continuam funcionando com campos derivados locais).
+**Risco documentado:** dependência da API da Câmara para o core do produto. Se a API ficar indisponível, o matcher e o perfil do deputado ficam degradados (feed de proposições e ranking continuam funcionando com campos derivados locais).
 
 **Ideias para mitigação futura (não implementadas):** três estratégias estão registradas como possíveis caminhos caso a dependência da API se mostre problemática em produção. A decisão sobre qual adotar (ou combinar) fica para o momento em que a necessidade for de fato identificada.
 
@@ -198,31 +189,31 @@ Em runtime, os votos individuais são buscados via API (`GET /votacoes/{id}/voto
 |---|---|
 | Registros de plenário (2025) | ~4.100 |
 
-**Justificativa:** orientação de bancada é exibida como contexto da votação no modal do feed e no detalhe do evento. Sem cruzamento com engines centrais.
+**Justificativa:** orientação de bancada é exibida como contexto da votação no modal do feed e no detalhe da proposição. Sem cruzamento com engines centrais.
 
-Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes`) sob demanda para exibição no modal do evento ("orientação de cada partido nesta votação"). Cache com TTL longo.
+Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes`) sob demanda para exibição no modal da proposição ("orientação de cada partido nesta votação"). Cache com TTL longo.
 
 **Tratamento de tipos de orientadores:** partidos individuais, federações, blocos e lideranças suprapartidárias (Governo, Oposição, Maioria, Minoria) são todos retornados pela API como orientações da votação, sem cascateamento para o deputado individual (conforme ADR 0005). O campo `siglaBancada` identifica o tipo.
 
 **Mesmo risco e mitigação de `votacoesVotos`:** se necessário ingerir no futuro, é operação aditiva.
 
-### votacoesObjetos-{ano}.csv (insumo de derivação)
+### votacoesObjetos-{ano}.csv (descartado)
 
 | Registros brutos (2025) | 102.037 |
 |---|---|
 | Registros de votações nominais (2025) | 28.206 |
 
-**Justificativa:** lista os possíveis objetos de cada votação. Não é ingerido no banco — é lido durante o processo de ingestão como insumo para derivar a tabela `votacao_materia_canonica`. O volume bruto é alto (~52 objetos por votação nominal em média) e não se justifica persistir para uso em runtime. Quando o usuário quiser ver todos os objetos de uma votação no detalhe, buscar via API.
+**Justificativa:** lista possíveis objetos de cada votação, acumulando proposições derivadas ao longo da tramitação. O nome do arquivo sugere uma chave mais forte do que o dado oferece. Não é baixado pela pipeline padrão, não é ingerido no banco e não é usado como fallback para vínculo votação-proposição.
 
 ---
 
-### votacoesProposicoes-{ano}.csv (insumo de derivação)
+### votacoesProposicoes-{ano}.csv (insumo de vínculo)
 
 | Registros brutos (2025) | 10.292 |
 |---|---|
 | Registros de votações nominais (2025) | 568 |
 
-**Justificativa:** lista as proposições afetadas por cada votação. Mesmo tratamento de `votacoesObjetos`: lido na ingestão como insumo de derivação da matéria canônica, não persistido no banco. Sob demanda via API para exibição de detalhes.
+**Justificativa:** lista as proposições afetadas por cada votação. É a fonte exclusiva do vínculo canônico votação-proposição. A ingestão persiste os pares úteis em `votacao_proposicao_afetada`, preservando a cardinalidade N:N.
 
 ---
 
@@ -332,8 +323,8 @@ Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes
 | Dado | Registros estimados |
 |------|---------------------|
 | Votações nominais (com campos derivados) | ~5.500 |
-| Votação↔matéria canônica (derivada) | ~5.500 |
-| Proposições (canônicas únicas) | ~4.000–5.000 |
+| Votação↔proposição afetada (derivada) | ~5.680 |
+| Proposições afetadas únicas | ~4.000–5.000 |
 | Temas de proposições | ~5.000–15.000 |
 | Deputados | ~7.900 (acumulado) |
 | Legislaturas | ~57 (acumulado) |
@@ -344,8 +335,8 @@ Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes
 | Dado | Registros estimados |
 |------|---------------------|
 | Votações nominais (com campos derivados) | ~13.750 |
-| Votação↔matéria canônica (derivada) | ~13.750 |
-| Proposições (canônicas únicas) | ~10.000–12.500 |
+| Votação↔proposição afetada (derivada) | ~14.200 |
+| Proposições afetadas únicas | ~10.000–12.500 |
 | Temas de proposições | ~12.500–37.500 |
 | Deputados | ~7.900 (acumulado) |
 | Legislaturas | ~57 (acumulado) |
@@ -361,7 +352,7 @@ A tradeoff é que o matcher e o perfil do deputado dependem da API da Câmara em
 
 O protótipo originalmente definia 25 `codTipo` permitidos para filtrar proposições na ingestão. Essa abordagem foi descartada por dois motivos:
 
-1. **O problema que resolvia não existe mais.** O filtro foi criado para reduzir 107 mil proposições para ~11 mil. Com a estratégia de matéria canônica, só ~400-500 proposições por ano são ingeridas — o filtro é redundante.
+1. **O problema que resolvia não existe mais.** O filtro foi criado para reduzir 107 mil proposições para ~11 mil. Com a estratégia de ingerir apenas proposições afetadas por votações nominais, só ~400-500 proposições por ano são ingeridas — o filtro é redundante.
 
 2. **O filtro introduzia falsos negativos.** A análise de 2025 identificou 17 votações nominais (6 de Plenário, com 382-432 votos cada) sobre proposições fora da lista dos 25 tipos. Entre elas: cassações de mandato (REP — caso Glauber Braga, caso Carla Zambelli), alterações no Código de Ética (PRC 63/2025), e outros tipos relevantes para o cidadão. Manter uma lista positiva de tipos exigiria revisão contínua e sempre correria o risco de perder votações relevantes.
 

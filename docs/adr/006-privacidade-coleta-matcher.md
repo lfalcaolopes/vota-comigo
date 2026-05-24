@@ -1,6 +1,6 @@
 # Privacidade por design na coleta do matcher
 
-A cada execução do matcher, o sistema armazena: estado informado pelo usuário, lista de eventos selecionados, voto declarado pelo usuário em cada evento ("deveria ser aprovado" / "não deveria" / "não sei") e timestamp. Não são armazenados IP, fingerprint de navegador, identificadores persistentes de qualquer natureza, nem dados pessoais. A deduplicação intra-sessão usa cookie de sessão não-persistente que expira ao fechar o navegador; duplicação entre sessões ou dispositivos diferentes é aceita.
+A cada execução do matcher, o sistema armazena: estado informado pelo usuário, lista de proposições selecionadas, posição declarada pelo usuário em cada proposição ("deveria ser aprovada" / "não deveria" / "não sei") e timestamp. Não são armazenados IP, fingerprint de navegador, identificadores persistentes de qualquer natureza, nem dados pessoais. A deduplicação intra-sessão usa cookie de sessão não-persistente que expira ao fechar o navegador; duplicação entre sessões ou dispositivos diferentes é aceita.
 
 A coleta começa no dia 1 do MVP, mesmo sem a feature de exibição agregada (Termômetro de representatividade) estar exposta, para que haja volume histórico quando ela for implementada. A alternativa de só começar a coletar quando a feature subir foi rejeitada porque atrasaria a feature em meses sem ganho proporcional.
 

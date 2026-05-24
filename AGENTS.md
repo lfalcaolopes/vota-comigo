@@ -5,7 +5,7 @@
  
 ## Naming and documentation conventions
 
-Code naming and documentation language conventions are defined in `docs/adr/0007-convencoes-naming-documentacao.md`. Consult it before creating any identifier or documentation file.
+Code naming and documentation language conventions are defined in `docs/adr/007-convencoes-naming-documentacao.md`. Consult it before creating any identifier or documentation file.
 
 ## Data origin
 

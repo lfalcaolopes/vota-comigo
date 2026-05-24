@@ -200,9 +200,9 @@ Incorporar intensidade de cobertura midiática como peso adicional na fórmula d
 - Cobertura regional brasileira é boa mas não exaustiva
 - Funciona bem só para proposições com apelido consolidado
 
-### Feed editorial de votações recentes
+### Feed editorial de proposições recentes
 
-Versão expandida do ranking de eventos importantes, com linguagem editorial e posts explicando cada votação relevante. "Ontem a Câmara votou X, e seu deputado votou Y."
+Versão expandida do ranking de proposições importantes, com linguagem editorial e posts explicando cada proposição votada relevante. "Ontem a Câmara votou X, e seu deputado votou Y."
 
 Demanda atenção de produto e comunicação, não só engenharia. Faz sentido quando o produto já tem tração.
 
@@ -239,7 +239,7 @@ Usuário salva políticos de interesse para acompanhamento rápido.
 
 ### Alertas de novas votações
 
-Notificação quando um político favoritado vota em matéria nova, especialmente se for votação relevante pelo score.
+Notificação quando um político favoritado vota em proposição nova, especialmente se for votação relevante pelo score.
 
 ---
 
@@ -320,7 +320,7 @@ Decisão (ADR 0005): blocos não são modelados como entidade com composição. 
 
 ### Lideranças suprapartidárias: decisão
 
-Governo, Oposição, Maioria e Minoria **não entram na cascata de orientação aplicada ao deputado**. Não representam a bancada formal do deputado. São armazenadas e exibidas como contexto da votação (como cada liderança se posicionou), disponíveis no detalhe da votação e no perfil da matéria. Tratamento alinhado com o que se aplica a blocos partidários conforme ADR 0005.
+Governo, Oposição, Maioria e Minoria **não entram na cascata de orientação aplicada ao deputado**. Não representam a bancada formal do deputado. São armazenadas e exibidas como contexto da votação (como cada liderança se posicionou), disponíveis no detalhe da votação e no perfil da proposição. Tratamento alinhado com o que se aplica a blocos partidários conforme ADR 0005.
 
 ### Disciplina partidária como fator de relevância e ranking — descartada
 

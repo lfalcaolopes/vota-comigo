@@ -67,7 +67,6 @@ A janela temporal só se aplica aos arquivos separados por ano. Arquivos únicos
 **Arquivos por ano** (afetados pela janela):
 - `votacoes-{ano}.csv`
 - `votacoesVotos-{ano}.csv`
-- `votacoesObjetos-{ano}.csv`
 - `votacoesProposicoes-{ano}.csv`
 - `proposicoes-{ano}.csv`
 - `proposicoesTemas-{ano}.csv`
