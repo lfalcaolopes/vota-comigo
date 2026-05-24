@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "download:csvs": "ts-node -r tsconfig-paths/register src/ingestion/csv-downloads/download-csvs.cli.ts",
+    "download:csvs": "ts-node -r tsconfig-paths/register src/ingestion/csv-downloads/csv-downloader.cli.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "dev": "nest start --watch",

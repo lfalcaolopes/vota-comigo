@@ -1,11 +1,7 @@
-import { createWriteStream } from 'node:fs';
-import { access, mkdir, rename, rm } from 'node:fs/promises';
 import { dirname } from 'node:path';
-import { Readable } from 'node:stream';
-import { pipeline } from 'node:stream/promises';
 
 import { buildCsvDownloadPlan } from './csv-download-plan';
-import { resolveCsvDownloaderConfig } from './csv-downloader-config';
+import { resolveCsvDownloaderConfig } from './csv-downloader.config';
 import type {
   CsvDownloadTransport,
   CsvDownloaderExecutionOptions,
@@ -16,8 +12,20 @@ import type {
   CsvDownloadPlanItem,
   CsvPlanItemDownloadResult,
   CsvPlanItemDownloaderOptions,
-  CsvPlanItemFileSystem,
 } from './csv-downloader.types';
+import { fetchCsv } from './fetch-csv-transport';
+import {
+  InactivityTimeoutError,
+  bodyWithInactivityTimeout,
+  withInactivityTimeout,
+} from './inactivity-timeout';
+import { nodeFileSystem } from './node-file-system';
+import {
+  attemptsExhaustedError,
+  backoffDelayMs,
+  isTransientHttpStatus,
+  retryDelayMs,
+} from './retry-policy';
 
 const maxConcurrentCsvDownloads = 3;
 
@@ -182,7 +190,7 @@ export async function downloadCsvPlanItem(
       let response: Awaited<ReturnType<CsvDownloadTransport>>;
 
       try {
-        response = await responseWithInactivityTimeout(
+        response = await withInactivityTimeout(
           transport(item.url, {
             signal: abortController.signal,
           }),
@@ -302,204 +310,12 @@ function failureReason(
   return result.message.replace(`${result.item.filename}: `, '');
 }
 
-const nodeFileSystem: CsvPlanItemFileSystem = {
-  async exists(path: string): Promise<boolean> {
-    try {
-      await access(path);
-      return true;
-    } catch (error) {
-      if (isNodeError(error) && error.code === 'ENOENT') {
-        return false;
-      }
-
-      throw error;
-    }
-  },
-  async mkdir(path: string): Promise<void> {
-    await mkdir(path, { recursive: true });
-  },
-  async remove(path: string): Promise<void> {
-    await rm(path, { force: true });
-  },
-  async write(path: string, body: AsyncIterable<Uint8Array>): Promise<void> {
-    await pipeline(Readable.from(body), createWriteStream(path));
-  },
-  async rename(from: string, to: string): Promise<void> {
-    await rename(from, to);
-  },
-};
-
-const fetchCsv: CsvDownloadTransport = async (url, options) => {
-  const response = await fetch(url, {
-    signal: options.signal,
-  });
-
-  if (!response.ok) {
-    return {
-      ok: false,
-      status: response.status,
-      statusText: response.statusText,
-      retryAfter: response.headers.get('Retry-After') ?? undefined,
-    };
-  }
-
-  if (response.body === null) {
-    return {
-      ok: false,
-      status: response.status,
-      statusText: 'Resposta sem corpo.',
-    };
-  }
-
-  return {
-    ok: true,
-    body: responseBody(response.body),
-  };
-};
-
 function errorMessage(error: unknown): string {
   if (error instanceof Error) {
     return error.message;
   }
 
   return String(error);
-}
-
-class InactivityTimeoutError extends Error {
-  constructor() {
-    super('timeout por inatividade');
-  }
-}
-
-function attemptsExhaustedError(reason: string, maxAttempts: number): Error {
-  return new Error(`${reason} após ${maxAttempts} tentativas`);
-}
-
-function isTransientHttpStatus(status: number): boolean {
-  return status === 429 || status >= 500;
-}
-
-function retryDelayMs(
-  response: { status: number; retryAfter?: string },
-  attempt: number,
-  retryBackoffMs: readonly number[],
-): number {
-  if (response.status === 429 && response.retryAfter !== undefined) {
-    const retryAfterMs = parseRetryAfterMs(response.retryAfter);
-
-    if (retryAfterMs !== undefined) {
-      return retryAfterMs;
-    }
-  }
-
-  return retryBackoffMs[attempt - 1] ?? retryBackoffMs.at(-1) ?? 0;
-}
-
-function backoffDelayMs(
-  attempt: number,
-  retryBackoffMs: readonly number[],
-): number {
-  return retryBackoffMs[attempt - 1] ?? retryBackoffMs.at(-1) ?? 0;
-}
-
-function parseRetryAfterMs(value: string): number | undefined {
-  const seconds = Number(value);
-
-  if (Number.isFinite(seconds) && seconds >= 0) {
-    return seconds * 1000;
-  }
-
-  const retryAt = Date.parse(value);
-
-  if (!Number.isNaN(retryAt)) {
-    return Math.max(0, retryAt - Date.now());
-  }
-
-  return undefined;
-}
-
-function isNodeError(error: unknown): error is NodeJS.ErrnoException {
-  return error instanceof Error && 'code' in error;
-}
-
-function responseBody(
-  body: ReadableStream<Uint8Array>,
-): AsyncIterable<Uint8Array> {
-  return body;
-}
-
-function bodyWithInactivityTimeout(
-  body: AsyncIterable<Uint8Array>,
-  inactivityTimeoutMs: number,
-  abortController: AbortController,
-): AsyncIterable<Uint8Array> {
-  return {
-    async *[Symbol.asyncIterator]() {
-      const iterator = body[Symbol.asyncIterator]();
-
-      try {
-        while (true) {
-          const result = await nextChunkWithTimeout(
-            iterator,
-            inactivityTimeoutMs,
-            abortController,
-          );
-
-          if (result.done === true) {
-            return;
-          }
-
-          yield result.value;
-        }
-      } finally {
-        await iterator.return?.();
-      }
-    },
-  };
-}
-
-async function responseWithInactivityTimeout<T>(
-  response: Promise<T>,
-  inactivityTimeoutMs: number,
-  abortController: AbortController,
-): Promise<T> {
-  return withInactivityTimeout(response, inactivityTimeoutMs, abortController);
-}
-
-async function nextChunkWithTimeout(
-  iterator: AsyncIterator<Uint8Array>,
-  inactivityTimeoutMs: number,
-  abortController: AbortController,
-): Promise<IteratorResult<Uint8Array>> {
-  return withInactivityTimeout(
-    iterator.next(),
-    inactivityTimeoutMs,
-    abortController,
-  );
-}
-
-async function withInactivityTimeout<T>(
-  operation: Promise<T>,
-  inactivityTimeoutMs: number,
-  abortController: AbortController,
-): Promise<T> {
-  let timeout: NodeJS.Timeout | undefined;
-
-  try {
-    return await Promise.race([
-      operation,
-      new Promise<T>((_, reject) => {
-        timeout = setTimeout(() => {
-          abortController.abort();
-          reject(new InactivityTimeoutError());
-        }, inactivityTimeoutMs);
-      }),
-    ]);
-  } finally {
-    if (timeout !== undefined) {
-      clearTimeout(timeout);
-    }
-  }
 }
 
 async function sleepFor(durationMs: number): Promise<void> {
