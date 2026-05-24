@@ -2,6 +2,10 @@ export type CsvDownloaderResult =
   | CsvDownloaderSuccessResult
   | CsvDownloaderErrorResult;
 
+export type CsvDownloaderExecutionResult =
+  | CsvDownloaderExecutionSuccessResult
+  | CsvDownloaderExecutionErrorResult;
+
 export type CsvDownloaderSuccessResult = {
   ok: true;
   message: string;
@@ -14,6 +18,16 @@ export type CsvDownloaderErrorResult = {
   ok: false;
   message: string;
   args: readonly string[];
+};
+
+export type CsvDownloaderExecutionSuccessResult = CsvDownloaderSuccessResult & {
+  exitCode: 0 | 1;
+  results: readonly CsvPlanItemDownloadResult[];
+  summary: CsvDownloadSummary;
+};
+
+export type CsvDownloaderExecutionErrorResult = CsvDownloaderErrorResult & {
+  exitCode: 1;
 };
 
 export type CsvDownloaderConfig = {
@@ -45,6 +59,18 @@ export type CsvPlanItemDownloadResult =
       message: string;
       error?: unknown;
     };
+
+export type CsvDownloadSummary = {
+  downloaded: number;
+  skipped: number;
+  failed: number;
+  failures: readonly CsvDownloadFailureSummary[];
+};
+
+export type CsvDownloadFailureSummary = {
+  filename: string;
+  reason: string;
+};
 
 export type CsvDownloadTransportResponse =
   | {
@@ -98,4 +124,17 @@ export type CsvDownloaderConfigResolution =
 export type CsvDownloaderOptions = {
   baseUrl?: string;
   currentYear?: number;
+};
+
+export type CsvDownloaderExecutionOptions = CsvDownloaderOptions & {
+  downloadItem?: (
+    item: CsvDownloadPlanItem,
+    options: CsvPlanItemDownloaderOptions,
+  ) => Promise<CsvPlanItemDownloadResult>;
+  reporter?: CsvDownloaderReporter;
+};
+
+export type CsvDownloaderReporter = {
+  log(message: string): void;
+  error?(message: string): void;
 };

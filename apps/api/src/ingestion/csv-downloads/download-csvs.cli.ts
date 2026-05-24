@@ -1,10 +1,19 @@
-import { runCsvDownloader } from './csv-downloader';
+import { executeCsvDownloader } from './csv-downloader';
 
-const result = runCsvDownloader(process.argv.slice(2));
+void main();
 
-if (!result.ok) {
-  console.error(result.message);
-  process.exitCode = 1;
-} else {
-  console.log(result.message);
+async function main(): Promise<void> {
+  const result = await executeCsvDownloader(process.argv.slice(2), {
+    reporter: {
+      log(message) {
+        console.log(message);
+      },
+    },
+  });
+
+  if (!result.ok) {
+    console.error(result.message);
+  }
+
+  process.exitCode = result.exitCode;
 }

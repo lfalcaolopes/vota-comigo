@@ -15,3 +15,5 @@ dist
 
 .personal-docs
 csv
+
+apps/api/data

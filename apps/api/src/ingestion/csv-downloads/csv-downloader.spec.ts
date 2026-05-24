@@ -2,7 +2,11 @@ import { Readable } from 'node:stream';
 
 import { resolveCsvDownloaderConfig } from './csv-downloader-config';
 import { buildCsvDownloadPlan } from './csv-download-plan';
-import { downloadCsvPlanItem, runCsvDownloader } from './csv-downloader';
+import {
+  downloadCsvPlanItem,
+  executeCsvDownloader,
+  runCsvDownloader,
+} from './csv-downloader';
 import type {
   CsvDownloadPlanItem,
   CsvDownloadTransport,
@@ -746,6 +750,155 @@ describe('csv downloader entrypoint', () => {
     });
   });
 
+  describe('when executing the public command', () => {
+    it('processes every planned item and returns a successful exit code when no item fails', async () => {
+      // Arrange
+      const args = ['--years=2025'];
+      const downloadItem = jest.fn((item: CsvDownloadPlanItem) => {
+        if (item.filename === 'deputados.csv') {
+          return Promise.resolve({
+            status: 'skipped' as const,
+            item,
+            message: `${item.filename} já existe, pulando.`,
+          });
+        }
+
+        return Promise.resolve({
+          status: 'downloaded' as const,
+          item,
+          message: `${item.filename} baixado com sucesso.`,
+        });
+      });
+
+      // Act
+      const result = await executeCsvDownloader(args, {
+        currentYear: 2026,
+        downloadItem,
+      });
+
+      // Assert
+      expect(downloadItem).toHaveBeenCalledTimes(8);
+      expect(downloadItem.mock.calls.map(([item]) => item.filename)).toEqual([
+        'deputados.csv',
+        'legislaturas.csv',
+        'votacoes-2025.csv',
+        'votacoesVotos-2025.csv',
+        'votacoesObjetos-2025.csv',
+        'votacoesProposicoes-2025.csv',
+        'proposicoes-2025.csv',
+        'proposicoesTemas-2025.csv',
+      ]);
+      expect(result).toMatchObject({
+        ok: true,
+        exitCode: 0,
+        summary: {
+          downloaded: 7,
+          skipped: 1,
+          failed: 0,
+          failures: [],
+        },
+      });
+    });
+
+    it('runs at most three downloads at the same time', async () => {
+      // Arrange
+      const args = ['--years=2025'];
+      let activeDownloads = 0;
+      let maxActiveDownloads = 0;
+      const downloadItem = jest.fn(async (item: CsvDownloadPlanItem) => {
+        activeDownloads += 1;
+        maxActiveDownloads = Math.max(maxActiveDownloads, activeDownloads);
+
+        await sleepForTest(5);
+
+        activeDownloads -= 1;
+        return {
+          status: 'downloaded' as const,
+          item,
+          message: `${item.filename} baixado com sucesso.`,
+        };
+      });
+
+      // Act
+      const result = await executeCsvDownloader(args, {
+        currentYear: 2026,
+        downloadItem,
+      });
+
+      // Assert
+      expect(result.exitCode).toBe(0);
+      expect(downloadItem).toHaveBeenCalledTimes(8);
+      expect(maxActiveDownloads).toBe(3);
+    });
+
+    it('continues after item failures and reports the final summary', async () => {
+      // Arrange
+      const args = ['--years=2025'];
+      const output: string[] = [];
+      const downloadItem = jest.fn((item: CsvDownloadPlanItem) => {
+        if (item.filename === 'legislaturas.csv') {
+          return Promise.resolve({
+            status: 'failed' as const,
+            item,
+            message: `${item.filename}: 404 Not Found`,
+          });
+        }
+
+        if (item.filename === 'deputados.csv') {
+          return Promise.resolve({
+            status: 'skipped' as const,
+            item,
+            message: `${item.filename} já existe, pulando.`,
+          });
+        }
+
+        return Promise.resolve({
+          status: 'downloaded' as const,
+          item,
+          message: `${item.filename} baixado com sucesso.`,
+        });
+      });
+
+      // Act
+      const result = await executeCsvDownloader(args, {
+        currentYear: 2026,
+        downloadItem,
+        reporter: {
+          log(message) {
+            output.push(message);
+          },
+        },
+      });
+
+      // Assert
+      expect(downloadItem).toHaveBeenCalledTimes(8);
+      expect(result).toMatchObject({
+        ok: true,
+        exitCode: 1,
+        summary: {
+          downloaded: 6,
+          skipped: 1,
+          failed: 1,
+          failures: [
+            {
+              filename: 'legislaturas.csv',
+              reason: '404 Not Found',
+            },
+          ],
+        },
+      });
+      expect(output).toEqual(
+        expect.arrayContaining([
+          '[deputados.csv] pulado',
+          '[legislaturas.csv] falhou: 404 Not Found',
+          'Resumo: 6 baixados, 1 pulados, 1 erros.',
+          'Falhas:',
+          '  - legislaturas.csv: 404 Not Found',
+        ]),
+      );
+    });
+  });
+
   describe('when invoked with invalid configuration', () => {
     it('rejects last combined with explicit years', () => {
       // Arrange
@@ -903,6 +1056,10 @@ async function drainBody(body: AsyncIterable<Uint8Array>): Promise<void> {
   for await (const chunk of body) {
     void chunk;
   }
+}
+
+async function sleepForTest(durationMs: number): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, durationMs));
 }
 
 async function* delayedCsvBody(
