@@ -1,0 +1,256 @@
+{
+  "id": "13e90c27-2a24-473b-888f-78f705ed7607",
+  "prevId": "f2d775e3-ba0b-4ec6-a938-c25fc83ad884",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.legislatura": {
+      "name": "legislatura",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "external_id_legislatura": {
+          "name": "external_id_legislatura",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "uri": {
+          "name": "uri",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "data_inicio": {
+          "name": "data_inicio",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "data_fim": {
+          "name": "data_fim",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ano_eleicao": {
+          "name": "ano_eleicao",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "legislatura_external_id_legislatura_unique": {
+          "name": "legislatura_external_id_legislatura_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "external_id_legislatura"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.partido": {
+      "name": "partido",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "external_id_partido": {
+          "name": "external_id_partido",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sigla": {
+          "name": "sigla",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "uri": {
+          "name": "uri",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "partido_external_id_partido_unique": {
+          "name": "partido_external_id_partido_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "external_id_partido"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.deputado": {
+      "name": "deputado",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "external_id_deputado": {
+          "name": "external_id_deputado",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "uri": {
+          "name": "uri",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nome": {
+          "name": "nome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nome_civil": {
+          "name": "nome_civil",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sigla_sexo": {
+          "name": "sigla_sexo",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "data_nascimento": {
+          "name": "data_nascimento",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "data_falecimento": {
+          "name": "data_falecimento",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "uf_nascimento": {
+          "name": "uf_nascimento",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "municipio_nascimento": {
+          "name": "municipio_nascimento",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "url_rede_social": {
+          "name": "url_rede_social",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "url_website": {
+          "name": "url_website",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "legislatura_inicial_id": {
+          "name": "legislatura_inicial_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "legislatura_final_id": {
+          "name": "legislatura_final_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "deputado_legislatura_inicial_id_legislatura_id_fk": {
+          "name": "deputado_legislatura_inicial_id_legislatura_id_fk",
+          "tableFrom": "deputado",
+          "tableTo": "legislatura",
+          "columnsFrom": [
+            "legislatura_inicial_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "deputado_legislatura_final_id_legislatura_id_fk": {
+          "name": "deputado_legislatura_final_id_legislatura_id_fk",
+          "tableFrom": "deputado",
+          "tableTo": "legislatura",
+          "columnsFrom": [
+            "legislatura_final_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "deputado_external_id_deputado_unique": {
+          "name": "deputado_external_id_deputado_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "external_id_deputado"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
