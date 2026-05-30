@@ -8,7 +8,34 @@ import type {
   LegislaturaRow,
   LegislaturaUpsertResult,
 } from './steps/legislaturas.repository.types';
-import type { IngestionReporter } from './ingestion-runner.types';
+import type {
+  IngestionReporter,
+  IngestionStep,
+  IngestionStepContext,
+  StepRunResult,
+} from './ingestion-runner.types';
+
+function countingStep(name: string): IngestionStep {
+  return {
+    name,
+    scope: 'annual',
+    async run(context: IngestionStepContext): Promise<StepRunResult> {
+      let read = 0;
+      for await (const row of context.readRecords()) {
+        void row;
+        read += 1;
+      }
+      return {
+        read,
+        inserted: 0,
+        updated: 0,
+        ignored: 0,
+        rejected: [],
+        externalGaps: [],
+      };
+    },
+  };
+}
 
 function createFakeRepository(): LegislaturaRepository & {
   readonly upserted: LegislaturaRow[];
@@ -208,6 +235,83 @@ describe('ingestion runner', () => {
       }
       expect(result.exitCode).toBe(1);
       expect(result.summary.aborted).toBe(true);
+    });
+  });
+
+  describe('when an annual source file is missing', () => {
+    it('skips the missing year as a source gap, runs the present year, and keeps a zero exit code', async () => {
+      // Arrange
+      const reporter = createReporter();
+      const presentYearCsv = ['idVotacao;voto', '1-1;Sim'].join('\n');
+
+      // Act
+      const result = await executeIngestionRunner(
+        ['--from=2020', '--to=2021'],
+        {
+          currentYear: 2021,
+          stepDescriptors: [
+            { name: 'votos', scope: 'annual', dataset: 'votacoesVotos' },
+          ],
+          csvReader: readCsvRecords,
+          sourceExists: (path) => !path.includes('2020'),
+          openSource: () => Readable.from(presentYearCsv),
+          createSteps: async () => ({
+            steps: [countingStep('votos')],
+            close: async () => {},
+          }),
+          reporter,
+        },
+      );
+
+      // Assert
+      expect(result.ok).toBe(true);
+      if (!result.ok) {
+        throw new Error(result.message);
+      }
+      expect(result.exitCode).toBe(0);
+      expect(result.summary.aborted).toBeFalsy();
+      expect(result.summary.totalExternalGaps).toBe(1);
+      expect(result.summary.steps).toEqual([
+        expect.objectContaining({
+          stepName: 'votos',
+          year: 2020,
+          read: 0,
+          externalGaps: [expect.objectContaining({ type: 'fonte_ausente' })],
+        }),
+        expect.objectContaining({ stepName: 'votos', year: 2021, read: 1 }),
+      ]);
+    });
+  });
+
+  describe('when a required single-file source is missing', () => {
+    it('aborts the run and exits with code 1', async () => {
+      // Arrange
+      const repository = createFakeRepository();
+
+      // Act
+      const result = await executeIngestionRunner(['--only=legislaturas'], {
+        currentYear: 2026,
+        csvReader: readCsvRecords,
+        sourceExists: () => false,
+        openSource: () => Readable.from(''),
+        createSteps: async () => ({
+          steps: [createLegislaturasStep(repository)],
+          close: async () => {},
+        }),
+        errorLog: {
+          fileSystem: { async mkdir() {}, async writeFile() {} },
+          now: () => new Date('2026-05-30T12:00:00.000Z'),
+        },
+      });
+
+      // Assert
+      expect(result.ok).toBe(true);
+      if (!result.ok) {
+        throw new Error(result.message);
+      }
+      expect(result.exitCode).toBe(1);
+      expect(result.summary.aborted).toBe(true);
+      expect(result.summary.totalExternalGaps).toBe(1);
     });
   });
 

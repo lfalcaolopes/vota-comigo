@@ -1,5 +1,5 @@
 import { basename } from 'node:path';
-import { createReadStream } from 'node:fs';
+import { createReadStream, existsSync } from 'node:fs';
 import type { Readable } from 'node:stream';
 
 import { readCsvRecords } from './csv-reader';
@@ -20,12 +20,15 @@ import type {
   IngestionRunnerExecutionResult,
   IngestionRunnerResult,
   IngestionStepDescriptor,
+  ExternalGap,
   Rejection,
   StepSummary,
 } from './ingestion-runner.types';
 
 export const ingestionStepDescriptors: readonly IngestionStepDescriptor[] = [
   { name: 'legislaturas', scope: 'single' },
+  { name: 'deputados', scope: 'single' },
+  { name: 'partidos', scope: 'annual', dataset: 'votacoesVotos' },
 ];
 
 export type IngestionRunnerExecutionOptions = IngestionRunnerConfigOptions & {
@@ -33,6 +36,7 @@ export type IngestionRunnerExecutionOptions = IngestionRunnerConfigOptions & {
   createSteps?: (input: CreateStepsInput) => Promise<CreateStepsResult>;
   csvReader?: CsvReader;
   openSource?: (path: string) => Readable;
+  sourceExists?: (path: string) => boolean;
   sourcePath?: (entry: IngestionPlanEntry) => string;
   errorLog?: { fileSystem: ErrorLogFileSystem; now: () => Date };
   reporter?: IngestionReporter;
@@ -74,6 +78,9 @@ export async function executeIngestionRunner(
   const { config, plan } = result;
   const csvReader = options.csvReader ?? readCsvRecords;
   const openSource = options.openSource ?? createReadStream;
+  // A custom source opener owns existence; only the real file opener probes the disk.
+  const sourceExists =
+    options.sourceExists ?? (options.openSource ? () => true : existsSync);
   const sourcePathFor = options.sourcePath ?? defaultSourcePath;
   const createSteps = options.createSteps ?? createIngestionSteps;
 
@@ -81,6 +88,7 @@ export async function executeIngestionRunner(
 
   const summaries: StepSummary[] = [];
   const rejections: Rejection[] = [];
+  const externalGaps: ExternalGap[] = [];
   let aborted = false;
 
   try {
@@ -93,6 +101,36 @@ export async function executeIngestionRunner(
 
       const sourcePath = sourcePathFor(entry);
       const startedAt = performance.now();
+
+      if (!sourceExists(sourcePath)) {
+        const gap: ExternalGap = {
+          file: basename(sourcePath),
+          type: 'fonte_ausente',
+          reference: sourcePath,
+          message: `Fonte ausente: ${sourcePath}.`,
+        };
+
+        externalGaps.push(gap);
+        summaries.push({
+          read: 0,
+          inserted: 0,
+          updated: 0,
+          ignored: 0,
+          rejected: [],
+          externalGaps: [gap],
+          stepName: entry.stepName,
+          year: entry.year,
+          durationMs: performance.now() - startedAt,
+        });
+
+        if (entry.scope === 'single' || config.strict) {
+          aborted = true;
+          options.reporter?.error?.(gap.message);
+          break;
+        }
+
+        continue;
+      }
 
       try {
         const stepResult = await step.run({
@@ -109,6 +147,7 @@ export async function executeIngestionRunner(
           durationMs: performance.now() - startedAt,
         });
         rejections.push(...stepResult.rejected);
+        externalGaps.push(...stepResult.externalGaps);
       } catch (error) {
         if (error instanceof StrictModeError) {
           rejections.push(error.rejection);
@@ -138,6 +177,7 @@ export async function executeIngestionRunner(
     totalUpdated: sum(summaries, (step) => step.updated),
     totalIgnored: sum(summaries, (step) => step.ignored),
     totalRejected: rejections.length,
+    totalExternalGaps: externalGaps.length,
     dryRun: config.dryRun,
     strict: config.strict,
     years: config.years,
@@ -151,7 +191,7 @@ export async function executeIngestionRunner(
 }
 
 function defaultSourcePath(entry: IngestionPlanEntry): string {
-  const dataset = entry.stepName;
+  const dataset = entry.dataset ?? entry.stepName;
 
   if (entry.scope === 'single') {
     return `data/raw/${dataset}/${dataset}.csv`;
@@ -175,6 +215,7 @@ function reportSummary(
     totalUpdated: number;
     totalIgnored: number;
     totalRejected: number;
+    totalExternalGaps: number;
     dryRun: boolean;
     strict: boolean;
     years: readonly number[];
@@ -196,17 +237,27 @@ function reportSummary(
   for (const step of summary.steps) {
     const label =
       step.year === undefined ? step.stepName : `${step.stepName} ${step.year}`;
+
+    if (step.externalGaps.length > 0) {
+      reporter.log(
+        `[${label}] fonte ausente: ${step.externalGaps
+          .map((gap) => gap.reference)
+          .join(', ')} (passo ignorado)`,
+      );
+      continue;
+    }
+
     reporter.log(
       `[${label}] lidos ${step.read}, inseridos ${step.inserted}, atualizados ${step.updated}, ignorados ${step.ignored}, rejeitados ${step.rejected.length} (${Math.round(step.durationMs)}ms)`,
     );
   }
 
   reporter.log(
-    `Resumo (${mode}): ${summary.totalRead} lidos, ${summary.totalInserted} inseridos, ${summary.totalUpdated} atualizados, ${summary.totalIgnored} ignorados, ${summary.totalRejected} rejeitados.`,
+    `Resumo (${mode}): ${summary.totalRead} lidos, ${summary.totalInserted} inseridos, ${summary.totalUpdated} atualizados, ${summary.totalIgnored} ignorados, ${summary.totalRejected} rejeitados, ${summary.totalExternalGaps} lacunas de fonte.`,
   );
 
   if (summary.aborted) {
-    reporter.log('Execução abortada pelo modo estrito.');
+    reporter.log('Execução abortada.');
   }
 
   if (summary.errorLogPath !== undefined) {

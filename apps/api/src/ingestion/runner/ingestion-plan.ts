@@ -14,14 +14,15 @@ export function buildIngestionPlan(
       : steps.filter((step) => config.only!.includes(step.name));
 
   return selected.flatMap((step): IngestionPlanEntry[] => {
+    const base =
+      step.dataset === undefined
+        ? { stepName: step.name, scope: step.scope }
+        : { stepName: step.name, scope: step.scope, dataset: step.dataset };
+
     if (step.scope === 'single') {
-      return [{ stepName: step.name, scope: step.scope }];
+      return [base];
     }
 
-    return config.years.map((year) => ({
-      stepName: step.name,
-      scope: step.scope,
-      year,
-    }));
+    return config.years.map((year) => ({ ...base, year }));
   });
 }

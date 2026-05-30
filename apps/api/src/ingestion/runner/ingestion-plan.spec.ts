@@ -67,4 +67,35 @@ describe('ingestion plan', () => {
       expect(plan).toEqual([{ stepName: 'legislaturas', scope: 'single' }]);
     });
   });
+
+  describe('when a step reads from a dataset other than its own name', () => {
+    it('carries the source dataset into each planned entry', () => {
+      // Arrange
+      const partidosStep = {
+        name: 'partidos',
+        scope: 'annual' as const,
+        dataset: 'votacoesVotos',
+      };
+      const runnerConfig = config({ only: ['partidos'], years: [2024, 2025] });
+
+      // Act
+      const plan = buildIngestionPlan(runnerConfig, [...steps, partidosStep]);
+
+      // Assert
+      expect(plan).toEqual([
+        {
+          stepName: 'partidos',
+          scope: 'annual',
+          dataset: 'votacoesVotos',
+          year: 2024,
+        },
+        {
+          stepName: 'partidos',
+          scope: 'annual',
+          dataset: 'votacoesVotos',
+          year: 2025,
+        },
+      ]);
+    });
+  });
 });

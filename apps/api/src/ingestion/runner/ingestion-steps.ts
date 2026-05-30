@@ -5,9 +5,22 @@ import {
 import { createLegislaturaRepository } from './steps/legislaturas.repository';
 import { createLegislaturasStep } from './steps/legislaturas.step';
 import type { LegislaturaRepository } from './steps/legislaturas.repository.types';
+import {
+  createDeputadoRepository,
+  createLegislaturaLookup,
+} from './steps/deputados.repository';
+import { createDeputadosStep } from './steps/deputados.step';
+import type {
+  DeputadoRepository,
+  LegislaturaLookup,
+} from './steps/deputados.repository.types';
+import { createPartidoRepository } from './steps/partidos.repository';
+import { createPartidosStep } from './steps/partidos.step';
+import type { PartidoRepository } from './steps/partidos.repository.types';
 import type {
   CreateStepsInput,
   CreateStepsResult,
+  IngestionStep,
 } from './ingestion-runner.types';
 
 export type IngestionStepsOptions = {
@@ -15,9 +28,21 @@ export type IngestionStepsOptions = {
 };
 
 const dryRunLegislaturaRepository: LegislaturaRepository = {
-  upsert(): Promise<never> {
+  upsert: dryRunWriteGuard,
+};
+
+const dryRunDeputadoRepository: DeputadoRepository = {
+  upsert: dryRunWriteGuard,
+};
+
+const dryRunPartidoRepository: PartidoRepository = {
+  upsert: dryRunWriteGuard,
+};
+
+const dryRunLegislaturaLookup: LegislaturaLookup = {
+  loadIdByExternalId(): Promise<never> {
     throw new Error(
-      'Repositório de escrita acionado em dry-run. Nenhuma gravação deveria ocorrer.',
+      'Lookup de legislatura acionado em dry-run. Nenhuma resolução de FK deveria ocorrer.',
     );
   },
 };
@@ -28,7 +53,11 @@ export function createIngestionSteps(
 ): Promise<CreateStepsResult> {
   if (input.dryRun) {
     return Promise.resolve({
-      steps: [createLegislaturasStep(dryRunLegislaturaRepository)],
+      steps: [
+        createLegislaturasStep(dryRunLegislaturaRepository),
+        createDeputadosStep(dryRunDeputadoRepository, dryRunLegislaturaLookup),
+        createPartidosStep(dryRunPartidoRepository),
+      ],
       close: () => Promise.resolve(),
     });
   }
@@ -36,14 +65,20 @@ export function createIngestionSteps(
   const factory = options.databaseClientFactory ?? createDatabaseClient;
   const { db, close } = factory();
 
-  return Promise.resolve({
-    steps: [createLegislaturaStepWith(db)],
-    close,
-  });
+  const steps: IngestionStep[] = [
+    createLegislaturasStep(createLegislaturaRepository(db)),
+    createDeputadosStep(
+      createDeputadoRepository(db),
+      createLegislaturaLookup(db),
+    ),
+    createPartidosStep(createPartidoRepository(db)),
+  ];
+
+  return Promise.resolve({ steps, close });
 }
 
-function createLegislaturaStepWith(
-  db: DatabaseClient['db'],
-): ReturnType<typeof createLegislaturasStep> {
-  return createLegislaturasStep(createLegislaturaRepository(db));
+function dryRunWriteGuard(): Promise<never> {
+  throw new Error(
+    'Repositório de escrita acionado em dry-run. Nenhuma gravação deveria ocorrer.',
+  );
 }

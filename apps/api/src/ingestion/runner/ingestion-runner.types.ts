@@ -25,11 +25,13 @@ export type StepScope = 'single' | 'annual';
 export type IngestionStepDescriptor = {
   readonly name: string;
   readonly scope: StepScope;
+  readonly dataset?: string;
 };
 
 export type IngestionPlanEntry = {
   stepName: string;
   scope: StepScope;
+  dataset?: string;
   year?: number;
 };
 
@@ -83,6 +85,7 @@ export type IngestionSummary = {
   totalUpdated: number;
   totalIgnored: number;
   totalRejected: number;
+  totalExternalGaps: number;
   dryRun: boolean;
   strict: boolean;
   years: readonly number[];
