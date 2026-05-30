@@ -30,7 +30,7 @@ Lista pública, sem necessidade de login, das proposições votadas mais relevan
 
 **Modal / expansão ao clicar:**
 - Detalhes completos da votação
-- Orientação de cada partido
+- Orientações de bancada quando disponíveis via API/cache
 - Placar completo
 - Link para a fonte oficial na Câmara
 - Contexto adicional quando disponível (regime de urgência, destaques, etc.)
@@ -54,9 +54,10 @@ Ferramenta de compatibilidade entre usuário e deputados com base nos votos. Fra
 4. Para cada proposição selecionada: contexto inicial, link para fonte, usuário vota "deveria ser aprovada", "não deveria" ou "não sei" (não entra no cálculo)
 5. Resultado: lista ordenada por % de concordância
 
-**Tratamento de ausências:**
-- Justificada (licença médica, missão oficial): neutro, não entra no cálculo
-- Sem justificativa: conta como discordância
+**Tratamento de ausências e impedimentos:**
+- Deputado em exercício sem registro em `votacoesVotos`: conta como discordância no matcher.
+- Deputado fora de exercício na data da votação: não entra no denominador.
+- Registro `Artigo 17`: não entra no denominador, mesmo tratamento de fora de exercício.
 
 **Tratamento de proposições fora do mandato do deputado:**
 
@@ -73,7 +74,7 @@ Isso cria o problema de amostra desigual (ver abaixo), que precisa ser tratado.
 
 Esses casos foram identificados durante a discussão e precisam ser resolvidos durante a construção do MVP, não deixados implícitos:
 
-- **Amostra desigual por ausência.** Deputado que votou em 3 de 5 proposições selecionadas (2 ausências injustificadas contando como discordância) pode ter o mesmo % que deputado que votou nas 5 com 3 concordâncias. Situações diferentes sendo tratadas como iguais.
+- **Amostra desigual por ausência.** Deputado que votou em 3 de 5 proposições selecionadas (2 ausências sem motivo conhecido contando como discordância) pode ter o mesmo % que deputado que votou nas 5 com 3 concordâncias. Situações diferentes sendo tratadas como iguais.
 - **Amostra desigual por mandato.** Deputado que estava em exercício nas votações de 5 de 20 proposições selecionadas vs. deputado em exercício em todas as 20. O primeiro pode ter 100% de compatibilidade calculado sobre 5 votos; comparar com alguém que tem 80% sobre 20 é enganoso.
 - **Volume diferente.** Candidato com 100% de concordância em 2 votações vs. candidato com 90% em 20 votações. Amostra maior é estatisticamente mais confiável.
 
@@ -87,8 +88,8 @@ Esses casos foram identificados durante a discussão e precisam ser resolvidos d
 **Ao clicar no candidato no resultado:**
 - % de participação nas votações vinculadas às proposições selecionadas
 - Indicação de em quais o deputado estava em exercício e em quais não
-- Justificativas de ausência quando houver
-- Para cada voto: alinhado ou contra a orientação do partido
+- Indicação de ausências sem motivo conhecido
+- Orientações de bancada da votação quando disponíveis via API/cache, sem vincular ao voto individual do deputado no MVP
 - Detalhamento voto a voto: em quais o usuário concordou, em quais discordou
 
 **Opções de visualização:**
@@ -105,7 +106,7 @@ Esses casos foram identificados durante a discussão e precisam ser resolvidos d
 **Entra no MVP:**
 - Dados básicos (nome, partido atual, estado, foto, cargo)
 - Votos nas proposições mais relevantes (lista com filtro)
-- Presença: total, com justificativa, sem justificativa
+- Presença em votações nominais e ausências sem motivo conhecido
 - Histórico de partidos
 
 **Não entra no MVP:**
@@ -119,9 +120,9 @@ Esses casos foram identificados durante a discussão e precisam ser resolvidos d
 ### MVP-4. Perfil do Partido — versão mínima
 
 - Lista de parlamentares do partido
-- Orientação de voto nas proposições mais relevantes
+- Orientação de voto nas proposições mais relevantes quando disponível via API/cache
 
-Incluído no MVP por ser praticamente gratuito — os dados já estão disponíveis na ingestão.
+Incluído no MVP por reutilizar deputados, partidos, proposições e votações já ingeridos. As orientações são contexto sob demanda e não bloqueiam as engines centrais quando a API da Câmara estiver indisponível.
 
 ### MVP-5. Comparativo de Políticos
 
@@ -156,19 +157,7 @@ Duas entradas para a mesma tela de comparação, com escopo lado a lado (inspira
 - Exportação em formato de imagem com marca d'água
 - Compartilhamento em redes sociais específicas
 
-### MVP-7. Export do candidato escolhido
-
-Após o usuário rodar o matcher e identificar um candidato com alta compatibilidade, oferecer opção de salvar os dados essenciais para consulta no dia da votação.
-
-**Escopo:**
-- Card simples com nome, número de urna, partido, cargo
-- Possibilidade de salvar como imagem na galeria do celular
-
-**Racional:** conecta diretamente com a missão do produto (ajudar a decidir o voto). Os dados dos deputados em atividade tentando reeleição já estão no sistema; adicionar número de urna é um campo extra no perfil. Baixo custo de implementação para valor direto ao usuário no momento mais importante (o dia da eleição).
-
-**Consideração:** o número de urna pode variar entre pleitos. Para deputados em atividade tentando reeleição, o número costuma ser mantido, mas isso precisa ser revisitado quando a integração TSE for implementada.
-
-### MVP-8. Coleta anonimizada de respostas do matcher
+### MVP-7. Coleta anonimizada de respostas do matcher
 
 Armazenamento de dados do matcher desde o dia 1, preparando base para feature "Termômetro de Representatividade" em melhorias futuras.
 
@@ -194,7 +183,7 @@ Armazenamento de dados do matcher desde o dia 1, preparando base para feature "T
 
 **Pré-requisito para a feature futura "Termômetro":** quando a feature de exibição agregada for implementada (em melhorias), já haverá volume histórico de dados para alimentá-la.
 
-### MVP-9. Otimização mobile
+### MVP-8. Otimização mobile
 
 Estratégia: desenvolvimento desktop-first durante a construção do MVP, mas mobile **precisa estar refinado antes do lançamento**.
 

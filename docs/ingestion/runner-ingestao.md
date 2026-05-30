@@ -4,7 +4,11 @@
 
 Definir as opções (flags) do runner de ingestão dos CSVs da Câmara dos Deputados, separando o que será implementado desde o início do que fica como possibilidade futura.
 
-O runner é o orquestrador da pipeline de ingestão: lê os CSVs já baixados localmente (saída do script de download), transforma os dados conforme as regras definidas, e popula o banco de dados.
+O runner é o orquestrador da pipeline de ingestão: lê os CSVs já baixados localmente (saída do script de download), transforma os dados conforme as regras definidas, complementa lacunas específicas via API da Câmara quando documentado, e popula o banco de dados.
+
+As chamadas à API dentro do runner são exceções controladas, não uma segunda fonte geral de enriquecimento. No desenho inicial entram apenas:
+- `GET /deputados/{id}/historico`, obrigatório para popular `deputado_historico`.
+- `GET /proposicoes/{id}`, fallback quando uma proposição afetada ou principal necessária não estiver disponível nos CSVs locais.
 
 ---
 
@@ -91,6 +95,8 @@ npm run ingest -- --from=2020 --to=2022 --dry-run
 
 Justificativa: dados de 25 anos têm qualidade variável, e abortar a cada problema tornaria a ingestão impraticável. O modo estrito existe via `--strict` para os casos de debugging.
 
+Quando uma proposição afetada ou principal necessária não existe nos CSVs locais e o fallback `GET /proposicoes/{id}` também falha, o runner não cria registro sintético. No modo default, registra a lacuna como rejeição do passo `proposicoes` e segue a execução; em `--strict`, aborta imediatamente. O banco não deve aparentar completude quando a fonte canônica daquela proposição não foi obtida.
+
 ### Resumos e métricas
 
 Toda execução produz, ao final, um resumo estruturado no output do terminal, e grava os detalhes de erros em um arquivo separado.
@@ -103,6 +109,7 @@ Por passo:
 - Quantos atualizados no banco (via UPSERT)
 - Quantos ignorados (não atendem critério de ingestão — ex: votações não nominais)
 - Quantos rejeitados (erro de parsing/validação), agrupados por tipo de erro com contagem
+- Quantas lacunas de fonte externa ocorreram (ex.: fallback de proposição via API indisponível), agrupadas por tipo
 - Tempo de execução do passo
 
 Global:

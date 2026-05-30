@@ -53,12 +53,14 @@ O Protótipo importa apenas o necessário para alimentar a fórmula de relevânc
 
 ### 4. Calibração da fórmula de relevância
 
-A fórmula inicial tem quatro fatores com pesos definidos:
+A fórmula inicial usa apenas fatores locais e auditáveis a partir dos dados ingeridos:
 
-- Polarização — 0.35 (votação apertada)
-- Quebra de disciplina partidária — 0.30 (parlamentares votando contra orientação do partido)
-- Tipo de proposição — 0.20 (PEC pesa mais que requerimento procedural)
-- Apelido popular — 0.15 (bônus para proposições conhecidas publicamente, calibrado para não dominar o ranking)
+- Polarização — votação apertada
+- Tipo de proposição — PEC pesa mais que requerimento procedural
+- Apelido popular — bônus para proposições conhecidas publicamente, calibrado para não dominar o ranking
+- Sinais endógenos adicionais quando a calibração justificar — quantidade de votações vinculadas, recência, regime de urgência quando disponível localmente, etc.
+
+**Decisão superveniente:** quebra de disciplina partidária foi removida da fórmula. O fator depende de orientação efetiva por deputado, mas orientações não são ingeridas no banco no MVP e a cascata sustentável cobre apenas partido e federação. A disciplina partidária como fator de relevância ou ranking fica descartada no roadmap atual, conforme ADR 0005 e `docs/melhorias.md`.
 
 **O que fazer nesta etapa:**
 
@@ -71,9 +73,9 @@ A fórmula inicial tem quatro fatores com pesos definidos:
 
 - Incorporar cobertura midiática como peso na fórmula. Essa ideia foi avaliada e movida para melhorias pós-MVP (ver seção final). O motivo é disciplina de escopo: se a fórmula com sinais endógenos produzir um ranking defensável, cobertura midiática vira complexidade desnecessária. Se não produzir, aí existe evidência empírica de que faz falta.
 
-### 5. Curadoria da tabela de apelidos populares
+### 5. Curadoria de apelidos populares
 
-Montar tabela de aproximadamente 80-150 apelidos de proposições conhecidas publicamente ("PEC da Impunidade", "Lei da Ficha Limpa", "Lei da Palmada", etc.). Trabalho manual, feito em paralelo com a calibração da fórmula — é insumo direto do fator "apelido popular".
+Montar curadoria manual de aproximadamente 80-150 apelidos de proposições conhecidas publicamente ("PEC da Impunidade", "Lei da Ficha Limpa", "Lei da Palmada", etc.). A forma de tabela, seed ou arquivo curado será definida depois, fora do runner de ingestão da Câmara.
 
 ---
 
@@ -86,7 +88,7 @@ Montar tabela de aproximadamente 80-150 apelidos de proposições conhecidas pub
 
 ### Escopo de votações
 
-Apenas votações nominais com voto individual computado (sim/não/abstenção registrados por deputado) entram no Protótipo. Votações por aclamação ficam fora porque não alimentam os dois fatores principais da fórmula de relevância — polarização e quebra de disciplina partidária — nem a lógica do matcher (que compara a posição do usuário com o voto do deputado). A informação de que uma proposição foi aprovada por aclamação pode ser exibida no perfil da proposição a partir dos endpoints de tramitação, sem necessidade de ingerir os registros dessas votações.
+Apenas votações nominais com voto individual computado (sim/não/abstenção registrados por deputado) entram no Protótipo. Votações por aclamação ficam fora porque não alimentam a polarização nem a lógica do matcher (que compara a posição do usuário com o voto do deputado). A informação de que uma proposição foi aprovada por aclamação pode ser exibida no perfil da proposição a partir dos endpoints de tramitação, sem necessidade de ingerir os registros dessas votações.
 
 ### Escopo de votações: plenário vs. comissão
 
@@ -149,7 +151,7 @@ Três perfis foram analisados para cobrir os padrões principais:
 ### Informações adicionais nos registros
 
 - **Mudanças de partido** geram registros com `situacao = "Exercício"` e `descricaoStatus = "Alteração de partido"`, com `siglaPartido` já atualizado. Permite saber a qual partido o deputado pertencia no momento de cada votação.
-- **Motivo do afastamento** é extraível da `descricaoStatus` nas saídas: "Ministro de Estado", "Afastamento de Suplente (automático)", "Licença para tratar de interesse particular", "LTS" (licença saúde). Útil para a regra do matcher sobre tratamento de ausências (licença médica/missão oficial = neutro vs. ausência sem justificativa = discordância).
+- **Motivo do afastamento** é extraível da `descricaoStatus` nas saídas: "Ministro de Estado", "Afastamento de Suplente (automático)", "Licença para tratar de interesse particular", "LTS" (licença saúde). Útil para explicar períodos fora de exercício no perfil do deputado; não distingue justificativa de ausência em votações individuais.
  
 ---
 

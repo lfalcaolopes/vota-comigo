@@ -32,7 +32,6 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 
 **Filtro de ingestão:** apenas registros cuja `id` aparece em `votacoesVotos-{ano}.csv` (proxy para votação nominal).
 
-**Complementação via API:** os campos `descUltimaAberturaVotacao` e `descUltimaApresentacaoProposicao` não existem nos CSVs anuais. A ingestão cria o esqueleto da votação a partir do CSV e consulta `GET /votacoes/{id}` para complementar esses textos. A identidade da peça votada é preservada como texto descritivo, junto com `descricao`; não há classificação de tipo regimental por regex.
 
 ---
 
@@ -67,7 +66,7 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 
 `votacoesObjetos-{ano}.csv` não é fonte de derivação nem fallback. Ele lista possíveis objetos da votação, acumulando proposições derivadas ao longo da tramitação, e não é vínculo canônico confiável.
 
-**Exibição de detalhes completos:** quando o usuário abre o detalhe de uma votação, os textos ricos da votação vêm de `GET /votacoes/{id}`. A lista de proposições exibida deve se basear nas proposições afetadas deste arquivo, não em objetos possíveis da votação.
+**Exibição de detalhes completos:** quando o usuário abre o detalhe de uma votação, os textos da votação vêm dos campos locais ingeridos de `votacoes-{ano}.csv`. A lista de proposições exibida deve se basear nas proposições afetadas deste arquivo, não em objetos possíveis da votação. Chamadas a `GET /votacoes/{id}` não fazem parte do runner nem do caminho padrão de runtime para detalhes de votação, porque a API não acrescenta informação útil em relação aos CSVs para esses campos.
 
 ---
 
@@ -82,9 +81,9 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 
 **Justificativa:** dados da proposição (tipo, ementa, número, ano, tramitação) são necessários para exibir o feed de proposições votadas e o contexto do matcher. O `codTipo` é usado como input do fator "tipo de proposição" (peso 0.20) na fórmula de relevância — PEC pesa mais que requerimento — mas não é usado como filtro de ingestão.
 
-**Escopo refinado:** ingerir apenas as proposições afetadas por votação nominal ingerida. Proposições sem relação com votação nominal ingerida não entram. Não há filtro por `codTipo` — qualquer tipo de proposição afetada por uma votação nominal é ingerido.
+**Escopo refinado:** ingerir as proposições afetadas por votação nominal ingerida e suas proposições principais. Proposições sem relação com votação nominal ingerida e sem papel de principal de uma proposição afetada não entram. Não há filtro por `codTipo` — qualquer tipo de proposição afetada por uma votação nominal é ingerido.
 
-**Observação:** votações de um ano podem referenciar proposições apresentadas em anos anteriores. A ingestão de `proposicoes` precisa cobrir múltiplos anos conforme necessário, não só o ano corrente.
+**Observação:** votações de um ano podem referenciar proposições apresentadas em anos anteriores. A ingestão de `proposicoes` precisa cobrir múltiplos anos conforme necessário, não só o ano corrente. Quando uma proposição necessária não estiver disponível nos CSVs locais baixados, o runner consulta `GET /proposicoes/{id}` e importa a partir da API. O CSV continua sendo a fonte preferencial; a API é fallback para lacuna de input.
 
 **Proposições como contexto de atividade do deputado** (quantas criou, quantas foram aprovadas) são acessadas via API com `GET /proposicoes?idAutor={id}`, com cache de algumas horas. Não requer ingestão nem de `proposicoes` em massa nem de `proposicoesAutores`.
 
@@ -117,7 +116,9 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 
 **Justificativa:** entidade central do produto. Nome, URI, legislaturas de atuação. Tudo cruza com deputado — matcher, perfil, comparativo.
 
-**Observação importante:** o CSV não contém campo de partido atual. O partido no momento do voto vem de `votacoesVotos-{ano}.csv`. Para exibir "partido atual" no perfil, usar o endpoint `/deputados/{id}` da API.
+**Complementação via API no job de carga — `GET /deputados/{id}/historico`:** para cada deputado ingerido, o job de carga consulta o histórico parlamentar e popula a tabela `deputado_historico` (ver `docs/modelagem-dados.md`). Esses dados não estão em nenhum CSV publicado pela Câmara e são necessários para a regra "em exercício na data da votação" do matcher (ADR 0008), para o histórico de partidos do perfil do deputado (MVP-3) e para resolver o partido atual sem novo fetch. A paralelização segue o mesmo padrão controlado do `csv-downloader`.
+
+**Foto do deputado:** o CSV não traz URL de foto. A estratégia inicial é inferir a URL pelo padrão canônico da Câmara `https://www.camara.leg.br/internet/deputado/bandep/{id_deputado}.jpg`, sem persistir nem fazer fetch. Caso observemos falhas reais (404 sistemático, mudança de padrão), migrar para fetch via `GET /deputados/{id}` no mesmo job de carga já usado para `historico`, e persistir `url_foto` em `deputado`.
 
 ---
 
@@ -310,7 +311,7 @@ O consumo integral de `votacoesVotos` aumenta o volume de dados processado em re
 
 O protótipo originalmente definia 25 `codTipo` permitidos para filtrar proposições na ingestão. Essa abordagem foi descartada por dois motivos:
 
-1. **O problema que resolvia não existe mais.** O filtro foi criado para reduzir 107 mil proposições para ~11 mil. Com a estratégia de ingerir apenas proposições afetadas por votações nominais, só ~400-500 proposições por ano são ingeridas — o filtro é redundante.
+1. **O problema que resolvia não existe mais.** O filtro foi criado para reduzir 107 mil proposições para ~11 mil. Com a estratégia de ingerir apenas proposições afetadas por votações nominais e suas principais, só algumas centenas de proposições por ano são ingeridas — o filtro é redundante.
 
 2. **O filtro introduzia falsos negativos.** A análise de 2025 identificou 17 votações nominais (6 de Plenário, com 382-432 votos cada) sobre proposições fora da lista dos 25 tipos. Entre elas: cassações de mandato (REP — caso Glauber Braga, caso Carla Zambelli), alterações no Código de Ética (PRC 63/2025), e outros tipos relevantes para o cidadão. Manter uma lista positiva de tipos exigiria revisão contínua e sempre correria o risco de perder votações relevantes.
 

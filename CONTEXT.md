@@ -57,6 +57,10 @@ _Avoid_: Matéria.
 
 **Voto computável**: Voto individual com valor `sim`, `não` ou `abstenção` em uma votação nominal.
 
+**Artigo 17**: Registro de impedimento regimental do deputado em uma votação nominal, tratado como fora do denominador no matcher.
+
+**Ausência sem motivo conhecido**: Caso em que um deputado em exercício não tem registro individual em uma votação nominal.
+
 **Escopo de votação**: Flag derivada de `siglaOrgao` com dois valores: `plenario` (quando sigla é `PLEN` ou `CN`) ou `comissao` (qualquer outra sigla).
 
 ### Bancadas e orientação
@@ -70,15 +74,15 @@ _Avoid_: Matéria.
 **Bancada**: Termo guarda-chuva para qualquer orientador de voto formal: partido, federação ou bloco.
 _Avoid_: Liderança (ambíguo).
 
-**Liderança suprapartidária**: Orientador que não representa bancada formal: Governo, Oposição, Maioria, Minoria. Armazenado como contexto, não usado na cascata.
+**Liderança suprapartidária**: Orientador que não representa bancada formal: Governo, Oposição, Maioria, Minoria. Exibido como contexto quando disponível, não usado na cascata.
 
 **Orientação**: Recomendação de voto emitida por uma bancada antes de uma votação.
 
 **Orientação computável**: Orientação com valor `Sim`, `Não` ou `Obstrução`. Valores `Liberado` e vazio não são computáveis.
 
-**Cascata de orientação**: Regra de resolução para identificar qual orientação se aplica a um deputado: partido individual → federação → bloco → não computável.
+**Cascata de orientação**: Regra de resolução para identificar qual orientação se aplica a um deputado: partido individual → federação → não computável.
 
-**Origem da orientação**: Valor que registra qual nível da cascata efetivamente forneceu a orientação aplicada: `partido`, `federacao` ou `bloco`.
+**Origem da orientação**: Valor que registra qual nível da cascata efetivamente forneceu a orientação aplicada: `partido` ou `federacao`.
 
 **Quebra de disciplina**: Voto computável de um deputado que diverge da orientação computável resolvida pela cascata.
 
@@ -90,7 +94,7 @@ _Avoid_: Liderança (ambíguo).
 
 **Polarização**: Fator da fórmula que mede quão apertado foi o placar de uma votação.
 
-**Apelido popular**: Fator binário da fórmula indicando que a proposição tem nome coloquial reconhecido publicamente, derivado de tabela curada.
+**Apelido popular**: Fator binário da fórmula indicando que a proposição tem nome coloquial reconhecido publicamente, derivado de curadoria manual.
 
 **Matcher**: Engine que calcula compatibilidade entre a posição declarada pelo usuário sobre proposições selecionadas e os votos dos deputados nas votações nominais vinculadas a essas proposições.
 
@@ -106,9 +110,12 @@ _Avoid_: Liderança (ambíguo).
 - Uma **Proposição** pode ser afetada por zero ou mais **Votações**.
 - Uma **Votação** tem **Escopo de votação** igual a `plenario` ou `comissao`.
 - Uma **Votação nominal** registra **Votos computáveis** dos **Deputados em exercício** naquela data.
+- O **Matcher** desconsidera uma **Votação nominal** para um **Deputado** quando ele não estava **Em exercício** ou quando seu registro é **Artigo 17**.
+- Uma **Ausência sem motivo conhecido** conta como discordância no **Matcher**.
 - Uma **Bancada** emite **Orientação** para uma **Votação**.
 - Um **Partido** pertence a zero ou uma **Federação** e a zero ou um **Bloco** em uma dada **Legislatura**.
-- Quando uma **Federação** ou **Bloco** orienta, os **Partidos** membros não orientam separadamente naquela **Votação**.
+- Quando uma **Federação** orienta, os **Partidos** membros não orientam separadamente naquela **Votação**.
+- Um **Bloco** pode emitir **Orientação** exibida como contexto da **Votação**, mas não é resolvido pela **Cascata de orientação**.
 - A **Cascata de orientação** resolve para um par (**Deputado**, **Votação**) qual **Orientação** se aplica e qual a **Origem da orientação**.
 - Uma **Quebra de disciplina** ocorre quando o **Voto computável** de um **Deputado** diverge da **Orientação computável** resolvida pela cascata.
 - A **Fórmula de relevância** e o **Matcher** consideram apenas **Votações** com **Escopo de votação** igual a `plenario`.

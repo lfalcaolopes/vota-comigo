@@ -50,7 +50,7 @@ Geração dinâmica de imagens OpenGraph por conteúdo. Cada tipo de página (pe
 - Imagens 1200x630 (formato padrão que serve os dois)
 
 **Escopo:**
-- Card para resultado do matcher: foto do deputado mais compatível, % de compatibilidade, número do candidato
+- Card para resultado do matcher: foto do deputado mais compatível, % de compatibilidade, estado e partido
 - Card para perfil do político: foto, nome, partido, estado, informações essenciais
 - Card para evento: título da proposição, data, resultado
 - Card para comparativo: informações lado a lado de 2-3 políticos
@@ -61,13 +61,13 @@ Geração dinâmica de imagens OpenGraph por conteúdo. Cada tipo de página (pe
 
 Após o usuário rodar o matcher e identificar um candidato com alta compatibilidade, oferecer opção de salvar para o dia da votação.
 
-**Escopo inicial (sem TSE):**
-- Card de imagem com nome, número, partido, cargo — salvável na galeria do celular
+**Escopo:**
+- Card de imagem com nome, número de urna, partido e cargo — salvável na galeria do celular
 - Possibilidade de lembrete `.ics` para calendário com os números escolhidos
 
-**Racional:** conecta diretamente com a missão do produto (ajudar a decidir o voto) e é barato de implementar. Os dados do deputado em atividade já estão no sistema; adicionar o número de urna é um campo extra no perfil.
+**Dependência:** exige dados de candidatura atual, preferencialmente via TSE/DivulgaCandContas. Não entra no MVP porque número de urna e candidatura vigente não vêm dos CSVs da Câmara.
 
-**Consideração:** o número de urna usado em eleições varia entre pleitos. Isso precisa ser tratado com cuidado quando a integração TSE acontecer, mas para deputados em atividade tentando reeleição, o número costuma ser mantido.
+**Racional:** conecta diretamente com a missão do produto (ajudar a decidir o voto), mas só é confiável quando o produto souber que o deputado é candidato naquele pleito e qual número de urna está vigente.
 
 ---
 
