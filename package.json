@@ -9,7 +9,10 @@
     "db:up": "docker compose up -d postgres",
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f postgres",
-    "download:csvs": "pnpm --filter api download:csvs"
+    "db:generate": "pnpm --filter api db:generate",
+    "db:migrate": "pnpm --filter api db:migrate",
+    "download:csvs": "pnpm --filter api download:csvs",
+    "ingest": "pnpm --filter api ingest"
   },
   "devDependencies": {
     "turbo": "^2.9.6",
