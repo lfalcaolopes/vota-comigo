@@ -56,4 +56,54 @@ describe('fetchCamaraJson', () => {
       });
     });
   });
+
+  describe('when the request times out', () => {
+    it('maps the abort to a transient failure instead of throwing', async () => {
+      // Arrange
+      const fetchMock = jest
+        .fn()
+        .mockRejectedValue(
+          new DOMException('The operation timed out', 'TimeoutError'),
+        );
+      global.fetch = fetchMock;
+
+      // Act
+      const response = await fetchCamaraJson('https://example.test/historico');
+
+      // Assert
+      expect(response).toMatchObject({ ok: false, status: 503 });
+    });
+
+    it('passes an abort signal so the request cannot hang forever', async () => {
+      // Arrange
+      const fetchMock = jest.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ dados: [], links: [] }),
+      });
+      global.fetch = fetchMock;
+
+      // Act
+      await fetchCamaraJson('https://example.test/historico');
+
+      // Assert
+      const [, init] = fetchMock.mock.calls[0];
+      expect(init.signal).toBeInstanceOf(AbortSignal);
+    });
+  });
+
+  describe('when the network fails', () => {
+    it('maps the error to a transient failure', async () => {
+      // Arrange
+      const fetchMock = jest
+        .fn()
+        .mockRejectedValue(new TypeError('fetch failed'));
+      global.fetch = fetchMock;
+
+      // Act
+      const response = await fetchCamaraJson('https://example.test/historico');
+
+      // Assert
+      expect(response).toMatchObject({ ok: false, status: 503 });
+    });
+  });
 });
