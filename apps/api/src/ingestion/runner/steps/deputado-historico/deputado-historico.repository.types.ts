@@ -26,8 +26,24 @@ export type DeputadoHistoricoFetchResult =
   | { ok: true; eventos: readonly HistoricoEvento[] }
   | { ok: false; reason: string };
 
+export type DeputadoHistoricoFetchEvent = {
+  type: 'retry';
+  externalIdDeputado: number;
+  attempt: number;
+  maxAttempts: number;
+  delayMs: number;
+  reason: string;
+};
+
+export type DeputadoHistoricoFetchOptions = {
+  onEvent?: (event: DeputadoHistoricoFetchEvent) => void;
+};
+
 export type DeputadoHistoricoClient = {
-  fetch(externalIdDeputado: number): Promise<DeputadoHistoricoFetchResult>;
+  fetch(
+    externalIdDeputado: number,
+    options?: DeputadoHistoricoFetchOptions,
+  ): Promise<DeputadoHistoricoFetchResult>;
 };
 
 export type PartidoLookup = {

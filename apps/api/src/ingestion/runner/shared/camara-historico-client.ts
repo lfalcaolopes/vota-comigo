@@ -5,6 +5,7 @@ import {
 import type {
   DeputadoHistoricoClient,
   DeputadoHistoricoFetchResult,
+  DeputadoHistoricoFetchOptions,
   HistoricoEvento,
 } from '../steps/deputado-historico/deputado-historico.repository.types';
 import type { CamaraJsonTransport } from './camara-api-transport';
@@ -32,10 +33,23 @@ export function createDeputadoHistoricoClient(
   return {
     async fetch(
       externalIdDeputado: number,
+      options?: DeputadoHistoricoFetchOptions,
     ): Promise<DeputadoHistoricoFetchResult> {
       const eventos: HistoricoEvento[] = [];
       let url: string | undefined =
         `${baseUrl}/deputados/${externalIdDeputado}/historico`;
+
+      const onRetry = options?.onEvent
+        ? (attempt: number, delayMs: number, reason: string) =>
+            options.onEvent?.({
+              type: 'retry',
+              externalIdDeputado,
+              attempt,
+              maxAttempts,
+              delayMs,
+              reason,
+            })
+        : undefined;
 
       while (url !== undefined) {
         const page = await fetchPage(url, {
@@ -43,6 +57,7 @@ export function createDeputadoHistoricoClient(
           sleep,
           maxAttempts,
           retryBackoffMs,
+          onRetry,
         });
 
         if (!page.ok) {
@@ -66,6 +81,7 @@ type PageDeps = {
   sleep: (ms: number) => Promise<void>;
   maxAttempts: number;
   retryBackoffMs: readonly number[];
+  onRetry?: (attempt: number, delayMs: number, reason: string) => void;
 };
 
 type PageResult =
@@ -81,15 +97,15 @@ async function fetchPage(url: string, deps: PageDeps): Promise<PageResult> {
     }
 
     const transient = isTransientHttpStatus(response.status);
+    const reason = `${response.status} ${response.statusText}`;
 
     if (!transient || attempt === deps.maxAttempts) {
-      return {
-        ok: false,
-        reason: `${response.status} ${response.statusText}`,
-      };
+      return { ok: false, reason };
     }
 
-    await deps.sleep(retryDelayMs(response, attempt, deps.retryBackoffMs));
+    const delayMs = retryDelayMs(response, attempt, deps.retryBackoffMs);
+    deps.onRetry?.(attempt, delayMs, reason);
+    await deps.sleep(delayMs);
   }
 
   return { ok: false, reason: 'tentativas esgotadas' };

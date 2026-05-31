@@ -1,5 +1,6 @@
 import type {
   ExternalGap,
+  IngestionReporter,
   IngestionStep,
   IngestionStepContext,
   Rejection,
@@ -15,6 +16,8 @@ import type {
 } from '../partidos/partidos.repository.types';
 import type {
   DeputadoHistoricoClient,
+  DeputadoHistoricoFetchEvent,
+  DeputadoHistoricoFetchResult,
   DeputadoHistoricoRepository,
   DeputadoHistoricoRow,
   DeputadoSource,
@@ -23,7 +26,8 @@ import type {
   PartidoLookup,
 } from './deputado-historico.repository.types';
 
-const API_CONCURRENCY = 3;
+const API_CONCURRENCY = 10;
+const PROGRESS_INTERVAL = 100;
 
 export type DeputadoHistoricoStepDeps = {
   deputadoSource: DeputadoSource;
@@ -46,15 +50,40 @@ export function createDeputadoHistoricoStep(
         return emptyResult();
       }
 
-      const deputados = await deps.deputadoSource.loadIngested();
+      const loaded = await deps.deputadoSource.loadIngested();
+      const deputados =
+        context.limit === undefined ? loaded : loaded.slice(0, context.limit);
+
+      const total = deputados.length;
+      let processed = 0;
+      let failures = 0;
 
       const fetched = await mapWithConcurrency(
         deputados,
         API_CONCURRENCY,
-        async (deputado) => ({
-          deputado,
-          result: await deps.historicoClient.fetch(deputado.externalIdDeputado),
-        }),
+        async (deputado) => {
+          const startedAt = performance.now();
+          const result = await deps.historicoClient.fetch(
+            deputado.externalIdDeputado,
+            { onEvent: debugEventHandler(context) },
+          );
+
+          processed += 1;
+          if (!result.ok) {
+            failures += 1;
+          }
+
+          reportDebugItem(
+            context,
+            deputado,
+            result,
+            performance.now() - startedAt,
+          );
+          reportProgress(context.reporter, processed, total);
+          reportStatus(context, processed, total, failures);
+
+          return { deputado, result };
+        },
       );
 
       const events: Array<{
@@ -126,6 +155,82 @@ export function createDeputadoHistoricoStep(
       };
     },
   };
+}
+
+function reportProgress(
+  reporter: IngestionReporter | undefined,
+  processed: number,
+  total: number,
+): void {
+  if (reporter === undefined) {
+    return;
+  }
+
+  if (processed !== total && processed % PROGRESS_INTERVAL !== 0) {
+    return;
+  }
+
+  const pct = total === 0 ? 100 : Math.round((processed / total) * 100);
+
+  reporter.log(
+    `[deputado_historico] ${processed}/${total} deputados (${pct}%)`,
+  );
+}
+
+function debugEventHandler(
+  context: IngestionStepContext,
+): ((event: DeputadoHistoricoFetchEvent) => void) | undefined {
+  const reporter = context.reporter;
+
+  if (!context.debug || reporter?.debug === undefined) {
+    return undefined;
+  }
+
+  return (event) =>
+    reporter.debug?.(
+      `[debug] deputado ${event.externalIdDeputado}: ${event.reason}, retry ${event.attempt}/${event.maxAttempts} em ${event.delayMs}ms`,
+    );
+}
+
+function reportDebugItem(
+  context: IngestionStepContext,
+  deputado: IngestedDeputado,
+  result: DeputadoHistoricoFetchResult,
+  durationMs: number,
+): void {
+  const reporter = context.reporter;
+
+  if (!context.debug || reporter?.debug === undefined) {
+    return;
+  }
+
+  const ms = Math.round(durationMs);
+  const outcome = result.ok
+    ? `ok, ${result.eventos.length} eventos`
+    : `falhou (${result.reason})`;
+
+  reporter.debug(
+    `[debug] deputado ${deputado.externalIdDeputado}: ${outcome}, ${ms}ms`,
+  );
+}
+
+function reportStatus(
+  context: IngestionStepContext,
+  processed: number,
+  total: number,
+  failures: number,
+): void {
+  const reporter = context.reporter;
+
+  if (!context.debug || reporter?.status === undefined) {
+    return;
+  }
+
+  const pct = total === 0 ? 100 : Math.round((processed / total) * 100);
+
+  reporter.status(
+    `deputado_historico ${processed}/${total} (${pct}%) ok:${processed - failures} falhas:${failures}`,
+  );
 }
 
 function emptyResult(): StepRunResult {

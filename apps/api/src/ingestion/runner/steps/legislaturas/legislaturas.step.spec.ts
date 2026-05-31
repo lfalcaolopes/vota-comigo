@@ -51,6 +51,7 @@ function context(
   return {
     dryRun: false,
     strict: false,
+    debug: false,
     sourceFile: 'legislaturas.csv',
     ...overrides,
   };

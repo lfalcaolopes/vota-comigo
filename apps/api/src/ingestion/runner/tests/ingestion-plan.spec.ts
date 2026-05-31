@@ -14,6 +14,7 @@ function config(
     years: [2024, 2025],
     dryRun: false,
     strict: false,
+    debug: false,
     ...overrides,
   };
 }

@@ -50,6 +50,7 @@ function context(
   return {
     dryRun: false,
     strict: false,
+    debug: false,
     sourceFile: 'votacoesVotos-2024.csv',
     ...overrides,
   };

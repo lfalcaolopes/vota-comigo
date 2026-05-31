@@ -3,6 +3,8 @@ export type IngestionRunnerConfig = {
   years: readonly number[];
   dryRun: boolean;
   strict: boolean;
+  debug: boolean;
+  limit?: number;
 };
 
 export type IngestionRunnerConfigResolution =
@@ -67,7 +69,10 @@ export type CsvRowSource = () => AsyncIterable<import('./csv-reader').CsvRow>;
 export type IngestionStepContext = {
   readonly dryRun: boolean;
   readonly strict: boolean;
+  readonly debug: boolean;
+  readonly limit?: number;
   readonly sourceFile: string;
+  readonly reporter?: IngestionReporter;
   readRecords: CsvRowSource;
 };
 
@@ -93,6 +98,7 @@ export type IngestionSummary = {
   strict: boolean;
   years: readonly number[];
   errorLogPath?: string;
+  gapLogPath?: string;
   aborted?: boolean;
 };
 
@@ -122,6 +128,10 @@ export type IngestionRunnerExecutionResult =
 export type IngestionReporter = {
   log(message: string): void;
   error?(message: string): void;
+  // Append-only event feed line, emitted only while debug mode is on.
+  debug?(message: string): void;
+  // Live status line that rewrites itself in a TTY and is silent otherwise.
+  status?(message: string): void;
 };
 
 export type CreateStepsInput = {

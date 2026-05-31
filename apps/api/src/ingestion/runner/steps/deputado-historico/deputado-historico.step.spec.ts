@@ -157,6 +157,7 @@ function context(
   return {
     dryRun: false,
     strict: false,
+    debug: false,
     sourceFile: 'deputado_historico',
     readRecords() {
       throw new Error('api step should not read csv records');
@@ -388,6 +389,116 @@ describe('deputado_historico step', () => {
       // Act / Assert
       await expect(step.run(context({ strict: true }))).rejects.toThrow();
       expect(historicoRepository.upserted).toEqual([]);
+    });
+  });
+
+  describe('when a reporter is provided', () => {
+    it('logs progress as the deputados are fetched and a final 100% line', async () => {
+      // Arrange
+      const deputados = Array.from({ length: 250 }, (_, index) => ({
+        id: `dep-${index}`,
+        externalIdDeputado: index,
+      }));
+      const { step } = stepWith({ deputadoSource: sourceOf(deputados) });
+      const logged: string[] = [];
+      const reporter = { log: (message: string) => logged.push(message) };
+
+      // Act
+      await step.run(context({ reporter }));
+
+      // Assert
+      expect(logged).toContain('[deputado_historico] 100/250 deputados (40%)');
+      expect(logged).toContain('[deputado_historico] 200/250 deputados (80%)');
+      expect(logged).toContain('[deputado_historico] 250/250 deputados (100%)');
+    });
+  });
+
+  describe('when a limit is set', () => {
+    it('fetches only the first N deputados and ignores the rest', async () => {
+      // Arrange
+      const fetched: number[] = [];
+      const countingClient: DeputadoHistoricoClient = {
+        fetch(externalIdDeputado): Promise<DeputadoHistoricoFetchResult> {
+          fetched.push(externalIdDeputado);
+          return Promise.resolve({ ok: true, eventos: [] });
+        },
+      };
+      const deputados = Array.from({ length: 5 }, (_, index) => ({
+        id: `dep-${index}`,
+        externalIdDeputado: index,
+      }));
+      const { step } = stepWith({
+        deputadoSource: sourceOf(deputados),
+        historicoClient: countingClient,
+      });
+
+      // Act
+      await step.run(context({ limit: 2 }));
+
+      // Assert
+      expect(fetched.sort((a, b) => a - b)).toEqual([0, 1]);
+    });
+  });
+
+  describe('when debug mode is on', () => {
+    it('emits a per-deputado event feed and a live status line', async () => {
+      // Arrange
+      const debugged: string[] = [];
+      const statuses: string[] = [];
+      const reporter = {
+        log: () => undefined,
+        debug: (message: string) => debugged.push(message),
+        status: (message: string) => statuses.push(message),
+      };
+      const { step } = stepWith({
+        deputadoSource: sourceOf([
+          { id: 'dep-1', externalIdDeputado: 220593 },
+          { id: 'dep-2', externalIdDeputado: 999999 },
+        ]),
+        historicoClient: clientOf(
+          new Map<number, DeputadoHistoricoFetchResult>([
+            [220593, { ok: true, eventos: [historicoEvento()] }],
+            [999999, { ok: false, reason: '503 Service Unavailable' }],
+          ]),
+        ),
+        legislaturaLookup: legislaturaLookupOf(new Map([[57, 'leg-57']])),
+        partidoLookup: partidoLookupOf(new Map([[13, 'partido-13']])),
+      });
+
+      // Act
+      await step.run(context({ debug: true, reporter }));
+
+      // Assert
+      expect(debugged).toContainEqual(
+        expect.stringContaining('deputado 220593: ok, 1 eventos'),
+      );
+      expect(debugged).toContainEqual(
+        expect.stringContaining('deputado 999999: falhou (503 Service Unavailable)'),
+      );
+      expect(statuses.at(-1)).toBe(
+        'deputado_historico 2/2 (100%) ok:1 falhas:1',
+      );
+    });
+
+    it('stays silent on the debug and status channels when debug is off', async () => {
+      // Arrange
+      const debugged: string[] = [];
+      const statuses: string[] = [];
+      const reporter = {
+        log: () => undefined,
+        debug: (message: string) => debugged.push(message),
+        status: (message: string) => statuses.push(message),
+      };
+      const { step } = stepWith({
+        deputadoSource: sourceOf([{ id: 'dep-1', externalIdDeputado: 220593 }]),
+      });
+
+      // Act
+      await step.run(context({ debug: false, reporter }));
+
+      // Assert
+      expect(debugged).toEqual([]);
+      expect(statuses).toEqual([]);
     });
   });
 

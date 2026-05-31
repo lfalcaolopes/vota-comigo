@@ -7,6 +7,7 @@ import type { CsvReader } from './csv-reader';
 import { buildIngestionPlan } from './ingestion-plan';
 import { resolveIngestionRunnerConfig } from './ingestion-runner.config';
 import { writeErrorLog } from './error-log';
+import { writeGapLog } from './gap-log';
 import { createIngestionSteps } from './ingestion-steps';
 import { nodeErrorLogFileSystem } from './node-error-log-file-system';
 import type { ErrorLogFileSystem } from './error-log';
@@ -112,7 +113,10 @@ export async function executeIngestionRunner(
         context = {
           dryRun: config.dryRun,
           strict: config.strict,
+          debug: config.debug,
+          limit: config.limit,
           sourceFile: step.name,
+          reporter: options.reporter,
           readRecords: apiReadGuard,
         };
       } else {
@@ -151,7 +155,10 @@ export async function executeIngestionRunner(
         context = {
           dryRun: config.dryRun,
           strict: config.strict,
+          debug: config.debug,
+          limit: config.limit,
           sourceFile: basename(sourcePath),
+          reporter: options.reporter,
           readRecords: () => csvReader(openSource(sourcePath)),
         };
       }
@@ -194,6 +201,14 @@ export async function executeIngestionRunner(
         })
       : undefined;
 
+  const gapLogPath =
+    externalGaps.length > 0
+      ? await writeGapLog(externalGaps, {
+          fileSystem: options.errorLog?.fileSystem ?? nodeErrorLogFileSystem,
+          now: options.errorLog?.now ?? (() => new Date()),
+        })
+      : undefined;
+
   const summary = {
     steps: summaries,
     totalRead: sum(summaries, (step) => step.read),
@@ -206,6 +221,7 @@ export async function executeIngestionRunner(
     strict: config.strict,
     years: config.years,
     errorLogPath,
+    gapLogPath,
     aborted,
   };
 
@@ -244,6 +260,7 @@ function reportSummary(
     strict: boolean;
     years: readonly number[];
     errorLogPath?: string;
+    gapLogPath?: string;
     aborted?: boolean;
   },
   reporter: IngestionReporter | undefined,
@@ -286,5 +303,9 @@ function reportSummary(
 
   if (summary.errorLogPath !== undefined) {
     reporter.log(`Detalhes de erros em ${summary.errorLogPath}`);
+  }
+
+  if (summary.gapLogPath !== undefined) {
+    reporter.log(`Detalhes de lacunas de fonte em ${summary.gapLogPath}`);
   }
 }

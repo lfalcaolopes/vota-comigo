@@ -178,6 +178,31 @@ describe('deputado historico client', () => {
       expect(transport).toHaveBeenCalledTimes(2);
     });
 
+    it('reports each retry through onEvent with the attempt details', async () => {
+      // Arrange
+      const transport = transportReturning(
+        { ok: false, status: 503, statusText: 'Service Unavailable' },
+        okResponse([dado()]),
+      );
+      const client = clientWith(transport, { retryBackoffMs: [1000, 2000] });
+      const events: unknown[] = [];
+
+      // Act
+      await client.fetch(220593, { onEvent: (event) => events.push(event) });
+
+      // Assert
+      expect(events).toEqual([
+        {
+          type: 'retry',
+          externalIdDeputado: 220593,
+          attempt: 1,
+          maxAttempts: 3,
+          delayMs: 1000,
+          reason: '503 Service Unavailable',
+        },
+      ]);
+    });
+
     it('gives up after exhausting the attempts and reports the failure', async () => {
       // Arrange
       const transport = transportReturning(

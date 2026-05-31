@@ -10,6 +10,8 @@ describe('ingestion runner config', () => {
         '--to=2025',
         '--dry-run',
         '--strict',
+        '--debug',
+        '--limit=5',
       ];
 
       // Act
@@ -26,6 +28,8 @@ describe('ingestion runner config', () => {
           years: [2024, 2025],
           dryRun: true,
           strict: true,
+          debug: true,
+          limit: 5,
         },
       });
     });
@@ -50,7 +54,27 @@ describe('ingestion runner config', () => {
           years: [2001, 2002, 2003],
           dryRun: false,
           strict: false,
+          debug: false,
+          limit: undefined,
         },
+      });
+    });
+  });
+
+  describe('when --limit is not a positive integer', () => {
+    it('aborts because --limit is invalid', () => {
+      // Arrange
+      const args = ['--limit=0'];
+
+      // Act
+      const resolution = resolveIngestionRunnerConfig(args, {
+        currentYear: 2026,
+      });
+
+      // Assert
+      expect(resolution).toEqual({
+        ok: false,
+        message: '--limit deve receber um inteiro positivo.',
       });
     });
   });

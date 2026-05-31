@@ -12,7 +12,13 @@ export function resolveIngestionRunnerConfig(
   const currentYear = options.currentYear ?? new Date().getFullYear();
   const dryRun = args.includes('--dry-run');
   const strict = args.includes('--strict');
+  const debug = args.includes('--debug');
   const only = parseOnly(args);
+
+  const limit = parseLimit(getStringArg(args, '--limit'));
+  if (!limit.ok) {
+    return limit;
+  }
 
   if (only !== undefined && options.stepNames !== undefined) {
     const unknown = only.filter((step) => !options.stepNames!.includes(step));
@@ -63,8 +69,27 @@ export function resolveIngestionRunnerConfig(
       years: range(fromYear, toYear),
       dryRun,
       strict,
+      debug,
+      limit: limit.value,
     },
   };
+}
+
+function parseLimit(
+  value: string | undefined,
+): { ok: true; value: number | undefined } | { ok: false; message: string } {
+  if (value === undefined) {
+    return { ok: true, value: undefined };
+  }
+
+  if (!/^\d+$/.test(value) || Number(value) < 1) {
+    return {
+      ok: false,
+      message: '--limit deve receber um inteiro positivo.',
+    };
+  }
+
+  return { ok: true, value: Number(value) };
 }
 
 function parseOnly(args: readonly string[]): readonly string[] | undefined {

@@ -205,6 +205,68 @@ describe('ingestion runner', () => {
     });
   });
 
+  describe('when a step reports external gaps', () => {
+    it('writes a JSONL gap file and cites its path in the summary', async () => {
+      // Arrange
+      const writes: { path: string; content: string }[] = [];
+      const gappyStep: IngestionStep = {
+        name: 'legislaturas',
+        scope: 'single',
+        async run(): Promise<StepRunResult> {
+          return {
+            read: 0,
+            inserted: 0,
+            updated: 0,
+            ignored: 0,
+            rejected: [],
+            externalGaps: [
+              {
+                file: 'deputado_historico',
+                type: 'fonte_externa_indisponivel',
+                reference: '999999',
+                message:
+                  'Histórico indisponível para o deputado 999999: 503 Service Unavailable.',
+              },
+            ],
+          };
+        },
+      };
+
+      // Act
+      const result = await executeIngestionRunner(['--only=legislaturas'], {
+        currentYear: 2026,
+        openSource: () => Readable.from('x'),
+        createSteps: async () => ({
+          steps: [gappyStep],
+          close: async () => {},
+        }),
+        errorLog: {
+          fileSystem: {
+            async mkdir() {},
+            async writeFile(path, content) {
+              writes.push({ path, content });
+            },
+          },
+          now: () => new Date('2026-05-30T12:00:00.000Z'),
+        },
+      });
+
+      // Assert
+      expect(result.ok).toBe(true);
+      if (!result.ok) {
+        throw new Error(result.message);
+      }
+      expect(result.summary.totalRejected).toBe(0);
+      expect(result.summary.errorLogPath).toBeUndefined();
+      expect(result.summary.gapLogPath).toBe(
+        'data/logs/gaps/gaps-2026-05-30T12-00-00-000Z.log',
+      );
+      expect(writes).toHaveLength(1);
+      expect(writes[0].content).toContain('999999');
+      expect(writes[0].content).toContain('fonte_externa_indisponivel');
+    });
+  });
+
   describe('when strict mode aborts on a bad row', () => {
     it('stops the run, flags the summary as aborted and exits with code 1', async () => {
       // Arrange
