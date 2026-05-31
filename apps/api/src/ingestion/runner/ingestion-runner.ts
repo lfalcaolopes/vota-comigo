@@ -19,16 +19,22 @@ import type {
   IngestionRunnerConfigOptions,
   IngestionRunnerExecutionResult,
   IngestionRunnerResult,
+  IngestionStepContext,
   IngestionStepDescriptor,
   ExternalGap,
   Rejection,
   StepSummary,
 } from './ingestion-runner.types';
 
+const apiReadGuard: IngestionStepContext['readRecords'] = () => {
+  throw new Error('Passo de origem API não consome registros CSV.');
+};
+
 export const ingestionStepDescriptors: readonly IngestionStepDescriptor[] = [
   { name: 'legislaturas', scope: 'single' },
   { name: 'deputados', scope: 'single' },
   { name: 'partidos', scope: 'annual', dataset: 'votacoesVotos' },
+  { name: 'deputado_historico', scope: 'single', source: 'api' },
 ];
 
 export type IngestionRunnerExecutionOptions = IngestionRunnerConfigOptions & {
@@ -99,46 +105,59 @@ export async function executeIngestionRunner(
         continue;
       }
 
-      const sourcePath = sourcePathFor(entry);
       const startedAt = performance.now();
+      let context: IngestionStepContext;
 
-      if (!sourceExists(sourcePath)) {
-        const gap: ExternalGap = {
-          file: basename(sourcePath),
-          type: 'fonte_ausente',
-          reference: sourcePath,
-          message: `Fonte ausente: ${sourcePath}.`,
+      if (step.source === 'api') {
+        context = {
+          dryRun: config.dryRun,
+          strict: config.strict,
+          sourceFile: step.name,
+          readRecords: apiReadGuard,
         };
+      } else {
+        const sourcePath = sourcePathFor(entry);
 
-        externalGaps.push(gap);
-        summaries.push({
-          read: 0,
-          inserted: 0,
-          updated: 0,
-          ignored: 0,
-          rejected: [],
-          externalGaps: [gap],
-          stepName: entry.stepName,
-          year: entry.year,
-          durationMs: performance.now() - startedAt,
-        });
+        if (!sourceExists(sourcePath)) {
+          const gap: ExternalGap = {
+            file: basename(sourcePath),
+            type: 'fonte_ausente',
+            reference: sourcePath,
+            message: `Fonte ausente: ${sourcePath}.`,
+          };
 
-        if (entry.scope === 'single' || config.strict) {
-          aborted = true;
-          options.reporter?.error?.(gap.message);
-          break;
+          externalGaps.push(gap);
+          summaries.push({
+            read: 0,
+            inserted: 0,
+            updated: 0,
+            ignored: 0,
+            rejected: [],
+            externalGaps: [gap],
+            stepName: entry.stepName,
+            year: entry.year,
+            durationMs: performance.now() - startedAt,
+          });
+
+          if (entry.scope === 'single' || config.strict) {
+            aborted = true;
+            options.reporter?.error?.(gap.message);
+            break;
+          }
+
+          continue;
         }
 
-        continue;
-      }
-
-      try {
-        const stepResult = await step.run({
+        context = {
           dryRun: config.dryRun,
           strict: config.strict,
           sourceFile: basename(sourcePath),
           readRecords: () => csvReader(openSource(sourcePath)),
-        });
+        };
+      }
+
+      try {
+        const stepResult = await step.run(context);
 
         summaries.push({
           ...stepResult,
@@ -150,7 +169,12 @@ export async function executeIngestionRunner(
         externalGaps.push(...stepResult.externalGaps);
       } catch (error) {
         if (error instanceof StrictModeError) {
-          rejections.push(error.rejection);
+          if (error.rejection !== undefined) {
+            rejections.push(error.rejection);
+          }
+          if (error.gap !== undefined) {
+            externalGaps.push(error.gap);
+          }
           aborted = true;
           break;
         }

@@ -22,10 +22,13 @@ export type IngestionRunnerConfigOptions = {
 
 export type StepScope = 'single' | 'annual';
 
+export type StepSource = 'csv' | 'api';
+
 export type IngestionStepDescriptor = {
   readonly name: string;
   readonly scope: StepScope;
   readonly dataset?: string;
+  readonly source?: StepSource;
 };
 
 export type IngestionPlanEntry = {

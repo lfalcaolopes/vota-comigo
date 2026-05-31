@@ -1,8 +1,8 @@
-import { createIngestionSteps } from './ingestion-steps';
+import { createIngestionSteps } from '../ingestion-steps';
 import type {
   DatabaseClient,
   DrizzleDatabase,
-} from '../../shared/database/client';
+} from '../../../shared/database/client';
 
 const fakeDatabase = {} as DrizzleDatabase;
 
@@ -25,6 +25,7 @@ describe('ingestion steps provider', () => {
       // Assert
       expect(factoryCalled).toBe(false);
       expect(steps.map((step) => step.name)).toContain('legislaturas');
+      expect(steps.map((step) => step.name)).toContain('deputado_historico');
     });
   });
 
@@ -48,6 +49,7 @@ describe('ingestion steps provider', () => {
 
       // Assert
       expect(steps.map((step) => step.name)).toContain('legislaturas');
+      expect(steps.map((step) => step.name)).toContain('deputado_historico');
       expect(closed).toBe(true);
     });
   });

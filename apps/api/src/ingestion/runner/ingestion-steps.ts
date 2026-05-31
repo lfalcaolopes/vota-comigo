@@ -2,21 +2,30 @@ import {
   createDatabaseClient,
   type DatabaseClient,
 } from '@/shared/database/client';
-import { createLegislaturaRepository } from './steps/legislaturas.repository';
-import { createLegislaturasStep } from './steps/legislaturas.step';
-import type { LegislaturaRepository } from './steps/legislaturas.repository.types';
+import { createLegislaturaRepository } from './steps/legislaturas/legislaturas.repository';
+import { createLegislaturasStep } from './steps/legislaturas/legislaturas.step';
+import type { LegislaturaRepository } from './steps/legislaturas/legislaturas.repository.types';
 import {
   createDeputadoRepository,
   createLegislaturaLookup,
-} from './steps/deputados.repository';
-import { createDeputadosStep } from './steps/deputados.step';
+} from './steps/deputados/deputados.repository';
+import { createDeputadosStep } from './steps/deputados/deputados.step';
 import type {
   DeputadoRepository,
   LegislaturaLookup,
-} from './steps/deputados.repository.types';
-import { createPartidoRepository } from './steps/partidos.repository';
-import { createPartidosStep } from './steps/partidos.step';
-import type { PartidoRepository } from './steps/partidos.repository.types';
+} from './steps/deputados/deputados.repository.types';
+import { createPartidoRepository } from './steps/partidos/partidos.repository';
+import { createPartidosStep } from './steps/partidos/partidos.step';
+import type { PartidoRepository } from './steps/partidos/partidos.repository.types';
+import {
+  createDeputadoHistoricoRepository,
+  createDeputadoSource,
+  createPartidoLookup,
+} from './steps/deputado-historico/deputado-historico.repository';
+import { createDeputadoHistoricoStep } from './steps/deputado-historico/deputado-historico.step';
+import type { DeputadoHistoricoStepDeps } from './steps/deputado-historico/deputado-historico.step';
+import { createDeputadoHistoricoClient } from './shared/camara-historico-client';
+import { fetchCamaraJson } from './shared/camara-api-transport';
 import type {
   CreateStepsInput,
   CreateStepsResult,
@@ -47,6 +56,15 @@ const dryRunLegislaturaLookup: LegislaturaLookup = {
   },
 };
 
+const dryRunHistoricoDeps: DeputadoHistoricoStepDeps = {
+  deputadoSource: { loadIngested: dryRunReadGuard },
+  historicoClient: { fetch: dryRunReadGuard },
+  legislaturaLookup: { loadIdByExternalId: dryRunReadGuard },
+  partidoLookup: { loadIdByExternalId: dryRunReadGuard },
+  partidoRepository: { upsert: dryRunWriteGuard },
+  historicoRepository: { upsert: dryRunWriteGuard },
+};
+
 export function createIngestionSteps(
   input: CreateStepsInput,
   options: IngestionStepsOptions = {},
@@ -57,6 +75,7 @@ export function createIngestionSteps(
         createLegislaturasStep(dryRunLegislaturaRepository),
         createDeputadosStep(dryRunDeputadoRepository, dryRunLegislaturaLookup),
         createPartidosStep(dryRunPartidoRepository),
+        createDeputadoHistoricoStep(dryRunHistoricoDeps),
       ],
       close: () => Promise.resolve(),
     });
@@ -72,9 +91,25 @@ export function createIngestionSteps(
       createLegislaturaLookup(db),
     ),
     createPartidosStep(createPartidoRepository(db)),
+    createDeputadoHistoricoStep({
+      deputadoSource: createDeputadoSource(db),
+      historicoClient: createDeputadoHistoricoClient({
+        transport: fetchCamaraJson,
+      }),
+      legislaturaLookup: createLegislaturaLookup(db),
+      partidoLookup: createPartidoLookup(db),
+      partidoRepository: createPartidoRepository(db),
+      historicoRepository: createDeputadoHistoricoRepository(db),
+    }),
   ];
 
   return Promise.resolve({ steps, close });
+}
+
+function dryRunReadGuard(): Promise<never> {
+  throw new Error(
+    'Dependência de leitura acionada em dry-run. O passo de histórico deveria ter feito short-circuit.',
+  );
 }
 
 function dryRunWriteGuard(): Promise<never> {

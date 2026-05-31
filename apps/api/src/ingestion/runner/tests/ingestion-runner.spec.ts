@@ -1,19 +1,20 @@
 import { Readable } from 'node:stream';
 
-import { executeIngestionRunner } from './ingestion-runner';
-import { readCsvRecords } from './csv-reader';
-import { createLegislaturasStep } from './steps/legislaturas.step';
+import { executeIngestionRunner } from '../ingestion-runner';
+import { readCsvRecords } from '../csv-reader';
+import { StrictModeError } from '../strict-mode-error';
+import { createLegislaturasStep } from '../steps/legislaturas/legislaturas.step';
 import type {
   LegislaturaRepository,
   LegislaturaRow,
   LegislaturaUpsertResult,
-} from './steps/legislaturas.repository.types';
+} from '../steps/legislaturas/legislaturas.repository.types';
 import type {
   IngestionReporter,
   IngestionStep,
   IngestionStepContext,
   StepRunResult,
-} from './ingestion-runner.types';
+} from '../ingestion-runner.types';
 
 function countingStep(name: string): IngestionStep {
   return {
@@ -337,6 +338,112 @@ describe('ingestion runner', () => {
       expect(result.exitCode).toBe(1);
       expect(result.message).toContain('legislaturas');
       expect(createStepsCalled).toBe(false);
+    });
+  });
+
+  describe('when a step is sourced from the API', () => {
+    it('runs the step without requiring a CSV source file', async () => {
+      // Arrange
+      const apiStep: IngestionStep = {
+        name: 'deputado_historico',
+        scope: 'single',
+        source: 'api',
+        async run() {
+          return {
+            read: 3,
+            inserted: 2,
+            updated: 1,
+            ignored: 0,
+            rejected: [],
+            externalGaps: [
+              {
+                file: 'deputado_historico',
+                type: 'fonte_externa_indisponivel',
+                reference: '999999',
+                message: 'indisponível',
+              },
+            ],
+          };
+        },
+      };
+
+      // Act
+      const result = await executeIngestionRunner(
+        ['--only=deputado_historico'],
+        {
+          currentYear: 2026,
+          stepDescriptors: [
+            { name: 'deputado_historico', scope: 'single', source: 'api' },
+          ],
+          sourceExists: () => false,
+          createSteps: async () => ({
+            steps: [apiStep],
+            close: async () => {},
+          }),
+        },
+      );
+
+      // Assert
+      expect(result.ok).toBe(true);
+      if (!result.ok) {
+        throw new Error(result.message);
+      }
+      expect(result.exitCode).toBe(0);
+      expect(result.summary.aborted).toBeFalsy();
+      expect(result.summary.totalExternalGaps).toBe(1);
+      expect(result.summary.steps).toEqual([
+        expect.objectContaining({
+          stepName: 'deputado_historico',
+          read: 3,
+          inserted: 2,
+        }),
+      ]);
+    });
+
+    it('aborts with exit code 1 when an API step raises a strict gap', async () => {
+      // Arrange
+      const apiStep: IngestionStep = {
+        name: 'deputado_historico',
+        scope: 'single',
+        source: 'api',
+        async run() {
+          throw StrictModeError.fromGap({
+            file: 'deputado_historico',
+            type: 'fonte_externa_indisponivel',
+            reference: '999999',
+            message: 'indisponível',
+          });
+        },
+      };
+
+      // Act
+      const result = await executeIngestionRunner(
+        ['--only=deputado_historico', '--strict'],
+        {
+          currentYear: 2026,
+          stepDescriptors: [
+            { name: 'deputado_historico', scope: 'single', source: 'api' },
+          ],
+          sourceExists: () => false,
+          createSteps: async () => ({
+            steps: [apiStep],
+            close: async () => {},
+          }),
+          errorLog: {
+            fileSystem: { async mkdir() {}, async writeFile() {} },
+            now: () => new Date('2026-05-30T12:00:00.000Z'),
+          },
+        },
+      );
+
+      // Assert
+      expect(result.ok).toBe(true);
+      if (!result.ok) {
+        throw new Error(result.message);
+      }
+      expect(result.exitCode).toBe(1);
+      expect(result.summary.aborted).toBe(true);
+      expect(result.summary.totalExternalGaps).toBe(1);
     });
   });
 
