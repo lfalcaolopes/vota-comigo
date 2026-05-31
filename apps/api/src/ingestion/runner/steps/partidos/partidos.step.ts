@@ -3,13 +3,13 @@ import type {
   IngestionStepContext,
   Rejection,
   StepRunResult,
-} from '../ingestion-runner.types';
+} from '../../ingestion-runner.types';
 import type {
   PartidoRepository,
   PartidoRow,
 } from './partidos.repository.types';
-import { normalizeVotacaoVotoRecord } from '../shared/votacoes-votos.normalizer';
-import { StrictModeError } from '../strict-mode-error';
+import { normalizeVotacaoVotoRecord } from '../../shared/votacoes-votos.normalizer';
+import { StrictModeError } from '../../strict-mode-error';
 
 export function createPartidosStep(
   repository: PartidoRepository,

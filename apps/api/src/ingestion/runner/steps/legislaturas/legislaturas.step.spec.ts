@@ -1,11 +1,11 @@
 import { createLegislaturasStep } from './legislaturas.step';
-import type { CsvRow } from '../csv-reader';
+import type { CsvRow } from '../../csv-reader';
 import type {
   LegislaturaRepository,
   LegislaturaRow,
   LegislaturaUpsertResult,
 } from './legislaturas.repository.types';
-import type { IngestionStepContext } from '../ingestion-runner.types';
+import type { IngestionStepContext } from '../../ingestion-runner.types';
 
 async function* rows(items: readonly CsvRow[]): AsyncIterable<CsvRow> {
   for (const item of items) {

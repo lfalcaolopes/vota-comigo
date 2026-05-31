@@ -1,4 +1,4 @@
-import { normalizeVotacaoVotoRecord } from './votacoes-votos.normalizer';
+import { normalizeVotacaoVotoRecord } from '../votacoes-votos.normalizer';
 
 const baseRecord = {
   idVotacao: '1197773-140',

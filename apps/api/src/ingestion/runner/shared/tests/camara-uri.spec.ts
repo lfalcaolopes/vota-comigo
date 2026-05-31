@@ -1,4 +1,4 @@
-import { extractExternalIdFromUri } from './camara-uri';
+import { extractExternalIdFromUri } from '../camara-uri';
 
 describe('extractExternalIdFromUri', () => {
   describe('when the uri ends with a numeric identifier', () => {

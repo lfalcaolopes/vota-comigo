@@ -3,12 +3,12 @@ import type {
   IngestionStepContext,
   Rejection,
   StepRunResult,
-} from '../ingestion-runner.types';
+} from '../../ingestion-runner.types';
 import type {
   LegislaturaRepository,
   LegislaturaRow,
 } from './legislaturas.repository.types';
-import { StrictModeError } from '../strict-mode-error';
+import { StrictModeError } from '../../strict-mode-error';
 
 type ParseResult =
   | { ok: true; row: LegislaturaRow }

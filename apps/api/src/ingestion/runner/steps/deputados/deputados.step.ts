@@ -3,15 +3,15 @@ import type {
   IngestionStepContext,
   Rejection,
   StepRunResult,
-} from '../ingestion-runner.types';
-import type { CsvRecord } from '../csv-reader';
+} from '../../ingestion-runner.types';
+import type { CsvRecord } from '../../csv-reader';
 import type {
   DeputadoRepository,
   DeputadoRow,
   LegislaturaLookup,
 } from './deputados.repository.types';
-import { extractExternalIdFromUri } from '../shared/camara-uri';
-import { StrictModeError } from '../strict-mode-error';
+import { extractExternalIdFromUri } from '../../shared/camara-uri';
+import { StrictModeError } from '../../strict-mode-error';
 
 const MIN_LEGISLATURA_FINAL = 51;
 

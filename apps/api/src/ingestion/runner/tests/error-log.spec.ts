@@ -1,6 +1,6 @@
-import { writeErrorLog } from './error-log';
-import type { ErrorLogFileSystem } from './error-log';
-import type { Rejection } from './ingestion-runner.types';
+import { writeErrorLog } from '../error-log';
+import type { ErrorLogFileSystem } from '../error-log';
+import type { Rejection } from '../ingestion-runner.types';
 
 function createFakeFileSystem(): ErrorLogFileSystem & {
   readonly writes: { path: string; content: string }[];

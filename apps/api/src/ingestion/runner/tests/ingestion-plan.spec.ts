@@ -1,5 +1,5 @@
-import { buildIngestionPlan } from './ingestion-plan';
-import type { IngestionRunnerConfig } from './ingestion-runner.types';
+import { buildIngestionPlan } from '../ingestion-plan';
+import type { IngestionRunnerConfig } from '../ingestion-runner.types';
 
 const steps = [
   { name: 'legislaturas', scope: 'single' as const },

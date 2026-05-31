@@ -1,4 +1,4 @@
-import { resolveIngestionRunnerConfig } from './ingestion-runner.config';
+import { resolveIngestionRunnerConfig } from '../ingestion-runner.config';
 
 describe('ingestion runner config', () => {
   describe('when every flag is provided', () => {

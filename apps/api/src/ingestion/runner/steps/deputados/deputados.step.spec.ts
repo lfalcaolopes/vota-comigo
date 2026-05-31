@@ -1,12 +1,12 @@
 import { createDeputadosStep } from './deputados.step';
-import type { CsvRow } from '../csv-reader';
+import type { CsvRow } from '../../csv-reader';
 import type {
   DeputadoRepository,
   DeputadoRow,
   DeputadoUpsertResult,
   LegislaturaLookup,
 } from './deputados.repository.types';
-import type { IngestionStepContext } from '../ingestion-runner.types';
+import type { IngestionStepContext } from '../../ingestion-runner.types';
 
 async function* rows(items: readonly CsvRow[]): AsyncIterable<CsvRow> {
   for (const item of items) {

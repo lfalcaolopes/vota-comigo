@@ -1,7 +1,7 @@
 import { Readable } from 'node:stream';
 
-import { readCsvRecords } from './csv-reader';
-import type { CsvRow } from './csv-reader';
+import { readCsvRecords } from '../csv-reader';
+import type { CsvRow } from '../csv-reader';
 
 async function collect(source: Readable): Promise<CsvRow[]> {
   const rows: CsvRow[] = [];

@@ -1,11 +1,11 @@
 import { createPartidosStep } from './partidos.step';
-import type { CsvRow } from '../csv-reader';
+import type { CsvRow } from '../../csv-reader';
 import type {
   PartidoRepository,
   PartidoRow,
   PartidoUpsertResult,
 } from './partidos.repository.types';
-import type { IngestionStepContext } from '../ingestion-runner.types';
+import type { IngestionStepContext } from '../../ingestion-runner.types';
 
 async function* rows(items: readonly CsvRow[]): AsyncIterable<CsvRow> {
   for (const item of items) {
