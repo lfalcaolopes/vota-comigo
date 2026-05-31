@@ -15,6 +15,13 @@
       "when": 1780168389697,
       "tag": "0001_bizarre_colleen_wing",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1780182438446,
+      "tag": "0002_greedy_blink",
+      "breakpoints": true
     }
   ]
 }
