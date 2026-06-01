@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { eq, inArray, notExists, sql } from 'drizzle-orm';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
 import { deputado, deputadoHistorico, partido } from '@/shared/database/schema';
@@ -10,6 +10,11 @@ import type {
   PartidoLookup,
 } from './deputado-historico.repository.types';
 
+// Drizzle builds the insert SQL by recursing over every bind parameter, so a
+// single insert with all rows overflows the call stack. Chunk to keep each
+// query small and well under Postgres' 65535 bind-parameter limit.
+const UPSERT_CHUNK_SIZE = 1000;
+
 export function createDeputadoHistoricoRepository(
   db: DrizzleDatabase,
 ): DeputadoHistoricoRepository {
@@ -19,45 +24,106 @@ export function createDeputadoHistoricoRepository(
         return { inserted: 0, updated: 0 };
       }
 
-      const result = await db
-        .insert(deputadoHistorico)
-        .values(rows.map(toValues))
-        .onConflictDoUpdate({
-          target: [
-            deputadoHistorico.deputadoId,
-            deputadoHistorico.dataHora,
-            deputadoHistorico.descricaoStatus,
-          ],
-          set: {
-            legislaturaId: sql`excluded.legislatura_id`,
-            partidoId: sql`excluded.partido_id`,
-            situacao: sql`excluded.situacao`,
-            condicaoEleitoral: sql`excluded.condicao_eleitoral`,
-            nome: sql`excluded.nome`,
-            nomeEleitoral: sql`excluded.nome_eleitoral`,
-            siglaUf: sql`excluded.sigla_uf`,
-            email: sql`excluded.email`,
-            urlFoto: sql`excluded.url_foto`,
-          },
-        })
-        .returning({ inserted: sql<boolean>`xmax = 0` });
+      // One transaction per call so a deputado's events are committed
+      // all-or-nothing; the step relies on "has rows" meaning "fully done".
+      return db.transaction(async (tx) => {
+        let inserted = 0;
+        let updated = 0;
 
-      const inserted = result.filter((row) => row.inserted).length;
+        for (let start = 0; start < rows.length; start += UPSERT_CHUNK_SIZE) {
+          const chunk = rows.slice(start, start + UPSERT_CHUNK_SIZE);
+          const result = await upsertChunk(tx, chunk);
 
-      return { inserted, updated: result.length - inserted };
+          inserted += result.inserted;
+          updated += result.updated;
+        }
+
+        return { inserted, updated };
+      });
     },
   };
 }
 
-export function createDeputadoSource(db: DrizzleDatabase): DeputadoSource {
+type TransactionExecutor = Parameters<
+  Parameters<DrizzleDatabase['transaction']>[0]
+>[0];
+
+async function upsertChunk(
+  db: TransactionExecutor,
+  rows: readonly DeputadoHistoricoRow[],
+): Promise<DeputadoHistoricoUpsertResult> {
+  const result = await db
+    .insert(deputadoHistorico)
+    .values(rows.map(toValues))
+    .onConflictDoUpdate({
+      target: [
+        deputadoHistorico.deputadoId,
+        deputadoHistorico.dataHora,
+        deputadoHistorico.descricaoStatus,
+      ],
+      set: {
+        legislaturaId: sql`excluded.legislatura_id`,
+        partidoId: sql`excluded.partido_id`,
+        situacao: sql`excluded.situacao`,
+        condicaoEleitoral: sql`excluded.condicao_eleitoral`,
+        nome: sql`excluded.nome`,
+        nomeEleitoral: sql`excluded.nome_eleitoral`,
+        siglaUf: sql`excluded.sigla_uf`,
+        email: sql`excluded.email`,
+        urlFoto: sql`excluded.url_foto`,
+      },
+    })
+    .returning({ inserted: sql<boolean>`xmax = 0` });
+
+  const inserted = result.filter((row) => row.inserted).length;
+
+  return { inserted, updated: result.length - inserted };
+}
+
+export type CreateDeputadoSourceOptions = {
+  onlyExternalIds?: readonly number[];
+  refetchHistorico?: boolean;
+};
+
+export function createDeputadoSource(
+  db: DrizzleDatabase,
+  options: CreateDeputadoSourceOptions = {},
+): DeputadoSource {
+  const { onlyExternalIds, refetchHistorico = false } = options;
+
   return {
     async loadIngested() {
-      return db
+      const selection = db
         .select({
           id: deputado.id,
           externalIdDeputado: deputado.externalIdDeputado,
         })
         .from(deputado);
+
+      // A targeted retry forces the given deputados regardless of what is
+      // already persisted; it overrides the pending filter.
+      if (onlyExternalIds !== undefined && onlyExternalIds.length > 0) {
+        return selection
+          .where(inArray(deputado.externalIdDeputado, [...onlyExternalIds]))
+          .orderBy(deputado.externalIdDeputado);
+      }
+
+      if (refetchHistorico) {
+        return selection.orderBy(deputado.externalIdDeputado);
+      }
+
+      // Default resume: only deputados with no history rows yet (pending),
+      // oldest external id first so successive windows make steady progress.
+      return selection
+        .where(
+          notExists(
+            db
+              .select({ one: sql`1` })
+              .from(deputadoHistorico)
+              .where(eq(deputadoHistorico.deputadoId, deputado.id)),
+          ),
+        )
+        .orderBy(deputado.externalIdDeputado);
     },
   };
 }

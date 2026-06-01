@@ -26,8 +26,9 @@ import type {
   PartidoLookup,
 } from './deputado-historico.repository.types';
 
-const API_CONCURRENCY = 10;
-const PROGRESS_INTERVAL = 100;
+const API_CONCURRENCY = 3;
+const PROGRESS_INTERVAL = 50;
+const DEFAULT_CHUNK_SIZE = 50;
 
 export type DeputadoHistoricoStepDeps = {
   deputadoSource: DeputadoSource;
@@ -36,6 +37,7 @@ export type DeputadoHistoricoStepDeps = {
   partidoLookup: PartidoLookup;
   partidoRepository: PartidoRepository;
   historicoRepository: DeputadoHistoricoRepository;
+  chunkSize?: number;
 };
 
 export function createDeputadoHistoricoStep(
@@ -51,110 +53,172 @@ export function createDeputadoHistoricoStep(
       }
 
       const loaded = await deps.deputadoSource.loadIngested();
-      const deputados =
+      const batch =
         context.limit === undefined ? loaded : loaded.slice(0, context.limit);
 
-      const total = deputados.length;
-      let processed = 0;
-      let failures = 0;
+      const total = batch.length;
+      const chunkSize = deps.chunkSize ?? DEFAULT_CHUNK_SIZE;
+      const legislaturaIds = await deps.legislaturaLookup.loadIdByExternalId();
 
-      const fetched = await mapWithConcurrency(
-        deputados,
-        API_CONCURRENCY,
-        async (deputado) => {
-          const startedAt = performance.now();
-          const result = await deps.historicoClient.fetch(
-            deputado.externalIdDeputado,
-            { onEvent: debugEventHandler(context) },
-          );
-
-          processed += 1;
-          if (!result.ok) {
-            failures += 1;
-          }
-
-          reportDebugItem(
-            context,
-            deputado,
-            result,
-            performance.now() - startedAt,
-          );
-          reportProgress(context.reporter, processed, total);
-          reportStatus(context, processed, total, failures);
-
-          return { deputado, result };
-        },
-      );
-
-      const events: Array<{
-        deputado: IngestedDeputado;
-        evento: HistoricoEvento;
-      }> = [];
+      const progress = { processed: 0, failures: 0 };
+      const tally = { read: 0, inserted: 0, updated: 0 };
+      const rejected: Rejection[] = [];
       const externalGaps: ExternalGap[] = [];
 
-      for (const { deputado, result } of fetched) {
-        if (!result.ok) {
-          const gap = toExternalGap(
-            context.sourceFile,
-            deputado,
-            result.reason,
-          );
-
-          if (context.strict) {
-            throw StrictModeError.fromGap(gap);
-          }
-
-          externalGaps.push(gap);
-          continue;
-        }
-
-        for (const evento of result.eventos) {
-          events.push({ deputado, evento });
-        }
-      }
-
-      const legislaturaIds = await deps.legislaturaLookup.loadIdByExternalId();
-      const partidoIds = await resolvePartidoIds(
-        deps,
-        events.map(({ evento }) => evento),
-      );
-
-      const rows: DeputadoHistoricoRow[] = [];
-      const rejected: Rejection[] = [];
-
-      for (const { deputado, evento } of events) {
-        const resolved = resolveEvent(
-          deputado,
-          evento,
-          legislaturaIds,
-          partidoIds,
-          context.sourceFile,
+      // Persist one chunk per transaction so an interruption (Ctrl-C, throttle,
+      // strict abort) preserves the deputados already written in earlier chunks.
+      for (const chunk of chunksOf(batch, chunkSize)) {
+        const events = await fetchChunk(
+          deps,
+          context,
+          chunk,
+          total,
+          progress,
+          externalGaps,
         );
 
-        if (!resolved.ok) {
-          if (context.strict) {
-            throw new StrictModeError(resolved.rejection);
+        const partidoIds = await resolvePartidoIds(
+          deps,
+          events.map(({ evento }) => evento),
+        );
+
+        tally.read += events.length;
+
+        const rows: DeputadoHistoricoRow[] = [];
+
+        for (const { deputado, evento } of events) {
+          const resolved = resolveEvent(
+            deputado,
+            evento,
+            legislaturaIds,
+            partidoIds,
+            context.sourceFile,
+          );
+
+          if (!resolved.ok) {
+            if (context.strict) {
+              throw new StrictModeError(resolved.rejection);
+            }
+
+            rejected.push(resolved.rejection);
+            continue;
           }
 
-          rejected.push(resolved.rejection);
-          continue;
+          rows.push(resolved.row);
         }
 
-        rows.push(resolved.row);
+        reportDebugWrite(context, rows.length);
+
+        const { inserted, updated } =
+          await deps.historicoRepository.upsert(rows);
+        tally.inserted += inserted;
+        tally.updated += updated;
       }
 
-      const { inserted, updated } = await deps.historicoRepository.upsert(rows);
+      reportPendingSummary(
+        context,
+        loaded.length,
+        progress.processed - progress.failures,
+      );
 
       return {
-        read: events.length,
-        inserted,
-        updated,
+        read: tally.read,
+        inserted: tally.inserted,
+        updated: tally.updated,
         ignored: 0,
         rejected,
         externalGaps,
       };
     },
   };
+}
+
+function chunksOf<T>(items: readonly T[], size: number): T[][] {
+  const chunks: T[][] = [];
+
+  for (let start = 0; start < items.length; start += size) {
+    chunks.push(items.slice(start, start + size));
+  }
+
+  return chunks;
+}
+
+type FetchedEvent = {
+  deputado: IngestedDeputado;
+  evento: HistoricoEvento;
+};
+
+async function fetchChunk(
+  deps: DeputadoHistoricoStepDeps,
+  context: IngestionStepContext,
+  chunk: readonly IngestedDeputado[],
+  total: number,
+  progress: { processed: number; failures: number },
+  externalGaps: ExternalGap[],
+): Promise<FetchedEvent[]> {
+  const fetched = await mapWithConcurrency(
+    chunk,
+    API_CONCURRENCY,
+    async (deputado) => {
+      const startedAt = performance.now();
+      const result = await deps.historicoClient.fetch(
+        deputado.externalIdDeputado,
+        { onEvent: debugEventHandler(context) },
+      );
+
+      progress.processed += 1;
+      if (!result.ok) {
+        progress.failures += 1;
+      }
+
+      reportDebugItem(context, deputado, result, performance.now() - startedAt);
+      reportProgress(context.reporter, progress.processed, total);
+      reportStatus(context, progress.processed, total, progress.failures);
+
+      return { deputado, result };
+    },
+  );
+
+  const events: FetchedEvent[] = [];
+
+  for (const { deputado, result } of fetched) {
+    if (!result.ok) {
+      const gap = toExternalGap(context.sourceFile, deputado, result.reason);
+
+      if (context.strict) {
+        throw StrictModeError.fromGap(gap);
+      }
+
+      externalGaps.push(gap);
+      continue;
+    }
+
+    for (const evento of result.eventos) {
+      events.push({ deputado, evento });
+    }
+  }
+
+  return events;
+}
+
+function reportPendingSummary(
+  context: IngestionStepContext,
+  totalPending: number,
+  processed: number,
+): void {
+  const reporter = context.reporter;
+
+  if (reporter === undefined) {
+    return;
+  }
+
+  const remaining = Math.max(totalPending - processed, 0);
+  const tail =
+    remaining > 0 ? ' — rode de novo para continuar' : ' — nada pendente';
+
+  reporter.log(
+    `[deputado_historico] ${processed} processados nesta janela, ${remaining} ainda pendentes${tail}`,
+  );
 }
 
 function reportProgress(
@@ -212,6 +276,19 @@ function reportDebugItem(
   reporter.debug(
     `[debug] deputado ${deputado.externalIdDeputado}: ${outcome}, ${ms}ms`,
   );
+}
+
+function reportDebugWrite(
+  context: IngestionStepContext,
+  rowCount: number,
+): void {
+  const reporter = context.reporter;
+
+  if (!context.debug || reporter?.debug === undefined) {
+    return;
+  }
+
+  reporter.debug(`[debug] gravando ${rowCount} eventos no banco em lotes`);
 }
 
 function reportStatus(

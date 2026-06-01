@@ -192,6 +192,7 @@ type StepDepsOverrides = {
   legislaturaLookup?: LegislaturaLookup;
   partidoLookup?: PartidoLookup;
   partidoRepository?: PartidoRepository;
+  chunkSize?: number;
 };
 
 function stepWith(overrides: StepDepsOverrides = {}) {
@@ -207,6 +208,7 @@ function stepWith(overrides: StepDepsOverrides = {}) {
     partidoLookup: overrides.partidoLookup ?? partidoLookupOf(new Map()),
     partidoRepository,
     historicoRepository,
+    chunkSize: overrides.chunkSize,
   });
 
   return { step, historicoRepository, partidoRepository };
@@ -344,6 +346,35 @@ describe('deputado_historico step', () => {
     });
   });
 
+  describe('when the run is interrupted partway through', () => {
+    it('keeps the events of deputados already processed in earlier chunks', async () => {
+      // Arrange
+      const { step, historicoRepository } = stepWith({
+        chunkSize: 1,
+        deputadoSource: sourceOf([
+          { id: 'dep-1', externalIdDeputado: 220593 },
+          { id: 'dep-2', externalIdDeputado: 999999 },
+        ]),
+        historicoClient: clientOf(
+          new Map<number, DeputadoHistoricoFetchResult>([
+            [220593, { ok: true, eventos: [historicoEvento()] }],
+            [999999, { ok: false, reason: '503 Service Unavailable' }],
+          ]),
+        ),
+        legislaturaLookup: legislaturaLookupOf(new Map([[57, 'leg-57']])),
+        partidoLookup: partidoLookupOf(new Map([[13, 'partido-13']])),
+      });
+
+      // Act / Assert
+      await expect(step.run(context({ strict: true }))).rejects.toThrow();
+      expect(historicoRepository.upserted).toHaveLength(1);
+      expect(historicoRepository.upserted[0]).toMatchObject({
+        deputadoId: 'dep-1',
+        descricaoStatus: 'Entrada - Posse de Eleito Titular',
+      });
+    });
+  });
+
   describe('when the API fails for one deputado', () => {
     it('records an external gap and keeps importing the other deputados', async () => {
       // Arrange
@@ -440,6 +471,27 @@ describe('deputado_historico step', () => {
     });
   });
 
+  describe('when a window leaves deputados still pending', () => {
+    it('reports how many pending deputados remain after the window', async () => {
+      // Arrange
+      const deputados = Array.from({ length: 5 }, (_, index) => ({
+        id: `dep-${index}`,
+        externalIdDeputado: index,
+      }));
+      const { step } = stepWith({ deputadoSource: sourceOf(deputados) });
+      const logged: string[] = [];
+      const reporter = { log: (message: string) => logged.push(message) };
+
+      // Act
+      await step.run(context({ limit: 2, reporter }));
+
+      // Assert
+      expect(logged).toContainEqual(
+        expect.stringContaining('2 processados nesta janela, 3 ainda pendentes'),
+      );
+    });
+  });
+
   describe('when debug mode is on', () => {
     it('emits a per-deputado event feed and a live status line', async () => {
       // Arrange
@@ -473,7 +525,12 @@ describe('deputado_historico step', () => {
         expect.stringContaining('deputado 220593: ok, 1 eventos'),
       );
       expect(debugged).toContainEqual(
-        expect.stringContaining('deputado 999999: falhou (503 Service Unavailable)'),
+        expect.stringContaining(
+          'deputado 999999: falhou (503 Service Unavailable)',
+        ),
+      );
+      expect(debugged).toContainEqual(
+        expect.stringContaining('gravando 1 eventos no banco'),
       );
       expect(statuses.at(-1)).toBe(
         'deputado_historico 2/2 (100%) ok:1 falhas:1',
