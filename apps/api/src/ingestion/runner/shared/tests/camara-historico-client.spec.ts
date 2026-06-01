@@ -161,6 +161,7 @@ describe('deputado historico client', () => {
       const transport = transportReturning(
         {
           ok: false,
+          kind: 'http',
           status: 429,
           statusText: 'Too Many Requests',
           retryAfter: '3',
@@ -181,7 +182,12 @@ describe('deputado historico client', () => {
     it('reports each retry through onEvent with the attempt details', async () => {
       // Arrange
       const transport = transportReturning(
-        { ok: false, status: 503, statusText: 'Service Unavailable' },
+        {
+          ok: false,
+          kind: 'http',
+          status: 503,
+          statusText: 'Service Unavailable',
+        },
         okResponse([dado()]),
       );
       const client = clientWith(transport, { retryBackoffMs: [1000, 2000] });
@@ -206,9 +212,24 @@ describe('deputado historico client', () => {
     it('gives up after exhausting the attempts and reports the failure', async () => {
       // Arrange
       const transport = transportReturning(
-        { ok: false, status: 503, statusText: 'Service Unavailable' },
-        { ok: false, status: 503, statusText: 'Service Unavailable' },
-        { ok: false, status: 503, statusText: 'Service Unavailable' },
+        {
+          ok: false,
+          kind: 'http',
+          status: 503,
+          statusText: 'Service Unavailable',
+        },
+        {
+          ok: false,
+          kind: 'http',
+          status: 503,
+          statusText: 'Service Unavailable',
+        },
+        {
+          ok: false,
+          kind: 'http',
+          status: 503,
+          statusText: 'Service Unavailable',
+        },
       );
       const client = clientWith(transport, { maxAttempts: 3 });
 
@@ -229,6 +250,7 @@ describe('deputado historico client', () => {
       // Arrange
       const transport = transportReturning({
         ok: false,
+        kind: 'http',
         status: 404,
         statusText: 'Not Found',
       });
@@ -240,6 +262,32 @@ describe('deputado historico client', () => {
       // Assert
       expect(result.ok).toBe(false);
       expect(transport).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('failure reason diagnostics', () => {
+    it('includes Retry-After and remaining rate-limit budget when present', async () => {
+      // Arrange
+      const transport = transportReturning({
+        ok: false,
+        kind: 'http',
+        status: 429,
+        statusText: 'Too Many Requests',
+        retryAfter: '30',
+        rateLimit: { remaining: '0' },
+      });
+      const client = clientWith(transport, { maxAttempts: 1 });
+
+      // Act
+      const result = await client.fetch(220593);
+
+      // Assert
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.reason).toBe(
+          '429 Too Many Requests (Retry-After: 30, X-RateLimit-Remaining: 0)',
+        );
+      }
     });
   });
 });

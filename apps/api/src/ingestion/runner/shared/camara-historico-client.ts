@@ -8,7 +8,10 @@ import type {
   DeputadoHistoricoFetchOptions,
   HistoricoEvento,
 } from '../steps/deputado-historico/deputado-historico.repository.types';
-import type { CamaraJsonTransport } from './camara-api-transport';
+import type {
+  CamaraJsonResponse,
+  CamaraJsonTransport,
+} from './camara-api-transport';
 
 const DEFAULT_BASE_URL = 'https://dadosabertos.camara.leg.br/api/v2';
 const DEFAULT_MAX_ATTEMPTS = 3;
@@ -39,9 +42,10 @@ export function createDeputadoHistoricoClient(
       let url: string | undefined =
         `${baseUrl}/deputados/${externalIdDeputado}/historico`;
 
-      const onRetry = options?.onEvent
+      const emit = options?.onEvent;
+      const onRetry = emit
         ? (attempt: number, delayMs: number, reason: string) =>
-            options.onEvent?.({
+            emit({
               type: 'retry',
               externalIdDeputado,
               attempt,
@@ -97,7 +101,7 @@ async function fetchPage(url: string, deps: PageDeps): Promise<PageResult> {
     }
 
     const transient = isTransientHttpStatus(response.status);
-    const reason = `${response.status} ${response.statusText}`;
+    const reason = describeFailure(response);
 
     if (!transient || attempt === deps.maxAttempts) {
       return { ok: false, reason };
@@ -109,6 +113,27 @@ async function fetchPage(url: string, deps: PageDeps): Promise<PageResult> {
   }
 
   return { ok: false, reason: 'tentativas esgotadas' };
+}
+
+function describeFailure(response: CamaraJsonResponse): string {
+  if (response.ok) {
+    return '';
+  }
+
+  const parts = [`${response.status} ${response.statusText}`];
+
+  if (response.retryAfter !== undefined) {
+    parts.push(`Retry-After: ${response.retryAfter}`);
+  }
+
+  const remaining = response.rateLimit?.remaining;
+  if (remaining !== undefined) {
+    parts.push(`X-RateLimit-Remaining: ${remaining}`);
+  }
+
+  return parts.length === 1
+    ? parts[0]
+    : `${parts[0]} (${parts.slice(1).join(', ')})`;
 }
 
 function readPage(body: unknown): PageResult {
