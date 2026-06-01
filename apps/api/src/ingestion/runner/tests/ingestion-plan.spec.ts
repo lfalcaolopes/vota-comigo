@@ -15,6 +15,7 @@ function config(
     dryRun: false,
     strict: false,
     debug: false,
+    refetchHistorico: false,
     ...overrides,
   };
 }

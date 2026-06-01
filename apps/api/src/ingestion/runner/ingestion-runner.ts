@@ -8,8 +8,11 @@ import { buildIngestionPlan } from './ingestion-plan';
 import { resolveIngestionRunnerConfig } from './ingestion-runner.config';
 import { writeErrorLog } from './error-log';
 import { writeGapLog } from './gap-log';
+import { readGapLog, selectRetryReferences } from './gap-log-reader';
+import type { GapLogReaderFileSystem } from './gap-log-reader';
 import { createIngestionSteps } from './ingestion-steps';
 import { nodeErrorLogFileSystem } from './node-error-log-file-system';
+import { nodeGapLogReaderFileSystem } from './node-gap-log-reader-file-system';
 import type { ErrorLogFileSystem } from './error-log';
 import { StrictModeError } from './strict-mode-error';
 import type {
@@ -17,11 +20,13 @@ import type {
   CreateStepsResult,
   IngestionPlanEntry,
   IngestionReporter,
+  IngestionRunnerConfig,
   IngestionRunnerConfigOptions,
   IngestionRunnerExecutionResult,
   IngestionRunnerResult,
   IngestionStepContext,
   IngestionStepDescriptor,
+  IngestionSummary,
   ExternalGap,
   Rejection,
   StepSummary,
@@ -46,6 +51,7 @@ export type IngestionRunnerExecutionOptions = IngestionRunnerConfigOptions & {
   sourceExists?: (path: string) => boolean;
   sourcePath?: (entry: IngestionPlanEntry) => string;
   errorLog?: { fileSystem: ErrorLogFileSystem; now: () => Date };
+  gapLogReader?: { fileSystem: GapLogReaderFileSystem };
   reporter?: IngestionReporter;
 };
 
@@ -91,7 +97,32 @@ export async function executeIngestionRunner(
   const sourcePathFor = options.sourcePath ?? defaultSourcePath;
   const createSteps = options.createSteps ?? createIngestionSteps;
 
-  const { steps, close } = await createSteps({ dryRun: config.dryRun });
+  let retryExternalIds: readonly number[] | undefined;
+
+  if (config.retryGapsPath !== undefined) {
+    const gaps = await readGapLog(
+      config.retryGapsPath,
+      options.gapLogReader?.fileSystem ?? nodeGapLogReaderFileSystem,
+    );
+    retryExternalIds = selectRetryReferences(gaps);
+
+    if (retryExternalIds.length === 0) {
+      options.reporter?.log(
+        `Nenhum registro para reprocessar em ${config.retryGapsPath}.`,
+      );
+      return { ok: true, exitCode: 0, summary: emptySummary(config) };
+    }
+
+    options.reporter?.log(
+      `Reprocessando ${retryExternalIds.length} registro(s) de ${config.retryGapsPath}.`,
+    );
+  }
+
+  const { steps, close } = await createSteps({
+    dryRun: config.dryRun,
+    retryExternalIds,
+    refetchHistorico: config.refetchHistorico,
+  });
 
   const summaries: StepSummary[] = [];
   const rejections: Rejection[] = [];
@@ -228,6 +259,22 @@ export async function executeIngestionRunner(
   reportSummary(summary, options.reporter);
 
   return { ok: true, exitCode: aborted ? 1 : 0, summary };
+}
+
+function emptySummary(config: IngestionRunnerConfig): IngestionSummary {
+  return {
+    steps: [],
+    totalRead: 0,
+    totalInserted: 0,
+    totalUpdated: 0,
+    totalIgnored: 0,
+    totalRejected: 0,
+    totalExternalGaps: 0,
+    dryRun: config.dryRun,
+    strict: config.strict,
+    years: config.years,
+    aborted: false,
+  };
 }
 
 function defaultSourcePath(entry: IngestionPlanEntry): string {

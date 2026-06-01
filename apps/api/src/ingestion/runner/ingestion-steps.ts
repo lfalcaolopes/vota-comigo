@@ -92,7 +92,10 @@ export function createIngestionSteps(
     ),
     createPartidosStep(createPartidoRepository(db)),
     createDeputadoHistoricoStep({
-      deputadoSource: createDeputadoSource(db),
+      deputadoSource: createDeputadoSource(db, {
+        onlyExternalIds: input.retryExternalIds,
+        refetchHistorico: input.refetchHistorico,
+      }),
       historicoClient: createDeputadoHistoricoClient({
         transport: fetchCamaraJson,
       }),

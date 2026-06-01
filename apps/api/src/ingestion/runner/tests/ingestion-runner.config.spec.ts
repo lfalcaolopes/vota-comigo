@@ -29,6 +29,7 @@ describe('ingestion runner config', () => {
           dryRun: true,
           strict: true,
           debug: true,
+          refetchHistorico: false,
           limit: 5,
         },
       });
@@ -55,6 +56,7 @@ describe('ingestion runner config', () => {
           dryRun: false,
           strict: false,
           debug: false,
+          refetchHistorico: false,
           limit: undefined,
         },
       });
@@ -96,6 +98,83 @@ describe('ingestion runner config', () => {
       }
       expect(resolution.message).toContain('votacoes');
       expect(resolution.message).toContain('legislaturas');
+    });
+  });
+
+  describe('when --refetch-historico is provided', () => {
+    it('flags a full re-fetch instead of resuming only pending deputados', () => {
+      // Arrange
+      const args = ['--refetch-historico'];
+
+      // Act
+      const resolution = resolveIngestionRunnerConfig(args, {
+        currentYear: 2026,
+        stepNames: ['deputado_historico'],
+      });
+
+      // Assert
+      expect(resolution.ok).toBe(true);
+      if (!resolution.ok) {
+        throw new Error('expected a valid resolution');
+      }
+      expect(resolution.config.refetchHistorico).toBe(true);
+    });
+
+    it('defaults to resuming only pending deputados when absent', () => {
+      // Arrange
+      const args: string[] = [];
+
+      // Act
+      const resolution = resolveIngestionRunnerConfig(args, {
+        currentYear: 2026,
+        stepNames: ['deputado_historico'],
+      });
+
+      // Assert
+      expect(resolution.ok).toBe(true);
+      if (!resolution.ok) {
+        throw new Error('expected a valid resolution');
+      }
+      expect(resolution.config.refetchHistorico).toBe(false);
+    });
+  });
+
+  describe('when --retry-gaps is provided', () => {
+    it('records the gap log path and restricts the run to deputado_historico', () => {
+      // Arrange
+      const args = ['--retry-gaps=data/logs/gaps/gaps.log'];
+
+      // Act
+      const resolution = resolveIngestionRunnerConfig(args, {
+        currentYear: 2026,
+        stepNames: ['deputado_historico'],
+      });
+
+      // Assert
+      expect(resolution.ok).toBe(true);
+      if (!resolution.ok) {
+        throw new Error('expected a valid resolution');
+      }
+      expect(resolution.config.only).toEqual(['deputado_historico']);
+      expect(resolution.config.retryGapsPath).toBe('data/logs/gaps/gaps.log');
+    });
+
+    it('rejects combining --retry-gaps with --only of another step', () => {
+      // Arrange
+      const args = ['--retry-gaps=gaps.log', '--only=legislaturas'];
+
+      // Act
+      const resolution = resolveIngestionRunnerConfig(args, {
+        currentYear: 2026,
+        stepNames: ['legislaturas', 'deputado_historico'],
+      });
+
+      // Assert
+      expect(resolution.ok).toBe(false);
+      if (resolution.ok) {
+        throw new Error('expected an invalid resolution');
+      }
+      expect(resolution.message).toContain('--retry-gaps');
     });
   });
 

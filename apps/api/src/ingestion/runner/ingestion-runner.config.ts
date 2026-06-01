@@ -4,6 +4,7 @@ import type {
 } from './ingestion-runner.types';
 
 const firstCsvYear = 2001;
+const retryGapsStep = 'deputado_historico';
 
 export function resolveIngestionRunnerConfig(
   args: readonly string[],
@@ -13,15 +14,32 @@ export function resolveIngestionRunnerConfig(
   const dryRun = args.includes('--dry-run');
   const strict = args.includes('--strict');
   const debug = args.includes('--debug');
+  const refetchHistorico = args.includes('--refetch-historico');
   const only = parseOnly(args);
+  const retryGapsPath = getStringArg(args, '--retry-gaps');
 
   const limit = parseLimit(getStringArg(args, '--limit'));
   if (!limit.ok) {
     return limit;
   }
 
-  if (only !== undefined && options.stepNames !== undefined) {
-    const unknown = only.filter((step) => !options.stepNames!.includes(step));
+  if (
+    retryGapsPath !== undefined &&
+    only !== undefined &&
+    (only.length !== 1 || only[0] !== retryGapsStep)
+  ) {
+    return {
+      ok: false,
+      message: `--retry-gaps só reprocessa o passo ${retryGapsStep}; remova ou ajuste --only.`,
+    };
+  }
+
+  const effectiveOnly = retryGapsPath !== undefined ? [retryGapsStep] : only;
+
+  if (effectiveOnly !== undefined && options.stepNames !== undefined) {
+    const unknown = effectiveOnly.filter(
+      (step) => !options.stepNames!.includes(step),
+    );
 
     if (unknown.length > 0) {
       return {
@@ -65,12 +83,14 @@ export function resolveIngestionRunnerConfig(
   return {
     ok: true,
     config: {
-      only,
+      only: effectiveOnly,
       years: range(fromYear, toYear),
       dryRun,
       strict,
       debug,
+      refetchHistorico,
       limit: limit.value,
+      retryGapsPath,
     },
   };
 }

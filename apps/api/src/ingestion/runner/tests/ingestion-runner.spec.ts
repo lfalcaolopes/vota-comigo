@@ -509,6 +509,124 @@ describe('ingestion runner', () => {
     });
   });
 
+  describe('when reprocessing a gap log via --retry-gaps', () => {
+    const gapLog = [
+      JSON.stringify({
+        file: 'deputado_historico',
+        type: 'fonte_externa_indisponivel',
+        reference: '220582',
+        message:
+          'Histórico indisponível para o deputado 220582: 503 tempo limite de 15000ms excedido.',
+      }),
+      JSON.stringify({
+        file: 'deputado_historico',
+        type: 'fonte_externa_indisponivel',
+        reference: '73768',
+        message:
+          'Histórico indisponível para o deputado 73768: 503 tempo limite de 15000ms excedido.',
+      }),
+      JSON.stringify({
+        file: 'votacoesVotos-2020.csv',
+        type: 'fonte_ausente',
+        reference: 'data/raw/votacoesVotos/votacoesVotos-2020.csv',
+        message: 'Fonte ausente.',
+      }),
+    ].join('\n');
+
+    const historicoStep = (): IngestionStep => ({
+      name: 'deputado_historico',
+      scope: 'single',
+      source: 'api',
+      async run(): Promise<StepRunResult> {
+        return {
+          read: 0,
+          inserted: 0,
+          updated: 0,
+          ignored: 0,
+          rejected: [],
+          externalGaps: [],
+        };
+      },
+    });
+
+    it('runs only deputado_historico for the failed references', async () => {
+      // Arrange
+      let received: readonly number[] | undefined;
+      const ranSteps: string[] = [];
+
+      // Act
+      const result = await executeIngestionRunner(['--retry-gaps=any.log'], {
+        currentYear: 2026,
+        gapLogReader: {
+          fileSystem: {
+            async readFile() {
+              return gapLog;
+            },
+          },
+        },
+        createSteps: async (input) => {
+          received = input.retryExternalIds;
+          const step = historicoStep();
+          return {
+            steps: [
+              {
+                ...step,
+                async run(context) {
+                  ranSteps.push(step.name);
+                  return step.run(context);
+                },
+              },
+            ],
+            close: async () => {},
+          };
+        },
+      });
+
+      // Assert
+      expect(result.ok).toBe(true);
+      if (!result.ok) {
+        throw new Error(result.message);
+      }
+      expect(received).toEqual([220582, 73768]);
+      expect(ranSteps).toEqual(['deputado_historico']);
+    });
+
+    it('does not build steps when the gap log has no retriable references', async () => {
+      // Arrange
+      let createStepsCalled = false;
+      const onlyMissingSource = JSON.stringify({
+        file: 'votacoesVotos-2020.csv',
+        type: 'fonte_ausente',
+        reference: 'data/raw/votacoesVotos/votacoesVotos-2020.csv',
+        message: 'Fonte ausente.',
+      });
+
+      // Act
+      const result = await executeIngestionRunner(['--retry-gaps=any.log'], {
+        currentYear: 2026,
+        gapLogReader: {
+          fileSystem: {
+            async readFile() {
+              return onlyMissingSource;
+            },
+          },
+        },
+        createSteps: async () => {
+          createStepsCalled = true;
+          return { steps: [], close: async () => {} };
+        },
+      });
+
+      // Assert
+      expect(result.ok).toBe(true);
+      if (!result.ok) {
+        throw new Error(result.message);
+      }
+      expect(result.exitCode).toBe(0);
+      expect(createStepsCalled).toBe(false);
+    });
+  });
+
   describe('when running in dry-run mode', () => {
     it('asks the step provider for dry-run dependencies and writes nothing', async () => {
       // Arrange

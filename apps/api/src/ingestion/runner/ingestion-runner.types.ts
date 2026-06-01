@@ -4,7 +4,9 @@ export type IngestionRunnerConfig = {
   dryRun: boolean;
   strict: boolean;
   debug: boolean;
+  refetchHistorico: boolean;
   limit?: number;
+  retryGapsPath?: string;
 };
 
 export type IngestionRunnerConfigResolution =
@@ -136,6 +138,8 @@ export type IngestionReporter = {
 
 export type CreateStepsInput = {
   dryRun: boolean;
+  retryExternalIds?: readonly number[];
+  refetchHistorico?: boolean;
 };
 
 export type CreateStepsResult = {
