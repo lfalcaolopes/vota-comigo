@@ -49,3 +49,13 @@ If the concept you need isn't in the glossary yet, that's a signal — either yo
 If your output contradicts an existing ADR, surface it explicitly rather than silently overriding:
 
 > _Contradicts ADR-0007 (event-sourced orders) — but worth reopening because…_
+
+## Writing an ADR
+
+When you add or edit a file in `docs/adr/`, match the house style — the existing ADRs are uniform, and a templated or list-heavy ADR stands out as wrong:
+
+- **One `#` title, nothing else.** A noun phrase naming the decision (e.g. "Estratégia de persistência: storage de inputs, não de scores"). No `## Status` / `## Context` / `## Decision` / `## Consequences` sections, no metadata block, no date.
+- **Prose, not lists.** Argue the decision in flowing paragraphs, typically two to six. Avoid bullet lists, numbered lists and tables; at most one short bullet list with bold lead-ins, and only to enumerate genuinely parallel cases or rejected alternatives.
+- **Implicit arc:** open by stating the decision concretely, in present tense ("O banco armazena…", "O cálculo considera apenas…"); then the justification, with empirical numbers woven inline; then alternatives named and explicitly rejected ("A alternativa de X foi rejeitada porque…"); then the accepted cost or trade-off, tied to a project principle, pointing to `docs/melhorias.md` for deferred evolution.
+- **Portuguese with accents** (ADR 0007); source field names in backticks; never accents in identifiers.
+- **Cite other ADRs as `ADR 0NNN`** — space, zero-padded to four digits (e.g. `ADR 0009`), not `ADR-9` or `ADR-009`.

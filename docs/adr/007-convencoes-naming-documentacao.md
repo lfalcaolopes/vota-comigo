@@ -9,7 +9,7 @@ Quando um identificador da fonte é persistido como coluna em uma tabela do prod
 - **Identificador da própria linha**: coluna ganha `external_` e `UNIQUE`. Exemplos: `external_id_deputado`, `external_id_proposicao`, `external_id_votacao`, `external_id_legislatura`, `external_id_partido`, `external_cod_tema`.
 - **Referência externa a entidade não modelada como tabela**: coluna ganha `external_` sem `UNIQUE`, pois pode repetir. Exemplos: `external_id_evento`, `external_id_orgao`, `external_id_proposicao_ultima_apresentacao`, `external_cod_tipo`.
 
-Quando a entidade referenciada é modelada como tabela própria, a coluna vira foreign key interna do tipo `uuid` com sufixo `_id` (ex.: `legislatura_inicial_id`, `proposicao_principal_id`, `partido_id`), e o identificador externo não é persistido em duplicidade — a resolução acontece no lookup durante a ingestão.
+Quando a entidade referenciada é modelada como tabela própria, a coluna vira foreign key interna do tipo `uuid` com sufixo `_id` (ex.: `legislatura_inicial_id`, `votacao_id`, `partido_id`), e o identificador externo não é persistido em duplicidade — a resolução acontece no lookup durante a ingestão.
 
 Atributos auxiliares permanecem com o nome original sem prefixo `external_`: `uri` (representação alternativa do mesmo ID já presente em `external_id_*`),  e siglas categóricas (`siglaUf`, `siglaPartido`, `siglaOrgao`) que rotulam, mas não servem como chave primária de busca em endpoints.
 

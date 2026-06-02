@@ -23,7 +23,7 @@ O escopo de fontes é o definido em `docs/ingestion/fontes-ingestao.md`. A janel
 - **Toda coluna que armazena um identificador usável em endpoints/arquivos da fonte (API ou CSV) recebe o prefixo `external_`** (ADR 0007 atualizado). Duas variações:
   - **Identificador da própria linha**: ganha `UNIQUE` (chave de rematch). Há no máximo uma por tabela. Exemplos: `external_id_deputado`, `external_id_proposicao`, `external_id_votacao`, `external_id_legislatura`, `external_id_partido`, `external_cod_tema`.
   - **Referência a entidade externa que não modelamos como tabela**: sem `UNIQUE` (pode repetir). Exemplos: `external_id_evento`, `external_id_orgao`, `external_id_proposicao_ultima_apresentacao`, `external_cod_tipo`.
-- **Quando a entidade referenciada é modelada como tabela própria, a coluna vira foreign key interna `uuid` com sufixo `_id`** (`legislatura_inicial_id`, `legislatura_final_id`, `proposicao_principal_id`, `partido_id`, `deputado_id`, `proposicao_id`, `votacao_id`). O identificador externo não é persistido em duplicidade — a resolução acontece no lookup durante a ingestão.
+- **Quando a entidade referenciada é modelada como tabela própria, a coluna vira foreign key interna `uuid` com sufixo `_id`** (`legislatura_inicial_id`, `legislatura_final_id`, `partido_id`, `deputado_id`, `proposicao_id`, `votacao_id`). O identificador externo não é persistido em duplicidade — a resolução acontece no lookup durante a ingestão.
 - **Tabelas derivadas (`deputado_historico`, `votacao_votos`) e junções (`votacao_proposicao`, `proposicao_tema`) não têm `external_*` próprio** porque suas linhas não são endereçáveis individualmente na fonte.
 - **Atributos auxiliares preservam o nome da fonte sem prefixo `external_`**: `uri` (alternativa do mesmo ID), `cpf` (namespace Receita Federal), e siglas categóricas (`sigla_uf`, `sigla_partido`, `sigla_orgao`).
 - TS via Drizzle: snake_case no banco, camelCase no código (`externalIdDeputado`, `legislaturaInicialId`).
@@ -151,9 +151,9 @@ A regra de consumo não deve ser apenas `situacao = 'Exercício'` no último eve
 
 Fonte: `proposicoes-{ano}.csv` (cabeçalho verificado: `id;uri;siglaTipo;numero;ano;codTipo;descricaoTipo;ementa;ementaDetalhada;keywords;dataApresentacao;uriOrgaoNumerador;uriPropAnterior;uriPropPrincipal;uriPropPosterior;urlInteiroTeor;urnFinal;ultimoStatus_*`).
 
-**Filtro de ingestão** (`fontes-ingestao.md`): proposições afetadas por uma votação nominal ingerida (chave: aparece em `votacoesProposicoes` para um `idVotacao` que também aparece em `votacoesVotos`) e suas proposições principais. O ingestor cobre múltiplos anos porque uma votação nominal de 2025 pode referenciar proposição apresentada em 2015. Sem filtro por `codTipo`.
+**Filtro de ingestão** (`fontes-ingestao.md`): proposições afetadas por uma votação nominal ingerida (chave: aparece em `votacoesProposicoes` para um `idVotacao` que também aparece em `votacoesVotos`). O ingestor cobre múltiplos anos porque uma votação nominal de 2025 pode referenciar proposição apresentada em 2015. Sem filtro por `codTipo`.
 
-**Fonte preferencial e fallback**: carregar a linha completa a partir de `proposicoes-{ano}.csv` quando ela existir nos CSVs locais. Se uma proposição afetada ou principal necessária não estiver disponível nos CSVs baixados, buscar via API `GET /proposicoes/{id}` durante o runner e importar os mesmos campos modelados abaixo. Se CSV e API não fornecerem a proposição, não criar registro parcial sintético; registrar lacuna de ingestão.
+**Fonte única (CSV) e cobertura multi-ano**: a linha completa vem de `proposicoes-{ano}.csv`. Não há fallback de API (ADR 0012). Antes do passo, o runner deriva das votações nominais em escopo os anos de proposição necessários e baixa automaticamente os `proposicoes-{ano}.csv` ausentes. Se uma proposição necessária não estiver em nenhum CSV (ausente do arquivo do ano ou inexistente na fonte), não criar registro parcial sintético; registrar lacuna de ingestão (segue no default, aborta em `--strict`).
 
 | Coluna | Tipo | Notas |
 |---|---|---|
@@ -170,7 +170,6 @@ Fonte: `proposicoes-{ano}.csv` (cabeçalho verificado: `id;uri;siglaTipo;numero;
 | `keywords` | `text` | Mantido como veio (separado por `_`). |
 | `data_apresentacao` | `timestamptz` | |
 | `url_inteiro_teor` | `text` | |
-| `proposicao_principal_id` (FK → `proposicao.id`) | `uuid` | Resolvido a partir de `uriPropPrincipal` durante a ingestão. `null` para "ela mesma é principal". |
 | `ultimo_status_data_hora` | `timestamptz` | |
 | `ultimo_status_regime` | `text` | Ex.: `Urgência (Art. 155, RICD)`, `Ordinário (Art. 151, III, RICD)`. Contexto local para detalhe da proposição e possível sinal endógeno da fórmula de relevância. |
 | `ultimo_status_descricao_situacao` | `text` | Útil para "tornou-se norma jurídica" etc. |
@@ -179,9 +178,9 @@ Fonte: `proposicoes-{ano}.csv` (cabeçalho verificado: `id;uri;siglaTipo;numero;
 
 Campos descartados na carga inicial por não ter consumidor mapeado no MVP: `uriOrgaoNumerador`, `uriPropAnterior`, `uriPropPosterior`, `urnFinal`, `ultimoStatus_sequencia`, `ultimoStatus_uriRelator`, `ultimoStatus_idOrgao`, `ultimoStatus_siglaOrgao`, `ultimoStatus_uriOrgao`, `ultimoStatus_idTipoTramitacao`, `ultimoStatus_idSituacao`, `ultimoStatus_despacho`, `ultimoStatus_apreciacao`. Trivial trazer depois se aparecer demanda.
 
-**Resolução de `proposicao_principal_id`**: dependência circular com a própria tabela. Ingestão em dois passos — inserir todas as proposições com `proposicao_principal_id = null`; resolver as referências num segundo passo lendo `uriPropPrincipal`. Quando a principal apontada ainda não estiver carregada, o runner tenta encontrá-la nos CSVs locais e, se necessário, busca `GET /proposicoes/{id}` antes de resolver a FK.
+**Proposição principal fora do MVP**: a coluna `proposicao_principal_id` e a resolução da cadeia de principais (`uriPropPrincipal`) foram retiradas da modelagem do MVP (ADR 0012). Os dados mostram que ~92% das proposições afetadas não têm principal e que ~89% dos vínculos existentes apontam para proposições já ingeridas como afetadas; o ganho não justificava a complexidade de download e resolução. A ingestão de `proposicao` é de passo único.
 
-**Índices**: `(ano)`, `(external_cod_tipo)`, `(proposicao_principal_id)`. Considerar `gin (to_tsvector('portuguese', coalesce(ementa,'') || ' ' || coalesce(keywords,'')))` para busca textual no matcher.
+**Índices**: `(ano)`, `(external_cod_tipo)`. Considerar `gin (to_tsvector('portuguese', coalesce(ementa,'') || ' ' || coalesce(keywords,'')))` para busca textual no matcher.
 
 ---
 
@@ -327,7 +326,7 @@ No matcher, `artigo_17` recebe o mesmo tratamento de fora de exercício: não en
 | `deputado` | `idLegislaturaFinal >= 51` (ADR 0003) |
 | `deputado_historico` | Apenas para `deputado` já ingerido; via API `GET /deputados/{id}/historico` |
 | `votacao` | `id` do CSV aparece em `votacoesVotos-{ano}.csv` (ADR 0002) |
-| `proposicao` | Aparece em `votacoesProposicoes` ligada a uma `votacao` ingerida ou é proposição principal de uma proposição ingerida |
+| `proposicao` | Aparece em `votacoesProposicoes` ligada a uma `votacao` ingerida |
 | `proposicao_tema` | `external_id_proposicao` resolvível em `proposicao` |
 | `votacao_proposicao` | Ambos os lados resolvíveis (`external_id_votacao` + `external_id_proposicao`) |
 | `votacao_votos` | `external_id_votacao` resolvível em `votacao` |
@@ -347,7 +346,7 @@ No matcher, `artigo_17` recebe o mesmo tratamento de fora de exercício: não en
 4. `deputado_historico` (FK em `deputado`, `legislatura` e `partido`; fetch via API `GET /deputados/{id}/historico` por deputado ingerido — paralelizado com a semântica do `csv-downloader`).
 5. `tema` (extração lateral via `proposicoesTemas`).
 6. `votacao` (filtrada pelos ids que aparecem em `votacoesVotos`).
-7. `proposicao` em duas passadas: insert das afetadas e principais sem `proposicao_principal_id`; resolução das principais, com fallback via `GET /proposicoes/{id}` quando o CSV local não contiver a proposição necessária.
+7. `proposicao`: passo único de insert das proposições afetadas a partir de `proposicoes-{ano}.csv`. O pré-voo garante em disco os arquivos dos anos necessários, derivados das votações em escopo, baixando os ausentes (ADR 0012). Sem `proposicao_principal_id` e sem fallback de API.
 8. `votacao_proposicao` (FK em ambos).
 9. `proposicao_tema` (FK em `proposicao` e `tema`).
 10. `votacao_votos` (FK em `votacao`; lookup de `deputado` por `external_id_deputado`).

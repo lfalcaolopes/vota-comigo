@@ -13,7 +13,8 @@
 
 Definir um mecanismo genérico para passos de ingestão que consomem a API da
 Câmara um item por vez (hoje `deputado_historico` via
-`GET /deputados/{id}/historico`; no futuro o fallback de `proposicoes`), de modo
+`GET /deputados/{id}/historico`, atualmente o único consumidor API-driven —
+o passo de `proposicoes` deixou de usar a API, ver ADR 0012), de modo
 que a ingestão consiga:
 
 1. **Retomar (checkpoint)** — sobreviver a cancelamento e ao throttling sem
@@ -92,8 +93,8 @@ Adicionar `historico_atualizado_em timestamptz` (nome final conforme ADR-007) em
 Uma tabela tipo `ingestao_sincronizacao` com `(entidade, external_id,
 sincronizado_em, status, erro?)`, servindo qualquer passo que consome a API.
 
-- Prós: escala para múltiplas fontes (ex.: fallback de `proposicoes`), centraliza
-  o estado de ingestão.
+- Prós: escala para múltiplas fontes API, caso surja um segundo passo
+  API-driven, centralizando o estado de ingestão.
 - Contras: mais maquinário do que o necessário hoje, com um só consumidor.
 
 Recomendação: **A agora**, migrar para **B** quando aparecer o segundo consumidor

@@ -6,9 +6,10 @@ Definir as opções (flags) do runner de ingestão dos CSVs da Câmara dos Deput
 
 O runner é o orquestrador da pipeline de ingestão: lê os CSVs já baixados localmente (saída do script de download), transforma os dados conforme as regras definidas, complementa lacunas específicas via API da Câmara quando documentado, e popula o banco de dados.
 
-As chamadas à API dentro do runner são exceções controladas, não uma segunda fonte geral de enriquecimento. No desenho inicial entram apenas:
+As chamadas à API dentro do runner são exceções controladas, não uma segunda fonte geral de enriquecimento. No desenho inicial entra apenas:
 - `GET /deputados/{id}/historico`, obrigatório para popular `deputado_historico`.
-- `GET /proposicoes/{id}`, fallback quando uma proposição afetada ou principal necessária não estiver disponível nos CSVs locais.
+
+O passo de `proposicoes` não usa API (ADR 0012): quando faltam arquivos `proposicoes-{ano}.csv` dos anos necessários, o runner os baixa automaticamente antes de ingerir.
 
 ---
 
@@ -95,7 +96,13 @@ npm run ingest -- --from=2020 --to=2022 --dry-run
 
 Justificativa: dados de 25 anos têm qualidade variável, e abortar a cada problema tornaria a ingestão impraticável. O modo estrito existe via `--strict` para os casos de debugging.
 
-Quando uma proposição afetada ou principal necessária não existe nos CSVs locais e o fallback `GET /proposicoes/{id}` também falha, o runner não cria registro sintético. No modo default, registra a lacuna como rejeição do passo `proposicoes` e segue a execução; em `--strict`, aborta imediatamente. O banco não deve aparentar completude quando a fonte canônica daquela proposição não foi obtida.
+Quando uma proposição afetada necessária não existe em nenhum CSV local (ausente do arquivo do ano ou inexistente na fonte), o runner não cria registro sintético. No modo default, registra a lacuna como rejeição do passo `proposicoes` e segue a execução; em `--strict`, aborta imediatamente. O banco não deve aparentar completude quando a fonte daquela proposição não foi obtida. Não há fallback de API para proposições (ADR 0012).
+
+### Pré-voo de `proposicoes` e download automático
+
+O passo `proposicoes` depende de arquivos `proposicoes-{ano}.csv` que cobrem anos anteriores ao da votação. Antes de ingerir, o runner deriva das votações nominais em escopo (respeitando `--from`/`--to`/`--limit`) o conjunto de anos de proposição necessários e verifica se cada arquivo está em disco. Os anos ausentes são logados e baixados automaticamente pelo downloader (ADR 0012). A mesma função de "conjunto necessário" alimenta a validação e a ingestão, para que não divirjam.
+
+Se o download de algum arquivo falhar, a execução para imediatamente, informando o motivo, quais arquivos faltam e como retomar (resolver a causa e reexecutar, p.ex. `--only=proposicoes`). Os passos baseados em CSV já concluídos antes do `proposicoes` permanecem gravados (upsert idempotente), então a retomada não os reprocessa de forma destrutiva.
 
 ### Resumos e métricas
 
@@ -109,7 +116,7 @@ Por passo:
 - Quantos atualizados no banco (via UPSERT)
 - Quantos ignorados (não atendem critério de ingestão — ex: votações não nominais)
 - Quantos rejeitados (erro de parsing/validação), agrupados por tipo de erro com contagem
-- Quantas lacunas de fonte externa ocorreram (ex.: fallback de proposição via API indisponível), agrupadas por tipo
+- Quantas lacunas de fonte externa ocorreram (ex.: proposição necessária ausente de todo CSV), agrupadas por tipo
 - Tempo de execução do passo
 
 Global:

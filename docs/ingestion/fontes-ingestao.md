@@ -81,9 +81,9 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 
 **Justificativa:** dados da proposição (tipo, ementa, número, ano, tramitação) são necessários para exibir o feed de proposições votadas e o contexto do matcher. O `codTipo` é usado como input do fator "tipo de proposição" (peso 0.20) na fórmula de relevância — PEC pesa mais que requerimento — mas não é usado como filtro de ingestão.
 
-**Escopo refinado:** ingerir as proposições afetadas por votação nominal ingerida e suas proposições principais. Proposições sem relação com votação nominal ingerida e sem papel de principal de uma proposição afetada não entram. Não há filtro por `codTipo` — qualquer tipo de proposição afetada por uma votação nominal é ingerido.
+**Escopo refinado:** ingerir as proposições afetadas por votação nominal ingerida. Proposições sem relação com votação nominal ingerida não entram. Não há filtro por `codTipo` — qualquer tipo de proposição afetada por uma votação nominal é ingerido. A proposição principal não é ingerida no MVP (ADR 0012).
 
-**Observação:** votações de um ano podem referenciar proposições apresentadas em anos anteriores. A ingestão de `proposicoes` precisa cobrir múltiplos anos conforme necessário, não só o ano corrente. Quando uma proposição necessária não estiver disponível nos CSVs locais baixados, o runner consulta `GET /proposicoes/{id}` e importa a partir da API. O CSV continua sendo a fonte preferencial; a API é fallback para lacuna de input.
+**Observação:** votações de um ano podem referenciar proposições apresentadas em anos anteriores. A ingestão de `proposicoes` precisa cobrir múltiplos anos conforme necessário, não só o ano corrente. O runner não usa API para proposições (ADR 0012): antes do passo, deriva das votações nominais em escopo os anos necessários e baixa automaticamente os `proposicoes-{ano}.csv` ausentes. Quando uma proposição necessária não está em nenhum CSV, registra-se lacuna de ingestão, sem registro sintético.
 
 **Proposições como contexto de atividade do deputado** (quantas criou, quantas foram aprovadas) são acessadas via API com `GET /proposicoes?idAutor={id}`, com cache de algumas horas. Não requer ingestão nem de `proposicoes` em massa nem de `proposicoesAutores`.
 
@@ -311,7 +311,7 @@ O consumo integral de `votacoesVotos` aumenta o volume de dados processado em re
 
 O protótipo originalmente definia 25 `codTipo` permitidos para filtrar proposições na ingestão. Essa abordagem foi descartada por dois motivos:
 
-1. **O problema que resolvia não existe mais.** O filtro foi criado para reduzir 107 mil proposições para ~11 mil. Com a estratégia de ingerir apenas proposições afetadas por votações nominais e suas principais, só algumas centenas de proposições por ano são ingeridas — o filtro é redundante.
+1. **O problema que resolvia não existe mais.** O filtro foi criado para reduzir 107 mil proposições para ~11 mil. Com a estratégia de ingerir apenas proposições afetadas por votações nominais, só algumas centenas de proposições por ano são ingeridas — o filtro é redundante.
 
 2. **O filtro introduzia falsos negativos.** A análise de 2025 identificou 17 votações nominais (6 de Plenário, com 382-432 votos cada) sobre proposições fora da lista dos 25 tipos. Entre elas: cassações de mandato (REP — caso Glauber Braga, caso Carla Zambelli), alterações no Código de Ética (PRC 63/2025), e outros tipos relevantes para o cidadão. Manter uma lista positiva de tipos exigiria revisão contínua e sempre correria o risco de perder votações relevantes.
 
