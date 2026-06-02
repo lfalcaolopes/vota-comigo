@@ -21,13 +21,17 @@ export function buildCsvDownloadPlan(
   options: Pick<CsvDownloaderOptions, 'baseUrl'> = {},
 ): CsvDownloadPlanItem[] {
   const baseUrl = removeTrailingSlash(options.baseUrl ?? defaultBaseUrl);
-  const singleFileItems = singleFileDatasets.map((dataset) =>
-    planItem(dataset, `${dataset}.csv`, baseUrl),
-  );
+  const wanted = config.datasets;
+  const includes = (dataset: string): boolean =>
+    wanted === undefined || wanted.includes(dataset);
+
+  const singleFileItems = singleFileDatasets
+    .filter(includes)
+    .map((dataset) => planItem(dataset, `${dataset}.csv`, baseUrl));
   const annualItems = config.years.flatMap((year) =>
-    annualDatasets.map((dataset) =>
-      planItem(dataset, `${dataset}-${year}.csv`, baseUrl),
-    ),
+    annualDatasets
+      .filter(includes)
+      .map((dataset) => planItem(dataset, `${dataset}-${year}.csv`, baseUrl)),
   );
 
   return [...singleFileItems, ...annualItems];

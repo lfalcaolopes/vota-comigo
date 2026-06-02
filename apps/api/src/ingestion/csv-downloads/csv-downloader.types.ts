@@ -33,6 +33,8 @@ export type CsvDownloaderExecutionErrorResult = CsvDownloaderErrorResult & {
 export type CsvDownloaderConfig = {
   years: readonly number[];
   force: boolean;
+  // Restringe o plano a datasets específicos. Undefined baixa todos.
+  datasets?: readonly string[];
 };
 
 export type CsvDownloadPlanItem = {

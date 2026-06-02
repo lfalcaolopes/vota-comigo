@@ -14,6 +14,8 @@ export function resolveCsvDownloaderConfig(
   const lastValue = getStringArg(args, '--last');
   const fromValue = getStringArg(args, '--from');
   const toValue = getStringArg(args, '--to');
+  const datasetValue = getStringArg(args, '--dataset');
+  const datasets = datasetValue?.split(',');
   const force = args.includes('--force');
 
   if (
@@ -36,7 +38,7 @@ export function resolveCsvDownloaderConfig(
       return years;
     }
 
-    return configResolution(years.value, force, currentYear);
+    return configResolution(years.value, force, currentYear, datasets);
   }
 
   if (lastValue !== undefined) {
@@ -53,6 +55,7 @@ export function resolveCsvDownloaderConfig(
       range(currentYear - last + 1, currentYear),
       force,
       currentYear,
+      datasets,
     );
   }
 
@@ -76,7 +79,12 @@ export function resolveCsvDownloaderConfig(
     };
   }
 
-  return configResolution(range(fromYear, toYear), force, currentYear);
+  return configResolution(
+    range(fromYear, toYear),
+    force,
+    currentYear,
+    datasets,
+  );
 }
 
 function getStringArg(
@@ -96,15 +104,19 @@ function configResolution(
   years: readonly number[],
   force: boolean,
   currentYear: number,
+  datasets?: readonly string[],
 ): CsvDownloaderConfigResolution {
+  // Proposições afetadas legítimas existem antes de 2001 (ex.: 1991, 1997-2000),
+  // então o piso não se aplica quando só `proposicoes` é baixado (ADR 0012).
+  const floorYear = isProposicoesOnly(datasets) ? 0 : firstCsvYear;
   const invalidYear = years.find(
-    (year) => year < firstCsvYear || year > currentYear,
+    (year) => year < floorYear || year > currentYear,
   );
 
   if (invalidYear !== undefined) {
     return {
       ok: false,
-      message: `Ano ${invalidYear} inválido. Use anos entre ${firstCsvYear} e ${currentYear}.`,
+      message: `Ano ${invalidYear} inválido. Use anos entre ${floorYear} e ${currentYear}.`,
     };
   }
 
@@ -113,8 +125,17 @@ function configResolution(
     config: {
       force,
       years,
+      ...(datasets === undefined ? {} : { datasets }),
     },
   };
+}
+
+function isProposicoesOnly(datasets?: readonly string[]): boolean {
+  return (
+    datasets !== undefined &&
+    datasets.length > 0 &&
+    datasets.every((dataset) => dataset === 'proposicoes')
+  );
 }
 
 function parseYears(
