@@ -29,6 +29,13 @@
       "when": 1780359056519,
       "tag": "0003_square_christian_walker",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1780407291995,
+      "tag": "0004_open_caretaker",
+      "breakpoints": true
     }
   ]
 }
