@@ -29,8 +29,10 @@ import { createVotacoesStep } from './steps/votacoes/votacoes.step';
 import type { VotacaoRepository } from './steps/votacoes/votacoes.repository.types';
 import { createProposicaoRepository } from './steps/proposicoes/proposicoes.repository';
 import { createProposicoesStep } from './steps/proposicoes/proposicoes.step';
-import { createProposicaoDownloader } from './steps/proposicoes/proposicoes.downloader';
-import type { ProposicaoDownloader } from './steps/proposicoes/proposicoes.step';
+import {
+  createDatasetDownloader,
+  type DatasetDownloader,
+} from './shared/dataset-downloader';
 import type { ProposicaoRepository } from './steps/proposicoes/proposicoes.repository.types';
 import { createVotacaoProposicaoRepository } from './steps/votacao-proposicao/votacao-proposicao.repository';
 import {
@@ -43,6 +45,13 @@ import type {
   VotacaoLookup,
   VotacaoProposicaoRepository,
 } from './steps/votacao-proposicao/votacao-proposicao.repository.types';
+import { createTemaRepository } from './steps/tema/tema.repository';
+import { createTemaLookup } from './steps/tema/tema.lookups';
+import { createTemaStep } from './steps/tema/tema.step';
+import type {
+  TemaLookup,
+  TemaRepository,
+} from './steps/tema/tema.repository.types';
 import { createDeputadoHistoricoClient } from './shared/camara-historico-client';
 import { fetchCamaraJson } from './shared/camara-api-transport';
 import type {
@@ -81,7 +90,7 @@ const dryRunVotacaoProposicaoRepository: VotacaoProposicaoRepository = {
 
 // O passo proposicoes faz short-circuit do download em dry-run; o guard apenas
 // garante que nenhuma rede seja acionada caso esse contrato seja quebrado.
-const dryRunProposicaoDownloader: ProposicaoDownloader = {
+const dryRunProposicaoDownloader: DatasetDownloader = {
   download: dryRunReadGuard,
 };
 
@@ -93,6 +102,15 @@ const dryRunVotacaoLookup: VotacaoLookup = {
 
 const dryRunProposicaoLookup: ProposicaoLookup = {
   loadIdByExternalId: () => Promise.resolve(new Map<number, string>()),
+};
+
+const dryRunTemaRepository: TemaRepository = {
+  upsertTemas: dryRunWriteGuard,
+  upsertVinculos: dryRunWriteGuard,
+};
+
+const dryRunTemaLookup: TemaLookup = {
+  loadIdByExternalCodTema: () => Promise.resolve(new Map<number, string>()),
 };
 
 const dryRunLegislaturaLookup: LegislaturaLookup = {
@@ -132,6 +150,12 @@ export function createIngestionSteps(
           votacaoLookup: dryRunVotacaoLookup,
           proposicaoLookup: dryRunProposicaoLookup,
         }),
+        createTemaStep({
+          repository: dryRunTemaRepository,
+          downloader: dryRunProposicaoDownloader,
+          proposicaoLookup: dryRunProposicaoLookup,
+          temaLookup: dryRunTemaLookup,
+        }),
         createDeputadoHistoricoStep(dryRunHistoricoDeps),
       ],
       close: () => Promise.resolve(),
@@ -151,12 +175,18 @@ export function createIngestionSteps(
     createVotacoesStep(createVotacaoRepository(db)),
     createProposicoesStep({
       repository: createProposicaoRepository(db),
-      downloader: createProposicaoDownloader(),
+      downloader: createDatasetDownloader('proposicoes'),
     }),
     createVotacaoProposicaoStep({
       repository: createVotacaoProposicaoRepository(db),
       votacaoLookup: createVotacaoLookup(db),
       proposicaoLookup: createProposicaoLookup(db),
+    }),
+    createTemaStep({
+      repository: createTemaRepository(db),
+      downloader: createDatasetDownloader('proposicoesTemas'),
+      proposicaoLookup: createProposicaoLookup(db),
+      temaLookup: createTemaLookup(db),
     }),
     createDeputadoHistoricoStep({
       deputadoSource: createDeputadoSource(db, {
