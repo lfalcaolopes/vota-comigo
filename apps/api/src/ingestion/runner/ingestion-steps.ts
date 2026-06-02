@@ -27,6 +27,22 @@ import type { DeputadoHistoricoStepDeps } from './steps/deputado-historico/deput
 import { createVotacaoRepository } from './steps/votacoes/votacoes.repository';
 import { createVotacoesStep } from './steps/votacoes/votacoes.step';
 import type { VotacaoRepository } from './steps/votacoes/votacoes.repository.types';
+import { createProposicaoRepository } from './steps/proposicoes/proposicoes.repository';
+import { createProposicoesStep } from './steps/proposicoes/proposicoes.step';
+import { createProposicaoDownloader } from './steps/proposicoes/proposicoes.downloader';
+import type { ProposicaoDownloader } from './steps/proposicoes/proposicoes.step';
+import type { ProposicaoRepository } from './steps/proposicoes/proposicoes.repository.types';
+import { createVotacaoProposicaoRepository } from './steps/votacao-proposicao/votacao-proposicao.repository';
+import {
+  createProposicaoLookup,
+  createVotacaoLookup,
+} from './steps/votacao-proposicao/lookups';
+import { createVotacaoProposicaoStep } from './steps/votacao-proposicao/votacao-proposicao.step';
+import type {
+  ProposicaoLookup,
+  VotacaoLookup,
+  VotacaoProposicaoRepository,
+} from './steps/votacao-proposicao/votacao-proposicao.repository.types';
 import { createDeputadoHistoricoClient } from './shared/camara-historico-client';
 import { fetchCamaraJson } from './shared/camara-api-transport';
 import type {
@@ -53,6 +69,30 @@ const dryRunPartidoRepository: PartidoRepository = {
 
 const dryRunVotacaoRepository: VotacaoRepository = {
   upsert: dryRunWriteGuard,
+};
+
+const dryRunProposicaoRepository: ProposicaoRepository = {
+  upsert: dryRunWriteGuard,
+};
+
+const dryRunVotacaoProposicaoRepository: VotacaoProposicaoRepository = {
+  upsert: dryRunWriteGuard,
+};
+
+// O passo proposicoes faz short-circuit do download em dry-run; o guard apenas
+// garante que nenhuma rede seja acionada caso esse contrato seja quebrado.
+const dryRunProposicaoDownloader: ProposicaoDownloader = {
+  download: dryRunReadGuard,
+};
+
+// Lookups vazios mantêm o dry-run sem tocar o banco: o passo ainda parseia e
+// valida cada linha, sem resolver FKs reais.
+const dryRunVotacaoLookup: VotacaoLookup = {
+  loadIdByExternalId: () => Promise.resolve(new Map<string, string>()),
+};
+
+const dryRunProposicaoLookup: ProposicaoLookup = {
+  loadIdByExternalId: () => Promise.resolve(new Map<number, string>()),
 };
 
 const dryRunLegislaturaLookup: LegislaturaLookup = {
@@ -83,6 +123,15 @@ export function createIngestionSteps(
         createDeputadosStep(dryRunDeputadoRepository, dryRunLegislaturaLookup),
         createPartidosStep(dryRunPartidoRepository),
         createVotacoesStep(dryRunVotacaoRepository),
+        createProposicoesStep({
+          repository: dryRunProposicaoRepository,
+          downloader: dryRunProposicaoDownloader,
+        }),
+        createVotacaoProposicaoStep({
+          repository: dryRunVotacaoProposicaoRepository,
+          votacaoLookup: dryRunVotacaoLookup,
+          proposicaoLookup: dryRunProposicaoLookup,
+        }),
         createDeputadoHistoricoStep(dryRunHistoricoDeps),
       ],
       close: () => Promise.resolve(),
@@ -100,6 +149,15 @@ export function createIngestionSteps(
     ),
     createPartidosStep(createPartidoRepository(db)),
     createVotacoesStep(createVotacaoRepository(db)),
+    createProposicoesStep({
+      repository: createProposicaoRepository(db),
+      downloader: createProposicaoDownloader(),
+    }),
+    createVotacaoProposicaoStep({
+      repository: createVotacaoProposicaoRepository(db),
+      votacaoLookup: createVotacaoLookup(db),
+      proposicaoLookup: createProposicaoLookup(db),
+    }),
     createDeputadoHistoricoStep({
       deputadoSource: createDeputadoSource(db, {
         onlyExternalIds: input.retryExternalIds,

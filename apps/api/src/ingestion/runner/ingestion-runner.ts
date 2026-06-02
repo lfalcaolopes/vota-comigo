@@ -45,6 +45,8 @@ export const ingestionStepDescriptors: readonly IngestionStepDescriptor[] = [
     scope: 'annual',
     companionDatasets: ['votacoesVotos'],
   },
+  { name: 'proposicoes', scope: 'single', source: 'derived' },
+  { name: 'votacao_proposicao', scope: 'single', source: 'derived' },
   { name: 'deputado_historico', scope: 'single', source: 'api' },
 ];
 
@@ -154,6 +156,34 @@ export async function executeIngestionRunner(
           sourceFile: step.name,
           reporter: options.reporter,
           readRecords: apiReadGuard,
+        };
+      } else if (step.source === 'derived') {
+        // Passo auto-gerido: varre múltiplos anos por conta própria, sem fonte
+        // única em disco. O runner só expõe os anos em escopo e um abridor de
+        // datasets anuais arbitrários.
+        context = {
+          dryRun: config.dryRun,
+          strict: config.strict,
+          debug: config.debug,
+          limit: config.limit,
+          sourceFile: step.name,
+          reporter: options.reporter,
+          readRecords: apiReadGuard,
+          years: config.years,
+          readDataset: (dataset, year) => {
+            const datasetPath = sourcePathFor({
+              stepName: dataset,
+              scope: 'annual',
+              dataset,
+              year,
+            });
+
+            if (!sourceExists(datasetPath)) {
+              return undefined;
+            }
+
+            return () => csvReader(openSource(datasetPath));
+          },
         };
       } else {
         const sourcePath = sourcePathFor(entry);
