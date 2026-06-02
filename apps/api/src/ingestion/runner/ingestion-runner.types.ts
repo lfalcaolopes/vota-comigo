@@ -26,7 +26,7 @@ export type IngestionRunnerConfigOptions = {
 
 export type StepScope = 'single' | 'annual';
 
-export type StepSource = 'csv' | 'api';
+export type StepSource = 'csv' | 'api' | 'derived';
 
 export type IngestionStepDescriptor = {
   readonly name: string;
@@ -83,6 +83,12 @@ export type IngestionStepContext = {
   // Opens a companion dataset declared in companionDatasets for the same year.
   // Returns undefined when the companion source for that year is absent.
   readCompanion?: (dataset: string) => CsvRowSource | undefined;
+  // Scope years (respeitando --from/--to), provided to derived steps that
+  // precisam varrer múltiplos anos por conta própria.
+  readonly years?: readonly number[];
+  // Abre qualquer dataset anual para um ano arbitrário. Undefined quando o
+  // arquivo do ano está ausente em disco.
+  readDataset?: (dataset: string, year: number) => CsvRowSource | undefined;
 };
 
 export type IngestionStep = IngestionStepDescriptor & {
