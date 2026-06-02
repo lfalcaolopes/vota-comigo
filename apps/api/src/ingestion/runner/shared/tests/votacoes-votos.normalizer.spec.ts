@@ -1,4 +1,7 @@
-import { normalizeVotacaoVotoRecord } from '../votacoes-votos.normalizer';
+import {
+  normalizeVotacaoVotoRecord,
+  normalizeVotoCategoria,
+} from '../votacoes-votos.normalizer';
 
 const baseRecord = {
   idVotacao: '1197773-140',
@@ -88,6 +91,28 @@ describe('normalizeVotacaoVotoRecord', () => {
         status: 'invalid',
         uri: 'https://dadosabertos.camara.leg.br/api/v2/partidos/sem-id',
       });
+    });
+  });
+});
+
+describe('normalizeVotoCategoria', () => {
+  describe('when normalizing raw Camara vote values', () => {
+    it('maps supported values to the canonical vote categories', () => {
+      // Arrange
+      const examples = [
+        ['Sim', 'sim'],
+        ['Não', 'nao'],
+        ['Abstenção', 'abstencao'],
+        ['Obstrução', 'obstrucao'],
+        ['Artigo 17', 'artigo_17'],
+        ['', 'nao_informado'],
+      ] as const;
+
+      // Act
+      const normalized = examples.map(([raw]) => normalizeVotoCategoria(raw));
+
+      // Assert
+      expect(normalized).toEqual(examples.map(([, expected]) => expected));
     });
   });
 });

@@ -27,6 +27,13 @@ import type { DeputadoHistoricoStepDeps } from './steps/deputado-historico/deput
 import { createVotacaoRepository } from './steps/votacoes/votacoes.repository';
 import { createVotacoesStep } from './steps/votacoes/votacoes.step';
 import type { VotacaoRepository } from './steps/votacoes/votacoes.repository.types';
+import { createVotacaoVotosRepository } from './steps/votacao-votos/votacao-votos.repository';
+import { createDeputadoLookup } from './steps/votacao-votos/lookups';
+import { createVotacaoVotosStep } from './steps/votacao-votos/votacao-votos.step';
+import type {
+  DeputadoLookup,
+  VotacaoVotosRepository,
+} from './steps/votacao-votos/votacao-votos.repository.types';
 import { createProposicaoRepository } from './steps/proposicoes/proposicoes.repository';
 import { createProposicoesStep } from './steps/proposicoes/proposicoes.step';
 import {
@@ -80,6 +87,10 @@ const dryRunVotacaoRepository: VotacaoRepository = {
   upsert: dryRunWriteGuard,
 };
 
+const dryRunVotacaoVotosRepository: VotacaoVotosRepository = {
+  upsert: dryRunWriteGuard,
+};
+
 const dryRunProposicaoRepository: ProposicaoRepository = {
   upsert: dryRunWriteGuard,
 };
@@ -101,6 +112,10 @@ const dryRunVotacaoLookup: VotacaoLookup = {
 };
 
 const dryRunProposicaoLookup: ProposicaoLookup = {
+  loadIdByExternalId: () => Promise.resolve(new Map<number, string>()),
+};
+
+const dryRunDeputadoLookup: DeputadoLookup = {
   loadIdByExternalId: () => Promise.resolve(new Map<number, string>()),
 };
 
@@ -141,6 +156,11 @@ export function createIngestionSteps(
         createDeputadosStep(dryRunDeputadoRepository, dryRunLegislaturaLookup),
         createPartidosStep(dryRunPartidoRepository),
         createVotacoesStep(dryRunVotacaoRepository),
+        createVotacaoVotosStep({
+          repository: dryRunVotacaoVotosRepository,
+          votacaoLookup: dryRunVotacaoLookup,
+          deputadoLookup: dryRunDeputadoLookup,
+        }),
         createProposicoesStep({
           repository: dryRunProposicaoRepository,
           downloader: dryRunProposicaoDownloader,
@@ -173,6 +193,11 @@ export function createIngestionSteps(
     ),
     createPartidosStep(createPartidoRepository(db)),
     createVotacoesStep(createVotacaoRepository(db)),
+    createVotacaoVotosStep({
+      repository: createVotacaoVotosRepository(db),
+      votacaoLookup: createVotacaoLookup(db),
+      deputadoLookup: createDeputadoLookup(db),
+    }),
     createProposicoesStep({
       repository: createProposicaoRepository(db),
       downloader: createDatasetDownloader('proposicoes'),

@@ -35,6 +35,14 @@ export type NormalizedVotacaoVoto = {
   partido: PartidoObservation;
 };
 
+export type VotoCategoria =
+  | 'sim'
+  | 'nao'
+  | 'abstencao'
+  | 'obstrucao'
+  | 'artigo_17'
+  | 'nao_informado';
+
 /**
  * Ponto único de parsing de uma linha de `votacoesVotos-{ano}.csv`. Mapeia os
  * campos da fonte (preservando a grafia da Câmara) e expõe o partido observado,
@@ -59,6 +67,33 @@ export function normalizeVotacaoVotoRecord(
     },
     partido: observePartido(record),
   };
+}
+
+export function normalizeVotoCategoria(voto: string | null): VotoCategoria {
+  if (voto === null || voto.trim() === '') {
+    return 'nao_informado';
+  }
+
+  const normalized = voto
+    .trim()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase();
+
+  switch (normalized) {
+    case 'sim':
+      return 'sim';
+    case 'nao':
+      return 'nao';
+    case 'abstencao':
+      return 'abstencao';
+    case 'obstrucao':
+      return 'obstrucao';
+    case 'artigo 17':
+      return 'artigo_17';
+    default:
+      return 'nao_informado';
+  }
 }
 
 function observePartido(record: CsvRecord): PartidoObservation {

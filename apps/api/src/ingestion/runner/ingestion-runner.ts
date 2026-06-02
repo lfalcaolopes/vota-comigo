@@ -45,6 +45,7 @@ export const ingestionStepDescriptors: readonly IngestionStepDescriptor[] = [
     scope: 'annual',
     companionDatasets: ['votacoesVotos'],
   },
+  { name: 'votacao_votos', scope: 'annual', dataset: 'votacoesVotos' },
   { name: 'proposicoes', scope: 'single', source: 'derived' },
   { name: 'votacao_proposicao', scope: 'single', source: 'derived' },
   { name: 'tema', scope: 'single', source: 'derived' },

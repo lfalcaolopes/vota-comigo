@@ -43,6 +43,13 @@
       "when": 1780411912802,
       "tag": "0005_stiff_raider",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1780418884715,
+      "tag": "0006_panoramic_thor_girl",
+      "breakpoints": true
     }
   ]
 }

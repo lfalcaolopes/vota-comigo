@@ -27,6 +27,7 @@ describe('ingestion steps provider', () => {
       expect(steps.map((step) => step.name)).toContain('legislaturas');
       expect(steps.map((step) => step.name)).toContain('deputado_historico');
       expect(steps.map((step) => step.name)).toContain('votacoes');
+      expect(steps.map((step) => step.name)).toContain('votacao_votos');
     });
   });
 
@@ -52,6 +53,7 @@ describe('ingestion steps provider', () => {
       expect(steps.map((step) => step.name)).toContain('legislaturas');
       expect(steps.map((step) => step.name)).toContain('deputado_historico');
       expect(steps.map((step) => step.name)).toContain('votacoes');
+      expect(steps.map((step) => step.name)).toContain('votacao_votos');
       expect(closed).toBe(true);
     });
   });
