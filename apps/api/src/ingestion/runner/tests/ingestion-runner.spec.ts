@@ -384,7 +384,7 @@ describe('ingestion runner', () => {
       let createStepsCalled = false;
 
       // Act
-      const result = await executeIngestionRunner(['--only=votacoes'], {
+      const result = await executeIngestionRunner(['--only=inexistente'], {
         currentYear: 2026,
         createSteps: async () => {
           createStepsCalled = true;
@@ -624,6 +624,125 @@ describe('ingestion runner', () => {
       }
       expect(result.exitCode).toBe(0);
       expect(createStepsCalled).toBe(false);
+    });
+  });
+
+  describe('when a step declares companion datasets', () => {
+    it('provides a companion reader that resolves the companion source for the year', async () => {
+      // Arrange
+      const openedPaths: string[] = [];
+      const votosCsv = ['idVotacao;voto', '1-1;Sim', '2-2;Nao'].join('\n');
+      const votacoesCsv = ['id;siglaOrgao', '1-1;PLEN'].join('\n');
+      let companionRowCount = 0;
+      const probeStep: IngestionStep = {
+        name: 'votacoes',
+        scope: 'annual',
+        companionDatasets: ['votacoesVotos'],
+        async run(context): Promise<StepRunResult> {
+          const companion = context.readCompanion?.('votacoesVotos');
+          if (companion !== undefined) {
+            for await (const entry of companion()) {
+              void entry;
+              companionRowCount += 1;
+            }
+          }
+          return {
+            read: 0,
+            inserted: 0,
+            updated: 0,
+            ignored: 0,
+            rejected: [],
+            externalGaps: [],
+          };
+        },
+      };
+
+      // Act
+      const result = await executeIngestionRunner(
+        ['--only=votacoes', '--from=2024', '--to=2024'],
+        {
+          currentYear: 2026,
+          stepDescriptors: [
+            {
+              name: 'votacoes',
+              scope: 'annual',
+              companionDatasets: ['votacoesVotos'],
+            },
+          ],
+          csvReader: readCsvRecords,
+          openSource: (path) => {
+            openedPaths.push(path);
+            return Readable.from(
+              path.includes('votacoesVotos') ? votosCsv : votacoesCsv,
+            );
+          },
+          createSteps: async () => ({
+            steps: [probeStep],
+            close: async () => {},
+          }),
+        },
+      );
+
+      // Assert
+      expect(result.ok).toBe(true);
+      if (!result.ok) {
+        throw new Error(result.message);
+      }
+      expect(companionRowCount).toBe(2);
+      expect(openedPaths).toContain(
+        'data/raw/votacoesVotos/votacoesVotos-2024.csv',
+      );
+    });
+
+    it('returns an undefined companion reader when the companion source is absent', async () => {
+      // Arrange
+      let companionDefined = true;
+      const probeStep: IngestionStep = {
+        name: 'votacoes',
+        scope: 'annual',
+        companionDatasets: ['votacoesVotos'],
+        async run(context): Promise<StepRunResult> {
+          companionDefined =
+            context.readCompanion?.('votacoesVotos') !== undefined;
+          return {
+            read: 0,
+            inserted: 0,
+            updated: 0,
+            ignored: 0,
+            rejected: [],
+            externalGaps: [],
+          };
+        },
+      };
+
+      // Act
+      const result = await executeIngestionRunner(
+        ['--only=votacoes', '--from=2024', '--to=2024'],
+        {
+          currentYear: 2026,
+          stepDescriptors: [
+            {
+              name: 'votacoes',
+              scope: 'annual',
+              companionDatasets: ['votacoesVotos'],
+            },
+          ],
+          csvReader: readCsvRecords,
+          sourceExists: (path) => !path.includes('votacoesVotos'),
+          openSource: () => Readable.from('id;siglaOrgao\n1-1;PLEN'),
+          createSteps: async () => ({
+            steps: [probeStep],
+            close: async () => {},
+          }),
+        },
+      );
+
+      // Assert
+      expect(result.ok).toBe(true);
+      if (!result.ok) {
+        throw new Error(result.message);
+      }
+      expect(companionDefined).toBe(false);
     });
   });
 

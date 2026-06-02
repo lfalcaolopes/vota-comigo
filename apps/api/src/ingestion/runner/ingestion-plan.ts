@@ -14,10 +14,14 @@ export function buildIngestionPlan(
       : steps.filter((step) => config.only!.includes(step.name));
 
   return selected.flatMap((step): IngestionPlanEntry[] => {
-    const base =
-      step.dataset === undefined
-        ? { stepName: step.name, scope: step.scope }
-        : { stepName: step.name, scope: step.scope, dataset: step.dataset };
+    const base: IngestionPlanEntry = {
+      stepName: step.name,
+      scope: step.scope,
+      ...(step.dataset === undefined ? {} : { dataset: step.dataset }),
+      ...(step.companionDatasets === undefined
+        ? {}
+        : { companionDatasets: step.companionDatasets }),
+    };
 
     if (step.scope === 'single') {
       return [base];

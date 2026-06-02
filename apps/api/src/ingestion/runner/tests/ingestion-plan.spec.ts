@@ -100,4 +100,29 @@ describe('ingestion plan', () => {
       ]);
     });
   });
+
+  describe('when a step declares companion datasets', () => {
+    it('carries the companion datasets into each planned entry', () => {
+      // Arrange
+      const votacoesStep = {
+        name: 'votacoes',
+        scope: 'annual' as const,
+        companionDatasets: ['votacoesVotos'],
+      };
+      const runnerConfig = config({ only: ['votacoes'], years: [2024] });
+
+      // Act
+      const plan = buildIngestionPlan(runnerConfig, [votacoesStep]);
+
+      // Assert
+      expect(plan).toEqual([
+        {
+          stepName: 'votacoes',
+          scope: 'annual',
+          companionDatasets: ['votacoesVotos'],
+          year: 2024,
+        },
+      ]);
+    });
+  });
 });

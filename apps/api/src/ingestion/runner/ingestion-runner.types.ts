@@ -33,12 +33,16 @@ export type IngestionStepDescriptor = {
   readonly scope: StepScope;
   readonly dataset?: string;
   readonly source?: StepSource;
+  // Extra datasets the step reads alongside its primary source, resolved per year
+  // by the orchestrator and exposed through context.readCompanion.
+  readonly companionDatasets?: readonly string[];
 };
 
 export type IngestionPlanEntry = {
   stepName: string;
   scope: StepScope;
   dataset?: string;
+  companionDatasets?: readonly string[];
   year?: number;
 };
 
@@ -76,6 +80,9 @@ export type IngestionStepContext = {
   readonly sourceFile: string;
   readonly reporter?: IngestionReporter;
   readRecords: CsvRowSource;
+  // Opens a companion dataset declared in companionDatasets for the same year.
+  // Returns undefined when the companion source for that year is absent.
+  readCompanion?: (dataset: string) => CsvRowSource | undefined;
 };
 
 export type IngestionStep = IngestionStepDescriptor & {

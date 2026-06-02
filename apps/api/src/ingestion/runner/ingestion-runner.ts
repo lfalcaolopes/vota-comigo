@@ -40,6 +40,11 @@ export const ingestionStepDescriptors: readonly IngestionStepDescriptor[] = [
   { name: 'legislaturas', scope: 'single' },
   { name: 'deputados', scope: 'single' },
   { name: 'partidos', scope: 'annual', dataset: 'votacoesVotos' },
+  {
+    name: 'votacoes',
+    scope: 'annual',
+    companionDatasets: ['votacoesVotos'],
+  },
   { name: 'deputado_historico', scope: 'single', source: 'api' },
 ];
 
@@ -191,6 +196,15 @@ export async function executeIngestionRunner(
           sourceFile: basename(sourcePath),
           reporter: options.reporter,
           readRecords: () => csvReader(openSource(sourcePath)),
+          readCompanion: (dataset) => {
+            const companionPath = sourcePathFor({ ...entry, dataset });
+
+            if (!sourceExists(companionPath)) {
+              return undefined;
+            }
+
+            return () => csvReader(openSource(companionPath));
+          },
         };
       }
 
