@@ -5,3 +5,5 @@ export * from './deputado-historico';
 export * from './votacao';
 export * from './proposicao';
 export * from './votacao-proposicao';
+export * from './tema';
+export * from './proposicao-tema';
