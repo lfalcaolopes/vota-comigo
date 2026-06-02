@@ -44,6 +44,28 @@ describe('csv downloader dataset selection', () => {
     });
   });
 
+  describe('when resolving a proposicoesTemas-only download', () => {
+    it('accepts years before the 2001 floor for proposicoesTemas', () => {
+      // Arrange
+      const args = ['--dataset=proposicoesTemas', '--years=1991,2000'];
+
+      // Act
+      const resolution = resolveCsvDownloaderConfig(args, {
+        currentYear: 2026,
+      });
+
+      // Assert
+      expect(resolution).toEqual({
+        ok: true,
+        config: {
+          force: false,
+          years: [1991, 2000],
+          datasets: ['proposicoesTemas'],
+        },
+      });
+    });
+  });
+
   describe('when resolving any other dataset', () => {
     it('keeps the 2001 floor for years before 2001', () => {
       // Arrange

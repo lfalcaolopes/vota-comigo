@@ -106,9 +106,10 @@ function configResolution(
   currentYear: number,
   datasets?: readonly string[],
 ): CsvDownloaderConfigResolution {
-  // Proposições afetadas legítimas existem antes de 2001 (ex.: 1991, 1997-2000),
-  // então o piso não se aplica quando só `proposicoes` é baixado (ADR 0012).
-  const floorYear = isProposicoesOnly(datasets) ? 0 : firstCsvYear;
+  // Proposições e seus temas legítimos existem antes de 2001 (ex.: 1991,
+  // 1997-2000), então o piso não se aplica quando só esses datasets são
+  // baixados (ADR 0012).
+  const floorYear = shouldWaiveYearFloor(datasets) ? 0 : firstCsvYear;
   const invalidYear = years.find(
     (year) => year < floorYear || year > currentYear,
   );
@@ -130,11 +131,13 @@ function configResolution(
   };
 }
 
-function isProposicoesOnly(datasets?: readonly string[]): boolean {
+const preCsvFloorDatasets = new Set(['proposicoes', 'proposicoesTemas']);
+
+function shouldWaiveYearFloor(datasets?: readonly string[]): boolean {
   return (
     datasets !== undefined &&
     datasets.length > 0 &&
-    datasets.every((dataset) => dataset === 'proposicoes')
+    datasets.every((dataset) => preCsvFloorDatasets.has(dataset))
   );
 }
 

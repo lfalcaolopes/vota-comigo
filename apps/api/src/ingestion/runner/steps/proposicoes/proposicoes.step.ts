@@ -11,14 +11,14 @@ import type {
   ProposicaoRepository,
   ProposicaoRow,
 } from './proposicoes.repository.types';
+import type {
+  DatasetDownloader,
+  DatasetDownloadOutcome,
+} from '../../shared/dataset-downloader';
 
-export type ProposicaoDownloadOutcome =
-  | { ok: true }
-  | { ok: false; failures: readonly { year: number; reason: string }[] };
+export type ProposicaoDownloadOutcome = DatasetDownloadOutcome;
 
-export type ProposicaoDownloader = {
-  download(years: readonly number[]): Promise<ProposicaoDownloadOutcome>;
-};
+export type ProposicaoDownloader = DatasetDownloader;
 
 export type ProposicoesStepDeps = {
   repository: ProposicaoRepository;
