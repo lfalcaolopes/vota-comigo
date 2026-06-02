@@ -24,6 +24,9 @@ import {
 } from './steps/deputado-historico/deputado-historico.repository';
 import { createDeputadoHistoricoStep } from './steps/deputado-historico/deputado-historico.step';
 import type { DeputadoHistoricoStepDeps } from './steps/deputado-historico/deputado-historico.step';
+import { createVotacaoRepository } from './steps/votacoes/votacoes.repository';
+import { createVotacoesStep } from './steps/votacoes/votacoes.step';
+import type { VotacaoRepository } from './steps/votacoes/votacoes.repository.types';
 import { createDeputadoHistoricoClient } from './shared/camara-historico-client';
 import { fetchCamaraJson } from './shared/camara-api-transport';
 import type {
@@ -45,6 +48,10 @@ const dryRunDeputadoRepository: DeputadoRepository = {
 };
 
 const dryRunPartidoRepository: PartidoRepository = {
+  upsert: dryRunWriteGuard,
+};
+
+const dryRunVotacaoRepository: VotacaoRepository = {
   upsert: dryRunWriteGuard,
 };
 
@@ -75,6 +82,7 @@ export function createIngestionSteps(
         createLegislaturasStep(dryRunLegislaturaRepository),
         createDeputadosStep(dryRunDeputadoRepository, dryRunLegislaturaLookup),
         createPartidosStep(dryRunPartidoRepository),
+        createVotacoesStep(dryRunVotacaoRepository),
         createDeputadoHistoricoStep(dryRunHistoricoDeps),
       ],
       close: () => Promise.resolve(),
@@ -91,6 +99,7 @@ export function createIngestionSteps(
       createLegislaturaLookup(db),
     ),
     createPartidosStep(createPartidoRepository(db)),
+    createVotacoesStep(createVotacaoRepository(db)),
     createDeputadoHistoricoStep({
       deputadoSource: createDeputadoSource(db, {
         onlyExternalIds: input.retryExternalIds,

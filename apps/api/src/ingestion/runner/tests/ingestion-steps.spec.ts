@@ -26,6 +26,7 @@ describe('ingestion steps provider', () => {
       expect(factoryCalled).toBe(false);
       expect(steps.map((step) => step.name)).toContain('legislaturas');
       expect(steps.map((step) => step.name)).toContain('deputado_historico');
+      expect(steps.map((step) => step.name)).toContain('votacoes');
     });
   });
 
@@ -50,6 +51,7 @@ describe('ingestion steps provider', () => {
       // Assert
       expect(steps.map((step) => step.name)).toContain('legislaturas');
       expect(steps.map((step) => step.name)).toContain('deputado_historico');
+      expect(steps.map((step) => step.name)).toContain('votacoes');
       expect(closed).toBe(true);
     });
   });
