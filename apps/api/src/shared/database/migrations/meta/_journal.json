@@ -22,6 +22,13 @@
       "when": 1780182438446,
       "tag": "0002_greedy_blink",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1780359056519,
+      "tag": "0003_square_christian_walker",
+      "breakpoints": true
     }
   ]
 }
