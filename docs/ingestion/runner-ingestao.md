@@ -33,6 +33,20 @@ npm run ingest -- --only=votacoes
 npm run ingest -- --only=votacoes,proposicoes
 ```
 
+### Passos manuais (fora da execução padrão)
+
+Alguns passos exigem condução manual e ficam **fora da execução padrão**: rodar `npm run ingest` (sem `--only`) executa todos os passos baseados em CSV mais o `sanity`, mas **não** o `deputado_historico`. Esse passo depende da API da Câmara (`GET /deputados/{id}/historico`), é lento e sujeito a indisponibilidade, então é ingerido separadamente, sob demanda:
+
+```
+# Ingestão padrão: todos os CSVs + sanity, sem histórico
+npm run ingest -- --from=2020 --to=2025
+
+# Histórico parlamentar, isolado e quando convém
+npm run ingest -- --only=deputado_historico
+```
+
+Quando nomeado explicitamente em `--only`, o passo manual roda normalmente (inclusive junto de outros, ex.: `--only=deputado_historico,votacoes`). A marcação de "manual" só afeta a execução padrão (sem `--only`).
+
 ### `--from={ano}` e `--to={ano}`
 
 Restringe a janela temporal dos arquivos por ano processados. Aplica-se apenas aos passos cujos CSVs são separados por ano (votações, proposições, etc.); arquivos únicos (deputados, legislaturas) são processados independentemente da janela.
@@ -103,6 +117,24 @@ Quando uma proposição afetada necessária não existe em nenhum CSV local (aus
 O passo `proposicoes` depende de arquivos `proposicoes-{ano}.csv` que cobrem anos anteriores ao da votação. Antes de ingerir, o runner deriva das votações nominais em escopo (respeitando `--from`/`--to`/`--limit`) o conjunto de anos de proposição necessários e verifica se cada arquivo está em disco. Os anos ausentes são logados e baixados automaticamente pelo downloader (ADR 0012). A mesma função de "conjunto necessário" alimenta a validação e a ingestão, para que não divirjam.
 
 Se o download de algum arquivo falhar, a execução para imediatamente, informando o motivo, quais arquivos faltam e como retomar (resolver a causa e reexecutar, p.ex. `--only=proposicoes`). Os passos baseados em CSV já concluídos antes do `proposicoes` permanecem gravados (upsert idempotente), então a retomada não os reprocessa de forma destrutiva.
+
+### Logs durante a execução
+
+Além do resumo final, o runner emite logs de progresso ao vivo, para que execuções longas (uma janela de vários anos leva minutos por passo) não fiquem silenciosas:
+
+- Um banner inicial com modo, janela de anos, número de passos planejados e limite.
+- Uma linha de início por passo (`[votacoes 2024] iniciando (votacoes-2024.csv)`).
+- A linha de resultado de cada passo assim que ele termina (lidos/inseridos/atualizados/ignorados/rejeitados + tempo), em vez de só no resumo final.
+- Progresso periódico nos passos de maior volume (`votacoes`, `votacao_votos`, `votacao_proposicao`) e nos passos derivados (`proposicoes`, `tema`), incluindo derivação do conjunto necessário, leitura por ano e downloads automáticos de arquivos ausentes.
+- Lacunas de fonte são logadas no instante em que ocorrem.
+
+Esses logs ficam no nível default. O modo `--debug` adiciona detalhe verboso (lotes de escrita, retries da API de histórico, breakdown de "outros" das divergências de placar) e, em terminais interativos, uma linha de status que se reescreve. O resumo final permanece como recap global (totais, modo, janela, lacunas e caminhos dos arquivos de log).
+
+### Sanity checks de placar
+
+O último passo da pipeline, `sanity`, compara o placar oficial de cada votação (`votosSim`/`votosNao` vindos de `votacoes-{ano}.csv`) com as contagens derivadas dos votos individuais agregados em `votacao_votos`. Quando `sim` ou `não` divergem, a votação é registrada como rejeição do tipo `sanity_placar_divergente`, com os dois valores, no resumo e no arquivo de erros. Votações sem placar oficial são contadas como ignoradas (não comparáveis), não como divergência. As demais categorias derivadas (abstenção, obstrução, Artigo 17, não informado) entram apenas como detalhe informativo em `--debug`, porque a semântica do agrupamento "Outros" da Câmara é ambígua. Em `--dry-run` o passo é pulado, pois não há escrita fresca para validar; em `--strict` aborta na primeira divergência.
+
+Há um caso específico tratado como **lacuna da fonte**, não como divergência: quando o placar oficial tem votos mas a fonte não traz nenhuma direção individual (todos os votos vieram em branco, agregados em `nao_informado`). É um problema de qualidade conhecido do `votacoesVotos` da Câmara — o placar agregado é publicado, mas o voto por deputado fica vazio. Nesse caso o `sanity` registra uma lacuna externa do tipo `votos_individuais_ausentes` no arquivo de lacunas (gaps), em vez de uma rejeição, deixando claro que a base local está fiel à fonte (sem registro sintético) e que a amostra individual daquela votação é inutilizável para o matcher. Divergências em que parte dos votos tem direção, mas os totais não batem, continuam sendo rejeições `sanity_placar_divergente`.
 
 ### Resumos e métricas
 
@@ -195,6 +227,35 @@ Sobrescrever a URL do banco diretamente na linha de comando.
 
 ## Pontos abertos a decidir na implementação
 
-1. **Convenção de tipos de erro.** Definir um conjunto enumerado de tipos (`validacao_situacao_desconhecida`, `parse_data_invalida`, `fk_proposicao_inexistente`, etc.) para agrupar consistentemente no resumo. Decidir no momento de implementar cada validação.
+1. **Convenção de tipos de erro.** Definir um conjunto enumerado de tipos (`validacao_situacao_desconhecida`, `parse_data_invalida`, `fk_proposicao_inexistente`, etc.) para agrupar consistentemente no resumo. Decidir no momento de implementar cada validação. Tipos já em uso incluem `validacao_id_invalido`, `validacao_uri_invalida`, `validacao_uri_partido_invalida`, `deputado_externo_desconhecido` e `sanity_placar_divergente` (divergência entre placar oficial e votos derivados).
 
 2. **Formato do conteúdo da linha no arquivo de erros.** Linha bruta do CSV, ou campos parseados estruturados (JSON por linha)? JSON por linha (JSONL) facilita parsing posterior para automação, mas linha bruta é mais simples e direta para inspeção visual. Decidir na implementação.
+
+---
+
+## Validação end-to-end 2020-2025
+
+Procedimento para validar a ingestão completa sobre a janela inicial de dados reais. Requer `DATABASE_URL` configurada e os CSVs já baixados em `data/raw/` (a janela 2020-2025; `proposicoes-{ano}.csv` e `proposicoesTemas-{ano}.csv` faltantes são baixados automaticamente pelos passos derivados).
+
+1. **Dry-run completo** para validar parsing, transformação e regras sem gravar:
+   ```
+   pnpm ingest -- --from=2020 --to=2025 --dry-run
+   ```
+   Confirme que não há rejeições inesperadas no resumo.
+
+2. **Execução real** que popula o banco:
+   ```
+   pnpm ingest -- --from=2020 --to=2025
+   ```
+
+3. **Reexecução** da mesma janela para verificar idempotência:
+   ```
+   pnpm ingest -- --from=2020 --to=2025
+   ```
+   O resumo da segunda execução deve mostrar praticamente zero inserções e atualizações consistentes; o número de linhas no banco não deve crescer.
+
+4. **Sanity checks.** Revise o passo `sanity` no resumo e, se houver divergências (`sanity_placar_divergente`), o arquivo de erros, para investigar votações cujo placar oficial não bate com os votos derivados.
+
+5. **Lacunas.** Revise o arquivo de lacunas (gaps) para proposições ou histórico parlamentar ausentes e para votações `votos_individuais_ausentes` (placar oficial sem voto individual na fonte). Lacunas são esperadas em parte dos dados e ficam registradas sem criar registros sintéticos; não indicam falha da ingestão.
+
+> Nota: `deputado_historico` é um passo manual — não roda na execução padrão. Rode-o à parte com `npm run ingest -- --only=deputado_historico` quando quiser popular o histórico parlamentar via API.
