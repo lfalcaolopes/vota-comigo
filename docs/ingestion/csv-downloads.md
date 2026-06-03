@@ -1,202 +1,200 @@
-# Script de Download dos CSVs
+# Downloader de CSVs — Contrato Operacional
 
-## Objetivo
+Contrato operacional do downloader dos CSVs públicos da Câmara dos Deputados (`dadosabertos.camara.leg.br`). Descreve como executar, depurar e interpretar o download sem reabrir as decisões de produto sobre quais arquivos entram na base.
 
-Definir o design do script responsável por baixar os CSVs públicos da Câmara dos Deputados (`dadosabertos.camara.leg.br`) para o sistema de arquivos local, preparando o input da pipeline de ingestão.
+## O que o downloader é
 
-Este script é o primeiro passo da pipeline. A ingestão consome os arquivos baixados localmente — não baixa diretamente. Separar as duas etapas permite iterar a ingestão sem refazer downloads, e isolar falhas de rede da lógica de transformação de dados.
+O downloader é o **primeiro passo** da pipeline: baixa os CSVs da Câmara para o sistema de arquivos local (`data/raw/`), preparando o input da ingestão. A ingestão consome os arquivos locais — não baixa diretamente. Separar as duas etapas permite iterar a ingestão sem refazer downloads e isola falhas de rede da lógica de transformação.
 
-### Informações atualizadas
+O catálogo de arquivos é uma **decisão de produto** (um catálogo estático local), não uma consequência automática de tudo que a Câmara publica via Swagger. Todos os CSVs da Câmara têm encoding UTF-8.
 
-As informações mais atualizadas referente aos csv podem ser encontrados na url: https://dadosabertos.camara.leg.br/swagger/api.html?tab=staticfile
+> O runner de ingestão também aciona o downloader sob demanda, para baixar os `proposicoes-{ano}.csv` e `proposicoesTemas-{ano}.csv` derivados que faltam ([ADR-0012](../adr/012-ingestao-proposicoes-sem-api-sem-principal.md)). Ver [runner-ingestao.md](./runner-ingestao.md).
 
-### Encoding
+### O que o downloader não faz
 
-Todos os Csv da câmara possuem o encoding UTF-8
+- Não valida conteúdo do CSV (separador, header, schema, `Content-Type`) — só o transporte: status HTTP de sucesso e conclusão do stream. Validação de conteúdo pertence à ingestão.
+- Não descobre arquivos dinamicamente via Swagger; usa o catálogo estático.
+- Não detecta que um arquivo **existente** mudou na fonte (ver [Detecção de "já baixado"](#detecção-de-já-baixado) e [Possibilidades futuras](#possibilidades-futuras)).
+- Não filtra conteúdo por janela dentro de um arquivo; a janela seleciona quais **arquivos anuais** baixar, não linhas.
 
 ---
 
-## Decisões tomadas
+## Como executar
 
-### Localização e comando público
+O comando público vive na raiz do repositório para reduzir atrito operacional. `pnpm download:csvs` é atalho para `pnpm --filter api download:csvs`. Os argumentos após `--` vão direto para o downloader.
 
-O script pertence ao contexto técnico da API, em `apps/api/src/ingestion/csv-downloads/`, porque sua saída é o input direto da pipeline de ingestão que popula o banco da aplicação.
+```bash
+# Backfill completo (2001 até o ano corrente, todos os datasets)
+pnpm download:csvs
 
-O comando público deve existir na raiz do repositório para reduzir atrito operacional:
-
-```
+# Uma janela específica
 pnpm download:csvs -- --from=2020 --to=2025
+
+# Anos avulsos (ex.: a Câmara corrigiu arquivos isolados)
+pnpm download:csvs -- --years=2019,2023
+
+# Só os últimos 5 anos
+pnpm download:csvs -- --last=5
+
+# Apenas alguns datasets de uma janela
+pnpm download:csvs -- --from=2020 --to=2025 --dataset=votacoes,votacoesVotos
 ```
 
-Esse comando delega para o pacote `api`, mas quem executa não precisa lembrar a sintaxe de filtro do workspace.
+Os arquivos são gravados em `apps/api/data/raw/` (a pasta fica no `.gitignore`; arquivos volumosos não vão para o Git). O downloader não toca o banco.
 
-### Configuração da janela temporal
+---
 
-O script aceita três mecanismos de configuração para os arquivos separados por ano:
+## Catálogo de datasets
 
-- `--from={ano}` e `--to={ano}` para definir um intervalo. Caminho default e mais legível.
-- `--years={ano1,ano2,...}` para baixar anos específicos. Útil quando a Câmara corrige um arquivo isolado e é necessário rebaixar apenas ele.
-- `--last={quantidade}` para baixar uma janela curta até o ano corrente. Inicialmente aceita apenas `5` ou `10`.
+A URL segue o padrão `{baseUrl}/{dataset}/csv/{filename}`, com base `https://dadosabertos.camara.leg.br/arquivos`. O caminho local é `data/raw/{dataset}/{filename}`. A janela temporal aplica-se só aos arquivos anuais; os arquivos únicos são baixados sempre (quando não filtrados por `--dataset`).
 
-Precedência das opções de janela temporal, da maior para a menor:
+| Dataset | Tipo | Arquivo | Caminho local |
+|---------|------|---------|---------------|
+| `votacoes` | anual | `votacoes-{ano}.csv` | `data/raw/votacoes/` |
+| `votacoesVotos` | anual | `votacoesVotos-{ano}.csv` | `data/raw/votacoesVotos/` |
+| `votacoesProposicoes` | anual | `votacoesProposicoes-{ano}.csv` | `data/raw/votacoesProposicoes/` |
+| `proposicoes` | anual | `proposicoes-{ano}.csv` | `data/raw/proposicoes/` |
+| `proposicoesTemas` | anual | `proposicoesTemas-{ano}.csv` | `data/raw/proposicoesTemas/` |
+| `deputados` | único | `deputados.csv` | `data/raw/deputados/` |
+| `legislaturas` | único | `legislaturas.csv` | `data/raw/legislaturas/` |
 
-1. `--years`
-2. `--from`/`--to`
-3. `--last`
-4. default completo
+Subpasta por dataset evita uma pasta plana com centenas de arquivos quando a janela cobre 25 anos. As informações mais atualizadas sobre os arquivos estão em <https://dadosabertos.camara.leg.br/swagger/api.html?tab=staticfile>.
 
-Quando `--years` é fornecido, ele sobrescreve `--from`/`--to` e `--last`.
+---
 
-`--last` não pode ser combinado com `--years`, `--from` ou `--to`. Essa combinação é tratada como configuração ambígua e aborta antes de qualquer download. `--force` pode ser combinado com qualquer mecanismo de janela temporal, porque não define quais arquivos entram na execução — apenas muda a política de sobrescrita.
+## Flags
 
-Quando nenhuma janela temporal é informada, o script baixa todos os anos válidos: `from = 2001` e `to = ano atual`.
+### Janela temporal: `--from` / `--to`, `--years`, `--last`
 
-`--last=5` baixa os últimos 5 anos incluindo o ano corrente. `--last=10` baixa os últimos 10 anos incluindo o ano corrente.
+Três formas mutuamente exclusivas de definir os anos dos arquivos anuais:
 
-Quando apenas um lado do intervalo é informado, o script completa o outro lado assim:
+- **`--from={ano}` / `--to={ano}`** — intervalo. Caminho default e mais legível. Quando só um lado é informado: `--from` baixa de `{ano}` ao ano corrente; `--to` baixa de `2001` a `{ano}`.
+- **`--years={ano1,ano2,...}`** — anos avulsos, separados por vírgula. Útil quando a Câmara corrige um arquivo isolado.
+- **`--last={5|10}`** — janela curta até o ano corrente, incluindo-o. Aceita apenas `5` ou `10`.
 
-- `--from={ano}` baixa de `{ano}` até o ano corrente.
-- `--to={ano}` baixa de `2001` até `{ano}`.
+**Precedência**, da maior para a menor: `--years` → `--from`/`--to` → `--last` → default completo (`from=2001`, `to=ano atual`).
 
-O script aceita apenas anos entre `2001` e o ano corrente, inclusive. Valores fora desse intervalo abortam a execução antes de qualquer download, com mensagem indicando o intervalo válido.
+`--last` **não pode** ser combinado com `--years`, `--from` ou `--to`: a combinação é tratada como configuração ambígua e aborta antes de qualquer download.
 
-### Dois grupos de arquivos
-
-A janela temporal só se aplica aos arquivos separados por ano. Arquivos únicos são baixados sempre, sem parâmetro de ano.
-
-**Arquivos por ano** (afetados pela janela):
-- `votacoes-{ano}.csv`
-- `votacoesVotos-{ano}.csv`
-- `votacoesProposicoes-{ano}.csv`
-- `proposicoes-{ano}.csv`
-- `proposicoesTemas-{ano}.csv`
-
-**Arquivos únicos** (baixados sempre):
-- `deputados.csv` (lista completa de todos os deputados que já passaram pela Câmara)
-- `legislaturas.csv` (lista completa)
-
-Não há filtro por dataset na implementação inicial. Uma execução com `--years=2025`, por exemplo, baixa todos os datasets anuais configurados para 2025 e também considera os arquivos únicos. Um filtro como `--only-dataset` fica adiado até existir necessidade real.
-
-### Catálogo de URLs
-
-O script usa um catálogo estático local com os datasets definidos nesta documentação, em vez de descobrir arquivos dinamicamente via Swagger. A lista de arquivos baixados é uma decisão de produto da ingestão, não uma consequência automática de tudo que a Câmara publica.
-
-A URL dos arquivos segue o padrão:
-
-```
-{baseUrl}/{dataset}/csv/{filename}
+```bash
+pnpm download:csvs -- --from=2024 --to=2024   # ano único via intervalo
+pnpm download:csvs -- --years=2025
+pnpm download:csvs -- --last=10
 ```
 
-Base URL padrão:
+### `--dataset={dataset1,dataset2,...}`
 
-```
-https://dadosabertos.camara.leg.br/arquivos
-```
+Restringe o plano a datasets específicos (anuais e/ou únicos), separados por vírgula. Sem a flag, baixa todos. Útil para rebaixar só um dataset corrigido sem varrer os demais.
 
-Exemplo:
-
-```
-https://dadosabertos.camara.leg.br/arquivos/votacoes/csv/votacoes-2025.csv
+```bash
+pnpm download:csvs -- --years=2024 --dataset=votacoes
+pnpm download:csvs -- --dataset=deputados,legislaturas
 ```
 
-A base URL pode ser sobrescrita por configuração técnica em testes, mas o uso normal do script aponta para `dadosabertos.camara.leg.br`.
+### `--force`
 
-### Estrutura de pastas local
+Ignora a checagem de existência e **rebaixa** tudo da janela configurada, sobrescrevendo o que estiver em disco. Combina com qualquer mecanismo de janela ou `--dataset`, porque não define quais arquivos entram — só muda a política de sobrescrita.
 
-Subpasta por dataset:
-
-```
-data/raw/
-  votacoes/
-    votacoes-2024.csv
-    votacoes-2025.csv
-  votacoesVotos/
-    votacoesVotos-2024.csv
-    votacoesVotos-2025.csv
-  proposicoes/
-    proposicoes-2024.csv
-  deputados/
-    deputados.csv
-  legislaturas/
-    legislaturas.csv
+```bash
+pnpm download:csvs -- --years=2024 --force
 ```
 
-Justificativa: quando a janela expandir para 25 anos, são 25 arquivos por dataset. Subpasta por dataset evita pasta plana com centenas de arquivos misturados.
+### Validação de anos
 
-A pasta `data/raw/` fica no `.gitignore` — arquivos volumosos não vão para o Git.
+Anos no formato `YYYY`, dentro de `[2001, ano atual]`, com `--from <= --to`. Valores fora do intervalo abortam antes de qualquer download, com mensagem indicando o intervalo válido.
+
+**Exceção (ADR-0012):** o piso de 2001 é dispensado quando `--dataset` contém **apenas** `proposicoes` e/ou `proposicoesTemas`, porque proposições e seus temas legítimos existem antes de 2001 (ex.: 1991, 1997-2000). Nesse caso o piso passa a ser `0`.
+
+```bash
+# Permitido: proposições pré-2001 isoladas
+pnpm download:csvs -- --years=1999 --dataset=proposicoes
+```
+
+---
+
+## Comportamento durante a execução
 
 ### Detecção de "já baixado"
 
-Estratégia inicial: **existência simples do arquivo no caminho esperado**. Se o arquivo existe localmente, o script pula o download. Se não existe, baixa.
+Estratégia: **existência simples do arquivo** no caminho esperado. Se o arquivo existe, o download é pulado; se não, baixa. `--force` ignora essa checagem.
 
-Override via flag `--force`: ignora a checagem de existência e rebaixa tudo da janela configurada, sobrescrevendo o que estiver lá.
+Limitação conhecida: se a Câmara atualiza um CSV existente (corrige, adiciona linhas), o downloader vê que o arquivo existe e pula — não detecta a mudança. Use `--force` (ou `--years`/`--dataset` mirando o arquivo) para rebaixar. Evoluções possíveis em [Possibilidades futuras](#possibilidades-futuras).
 
-O download é escrito primeiro em arquivo temporário no mesmo diretório, com sufixo `.tmp`, e só é renomeado para o caminho final quando termina com sucesso. Assim, uma conexão interrompida não deixa um CSV parcial que seria tratado como já baixado na próxima execução.
+### Escrita atômica
 
-Se existir apenas um `.tmp` de execução anterior, o script ignora esse arquivo como fonte de verdade e recomeça o download do zero, substituindo o temporário. Essa limpeza não depende de `--force`, porque arquivo temporário nunca é considerado input válido para a ingestão.
+O download é escrito primeiro em arquivo temporário `{arquivo}.tmp` no mesmo diretório e só é renomeado para o caminho final ao concluir com sucesso. Uma conexão interrompida não deixa um CSV parcial que seria tratado como já baixado. Um `.tmp` de execução anterior é descartado e o download recomeça do zero — arquivo temporário nunca é input válido, então essa limpeza não depende de `--force`.
 
-### Tratamento de falhas
+### Concorrência
 
-**Estratégia: continuar e relatar no final.** Falha em um arquivo não interrompe o download dos demais. Ao final da execução, o script imprime um resumo com a contagem de sucessos, pulados e falhas, listando os arquivos que falharam e o motivo.
+Os downloads rodam com paralelismo fixo de **3 arquivos simultâneos** — acelera o backfill sem pressionar o servidor público da Câmara. Configurar o paralelismo fica adiado até existir necessidade real.
 
-O downloader valida apenas o transporte: status HTTP de sucesso e conclusão do stream de escrita. Ele não valida `Content-Type`, separador, header, schema ou conteúdo do CSV. Validação de conteúdo pertence à etapa de ingestão.
+---
 
-Quando houver uma ou mais falhas ao final, o processo termina com exit code `1`. Quando todos os arquivos da execução forem baixados ou pulados sem erro, termina com exit code `0`.
+## Tratamento de falhas
 
-Retry com backoff: em erros de rede transitórios (timeout, `429`, `5xx`), tentar 3 vezes com espera crescente antes de marcar como falha. Quando uma resposta `429` trouxer header `Retry-After`, respeitar esse valor; caso contrário, usar o backoff padrão. Erros definitivos (`404`, `4xx` exceto `429`) falham imediatamente sem retry.
+**Estratégia: continuar e relatar no final.** Falha em um arquivo não interrompe os demais. Ao final, o resumo lista os arquivos que falharam e o motivo.
 
-Timeout é medido por inatividade, não por duração total do download: se uma tentativa ficar 60 segundos sem receber bytes, ela é abortada e entra na política de retry. Downloads longos continuam válidos enquanto houver progresso.
+- **Retry com backoff:** erros transitórios são tentados até **3 vezes** com espera crescente (`1000ms`, depois `2000ms`) antes de marcar falha. Transitório = `429` ou `5xx`. Quando um `429` traz header `Retry-After`, esse valor é respeitado (segundos ou data HTTP); caso contrário, usa o backoff padrão.
+- **Erros definitivos** (`404` e demais `4xx` exceto `429`) falham **imediatamente**, sem retry.
+- **Timeout por inatividade:** medido por ausência de bytes, não por duração total. Se uma tentativa fica **60s** sem receber bytes, ela é abortada e entra na política de retry. Downloads longos seguem válidos enquanto houver progresso.
 
-Os downloads rodam com paralelismo limitado a 3 arquivos simultâneos. Esse limite é fixo na implementação inicial: acelera o backfill completo sem pressionar excessivamente o servidor público da Câmara. Uma flag para configurar paralelismo fica adiada até existir necessidade real.
+**Exit code:** `1` quando houve uma ou mais falhas (ou configuração inválida); `0` quando todos os arquivos foram baixados ou pulados sem erro.
 
-### Output do script
+---
 
-Formato sugerido (a refinar na implementação):
+## Saídas
+
+### Output ao vivo
+
+Uma linha por arquivo, conforme o resultado:
 
 ```
-> npm run download -- --from=2020 --to=2025
+[deputados.csv] pulado
+[legislaturas.csv] pulado
+[votacoes-2020.csv] baixado
+[votacoesVotos-2020.csv] baixado
+[votacoes-2003.csv] falhou: 404 Not Found
+```
 
-[deputados.csv] já existe, pulando
-[legislaturas.csv] já existe, pulando
-[votacoes-2020.csv] baixando... ok (2.1 MB)
-[votacoesVotos-2020.csv] baixando... ok (15.3 MB)
-[proposicoes-2020.csv] já existe, pulando
-...
+### Resumo final
 
+```
 Resumo: 12 baixados, 8 pulados, 0 erros.
 ```
 
-Em caso de falhas:
+Quando há falhas, o resumo é seguido da lista:
 
 ```
 Resumo: 18 baixados, 0 pulados, 2 erros.
 Falhas:
   - votacoes-2003.csv: 404 Not Found
-  - votacoesVotos-2004.csv: timeout após 3 tentativas
+  - votacoesVotos-2004.csv: timeout por inatividade após 3 tentativas
 ```
+
+Cada item do plano resolve para um de três status: `downloaded`, `skipped` ou `failed` (com `reason`). O resumo agrega as contagens e as falhas.
 
 ---
 
-## Ideias para evolução futura (não implementadas)
+## Possibilidades futuras
+
+Ideias consideradas e adiadas; ficam registradas para quando o uso revelar a demanda.
 
 ### Versionamento de snapshots
 
-Quando a ingestão entrar em produção real e for executada de forma recorrente, vale manter snapshots datados dos CSVs usados em cada execução. Permite reprocessar uma ingestão antiga com os mesmos dados de entrada que ela usou na época, útil para isolar bugs de transformação que apareçam meses depois.
-
-Caminhos possíveis:
-- Cada execução cria `data/snapshots/{data}/` com cópia dos arquivos baixados.
-- Snapshot é gerado **antes** da substituição de um arquivo modificado, preservando só o histórico do que efetivamente mudou.
-
-Decisão adiada porque o projeto está em prototipagem e o custo de manutenção e espaço em disco não se paga ainda.
+Quando a ingestão entrar em produção recorrente, vale manter snapshots datados dos CSVs usados em cada execução, para reprocessar uma ingestão antiga com os mesmos inputs (isolar bugs de transformação que apareçam meses depois). Caminhos: `data/snapshots/{data}/` com cópia, ou snapshot só do que efetivamente mudou. Adiado: em prototipagem, o custo de disco e manutenção não se paga ainda.
 
 ### Detecção de "já baixado" mais sofisticada
 
-A estratégia atual (existência do arquivo) tem uma fraqueza conhecida: se a Câmara atualiza um CSV existente (corrige erro, adiciona linhas), o script local não detecta — vê que o arquivo já existe e pula.
+A estratégia atual (existência do arquivo) não percebe atualizações na fonte. Evoluções:
 
-Duas evoluções possíveis:
+1. **Hash do conteúdo** — baixar em `.tmp`, comparar hash; substituir só se diferente. Mais correto, mas baixa duas vezes (consome banda).
+2. **HTTP HEAD com `Last-Modified`/`ETag`** — consultar sem baixar e comparar com o arquivo local. Eficiente, mas depende de o servidor expor headers confiáveis. Investigar isso primeiro; se houver suporte, é o caminho ótimo, senão hash de conteúdo.
 
-1. **Hash do conteúdo.** Baixar em arquivo temporário, comparar hash com o arquivo existente. Se igual, descartar; se diferente, substituir. Mais correto, mas baixa duas vezes (consome banda).
+---
 
-2. **HTTP HEAD com `Last-Modified` ou `ETag`.** Consultar o servidor sem baixar, comparar com timestamp do arquivo local. Eficiente — depende do servidor `dadosabertos.camara.leg.br` expor esses headers, o que vale testar antes de implementar.
+## Referências
 
-Quando essa evolução for endereçada, sugiro investigar primeiro se o servidor suporta `ETag`/`Last-Modified` confiáveis. Se sim, esse é o caminho mais eficiente. Caso contrário, hash de conteúdo.
+- [ADR-0012 — Ingestão de proposições sem API e sem proposição principal](../adr/012-ingestao-proposicoes-sem-api-sem-principal.md)
+- [runner-ingestao.md](./runner-ingestao.md) — contrato operacional do runner de ingestão
+- [fontes-ingestao.md](./fontes-ingestao.md) — origem de cada dado por passo
+- Catálogo oficial: <https://dadosabertos.camara.leg.br/swagger/api.html?tab=staticfile>
