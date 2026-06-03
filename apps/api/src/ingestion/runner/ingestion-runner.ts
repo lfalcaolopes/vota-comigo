@@ -11,6 +11,12 @@ import { writeGapLog } from './gap-log';
 import { readGapLog, selectRetryReferences } from './gap-log-reader';
 import type { GapLogReaderFileSystem } from './gap-log-reader';
 import { createIngestionSteps } from './ingestion-steps';
+import {
+  logStepGap,
+  logStepResult,
+  logStepStart,
+  stepLabel,
+} from './step-logging';
 import { nodeErrorLogFileSystem } from './node-error-log-file-system';
 import { nodeGapLogReaderFileSystem } from './node-gap-log-reader-file-system';
 import type { ErrorLogFileSystem } from './error-log';
@@ -49,7 +55,8 @@ export const ingestionStepDescriptors: readonly IngestionStepDescriptor[] = [
   { name: 'proposicoes', scope: 'single', source: 'derived' },
   { name: 'votacao_proposicao', scope: 'single', source: 'derived' },
   { name: 'tema', scope: 'single', source: 'derived' },
-  { name: 'deputado_historico', scope: 'single', source: 'api' },
+  { name: 'deputado_historico', scope: 'single', source: 'api', manual: true },
+  { name: 'sanity', scope: 'single', source: 'db' },
 ];
 
 export type IngestionRunnerExecutionOptions = IngestionRunnerConfigOptions & {
@@ -138,6 +145,8 @@ export async function executeIngestionRunner(
   const externalGaps: ExternalGap[] = [];
   let aborted = false;
 
+  reportRunStart(config, plan, options.reporter);
+
   try {
     for (const entry of plan) {
       const step = steps.find((candidate) => candidate.name === entry.stepName);
@@ -146,10 +155,11 @@ export async function executeIngestionRunner(
         continue;
       }
 
+      const label = stepLabel(entry.stepName, entry.year);
       const startedAt = performance.now();
       let context: IngestionStepContext;
 
-      if (step.source === 'api') {
+      if (step.source === 'api' || step.source === 'db') {
         context = {
           dryRun: config.dryRun,
           strict: config.strict,
@@ -210,6 +220,7 @@ export async function executeIngestionRunner(
             year: entry.year,
             durationMs: performance.now() - startedAt,
           });
+          logStepGap(options.reporter, label, [gap.reference]);
 
           if (entry.scope === 'single' || config.strict) {
             aborted = true;
@@ -226,6 +237,7 @@ export async function executeIngestionRunner(
           debug: config.debug,
           limit: config.limit,
           sourceFile: basename(sourcePath),
+          year: entry.year,
           reporter: options.reporter,
           readRecords: () => csvReader(openSource(sourcePath)),
           readCompanion: (dataset) => {
@@ -240,17 +252,23 @@ export async function executeIngestionRunner(
         };
       }
 
+      const sourceDesc =
+        context.sourceFile === entry.stepName ? undefined : context.sourceFile;
+      logStepStart(options.reporter, label, sourceDesc);
+
       try {
         const stepResult = await step.run(context);
+        const durationMs = performance.now() - startedAt;
 
         summaries.push({
           ...stepResult,
           stepName: entry.stepName,
           year: entry.year,
-          durationMs: performance.now() - startedAt,
+          durationMs,
         });
         rejections.push(...stepResult.rejected);
         externalGaps.push(...stepResult.externalGaps);
+        logStepResult(options.reporter, label, stepResult, durationMs);
       } catch (error) {
         if (error instanceof StrictModeError) {
           if (error.rejection !== undefined) {
@@ -340,6 +358,39 @@ function sum(
   return summaries.reduce((total, summary) => total + pick(summary), 0);
 }
 
+function describeMode(summary: {
+  dryRun: boolean;
+  strict: boolean;
+}): 'dry-run' | 'strict' | 'normal' {
+  if (summary.dryRun) {
+    return 'dry-run';
+  }
+
+  return summary.strict ? 'strict' : 'normal';
+}
+
+function reportRunStart(
+  config: IngestionRunnerConfig,
+  plan: readonly IngestionPlanEntry[],
+  reporter: IngestionReporter | undefined,
+): void {
+  if (reporter === undefined) {
+    return;
+  }
+
+  const mode = describeMode(config);
+  const years = config.years;
+  const window =
+    years.length === 0
+      ? 'sem janela anual'
+      : `anos ${years[0]}-${years[years.length - 1]}`;
+  const limit = config.limit === undefined ? '' : `, limite ${config.limit}`;
+
+  reporter.log(
+    `Iniciando ingestão (${mode}): ${window}, ${plan.length} passos planejados${limit}.`,
+  );
+}
+
 function reportSummary(
   summary: {
     steps: readonly StepSummary[];
@@ -362,29 +413,7 @@ function reportSummary(
     return;
   }
 
-  const mode = summary.dryRun
-    ? 'dry-run'
-    : summary.strict
-      ? 'strict'
-      : 'normal';
-
-  for (const step of summary.steps) {
-    const label =
-      step.year === undefined ? step.stepName : `${step.stepName} ${step.year}`;
-
-    if (step.externalGaps.length > 0) {
-      reporter.log(
-        `[${label}] fonte ausente: ${step.externalGaps
-          .map((gap) => gap.reference)
-          .join(', ')} (passo ignorado)`,
-      );
-      continue;
-    }
-
-    reporter.log(
-      `[${label}] lidos ${step.read}, inseridos ${step.inserted}, atualizados ${step.updated}, ignorados ${step.ignored}, rejeitados ${step.rejected.length} (${Math.round(step.durationMs)}ms)`,
-    );
-  }
+  const mode = describeMode(summary);
 
   reporter.log(
     `Resumo (${mode}): ${summary.totalRead} lidos, ${summary.totalInserted} inseridos, ${summary.totalUpdated} atualizados, ${summary.totalIgnored} ignorados, ${summary.totalRejected} rejeitados, ${summary.totalExternalGaps} lacunas de fonte.`,

@@ -59,6 +59,9 @@ import type {
   TemaLookup,
   TemaRepository,
 } from './steps/tema/tema.repository.types';
+import { createSanityRepository } from './steps/sanity/sanity.repository';
+import { createSanityStep } from './steps/sanity/sanity.step';
+import type { SanityRepository } from './steps/sanity/sanity.repository.types';
 import { createDeputadoHistoricoClient } from './shared/camara-historico-client';
 import { fetchCamaraJson } from './shared/camara-api-transport';
 import type {
@@ -136,6 +139,12 @@ const dryRunLegislaturaLookup: LegislaturaLookup = {
   },
 };
 
+// O passo sanity faz short-circuit em dry-run; o guard só protege o contrato
+// caso essa garantia seja quebrada.
+const dryRunSanityRepository: SanityRepository = {
+  loadPlacares: dryRunReadGuard,
+};
+
 const dryRunHistoricoDeps: DeputadoHistoricoStepDeps = {
   deputadoSource: { loadIngested: dryRunReadGuard },
   historicoClient: { fetch: dryRunReadGuard },
@@ -177,6 +186,7 @@ export function createIngestionSteps(
           temaLookup: dryRunTemaLookup,
         }),
         createDeputadoHistoricoStep(dryRunHistoricoDeps),
+        createSanityStep(dryRunSanityRepository),
       ],
       close: () => Promise.resolve(),
     });
@@ -226,6 +236,7 @@ export function createIngestionSteps(
       partidoRepository: createPartidoRepository(db),
       historicoRepository: createDeputadoHistoricoRepository(db),
     }),
+    createSanityStep(createSanityRepository(db)),
   ];
 
   return Promise.resolve({ steps, close });
