@@ -48,6 +48,13 @@ export function createProposicoesStep(
       });
 
       const neededYears = [...neededByYear.keys()];
+      const neededTotal = [...neededByYear.values()].reduce(
+        (total, ids) => total + ids.size,
+        0,
+      );
+      context.reporter?.log(
+        `[proposicoes] ${neededTotal} proposições necessárias em ${neededYears.length} ano(s)`,
+      );
 
       await ensureProposicaoFiles(context, neededYears, deps.downloader);
 
@@ -63,6 +70,8 @@ export function createProposicoesStep(
           externalGaps.push(missingFileGap(year));
           continue;
         }
+
+        context.reporter?.log(`[proposicoes] lendo proposicoes-${year}.csv`);
 
         const found = new Set<number>();
 
@@ -125,6 +134,10 @@ async function ensureProposicaoFiles(
   if (missingYears.length === 0) {
     return;
   }
+
+  context.reporter?.log(
+    `[proposicoes] baixando proposicoes-{ano}.csv ausentes: ${missingYears.join(', ')}`,
+  );
 
   const outcome = await downloader.download(missingYears);
 

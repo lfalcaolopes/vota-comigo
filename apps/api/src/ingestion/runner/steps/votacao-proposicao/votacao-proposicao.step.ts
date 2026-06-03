@@ -58,6 +58,10 @@ export function createVotacaoProposicaoStep(
           continue;
         }
 
+        context.reporter?.log(
+          `[votacao_proposicao] lendo ${LINK_DATASET}-${year}.csv`,
+        );
+
         for await (const { record } of links()) {
           const { idVotacao, proposicaoId } =
             normalizeVotacaoProposicaoRecord(record);

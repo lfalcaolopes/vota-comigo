@@ -4,6 +4,7 @@ import type {
   StepRunResult,
 } from '../../ingestion-runner.types';
 import { normalizeVotacaoVotoRecord } from '../../shared/votacoes-votos.normalizer';
+import { createProgressLogger, stepLabel } from '../../step-logging';
 import { StrictModeError } from '../../strict-mode-error';
 import type { VotacaoLookup } from '../votacao-proposicao/votacao-proposicao.repository.types';
 import type {
@@ -29,12 +30,23 @@ export function createVotacaoVotosStep(
       const votacaoIds = await deps.votacaoLookup.loadIdByExternalId();
       const deputadoIds = await deps.deputadoLookup.loadIdByExternalId();
 
+      const progress = createProgressLogger(
+        context.reporter,
+        stepLabel('votacao_votos', context.year),
+      );
+      let recordsRead = 0;
+
       const transformed = await transformVotacaoVotos({
-        rows: normalizedRows(context),
+        rows: normalizedRows(context, () => {
+          recordsRead += 1;
+          progress.tick(recordsRead);
+        }),
         sourceFile: context.sourceFile,
         votacaoIds,
         deputadoIds,
       });
+
+      progress.done(recordsRead);
 
       if (context.strict && transformed.rejected.length > 0) {
         throw new StrictModeError(transformed.rejected[0]);
@@ -56,8 +68,12 @@ export function createVotacaoVotosStep(
   };
 }
 
-async function* normalizedRows(context: IngestionStepContext) {
+async function* normalizedRows(
+  context: IngestionStepContext,
+  onRecord: () => void,
+) {
   for await (const { lineNumber, record } of context.readRecords()) {
+    onRecord();
     yield {
       lineNumber,
       voto: normalizeVotacaoVotoRecord(record),

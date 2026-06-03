@@ -52,6 +52,9 @@ export function createTemaStep(deps: TemaStepDeps): IngestionStep {
       });
 
       const neededYears = [...neededByYear.keys()];
+      context.reporter?.log(
+        `[tema] temas necessários para proposições de ${neededYears.length} ano(s)`,
+      );
 
       await ensureTemaFiles(context, neededYears, deps.downloader);
 
@@ -71,6 +74,8 @@ export function createTemaStep(deps: TemaStepDeps): IngestionStep {
           externalGaps.push(missingFileGap(year));
           continue;
         }
+
+        context.reporter?.log(`[tema] lendo ${TEMA_DATASET}-${year}.csv`);
 
         for await (const { record } of yearSource()) {
           const { externalIdProposicao, codTema, tema } =
@@ -177,6 +182,10 @@ async function ensureTemaFiles(
   if (missingYears.length === 0) {
     return;
   }
+
+  context.reporter?.log(
+    `[tema] baixando ${TEMA_DATASET}-{ano}.csv ausentes: ${missingYears.join(', ')}`,
+  );
 
   const outcome = await downloader.download(missingYears);
 

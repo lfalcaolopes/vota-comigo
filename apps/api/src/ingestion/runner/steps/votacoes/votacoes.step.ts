@@ -6,6 +6,7 @@ import type {
   StepRunResult,
 } from '../../ingestion-runner.types';
 import { normalizeVotacaoVotoRecord } from '../../shared/votacoes-votos.normalizer';
+import { createProgressLogger, stepLabel } from '../../step-logging';
 import { StrictModeError } from '../../strict-mode-error';
 import type {
   VotacaoRepository,
@@ -31,9 +32,17 @@ export function createVotacoesStep(
 
       const nominalIds = await collectNominalIds(companion);
       const votacoes = new Map<string, VotacaoRow>();
+      const progress = createProgressLogger(
+        context.reporter,
+        stepLabel('votacoes', context.year),
+      );
       let ignored = 0;
+      let recordsRead = 0;
 
       for await (const { record } of context.readRecords()) {
+        recordsRead += 1;
+        progress.tick(recordsRead);
+
         if (!nominalIds.has(record.id)) {
           ignored += 1;
           continue;
@@ -42,6 +51,8 @@ export function createVotacoesStep(
         const row = toVotacaoRow(record);
         votacoes.set(row.externalIdVotacao, row);
       }
+
+      progress.done(recordsRead);
 
       const read = votacoes.size;
       const { inserted, updated } = context.dryRun
