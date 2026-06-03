@@ -25,18 +25,17 @@ Contratos operacionais detalhados na tabela abaixo.
 
 ## Documentação
 
-As grandes docs do projeto. Cada uma referencia, no seu próprio contexto, as docs menores relacionadas.
 
-| Doc | Descrição |
-|-----|-----------|
-| [CONTEXT.md](CONTEXT.md) | Vocabulário canônico e contexto de domínio do produto. |
-| [docs/prototipo.md](docs/prototipo.md) | Fase de protótipo: viabilidade dos dados, coerência da modelagem e da fórmula de relevância. |
-| [docs/mvp.md](docs/mvp.md) | Escopo do MVP: as features mínimas que entregam valor ao cidadão. |
-| [docs/modelagem-dados.md](docs/modelagem-dados.md) | Modelagem relacional da base ingerida da Câmara e derivados. |
-| [docs/melhorias.md](docs/melhorias.md) | Melhorias pós-MVP, priorizadas em tiers. |
-| [docs/adr/](docs/adr/) | Architecture Decision Records: decisões de domínio e arquitetura. |
-| [docs/ingestion/csv-downloads.md](docs/ingestion/csv-downloads.md) | Contrato operacional do downloader de CSVs da Câmara. |
-| [docs/ingestion/runner-ingestao.md](docs/ingestion/runner-ingestao.md) | Contrato operacional do runner de ingestão. |
+| Doc                                                  | Descrição |
+|------------------------------------------------------|-----------|
+| [CONTEXT.md](CONTEXT.md)                             | Vocabulário canônico e contexto de domínio do produto. |
+| [prototipo](docs/prototipo.md)               | Fase de protótipo: viabilidade dos dados, coerência da modelagem e da fórmula de relevância. |
+| [mvp](docs/mvp.md)                           | Escopo do MVP: as features mínimas que entregam valor ao cidadão. |
+| [melhorias](docs/melhorias.md)               | Melhorias pós-MVP, priorizadas em tiers. |
+| [modelagem-dados](docs/modelagem-dados.md)   | Modelagem relacional da base ingerida da Câmara e derivados. |
+| [docs/adr/](docs/adr/)                               | Architecture Decision Records: decisões de domínio e arquitetura. |
+| [csv-downloader](docs/ingestion/csv-downloads.md)     | Contrato operacional do downloader de CSVs da Câmara. |
+| [runner-ingestao](docs/ingestion/runner-ingestao.md) | Contrato operacional do runner de ingestão. |
 
 ## Testes
 
