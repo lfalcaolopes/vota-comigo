@@ -26,7 +26,7 @@ export type IngestionRunnerConfigOptions = {
 
 export type StepScope = 'single' | 'annual';
 
-export type StepSource = 'csv' | 'api' | 'derived';
+export type StepSource = 'csv' | 'api' | 'derived' | 'db';
 
 export type IngestionStepDescriptor = {
   readonly name: string;
@@ -36,6 +36,10 @@ export type IngestionStepDescriptor = {
   // Extra datasets the step reads alongside its primary source, resolved per year
   // by the orchestrator and exposed through context.readCompanion.
   readonly companionDatasets?: readonly string[];
+  // Passo fora da execução padrão: só roda quando nomeado explicitamente em
+  // `--only`. Usado para passos que exigem condução manual (ex.: histórico via
+  // API da Câmara, lento e sujeito a indisponibilidade).
+  readonly manual?: boolean;
 };
 
 export type IngestionPlanEntry = {
@@ -78,6 +82,9 @@ export type IngestionStepContext = {
   readonly debug: boolean;
   readonly limit?: number;
   readonly sourceFile: string;
+  // Ano do arquivo anual em processamento, quando aplicável. Permite que passos
+  // anuais rotulem o progresso com o mesmo ano que o orquestrador reporta.
+  readonly year?: number;
   readonly reporter?: IngestionReporter;
   readRecords: CsvRowSource;
   // Opens a companion dataset declared in companionDatasets for the same year.
