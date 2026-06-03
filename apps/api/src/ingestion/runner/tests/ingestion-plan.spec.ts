@@ -38,6 +38,39 @@ describe('ingestion plan', () => {
     });
   });
 
+  describe('when a step is marked as manual', () => {
+    const stepsWithManual = [
+      ...steps,
+      { name: 'deputado_historico', scope: 'single' as const, manual: true },
+    ];
+
+    it('leaves the manual step out of the default run', () => {
+      // Arrange
+      const runnerConfig = config();
+
+      // Act
+      const plan = buildIngestionPlan(runnerConfig, stepsWithManual);
+
+      // Assert
+      expect(plan.map((entry) => entry.stepName)).not.toContain(
+        'deputado_historico',
+      );
+    });
+
+    it('runs the manual step when it is named explicitly in --only', () => {
+      // Arrange
+      const runnerConfig = config({ only: ['deputado_historico'] });
+
+      // Act
+      const plan = buildIngestionPlan(runnerConfig, stepsWithManual);
+
+      // Assert
+      expect(plan).toEqual([
+        { stepName: 'deputado_historico', scope: 'single' },
+      ]);
+    });
+  });
+
   describe('when --only selects a subset of steps', () => {
     it('plans only the selected steps', () => {
       // Arrange

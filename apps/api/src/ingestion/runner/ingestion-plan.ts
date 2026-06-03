@@ -8,9 +8,11 @@ export function buildIngestionPlan(
   config: IngestionRunnerConfig,
   steps: readonly IngestionStepDescriptor[],
 ): IngestionPlanEntry[] {
+  // Sem --only, passos manuais ficam fora da execução padrão; com --only, rodam
+  // apenas quando nomeados explicitamente.
   const selected =
     config.only === undefined
-      ? steps
+      ? steps.filter((step) => step.manual !== true)
       : steps.filter((step) => config.only!.includes(step.name));
 
   return selected.flatMap((step): IngestionPlanEntry[] => {
