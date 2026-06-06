@@ -101,7 +101,7 @@ Ao exibir o voto de um deputado em uma votação específica (no perfil do deput
 
 **Não entra no MVP:** o MVP exibe a orientação de cada bancada como contexto da votação, mas não vincula essa orientação ao voto individual de cada deputado. Esta feature é a evolução natural depois de o MVP estar no ar.
 
-**Fora de escopo (descartado, condicional à fonte de dados):** ranking de "quem quebra mais disciplina" e disciplina partidária como fator na fórmula de relevância ou no matcher. Esses usos exigiriam cascata de três níveis incluindo bloco, que depende de histórico estruturado de composição de bloco que a Câmara não disponibiliza. Reconsiderar apenas se essa fonte estruturada for publicada.
+**Fora de escopo (descartado, condicional à fonte de dados):** ranking de "quem quebra mais disciplina" e disciplina partidária como fator no ranking público ou no matcher. Esses usos exigiriam cascata de três níveis incluindo bloco, que depende de histórico estruturado de composição de bloco que a Câmara não disponibiliza. Reconsiderar apenas se essa fonte estruturada for publicada.
 
 ### Senado Federal
 
@@ -112,7 +112,7 @@ Expansão horizontal da cobertura para a segunda casa do Congresso. Senado cobre
 **Trabalho esperado:**
 - API do Senado (`legis.senado.leg.br/dadosabertos`) tem estrutura análoga à da Câmara
 - Adaptar schema para acomodar senadores e votações do Senado (mandato de 8 anos, não 4)
-- Fórmula de relevância calibrada separadamente para o Senado
+- Regra de ranking calibrada separadamente para o Senado
 
 ### Rankings justos
 
@@ -185,15 +185,15 @@ Importante para quem quer acompanhar o representante que já elegeu, mas secund�
 
 ### Cobertura midiática via GDELT
 
-Incorporar intensidade de cobertura midiática como peso adicional na fórmula de relevância dos eventos, usando GDELT Project via Google BigQuery.
+Avaliar intensidade de cobertura midiática como sinal externo para uma eventual evolução editorial do ranking público, usando GDELT Project via Google BigQuery.
 
-**Pré-requisito:** validar experimentalmente se o sinal GDELT adiciona informação além do fator "apelido popular" já existente. Se for redundante, descartar. Se for complementar, integrar com peso calibrado.
+**Pré-requisito:** validar experimentalmente se o sinal GDELT adiciona informação útil além do ranking atual por volume de votações nominais em plenário. Se for redundante, descartar. Se for complementar, documentar nova decisão metodológica antes de integrar.
 
 **Trabalho previsto:**
 - Conta Google Cloud com BigQuery habilitado
 - Queries para a tabela pública `gdelt-bq.gdeltv2.gkg` para cada proposição com apelido
 - Normalização de contagens (escala logarítmica provavelmente)
-- Incorporação como fator com peso baixo (0.10–0.15) na fórmula
+- Incorporação como sinal complementar apenas se houver revisão explícita da regra do ranking público
 
 **Limitações conhecidas:**
 - Tradução automática introduz ruído em nomes de apelidos brasileiros
@@ -239,7 +239,7 @@ Usuário salva políticos de interesse para acompanhamento rápido.
 
 ### Alertas de novas votações
 
-Notificação quando um político favoritado vota em proposição nova, especialmente se for votação relevante pelo score.
+Notificação quando um político favoritado vota em proposição nova, especialmente se a proposição estiver bem posicionada no ranking público.
 
 ---
 
@@ -322,9 +322,9 @@ Decisão (ADR 0005): blocos não são modelados como entidade com composição. 
 
 Governo, Oposição, Maioria e Minoria **não entram na cascata de orientação aplicada ao deputado**. Não representam a bancada formal do deputado. São armazenadas e exibidas como contexto da votação (como cada liderança se posicionou), disponíveis no detalhe da votação e no perfil da proposição. Tratamento alinhado com o que se aplica a blocos partidários conforme ADR 0005.
 
-### Disciplina partidária como fator de relevância e ranking — descartada
+### Disciplina partidária no ranking e no matcher — descartada
 
-A quebra de disciplina partidária como fator da fórmula de relevância ou como base de ranking ("quem mais quebra disciplina") foi descartada do roadmap após a análise de cobertura de orientações de 2025.
+A quebra de disciplina partidária como fator do ranking público ou como base de ranking ("quem mais quebra disciplina") foi descartada do roadmap após a análise de cobertura de orientações de 2025.
 
 Motivo: a cobertura de orientação por par (deputado, votação) em cascata estável (partido + federação) é de apenas 17,78% em plenário. Para chegar a 36,09%, seria necessário incluir blocos na cascata, mas a Câmara não disponibiliza histórico estruturado de composição de blocos — endpoint `/blocos/{id}/partidos?data=...` não retorna composições históricas distintas, e vários blocos retornam composição vazia. Reconstrução por inferência exigiria curadoria manual recorrente.
 
@@ -336,9 +336,9 @@ Esta feature só será reconsiderada se a Câmara publicar fonte estruturada de 
 
 Itens que não são features únicas mas evoluções contínuas do produto, que devem ser revisitados conforme o produto amadurece.
 
-### Refinamento da fórmula de relevância
+### Refinamento do ranking público
 
-Calibração contínua dos pesos da fórmula conforme o uso em produção revelar casos que não ranqueiam bem. Novos fatores endógenos podem ser incorporados se houver buracos identificados (destaques, requerimentos, regime de urgência).
+Revisão contínua da regra de ranking conforme o uso em produção revelar casos que não ranqueiam bem. A regra atual é volume de votações nominais em plenário; novos sinais só devem entrar com decisão metodológica documentada.
 
 ### Refinamento do matcher para amostra desigual
 

@@ -6,13 +6,13 @@ Validar, antes de construir qualquer interface ou backend de produto, três cois
 
 1. **Viabilidade dos dados:** o que está disponível nas fontes públicas da Câmara dos Deputados é suficiente e confiável para alimentar o produto?
 2. **Modelagem coerente:** o schema consegue representar as entidades do domínio de forma que acomode o produto completo, não apenas o MVP?
-3. **Fórmula de relevância defensável:** o ranking de proposições votadas produzido pela fórmula é publicamente defensável quando aplicado a dados reais?
+3. **Ranking público defensável:** a ordenação de proposições votadas é auditável, explicável e publicamente defensável quando aplicada a dados reais?
 
 Sem essas três validações, qualquer trabalho de frontend ou backend é especulativo.
 
 ## Critério de saída
 
-O Protótipo está concluído quando for possível olhar para o ranking das 20 proposições votadas mais relevantes de um ano de dados reais e considerá-lo **publicamente defensável** — isto é, alguém que acompanha política brasileira concordaria que aquelas foram, de fato, as proposições que importaram.
+O Protótipo está concluído quando for possível olhar para o ranking das 20 proposições com maior volume de votações nominais em plenário de um ano de dados reais e considerá-lo **publicamente defensável** como porta de entrada do produto.
 
 ---
 
@@ -46,44 +46,33 @@ Princípios que devem guiar a modelagem:
 
 ### 3. Ingestão mínima
 
-O Protótipo importa apenas o necessário para alimentar a fórmula de relevância e um matcher de teste. Dados complementares (gastos de cota parlamentar, frentes parlamentares, estrutura de comissões do deputado, emendas, discursos) ficam **modelados no schema mas fora do escopo de ingestão do Protótipo**.
+O Protótipo importa apenas o necessário para alimentar o ranking público por volume de votações em plenário e um matcher de teste. Dados complementares (gastos de cota parlamentar, frentes parlamentares, estrutura de comissões do deputado, emendas, discursos) ficam **modelados no schema mas fora do escopo de ingestão do Protótipo**.
 
 - Janela temporal: 2-3 anos recentes, não histórico completo
-- Critério: o suficiente para calibrar a fórmula com volume estatisticamente relevante e diversidade de proposições
+- Critério: o suficiente para validar a ordenação por volume de votações em plenário com diversidade de proposições
 
-### 4. Calibração da fórmula de relevância
+### 4. Validação do ranking público
 
-A fórmula inicial usa apenas fatores locais e auditáveis a partir dos dados ingeridos:
+O ranking público do MVP usa volume de votações nominais em plenário vinculadas pela relação canônica `votacao_proposicao`, conforme ADR 0013. A regra substitui a fórmula ponderada inicialmente considerada porque a análise com dados reais mostrou que o baseline de contagem de votações era mais simples, auditável e não materialmente pior.
 
-- Polarização — votação apertada
-- Tipo de proposição — PEC pesa mais que requerimento procedural
-- Apelido popular — bônus para proposições conhecidas publicamente, calibrado para não dominar o ranking
-- Sinais endógenos adicionais quando a calibração justificar — quantidade de votações vinculadas, recência, regime de urgência quando disponível localmente, etc.
-
-**Decisão superveniente:** quebra de disciplina partidária foi removida da fórmula. O fator depende de orientação efetiva por deputado, mas orientações não são ingeridas no banco no MVP e a cascata sustentável cobre apenas partido e federação. A disciplina partidária como fator de relevância ou ranking fica descartada no roadmap atual, conforme ADR 0005 e `docs/melhorias.md`.
+**Decisão superveniente:** quebra de disciplina partidária foi removida do ranking. O fator depende de orientação efetiva por deputado, mas orientações não são ingeridas no banco no MVP e a cascata sustentável cobre apenas partido e federação. A disciplina partidária como fator de ranking fica descartada no roadmap atual, conforme ADR 0005 e `docs/melhorias.md`.
 
 **O que fazer nesta etapa:**
 
-1. Rodar a fórmula sobre os dados reais ingeridos
+1. Rodar a ordenação por volume sobre os dados reais ingeridos
 2. Validar manualmente as top 20 proposições do ranking
-3. Ajustar pesos conforme necessário
-4. Se houver buracos óbvios (proposições estruturalmente importantes ranqueando baixo), considerar sinais endógenos adicionais: presença na sessão, quantidade de votações associadas, regime de urgência, etc. Todos esses sinais são auditáveis e vêm dos próprios dados da Câmara.
+3. Conferir se o ranking é defensável como porta de entrada pública
+4. Se houver buracos óbvios, registrar a limitação e tratar como possível revisão futura da regra, não como ajuste implícito de pesos
 
 **O que NÃO fazer nesta etapa:**
 
-- Incorporar cobertura midiática como peso na fórmula. Essa ideia foi avaliada e movida para melhorias pós-MVP (ver seção final). O motivo é disciplina de escopo: se a fórmula com sinais endógenos produzir um ranking defensável, cobertura midiática vira complexidade desnecessária. Se não produzir, aí existe evidência empírica de que faz falta.
-
-### 5. Curadoria de apelidos populares
-
-Montar curadoria manual de aproximadamente 80-150 apelidos de proposições conhecidas publicamente ("PEC da Impunidade", "Lei da Ficha Limpa", "Lei da Palmada", etc.). A forma de tabela, seed ou arquivo curado será definida depois, fora do runner de ingestão da Câmara.
-
----
+- Incorporar cobertura midiática como critério do ranking. Essa ideia foi avaliada e movida para melhorias pós-MVP (ver seção final). O motivo é disciplina de escopo: a regra atual por volume é auditável e suficiente para o MVP; sinais externos só devem entrar se houver evidência empírica de que fazem falta.
 
 ## Decisões metodológicas registradas
 
-- **Neutralidade por transparência, não por omissão.** Decisões editoriais inerentes à construção da fórmula e das tabelas de apoio devem ser documentadas e revisáveis. Open methodology é o mecanismo que viabiliza a promessa de neutralidade.
+- **Neutralidade por transparência, não por omissão.** Decisões editoriais inerentes à construção do ranking e das tabelas de apoio devem ser documentadas e revisáveis. Open methodology é o mecanismo que viabiliza a promessa de neutralidade.
 - **Sinais endógenos antes de externos.** Tudo que vem dos dados da Câmara é auditável, gratuito e não depende de terceiros. Fontes externas só entram quando o sinal endógeno se provar insuficiente.
-- **Fórmula resiliente a gaming.** Uma votação unânime sobre uma proposta popular não pode dominar o ranking acima de uma votação polarizada menos conhecida. Isso está refletido no peso baixo do fator "apelido popular" (0.15).
+- **Ranking auditável.** A posição no ranking público indica volume de votações nominais em plenário nos dados ingeridos, não maior saliência pública, impacto social, polarização ou mérito político.
 - **Escopo limitado a quem vota.** Cargos executivos (presidente, governadores, prefeitos) ficam fora do produto — não votam, não há o que comparar.
 
 ### Escopo de votações
@@ -103,7 +92,7 @@ A regra é: tudo que não é `PLEN` ou `CN` é comissão. Não há lista enumera
 
 A flag é usada assim:
 
-- **Fórmula de relevância e matcher:** filtram por `escopo_votacao = plenario`. Votações em comissão ficam fora dessas duas engines centrais. Motivo: deputados que não pertencem à comissão nunca aparecem nas votações dela — não por ausência, por não pertencer. Comparar deputados desiguais introduz viés sistemático.
+- **Ranking público e matcher:** filtram por `escopo_votacao = plenario`. Votações em comissão ficam fora dessas duas engines centrais. Motivo: deputados que não pertencem à comissão nunca aparecem nas votações dela — não por ausência, por não pertencer. Comparar deputados desiguais introduz viés sistemático.
 - **Perfil do deputado e da proposição:** podem exibir votações em comissão como contexto consultável, segregadas das de plenário.
 
 Esta decisão pode ser revisitada em melhorias pós-MVP se houver demanda por accountability mais granular sobre o trabalho dos deputados em comissões, com modelagem que trate a desigualdade de pertencimento.
@@ -165,6 +154,7 @@ Três perfis foram analisados para cobrir os padrões principais:
 
 Itens que foram discutidos mas estão explicitamente adiados:
 
-- **Cobertura midiática na fórmula de relevância.** Movido para melhorias pós-MVP. A integração mais viável seria via GDELT Project (dataset público, gratuito via Google BigQuery). Antes de incorporar, validar experimentalmente se o sinal adiciona informação que a fórmula atual — especialmente o fator "apelido popular" — não já captura. Se for redundante, descartar; se for complementar, integrar com peso calibrado.
+- **Cobertura midiática no ranking público.** Movido para melhorias pós-MVP. A integração mais viável seria via GDELT Project (dataset público, gratuito via Google BigQuery). Antes de incorporar, validar experimentalmente se o sinal melhora a regra atual por volume de votações em plenário. Se for redundante, descartar; se for complementar, documentar nova decisão metodológica.
+- **Curadoria de apelidos populares.** Pode enriquecer busca, exibição e cobertura midiática futura, mas não é pré-requisito do Protótipo depois da decisão de ranking por volume de votações em plenário.
 - **Ingestão de dados complementares** (gastos, frentes, estrutura de comissões do deputado, emendas, discursos). Modelados no schema, importados depois.
 - **Backend e frontend do produto.** Só começam depois que o Protótipo sair com critério de saída cumprido.

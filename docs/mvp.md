@@ -10,7 +10,7 @@ Princípio de escopo: uma feature só entra no MVP se sua ausência torna o prod
 
 ## Pré-requisitos
 
-O MVP só começa quando o Protótipo cumprir seu critério de saída: ranking das 20 proposições votadas mais relevantes de um ano considerado publicamente defensável, com dados reais da Câmara dos Deputados ingeridos e schema modelado.
+O MVP só começa quando o Protótipo cumprir seu critério de saída: ranking das 20 proposições com maior volume de votações nominais em plenário considerado publicamente defensável como porta de entrada, com dados reais da Câmara dos Deputados ingeridos e schema modelado.
 
 ## Escopo do produto
 
@@ -22,11 +22,11 @@ O produto no MVP cobre exclusivamente **deputados federais com histórico de vot
 
 ### MVP-1. Feed / Ranking de Proposições Importantes
 
-Lista pública, sem necessidade de login, das proposições votadas mais relevantes segundo a fórmula calibrada no Protótipo.
+Lista pública, sem necessidade de login, das proposições com maior volume de votações nominais em plenário, conforme a regra definida no Protótipo.
 
 **Apresentação em lista:**
 - Informações enxutas: título, data, tipo de proposição, resultado
-- Ordenada por score de relevância
+- Ordenada por volume de votações nominais em plenário
 
 **Modal / expansão ao clicar:**
 - Detalhes completos da votação
@@ -47,11 +47,11 @@ Ferramenta de compatibilidade entre usuário e deputados com base nos votos. Fra
 **Fluxo:**
 1. Usuário clica para iniciar
 2. Informa estado (obrigatório) e cidade (opcional, preparando para cobertura municipal futura)
-3. Sistema apresenta as 5 proposições votadas mais relevantes, já pré-selecionadas. Usuário pode:
+3. Sistema apresenta as 5 proposições mais bem posicionadas no ranking público e computáveis pelo matcher, já pré-selecionadas. Usuário pode:
    - Expandir para ver/selecionar mais proposições
    - Desselecionar proposições pré-selecionadas
    - Buscar proposições específicas por texto
-4. Para cada proposição selecionada: contexto inicial, link para fonte, usuário vota "deveria ser aprovada", "não deveria" ou "não sei" (não entra no cálculo)
+4. Para cada proposição selecionada: contexto inicial, resultado da votação de referência, link para fonte, usuário informa se concorda, discorda ou não sabe (não entra no cálculo)
 5. Resultado: lista ordenada por % de concordância
 
 **Tratamento de ausências e impedimentos:**
@@ -61,13 +61,13 @@ Ferramenta de compatibilidade entre usuário e deputados com base nos votos. Fra
 
 **Tratamento de proposições fora do mandato do deputado:**
 
-Quando um deputado não estava em exercício durante a votação nominal vinculada a uma proposição selecionada pelo usuário, essa proposição é desconsiderada para aquele deputado (não entra no cálculo), mas o deputado continua no ranking.
+Quando um deputado não estava em exercício durante a votação de referência de uma proposição selecionada pelo usuário, essa proposição é desconsiderada para aquele deputado (não entra no cálculo), mas o deputado continua no ranking.
 
 Isso cria o problema de amostra desigual (ver abaixo), que precisa ser tratado.
 
 **Ordenação e desempate:**
 - Ordenação primária: % de concordância com o usuário
-- Desempate 1: maior % de presença nas votações vinculadas às proposições selecionadas
+- Desempate 1: maior % de presença nas votações de referência das proposições selecionadas
 - Desempate 2: candidato em atividade tem prioridade
 
 **Casos de desempate e amostra que exigem decisão documentada antes de codar:**
@@ -83,10 +83,12 @@ Esses casos foram identificados durante a discussão e precisam ser resolvidos d
 - Exibição transparente por deputado: "100% de compatibilidade (3 de 20 votações — deputado estava em exercício em 3)". O usuário vê a confiabilidade do número.
 - Ordenação secundária que considera tamanho de amostra entre deputados empatados em %.
 
-**Decisão já tomada:** todas as proposições selecionadas pelo usuário têm peso igual no cálculo de compatibilidade. O score de relevância serve apenas para ordenar a listagem de proposições, não influencia o cálculo do matcher.
+**Decisão já tomada:** todas as proposições selecionadas pelo usuário têm peso igual no cálculo de compatibilidade. O ranking público serve apenas para ordenar a listagem de proposições, não influencia o cálculo do matcher.
+
+**Votação de referência:** cada proposição computável pelo matcher usa uma única votação nominal em plenário, escolhida por mérito decisório conforme ADR 0014 e `docs/matcher/votacao-referencia.md`. Destaques, DTQs, requerimentos, recursos, dispensas, preferências, apreciações preliminares e votos de manutenção/supressão de trecho não são usados como votação decisiva de referência.
 
 **Ao clicar no candidato no resultado:**
-- % de participação nas votações vinculadas às proposições selecionadas
+- % de participação nas votações de referência das proposições selecionadas
 - Indicação de em quais o deputado estava em exercício e em quais não
 - Indicação de ausências sem motivo conhecido
 - Orientações de bancada da votação quando disponíveis via API/cache, sem vincular ao voto individual do deputado no MVP
@@ -105,7 +107,7 @@ Esses casos foram identificados durante a discussão e precisam ser resolvidos d
 
 **Entra no MVP:**
 - Dados básicos (nome, partido atual, estado, foto, cargo)
-- Votos nas proposições mais relevantes (lista com filtro)
+- Votos nas proposições mais bem posicionadas no ranking público (lista com filtro)
 - Presença em votações nominais e ausências sem motivo conhecido
 - Histórico de partidos
 
@@ -120,7 +122,7 @@ Esses casos foram identificados durante a discussão e precisam ser resolvidos d
 ### MVP-4. Perfil do Partido — versão mínima
 
 - Lista de parlamentares do partido
-- Orientação de voto nas proposições mais relevantes quando disponível via API/cache
+- Orientação de voto nas proposições mais bem posicionadas no ranking público quando disponível via API/cache
 
 Incluído no MVP por reutilizar deputados, partidos, proposições e votações já ingeridos. As orientações são contexto sob demanda e não bloqueiam as engines centrais quando a API da Câmara estiver indisponível.
 
@@ -199,7 +201,7 @@ O MVP está pronto para ir ao ar quando:
 
 1. Todas as features acima funcionam com dados reais atualizados da Câmara
 2. Mobile está refinado, não apenas funcional
-3. A fórmula de relevância, calibrada no Protótipo, continua produzindo rankings defensáveis com os dados mais recentes
+3. A regra de ranking público por volume de votações em plenário continua produzindo uma lista defensável com os dados mais recentes
 4. Os casos de amostra desigual e desempate do matcher estão decididos e documentados
 5. Páginas públicas têm meta tags OpenGraph e twitter:card funcionando (teste em WhatsApp e Twitter)
 6. Coleta anonimizada de respostas do matcher funciona com política de privacidade publicada
