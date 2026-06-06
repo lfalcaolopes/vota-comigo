@@ -1,0 +1,7 @@
+# Ranking do MVP por volume de votações em plenário
+
+O ranking público de proposições do MVP deixa de ser uma fórmula de relevância e passa a ser uma ordenação por volume de votações nominais em plenário vinculadas pela relação canônica `votacao_proposicao`. A análise com dados reais mostrou que a fórmula endógena ponderada por volume, polarização e participação não era significativamente superior ao baseline de contagem de votações; por isso, a regra simples foi escolhida por ser mais auditável, menos editorial e mais fácil de explicar.
+
+Entram no ranking apenas proposições afetadas com pelo menos uma votação nominal em plenário vinculada. Cada votação vinculada conta uma vez para cada proposição afetada, inclusive quando a mesma votação aparece associada a múltiplas proposições no vínculo N:N definido pela Câmara. Não há filtro adicional por placar agregado, não há fusão por proposição principal, não há canonização por sigla/número/ano e não há compensação para vínculos possivelmente inconsistentes.
+
+Empates são resolvidos apenas para estabilidade visual, sem significado de relevância: primeiro `ano desc`, depois `numero desc`, `siglaTipo asc` e `idProposicao asc`. A posição mais alta no ranking não afirma maior saliência pública, importância política, impacto social, polarização ou mérito da proposição; afirma apenas maior volume de votações nominais em plenário dentro dos dados ingeridos.
