@@ -1,6 +1,7 @@
 import { createProposicoesStep } from './proposicoes.step';
-import type { ProposicaoDownloader } from './proposicoes.step';
+import { createFonteDerivadaProposicoesAfetadas } from './fonte-derivada-proposicoes-afetadas';
 import type { CsvRecord, CsvRow } from '../../csv-reader';
+import type { DatasetDownloader } from '../../shared/dataset-downloader';
 import type {
   ProposicaoRepository,
   ProposicaoRow,
@@ -78,7 +79,7 @@ function createFakeRepository(): ProposicaoRepository & {
 
 function createFakeDownloader(
   behavior: (years: readonly number[]) => void,
-): ProposicaoDownloader & { readonly calls: number[][] } {
+): DatasetDownloader & { readonly calls: number[][] } {
   const calls: number[][] = [];
   return {
     calls,
@@ -88,6 +89,18 @@ function createFakeDownloader(
       return { ok: true };
     },
   };
+}
+
+function buildStep(
+  repository: ProposicaoRepository,
+  downloader: DatasetDownloader = createFakeDownloader(() => {}),
+) {
+  const fonteDerivada = createFonteDerivadaProposicoesAfetadas({
+    proposicoesDownloader: downloader,
+    temasDownloader: createFakeDownloader(() => {}),
+  });
+
+  return createProposicoesStep({ repository, fonteDerivada });
 }
 
 function context(
@@ -127,8 +140,7 @@ describe('proposicoes step', () => {
         },
       };
       const repository = createFakeRepository();
-      const downloader = createFakeDownloader(() => {});
-      const step = createProposicoesStep({ repository, downloader });
+      const step = buildStep(repository);
 
       // Act
       const result = await step.run(context(datasets));
@@ -154,7 +166,7 @@ describe('proposicoes step', () => {
       const downloader = createFakeDownloader(() => {
         datasets.proposicoes[2007] = [proposicaoRecord('111', '2007')];
       });
-      const step = createProposicoesStep({ repository, downloader });
+      const step = buildStep(repository, downloader);
 
       // Act
       const result = await step.run(context(datasets));
@@ -174,12 +186,12 @@ describe('proposicoes step', () => {
         proposicoes: {},
       };
       const repository = createFakeRepository();
-      const failing: ProposicaoDownloader = {
+      const failing: DatasetDownloader = {
         async download() {
           return { ok: false, failures: [{ year: 2007, reason: 'HTTP 503' }] };
         },
       };
-      const step = createProposicoesStep({ repository, downloader: failing });
+      const step = buildStep(repository, failing);
 
       // Act / Assert
       await expect(step.run(context(datasets))).rejects.toThrow(/proposicoes/i);
@@ -198,10 +210,7 @@ describe('proposicoes step', () => {
         proposicoes: { 2015: [proposicaoRecord('111', '2015')] },
       };
       const repository = createFakeRepository();
-      const step = createProposicoesStep({
-        repository,
-        downloader: createFakeDownloader(() => {}),
-      });
+      const step = buildStep(repository);
 
       // Act
       const result = await step.run(context(datasets));
@@ -226,10 +235,7 @@ describe('proposicoes step', () => {
         proposicoes: { 2015: [proposicaoRecord('111', '2015')] },
       };
       const repository = createFakeRepository();
-      const step = createProposicoesStep({
-        repository,
-        downloader: createFakeDownloader(() => {}),
-      });
+      const step = buildStep(repository);
 
       // Act / Assert
       await expect(
@@ -248,7 +254,7 @@ describe('proposicoes step', () => {
       };
       const repository = createFakeRepository();
       const downloader = createFakeDownloader(() => {});
-      const step = createProposicoesStep({ repository, downloader });
+      const step = buildStep(repository, downloader);
 
       // Act
       const result = await step.run(context(datasets, { dryRun: true }));

@@ -1,28 +1,18 @@
 import type {
-  ExternalGap,
   IngestionStep,
   IngestionStepContext,
   StepRunResult,
 } from '../../ingestion-runner.types';
-import { StrictModeError } from '../../strict-mode-error';
-import { collectNeededProposicoes } from './needed-proposicoes';
+import type { FonteDerivadaProposicoesAfetadas } from './fonte-derivada-proposicoes-afetadas';
 import { toProposicaoRow } from './proposicoes.transformer';
 import type {
   ProposicaoRepository,
   ProposicaoRow,
 } from './proposicoes.repository.types';
-import type {
-  DatasetDownloader,
-  DatasetDownloadOutcome,
-} from '../../shared/dataset-downloader';
-
-export type ProposicaoDownloadOutcome = DatasetDownloadOutcome;
-
-export type ProposicaoDownloader = DatasetDownloader;
 
 export type ProposicoesStepDeps = {
   repository: ProposicaoRepository;
-  downloader: ProposicaoDownloader;
+  fonteDerivada: FonteDerivadaProposicoesAfetadas;
 };
 
 export function createProposicoesStep(
@@ -41,39 +31,26 @@ export function createProposicoesStep(
         );
       }
 
-      const { neededByYear } = await collectNeededProposicoes({
+      const prepared = await deps.fonteDerivada.prepareProposicoes({
         years: context.years ?? [],
         limit: context.limit,
+        canDownload: !context.dryRun,
+        strict: context.strict,
+        reporter: context.reporter,
         readDataset,
       });
 
-      const neededYears = [...neededByYear.keys()];
-      const neededTotal = [...neededByYear.values()].reduce(
-        (total, ids) => total + ids.size,
-        0,
-      );
-      context.reporter?.log(
-        `[proposicoes] ${neededTotal} proposições necessárias em ${neededYears.length} ano(s)`,
-      );
-
-      await ensureProposicaoFiles(context, neededYears, deps.downloader);
-
       const rows: ProposicaoRow[] = [];
-      const externalGaps: ExternalGap[] = [];
       let read = 0;
 
-      for (const year of neededYears) {
-        const neededIds = neededByYear.get(year)!;
+      for (const [year, neededIds] of prepared.neededByYear) {
         const yearSource = readDataset('proposicoes', year);
 
         if (yearSource === undefined) {
-          externalGaps.push(missingFileGap(year));
           continue;
         }
 
         context.reporter?.log(`[proposicoes] lendo proposicoes-${year}.csv`);
-
-        const found = new Set<number>();
 
         for await (const { record } of yearSource()) {
           const externalId = Number(record.id);
@@ -82,23 +59,8 @@ export function createProposicoesStep(
             continue;
           }
 
-          found.add(externalId);
           rows.push(toProposicaoRow(record));
           read += 1;
-        }
-
-        for (const externalId of neededIds) {
-          if (found.has(externalId)) {
-            continue;
-          }
-
-          const gap = missingProposicaoGap(year, externalId);
-
-          if (context.strict && !context.dryRun) {
-            throw StrictModeError.fromGap(gap);
-          }
-
-          externalGaps.push(gap);
         }
       }
 
@@ -112,73 +74,8 @@ export function createProposicoesStep(
         updated,
         ignored: 0,
         rejected: [],
-        externalGaps,
+        externalGaps: [...prepared.externalGaps],
       };
     },
-  };
-}
-
-async function ensureProposicaoFiles(
-  context: IngestionStepContext,
-  neededYears: readonly number[],
-  downloader: ProposicaoDownloader,
-): Promise<void> {
-  if (context.dryRun) {
-    return;
-  }
-
-  const missingYears = neededYears.filter(
-    (year) => context.readDataset!('proposicoes', year) === undefined,
-  );
-
-  if (missingYears.length === 0) {
-    return;
-  }
-
-  context.reporter?.log(
-    `[proposicoes] baixando proposicoes-{ano}.csv ausentes: ${missingYears.join(', ')}`,
-  );
-
-  const outcome = await downloader.download(missingYears);
-
-  if (!outcome.ok) {
-    const failedYears = outcome.failures.map((failure) => failure.year);
-    const gap: ExternalGap = {
-      file: 'proposicoes',
-      type: 'download_falhou',
-      reference: failedYears.join(','),
-      message:
-        `Falha ao baixar proposicoes-{ano}.csv: ${describeFailures(outcome.failures)}. ` +
-        `Faltam os anos ${failedYears.join(', ')}. ` +
-        `Retome com: npm run ingest -- --only=proposicoes,votacao_proposicao após restabelecer o acesso à fonte.`,
-    };
-
-    throw StrictModeError.fromGap(gap);
-  }
-}
-
-function describeFailures(
-  failures: readonly { year: number; reason: string }[],
-): string {
-  return failures
-    .map((failure) => `${failure.year} (${failure.reason})`)
-    .join('; ');
-}
-
-function missingFileGap(year: number): ExternalGap {
-  return {
-    file: `proposicoes-${year}.csv`,
-    type: 'fonte_ausente',
-    reference: `proposicoes-${year}`,
-    message: `proposicoes-${year}.csv ausente em disco; proposições do ano ${year} não foram ingeridas.`,
-  };
-}
-
-function missingProposicaoGap(year: number, externalId: number): ExternalGap {
-  return {
-    file: `proposicoes-${year}.csv`,
-    type: 'proposicao_ausente',
-    reference: String(externalId),
-    message: `Proposição ${externalId} necessária não encontrada em proposicoes-${year}.csv; lacuna registrada sem registro sintético.`,
   };
 }

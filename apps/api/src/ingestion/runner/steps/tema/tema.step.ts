@@ -1,13 +1,10 @@
 import type {
-  ExternalGap,
   IngestionStep,
   IngestionStepContext,
   StepRunResult,
 } from '../../ingestion-runner.types';
-import { StrictModeError } from '../../strict-mode-error';
 import { normalizeProposicaoTemaRecord } from '../../shared/proposicoes-temas.normalizer';
-import { collectNeededProposicoes } from '../proposicoes/needed-proposicoes';
-import type { DatasetDownloader } from '../../shared/dataset-downloader';
+import type { FonteDerivadaProposicoesAfetadas } from '../proposicoes/fonte-derivada-proposicoes-afetadas';
 import type { ProposicaoLookup } from '../votacao-proposicao/votacao-proposicao.repository.types';
 import type {
   ProposicaoTemaRow,
@@ -20,7 +17,7 @@ const TEMA_DATASET = 'proposicoesTemas';
 
 export type TemaStepDeps = {
   repository: TemaRepository;
-  downloader: DatasetDownloader;
+  fonteDerivada: FonteDerivadaProposicoesAfetadas;
   proposicaoLookup: ProposicaoLookup;
   temaLookup: TemaLookup;
 };
@@ -45,33 +42,27 @@ export function createTemaStep(deps: TemaStepDeps): IngestionStep {
         );
       }
 
-      const { neededByYear } = await collectNeededProposicoes({
+      const prepared = await deps.fonteDerivada.prepareTemas({
         years: context.years ?? [],
         limit: context.limit,
+        canDownload: !context.dryRun,
+        strict: context.strict,
+        reporter: context.reporter,
         readDataset,
       });
-
-      const neededYears = [...neededByYear.keys()];
-      context.reporter?.log(
-        `[tema] temas necessários para proposições de ${neededYears.length} ano(s)`,
-      );
-
-      await ensureTemaFiles(context, neededYears, deps.downloader);
 
       const proposicaoIds = await deps.proposicaoLookup.loadIdByExternalId();
 
       const temaByCod = new Map<number, TemaRow>();
       const vinculoKeys = new Set<string>();
       const pendingVinculos: PendingVinculo[] = [];
-      const externalGaps: ExternalGap[] = [];
       let read = 0;
       let ignored = 0;
 
-      for (const year of neededYears) {
+      for (const year of prepared.neededByYear.keys()) {
         const yearSource = readDataset(TEMA_DATASET, year);
 
         if (yearSource === undefined) {
-          externalGaps.push(missingFileGap(year));
           continue;
         }
 
@@ -118,7 +109,7 @@ export function createTemaStep(deps: TemaStepDeps): IngestionStep {
           updated: 0,
           ignored,
           rejected: [],
-          externalGaps,
+          externalGaps: [...prepared.externalGaps],
         };
       }
 
@@ -136,7 +127,7 @@ export function createTemaStep(deps: TemaStepDeps): IngestionStep {
         updated: temaResult.updated + vinculoResult.updated,
         ignored,
         rejected: [],
-        externalGaps,
+        externalGaps: [...prepared.externalGaps],
       };
     },
   };
@@ -164,60 +155,4 @@ function resolveVinculos(
   }
 
   return rows;
-}
-
-async function ensureTemaFiles(
-  context: IngestionStepContext,
-  neededYears: readonly number[],
-  downloader: DatasetDownloader,
-): Promise<void> {
-  if (context.dryRun) {
-    return;
-  }
-
-  const missingYears = neededYears.filter(
-    (year) => context.readDataset!(TEMA_DATASET, year) === undefined,
-  );
-
-  if (missingYears.length === 0) {
-    return;
-  }
-
-  context.reporter?.log(
-    `[tema] baixando ${TEMA_DATASET}-{ano}.csv ausentes: ${missingYears.join(', ')}`,
-  );
-
-  const outcome = await downloader.download(missingYears);
-
-  if (!outcome.ok) {
-    const failedYears = outcome.failures.map((failure) => failure.year);
-    const gap: ExternalGap = {
-      file: TEMA_DATASET,
-      type: 'download_falhou',
-      reference: failedYears.join(','),
-      message:
-        `Falha ao baixar ${TEMA_DATASET}-{ano}.csv: ${describeFailures(outcome.failures)}. ` +
-        `Faltam os anos ${failedYears.join(', ')}. ` +
-        `Retome com: npm run ingest -- --only=tema após restabelecer o acesso à fonte.`,
-    };
-
-    throw StrictModeError.fromGap(gap);
-  }
-}
-
-function describeFailures(
-  failures: readonly { year: number; reason: string }[],
-): string {
-  return failures
-    .map((failure) => `${failure.year} (${failure.reason})`)
-    .join('; ');
-}
-
-function missingFileGap(year: number): ExternalGap {
-  return {
-    file: `${TEMA_DATASET}-${year}.csv`,
-    type: 'fonte_ausente',
-    reference: `${TEMA_DATASET}-${year}`,
-    message: `${TEMA_DATASET}-${year}.csv ausente em disco; temas do ano ${year} não foram ingeridos.`,
-  };
 }
