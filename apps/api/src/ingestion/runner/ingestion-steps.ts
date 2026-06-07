@@ -36,6 +36,7 @@ import type {
 } from './steps/votacao-votos/votacao-votos.repository.types';
 import { createProposicaoRepository } from './steps/proposicoes/proposicoes.repository';
 import { createProposicoesStep } from './steps/proposicoes/proposicoes.step';
+import { createFonteDerivadaProposicoesAfetadas } from './steps/proposicoes/fonte-derivada-proposicoes-afetadas';
 import {
   createDatasetDownloader,
   type DatasetDownloader,
@@ -159,6 +160,11 @@ export function createIngestionSteps(
   options: IngestionStepsOptions = {},
 ): Promise<CreateStepsResult> {
   if (input.dryRun) {
+    const fonteDerivada = createFonteDerivadaProposicoesAfetadas({
+      proposicoesDownloader: dryRunProposicaoDownloader,
+      temasDownloader: dryRunProposicaoDownloader,
+    });
+
     return Promise.resolve({
       steps: [
         createLegislaturasStep(dryRunLegislaturaRepository),
@@ -172,7 +178,7 @@ export function createIngestionSteps(
         }),
         createProposicoesStep({
           repository: dryRunProposicaoRepository,
-          downloader: dryRunProposicaoDownloader,
+          fonteDerivada,
         }),
         createVotacaoProposicaoStep({
           repository: dryRunVotacaoProposicaoRepository,
@@ -181,7 +187,7 @@ export function createIngestionSteps(
         }),
         createTemaStep({
           repository: dryRunTemaRepository,
-          downloader: dryRunProposicaoDownloader,
+          fonteDerivada,
           proposicaoLookup: dryRunProposicaoLookup,
           temaLookup: dryRunTemaLookup,
         }),
@@ -194,6 +200,10 @@ export function createIngestionSteps(
 
   const factory = options.databaseClientFactory ?? createDatabaseClient;
   const { db, close } = factory();
+  const fonteDerivada = createFonteDerivadaProposicoesAfetadas({
+    proposicoesDownloader: createDatasetDownloader('proposicoes'),
+    temasDownloader: createDatasetDownloader('proposicoesTemas'),
+  });
 
   const steps: IngestionStep[] = [
     createLegislaturasStep(createLegislaturaRepository(db)),
@@ -210,7 +220,7 @@ export function createIngestionSteps(
     }),
     createProposicoesStep({
       repository: createProposicaoRepository(db),
-      downloader: createDatasetDownloader('proposicoes'),
+      fonteDerivada,
     }),
     createVotacaoProposicaoStep({
       repository: createVotacaoProposicaoRepository(db),
@@ -219,7 +229,7 @@ export function createIngestionSteps(
     }),
     createTemaStep({
       repository: createTemaRepository(db),
-      downloader: createDatasetDownloader('proposicoesTemas'),
+      fonteDerivada,
       proposicaoLookup: createProposicaoLookup(db),
       temaLookup: createTemaLookup(db),
     }),

@@ -1,6 +1,7 @@
 import { createTemaStep } from './tema.step';
 import type { CsvRecord, CsvRow } from '../../csv-reader';
 import type { DatasetDownloader } from '../../shared/dataset-downloader';
+import { createFonteDerivadaProposicoesAfetadas } from '../proposicoes/fonte-derivada-proposicoes-afetadas';
 import type { ProposicaoLookup } from '../votacao-proposicao/votacao-proposicao.repository.types';
 import type {
   ProposicaoTemaRow,
@@ -156,9 +157,14 @@ function buildStep(
   proposicoes: Record<number, string>,
   downloader: DatasetDownloader = createFakeDownloader(),
 ) {
+  const fonteDerivada = createFonteDerivadaProposicoesAfetadas({
+    proposicoesDownloader: createFakeDownloader(),
+    temasDownloader: downloader,
+  });
+
   return createTemaStep({
     repository,
-    downloader,
+    fonteDerivada,
     proposicaoLookup: proposicaoLookup(proposicoes),
     temaLookup: temaLookup(repository.temaStore),
   });
