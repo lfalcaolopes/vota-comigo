@@ -7,9 +7,27 @@
 
 Code naming and documentation language conventions are defined in `docs/adr/007-convencoes-naming-documentacao.md`. Consult it before creating any identifier or documentation file.
 
+**ADR 007 is the authority on naming, not the docs.** Operational docs, ADR prose, SQL queries (e.g. `docs/matcher/votacao-referencia.md`), and source field aliases are references for *behavior*, not naming. A column alias or a term used in doc prose does **not** justify keeping it as an identifier. Apply the rule from first principles every time:
+
+- English for the syntactic structure: verbs, connectives (`with`, not `com`), boolean predicates, generic helpers, and framework patterns. Generic nouns with a precise English equivalent are English too — `priority`, `pattern`, `classification`, `cascade`, `exclusion`, `summary` (not `prioridade`, `padrao`, `classificacao`, `cascata`, `exclusao`).
+- Portuguese (no accents) **only** for domain substantives — and the canonical list is the **bolded glossary in `CONTEXT.md`** (`Votacao`, `Proposicao`, `Deputado`, `referencia`, `Resultado`, `resumo`, `computavel`, `ranking`, `turno`, `plenario`, …). If a word is not a bolded domain term and has a clean English equivalent, it is English.
+- The exception is the **Data origin** rule below: identifiers/columns mirroring Câmara source fields are preserved as-is.
+
+When in doubt, a word is generic (English) unless it is a domain term you can point to in `CONTEXT.md`.
+
 ### Code comments
 
 Default to no comments. Names and types should carry the meaning. Do not add docstrings that restate a type, signature, or what the code plainly does. Write a comment only to explain a non-obvious *why* (a surprising decision, a constraint, a workaround) — and keep it to one short line. AAA section markers in tests are the exception and stay.
+
+## Shared types and contracts
+
+`@vota-comigo/shared-types` is the single source of truth for any type that crosses a boundary — the public API contract (DTOs, response shapes) and any literal set / enum that both the front and back, or two backend modules, need to agree on (e.g. the votação-referência pattern list, the votação result values).
+
+- Define such a literal set or enum **once** in `shared-types` (a `z.enum([...])` plus its `z.infer` type) and import it everywhere else. Do **not** redeclare a parallel `type X = 'a' | 'b' | ...` union in a module that already has, or could share, a contract counterpart — parallel lists drift silently.
+- Domain/app modules import these as **type-only** (`import type { ... } from '@vota-comigo/shared-types'`). That keeps pure modules (like the matcher) free of runtime, framework, and DB dependencies while still reusing the canonical type.
+- `shared-types` must never import from `apps/*`. The dependency direction is always app → contract, never the reverse.
+
+Before adding a string-literal union or enum, check whether `shared-types` already defines it (or should).
 
 ## Data origin
 
