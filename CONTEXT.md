@@ -32,6 +32,8 @@ _Avoid_: Parlamentar, congressista, representante.
 
 **Em exercício**: Condição de um deputado estar habilitado a votar em uma data específica, determinada pelos intervalos de exercício.
 
+**Em atividade**: Condição de um deputado com intervalo de exercício aberto no snapshot mais recente conhecido, usada como desempate no matcher.
+
 **Suplência**: Condição de um suplente quando afastado, geralmente porque o titular retornou.
 
 **Licença**: Condição de um titular temporariamente afastado por motivo formal (cargo executivo, saúde, interesse particular).
@@ -65,6 +67,10 @@ _Avoid_: Matéria.
 
 **Voto de redação final**: Votação nominal que aprova ou rejeita a forma final do texto após a deliberação de mérito, usada no matcher apenas como fallback quando não há voto de mérito decisório nem fallback por turno elegível.
 
+**Resultado da votação**: Interpretação pública do placar de uma votação como aprovada, rejeitada ou indisponível, preservando os números brutos do placar.
+
+**Placar completo**: Contagem agregada dos votos de uma votação nominal por categoria, sem listar os votos individuais dos deputados.
+
 **Fallback por turno**: Critério secundário de escolha da votação de referência do matcher que usa indicação explícita de turno quando o texto da votação não casa com padrões de mérito decisório e não indica voto fragmentário, procedural ou redação final.
 
 **Votação por aclamação**: Votação sem registro individual de voto, fora de escopo do produto.
@@ -75,11 +81,13 @@ _Avoid_: Matéria.
 
 **Obstrução**: Voto computável em que o deputado registra participação como estratégia parlamentar de dificultar ou atrasar a deliberação, sem votar `sim` nem `não`.
 
-**Posição do usuário**: Resposta declarada pelo usuário sobre uma proposição no matcher: a favor, contra ou não sei.
+**Posição do usuário**: Resposta declarada pelo usuário sobre uma proposição no matcher: deveria ser aprovada, não deveria ser aprovada ou não sei.
 
 **Artigo 17**: Registro de impedimento regimental do deputado em uma votação nominal, tratado como fora do denominador no matcher.
 
 **Ausência sem motivo conhecido**: Caso em que um deputado em exercício não tem registro individual em uma votação nominal.
+
+**Voto não informado**: Registro individual importado com voto vazio, tratado como fora do denominador por qualidade de dado no matcher.
 
 **Escopo de votação**: Flag derivada de `siglaOrgao` com dois valores: `plenario` (quando sigla é `PLEN` ou `CN`) ou `comissao` (qualquer outra sigla).
 
@@ -111,7 +119,9 @@ _Avoid_: Liderança (ambíguo).
 **Ranking de volume de votações em plenário**: Ordenação de proposições afetadas com pelo menos uma votação nominal em plenário vinculada, pela quantidade dessas votações, sem filtro adicional por placar agregado, com empates resolvidos por `ano desc`, `numero desc`, `siglaTipo asc` e `idProposicao asc` apenas como heurística de estabilidade.
 _Avoid_: Fórmula de relevância, ranking de relevância.
 
-**Proposições mais votadas em plenário**: Nome público do ranking de volume de votações em plenário.
+**Feed de proposições do MVP**: Lista pública de proposições computáveis pelo matcher, ordenada pelo ranking de volume de votações em plenário.
+
+**Proposições mais votadas em plenário**: Nome público do feed de proposições do MVP.
 _Avoid_: Proposições que marcaram.
 
 **Sugestão inicial de proposições**: Lista inicial de proposições computáveis pelo matcher apresentada ao usuário a partir do ranking de volume de votações em plenário.
@@ -123,6 +133,26 @@ _Avoid_: Proposições que marcaram.
 **Matcher**: Engine que calcula compatibilidade entre a posição declarada pelo usuário sobre proposições com votação nominal em plenário vinculada e os votos dos deputados nas votações de referência dessas proposições.
 
 **Compatibilidade**: Percentual de concordância entre o usuário e um deputado, calculado pelo matcher sobre o conjunto de proposições selecionadas.
+
+**Execução válida do matcher**: Execução com lista única de três a trinta proposições computáveis pelo matcher e pelo menos três posições computáveis do usuário.
+
+**UF de resultado do matcher**: Estado mais recente conhecido do deputado, usado para filtrar a visualização padrão dos resultados.
+
+**Cidade informada no matcher**: Município opcional informado pelo usuário, sem efeito no cálculo ou filtro do matcher no MVP.
+
+**Cobertura de exercício no matcher**: Percentual de posições computáveis do usuário em que um deputado estava em exercício e não tinha impedimento por Artigo 17.
+
+**Compatibilidade bruta**: Percentual simples de concordância entre o usuário e um deputado, antes de ajuste por tamanho de amostra.
+
+**Score Wilson do matcher**: Limite inferior do intervalo de Wilson com `z = 1.96`, calculado sobre concordâncias e denominador do matcher, usado para ordenar resultados sem supervalorizar amostras pequenas.
+
+**Amostra pequena no matcher**: Alerta de resultado do matcher quando a amostra comparável de um deputado é menor que 50% das posições computáveis do usuário.
+
+**Sem bom match**: Condição do matcher quando o melhor resultado do escopo consultado tem compatibilidade bruta menor que 60%.
+
+**Resumo de resultado do matcher**: Apresentação enxuta de um deputado no ranking do matcher, com compatibilidade, amostra comparável e alertas curtos.
+
+**Detalhe de resultado do matcher**: Apresentação expandida de um deputado no matcher, com métricas completas e detalhamento voto a voto.
 
 ## Relationships
 
@@ -139,17 +169,29 @@ _Avoid_: Proposições que marcaram.
 - No **Ranking de volume de votações em plenário**, uma **Votação** vinculada a múltiplas **Proposições afetadas** conta uma vez para cada proposição vinculada.
 - Uma **Votação** tem **Escopo de votação** igual a `plenario` ou `comissao`.
 - Uma **Votação nominal** registra **Votos computáveis** dos **Deputados em exercício** naquela data.
-- A **Sugestão inicial de proposições** usa o **Ranking de volume de votações em plenário**, mas só inclui **Proposições** com **Votação de referência do matcher**.
+- O **Feed de proposições do MVP** usa o **Ranking de volume de votações em plenário**, mas só inclui **Proposições computáveis pelo matcher**.
+- A **Sugestão inicial de proposições** usa as primeiras **Proposições** do **Feed de proposições do MVP**.
 - O usuário pode escolher manualmente qualquer **Proposição computável pelo matcher**, mesmo que ela não esteja na **Sugestão inicial de proposições**.
-- Para cada **Proposição** selecionada, o **Matcher** compara a posição do usuário com os votos dos deputados na **Votação de referência do matcher**.
+- Para cada **Proposição** selecionada, o **Matcher** compara a **Posição do usuário** com os votos dos deputados na **Votação de referência do matcher**.
+- A **Compatibilidade** não inverte a concordância pelo **Resultado da votação**: posição "deveria ser aprovada" concorda com voto `sim`, e posição "não deveria ser aprovada" concorda com voto `não`.
 - **Não sei** não entra no cálculo de **Compatibilidade**.
+- Uma **Posição do usuário** `não sei` tem o mesmo efeito de não selecionar a **Proposição**: ela é completamente desconsiderada pelo cálculo e pelo detalhe comparativo.
+- Uma **Execução válida do matcher** exige lista única de três a trinta **Proposições computáveis pelo matcher** e pelo menos três **Posições do usuário** computáveis.
 - O usuário não declara **Abstenção** como **Posição do usuário**.
 - Uma **Abstenção** conta como discordância no **Matcher**, com o mesmo efeito de um voto contrário à **Posição do usuário**, preservando o voto real para exibição.
 - O usuário não declara **Obstrução** como **Posição do usuário**.
 - Uma **Obstrução** conta como discordância no **Matcher**, com o mesmo efeito de um voto contrário à **Posição do usuário**, preservando o voto real para exibição.
 - O **Matcher** desconsidera uma **Votação nominal** para um **Deputado** quando ele não estava **Em exercício** ou quando seu registro é **Artigo 17**.
+- O **Matcher** desconsidera uma **Votação nominal** para um **Deputado** quando seu registro é **Voto não informado**.
+- O **Matcher** exclui do ranking deputados sem histórico suficiente para determinar **Intervalos de exercício**, contabilizando-os como lacuna de dados.
 - Uma **Ausência sem motivo conhecido** conta como discordância no **Matcher**.
 - A apresentação do **Matcher** preserva a diferença entre voto `sim`, voto `não`, **Abstenção**, **Obstrução** e **Ausência sem motivo conhecido**, mesmo quando esses casos têm o mesmo efeito na **Compatibilidade**.
+- A visualização padrão do **Matcher** usa a **UF de resultado do matcher**, enquanto a condição **Em exercício** continua sendo avaliada na data de cada **Votação de referência do matcher**.
+- A **Cidade informada no matcher** é preservada como contexto de produto futuro, mas não altera a **Compatibilidade**, o score de ordenação nem o escopo de resultado no MVP.
+- O desempate por deputado **Em atividade** no **Matcher** usa o snapshot mais recente conhecido, não a condição **Em exercício** em cada votação histórica.
+- O ranking do **Matcher** é ordenado pelo **Score Wilson do matcher**, preservando a **Compatibilidade bruta** e a amostra comparável para exibição.
+- O **Resumo de resultado do matcher** preserva a transparência de amostra sem exibir todas as métricas; o **Detalhe de resultado do matcher** contém métricas completas e detalhamento voto a voto.
+- O **Matcher** sinaliza **Sem bom match** quando o melhor resultado do escopo consultado tem **Compatibilidade bruta** menor que 60%.
 - Uma **Bancada** emite **Orientação** para uma **Votação**.
 - Um **Partido** pertence a zero ou uma **Federação** e a zero ou um **Bloco** em uma dada **Legislatura**.
 - Quando uma **Federação** orienta, os **Partidos** membros não orientam separadamente naquela **Votação**.
@@ -167,4 +209,5 @@ _Avoid_: Proposições que marcaram.
 - **Liderança** foi usada para se referir tanto a bancadas formais quanto a Governo/Oposição/Maioria/Minoria. Resolvido: bancadas formais são **partido**, **federação** ou **bloco**; os outros quatro são **liderança suprapartidária**. "Liderança" sozinho deve ser evitado.
 - **Parlamentar** foi usado intercambiavelmente com **deputado**. Resolvido: no escopo do MVP, só existem **deputados**. Quando o produto cobrir Senado, **senador** entra como termo distinto e **parlamentar** pode reaparecer como guarda-chuva.
 - **Fórmula de relevância** e **Proposições que marcaram** foram usados para um ranking por importância pública. Resolvido: no MVP, o ranking é **Ranking de volume de votações em plenário** e o nome público é **Proposições mais votadas em plenário**; ele não mede relevância, saliência pública ou importância política.
-- **Proposições sem votação de referência do matcher** não entram na escolha do **Matcher**. O **Ranking de volume de votações em plenário** pode exibi-las, mas o matcher só compara proposições com uma votação nominal representativa da decisão substantiva.
+- **Proposições sem votação de referência do matcher** não entram no **Feed de proposições do MVP** nem na escolha do **Matcher**. O **Ranking de volume de votações em plenário** continua existindo como ordenação metodológica, mas o produto público do MVP só exibe proposições com uma votação nominal representativa da decisão substantiva.
+- **MVP-1** se refere à feature **Feed / Ranking de Proposições Importantes** descrita em `docs/mvp.md`, não ao MVP inteiro nem à primeira entrega técnica do backend.

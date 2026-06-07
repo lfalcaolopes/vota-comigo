@@ -22,17 +22,21 @@ O produto no MVP cobre exclusivamente **deputados federais com histórico de vot
 
 ### MVP-1. Feed / Ranking de Proposições Importantes
 
-Lista pública, sem necessidade de login, das proposições com maior volume de votações nominais em plenário, conforme a regra definida no Protótipo.
+Lista pública, sem necessidade de login, das proposições computáveis pelo matcher com maior volume de votações nominais em plenário, conforme a regra definida no Protótipo.
 
 **Apresentação em lista:**
 - Informações enxutas: título, data, tipo de proposição, resultado
 - Ordenada por volume de votações nominais em plenário
+- Cada proposição exibida precisa ter uma votação de referência do matcher
+- A lista retorna apenas o resumo necessário para o card; detalhes completos são carregados quando o usuário abre a proposição
 
 **Modal / expansão ao clicar:**
 - Detalhes completos da votação
-- Orientações de bancada quando disponíveis via API/cache
+- Votações nominais em plenário vinculadas à proposição, sem duplicatas
+- Votação de referência do matcher exibida como uma votação normal da lista, marcada visualmente como referência
+- Orientações de bancada quando disponíveis via API/cache, em corte posterior do MVP-1
 - Placar completo
-- Link para a fonte oficial na Câmara
+- Link para a fonte oficial da proposição e, em cada votação listada, link para a fonte oficial da votação
 - Contexto adicional quando disponível (regime de urgência, destaques, etc.)
 
 **Não entra no MVP:**
@@ -51,8 +55,14 @@ Ferramenta de compatibilidade entre usuário e deputados com base nos votos. Fra
    - Expandir para ver/selecionar mais proposições
    - Desselecionar proposições pré-selecionadas
    - Buscar proposições específicas por texto
-4. Para cada proposição selecionada: contexto inicial, resultado da votação de referência, link para fonte, usuário informa se concorda, discorda ou não sabe (não entra no cálculo)
+   - Selecionar uma lista única de proposições computáveis pelo matcher
+4. Para cada proposição selecionada: contexto inicial, resultado da votação de referência, link para fonte, usuário informa se a proposição deveria ser aprovada, não deveria ser aprovada ou não sabe. `Não sei` tem o mesmo efeito de não selecionar a proposição: é completamente desconsiderado no cálculo.
 5. Resultado: lista ordenada por % de concordância
+
+**Validação de entrada:**
+- Mínimo de 3 posições computáveis do usuário (`deveria ser aprovada` ou `não deveria ser aprovada`)
+- Máximo de 30 proposições selecionadas para o matcher, incluindo respostas `não sei`
+- Proposições duplicadas ou não computáveis pelo matcher tornam a execução inválida
 
 **Tratamento de ausências e impedimentos:**
 - Deputado em exercício sem registro em `votacoesVotos`: conta como discordância no matcher.
@@ -66,9 +76,14 @@ Quando um deputado não estava em exercício durante a votação de referência 
 Isso cria o problema de amostra desigual (ver abaixo), que precisa ser tratado.
 
 **Ordenação e desempate:**
-- Ordenação primária: % de concordância com o usuário
-- Desempate 1: maior % de presença nas votações de referência das proposições selecionadas
-- Desempate 2: candidato em atividade tem prioridade
+- Ordenação primária: Score Wilson do matcher, calculado como limite inferior do intervalo de Wilson com `z = 1.96` sobre concordâncias e denominador do matcher
+- A compatibilidade bruta continua exibida ao usuário junto com a amostra comparável
+- Desempate 1: compatibilidade bruta
+- Desempate 2: maior % de presença nas votações de referência das proposições selecionadas
+- Desempate 3: candidato em atividade tem prioridade
+- Desempate 4: nome do deputado em ordem alfabética, apenas para estabilidade
+- Desempate 5: identificador externo do deputado, apenas para estabilidade
+- Resultados retornados com paginação; `limit` padrão 20 e máximo 100
 
 **Casos de desempate e amostra que exigem decisão documentada antes de codar:**
 
@@ -79,9 +94,13 @@ Esses casos foram identificados durante a discussão e precisam ser resolvidos d
 - **Volume diferente.** Candidato com 100% de concordância em 2 votações vs. candidato com 90% em 20 votações. Amostra maior é estatisticamente mais confiável.
 
 **Direções de tratamento a decidir na construção:**
-- Threshold mínimo de votos efetivos (ex.: 30-50% das proposições selecionadas) para aparecer nos primeiros resultados. Abaixo disso, listar numa seção separada tipo "deputados com pouco histórico relevante".
-- Exibição transparente por deputado: "100% de compatibilidade (3 de 20 votações — deputado estava em exercício em 3)". O usuário vê a confiabilidade do número.
-- Ordenação secundária que considera tamanho de amostra entre deputados empatados em %.
+**Decisão:** o matcher usa o limite inferior de Wilson como score de ordenação para reduzir o efeito de amostras pequenas sem criar duas listas de resultados. A compatibilidade bruta continua sendo calculada e exibida, mas não é o score primário de ordenação.
+
+Exibição transparente por deputado: "100% de compatibilidade (3 de 20 votações — deputado estava em exercício em 3)". O usuário vê a confiabilidade do número.
+
+Deputados com amostra comparável menor que 50% das posições computáveis do usuário recebem alerta de amostra pequena, mas continuam na lista única ordenada pelo score Wilson.
+
+Ordenação secundária considera tamanho de amostra entre deputados empatados em %.
 
 **Decisão já tomada:** todas as proposições selecionadas pelo usuário têm peso igual no cálculo de compatibilidade. O ranking público serve apenas para ordenar a listagem de proposições, não influencia o cálculo do matcher.
 
@@ -97,6 +116,7 @@ Esses casos foram identificados durante a discussão e precisam ser resolvidos d
 **Opções de visualização:**
 - Default: deputados do estado informado pelo usuário
 - Toggle para expandir a visualização para todos os deputados, caso o usuário queira
+- A expansão para todos os deputados faz nova chamada com o mesmo cálculo e escopo nacional
 
 **Comportamentos de borda:**
 

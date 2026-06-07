@@ -1,0 +1,5 @@
+# Ordenação do matcher por limite inferior de Wilson
+
+O ranking do matcher usa o limite inferior do intervalo de Wilson com `z = 1.96` como score primário de ordenação, calculado sobre concordâncias e denominador do matcher, em vez de ordenar apenas pela compatibilidade bruta. A compatibilidade bruta continua exposta ao usuário junto com a amostra comparável, mas o score Wilson evita que amostras pequenas, como 100% em poucas votações comparáveis, apareçam acima de resultados com amostra mais confiável.
+
+Foram consideradas duas alternativas principais: separar deputados com baixa cobertura em uma seção de pouco histórico relevante e usar suavização bayesiana. A seção separada foi rejeitada porque criaria duas listas de resultado e enfraqueceria a experiência de ranking único; a suavização bayesiana foi rejeitada por exigir calibrar um peso-base arbitrário. Wilson foi escolhido por penalizar amostras pequenas de forma estatisticamente defensável, sem threshold abrupto e sem peso calibrado manualmente.
