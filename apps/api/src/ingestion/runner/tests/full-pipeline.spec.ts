@@ -8,6 +8,7 @@ import { createPartidosStep } from '../steps/partidos/partidos.step';
 import { createVotacoesStep } from '../steps/votacoes/votacoes.step';
 import { createVotacaoVotosStep } from '../steps/votacao-votos/votacao-votos.step';
 import { createProposicoesStep } from '../steps/proposicoes/proposicoes.step';
+import { createFonteDerivadaProposicoesAfetadas } from '../steps/proposicoes/fonte-derivada-proposicoes-afetadas';
 import { createVotacaoProposicaoStep } from '../steps/votacao-proposicao/votacao-proposicao.step';
 import { createTemaStep } from '../steps/tema/tema.step';
 import { createSanityStep } from '../steps/sanity/sanity.step';
@@ -372,6 +373,10 @@ function buildSteps(store: Store): readonly IngestionStep[] {
       return rows;
     },
   };
+  const fonteDerivada = createFonteDerivadaProposicoesAfetadas({
+    proposicoesDownloader: downloader,
+    temasDownloader: downloader,
+  });
 
   return [
     createLegislaturasStep(legislaturaRepository),
@@ -383,7 +388,7 @@ function buildSteps(store: Store): readonly IngestionStep[] {
       votacaoLookup,
       deputadoLookup,
     }),
-    createProposicoesStep({ repository: proposicaoRepository, downloader }),
+    createProposicoesStep({ repository: proposicaoRepository, fonteDerivada }),
     createVotacaoProposicaoStep({
       repository: votacaoProposicaoRepository,
       votacaoLookup,
@@ -391,7 +396,7 @@ function buildSteps(store: Store): readonly IngestionStep[] {
     }),
     createTemaStep({
       repository: temaRepository,
-      downloader,
+      fonteDerivada,
       proposicaoLookup,
       temaLookup,
     }),

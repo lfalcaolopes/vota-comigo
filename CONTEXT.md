@@ -114,6 +114,10 @@ _Avoid_: Liderança (ambíguo).
 
 **Quebra de disciplina**: Voto computável de um deputado que diverge da orientação computável resolvida pela cascata.
 
+### Ingestão
+
+**Fonte derivada de proposições afetadas**: Módulo de ingestão que deriva, a partir das votações nominais em escopo e do CSV `votacoesProposicoes-{ano}.csv`, quais proposições afetadas precisam de arquivos `proposicoes-{ano}.csv` e `proposicoesTemas-{ano}.csv`, completa esses arquivos por download quando permitido e aplica a política de lacunas definida para proposições e temas.
+
 ### Engines do produto
 
 **Ranking de volume de votações em plenário**: Ordenação de proposições afetadas com pelo menos uma votação nominal em plenário vinculada, pela quantidade dessas votações, sem filtro adicional por placar agregado, com empates resolvidos por `ano desc`, `numero desc`, `siglaTipo asc` e `idProposicao asc` apenas como heurística de estabilidade.
@@ -202,6 +206,7 @@ _Avoid_: Proposições que marcaram.
 - Quando a **Orientação computável** resolvida é `Sim` ou `Não`, **Votos computáveis** `abstenção` e `obstrução` contam como quebra de disciplina.
 - Uma **Quebra de disciplina** ocorre quando o **Voto computável** de um **Deputado** diverge da **Orientação computável** resolvida pela cascata.
 - O **Ranking de volume de votações em plenário** e o **Matcher** consideram apenas **Votações** com **Escopo de votação** igual a `plenario`.
+- A **Fonte derivada de proposições afetadas** usa **Votações nominais** em escopo para descobrir quais **Proposições afetadas** precisam ser ingeridas e quais anos de tema podem ser consultados.
 
 ## Flagged ambiguities
 
