@@ -8,6 +8,6 @@
       "@vota-comigo/shared-types": ["../../packages/shared-types/src"]
     }
   },
-  "include": ["src", "test"],
+  "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }
