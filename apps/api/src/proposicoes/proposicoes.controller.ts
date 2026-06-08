@@ -2,12 +2,14 @@ import {
   BadRequestException,
   Controller,
   Get,
+  Param,
   ParseIntPipe,
   Query,
 } from '@nestjs/common';
 
 import type {
   MaisVotadasResponse,
+  ProposicaoDetalhe,
   ProposicoesSearchResponse,
 } from '@vota-comigo/shared-types';
 
@@ -40,5 +42,12 @@ export class ProposicoesController {
     }
     const pagination = normalizePagination(limit, offset);
     return this.service.search(query, pagination.limit, pagination.offset);
+  }
+
+  @Get(':externalIdProposicao')
+  async detalhe(
+    @Param('externalIdProposicao', ParseIntPipe) externalIdProposicao: number,
+  ): Promise<ProposicaoDetalhe> {
+    return this.service.detalhe(externalIdProposicao);
   }
 }
