@@ -1,10 +1,13 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
   proposicao,
+  proposicaoTema,
+  tema,
   votacao,
   votacaoProposicao,
+  votacaoVotos,
 } from '@/shared/database/schema';
 
 export const PROPOSICOES_REPOSITORY = Symbol('PROPOSICOES_REPOSITORY');
@@ -31,10 +34,56 @@ export type ProposicaoVotacaoJoinRow = {
   aprovacao: number | null;
 };
 
+export type ProposicaoDetalheHead = {
+  externalIdProposicao: number;
+  siglaTipo: string | null;
+  numero: number | null;
+  ano: number | null;
+  ementa: string | null;
+  ultimoStatusSiglaOrgao: string | null;
+  ultimoStatusDescricaoSituacao: string | null;
+  ultimoStatusRegime: string | null;
+  ultimoStatusDataHora: string | null;
+};
+
+export type VotacaoDetalheRow = {
+  externalIdVotacao: string;
+  data: string | null;
+  dataHoraRegistro: string | null;
+  descricao: string | null;
+  ultimaAberturaVotacaoDescricao: string | null;
+  ultimaApresentacaoProposicaoDescricao: string | null;
+  votosSim: number | null;
+  votosNao: number | null;
+  votosOutros: number | null;
+  aprovacao: number | null;
+  votacaoVotosExternalId: string | null;
+  votacaoVotosSim: number | null;
+  votacaoVotosNao: number | null;
+  votosAbstencao: number | null;
+  votosObstrucao: number | null;
+  votosArtigo17: number | null;
+  votosNaoInformado: number | null;
+};
+
+export type TemaRow = {
+  externalCodTema: number;
+  tema: string | null;
+};
+
+export type ProposicaoDetalheResult = {
+  proposicao: ProposicaoDetalheHead;
+  votacoes: readonly VotacaoDetalheRow[];
+  temas: readonly TemaRow[];
+};
+
 export type ProposicoesRepository = {
   loadProposicoesWithVotacoesPlenario(): Promise<
     readonly ProposicaoVotacaoJoinRow[]
   >;
+  loadProposicaoDetalhe(
+    externalIdProposicao: number,
+  ): Promise<ProposicaoDetalheResult | null>;
 };
 
 export function createProposicoesRepository(
@@ -74,6 +123,73 @@ export function createProposicoesRepository(
           eq(votacaoProposicao.proposicaoId, proposicao.id),
         )
         .where(eq(votacao.escopoVotacao, 'plenario'));
+    },
+
+    async loadProposicaoDetalhe(externalIdProposicao) {
+      const heads = await db
+        .select({
+          externalIdProposicao: proposicao.externalIdProposicao,
+          siglaTipo: proposicao.siglaTipo,
+          numero: proposicao.numero,
+          ano: proposicao.ano,
+          ementa: proposicao.ementa,
+          ultimoStatusSiglaOrgao: proposicao.ultimoStatusSiglaOrgao,
+          ultimoStatusDescricaoSituacao:
+            proposicao.ultimoStatusDescricaoSituacao,
+          ultimoStatusRegime: proposicao.ultimoStatusRegime,
+          ultimoStatusDataHora: proposicao.ultimoStatusDataHora,
+        })
+        .from(proposicao)
+        .where(eq(proposicao.externalIdProposicao, externalIdProposicao))
+        .limit(1);
+
+      const head = heads.at(0);
+      if (head === undefined) {
+        return null;
+      }
+
+      const votacoes = await db
+        .select({
+          externalIdVotacao: votacao.externalIdVotacao,
+          data: votacao.data,
+          dataHoraRegistro: votacao.dataHoraRegistro,
+          descricao: votacao.descricao,
+          ultimaAberturaVotacaoDescricao:
+            votacao.ultimaAberturaVotacaoDescricao,
+          ultimaApresentacaoProposicaoDescricao:
+            votacao.ultimaApresentacaoProposicaoDescricao,
+          votosSim: votacao.votosSim,
+          votosNao: votacao.votosNao,
+          votosOutros: votacao.votosOutros,
+          aprovacao: votacao.aprovacao,
+          votacaoVotosExternalId: votacaoVotos.externalIdVotacao,
+          votacaoVotosSim: votacaoVotos.votosSim,
+          votacaoVotosNao: votacaoVotos.votosNao,
+          votosAbstencao: votacaoVotos.votosAbstencao,
+          votosObstrucao: votacaoVotos.votosObstrucao,
+          votosArtigo17: votacaoVotos.votosArtigo17,
+          votosNaoInformado: votacaoVotos.votosNaoInformado,
+        })
+        .from(votacaoProposicao)
+        .innerJoin(votacao, eq(votacaoProposicao.votacaoId, votacao.id))
+        .leftJoin(votacaoVotos, eq(votacaoVotos.votacaoId, votacao.id))
+        .where(
+          and(
+            eq(votacaoProposicao.externalIdProposicao, externalIdProposicao),
+            eq(votacao.escopoVotacao, 'plenario'),
+          ),
+        );
+
+      const temas = await db
+        .select({
+          externalCodTema: tema.externalCodTema,
+          tema: tema.tema,
+        })
+        .from(proposicaoTema)
+        .innerJoin(tema, eq(proposicaoTema.temaId, tema.id))
+        .where(eq(proposicaoTema.externalIdProposicao, externalIdProposicao));
+
+      return { proposicao: head, votacoes, temas };
     },
   };
 }

@@ -36,6 +36,7 @@ function fakeRepository(
 ): ProposicoesRepository {
   return {
     loadProposicoesWithVotacoesPlenario: async () => rows,
+    loadProposicaoDetalhe: async () => null,
   };
 }
 
