@@ -49,6 +49,51 @@ export const proposicaoCardSchema = z.object({
   votacaoReferencia: votacaoReferenciaResumoSchema,
 });
 
+export const placarVotacaoSchema = z.discriminatedUnion('placarCompleto', [
+  z.object({
+    placarCompleto: z.literal(true),
+    votosSim: z.number(),
+    votosNao: z.number(),
+    votosAbstencao: z.number(),
+    votosObstrucao: z.number(),
+    votosArtigo17: z.number(),
+    votosNaoInformado: z.number(),
+  }),
+  z.object({
+    placarCompleto: z.literal(false),
+    votosSim: z.number(),
+    votosNao: z.number(),
+    votosOutros: z.number(),
+  }),
+]);
+
+export const votacaoNominalSchema = z.object({
+  externalIdVotacao: z.string(),
+  data: z.string().nullable(),
+  descricao: z.string().nullable(),
+  fonteOficial: z.string(),
+  placar: placarVotacaoSchema,
+  resultado: resultadoVotacao,
+  isReferenciaMatcher: z.boolean(),
+});
+
+export const temaOficialSchema = z.object({
+  externalCodTema: z.number(),
+  tema: z.string().nullable(),
+});
+
+export const proposicaoDetalheSchema = z.object({
+  externalIdProposicao: z.number(),
+  siglaTipo: z.string().nullable(),
+  numero: z.number().nullable(),
+  ano: z.number().nullable(),
+  ementa: z.string().nullable(),
+  status: proposicaoStatusResumoSchema,
+  fonteOficial: z.string(),
+  temas: z.array(temaOficialSchema),
+  votacoes: z.array(votacaoNominalSchema),
+});
+
 export const maisVotadasResponseSchema = z.object({
   items: z.array(proposicaoCardSchema),
   total: z.number(),
@@ -73,6 +118,10 @@ export type ProposicaoStatusResumo = z.infer<
   typeof proposicaoStatusResumoSchema
 >;
 export type ProposicaoCard = z.infer<typeof proposicaoCardSchema>;
+export type PlacarVotacao = z.infer<typeof placarVotacaoSchema>;
+export type VotacaoNominal = z.infer<typeof votacaoNominalSchema>;
+export type TemaOficial = z.infer<typeof temaOficialSchema>;
+export type ProposicaoDetalhe = z.infer<typeof proposicaoDetalheSchema>;
 export type MaisVotadasResponse = z.infer<typeof maisVotadasResponseSchema>;
 export type ProposicoesSearchResponse = z.infer<
   typeof proposicoesSearchResponseSchema
