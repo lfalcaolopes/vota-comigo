@@ -1,4 +1,4 @@
-import { normalizePagination } from './mais-votadas-query.dto';
+import { normalizePagination } from './pagination';
 
 describe('normalizePagination', () => {
   describe('defaults', () => {

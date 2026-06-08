@@ -1,8 +1,18 @@
-import { Controller, Get, ParseIntPipe, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  ParseIntPipe,
+  Query,
+} from '@nestjs/common';
 
-import type { MaisVotadasResponse } from '@vota-comigo/shared-types';
+import type {
+  MaisVotadasResponse,
+  ProposicoesSearchResponse,
+} from '@vota-comigo/shared-types';
 
-import { normalizePagination } from './dto/mais-votadas-query.dto';
+import { normalizePagination } from './pagination';
+import { tokenizeQuery } from './proposicoes-search';
 import { ProposicoesService } from './proposicoes.service';
 
 @Controller('proposicoes')
@@ -16,5 +26,19 @@ export class ProposicoesController {
   ): Promise<MaisVotadasResponse> {
     const pagination = normalizePagination(limit, offset);
     return this.service.maisVotadas(pagination.limit, pagination.offset);
+  }
+
+  @Get('search')
+  async search(
+    @Query('q') q?: string,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
+    @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
+  ): Promise<ProposicoesSearchResponse> {
+    const query = (q ?? '').trim();
+    if (tokenizeQuery(query).length === 0) {
+      throw new BadRequestException('q must be a useful search query');
+    }
+    const pagination = normalizePagination(limit, offset);
+    return this.service.search(query, pagination.limit, pagination.offset);
   }
 }

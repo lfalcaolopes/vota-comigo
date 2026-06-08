@@ -1,6 +1,11 @@
+import { BadRequestException } from '@nestjs/common';
+
 import { ProposicoesController } from './proposicoes.controller';
 import type { ProposicoesService } from './proposicoes.service';
-import type { MaisVotadasResponse } from '@vota-comigo/shared-types';
+import type {
+  MaisVotadasResponse,
+  ProposicoesSearchResponse,
+} from '@vota-comigo/shared-types';
 
 function fakeService(response: MaisVotadasResponse) {
   const maisVotadas = jest.fn().mockResolvedValue(response);
@@ -8,11 +13,25 @@ function fakeService(response: MaisVotadasResponse) {
   return { service, maisVotadas };
 }
 
+function fakeSearchService(response: ProposicoesSearchResponse) {
+  const search = jest.fn().mockResolvedValue(response);
+  const service = { search } as unknown as ProposicoesService;
+  return { service, search };
+}
+
 const emptyResponse: MaisVotadasResponse = {
   items: [],
   total: 0,
   limit: 20,
   offset: 0,
+};
+
+const emptySearchResponse: ProposicoesSearchResponse = {
+  items: [],
+  total: 0,
+  limit: 20,
+  offset: 0,
+  query: 'saude',
 };
 
 describe('ProposicoesController.maisVotadas', () => {
@@ -45,5 +64,51 @@ describe('ProposicoesController.maisVotadas', () => {
       expect(maisVotadas).toHaveBeenNthCalledWith(1, 20, 0);
       expect(maisVotadas).toHaveBeenNthCalledWith(2, 100, 0);
     });
+  });
+});
+
+describe('ProposicoesController.search', () => {
+  describe('when the query is useful', () => {
+    it('delegates with the trimmed query and clamped limit/offset', async () => {
+      // Arrange
+      const { service, search } = fakeSearchService(emptySearchResponse);
+      const controller = new ProposicoesController(service);
+
+      // Act
+      const result = await controller.search('  saúde  ', 999, 5);
+
+      // Assert
+      expect(search).toHaveBeenCalledWith('saúde', 100, 5);
+      expect(result).toBe(emptySearchResponse);
+    });
+
+    it('applies the default pagination when limit and offset are missing', async () => {
+      // Arrange
+      const { service, search } = fakeSearchService(emptySearchResponse);
+      const controller = new ProposicoesController(service);
+
+      // Act
+      await controller.search('saúde', undefined, undefined);
+
+      // Assert
+      expect(search).toHaveBeenCalledWith('saúde', 20, 0);
+    });
+  });
+
+  describe('when the query has no useful text', () => {
+    it.each([undefined, '', '   '])(
+      'rejects %p with a BadRequestException',
+      async (q) => {
+        // Arrange
+        const { service, search } = fakeSearchService(emptySearchResponse);
+        const controller = new ProposicoesController(service);
+
+        // Act / Assert
+        await expect(controller.search(q, undefined)).rejects.toBeInstanceOf(
+          BadRequestException,
+        );
+        expect(search).not.toHaveBeenCalled();
+      },
+    );
   });
 });
