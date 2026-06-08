@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import type {
   MaisVotadasResponse,
   ProposicaoCard,
+  ProposicoesSearchResponse,
 } from '@vota-comigo/shared-types';
 
 import {
@@ -18,6 +19,13 @@ import {
   type ProposicaoVotacaoJoinRow,
   type ProposicoesRepository,
 } from './proposicoes.repository';
+import {
+  matchesAllTokens,
+  normalizeText,
+  referenceMatchCount,
+  tokenizeQuery,
+  type SearchableProposicao,
+} from './proposicoes-search';
 
 type ProposicaoWithVotacoes = {
   externalIdProposicao: number;
@@ -50,7 +58,7 @@ export class ProposicoesService {
     offset: number,
   ): Promise<MaisVotadasResponse> {
     const rows = await this.repository.loadProposicoesWithVotacoesPlenario();
-    const ranked = rankProposicoes(groupByProposicao(rows));
+    const ranked = [...toComputaveis(rows)].sort(compareRanking);
 
     return {
       items: ranked.slice(offset, offset + limit).map(toProposicaoCard),
@@ -59,7 +67,41 @@ export class ProposicoesService {
       offset,
     };
   }
+
+  async search(
+    query: string,
+    limit: number,
+    offset: number,
+  ): Promise<ProposicoesSearchResponse> {
+    const rows = await this.repository.loadProposicoesWithVotacoesPlenario();
+    const tokens = tokenizeQuery(query);
+
+    const matched = toComputaveis(rows)
+      .flatMap((ranked) => {
+        const fields = toSearchable(ranked.proposicao);
+        if (!matchesAllTokens(fields, tokens)) {
+          return [];
+        }
+        return [{ ranked, refMatches: referenceMatchCount(fields, tokens) }];
+      })
+      .sort(compareSearchRelevance);
+
+    return {
+      items: matched
+        .slice(offset, offset + limit)
+        .map((entry) => toProposicaoCard(entry.ranked)),
+      total: matched.length,
+      limit,
+      offset,
+      query,
+    };
+  }
 }
+
+type SearchMatch = {
+  ranked: RankedProposicao;
+  refMatches: number;
+};
 
 function toCandidate(row: ProposicaoVotacaoJoinRow): VotacaoCandidate {
   return {
@@ -127,10 +169,10 @@ function compareRanking(a: RankedProposicao, b: RankedProposicao): number {
   return a.proposicao.externalIdProposicao - b.proposicao.externalIdProposicao;
 }
 
-function rankProposicoes(
-  grouped: readonly ProposicaoWithVotacoes[],
+function toComputaveis(
+  rows: readonly ProposicaoVotacaoJoinRow[],
 ): readonly RankedProposicao[] {
-  const computaveis = grouped.flatMap((proposicao) => {
+  return groupByProposicao(rows).flatMap((proposicao) => {
     const referencia = selectVotacaoReferencia(proposicao.votacoesPlenario);
     if (referencia === null) {
       return [];
@@ -143,8 +185,24 @@ function rankProposicoes(
       },
     ];
   });
+}
 
-  return [...computaveis].sort(compareRanking);
+function toSearchable(
+  proposicao: ProposicaoWithVotacoes,
+): SearchableProposicao {
+  return {
+    ementa: normalizeText(proposicao.ementa ?? ''),
+    siglaTipo: normalizeText(proposicao.siglaTipo ?? ''),
+    numero: proposicao.numero === null ? '' : String(proposicao.numero),
+    ano: proposicao.ano === null ? '' : String(proposicao.ano),
+  };
+}
+
+function compareSearchRelevance(a: SearchMatch, b: SearchMatch): number {
+  if (a.refMatches !== b.refMatches) {
+    return b.refMatches - a.refMatches;
+  }
+  return compareRanking(a.ranked, b.ranked);
 }
 
 function toProposicaoCard(ranked: RankedProposicao): ProposicaoCard {

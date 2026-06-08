@@ -197,3 +197,231 @@ describe('ProposicoesService.maisVotadas', () => {
     });
   });
 });
+
+describe('ProposicoesService.search', () => {
+  describe('when searching by a word in the ementa', () => {
+    it('returns the matching computavel card and echoes the query', async () => {
+      // Arrange
+      const service = createService([
+        joinRow({
+          externalIdProposicao: 1,
+          ementa: 'Dispõe sobre saúde pública',
+          descricao: 'Aprovado o Projeto de Lei',
+        }),
+        joinRow({
+          externalIdProposicao: 2,
+          ementa: 'Dispõe sobre educação',
+          descricao: 'Aprovado o Projeto de Lei',
+        }),
+      ]);
+
+      // Act
+      const result = await service.search('saúde', 20, 0);
+
+      // Assert
+      expect(result.query).toBe('saúde');
+      expect(result.limit).toBe(20);
+      expect(result.offset).toBe(0);
+      expect(result.total).toBe(1);
+      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([
+        1,
+      ]);
+    });
+  });
+
+  describe('when searching by the legislative identifier', () => {
+    it.each([
+      ['siglaTipo', 'PL'],
+      ['numero', '1234'],
+      ['ano', '2024'],
+    ])('finds the proposicao by its %s', async (_field, term) => {
+      // Arrange
+      const service = createService([
+        joinRow({
+          externalIdProposicao: 7,
+          siglaTipo: 'PL',
+          numero: 1234,
+          ano: 2024,
+          ementa: 'Texto qualquer',
+          descricao: 'Aprovado o Projeto de Lei',
+        }),
+      ]);
+
+      // Act
+      const result = await service.search(term, 20, 0);
+
+      // Assert
+      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([
+        7,
+      ]);
+    });
+
+    it('finds the proposicao by the "tipo numero/ano" citation format', async () => {
+      // Arrange
+      const service = createService([
+        joinRow({
+          externalIdProposicao: 7,
+          siglaTipo: 'PEC',
+          numero: 3,
+          ano: 2021,
+          ementa: 'Texto qualquer',
+          descricao: 'Aprovado o Projeto de Lei',
+        }),
+      ]);
+
+      // Act
+      const result = await service.search('PEC 3/2021', 20, 0);
+
+      // Assert
+      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([
+        7,
+      ]);
+    });
+  });
+
+  describe('when the query has multiple tokens', () => {
+    it('requires every token to match (AND semantics)', async () => {
+      // Arrange
+      const service = createService([
+        joinRow({
+          externalIdProposicao: 1,
+          ementa: 'Dispõe sobre saúde pública',
+          descricao: 'Aprovado o Projeto de Lei',
+        }),
+      ]);
+
+      // Act
+      const result = await service.search('saúde educação', 20, 0);
+
+      // Assert
+      expect(result.total).toBe(0);
+      expect(result.items).toEqual([]);
+    });
+  });
+
+  describe('when a matching proposicao is not computavel pelo matcher', () => {
+    it('excludes it even though the text matches', async () => {
+      // Arrange
+      const computavel = joinRow({
+        externalIdProposicao: 1,
+        ementa: 'Dispõe sobre saúde',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const naoComputavel = joinRow({
+        externalIdProposicao: 2,
+        ementa: 'Dispõe sobre saúde',
+        descricao: 'Requerimento de retirada de pauta',
+      });
+      const service = createService([computavel, naoComputavel]);
+
+      // Act
+      const result = await service.search('saúde', 20, 0);
+
+      // Assert
+      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([
+        1,
+      ]);
+    });
+  });
+
+  describe('when ranking the matches', () => {
+    it('puts identifier hits before ementa-coincidence hits, then breaks ties by volume', async () => {
+      // Arrange: query "pl" hits siglaTipo for two, only the ementa for one
+      const ementaCoincidence = joinRow({
+        externalIdProposicao: 1,
+        siglaTipo: 'PEC',
+        numero: 999,
+        ano: 2019,
+        ementa: 'Disciplina o pl orçamentário',
+        externalIdVotacao: '1-1',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const identifierLowVolume = joinRow({
+        externalIdProposicao: 2,
+        siglaTipo: 'PL',
+        numero: 50,
+        ano: 2024,
+        ementa: 'Projeto sobre transporte',
+        externalIdVotacao: '2-1',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const identifierHighVolumeA = joinRow({
+        externalIdProposicao: 3,
+        siglaTipo: 'PL',
+        numero: 51,
+        ano: 2024,
+        ementa: 'Projeto sobre energia',
+        externalIdVotacao: '3-1',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const identifierHighVolumeB = joinRow({
+        externalIdProposicao: 3,
+        siglaTipo: 'PL',
+        numero: 51,
+        ano: 2024,
+        ementa: 'Projeto sobre energia',
+        externalIdVotacao: '3-2',
+        descricao: 'Aprovada a Medida Provisória',
+      });
+      const service = createService([
+        ementaCoincidence,
+        identifierLowVolume,
+        identifierHighVolumeA,
+        identifierHighVolumeB,
+      ]);
+
+      // Act
+      const result = await service.search('pl', 20, 0);
+
+      // Assert
+      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([
+        3, 2, 1,
+      ]);
+    });
+  });
+
+  describe('pagination', () => {
+    function fourMatches() {
+      return [2024, 2023, 2022, 2021].map((ano, index) =>
+        joinRow({
+          externalIdProposicao: index + 1,
+          ano,
+          numero: index + 1,
+          ementa: 'Dispõe sobre saúde',
+          externalIdVotacao: `${index + 1}-1`,
+          descricao: 'Aprovado o Projeto de Lei',
+        }),
+      );
+    }
+
+    it('slices by limit and offset while reporting the full total', async () => {
+      // Arrange
+      const service = createService(fourMatches());
+
+      // Act
+      const result = await service.search('saúde', 2, 1);
+
+      // Assert
+      expect(result.total).toBe(4);
+      expect(result.limit).toBe(2);
+      expect(result.offset).toBe(1);
+      expect(result.items).toHaveLength(2);
+      // ordered by ano desc, so the full ranking is [1, 2, 3, 4]
+      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([
+        2, 3,
+      ]);
+    });
+
+    it('returns an empty page when offset is beyond the total', async () => {
+      // Arrange
+      const service = createService(fourMatches());
+
+      // Act
+      const result = await service.search('saúde', 20, 99);
+
+      // Assert
+      expect(result.total).toBe(4);
+      expect(result.items).toEqual([]);
+    });
+  });
+});
