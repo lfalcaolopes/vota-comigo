@@ -11,9 +11,9 @@ import type {
   ProposicoesSearchResponse,
 } from '@vota-comigo/shared-types';
 
-import { normalizePagination } from './pagination';
-import { tokenizeQuery } from './proposicoes-search';
 import { ProposicoesService } from './proposicoes.service';
+import { normalizePagination } from './rules/pagination';
+import { tokenizeQuery } from './rules/proposicoes-search';
 
 @Controller('proposicoes')
 export class ProposicoesController {

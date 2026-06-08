@@ -1,4 +1,4 @@
-import { normalizePagination } from './pagination';
+import { normalizePagination } from '../rules/pagination';
 
 describe('normalizePagination', () => {
   describe('defaults', () => {

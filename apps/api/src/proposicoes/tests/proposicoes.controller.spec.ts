@@ -1,11 +1,12 @@
 import { BadRequestException } from '@nestjs/common';
 
-import { ProposicoesController } from './proposicoes.controller';
-import type { ProposicoesService } from './proposicoes.service';
 import type {
   MaisVotadasResponse,
   ProposicoesSearchResponse,
 } from '@vota-comigo/shared-types';
+
+import { ProposicoesController } from '../proposicoes.controller';
+import type { ProposicoesService } from '../proposicoes.service';
 
 function fakeService(response: MaisVotadasResponse) {
   const maisVotadas = jest.fn().mockResolvedValue(response);

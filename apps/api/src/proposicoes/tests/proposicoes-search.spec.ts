@@ -3,7 +3,7 @@ import {
   referenceMatchCount,
   tokenizeQuery,
   type SearchableProposicao,
-} from './proposicoes-search';
+} from '../rules/proposicoes-search';
 
 function searchable(
   overrides: Partial<SearchableProposicao> = {},

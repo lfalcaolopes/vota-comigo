@@ -58,7 +58,8 @@ export function createProposicoesRepository(
           data: votacao.data,
           dataHoraRegistro: votacao.dataHoraRegistro,
           descricao: votacao.descricao,
-          ultimaAberturaVotacaoDescricao: votacao.ultimaAberturaVotacaoDescricao,
+          ultimaAberturaVotacaoDescricao:
+            votacao.ultimaAberturaVotacaoDescricao,
           ultimaApresentacaoProposicaoDescricao:
             votacao.ultimaApresentacaoProposicaoDescricao,
           votosSim: votacao.votosSim,

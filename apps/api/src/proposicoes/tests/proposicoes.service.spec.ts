@@ -1,8 +1,8 @@
-import { ProposicoesService } from './proposicoes.service';
 import type {
   ProposicaoVotacaoJoinRow,
   ProposicoesRepository,
-} from './proposicoes.repository';
+} from '../proposicoes.repository';
+import { ProposicoesService } from '../proposicoes.service';
 
 function joinRow(
   overrides: Partial<ProposicaoVotacaoJoinRow> = {},
@@ -122,11 +122,7 @@ describe('ProposicoesService.maisVotadas', () => {
         externalIdVotacao: '2-2',
         descricao: 'Aprovada a Medida Provisória',
       });
-      const service = createService([
-        umaVotacao,
-        duasVotacoesA,
-        duasVotacoesB,
-      ]);
+      const service = createService([umaVotacao, duasVotacoesA, duasVotacoesB]);
 
       // Act
       const page = await service.maisVotadas(20, 0);
@@ -142,9 +138,30 @@ describe('ProposicoesService.maisVotadas', () => {
       // Arrange
       const base = { descricao: 'Aprovado o Projeto de Lei' } as const;
       const rows = [
-        joinRow({ externalIdProposicao: 10, ano: 2023, numero: 5, siglaTipo: 'PL', externalIdVotacao: 'a', ...base }),
-        joinRow({ externalIdProposicao: 11, ano: 2024, numero: 5, siglaTipo: 'PL', externalIdVotacao: 'b', ...base }),
-        joinRow({ externalIdProposicao: 12, ano: 2024, numero: 9, siglaTipo: 'PL', externalIdVotacao: 'c', ...base }),
+        joinRow({
+          externalIdProposicao: 10,
+          ano: 2023,
+          numero: 5,
+          siglaTipo: 'PL',
+          externalIdVotacao: 'a',
+          ...base,
+        }),
+        joinRow({
+          externalIdProposicao: 11,
+          ano: 2024,
+          numero: 5,
+          siglaTipo: 'PL',
+          externalIdVotacao: 'b',
+          ...base,
+        }),
+        joinRow({
+          externalIdProposicao: 12,
+          ano: 2024,
+          numero: 9,
+          siglaTipo: 'PL',
+          externalIdVotacao: 'c',
+          ...base,
+        }),
       ];
       const service = createService(rows);
 
