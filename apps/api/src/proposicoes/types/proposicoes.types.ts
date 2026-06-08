@@ -1,7 +1,7 @@
 import type {
   ClassifiedVotacao,
   VotacaoCandidate,
-} from '@/matcher/votacao-referencia';
+} from '@/matcher/rules/votacao-referencia';
 
 export type ProposicaoWithVotacoes = {
   externalIdProposicao: number;

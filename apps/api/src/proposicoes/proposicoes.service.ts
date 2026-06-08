@@ -6,7 +6,7 @@ import type {
   ProposicoesSearchResponse,
 } from '@vota-comigo/shared-types';
 
-import { selectVotacaoReferencia } from '@/matcher/votacao-referencia';
+import { selectVotacaoReferencia } from '@/matcher/rules/votacao-referencia';
 
 import { toProposicaoCard } from './mappers/proposicao-card.mapper';
 import { toProposicaoDetalhe } from './mappers/proposicao-detalhe.mapper';

@@ -1,6 +1,6 @@
 import type { ProposicaoCard } from '@vota-comigo/shared-types';
 
-import { interpretResultado } from '@/matcher/votacao-referencia';
+import { interpretResultado } from '@/matcher/rules/votacao-referencia';
 
 import type { RankedProposicao } from '../types/proposicoes.types';
 

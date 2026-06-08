@@ -2,8 +2,8 @@ import {
   classifyVotacaoReferencia,
   interpretResultado,
   selectVotacaoReferencia,
-} from './votacao-referencia';
-import type { VotacaoCandidate } from './votacao-referencia';
+} from '../rules/votacao-referencia';
+import type { VotacaoCandidate } from '../rules/votacao-referencia';
 
 function candidate(
   overrides: Partial<VotacaoCandidate> = {},

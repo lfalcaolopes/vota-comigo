@@ -4,7 +4,7 @@ import type {
   VotacaoNominal,
 } from '@vota-comigo/shared-types';
 
-import { interpretResultado } from '@/matcher/votacao-referencia';
+import { interpretResultado } from '@/matcher/rules/votacao-referencia';
 
 import type {
   ProposicaoDetalheResult,

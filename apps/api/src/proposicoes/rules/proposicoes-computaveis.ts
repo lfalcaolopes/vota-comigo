@@ -1,7 +1,7 @@
 import {
   selectVotacaoReferencia,
   type VotacaoCandidate,
-} from '@/matcher/votacao-referencia';
+} from '@/matcher/rules/votacao-referencia';
 
 import type { ProposicaoVotacaoJoinRow } from '../proposicoes.repository';
 import type {
