@@ -12,8 +12,8 @@ import {
 export const MATCHER_REPOSITORY = Symbol('MATCHER_REPOSITORY');
 
 export type MatcherRepository = {
-  loadComputaveisExternalIds(
-    externalIds: readonly number[],
+  loadExternalIdProposicoesComputaveis(
+    externalIdProposicoes: readonly number[],
   ): Promise<ReadonlySet<number>>;
 };
 
@@ -21,8 +21,8 @@ export function createMatcherRepository(
   db: DrizzleDatabase,
 ): MatcherRepository {
   return {
-    async loadComputaveisExternalIds(externalIds) {
-      if (externalIds.length === 0) {
+    async loadExternalIdProposicoesComputaveis(externalIdProposicoes) {
+      if (externalIdProposicoes.length === 0) {
         return new Set<number>();
       }
 
@@ -60,7 +60,9 @@ export function createMatcherRepository(
         .where(
           and(
             eq(votacao.escopoVotacao, 'plenario'),
-            inArray(proposicao.externalIdProposicao, [...externalIds]),
+            inArray(proposicao.externalIdProposicao, [
+              ...externalIdProposicoes,
+            ]),
           ),
         );
 

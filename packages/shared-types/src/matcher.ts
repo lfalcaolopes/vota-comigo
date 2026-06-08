@@ -31,14 +31,14 @@ export const siglaUfEnum = z.enum([
 ]);
 
 export const posicaoUsuarioMatcherEnum = z.enum([
-  'deveria_ser_aprovada',
-  'nao_deveria_ser_aprovada',
+  'aprovar',
+  'rejeitar',
   'nao_sei',
 ]);
 
 export const POSICOES_COMPUTAVEIS = [
-  'deveria_ser_aprovada',
-  'nao_deveria_ser_aprovada',
+  'aprovar',
+  'rejeitar',
 ] as const;
 
 export const MAX_POSICOES = 30;

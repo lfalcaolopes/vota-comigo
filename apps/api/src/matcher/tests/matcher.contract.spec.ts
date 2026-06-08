@@ -14,25 +14,31 @@ import { MatcherService } from '../matcher.service';
 function posicao(overrides: Partial<PosicaoMatcher> = {}): PosicaoMatcher {
   return {
     externalIdProposicao: 1,
-    posicao: 'deveria_ser_aprovada',
+    posicao: 'aprovar',
     ...overrides,
   };
 }
 
-function fakeRepository(computaveis: ReadonlySet<number>): MatcherRepository {
+function fakeRepository(
+  externalIdProposicoesComputaveis: ReadonlySet<number>,
+): MatcherRepository {
   return {
-    loadComputaveisExternalIds: async () => computaveis,
+    loadExternalIdProposicoesComputaveis: async () =>
+      externalIdProposicoesComputaveis,
   };
 }
 
 async function buildApp(
-  computaveis: ReadonlySet<number>,
+  externalIdProposicoesComputaveis: ReadonlySet<number>,
 ): Promise<INestApplication> {
   const moduleRef = await Test.createTestingModule({
     controllers: [MatcherController],
     providers: [
       MatcherService,
-      { provide: MATCHER_REPOSITORY, useValue: fakeRepository(computaveis) },
+      {
+        provide: MATCHER_REPOSITORY,
+        useValue: fakeRepository(externalIdProposicoesComputaveis),
+      },
     ],
   }).compile();
 
@@ -64,7 +70,7 @@ describe('POST /matcher', () => {
             posicao({ externalIdProposicao: 1 }),
             posicao({
               externalIdProposicao: 2,
-              posicao: 'nao_deveria_ser_aprovada',
+              posicao: 'rejeitar',
             }),
             posicao({ externalIdProposicao: 3 }),
           ],
@@ -72,10 +78,8 @@ describe('POST /matcher', () => {
 
       // Assert
       expect(response.status).toBe(200);
-      expect(matcherExecucaoResumoSchema.safeParse(response.body).success).toBe(
-        true,
-      );
-      expect(response.body).toMatchObject({
+      const body = matcherExecucaoResumoSchema.parse(response.body as unknown);
+      expect(body).toMatchObject({
         siglaUf: 'PE',
         cidade: 'Recife',
         totalProposicoesSelecionadas: 3,
@@ -93,7 +97,7 @@ describe('POST /matcher', () => {
             posicao({ externalIdProposicao: 1 }),
             posicao({
               externalIdProposicao: 2,
-              posicao: 'nao_deveria_ser_aprovada',
+              posicao: 'rejeitar',
             }),
             posicao({ externalIdProposicao: 3 }),
           ],
@@ -101,7 +105,8 @@ describe('POST /matcher', () => {
 
       // Assert
       expect(response.status).toBe(200);
-      expect(response.body.cidade).toBeNull();
+      const body = matcherExecucaoResumoSchema.parse(response.body as unknown);
+      expect(body.cidade).toBeNull();
     });
 
     it('accepts up to thirty selected proposicoes, counting nao_sei', async () => {
@@ -110,7 +115,7 @@ describe('POST /matcher', () => {
         posicao({ externalIdProposicao: 1 }),
         posicao({
           externalIdProposicao: 2,
-          posicao: 'nao_deveria_ser_aprovada',
+          posicao: 'rejeitar',
         }),
         posicao({ externalIdProposicao: 3 }),
         ...Array.from({ length: 27 }, (_unused, index) =>
@@ -125,8 +130,9 @@ describe('POST /matcher', () => {
 
       // Assert
       expect(response.status).toBe(200);
-      expect(response.body.totalProposicoesSelecionadas).toBe(30);
-      expect(response.body.totalPosicoesComputaveis).toBe(3);
+      const body = matcherExecucaoResumoSchema.parse(response.body as unknown);
+      expect(body.totalProposicoesSelecionadas).toBe(30);
+      expect(body.totalPosicoesComputaveis).toBe(3);
     });
   });
 
@@ -150,7 +156,7 @@ describe('POST /matcher', () => {
         .post('/matcher')
         .send({
           siglaUf: 'PE',
-          posicoes: { '1': { posicao: 'deveria_ser_aprovada' } },
+          posicoes: { '1': { posicao: 'aprovar' } },
         });
 
       // Assert
@@ -169,7 +175,7 @@ describe('POST /matcher', () => {
             posicao({ externalIdProposicao: 1 }),
             posicao({
               externalIdProposicao: 2,
-              posicao: 'nao_deveria_ser_aprovada',
+              posicao: 'rejeitar',
             }),
             posicao({ externalIdProposicao: 3 }),
           ],
@@ -188,7 +194,7 @@ describe('POST /matcher', () => {
             posicao({ externalIdProposicao: 1 }),
             posicao({
               externalIdProposicao: 2,
-              posicao: 'nao_deveria_ser_aprovada',
+              posicao: 'rejeitar',
             }),
             posicao({ externalIdProposicao: 3 }),
           ],
@@ -210,7 +216,7 @@ describe('POST /matcher', () => {
             posicao({ externalIdProposicao: 1 }),
             posicao({
               externalIdProposicao: 1,
-              posicao: 'nao_deveria_ser_aprovada',
+              posicao: 'rejeitar',
             }),
             posicao({ externalIdProposicao: 3 }),
           ],
@@ -250,7 +256,7 @@ describe('POST /matcher', () => {
             posicao({ externalIdProposicao: 1 }),
             posicao({
               externalIdProposicao: 2,
-              posicao: 'nao_deveria_ser_aprovada',
+              posicao: 'rejeitar',
             }),
             posicao({ externalIdProposicao: 3, posicao: 'nao_sei' }),
           ],
@@ -272,7 +278,7 @@ describe('POST /matcher', () => {
             posicao({ externalIdProposicao: 1 }),
             posicao({
               externalIdProposicao: 2,
-              posicao: 'nao_deveria_ser_aprovada',
+              posicao: 'rejeitar',
             }),
             posicao({ externalIdProposicao: 99 }),
           ],

@@ -15,10 +15,10 @@ export class MatcherController {
 
   @Post()
   @HttpCode(200)
-  async validar(
+  async validate(
     @Body(new ZodValidationPipe(matcherExecucaoRequestSchema))
     body: MatcherExecucaoRequest,
   ): Promise<MatcherExecucaoResumo> {
-    return this.service.validarExecucao(body);
+    return this.service.validateExecucao(body);
   }
 }

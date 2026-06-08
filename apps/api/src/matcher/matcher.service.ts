@@ -15,20 +15,22 @@ export class MatcherService {
     private readonly repository: MatcherRepository,
   ) {}
 
-  async validarExecucao(
+  async validateExecucao(
     request: MatcherExecucaoRequest,
   ): Promise<MatcherExecucaoResumo> {
-    const externalIds = request.posicoes.map(
+    const externalIdProposicoes = request.posicoes.map(
       (posicao) => posicao.externalIdProposicao,
     );
-    const computaveis =
-      await this.repository.loadComputaveisExternalIds(externalIds);
+    const externalIdProposicoesComputaveis =
+      await this.repository.loadExternalIdProposicoesComputaveis(
+        externalIdProposicoes,
+      );
 
     const result = validateExecucao({
       siglaUf: request.siglaUf,
       cidade: request.cidade,
       posicoes: request.posicoes,
-      computaveis,
+      externalIdProposicoesComputaveis,
     });
 
     if (!result.ok) {

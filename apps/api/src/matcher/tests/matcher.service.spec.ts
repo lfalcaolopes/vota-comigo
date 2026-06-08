@@ -10,7 +10,7 @@ import { MatcherService } from '../matcher.service';
 function posicao(overrides: Partial<PosicaoMatcher> = {}): PosicaoMatcher {
   return {
     externalIdProposicao: 1,
-    posicao: 'deveria_ser_aprovada',
+    posicao: 'aprovar',
     ...overrides,
   };
 }
@@ -21,9 +21,9 @@ function request(
   return {
     siglaUf: 'PE',
     posicoes: [
-      posicao({ externalIdProposicao: 1, posicao: 'deveria_ser_aprovada' }),
-      posicao({ externalIdProposicao: 2, posicao: 'nao_deveria_ser_aprovada' }),
-      posicao({ externalIdProposicao: 3, posicao: 'deveria_ser_aprovada' }),
+      posicao({ externalIdProposicao: 1, posicao: 'aprovar' }),
+      posicao({ externalIdProposicao: 2, posicao: 'rejeitar' }),
+      posicao({ externalIdProposicao: 3, posicao: 'aprovar' }),
     ],
     ...overrides,
   };
@@ -33,25 +33,27 @@ type FakeRepo = MatcherRepository & {
   calls: number[][];
 };
 
-function fakeRepository(computaveis: ReadonlySet<number>): FakeRepo {
+function fakeRepository(
+  externalIdProposicoesComputaveis: ReadonlySet<number>,
+): FakeRepo {
   const calls: number[][] = [];
   return {
     calls,
-    loadComputaveisExternalIds: async (externalIds) => {
-      calls.push([...externalIds]);
-      return computaveis;
+    loadExternalIdProposicoesComputaveis: async (externalIdProposicoes) => {
+      calls.push([...externalIdProposicoes]);
+      return externalIdProposicoesComputaveis;
     },
   };
 }
 
-describe('MatcherService.validarExecucao', () => {
+describe('MatcherService.validateExecucao', () => {
   describe('when every selected proposicao is computavel and the minimum is met', () => {
     it('resolves with the normalized execution summary', async () => {
       // Arrange
       const service = new MatcherService(fakeRepository(new Set([1, 2, 3])));
 
       // Act
-      const resumo = await service.validarExecucao(
+      const resumo = await service.validateExecucao(
         request({ cidade: 'Recife' }),
       );
 
@@ -70,7 +72,7 @@ describe('MatcherService.validarExecucao', () => {
       const service = new MatcherService(repo);
 
       // Act
-      await service.validarExecucao(request());
+      await service.validateExecucao(request());
 
       // Assert
       expect(repo.calls).toEqual([[1, 2, 3]]);
@@ -83,7 +85,7 @@ describe('MatcherService.validarExecucao', () => {
       const service = new MatcherService(fakeRepository(new Set([1, 2])));
 
       // Act & Assert
-      await expect(service.validarExecucao(request())).rejects.toBeInstanceOf(
+      await expect(service.validateExecucao(request())).rejects.toBeInstanceOf(
         BadRequestException,
       );
     });
@@ -95,17 +97,17 @@ describe('MatcherService.validarExecucao', () => {
       const service = new MatcherService(fakeRepository(new Set([1, 2, 3])));
       const payload = request({
         posicoes: [
-          posicao({ externalIdProposicao: 1, posicao: 'deveria_ser_aprovada' }),
+          posicao({ externalIdProposicao: 1, posicao: 'aprovar' }),
           posicao({
             externalIdProposicao: 2,
-            posicao: 'nao_deveria_ser_aprovada',
+            posicao: 'rejeitar',
           }),
           posicao({ externalIdProposicao: 3, posicao: 'nao_sei' }),
         ],
       });
 
       // Act & Assert
-      await expect(service.validarExecucao(payload)).rejects.toBeInstanceOf(
+      await expect(service.validateExecucao(payload)).rejects.toBeInstanceOf(
         BadRequestException,
       );
     });

@@ -9,14 +9,14 @@ import type {
   SiglaUf,
 } from '@vota-comigo/shared-types';
 
-export type ValidacaoExecucaoInput = {
+export type ExecucaoValidationInput = {
   siglaUf: SiglaUf;
   cidade?: string;
   posicoes: readonly PosicaoMatcher[];
-  computaveis: ReadonlySet<number>;
+  externalIdProposicoesComputaveis: ReadonlySet<number>;
 };
 
-export type ValidacaoExecucaoResult =
+export type ExecucaoValidationResult =
   | { ok: true; resumo: MatcherExecucaoResumo }
   | { ok: false; error: string };
 
@@ -25,17 +25,18 @@ function isComputavel(posicao: PosicaoUsuarioMatcher): boolean {
 }
 
 export function validateExecucao(
-  input: ValidacaoExecucaoInput,
-): ValidacaoExecucaoResult {
-  const computaveisSelecionadas = input.posicoes.filter((posicao) =>
+  input: ExecucaoValidationInput,
+): ExecucaoValidationResult {
+  const posicoesComputaveisSelecionadas = input.posicoes.filter((posicao) =>
     isComputavel(posicao.posicao),
   );
 
-  const naoComputaveis = computaveisSelecionadas.filter(
-    (posicao) => !input.computaveis.has(posicao.externalIdProposicao),
+  const posicoesNaoComputaveis = posicoesComputaveisSelecionadas.filter(
+    (posicao) =>
+      !input.externalIdProposicoesComputaveis.has(posicao.externalIdProposicao),
   );
-  if (naoComputaveis.length > 0) {
-    const ids = naoComputaveis
+  if (posicoesNaoComputaveis.length > 0) {
+    const ids = posicoesNaoComputaveis
       .map((posicao) => posicao.externalIdProposicao)
       .join(', ');
     return {
@@ -44,10 +45,10 @@ export function validateExecucao(
     };
   }
 
-  if (computaveisSelecionadas.length < MIN_POSICOES_COMPUTAVEIS) {
+  if (posicoesComputaveisSelecionadas.length < MIN_POSICOES_COMPUTAVEIS) {
     return {
       ok: false,
-      error: `minimo de ${MIN_POSICOES_COMPUTAVEIS} posicoes computaveis (deveria_ser_aprovada ou nao_deveria_ser_aprovada)`,
+      error: `minimo de ${MIN_POSICOES_COMPUTAVEIS} posicoes computaveis (aprovar ou rejeitar)`,
     };
   }
 
@@ -57,7 +58,7 @@ export function validateExecucao(
       siglaUf: input.siglaUf,
       cidade: input.cidade ?? null,
       totalProposicoesSelecionadas: input.posicoes.length,
-      totalPosicoesComputaveis: computaveisSelecionadas.length,
+      totalPosicoesComputaveis: posicoesComputaveisSelecionadas.length,
     },
   };
 }
