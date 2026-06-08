@@ -1,11 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 
 import type {
   MaisVotadasResponse,
+  ProposicaoDetalhe,
   ProposicoesSearchResponse,
 } from '@vota-comigo/shared-types';
 
+import { selectVotacaoReferencia } from '@/matcher/votacao-referencia';
+
 import { toProposicaoCard } from './mappers/proposicao-card.mapper';
+import { toProposicaoDetalhe } from './mappers/proposicao-detalhe.mapper';
 import {
   PROPOSICOES_REPOSITORY,
   type ProposicoesRepository,
@@ -40,6 +44,21 @@ export class ProposicoesService {
       limit,
       offset,
     };
+  }
+
+  async detalhe(externalIdProposicao: number): Promise<ProposicaoDetalhe> {
+    const result =
+      await this.repository.loadProposicaoDetalhe(externalIdProposicao);
+    if (result === null) {
+      throw new NotFoundException('proposicao nao encontrada');
+    }
+
+    const referencia = selectVotacaoReferencia(result.votacoes);
+    if (referencia === null) {
+      throw new NotFoundException('proposicao nao computavel pelo matcher');
+    }
+
+    return toProposicaoDetalhe(result, referencia.externalIdVotacao);
   }
 
   async search(
