@@ -100,7 +100,7 @@ describe('ProposicoesService.detalhe', () => {
       );
     });
 
-    it('lists the linked votacao with its own fonte oficial, full placar, resultado and reference mark', async () => {
+    it('lists the linked votacao with full placar, resultado and reference mark', async () => {
       // Arrange
       const service = createService(detailResult());
 
@@ -113,7 +113,6 @@ describe('ProposicoesService.detalhe', () => {
           externalIdVotacao: '1-1',
           data: '2024-05-01',
           descricao: 'Aprovado o Projeto de Lei',
-          fonteOficial: 'https://www.camara.leg.br/votacoes/1-1',
           placar: {
             placarCompleto: true,
             votosSim: 300,

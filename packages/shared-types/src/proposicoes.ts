@@ -71,7 +71,6 @@ export const votacaoNominalSchema = z.object({
   externalIdVotacao: z.string(),
   data: z.string().nullable(),
   descricao: z.string().nullable(),
-  fonteOficial: z.string(),
   placar: placarVotacaoSchema,
   resultado: resultadoVotacao,
   isReferenciaMatcher: z.boolean(),

@@ -10,10 +10,7 @@ import type {
   ProposicaoDetalheResult,
   VotacaoDetalheRow,
 } from '../proposicoes.repository';
-import {
-  fonteOficialProposicao,
-  fonteOficialVotacao,
-} from './camara-portal-url';
+import { fonteOficialProposicao } from './camara-portal-url';
 
 function toPlacar(row: VotacaoDetalheRow): PlacarVotacao {
   if (row.votacaoVotosExternalId !== null) {
@@ -44,7 +41,6 @@ function toVotacaoNominal(
     externalIdVotacao: row.externalIdVotacao,
     data: row.data,
     descricao: row.descricao,
-    fonteOficial: fonteOficialVotacao(row.externalIdVotacao),
     placar: toPlacar(row),
     resultado: interpretResultado(row.aprovacao),
     isReferenciaMatcher: row.externalIdVotacao === referenciaExternalId,
