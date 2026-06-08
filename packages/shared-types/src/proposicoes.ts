@@ -56,6 +56,14 @@ export const maisVotadasResponseSchema = z.object({
   offset: z.number(),
 });
 
+export const proposicoesSearchResponseSchema = z.object({
+  items: z.array(proposicaoCardSchema),
+  total: z.number(),
+  limit: z.number(),
+  offset: z.number(),
+  query: z.string(),
+});
+
 export type VotacaoReferenciaPattern = z.infer<typeof votacaoReferenciaPattern>;
 export type Resultado = z.infer<typeof resultadoVotacao>;
 export type VotacaoReferenciaResumo = z.infer<
@@ -66,3 +74,6 @@ export type ProposicaoStatusResumo = z.infer<
 >;
 export type ProposicaoCard = z.infer<typeof proposicaoCardSchema>;
 export type MaisVotadasResponse = z.infer<typeof maisVotadasResponseSchema>;
+export type ProposicoesSearchResponse = z.infer<
+  typeof proposicoesSearchResponseSchema
+>;
