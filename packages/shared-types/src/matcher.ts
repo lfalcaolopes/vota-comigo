@@ -1,0 +1,87 @@
+import { z } from 'zod';
+
+export const siglaUfEnum = z.enum([
+  'AC',
+  'AL',
+  'AP',
+  'AM',
+  'BA',
+  'CE',
+  'DF',
+  'ES',
+  'GO',
+  'MA',
+  'MT',
+  'MS',
+  'MG',
+  'PA',
+  'PB',
+  'PR',
+  'PE',
+  'PI',
+  'RJ',
+  'RN',
+  'RS',
+  'RO',
+  'RR',
+  'SC',
+  'SP',
+  'SE',
+  'TO',
+]);
+
+export const posicaoUsuarioMatcherEnum = z.enum([
+  'deveria_ser_aprovada',
+  'nao_deveria_ser_aprovada',
+  'nao_sei',
+]);
+
+export const POSICOES_COMPUTAVEIS = [
+  'deveria_ser_aprovada',
+  'nao_deveria_ser_aprovada',
+] as const;
+
+export const MAX_POSICOES = 30;
+export const MIN_POSICOES_COMPUTAVEIS = 3;
+
+export const posicaoMatcherSchema = z.object({
+  externalIdProposicao: z.number().int().positive(),
+  posicao: posicaoUsuarioMatcherEnum,
+});
+
+export const matcherExecucaoRequestSchema = z.object({
+  siglaUf: siglaUfEnum,
+  cidade: z.string().trim().min(1).max(120).optional(),
+  posicoes: z
+    .array(posicaoMatcherSchema)
+    .min(1)
+    .max(MAX_POSICOES)
+    .superRefine((posicoes, ctx) => {
+      const seen = new Set<number>();
+      posicoes.forEach((posicao, index) => {
+        if (seen.has(posicao.externalIdProposicao)) {
+          ctx.addIssue({
+            code: 'custom',
+            path: [index, 'externalIdProposicao'],
+            message: `proposicao duplicada: ${posicao.externalIdProposicao}`,
+          });
+        }
+        seen.add(posicao.externalIdProposicao);
+      });
+    }),
+});
+
+export const matcherExecucaoResumoSchema = z.object({
+  siglaUf: siglaUfEnum,
+  cidade: z.string().nullable(),
+  totalProposicoesSelecionadas: z.number().int().nonnegative(),
+  totalPosicoesComputaveis: z.number().int().nonnegative(),
+});
+
+export type SiglaUf = z.infer<typeof siglaUfEnum>;
+export type PosicaoUsuarioMatcher = z.infer<typeof posicaoUsuarioMatcherEnum>;
+export type PosicaoMatcher = z.infer<typeof posicaoMatcherSchema>;
+export type MatcherExecucaoRequest = z.infer<
+  typeof matcherExecucaoRequestSchema
+>;
+export type MatcherExecucaoResumo = z.infer<typeof matcherExecucaoResumoSchema>;
