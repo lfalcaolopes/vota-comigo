@@ -72,7 +72,8 @@
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/$1"
+      "^@/(.*)$": "<rootDir>/$1",
+      "^@vota-comigo/shared-types$": "<rootDir>/../../../packages/shared-types/src/index.ts"
     },
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
