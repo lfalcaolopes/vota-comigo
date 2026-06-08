@@ -1,7 +1,8 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 import type {
   MaisVotadasResponse,
+  ProposicaoDetalhe,
   ProposicoesSearchResponse,
 } from '@vota-comigo/shared-types';
 
@@ -18,6 +19,11 @@ function fakeSearchService(response: ProposicoesSearchResponse) {
   const search = jest.fn().mockResolvedValue(response);
   const service = { search } as unknown as ProposicoesService;
   return { service, search };
+}
+
+function fakeDetalheService(impl: jest.Mock) {
+  const service = { detalhe: impl } as unknown as ProposicoesService;
+  return { service, detalhe: impl };
 }
 
 const emptyResponse: MaisVotadasResponse = {
@@ -64,6 +70,53 @@ describe('ProposicoesController.maisVotadas', () => {
       // Assert
       expect(maisVotadas).toHaveBeenNthCalledWith(1, 20, 0);
       expect(maisVotadas).toHaveBeenNthCalledWith(2, 100, 0);
+    });
+  });
+});
+
+describe('ProposicoesController.detalhe', () => {
+  const detail = {
+    externalIdProposicao: 1,
+    siglaTipo: 'PL',
+    numero: 100,
+    ano: 2024,
+    ementa: 'Dispõe sobre algo',
+    status: { siglaOrgao: null, situacao: null, regime: null, dataHora: null },
+    fonteOficial:
+      'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=1',
+    temas: [],
+    votacoes: [],
+  } as unknown as ProposicaoDetalhe;
+
+  describe('when the proposicao is computavel', () => {
+    it('delegates to the service with the parsed externalId', async () => {
+      // Arrange
+      const { service, detalhe } = fakeDetalheService(
+        jest.fn().mockResolvedValue(detail),
+      );
+      const controller = new ProposicoesController(service);
+
+      // Act
+      const result = await controller.detalhe(1);
+
+      // Assert
+      expect(detalhe).toHaveBeenCalledWith(1);
+      expect(result).toBe(detail);
+    });
+  });
+
+  describe('when the service rejects', () => {
+    it('propagates the NotFoundException', async () => {
+      // Arrange
+      const { service } = fakeDetalheService(
+        jest.fn().mockRejectedValue(new NotFoundException()),
+      );
+      const controller = new ProposicoesController(service);
+
+      // Act / Assert
+      await expect(controller.detalhe(999)).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
     });
   });
 });
