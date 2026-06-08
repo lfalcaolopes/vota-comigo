@@ -1,0 +1,286 @@
+import type { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import {
+  matcherExecucaoResumoSchema,
+  type PosicaoMatcher,
+} from '@vota-comigo/shared-types';
+import request from 'supertest';
+
+import { MatcherController } from '../matcher.controller';
+import { MATCHER_REPOSITORY } from '../matcher.repository';
+import type { MatcherRepository } from '../matcher.repository';
+import { MatcherService } from '../matcher.service';
+
+function posicao(overrides: Partial<PosicaoMatcher> = {}): PosicaoMatcher {
+  return {
+    externalIdProposicao: 1,
+    posicao: 'deveria_ser_aprovada',
+    ...overrides,
+  };
+}
+
+function fakeRepository(computaveis: ReadonlySet<number>): MatcherRepository {
+  return {
+    loadComputaveisExternalIds: async () => computaveis,
+  };
+}
+
+async function buildApp(
+  computaveis: ReadonlySet<number>,
+): Promise<INestApplication> {
+  const moduleRef = await Test.createTestingModule({
+    controllers: [MatcherController],
+    providers: [
+      MatcherService,
+      { provide: MATCHER_REPOSITORY, useValue: fakeRepository(computaveis) },
+    ],
+  }).compile();
+
+  const app = moduleRef.createNestApplication();
+  await app.init();
+  return app;
+}
+
+describe('POST /matcher', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    app = await buildApp(new Set([1, 2, 3, 4, 5]));
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('when the execution is valid', () => {
+    it('returns 200 with a normalized execution summary contract', async () => {
+      // Act
+      const response = await request(app.getHttpServer())
+        .post('/matcher')
+        .send({
+          siglaUf: 'PE',
+          cidade: 'Recife',
+          posicoes: [
+            posicao({ externalIdProposicao: 1 }),
+            posicao({
+              externalIdProposicao: 2,
+              posicao: 'nao_deveria_ser_aprovada',
+            }),
+            posicao({ externalIdProposicao: 3 }),
+          ],
+        });
+
+      // Assert
+      expect(response.status).toBe(200);
+      expect(matcherExecucaoResumoSchema.safeParse(response.body).success).toBe(
+        true,
+      );
+      expect(response.body).toMatchObject({
+        siglaUf: 'PE',
+        cidade: 'Recife',
+        totalProposicoesSelecionadas: 3,
+        totalPosicoesComputaveis: 3,
+      });
+    });
+
+    it('coalesces a missing cidade to null', async () => {
+      // Act
+      const response = await request(app.getHttpServer())
+        .post('/matcher')
+        .send({
+          siglaUf: 'PE',
+          posicoes: [
+            posicao({ externalIdProposicao: 1 }),
+            posicao({
+              externalIdProposicao: 2,
+              posicao: 'nao_deveria_ser_aprovada',
+            }),
+            posicao({ externalIdProposicao: 3 }),
+          ],
+        });
+
+      // Assert
+      expect(response.status).toBe(200);
+      expect(response.body.cidade).toBeNull();
+    });
+
+    it('accepts up to thirty selected proposicoes, counting nao_sei', async () => {
+      // Arrange: 3 computaveis + 27 nao_sei = 30 selected
+      const posicoes = [
+        posicao({ externalIdProposicao: 1 }),
+        posicao({
+          externalIdProposicao: 2,
+          posicao: 'nao_deveria_ser_aprovada',
+        }),
+        posicao({ externalIdProposicao: 3 }),
+        ...Array.from({ length: 27 }, (_unused, index) =>
+          posicao({ externalIdProposicao: 100 + index, posicao: 'nao_sei' }),
+        ),
+      ];
+
+      // Act
+      const response = await request(app.getHttpServer())
+        .post('/matcher')
+        .send({ siglaUf: 'PE', posicoes });
+
+      // Assert
+      expect(response.status).toBe(200);
+      expect(response.body.totalProposicoesSelecionadas).toBe(30);
+      expect(response.body.totalPosicoesComputaveis).toBe(3);
+    });
+  });
+
+  describe('when positions are sent as query string instead of body', () => {
+    it('rejects with 400 because positions must travel in the body', async () => {
+      // Act
+      const response = await request(app.getHttpServer())
+        .post('/matcher')
+        .query({ siglaUf: 'PE' })
+        .send();
+
+      // Assert
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe('when posicoes is a map keyed by id instead of a list', () => {
+    it('rejects with 400', async () => {
+      // Act
+      const response = await request(app.getHttpServer())
+        .post('/matcher')
+        .send({
+          siglaUf: 'PE',
+          posicoes: { '1': { posicao: 'deveria_ser_aprovada' } },
+        });
+
+      // Assert
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe('when siglaUf is invalid or missing', () => {
+    it('rejects an unknown UF with 400', async () => {
+      // Act
+      const response = await request(app.getHttpServer())
+        .post('/matcher')
+        .send({
+          siglaUf: 'XX',
+          posicoes: [
+            posicao({ externalIdProposicao: 1 }),
+            posicao({
+              externalIdProposicao: 2,
+              posicao: 'nao_deveria_ser_aprovada',
+            }),
+            posicao({ externalIdProposicao: 3 }),
+          ],
+        });
+
+      // Assert
+      expect(response.status).toBe(400);
+    });
+
+    it('rejects a missing UF with 400', async () => {
+      // Act
+      const response = await request(app.getHttpServer())
+        .post('/matcher')
+        .send({
+          posicoes: [
+            posicao({ externalIdProposicao: 1 }),
+            posicao({
+              externalIdProposicao: 2,
+              posicao: 'nao_deveria_ser_aprovada',
+            }),
+            posicao({ externalIdProposicao: 3 }),
+          ],
+        });
+
+      // Assert
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe('when a proposicao is duplicated', () => {
+    it('rejects with 400 and names the duplicate', async () => {
+      // Act
+      const response = await request(app.getHttpServer())
+        .post('/matcher')
+        .send({
+          siglaUf: 'PE',
+          posicoes: [
+            posicao({ externalIdProposicao: 1 }),
+            posicao({
+              externalIdProposicao: 1,
+              posicao: 'nao_deveria_ser_aprovada',
+            }),
+            posicao({ externalIdProposicao: 3 }),
+          ],
+        });
+
+      // Assert
+      expect(response.status).toBe(400);
+      expect(JSON.stringify(response.body)).toContain('duplicada');
+    });
+  });
+
+  describe('when more than thirty proposicoes are selected', () => {
+    it('rejects with 400', async () => {
+      // Arrange
+      const posicoes = Array.from({ length: 31 }, (_unused, index) =>
+        posicao({ externalIdProposicao: index + 1 }),
+      );
+
+      // Act
+      const response = await request(app.getHttpServer())
+        .post('/matcher')
+        .send({ siglaUf: 'PE', posicoes });
+
+      // Assert
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe('when fewer than three computavel positions are sent', () => {
+    it('rejects with 400, ignoring nao_sei for the minimum', async () => {
+      // Act
+      const response = await request(app.getHttpServer())
+        .post('/matcher')
+        .send({
+          siglaUf: 'PE',
+          posicoes: [
+            posicao({ externalIdProposicao: 1 }),
+            posicao({
+              externalIdProposicao: 2,
+              posicao: 'nao_deveria_ser_aprovada',
+            }),
+            posicao({ externalIdProposicao: 3, posicao: 'nao_sei' }),
+          ],
+        });
+
+      // Assert
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe('when a computavel position is not computavel pelo matcher', () => {
+    it('rejects with 400 naming the offending proposicao', async () => {
+      // Act
+      const response = await request(app.getHttpServer())
+        .post('/matcher')
+        .send({
+          siglaUf: 'PE',
+          posicoes: [
+            posicao({ externalIdProposicao: 1 }),
+            posicao({
+              externalIdProposicao: 2,
+              posicao: 'nao_deveria_ser_aprovada',
+            }),
+            posicao({ externalIdProposicao: 99 }),
+          ],
+        });
+
+      // Assert
+      expect(response.status).toBe(400);
+      expect(JSON.stringify(response.body)).toContain('99');
+    });
+  });
+});
