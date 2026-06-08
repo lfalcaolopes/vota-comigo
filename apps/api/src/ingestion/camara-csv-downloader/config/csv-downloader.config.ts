@@ -1,7 +1,7 @@
 import type {
   CsvDownloaderConfigResolution,
   CsvDownloaderOptions,
-} from './csv-downloader.types';
+} from '../types/csv-downloader.types';
 
 const firstCsvYear = 2001;
 

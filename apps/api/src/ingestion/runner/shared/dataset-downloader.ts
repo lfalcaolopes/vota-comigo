@@ -1,5 +1,5 @@
-import { buildCsvDownloadPlan } from '@/ingestion/csv-downloads/csv-download-plan';
-import { downloadCsvPlanItem } from '@/ingestion/csv-downloads/csv-downloader';
+import { downloadCsvPlanItem } from '@/ingestion/camara-csv-downloader/download/download-csv-plan-item';
+import { buildCsvDownloadPlan } from '@/ingestion/camara-csv-downloader/plan/csv-download-plan';
 
 export type DatasetDownloadOutcome =
   | { ok: true }

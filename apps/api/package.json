@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "download:csvs": "ts-node -r tsconfig-paths/register src/ingestion/csv-downloads/csv-downloader.cli.ts",
+    "download:csvs": "ts-node -r tsconfig-paths/register src/ingestion/camara-csv-downloader/csv-downloader.cli.ts",
     "ingest": "ts-node -r tsconfig-paths/register src/ingestion/runner/ingestion-runner.cli.ts",
     "db:generate": "drizzle-kit generate --config src/shared/database/drizzle.config.ts",
     "db:migrate": "drizzle-kit migrate --config src/shared/database/drizzle.config.ts",

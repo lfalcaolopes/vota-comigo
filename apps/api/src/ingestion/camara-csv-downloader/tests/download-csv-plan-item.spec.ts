@@ -1,11 +1,11 @@
 import { Readable } from 'node:stream';
 
-import { downloadCsvPlanItem } from './csv-downloader';
+import { downloadCsvPlanItem } from '../download/download-csv-plan-item';
 import type {
   CsvDownloadPlanItem,
   CsvDownloadTransport,
   CsvPlanItemFileSystem,
-} from './csv-downloader.types';
+} from '../types/csv-downloader.types';
 
 describe('downloadCsvPlanItem', () => {
   const item: CsvDownloadPlanItem = {

@@ -1,5 +1,5 @@
-import { resolveCsvDownloaderConfig } from './csv-downloader.config';
-import { buildCsvDownloadPlan } from './csv-download-plan';
+import { resolveCsvDownloaderConfig } from '../config/csv-downloader.config';
+import { buildCsvDownloadPlan } from '../plan/csv-download-plan';
 
 describe('csv downloader dataset selection', () => {
   describe('when the plan is restricted to a dataset', () => {

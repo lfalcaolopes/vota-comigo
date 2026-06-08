@@ -3,7 +3,7 @@ import { access, mkdir, rename, rm } from 'node:fs/promises';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 
-import type { CsvPlanItemFileSystem } from './csv-downloader.types';
+import type { CsvPlanItemFileSystem } from '../types/csv-downloader.types';
 
 export const nodeFileSystem: CsvPlanItemFileSystem = {
   async exists(path: string): Promise<boolean> {

@@ -1,7 +1,7 @@
-import { resolveCsvDownloaderConfig } from './csv-downloader.config';
-import { buildCsvDownloadPlan } from './csv-download-plan';
-import { executeCsvDownloader, runCsvDownloader } from './csv-downloader';
-import type { CsvDownloadPlanItem } from './csv-downloader.types';
+import { resolveCsvDownloaderConfig } from '../config/csv-downloader.config';
+import { executeCsvDownloader, runCsvDownloader } from '../csv-downloader';
+import { buildCsvDownloadPlan } from '../plan/csv-download-plan';
+import type { CsvDownloadPlanItem } from '../types/csv-downloader.types';
 
 describe('csv downloader entrypoint', () => {
   describe('when building the download plan', () => {

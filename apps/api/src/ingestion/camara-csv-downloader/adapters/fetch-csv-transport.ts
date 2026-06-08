@@ -1,4 +1,4 @@
-import type { CsvDownloadTransport } from './csv-downloader.types';
+import type { CsvDownloadTransport } from '../types/csv-downloader.types';
 
 export const fetchCsv: CsvDownloadTransport = async (url, options) => {
   const response = await fetch(url, {

@@ -2,7 +2,7 @@ import type {
   CsvDownloadPlanItem,
   CsvDownloaderConfig,
   CsvDownloaderOptions,
-} from './csv-downloader.types';
+} from '../types/csv-downloader.types';
 
 const defaultBaseUrl = 'https://dadosabertos.camara.leg.br/arquivos';
 

@@ -1,7 +1,7 @@
 import {
   isTransientHttpStatus,
   retryDelayMs,
-} from '../../csv-downloads/retry-policy';
+} from '../../camara-csv-downloader/resilience/retry-policy';
 import type {
   DeputadoHistoricoClient,
   DeputadoHistoricoFetchResult,
