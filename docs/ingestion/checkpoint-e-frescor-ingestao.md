@@ -159,6 +159,6 @@ desatualizados primeiro. A mesma máquina serve para a carga inicial (tudo
 
 - `apps/api/src/shared/database/schema/deputado.ts`
 - `apps/api/src/shared/database/schema/deputado-historico.ts`
-- `apps/api/src/ingestion/runner/steps/deputado-historico/deputado-historico.step.ts`
-- `apps/api/src/ingestion/runner/steps/deputado-historico/deputado-historico.repository.ts`
-- `apps/api/src/ingestion/runner/ingestion-steps.ts`
+- `apps/api/src/ingestion/pipeline-runner/steps/deputado-historico/deputado-historico.step.ts`
+- `apps/api/src/ingestion/pipeline-runner/steps/deputado-historico/deputado-historico.repository.ts`
+- `apps/api/src/ingestion/pipeline-runner/composition/ingestion-steps.ts`

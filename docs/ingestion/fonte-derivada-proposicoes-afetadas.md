@@ -71,7 +71,7 @@ receber uma fonte preparada ou uma falha/lacuna já classificada.
 ### O módulo possui aborto em modo estrito
 
 O módulo deve receber `strict` e lançar `StrictModeError` nos casos fatais. O
-runner já tem uma seam de aborto para `StrictModeError`; reutilizar essa seam
+pipeline-runner já tem uma seam de aborto para `StrictModeError`; reutilizar essa seam
 mantém a mudança pequena e preserva o comportamento operacional.
 
 Políticas:
@@ -93,7 +93,7 @@ logs que hoje pertencem à preparação da fonte:
 - `[tema] baixando proposicoesTemas-{ano}.csv ausentes: ...`
 
 Ele não deve depender de `debug`, `status`, `sourceFile`, `readRecords` nem do
-restante do contexto do runner.
+restante do contexto do pipeline-runner.
 
 ### O módulo não possui parsing nem escrita
 
@@ -127,9 +127,9 @@ Nomes finais devem seguir ADR-007. O esboço abaixo registra a forma da
 interface, não exige esses nomes exatos.
 
 ```ts
-import type { CsvRowSource } from '../../ingestion-runner.types';
+import type { CsvRowSource } from '../../types/ingestion-pipeline-runner.types';
 import type { DatasetDownloader } from '../../shared/dataset-downloader';
-import type { ExternalGap, IngestionReporter } from '../../ingestion-runner.types';
+import type { ExternalGap, IngestionReporter } from '../../types/ingestion-pipeline-runner.types';
 
 export type FonteDerivadaProposicoesAfetadasOptions = {
   years: readonly number[];
@@ -275,14 +275,14 @@ O passo ainda deve:
 Local provável:
 
 ```text
-apps/api/src/ingestion/runner/steps/proposicoes/fonte-derivada-proposicoes-afetadas.ts
+apps/api/src/ingestion/pipeline-runner/steps/proposicoes/fonte-derivada-proposicoes-afetadas.ts
 ```
 
 Alternativa aceitável, se a implementação preferir manter fontes compartilhadas
 fora de um passo específico:
 
 ```text
-apps/api/src/ingestion/runner/shared/fonte-derivada-proposicoes-afetadas.ts
+apps/api/src/ingestion/pipeline-runner/shared/fonte-derivada-proposicoes-afetadas.ts
 ```
 
 A primeira opção concentra a origem conceitual perto de `proposicoes`, mas pode
@@ -337,9 +337,9 @@ Depois que a fonte derivada tiver testes próprios, os testes de `proposicoes` e
 
 ## Arquivos de referência
 
-- `apps/api/src/ingestion/runner/steps/proposicoes/needed-proposicoes.ts`
-- `apps/api/src/ingestion/runner/steps/proposicoes/proposicoes.step.ts`
-- `apps/api/src/ingestion/runner/steps/tema/tema.step.ts`
-- `apps/api/src/ingestion/runner/shared/dataset-downloader.ts`
-- `apps/api/src/ingestion/runner/ingestion-runner.ts`
+- `apps/api/src/ingestion/pipeline-runner/steps/proposicoes/needed-proposicoes.ts`
+- `apps/api/src/ingestion/pipeline-runner/steps/proposicoes/proposicoes.step.ts`
+- `apps/api/src/ingestion/pipeline-runner/steps/tema/tema.step.ts`
+- `apps/api/src/ingestion/pipeline-runner/shared/dataset-downloader.ts`
+- `apps/api/src/ingestion/pipeline-runner/ingestion-pipeline-runner.ts`
 - `docs/adr/012-ingestao-proposicoes-sem-api-sem-principal.md`

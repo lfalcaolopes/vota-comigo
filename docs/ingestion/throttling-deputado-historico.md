@@ -205,11 +205,11 @@ orçamento de ~1000 requisições por janela, persiste, para, e retoma na próxi
 
 ## Referências de código
 
-- `apps/api/src/ingestion/runner/steps/deputado-historico/deputado-historico.step.ts`
-- `apps/api/src/ingestion/runner/steps/deputado-historico/deputado-historico.repository.ts`
-- `apps/api/src/ingestion/runner/shared/camara-api-transport.ts`
-- `apps/api/src/ingestion/runner/shared/camara-historico-client.ts`
-- `apps/api/src/ingestion/runner/shared/throttle-gate.ts`
-- `apps/api/src/ingestion/runner/gap-log.ts`
-- `apps/api/src/ingestion/runner/gap-log-reader.ts`
-- `apps/api/src/ingestion/runner/ingestion-steps.ts`
+- `apps/api/src/ingestion/pipeline-runner/steps/deputado-historico/deputado-historico.step.ts`
+- `apps/api/src/ingestion/pipeline-runner/steps/deputado-historico/deputado-historico.repository.ts`
+- `apps/api/src/ingestion/pipeline-runner/shared/camara-api-transport.ts`
+- `apps/api/src/ingestion/pipeline-runner/shared/camara-historico-client.ts`
+- `apps/api/src/ingestion/pipeline-runner/shared/throttle-gate.ts`
+- `apps/api/src/ingestion/pipeline-runner/logs/gap-log.ts`
+- `apps/api/src/ingestion/pipeline-runner/logs/gap-log-reader.ts`
+- `apps/api/src/ingestion/pipeline-runner/composition/ingestion-steps.ts`

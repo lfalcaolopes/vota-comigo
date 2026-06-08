@@ -8,7 +8,7 @@ O downloader é o **primeiro passo** da pipeline: baixa os CSVs da Câmara para 
 
 O catálogo de arquivos é uma **decisão de produto** (um catálogo estático local), não uma consequência automática de tudo que a Câmara publica via Swagger. Todos os CSVs da Câmara têm encoding UTF-8.
 
-> O runner de ingestão também aciona o downloader sob demanda, para baixar os `proposicoes-{ano}.csv` e `proposicoesTemas-{ano}.csv` derivados que faltam ([ADR-0012](../adr/012-ingestao-proposicoes-sem-api-sem-principal.md)). Ver [runner-ingestao.md](./runner-ingestao.md).
+> O pipeline-runner de ingestão também aciona o downloader sob demanda, para baixar os `proposicoes-{ano}.csv` e `proposicoesTemas-{ano}.csv` derivados que faltam ([ADR-0012](../adr/012-ingestao-proposicoes-sem-api-sem-principal.md)). Ver [pipeline-runner-ingestao.md](./pipeline-runner-ingestao.md).
 
 ### O que o downloader não faz
 
@@ -195,6 +195,6 @@ A estratégia atual (existência do arquivo) não percebe atualizações na font
 ## Referências
 
 - [ADR-0012 — Ingestão de proposições sem API e sem proposição principal](../adr/012-ingestao-proposicoes-sem-api-sem-principal.md)
-- [runner-ingestao.md](./runner-ingestao.md) — contrato operacional do runner de ingestão
+- [pipeline-runner-ingestao.md](./pipeline-runner-ingestao.md) — contrato operacional do pipeline-runner de ingestão
 - [fontes-ingestao.md](./fontes-ingestao.md) — origem de cada dado por passo
 - Catálogo oficial: <https://dadosabertos.camara.leg.br/swagger/api.html?tab=staticfile>

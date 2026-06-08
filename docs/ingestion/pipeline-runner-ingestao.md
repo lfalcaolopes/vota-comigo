@@ -1,14 +1,14 @@
 # Runner de Ingestão — Contrato Operacional
 
-Contrato operacional do runner de ingestão dos dados da Câmara dos Deputados. Descreve como executar, depurar e interpretar a pipeline sem reabrir as decisões de domínio. As decisões de domínio em si ficam nas ADRs referenciadas ao longo do texto.
+Contrato operacional do pipeline-runner de ingestão dos dados da Câmara dos Deputados. Descreve como executar, depurar e interpretar a pipeline sem reabrir as decisões de domínio. As decisões de domínio em si ficam nas ADRs referenciadas ao longo do texto.
 
-## O que o runner é
+## O que o pipeline-runner é
 
-O runner é o orquestrador da pipeline de ingestão: lê os CSVs já baixados localmente (saída do downloader, ver [camara-csv-downloader.md](./camara-csv-downloader.md)), transforma os dados conforme as regras documentadas, complementa lacunas específicas via API da Câmara quando permitido, e popula o banco.
+O pipeline-runner é o orquestrador da pipeline de ingestão: lê os CSVs já baixados localmente (saída do downloader, ver [camara-csv-downloader.md](./camara-csv-downloader.md)), transforma os dados conforme as regras documentadas, complementa lacunas específicas via API da Câmara quando permitido, e popula o banco.
 
-A API dentro do runner é exceção controlada, não uma segunda fonte geral de enriquecimento. No desenho atual ela entra **apenas** no passo `deputado_historico`, via `GET /deputados/{id}/historico` — o único dado necessário que não existe em CSV. As proposições vêm **exclusivamente** dos CSVs locais; quando faltam arquivos `proposicoes-{ano}.csv` ou `proposicoesTemas-{ano}.csv`, o runner os baixa automaticamente pelo downloader, sem fallback de API ([ADR-0012](../adr/012-ingestao-proposicoes-sem-api-sem-principal.md)).
+A API dentro do pipeline-runner é exceção controlada, não uma segunda fonte geral de enriquecimento. No desenho atual ela entra **apenas** no passo `deputado_historico`, via `GET /deputados/{id}/historico` — o único dado necessário que não existe em CSV. As proposições vêm **exclusivamente** dos CSVs locais; quando faltam arquivos `proposicoes-{ano}.csv` ou `proposicoesTemas-{ano}.csv`, o pipeline-runner os baixa automaticamente pelo downloader, sem fallback de API ([ADR-0012](../adr/012-ingestao-proposicoes-sem-api-sem-principal.md)).
 
-### O que o runner não faz
+### O que o pipeline-runner não faz
 
 Limites explícitos, para não inferir completude que a fonte não dá:
 
@@ -26,7 +26,7 @@ Limites explícitos, para não inferir completude que a fonte não dá:
 
 Pré-requisitos: dependências instaladas (`pnpm install`), Postgres acessível via `DATABASE_URL`, schema aplicado (`pnpm db:migrate`) e os CSVs já baixados em `apps/api/data/raw/` (ver [camara-csv-downloader.md](./camara-csv-downloader.md); os arquivos derivados `proposicoes-{ano}.csv` e `proposicoesTemas-{ano}.csv` ausentes são baixados automaticamente pelos passos derivados).
 
-Todos os comandos assumem a raiz do repositório. `pnpm ingest` é atalho para `pnpm --filter api ingest`. Os argumentos após `--` vão direto para o runner.
+Todos os comandos assumem a raiz do repositório. `pnpm ingest` é atalho para `pnpm --filter api ingest`. Os argumentos após `--` vão direto para o pipeline-runner.
 
 ### No banco principal do app
 
@@ -214,13 +214,13 @@ pnpm ingest -- --from=2020 --to=2022 --dry-run
 
 ### Pré-voo de `proposicoes`/`tema` e download automático
 
-Os passos derivados dependem de arquivos `proposicoes-{ano}.csv` e `proposicoesTemas-{ano}.csv` cujos anos não coincidem necessariamente com a janela das votações. Antes de ingerir, o runner deriva das votações nominais em escopo (respeitando `--from`/`--to`/`--limit`) o conjunto de anos necessários e verifica cada arquivo em disco. Os ausentes são logados e baixados automaticamente pelo downloader. A mesma função de "conjunto necessário" alimenta validação e ingestão, para que não divirjam. Não há fallback de API para proposições ([ADR-0012](../adr/012-ingestao-proposicoes-sem-api-sem-principal.md)).
+Os passos derivados dependem de arquivos `proposicoes-{ano}.csv` e `proposicoesTemas-{ano}.csv` cujos anos não coincidem necessariamente com a janela das votações. Antes de ingerir, o pipeline-runner deriva das votações nominais em escopo (respeitando `--from`/`--to`/`--limit`) o conjunto de anos necessários e verifica cada arquivo em disco. Os ausentes são logados e baixados automaticamente pelo downloader. A mesma função de "conjunto necessário" alimenta validação e ingestão, para que não divirjam. Não há fallback de API para proposições ([ADR-0012](../adr/012-ingestao-proposicoes-sem-api-sem-principal.md)).
 
 Se o download de algum arquivo necessário falhar, a execução para informando o motivo, o que falta e como retomar (resolver a causa e reexecutar, p.ex. `--only=proposicoes`). Os passos CSV concluídos antes permanecem gravados (upsert idempotente), então a retomada não os reprocessa de forma destrutiva.
 
 ### Fonte de escopo único ausente
 
-Quando um arquivo de um passo de escopo único não está em disco, o runner registra uma lacuna `fonte_ausente` e **aborta** (porque os passos seguintes dependem dele). Para um passo anual, a ausência de um ano específico é pulada no modo default e aborta em `--strict`.
+Quando um arquivo de um passo de escopo único não está em disco, o pipeline-runner registra uma lacuna `fonte_ausente` e **aborta** (porque os passos seguintes dependem dele). Para um passo anual, a ausência de um ano específico é pulada no modo default e aborta em `--strict`.
 
 ### Sanity checks de placar
 
@@ -230,7 +230,7 @@ Um caso é tratado como **lacuna de fonte**, não divergência: quando o placar 
 
 ### Logs ao vivo
 
-Além do resumo final, o runner emite progresso ao vivo para que execuções longas não fiquem silenciosas. Formatos (nível default):
+Além do resumo final, o pipeline-runner emite progresso ao vivo para que execuções longas não fiquem silenciosas. Formatos (nível default):
 
 - **Banner inicial** — modo, janela, número de passos e limite: `Iniciando ingestão (normal): anos 2020-2025, 9 passos planejados.`
 - **Início de passo** — `[votacoes 2024] iniciando (votacoes-2024.csv)`
@@ -303,7 +303,7 @@ A lista evolui com novas validações; ela não é fechada por contrato, mas os 
 
 ## Lacunas de fonte
 
-O runner distingue **rejeição** (linha que falhou parsing/validação) de **lacuna de fonte** (dado que a fonte simplesmente não forneceu). A pipeline é uma base metodológica auditável: quando falta fonte, a ausência aparece no relatório, não é escondida por dado sintético.
+O pipeline-runner distingue **rejeição** (linha que falhou parsing/validação) de **lacuna de fonte** (dado que a fonte simplesmente não forneceu). A pipeline é uma base metodológica auditável: quando falta fonte, a ausência aparece no relatório, não é escondida por dado sintético.
 
 Como interpretar, sem assumir completude falsa do banco:
 

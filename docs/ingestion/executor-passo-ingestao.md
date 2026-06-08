@@ -20,15 +20,15 @@ concentrando a mecânica de:
 - emitir logs de passo;
 - converter `StrictModeError` em resultado de aborto;
 - retornar resumo, rejeições, lacunas e sinal de aborto em uma forma simples
-  para o runner agregar.
+  para o pipeline-runner agregar.
 
-O objetivo não é mover o loop inteiro da pipeline. O runner continua dono da
+O objetivo não é mover o loop inteiro da pipeline. O pipeline-runner continua dono da
 execução completa: configuração, plano, criação de passos, retry de lacunas,
 fechamento de recursos, escrita dos logs finais e resumo da execução.
 
 ## Problema atual
 
-Hoje `executeIngestionRunner` contém, no mesmo loop:
+Hoje `executeIngestionPipelineRunner` contém, no mesmo loop:
 
 - busca do passo correspondente ao `IngestionPlanEntry`;
 - construção do contexto de `api`, `db`, `derived` e CSV normal;
@@ -39,11 +39,11 @@ Hoje `executeIngestionRunner` contém, no mesmo loop:
 - captura de `StrictModeError`;
 - agregação de `StepSummary`, `Rejection` e `ExternalGap`.
 
-Essa mistura torna a interface do runner rasa: a cada novo tipo de fonte ou
+Essa mistura torna a interface do pipeline-runner rasa: a cada novo tipo de fonte ou
 ajuste de comportamento de passo, a pessoa precisa reabrir o loop central e
 entender detalhes que pertencem a uma única execução de passo.
 
-Depois que a Fonte derivada de proposições afetadas existir, o runner não
+Depois que a Fonte derivada de proposições afetadas existir, o pipeline-runner não
 precisa mais saber nenhuma política específica de `proposicoes` ou `tema`.
 Sobra uma seam clara: **executar uma entrada do plano contra um passo resolvido**.
 
@@ -58,12 +58,12 @@ Motivo: se o executor possuir o loop inteiro, ele tende a absorver retry gaps,
 `createSteps`, ciclo de vida de `close`, escrita de logs finais e resumo total.
 Isso deixaria o módulo amplo em vez de profundo.
 
-### O runner resolve o passo
+### O pipeline-runner resolve o passo
 
 O executor deve receber o `IngestionStep` já resolvido. Ele não deve receber a
 lista de passos nem procurar por `entry.stepName`.
 
-O runner preserva o comportamento atual de pular silenciosamente entradas sem
+O pipeline-runner preserva o comportamento atual de pular silenciosamente entradas sem
 passo correspondente:
 
 ```ts
@@ -104,7 +104,7 @@ atual:
 - emitir log de lacuna;
 - marcar `aborted = true` quando `entry.scope === 'single'` ou
   `config.strict`;
-- caso contrário, permitir que o runner continue a próxima entrada anual.
+- caso contrário, permitir que o pipeline-runner continue a próxima entrada anual.
 
 `StrictModeError` permanece reservado para abortos decididos dentro do passo.
 
@@ -119,7 +119,7 @@ O executor deve chamar:
 Esses logs dependem de label de passo, descrição de arquivo fonte, lacuna de
 fonte e duração. Todos esses dados pertencem à execução de um passo.
 
-O runner continua dono apenas dos logs de execução completa:
+O pipeline-runner continua dono apenas dos logs de execução completa:
 
 - início da ingestão;
 - mensagens de retry de lacunas;
@@ -138,7 +138,7 @@ export type StepExecutionResult = {
 };
 ```
 
-Isso simplifica o loop do runner:
+Isso simplifica o loop do pipeline-runner:
 
 ```ts
 if (result.summary !== undefined) {
@@ -176,11 +176,11 @@ import type {
   ExternalGap,
   IngestionPlanEntry,
   IngestionReporter,
-  IngestionRunnerConfig,
+  IngestionPipelineRunnerConfig,
   IngestionStep,
   Rejection,
   StepSummary,
-} from './ingestion-runner.types';
+} from '../types/ingestion-pipeline-runner.types';
 
 export type StepExecutionResult = {
   summary?: StepSummary;
@@ -197,7 +197,7 @@ export type IngestionStepExecutor = {
 };
 
 export type IngestionStepExecutorDeps = {
-  config: IngestionRunnerConfig;
+  config: IngestionPipelineRunnerConfig;
   csvReader: CsvReader;
   openSource(path: string): Readable;
   sourceExists(path: string): boolean;
@@ -295,9 +295,9 @@ Para qualquer contexto válido:
 
 Erros que não sejam `StrictModeError` devem continuar escapando.
 
-## Alteração prevista no runner
+## Alteração prevista no pipeline-runner
 
-O runner deve ficar com um loop mais simples:
+O pipeline-runner deve ficar com um loop mais simples:
 
 ```ts
 const stepsByName = new Map(steps.map((step) => [step.name, step]));
@@ -333,9 +333,9 @@ for (const entry of plan) {
 }
 ```
 
-`executeIngestionRunner` continua responsável por:
+`executeIngestionPipelineRunner` continua responsável por:
 
-- `runIngestionRunner`;
+- `runIngestionPipelineRunner`;
 - leitura de `retryGapsPath`;
 - chamada a `createSteps`;
 - `try/finally` com `close`;
@@ -369,7 +369,7 @@ for (const entry of plan) {
 
 ### Runner
 
-Depois que o executor tiver testes próprios, os testes de `executeIngestionRunner`
+Depois que o executor tiver testes próprios, os testes de `executeIngestionPipelineRunner`
 podem focar no ciclo completo:
 
 - resolve config e plano;
@@ -386,15 +386,15 @@ podem focar no ciclo completo:
 1. Criar o módulo novo com `defaultSourcePath`, guard de leitura e executor.
 2. Copiar para ele a construção de contexto sem alterar comportamento.
 3. Cobrir o executor com testes unitários.
-4. Trocar o loop de `executeIngestionRunner` para usar o executor.
-5. Remover funções privadas do runner que migraram para o executor.
-6. Rodar testes do runner e pipeline completa.
+4. Trocar o loop de `executeIngestionPipelineRunner` para usar o executor.
+5. Remover funções privadas do pipeline-runner que migraram para o executor.
+6. Rodar testes do pipeline-runner e pipeline completa.
 
 ## Arquivos de referência
 
-- `apps/api/src/ingestion/runner/ingestion-runner.ts`
-- `apps/api/src/ingestion/runner/ingestion-runner.types.ts`
-- `apps/api/src/ingestion/runner/step-logging.ts`
-- `apps/api/src/ingestion/runner/strict-mode-error.ts`
-- `apps/api/src/ingestion/runner/tests/ingestion-runner.spec.ts`
-- `apps/api/src/ingestion/runner/tests/full-pipeline.spec.ts`
+- `apps/api/src/ingestion/pipeline-runner/ingestion-pipeline-runner.ts`
+- `apps/api/src/ingestion/pipeline-runner/types/ingestion-pipeline-runner.types.ts`
+- `apps/api/src/ingestion/pipeline-runner/reporting/step-logging.ts`
+- `apps/api/src/ingestion/pipeline-runner/errors/strict-mode-error.ts`
+- `apps/api/src/ingestion/pipeline-runner/tests/ingestion-pipeline-runner.spec.ts`
+- `apps/api/src/ingestion/pipeline-runner/tests/full-pipeline.spec.ts`

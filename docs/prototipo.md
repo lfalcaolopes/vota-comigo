@@ -41,7 +41,7 @@ A modelagem das entidades específicas será um trabalho próprio, realizado a p
 Princípios que devem guiar a modelagem:
 
 - **Escopo do produto completo, não só do Protótipo.** Mesmo que o Protótipo importe apenas um subconjunto dos dados, o schema deve acomodar tudo que o produto completo precisará. Evita retrabalho posterior.
-- **Proposição afetada como unidade de vínculo.** A relação votação-proposição vem exclusivamente de `votacoesProposicoes-{ano}.csv`, que lista as proposições afetadas por cada votação. A cardinalidade é N:N: uma votação pode afetar múltiplas proposições, e uma proposição pode acumular múltiplas votações ao longo da tramitação. Relações como `uriProposicaoPrincipal` ou `/proposicoes/{id}/relacionadas` continuam úteis como contexto de tramitação, mas não definem o vínculo canônico da votação. A proposição principal não é ingerida no runner do MVP (ver ADR 0012).
+- **Proposição afetada como unidade de vínculo.** A relação votação-proposição vem exclusivamente de `votacoesProposicoes-{ano}.csv`, que lista as proposições afetadas por cada votação. A cardinalidade é N:N: uma votação pode afetar múltiplas proposições, e uma proposição pode acumular múltiplas votações ao longo da tramitação. Relações como `uriProposicaoPrincipal` ou `/proposicoes/{id}/relacionadas` continuam úteis como contexto de tramitação, mas não definem o vínculo canônico da votação. A proposição principal não é ingerida no pipeline-runner do MVP (ver ADR 0012).
 - **Relações temporais.** Relações como deputado↔partido e deputado↔comissão mudam ao longo do tempo. Não podem ser tratadas como chave fixa.
 
 ### 3. Ingestão mínima

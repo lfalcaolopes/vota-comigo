@@ -66,7 +66,7 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 
 `votacoesObjetos-{ano}.csv` não é fonte de derivação nem fallback. Ele lista possíveis objetos da votação, acumulando proposições derivadas ao longo da tramitação, e não é vínculo canônico confiável.
 
-**Exibição de detalhes completos:** quando o usuário abre o detalhe de uma votação, os textos da votação vêm dos campos locais ingeridos de `votacoes-{ano}.csv`. A lista de proposições exibida deve se basear nas proposições afetadas deste arquivo, não em objetos possíveis da votação. Chamadas a `GET /votacoes/{id}` não fazem parte do runner nem do caminho padrão de runtime para detalhes de votação, porque a API não acrescenta informação útil em relação aos CSVs para esses campos.
+**Exibição de detalhes completos:** quando o usuário abre o detalhe de uma votação, os textos da votação vêm dos campos locais ingeridos de `votacoes-{ano}.csv`. A lista de proposições exibida deve se basear nas proposições afetadas deste arquivo, não em objetos possíveis da votação. Chamadas a `GET /votacoes/{id}` não fazem parte do pipeline-runner nem do caminho padrão de runtime para detalhes de votação, porque a API não acrescenta informação útil em relação aos CSVs para esses campos.
 
 ---
 
@@ -83,7 +83,7 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 
 **Escopo refinado:** ingerir as proposições afetadas por votação nominal ingerida. Proposições sem relação com votação nominal ingerida não entram. Não há filtro por `codTipo` — qualquer tipo de proposição afetada por uma votação nominal é ingerido. A proposição principal não é ingerida no MVP (ADR 0012).
 
-**Observação:** votações de um ano podem referenciar proposições apresentadas em anos anteriores. A ingestão de `proposicoes` precisa cobrir múltiplos anos conforme necessário, não só o ano corrente. O runner não usa API para proposições (ADR 0012): antes do passo, deriva das votações nominais em escopo os anos necessários e baixa automaticamente os `proposicoes-{ano}.csv` ausentes. Quando uma proposição necessária não está em nenhum CSV, registra-se lacuna de ingestão, sem registro sintético.
+**Observação:** votações de um ano podem referenciar proposições apresentadas em anos anteriores. A ingestão de `proposicoes` precisa cobrir múltiplos anos conforme necessário, não só o ano corrente. O pipeline-runner não usa API para proposições (ADR 0012): antes do passo, deriva das votações nominais em escopo os anos necessários e baixa automaticamente os `proposicoes-{ano}.csv` ausentes. Quando uma proposição necessária não está em nenhum CSV, registra-se lacuna de ingestão, sem registro sintético.
 
 **Proposições como contexto de atividade do deputado** (quantas criou, quantas foram aprovadas) são acessadas via API com `GET /proposicoes?idAutor={id}`, com cache de algumas horas. Não requer ingestão nem de `proposicoes` em massa nem de `proposicoesAutores`.
 

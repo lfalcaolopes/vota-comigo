@@ -1,6 +1,6 @@
 # Refatoração dos Módulos de Ingestão — Contexto
 
-Esta nota registra o contexto para uma refatoração futura dos módulos `camara-csv-downloader` e `runner` em `apps/api/src/ingestion/`. Ela não muda contrato operacional nem substitui os documentos [camara-csv-downloader.md](./camara-csv-downloader.md) e [runner-ingestao.md](./runner-ingestao.md). O objetivo é orientar uma reorganização de arquivos quando a mudança for executada.
+Esta nota registra o contexto para uma refatoração futura dos módulos `camara-csv-downloader` e `pipeline-runner` em `apps/api/src/ingestion/`. Ela não muda contrato operacional nem substitui os documentos [camara-csv-downloader.md](./camara-csv-downloader.md) e [pipeline-runner-ingestao.md](./pipeline-runner-ingestao.md). O objetivo é orientar uma reorganização de arquivos quando a mudança for executada.
 
 ## Intenção
 
@@ -69,19 +69,19 @@ Papel esperado de cada área:
 
 O atual `csv-downloader.ts` concentra execução, concorrência, download de item e relatório. A refatoração deve extrair essas responsabilidades sem transformar cada helper em um pass-through. O caller idealmente continua importando o mínimo possível do root.
 
-## `runner`
+## `pipeline-runner`
 
-`runner` é o orquestrador da pipeline de ingestão. Ele lê fontes locais, monta contexto de execução, compõe passos, registra rejeições/lacunas e produz resumo. A pasta `steps/` já expressa bem a unidade principal do domínio e deve continuar como centro do módulo.
+`pipeline-runner` é o orquestrador da pipeline de ingestão. Ele lê fontes locais, monta contexto de execução, compõe passos, registra rejeições/lacunas e produz resumo. A pasta `steps/` já expressa bem a unidade principal do domínio e deve continuar como centro do módulo.
 
 Estrutura alvo sugerida:
 
 ```txt
-runner/
-  ingestion-runner.cli.ts
-  ingestion-runner.ts
+pipeline-runner/
+  ingestion-pipeline-runner.cli.ts
+  ingestion-pipeline-runner.ts
 
   config/
-    ingestion-runner.config.ts
+    ingestion-pipeline-runner.config.ts
 
   plan/
     ingestion-plan.ts
@@ -111,7 +111,7 @@ runner/
     strict-mode-error.ts
 
   types/
-    ingestion-runner.types.ts
+    ingestion-pipeline-runner.types.ts
 
   shared/
     bounded-concurrency.ts
@@ -139,20 +139,20 @@ runner/
 
 Papel esperado de cada área:
 
-- `ingestion-runner.ts`: fachada do runner, mantendo `runIngestionRunner` e `executeIngestionRunner`.
-- `ingestion-runner.cli.ts`: adapter CLI.
-- `config/`: parsing e validação de flags do runner.
+- `ingestion-pipeline-runner.ts`: fachada do pipeline-runner, mantendo `runIngestionPipelineRunner` e `executeIngestionPipelineRunner`.
+- `ingestion-pipeline-runner.cli.ts`: adapter CLI.
+- `config/`: parsing e validação de flags do pipeline-runner.
 - `plan/`: montagem do plano e lista estática de descritores dos passos.
 - `composition/`: criação dos passos, wiring de repositórios/lookups/clientes e dependências de dry-run.
 - `sources/`: leitura de CSVs e resolução de caminhos de fontes em `data/raw/`.
 - `logs/`: escrita e leitura de logs persistidos de erros e lacunas.
 - `reporting/`: output ao vivo, logs de passo, banner inicial e resumo.
 - `errors/`: erros internos com semântica de controle, como strict mode.
-- `types/`: contratos internos do runner.
-- `shared/`: utilidades compartilhadas por mais de um passo ou subárea do runner.
+- `types/`: contratos internos do pipeline-runner.
+- `shared/`: utilidades compartilhadas por mais de um passo ou subárea do pipeline-runner.
 - `steps/`: implementação dos passos de ingestão.
 
-O `ingestionStepDescriptors` deve sair de `ingestion-runner.ts` para `plan/ingestion-step-descriptors.ts`, porque descreve o pipeline e não a execução. O `defaultSourcePath` deve sair de `ingestion-runner.ts` para `sources/source-path.ts`, porque é parte do contrato com `data/raw/`. Os helpers de resumo (`reportRunStart`, `reportSummary`, `describeMode`) podem ir para `reporting/run-reporting.ts`.
+O `ingestionStepDescriptors` deve sair de `ingestion-pipeline-runner.ts` para `plan/ingestion-step-descriptors.ts`, porque descreve o pipeline e não a execução. O `defaultSourcePath` deve sair de `ingestion-pipeline-runner.ts` para `sources/source-path.ts`, porque é parte do contrato com `data/raw/`. Os helpers de resumo (`reportRunStart`, `reportSummary`, `describeMode`) podem ir para `reporting/run-reporting.ts`.
 
 O atual `ingestion-steps.ts` mistura criação de steps reais, dependências de dry-run, guards e criação do cliente de banco. A separação inicial recomendada é:
 
@@ -177,19 +177,19 @@ steps/proposicoes/
   tests/
 ```
 
-Essa mudança deve ser tratada como segunda etapa, porque mover todos os specs de steps aumenta o volume de imports alterados sem limpar o root do `runner`, que é o problema principal.
+Essa mudança deve ser tratada como segunda etapa, porque mover todos os specs de steps aumenta o volume de imports alterados sem limpar o root do `pipeline-runner`, que é o problema principal.
 
 ## Ordem recomendada
 
 1. Refatorar `camara-csv-downloader`, porque é menor e valida o padrão de pastas com baixo risco.
 2. Rodar os testes do downloader e ajustar imports.
-3. Refatorar o root de `runner`, sem mexer inicialmente em `steps/`.
-4. Rodar os testes do runner.
+3. Refatorar o root de `pipeline-runner`, sem mexer inicialmente em `steps/`.
+4. Rodar os testes do pipeline-runner.
 5. Só então avaliar se vale mover specs internas de `steps/` para subpastas `tests/`.
 
 ## Critérios de sucesso
 
-- `camara-csv-downloader/` e `runner/` ficam com roots pequenos e fáceis de escanear.
+- `camara-csv-downloader/` e `pipeline-runner/` ficam com roots pequenos e fáceis de escanear.
 - Imports externos aos módulos continuam apontando para fachadas ou entrypoints claros.
 - Testes continuam descrevendo comportamento, não localização de arquivos.
 - Nenhuma mudança funcional aparece nos contratos operacionais documentados.
