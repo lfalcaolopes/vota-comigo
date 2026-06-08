@@ -1,4 +1,4 @@
-# Downloader de CSVs — Contrato Operacional
+# Downloader de CSVs da Câmara — Contrato Operacional
 
 Contrato operacional do downloader dos CSVs públicos da Câmara dos Deputados (`dadosabertos.camara.leg.br`). Descreve como executar, depurar e interpretar o download sem reabrir as decisões de produto sobre quais arquivos entram na base.
 

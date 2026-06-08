@@ -4,7 +4,7 @@ Contrato operacional do runner de ingestão dos dados da Câmara dos Deputados. 
 
 ## O que o runner é
 
-O runner é o orquestrador da pipeline de ingestão: lê os CSVs já baixados localmente (saída do downloader, ver [csv-downloads.md](./csv-downloads.md)), transforma os dados conforme as regras documentadas, complementa lacunas específicas via API da Câmara quando permitido, e popula o banco.
+O runner é o orquestrador da pipeline de ingestão: lê os CSVs já baixados localmente (saída do downloader, ver [camara-csv-downloader.md](./camara-csv-downloader.md)), transforma os dados conforme as regras documentadas, complementa lacunas específicas via API da Câmara quando permitido, e popula o banco.
 
 A API dentro do runner é exceção controlada, não uma segunda fonte geral de enriquecimento. No desenho atual ela entra **apenas** no passo `deputado_historico`, via `GET /deputados/{id}/historico` — o único dado necessário que não existe em CSV. As proposições vêm **exclusivamente** dos CSVs locais; quando faltam arquivos `proposicoes-{ano}.csv` ou `proposicoesTemas-{ano}.csv`, o runner os baixa automaticamente pelo downloader, sem fallback de API ([ADR-0012](../adr/012-ingestao-proposicoes-sem-api-sem-principal.md)).
 
@@ -24,7 +24,7 @@ Limites explícitos, para não inferir completude que a fonte não dá:
 
 ## Como executar
 
-Pré-requisitos: dependências instaladas (`pnpm install`), Postgres acessível via `DATABASE_URL`, schema aplicado (`pnpm db:migrate`) e os CSVs já baixados em `apps/api/data/raw/` (ver [csv-downloads.md](./csv-downloads.md); os arquivos derivados `proposicoes-{ano}.csv` e `proposicoesTemas-{ano}.csv` ausentes são baixados automaticamente pelos passos derivados).
+Pré-requisitos: dependências instaladas (`pnpm install`), Postgres acessível via `DATABASE_URL`, schema aplicado (`pnpm db:migrate`) e os CSVs já baixados em `apps/api/data/raw/` (ver [camara-csv-downloader.md](./camara-csv-downloader.md); os arquivos derivados `proposicoes-{ano}.csv` e `proposicoesTemas-{ano}.csv` ausentes são baixados automaticamente pelos passos derivados).
 
 Todos os comandos assumem a raiz do repositório. `pnpm ingest` é atalho para `pnpm --filter api ingest`. Os argumentos após `--` vão direto para o runner.
 
@@ -367,7 +367,7 @@ Opções consideradas e adiadas; ficam registradas para o caso de o uso revelar 
 - [ADR-0004 — Armazenar inputs, não scores](../adr/004-storage-inputs-nao-scores.md)
 - [ADR-0002 — Escopo de votações ingeridas](../adr/002-escopo-votacoes-ingeridas.md)
 - [ADR-0003 — Filtro de deputados por legislatura mínima](../adr/003-filtro-deputados-legislatura-minima.md)
-- [csv-downloads.md](./csv-downloads.md) — downloader dos CSVs da Câmara
+- [camara-csv-downloader.md](./camara-csv-downloader.md) — downloader dos CSVs da Câmara
 - [fontes-ingestao.md](./fontes-ingestao.md) — origem de cada dado por passo
 - [throttling-deputado-historico.md](./throttling-deputado-historico.md) — API de histórico, retomada e `--retry-gaps`
 - [checkpoint-e-frescor-ingestao.md](./checkpoint-e-frescor-ingestao.md) — checkpoint e frescor

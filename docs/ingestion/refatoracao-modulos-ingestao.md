@@ -1,6 +1,6 @@
 # Refatoração dos Módulos de Ingestão — Contexto
 
-Esta nota registra o contexto para uma refatoração futura dos módulos `csv-downloads` e `runner` em `apps/api/src/ingestion/`. Ela não muda contrato operacional nem substitui os documentos [csv-downloads.md](./csv-downloads.md) e [runner-ingestao.md](./runner-ingestao.md). O objetivo é orientar uma reorganização de arquivos quando a mudança for executada.
+Esta nota registra o contexto para uma refatoração futura dos módulos `camara-csv-downloader` e `runner` em `apps/api/src/ingestion/`. Ela não muda contrato operacional nem substitui os documentos [camara-csv-downloader.md](./camara-csv-downloader.md) e [runner-ingestao.md](./runner-ingestao.md). O objetivo é orientar uma reorganização de arquivos quando a mudança for executada.
 
 ## Intenção
 
@@ -17,14 +17,14 @@ Os módulos de ingestão não são módulos HTTP/CRUD. Portanto, eles devem apro
 - `entities/` não deve duplicar schema Drizzle. O schema de banco continua em `apps/api/src/shared/database/schema/`.
 - Pastas vazias não devem ser criadas.
 
-## `csv-downloads`
+## `camara-csv-downloader`
 
-`csv-downloads` é uma ferramenta operacional que baixa os CSVs públicos da Câmara para `data/raw/`. A interface pública do módulo deve continuar pequena: planejamento da execução, execução do download e entrypoint CLI.
+`camara-csv-downloader` é uma ferramenta operacional que baixa os CSVs públicos da Câmara para `data/raw/`. A interface pública do módulo deve continuar pequena: planejamento da execução, execução do download e entrypoint CLI.
 
 Estrutura alvo sugerida:
 
 ```txt
-csv-downloads/
+camara-csv-downloader/
   csv-downloader.cli.ts
   csv-downloader.ts
 
@@ -181,7 +181,7 @@ Essa mudança deve ser tratada como segunda etapa, porque mover todos os specs d
 
 ## Ordem recomendada
 
-1. Refatorar `csv-downloads`, porque é menor e valida o padrão de pastas com baixo risco.
+1. Refatorar `camara-csv-downloader`, porque é menor e valida o padrão de pastas com baixo risco.
 2. Rodar os testes do downloader e ajustar imports.
 3. Refatorar o root de `runner`, sem mexer inicialmente em `steps/`.
 4. Rodar os testes do runner.
@@ -189,7 +189,7 @@ Essa mudança deve ser tratada como segunda etapa, porque mover todos os specs d
 
 ## Critérios de sucesso
 
-- `csv-downloads/` e `runner/` ficam com roots pequenos e fáceis de escanear.
+- `camara-csv-downloader/` e `runner/` ficam com roots pequenos e fáceis de escanear.
 - Imports externos aos módulos continuam apontando para fachadas ou entrypoints claros.
 - Testes continuam descrevendo comportamento, não localização de arquivos.
 - Nenhuma mudança funcional aparece nos contratos operacionais documentados.
