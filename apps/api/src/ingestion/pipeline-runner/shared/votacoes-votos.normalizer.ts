@@ -1,5 +1,8 @@
+import type { VotoCategoria } from '@vota-comigo/shared-types';
 import type { CsvRecord } from '../sources/csv-reader';
 import { extractExternalIdFromUri } from './camara-uri';
+
+export type { VotoCategoria };
 
 /**
  * Partido observado em uma linha de `votacoesVotos`.
@@ -34,14 +37,6 @@ export type NormalizedVotacaoVoto = {
   deputado: NormalizedDeputadoRef;
   partido: PartidoObservation;
 };
-
-export type VotoCategoria =
-  | 'sim'
-  | 'nao'
-  | 'abstencao'
-  | 'obstrucao'
-  | 'artigo_17'
-  | 'nao_informado';
 
 /**
  * Ponto único de parsing de uma linha de `votacoesVotos-{ano}.csv`. Mapeia os
