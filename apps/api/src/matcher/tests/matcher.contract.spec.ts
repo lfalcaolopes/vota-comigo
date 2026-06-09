@@ -32,9 +32,42 @@ function posicao(overrides: Partial<PosicaoMatcher> = {}): PosicaoMatcher {
   };
 }
 
+function deputadoInput(
+  overrides: Partial<DeputadoCompatibilidadeInput> = {},
+): DeputadoCompatibilidadeInput {
+  return {
+    deputadoId: 'dep-1',
+    externalIdDeputado: 100,
+    nome: 'Fulano',
+    partido: 'PT',
+    siglaUf: 'PE',
+    urlFoto: null,
+    eventos: [
+      {
+        dataHora: '2023-02-01T12:00:00Z',
+        situacao: 'Exercício',
+        descricaoStatus: 'Entrada - Posse de Eleito Titular',
+        partido: 'PT',
+      },
+    ],
+    ...overrides,
+  };
+}
+
+function expectSerializedBodyNotToContain(
+  body: unknown,
+  forbiddenTokens: readonly string[],
+): void {
+  const serialized = JSON.stringify(body);
+  for (const token of forbiddenTokens) {
+    expect(serialized).not.toContain(token);
+  }
+}
+
 function fakeRepository(
   externalIdProposicoesComputaveis: ReadonlySet<number>,
   deputadoResult?: DeputadoCompatibilidadeInput | null,
+  deputadosResult: readonly DeputadoCompatibilidadeInput[] = [],
 ): MatcherRepository {
   const votacoes: VotacaoReferenciaVotos[] = [
     {
@@ -134,28 +167,13 @@ function fakeRepository(
       votosByDeputado: new Map([['dep-1', 'sim']]),
     },
   ];
-  const deputado: DeputadoCompatibilidadeInput = {
-    deputadoId: 'dep-1',
-    externalIdDeputado: 100,
-    nome: 'Fulano',
-    partido: 'PT',
-    siglaUf: 'PE',
-    urlFoto: null,
-    eventos: [
-      {
-        dataHora: '2023-02-01T12:00:00Z',
-        situacao: 'Exercício',
-        descricaoStatus: 'Entrada - Posse de Eleito Titular',
-        partido: 'PT',
-      },
-    ],
-  };
+  const deputado = deputadoInput();
 
   return {
     loadExternalIdProposicoesComputaveis: async () =>
       externalIdProposicoesComputaveis,
     loadVotacoesReferenciaWithVotos: async () => votacoes,
-    loadDeputadosByEscopoWithHistorico: async () => [],
+    loadDeputadosByEscopoWithHistorico: async () => deputadosResult,
     loadDeputadoByExternalIdWithHistorico: async () =>
       deputadoResult === undefined ? deputado : deputadoResult,
   };
@@ -164,6 +182,7 @@ function fakeRepository(
 async function buildApp(
   externalIdProposicoesComputaveis: ReadonlySet<number>,
   deputadoResult?: DeputadoCompatibilidadeInput | null,
+  deputadosResult: readonly DeputadoCompatibilidadeInput[] = [],
 ): Promise<INestApplication> {
   const moduleRef = await Test.createTestingModule({
     controllers: [MatcherController],
@@ -174,6 +193,7 @@ async function buildApp(
         useValue: fakeRepository(
           externalIdProposicoesComputaveis,
           deputadoResult,
+          deputadosResult,
         ),
       },
     ],
@@ -295,6 +315,67 @@ describe('POST /matcher', () => {
       expect(response.status).toBe(200);
       const body = matcherResultadoSchema.parse(response.body as unknown);
       expect(body.escopo).toBe('estadual');
+    });
+
+    it('keeps ranking deputados as lean summaries without vote-by-vote detail', async () => {
+      // Arrange
+      const appWithRanking = await buildApp(new Set([1, 2, 3]), undefined, [
+        deputadoInput(),
+      ]);
+
+      try {
+        // Act
+        const response = await request(getTestServer(appWithRanking))
+          .post('/matcher')
+          .send({
+            siglaUf: 'PE',
+            cidade: 'Recife',
+            posicoes: [
+              posicao({ externalIdProposicao: 1 }),
+              posicao({
+                externalIdProposicao: 2,
+                posicao: 'rejeitar',
+              }),
+              posicao({ externalIdProposicao: 3 }),
+            ],
+          });
+
+        // Assert
+        expect(response.status).toBe(200);
+        const body = matcherResultadoSchema.parse(response.body as unknown);
+        expect(body.deputados).toHaveLength(1);
+        expect(body.deputados[0]).toMatchObject({
+          externalIdDeputado: 100,
+          nome: 'Fulano',
+          siglaUf: 'PE',
+          compatibilidadeBruta: 100,
+          amostraComparavel: 3,
+        });
+        expect(body.deputados[0]).not.toHaveProperty('votos');
+        expect(body.deputados[0]).not.toHaveProperty('metrics');
+        expect(body.deputados[0]).not.toHaveProperty('posicaoUsuario');
+        expect(body.deputados[0]).not.toHaveProperty('votacaoReferencia');
+        expect(body.deputados[0]).not.toHaveProperty('situacaoDeputadoVotacao');
+        expect(body.deputados[0]).not.toHaveProperty('matcherEffect');
+        expectSerializedBodyNotToContain(response.body, [
+          'votos',
+          'metrics',
+          'posicaoUsuario',
+          'votacaoReferencia',
+          'situacaoDeputadoVotacao',
+          'matcherEffect',
+          'resultadoId',
+          'token',
+          'session',
+          'cache',
+          'orientacao',
+          'bancada',
+          'shared',
+          'link',
+        ]);
+      } finally {
+        await appWithRanking.close();
+      }
     });
 
     it('rejects the nacional escopo without a UF, since UF stays required', async () => {
@@ -611,7 +692,18 @@ describe('POST /matcher/deputados/:externalIdDeputado', () => {
       expect(
         body.votos.map((voto) => voto.proposicao.externalIdProposicao),
       ).not.toContain(4);
-      expect(JSON.stringify(response.body)).not.toContain('orientacao');
+      expectSerializedBodyNotToContain(response.body, [
+        'resultadoId',
+        'token',
+        'session',
+        'cache',
+        'coleta',
+        'cookie',
+        'orientacao',
+        'bancada',
+        'shared',
+        'link',
+      ]);
     });
   });
 
@@ -643,4 +735,27 @@ describe('POST /matcher/deputados/:externalIdDeputado', () => {
       expect(response.status).toBe(404);
     });
   });
+});
+
+describe('GET matcher suggestion routes', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    app = await buildApp(new Set([1, 2, 3, 4, 5]));
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it.each(['/matcher/sugestoes', '/matcher/suggestions'])(
+    'does not expose %s as a public matcher endpoint',
+    async (path) => {
+      // Act
+      const response = await request(getTestServer(app)).get(path);
+
+      // Assert
+      expect(response.status).toBe(404);
+    },
+  );
 });

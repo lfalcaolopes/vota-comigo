@@ -206,6 +206,45 @@ describe('GET /proposicoes/mais-votadas', () => {
   });
 });
 
+describe('GET /proposicoes/mais-votadas as initial matcher suggestion source', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    app = await buildApp({
+      lista: Array.from({ length: 6 }, (_unused, index) => {
+        const externalIdProposicao = index + 1;
+        return joinRow({
+          externalIdProposicao,
+          numero: 100 + externalIdProposicao,
+          ementa: `Proposição sugerida ${externalIdProposicao}`,
+          externalIdVotacao: `${externalIdProposicao}-1`,
+          votosSim: 300 - index,
+          votosNao: 100 + index,
+        });
+      }),
+    });
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('serves five public cards when the initial matcher flow requests limit 5', async () => {
+    // Act
+    const response = await request(getTestServer(app))
+      .get('/proposicoes/mais-votadas')
+      .query({ limit: 5 });
+
+    // Assert
+    expect(response.status).toBe(200);
+    const body = maisVotadasResponseSchema.parse(response.body as unknown);
+    expect(body.limit).toBe(5);
+    expect(body.items).toHaveLength(5);
+    expect(body.total).toBe(6);
+    expect(body.items.map((item) => item.externalIdProposicao)).toHaveLength(5);
+  });
+});
+
 describe('GET /proposicoes/mais-votadas with no computavel proposicao', () => {
   let app: INestApplication;
 
