@@ -67,6 +67,52 @@ describe('sortRanking', () => {
     });
   });
 
+  describe('when a prioritized UF is given for nacional escopo', () => {
+    it('floats deputados from the prioritized UF above others on a tie', () => {
+      // Arrange
+      const outraUf = deputado({ externalIdDeputado: 1, siglaUf: 'SP' });
+      const ufInformada = deputado({ externalIdDeputado: 2, siglaUf: 'PE' });
+
+      // Act
+      const ordenados = sortRanking([outraUf, ufInformada], 'PE');
+
+      // Assert
+      expect(ids(ordenados)).toEqual([2, 1]);
+    });
+
+    it('keeps the prioritized UF below a higher compatibilidadeBruta', () => {
+      // Arrange: bruta outranks geography
+      const ufInformadaMenor = deputado({
+        externalIdDeputado: 1,
+        siglaUf: 'PE',
+        compatibilidadeBruta: 60,
+      });
+      const outraUfMaior = deputado({
+        externalIdDeputado: 2,
+        siglaUf: 'SP',
+        compatibilidadeBruta: 80,
+      });
+
+      // Act
+      const ordenados = sortRanking([ufInformadaMenor, outraUfMaior], 'PE');
+
+      // Assert
+      expect(ids(ordenados)).toEqual([2, 1]);
+    });
+
+    it('ignores geography when no prioritized UF is given', () => {
+      // Arrange: exact tie except UF and id; falls through to id asc
+      const outraUf = deputado({ externalIdDeputado: 1, siglaUf: 'SP' });
+      const ufInformada = deputado({ externalIdDeputado: 2, siglaUf: 'PE' });
+
+      // Act
+      const ordenados = sortRanking([ufInformada, outraUf]);
+
+      // Assert
+      expect(ids(ordenados)).toEqual([1, 2]);
+    });
+  });
+
   describe('when score and bruta tie', () => {
     it('breaks the tie by coberturaExercicio desc', () => {
       // Arrange

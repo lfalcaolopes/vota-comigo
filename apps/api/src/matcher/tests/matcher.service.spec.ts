@@ -273,6 +273,36 @@ describe('MatcherService.execute', () => {
       expect(resultado.deputados.map((d) => d.siglaUf)).toEqual(['SP', 'PE']);
     });
 
+    it('floats deputados from the informed UF above tied ones from other UFs', async () => {
+      // Arrange: dep-pe e dep-sp votam igual em tudo -> mesmo score e bruta
+      const empate: VotacaoReferenciaVotos[] = [1, 2, 3].map(
+        (externalIdProposicao) => ({
+          externalIdProposicao,
+          votacaoReferencia: {
+            dataHoraRegistro: '2023-06-01T15:00:00Z',
+            data: '2023-06-01',
+          },
+          votosByDeputado: new Map([
+            ['dep-sp', 'sim'],
+            ['dep-pe', 'sim'],
+          ]),
+        }),
+      );
+      const service = new MatcherService(
+        fakeRepository({
+          computaveis: new Set([1, 2, 3]),
+          votacoes: empate,
+          deputados,
+        }),
+      );
+
+      // Act
+      const resultado = await service.execute(reqAprovar(), pagina);
+
+      // Assert: UF informada (PE) no topo, apesar de empatar com SP
+      expect(resultado.deputados.map((d) => d.siglaUf)).toEqual(['PE', 'SP']);
+    });
+
     it('derives semBomMatch from the best result of the nacional set', async () => {
       // Arrange: o topo nacional (dep-sp) tem bruta 100, acima do mínimo
       const service = new MatcherService(

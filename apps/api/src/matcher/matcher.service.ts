@@ -97,7 +97,10 @@ export class MatcherService {
       totalPosicoesComputaveis: validation.resumo.totalPosicoesComputaveis,
     });
 
-    const ordenados = sortRanking(resultado.deputados);
+    const ordenados = sortRanking(
+      resultado.deputados,
+      request.escopo === 'nacional' ? request.siglaUf : undefined,
+    );
     const semBomMatch =
       ordenados.length === 0 ||
       ordenados[0].compatibilidadeBruta < COMPATIBILIDADE_BOM_MATCH_MINIMA;
