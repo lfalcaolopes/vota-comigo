@@ -1,4 +1,5 @@
 import type {
+  EscopoMatcher,
   MatcherDeputadoResumo,
   MatcherExecucaoResumo,
   MatcherResultado,
@@ -32,8 +33,9 @@ function toDeputadoResumo(
   };
 }
 
-export function toMatcherResultadoEstadual(
+export function toMatcherResultado(
   resumo: MatcherExecucaoResumo,
+  escopo: EscopoMatcher,
   resultado: Omit<CompatibilidadeResumidaResult, 'deputados'>,
   deputados: readonly DeputadoResumoComputado[],
   paginacao: PaginacaoResultado,
@@ -41,7 +43,7 @@ export function toMatcherResultadoEstadual(
 ): MatcherResultado {
   return {
     ...resumo,
-    escopo: 'estadual',
+    escopo,
     deputados: deputados.map(toDeputadoResumo),
     totalDeputadosAvaliados: resultado.totalDeputadosAvaliados,
     deputadosHistoricoIncompleto: resultado.deputadosHistoricoIncompleto,

@@ -34,7 +34,7 @@ function fakeRepository(
     loadExternalIdProposicoesComputaveis: async () =>
       externalIdProposicoesComputaveis,
     loadVotacoesReferenciaWithVotos: async () => [],
-    loadDeputadosByEstadoWithHistorico: async () => [],
+    loadDeputadosByEscopoWithHistorico: async () => [],
   };
 }
 
@@ -123,6 +123,71 @@ describe('POST /matcher', () => {
         totalDeputadosAvaliados: 0,
         deputadosHistoricoIncompleto: 0,
       });
+    });
+
+    it('echoes the nacional escopo sent in the body', async () => {
+      // Act
+      const response = await request(getTestServer(app))
+        .post('/matcher')
+        .send({
+          siglaUf: 'PE',
+          escopo: 'nacional',
+          posicoes: [
+            posicao({ externalIdProposicao: 1 }),
+            posicao({
+              externalIdProposicao: 2,
+              posicao: 'rejeitar',
+            }),
+            posicao({ externalIdProposicao: 3 }),
+          ],
+        });
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = matcherResultadoSchema.parse(response.body as unknown);
+      expect(body.escopo).toBe('nacional');
+    });
+
+    it('defaults the escopo to estadual when the field is absent', async () => {
+      // Act
+      const response = await request(getTestServer(app))
+        .post('/matcher')
+        .send({
+          siglaUf: 'PE',
+          posicoes: [
+            posicao({ externalIdProposicao: 1 }),
+            posicao({
+              externalIdProposicao: 2,
+              posicao: 'rejeitar',
+            }),
+            posicao({ externalIdProposicao: 3 }),
+          ],
+        });
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = matcherResultadoSchema.parse(response.body as unknown);
+      expect(body.escopo).toBe('estadual');
+    });
+
+    it('rejects the nacional escopo without a UF, since UF stays required', async () => {
+      // Act
+      const response = await request(getTestServer(app))
+        .post('/matcher')
+        .send({
+          escopo: 'nacional',
+          posicoes: [
+            posicao({ externalIdProposicao: 1 }),
+            posicao({
+              externalIdProposicao: 2,
+              posicao: 'rejeitar',
+            }),
+            posicao({ externalIdProposicao: 3 }),
+          ],
+        });
+
+      // Assert
+      expect(response.status).toBe(400);
     });
 
     it('coalesces a missing cidade to null', async () => {

@@ -49,8 +49,11 @@ export const posicaoMatcherSchema = z.object({
   posicao: posicaoUsuarioMatcherEnum,
 });
 
+export const escopoMatcherEnum = z.enum(['estadual', 'nacional']);
+
 export const matcherExecucaoRequestSchema = z.object({
   siglaUf: siglaUfEnum,
+  escopo: escopoMatcherEnum.default('estadual'),
   cidade: z.string().trim().min(1).max(120).optional(),
   posicoes: z
     .array(posicaoMatcherSchema)
@@ -77,8 +80,6 @@ export const matcherExecucaoResumoSchema = z.object({
   totalProposicoesSelecionadas: z.number().int().nonnegative(),
   totalPosicoesComputaveis: z.number().int().nonnegative(),
 });
-
-export const escopoMatcherEnum = z.enum(['estadual']); // #27 adiciona 'nacional'
 
 export const alertaMatcherEnum = z.enum(['amostra_pequena']);
 

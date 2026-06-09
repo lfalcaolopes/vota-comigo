@@ -1,5 +1,9 @@
 import { and, desc, eq, inArray } from 'drizzle-orm';
-import type { SiglaUf, VotoCategoria } from '@vota-comigo/shared-types';
+import type {
+  EscopoMatcher,
+  SiglaUf,
+  VotoCategoria,
+} from '@vota-comigo/shared-types';
 
 import { toProposicoesComputaveis } from '@/proposicoes/rules/proposicoes-computaveis';
 import type { ProposicaoVotacaoJoinRow } from '@/proposicoes/proposicoes.repository';
@@ -28,7 +32,8 @@ export type MatcherRepository = {
   loadVotacoesReferenciaWithVotos(
     externalIdProposicoes: readonly number[],
   ): Promise<readonly VotacaoReferenciaVotos[]>;
-  loadDeputadosByEstadoWithHistorico(
+  loadDeputadosByEscopoWithHistorico(
+    escopo: EscopoMatcher,
     siglaUf: SiglaUf,
   ): Promise<readonly DeputadoCompatibilidadeInput[]>;
 };
@@ -144,7 +149,7 @@ export function createMatcherRepository(
       }));
     },
 
-    async loadDeputadosByEstadoWithHistorico(siglaUf) {
+    async loadDeputadosByEscopoWithHistorico(escopo, siglaUf) {
       const maisRecente = db
         .selectDistinctOn([deputadoHistorico.deputadoId], {
           deputadoId: deputadoHistorico.deputadoId,
@@ -156,7 +161,7 @@ export function createMatcherRepository(
         .orderBy(deputadoHistorico.deputadoId, desc(deputadoHistorico.dataHora))
         .as('mais_recente');
 
-      const estado = await db
+      const base = db
         .select({
           deputadoId: maisRecente.deputadoId,
           siglaUf: maisRecente.siglaUf,
@@ -164,8 +169,12 @@ export function createMatcherRepository(
           partido: partido.sigla,
         })
         .from(maisRecente)
-        .leftJoin(partido, eq(maisRecente.partidoId, partido.id))
-        .where(eq(maisRecente.siglaUf, siglaUf));
+        .leftJoin(partido, eq(maisRecente.partidoId, partido.id));
+
+      const estado =
+        escopo === 'nacional'
+          ? await base
+          : await base.where(eq(maisRecente.siglaUf, siglaUf));
 
       const deputadoIds = estado.map((row) => row.deputadoId);
       if (deputadoIds.length === 0) {

@@ -8,7 +8,7 @@ import type {
 
 import { MATCHER_REPOSITORY } from './matcher.repository';
 import type { MatcherRepository } from './matcher.repository';
-import { toMatcherResultadoEstadual } from './mappers/compatibilidade-resumida.mapper';
+import { toMatcherResultado } from './mappers/compatibilidade-resumida.mapper';
 import { computeCompatibilidadeResumida } from './rules/compatibilidade-resumida';
 import { validateExecucao } from './rules/matcher-execucao-validation';
 import type { Pagination } from './rules/pagination';
@@ -86,7 +86,8 @@ export class MatcherService {
       ];
     });
 
-    const deputados = await this.repository.loadDeputadosByEstadoWithHistorico(
+    const deputados = await this.repository.loadDeputadosByEscopoWithHistorico(
+      request.escopo,
       request.siglaUf,
     );
 
@@ -106,8 +107,9 @@ export class MatcherService {
       pagination.offset + pagination.limit,
     );
 
-    return toMatcherResultadoEstadual(
+    return toMatcherResultado(
       validation.resumo,
+      request.escopo,
       resultado,
       pagina,
       { limit: pagination.limit, offset: pagination.offset, total },

@@ -1,5 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import type {
+  EscopoMatcher,
   MatcherExecucaoRequest,
   PosicaoMatcher,
   SiglaUf,
@@ -25,6 +26,7 @@ function request(
 ): MatcherExecucaoRequest {
   return {
     siglaUf: 'PE',
+    escopo: 'estadual',
     posicoes: [
       posicao({ externalIdProposicao: 1, posicao: 'aprovar' }),
       posicao({ externalIdProposicao: 2, posicao: 'rejeitar' }),
@@ -40,20 +42,22 @@ type FakeRepoOptions = {
   deputados?: readonly DeputadoCompatibilidadeInput[];
 };
 
+type EscopoCall = { escopo: EscopoMatcher; siglaUf: SiglaUf };
+
 type FakeRepo = MatcherRepository & {
   computaveisCalls: number[][];
   votacoesCalls: number[][];
-  estadoCalls: SiglaUf[];
+  escopoCalls: EscopoCall[];
 };
 
 function fakeRepository(options: FakeRepoOptions): FakeRepo {
   const computaveisCalls: number[][] = [];
   const votacoesCalls: number[][] = [];
-  const estadoCalls: SiglaUf[] = [];
+  const escopoCalls: EscopoCall[] = [];
   return {
     computaveisCalls,
     votacoesCalls,
-    estadoCalls,
+    escopoCalls,
     loadExternalIdProposicoesComputaveis: async (externalIdProposicoes) => {
       computaveisCalls.push([...externalIdProposicoes]);
       return options.computaveis;
@@ -62,8 +66,8 @@ function fakeRepository(options: FakeRepoOptions): FakeRepo {
       votacoesCalls.push([...externalIdProposicoes]);
       return options.votacoes ?? [];
     },
-    loadDeputadosByEstadoWithHistorico: async (siglaUf) => {
-      estadoCalls.push(siglaUf);
+    loadDeputadosByEscopoWithHistorico: async (escopo, siglaUf) => {
+      escopoCalls.push({ escopo, siglaUf });
       return options.deputados ?? [];
     },
   };
@@ -158,7 +162,133 @@ describe('MatcherService.execute', () => {
       // Assert
       expect(repo.computaveisCalls).toEqual([[1, 2, 3]]);
       expect(repo.votacoesCalls).toEqual([[1, 2, 3]]);
-      expect(repo.estadoCalls).toEqual(['PE']);
+      expect(repo.escopoCalls).toEqual([{ escopo: 'estadual', siglaUf: 'PE' }]);
+    });
+  });
+
+  describe('when the escopo is nacional', () => {
+    const votacoes: VotacaoReferenciaVotos[] = [
+      {
+        externalIdProposicao: 1,
+        votacaoReferencia: {
+          dataHoraRegistro: '2023-06-01T15:00:00Z',
+          data: '2023-06-01',
+        },
+        votosByDeputado: new Map([
+          ['dep-sp', 'sim'],
+          ['dep-pe', 'nao'],
+        ]),
+      },
+      {
+        externalIdProposicao: 2,
+        votacaoReferencia: {
+          dataHoraRegistro: '2023-06-01T15:00:00Z',
+          data: '2023-06-01',
+        },
+        votosByDeputado: new Map([
+          ['dep-sp', 'sim'],
+          ['dep-pe', 'nao'],
+        ]),
+      },
+      {
+        externalIdProposicao: 3,
+        votacaoReferencia: {
+          dataHoraRegistro: '2023-06-01T15:00:00Z',
+          data: '2023-06-01',
+        },
+        votosByDeputado: new Map([
+          ['dep-sp', 'sim'],
+          ['dep-pe', 'nao'],
+        ]),
+      },
+    ];
+
+    // dep-sp concorda em tudo (bruta 100), dep-pe discorda em tudo (bruta 0)
+    const deputados: DeputadoCompatibilidadeInput[] = [
+      {
+        deputadoId: 'dep-pe',
+        externalIdDeputado: 200,
+        nome: 'Pernambucano',
+        partido: 'PT',
+        siglaUf: 'PE',
+        urlFoto: null,
+        eventos: [posse],
+      },
+      {
+        deputadoId: 'dep-sp',
+        externalIdDeputado: 100,
+        nome: 'Paulista',
+        partido: 'PT',
+        siglaUf: 'SP',
+        urlFoto: null,
+        eventos: [posse],
+      },
+    ];
+
+    function reqAprovar(
+      overrides: Partial<MatcherExecucaoRequest> = {},
+    ): MatcherExecucaoRequest {
+      return request({
+        escopo: 'nacional',
+        posicoes: [
+          posicao({ externalIdProposicao: 1, posicao: 'aprovar' }),
+          posicao({ externalIdProposicao: 2, posicao: 'aprovar' }),
+          posicao({ externalIdProposicao: 3, posicao: 'aprovar' }),
+        ],
+        ...overrides,
+      });
+    }
+
+    it('queries the repository with the nacional escopo and the informed UF', async () => {
+      // Arrange
+      const repo = fakeRepository({
+        computaveis: new Set([1, 2, 3]),
+        votacoes,
+        deputados,
+      });
+      const service = new MatcherService(repo);
+
+      // Act
+      await service.execute(reqAprovar(), pagina);
+
+      // Assert
+      expect(repo.escopoCalls).toEqual([{ escopo: 'nacional', siglaUf: 'PE' }]);
+    });
+
+    it('returns deputados from UFs other than the informed one with nacional escopo', async () => {
+      // Arrange
+      const service = new MatcherService(
+        fakeRepository({
+          computaveis: new Set([1, 2, 3]),
+          votacoes,
+          deputados,
+        }),
+      );
+
+      // Act
+      const resultado = await service.execute(reqAprovar(), pagina);
+
+      // Assert
+      expect(resultado.escopo).toBe('nacional');
+      expect(resultado.deputados.map((d) => d.siglaUf)).toEqual(['SP', 'PE']);
+    });
+
+    it('derives semBomMatch from the best result of the nacional set', async () => {
+      // Arrange: o topo nacional (dep-sp) tem bruta 100, acima do mínimo
+      const service = new MatcherService(
+        fakeRepository({
+          computaveis: new Set([1, 2, 3]),
+          votacoes,
+          deputados,
+        }),
+      );
+
+      // Act
+      const resultado = await service.execute(reqAprovar(), pagina);
+
+      // Assert
+      expect(resultado.deputados[0]?.compatibilidadeBruta).toBe(100);
+      expect(resultado.semBomMatch).toBe(false);
     });
   });
 
