@@ -1,7 +1,13 @@
-import type { DeputadoVotacaoClassification } from '@vota-comigo/shared-types';
+import type {
+  AlertaMatcher,
+  DeputadoVotacaoClassification,
+} from '@vota-comigo/shared-types';
 
 import { classifyDeputadoVotacao } from '@/exercicio/rules/deputado-votacao';
-import { deriveIntervalosExercicio } from '@/exercicio/rules/intervalos-exercicio';
+import {
+  deriveIntervalosExercicio,
+  isEmAtividade,
+} from '@/exercicio/rules/intervalos-exercicio';
 
 import type {
   CompatibilidadeResumidaResult,
@@ -9,15 +15,22 @@ import type {
   DeputadoResumoComputado,
   PosicaoComputavel,
 } from '../types/compatibilidade.types';
+import { wilsonLowerBound } from './wilson';
 
 export type ComputeCompatibilidadeResumidaInput = {
   posicoes: readonly PosicaoComputavel[];
   deputados: readonly DeputadoCompatibilidadeInput[];
+  totalPosicoesComputaveis: number;
 };
 
 const FORA_DO_DENOMINADOR: ReadonlySet<DeputadoVotacaoClassification> = new Set(
   ['fora_de_exercicio', 'artigo_17', 'voto_nao_informado', 'lacuna_de_dados'],
 );
+
+const FORA_DE_EXERCICIO: ReadonlySet<DeputadoVotacaoClassification> = new Set([
+  'fora_de_exercicio',
+  'lacuna_de_dados',
+]);
 
 function round2(value: number): number {
   return Math.round(value * 100) / 100;
@@ -26,9 +39,11 @@ function round2(value: number): number {
 function avaliarDeputado(
   deputado: DeputadoCompatibilidadeInput,
   posicoes: readonly PosicaoComputavel[],
+  totalPosicoesComputaveis: number,
 ): DeputadoResumoComputado | null {
   let amostraComparavel = 0;
   let concordancias = 0;
+  let coberturaExercicio = 0;
 
   for (const posicao of posicoes) {
     const voto = posicao.votosByDeputado.get(deputado.deputadoId) ?? null;
@@ -37,6 +52,10 @@ function avaliarDeputado(
       votacao: posicao.votacaoReferencia,
       voto,
     });
+
+    if (!FORA_DE_EXERCICIO.has(classificacao)) {
+      coberturaExercicio += 1;
+    }
 
     if (FORA_DO_DENOMINADOR.has(classificacao)) {
       continue;
@@ -53,6 +72,11 @@ function avaliarDeputado(
     return null;
   }
 
+  const alertas: AlertaMatcher[] =
+    amostraComparavel < totalPosicoesComputaveis * 0.5
+      ? ['amostra_pequena']
+      : [];
+
   return {
     externalIdDeputado: deputado.externalIdDeputado,
     nome: deputado.nome,
@@ -61,6 +85,12 @@ function avaliarDeputado(
     urlFoto: deputado.urlFoto,
     compatibilidadeBruta: round2((concordancias / amostraComparavel) * 100),
     amostraComparavel,
+    scoreOrdenacaoPercentual: round2(
+      wilsonLowerBound(concordancias, amostraComparavel) * 100,
+    ),
+    alertas,
+    emAtividade: isEmAtividade(deputado.eventos),
+    coberturaExercicio,
   };
 }
 
@@ -77,7 +107,11 @@ export function computeCompatibilidadeResumida(
       continue;
     }
 
-    const resumo = avaliarDeputado(deputado, input.posicoes);
+    const resumo = avaliarDeputado(
+      deputado,
+      input.posicoes,
+      input.totalPosicoesComputaveis,
+    );
     if (resumo !== null) {
       deputados.push(resumo);
     }

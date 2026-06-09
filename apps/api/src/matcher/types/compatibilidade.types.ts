@@ -1,5 +1,9 @@
 import { POSICOES_COMPUTAVEIS } from '@vota-comigo/shared-types';
-import type { SiglaUf, VotoCategoria } from '@vota-comigo/shared-types';
+import type {
+  AlertaMatcher,
+  SiglaUf,
+  VotoCategoria,
+} from '@vota-comigo/shared-types';
 
 import type {
   EventoExercicio,
@@ -33,6 +37,10 @@ export type DeputadoResumoComputado = {
   urlFoto: string | null;
   compatibilidadeBruta: number;
   amostraComparavel: number;
+  scoreOrdenacaoPercentual: number;
+  alertas: readonly AlertaMatcher[];
+  emAtividade: boolean;
+  coberturaExercicio: number;
 };
 
 export type CompatibilidadeResumidaResult = {
