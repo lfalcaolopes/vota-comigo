@@ -11,10 +11,14 @@ import type { MatcherRepository } from './matcher.repository';
 import { toMatcherResultadoEstadual } from './mappers/compatibilidade-resumida.mapper';
 import { computeCompatibilidadeResumida } from './rules/compatibilidade-resumida';
 import { validateExecucao } from './rules/matcher-execucao-validation';
+import type { Pagination } from './rules/pagination';
+import { sortRanking } from './rules/ranking';
 import type {
   PosicaoComputavel,
   PosicaoComputavelValue,
 } from './types/compatibilidade.types';
+
+const COMPATIBILIDADE_BOM_MATCH_MINIMA = 60;
 
 type PosicaoComputavelMatcher = PosicaoMatcher & {
   posicao: PosicaoComputavelValue;
@@ -33,7 +37,10 @@ export class MatcherService {
     private readonly repository: MatcherRepository,
   ) {}
 
-  async execute(request: MatcherExecucaoRequest): Promise<MatcherResultado> {
+  async execute(
+    request: MatcherExecucaoRequest,
+    pagination: Pagination,
+  ): Promise<MatcherResultado> {
     const externalIdProposicoes = request.posicoes.map(
       (posicao) => posicao.externalIdProposicao,
     );
@@ -83,8 +90,28 @@ export class MatcherService {
       request.siglaUf,
     );
 
-    const resultado = computeCompatibilidadeResumida({ posicoes, deputados });
+    const resultado = computeCompatibilidadeResumida({
+      posicoes,
+      deputados,
+      totalPosicoesComputaveis: validation.resumo.totalPosicoesComputaveis,
+    });
 
-    return toMatcherResultadoEstadual(validation.resumo, resultado);
+    const ordenados = sortRanking(resultado.deputados);
+    const semBomMatch =
+      ordenados.length === 0 ||
+      ordenados[0].compatibilidadeBruta < COMPATIBILIDADE_BOM_MATCH_MINIMA;
+    const total = ordenados.length;
+    const pagina = ordenados.slice(
+      pagination.offset,
+      pagination.offset + pagination.limit,
+    );
+
+    return toMatcherResultadoEstadual(
+      validation.resumo,
+      resultado,
+      pagina,
+      { limit: pagination.limit, offset: pagination.offset, total },
+      semBomMatch,
+    );
   }
 }

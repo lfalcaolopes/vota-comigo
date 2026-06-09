@@ -174,6 +174,46 @@ describe('POST /matcher', () => {
     });
   });
 
+  describe('when paginating through the query string', () => {
+    function validBody() {
+      return {
+        siglaUf: 'PE',
+        posicoes: [
+          posicao({ externalIdProposicao: 1 }),
+          posicao({ externalIdProposicao: 2, posicao: 'rejeitar' }),
+          posicao({ externalIdProposicao: 3 }),
+        ],
+      };
+    }
+
+    it('defaults limit to 20 and offset to 0 when absent', async () => {
+      // Act
+      const response = await request(getTestServer(app))
+        .post('/matcher')
+        .send(validBody());
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = matcherResultadoSchema.parse(response.body as unknown);
+      expect(body.limit).toBe(20);
+      expect(body.offset).toBe(0);
+    });
+
+    it('caps the limit at 100 and keeps the offset from the query', async () => {
+      // Act
+      const response = await request(getTestServer(app))
+        .post('/matcher')
+        .query({ limit: 999, offset: 5 })
+        .send(validBody());
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = matcherResultadoSchema.parse(response.body as unknown);
+      expect(body.limit).toBe(100);
+      expect(body.offset).toBe(5);
+    });
+  });
+
   describe('when positions are sent as query string instead of body', () => {
     it('rejects with 400 because positions must travel in the body', async () => {
       // Act

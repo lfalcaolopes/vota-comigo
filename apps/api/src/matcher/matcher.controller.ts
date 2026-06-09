@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   matcherExecucaoRequestSchema,
   type MatcherExecucaoRequest,
@@ -8,6 +15,7 @@ import {
 import { ZodValidationPipe } from '@/shared/validation/zod-validation.pipe';
 
 import { MatcherService } from './matcher.service';
+import { normalizePagination } from './rules/pagination';
 
 @Controller('matcher')
 export class MatcherController {
@@ -18,7 +26,10 @@ export class MatcherController {
   async execute(
     @Body(new ZodValidationPipe(matcherExecucaoRequestSchema))
     body: MatcherExecucaoRequest,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
+    @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
   ): Promise<MatcherResultado> {
-    return this.service.execute(body);
+    const pagination = normalizePagination(limit, offset);
+    return this.service.execute(body, pagination);
   }
 }
