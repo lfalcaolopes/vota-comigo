@@ -101,6 +101,8 @@ Esta decisão pode ser revisitada em melhorias pós-MVP se houver demanda por ac
 
 Análise exploratória realizada sobre o endpoint `/deputados/{id}/historico` da API da Câmara. Documenta a estrutura dos dados e as regras de transformação em intervalos de exercício para uso no matcher e no perfil do deputado.
 
+> **Nota:** esta seção é registro histórico da investigação inicial. A regra operacional vigente está em [`docs/ingestion/derivacao-exercicio-deputado.md`](./ingestion/derivacao-exercicio-deputado.md), com decisão registrada na [ADR 016](./adr/016-derivacao-intervalos-exercicio-deputado-historico.md).
+
 ### Estrutura dos dados
 
 O endpoint retorna uma lista de eventos ordenados cronologicamente, cada um com `dataHora`, `situacao`, `condicaoEleitoral` e `descricaoStatus`. Não são intervalos — são eventos pontuais de mudança de status que precisam ser transformados em pares (entrada, saída) para determinar os períodos em que o deputado estava em exercício.

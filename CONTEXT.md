@@ -28,15 +28,24 @@ _Avoid_: Parlamentar, congressista, representante.
 
 **Mandato**: Período de quatro anos em que um deputado exerce o cargo eletivo.
 
-**Intervalo de exercício**: Par `(dataInicio, dataFim)` representando um período contínuo em que um deputado esteve habilitado a votar. `dataFim` nulo indica intervalo aberto.
+**Intervalo de exercício**: Período contínuo em que um deputado esteve habilitado a votar, aberto por posse ou reassunção e fechado por afastamento, fim de mandato ou vacância.
 
 **Em exercício**: Condição de um deputado estar habilitado a votar em uma data específica, determinada pelos intervalos de exercício.
+_Avoid_: Apto a votar, elegível para votar.
 
 **Em atividade**: Condição de um deputado com intervalo de exercício aberto no snapshot mais recente conhecido, usada como desempate no matcher.
 
 **Suplência**: Condição de um suplente quando afastado, geralmente porque o titular retornou.
 
 **Licença**: Condição de um titular temporariamente afastado por motivo formal (cargo executivo, saúde, interesse particular).
+
+**Convocação**: Chamado administrativo para um suplente assumir uma cadeira, ainda sem caracterizar exercício até a posse ou reassunção.
+
+**Alteração de partido**: Mudança de filiação partidária registrada durante o mandato, sem alterar por si só a condição de exercício.
+
+**Fim de mandato**: Encerramento regular do exercício ao final de uma legislatura ou mandato.
+
+**Vacância**: Encerramento antecipado do exercício por perda definitiva da cadeira, como renúncia, falecimento ou cassação.
 
 **Cassação**: Perda compulsória de mandato por decisão da própria Câmara.
 _Avoid_: Impeachment, destituição.
@@ -83,9 +92,12 @@ _Avoid_: Matéria.
 
 **Posição do usuário**: Resposta declarada pelo usuário sobre uma proposição no matcher: deveria ser aprovada, não deveria ser aprovada ou não sei.
 
-**Artigo 17**: Registro de impedimento regimental do deputado em uma votação nominal, tratado como fora do denominador no matcher.
+**Artigo 17**: Registro de impedimento regimental do deputado em uma votação nominal, sem alterar sua condição de exercício e tratado como fora do denominador no matcher.
 
 **Ausência sem motivo conhecido**: Caso em que um deputado em exercício não tem registro individual em uma votação nominal.
+_Avoid_: Sem registro.
+
+**Lacuna de dados**: Falta de informação fonte suficiente para classificar uma condição necessária do produto com segurança.
 
 **Voto não informado**: Registro individual importado com voto vazio, tratado como fora do denominador por qualidade de dado no matcher.
 
@@ -173,6 +185,7 @@ _Avoid_: Proposições que marcaram.
 - No **Ranking de volume de votações em plenário**, uma **Votação** vinculada a múltiplas **Proposições afetadas** conta uma vez para cada proposição vinculada.
 - Uma **Votação** tem **Escopo de votação** igual a `plenario` ou `comissao`.
 - Uma **Votação nominal** registra **Votos computáveis** dos **Deputados em exercício** naquela data.
+- O **Partido** de um **Deputado** na data de uma **Votação nominal** é derivado do histórico do deputado, não do registro individual de voto.
 - O **Feed de proposições do MVP** usa o **Ranking de volume de votações em plenário**, mas só inclui **Proposições computáveis pelo matcher**.
 - A **Sugestão inicial de proposições** usa as primeiras **Proposições** do **Feed de proposições do MVP**.
 - O usuário pode escolher manualmente qualquer **Proposição computável pelo matcher**, mesmo que ela não esteja na **Sugestão inicial de proposições**.
@@ -186,9 +199,12 @@ _Avoid_: Proposições que marcaram.
 - O usuário não declara **Obstrução** como **Posição do usuário**.
 - Uma **Obstrução** conta como discordância no **Matcher**, com o mesmo efeito de um voto contrário à **Posição do usuário**, preservando o voto real para exibição.
 - O **Matcher** desconsidera uma **Votação nominal** para um **Deputado** quando ele não estava **Em exercício** ou quando seu registro é **Artigo 17**.
+- A condição **Em exercício** é avaliada na data e hora da **Votação nominal** quando esse horário está disponível.
 - O **Matcher** desconsidera uma **Votação nominal** para um **Deputado** quando seu registro é **Voto não informado**.
 - O **Matcher** exclui do ranking deputados sem histórico suficiente para determinar **Intervalos de exercício**, contabilizando-os como lacuna de dados.
+- Um voto registrado não substitui o histórico do deputado para determinar **Em exercício**.
 - Uma **Ausência sem motivo conhecido** conta como discordância no **Matcher**.
+- Para cada par **Deputado** e **Votação nominal**, o **Matcher** classifica primeiro **Lacuna de dados**, depois ausência de **Em exercício**, depois **Artigo 17**, depois **Voto não informado**, depois voto computável, e por fim **Ausência sem motivo conhecido**.
 - A apresentação do **Matcher** preserva a diferença entre voto `sim`, voto `não`, **Abstenção**, **Obstrução** e **Ausência sem motivo conhecido**, mesmo quando esses casos têm o mesmo efeito na **Compatibilidade**.
 - A visualização padrão do **Matcher** usa a **UF de resultado do matcher**, enquanto a condição **Em exercício** continua sendo avaliada na data de cada **Votação de referência do matcher**.
 - A **Cidade informada no matcher** é preservada como contexto de produto futuro, mas não altera a **Compatibilidade**, o score de ordenação nem o escopo de resultado no MVP.
