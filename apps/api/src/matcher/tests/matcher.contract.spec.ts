@@ -1,6 +1,7 @@
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import {
+  matcherDeputadoDetalheSchema,
   matcherExecucaoResumoSchema,
   matcherResultadoSchema,
   type PosicaoMatcher,
@@ -11,6 +12,10 @@ import { MatcherController } from '../matcher.controller';
 import { MATCHER_REPOSITORY } from '../matcher.repository';
 import type { MatcherRepository } from '../matcher.repository';
 import { MatcherService } from '../matcher.service';
+import type {
+  DeputadoCompatibilidadeInput,
+  VotacaoReferenciaVotos,
+} from '../types/compatibilidade.types';
 
 type TestServer = Parameters<typeof request>[0];
 
@@ -29,17 +34,136 @@ function posicao(overrides: Partial<PosicaoMatcher> = {}): PosicaoMatcher {
 
 function fakeRepository(
   externalIdProposicoesComputaveis: ReadonlySet<number>,
+  deputadoResult?: DeputadoCompatibilidadeInput | null,
 ): MatcherRepository {
+  const votacoes: VotacaoReferenciaVotos[] = [
+    {
+      externalIdProposicao: 1,
+      proposicao: {
+        externalIdProposicao: 1,
+        siglaTipo: 'PL',
+        numero: 1,
+        ano: 2024,
+        ementa: 'Proposição de teste',
+        status: {
+          siglaOrgao: 'MESA',
+          situacao: 'Pronta para Pauta',
+          regime: null,
+          dataHora: '2024-01-01T00:00:00Z',
+        },
+        volumeVotacoesPlenario: 1,
+        votacaoReferencia: {
+          externalIdVotacao: '1',
+          data: '2024-01-01',
+          descricao: 'Aprovado o projeto de lei',
+          pattern: 'projeto_de_lei',
+          votosSim: 1,
+          votosNao: 0,
+          votosOutros: 0,
+          resultado: 'aprovada',
+        },
+      },
+      votacaoReferencia: {
+        dataHoraRegistro: '2024-01-01T12:00:00Z',
+        data: '2024-01-01',
+      },
+      votosByDeputado: new Map([['dep-1', 'sim']]),
+    },
+    {
+      externalIdProposicao: 2,
+      proposicao: {
+        externalIdProposicao: 2,
+        siglaTipo: 'PL',
+        numero: 2,
+        ano: 2024,
+        ementa: 'Proposição de teste',
+        status: {
+          siglaOrgao: 'MESA',
+          situacao: 'Pronta para Pauta',
+          regime: null,
+          dataHora: '2024-01-01T00:00:00Z',
+        },
+        volumeVotacoesPlenario: 1,
+        votacaoReferencia: {
+          externalIdVotacao: '2',
+          data: '2024-01-01',
+          descricao: 'Aprovado o projeto de lei',
+          pattern: 'projeto_de_lei',
+          votosSim: 0,
+          votosNao: 1,
+          votosOutros: 0,
+          resultado: 'rejeitada',
+        },
+      },
+      votacaoReferencia: {
+        dataHoraRegistro: '2024-01-01T12:00:00Z',
+        data: '2024-01-01',
+      },
+      votosByDeputado: new Map([['dep-1', 'nao']]),
+    },
+    {
+      externalIdProposicao: 3,
+      proposicao: {
+        externalIdProposicao: 3,
+        siglaTipo: 'PL',
+        numero: 3,
+        ano: 2024,
+        ementa: 'Proposição de teste',
+        status: {
+          siglaOrgao: 'MESA',
+          situacao: 'Pronta para Pauta',
+          regime: null,
+          dataHora: '2024-01-01T00:00:00Z',
+        },
+        volumeVotacoesPlenario: 1,
+        votacaoReferencia: {
+          externalIdVotacao: '3',
+          data: '2024-01-01',
+          descricao: 'Aprovado o projeto de lei',
+          pattern: 'projeto_de_lei',
+          votosSim: 1,
+          votosNao: 0,
+          votosOutros: 0,
+          resultado: 'aprovada',
+        },
+      },
+      votacaoReferencia: {
+        dataHoraRegistro: '2024-01-01T12:00:00Z',
+        data: '2024-01-01',
+      },
+      votosByDeputado: new Map([['dep-1', 'sim']]),
+    },
+  ];
+  const deputado: DeputadoCompatibilidadeInput = {
+    deputadoId: 'dep-1',
+    externalIdDeputado: 100,
+    nome: 'Fulano',
+    partido: 'PT',
+    siglaUf: 'PE',
+    urlFoto: null,
+    eventos: [
+      {
+        dataHora: '2023-02-01T12:00:00Z',
+        situacao: 'Exercício',
+        descricaoStatus: 'Entrada - Posse de Eleito Titular',
+        partido: 'PT',
+      },
+    ],
+  };
+
   return {
     loadExternalIdProposicoesComputaveis: async () =>
       externalIdProposicoesComputaveis,
-    loadVotacoesReferenciaWithVotos: async () => [],
+    loadVotacoesReferenciaWithVotos: async () => votacoes,
     loadDeputadosByEscopoWithHistorico: async () => [],
+    loadDeputadoByExternalIdWithHistorico: async () =>
+      deputadoResult === undefined ? deputado : deputadoResult,
   };
 }
 
 async function buildApp(
   externalIdProposicoesComputaveis: ReadonlySet<number>,
+  deputadoResult?: DeputadoCompatibilidadeInput | null,
 ): Promise<INestApplication> {
   const moduleRef = await Test.createTestingModule({
     controllers: [MatcherController],
@@ -47,7 +171,10 @@ async function buildApp(
       MatcherService,
       {
         provide: MATCHER_REPOSITORY,
-        useValue: fakeRepository(externalIdProposicoesComputaveis),
+        useValue: fakeRepository(
+          externalIdProposicoesComputaveis,
+          deputadoResult,
+        ),
       },
     ],
   }).compile();
@@ -430,6 +557,90 @@ describe('POST /matcher', () => {
       // Assert
       expect(response.status).toBe(400);
       expect(JSON.stringify(response.body)).toContain('99');
+    });
+  });
+});
+
+describe('POST /matcher/deputados/:externalIdDeputado', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    app = await buildApp(new Set([1, 2, 3, 4, 5]));
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('when the execution is valid', () => {
+    it('returns 200 with the deputado detail contract', async () => {
+      // Act
+      const response = await request(getTestServer(app))
+        .post('/matcher/deputados/100')
+        .send({
+          siglaUf: 'PE',
+          cidade: 'Recife',
+          posicoes: [
+            posicao({ externalIdProposicao: 1 }),
+            posicao({ externalIdProposicao: 2, posicao: 'rejeitar' }),
+            posicao({ externalIdProposicao: 3 }),
+            posicao({ externalIdProposicao: 4, posicao: 'nao_sei' }),
+          ],
+        });
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = matcherDeputadoDetalheSchema.parse(response.body as unknown);
+      expect(body).toMatchObject({
+        siglaUf: 'PE',
+        cidade: 'Recife',
+        totalProposicoesSelecionadas: 4,
+        totalPosicoesComputaveis: 3,
+        deputado: {
+          externalIdDeputado: 100,
+          nome: 'Fulano',
+        },
+        metrics: {
+          totalConcordancias: 3,
+          totalDiscordancias: 0,
+          totalForaDoDenominador: 0,
+          amostraComparavel: 3,
+        },
+      });
+      expect(body.votos).toHaveLength(3);
+      expect(
+        body.votos.map((voto) => voto.proposicao.externalIdProposicao),
+      ).not.toContain(4);
+      expect(JSON.stringify(response.body)).not.toContain('orientacao');
+    });
+  });
+
+  describe('when the deputado is not available in the requested scope', () => {
+    let appWithoutDeputado: INestApplication;
+
+    beforeAll(async () => {
+      appWithoutDeputado = await buildApp(new Set([1, 2, 3]), null);
+    });
+
+    afterAll(async () => {
+      await appWithoutDeputado.close();
+    });
+
+    it('returns 404', async () => {
+      // Act
+      const response = await request(getTestServer(appWithoutDeputado))
+        .post('/matcher/deputados/999')
+        .send({
+          siglaUf: 'PE',
+          posicoes: [
+            posicao({ externalIdProposicao: 1 }),
+            posicao({ externalIdProposicao: 2, posicao: 'rejeitar' }),
+            posicao({ externalIdProposicao: 3 }),
+          ],
+        });
+
+      // Assert
+      expect(response.status).toBe(404);
     });
   });
 });
