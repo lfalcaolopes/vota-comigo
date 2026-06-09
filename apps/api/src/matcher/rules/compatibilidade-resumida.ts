@@ -1,7 +1,4 @@
-import type {
-  AlertaMatcher,
-  DeputadoVotacaoClassification,
-} from '@vota-comigo/shared-types';
+import type { AlertaMatcher } from '@vota-comigo/shared-types';
 
 import { classifyDeputadoVotacao } from '@/exercicio/rules/deputado-votacao';
 import {
@@ -15,6 +12,11 @@ import type {
   DeputadoResumoComputado,
   PosicaoComputavel,
 } from '../types/compatibilidade.types';
+import {
+  FORA_DE_EXERCICIO,
+  FORA_DO_DENOMINADOR,
+  round2,
+} from './compatibilidade-metrics';
 import { wilsonLowerBound } from './wilson';
 
 export type ComputeCompatibilidadeResumidaInput = {
@@ -22,19 +24,6 @@ export type ComputeCompatibilidadeResumidaInput = {
   deputados: readonly DeputadoCompatibilidadeInput[];
   totalPosicoesComputaveis: number;
 };
-
-const FORA_DO_DENOMINADOR: ReadonlySet<DeputadoVotacaoClassification> = new Set(
-  ['fora_de_exercicio', 'artigo_17', 'voto_nao_informado', 'lacuna_de_dados'],
-);
-
-const FORA_DE_EXERCICIO: ReadonlySet<DeputadoVotacaoClassification> = new Set([
-  'fora_de_exercicio',
-  'lacuna_de_dados',
-]);
-
-function round2(value: number): number {
-  return Math.round(value * 100) / 100;
-}
 
 function avaliarDeputado(
   deputado: DeputadoCompatibilidadeInput,

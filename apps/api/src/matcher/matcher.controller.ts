@@ -2,11 +2,13 @@ import {
   Body,
   Controller,
   HttpCode,
+  Param,
   ParseIntPipe,
   Post,
   Query,
 } from '@nestjs/common';
 import {
+  type MatcherDeputadoDetalhe,
   matcherExecucaoRequestSchema,
   type MatcherExecucaoRequest,
   type MatcherResultado,
@@ -31,5 +33,15 @@ export class MatcherController {
   ): Promise<MatcherResultado> {
     const pagination = normalizePagination(limit, offset);
     return this.service.execute(body, pagination);
+  }
+
+  @Post('deputados/:externalIdDeputado')
+  @HttpCode(200)
+  async detail(
+    @Param('externalIdDeputado', ParseIntPipe) externalIdDeputado: number,
+    @Body(new ZodValidationPipe(matcherExecucaoRequestSchema))
+    body: MatcherExecucaoRequest,
+  ): Promise<MatcherDeputadoDetalhe> {
+    return this.service.detail(externalIdDeputado, body);
   }
 }

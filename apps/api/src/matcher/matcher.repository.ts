@@ -7,6 +7,7 @@ import type {
 
 import { toProposicoesComputaveis } from '@/proposicoes/rules/proposicoes-computaveis';
 import type { ProposicaoVotacaoJoinRow } from '@/proposicoes/proposicoes.repository';
+import { toProposicaoCard } from '@/proposicoes/mappers/proposicao-card.mapper';
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
   deputado,
@@ -36,6 +37,11 @@ export type MatcherRepository = {
     escopo: EscopoMatcher,
     siglaUf: SiglaUf,
   ): Promise<readonly DeputadoCompatibilidadeInput[]>;
+  loadDeputadoByExternalIdWithHistorico(
+    escopo: EscopoMatcher,
+    siglaUf: SiglaUf,
+    externalIdDeputado: number,
+  ): Promise<DeputadoCompatibilidadeInput | null>;
 };
 
 function selectProposicaoVotacaoJoin(
@@ -139,6 +145,7 @@ export function createMatcherRepository(
 
       return ranked.map((item) => ({
         externalIdProposicao: item.proposicao.externalIdProposicao,
+        proposicao: toProposicaoCard(item),
         votacaoReferencia: {
           dataHoraRegistro: item.referencia.dataHoraRegistro,
           data: item.referencia.data,
@@ -246,6 +253,59 @@ export function createMatcherRepository(
           },
         ];
       });
+    },
+
+    async loadDeputadoByExternalIdWithHistorico(
+      escopo,
+      siglaUf,
+      externalIdDeputado,
+    ) {
+      const [maisRecente] = await db
+        .select({
+          deputadoId: deputado.id,
+          externalIdDeputado: deputado.externalIdDeputado,
+          nome: deputado.nome,
+          siglaUf: deputadoHistorico.siglaUf,
+          urlFoto: deputadoHistorico.urlFoto,
+          partido: partido.sigla,
+        })
+        .from(deputado)
+        .innerJoin(
+          deputadoHistorico,
+          eq(deputadoHistorico.deputadoId, deputado.id),
+        )
+        .leftJoin(partido, eq(deputadoHistorico.partidoId, partido.id))
+        .where(eq(deputado.externalIdDeputado, externalIdDeputado))
+        .orderBy(desc(deputadoHistorico.dataHora))
+        .limit(1);
+
+      if (maisRecente === undefined) {
+        return null;
+      }
+      if (escopo === 'estadual' && maisRecente.siglaUf !== siglaUf) {
+        return null;
+      }
+
+      const historico = await db
+        .select({
+          dataHora: deputadoHistorico.dataHora,
+          situacao: deputadoHistorico.situacao,
+          descricaoStatus: deputadoHistorico.descricaoStatus,
+          partido: partido.sigla,
+        })
+        .from(deputadoHistorico)
+        .leftJoin(partido, eq(deputadoHistorico.partidoId, partido.id))
+        .where(eq(deputadoHistorico.deputadoId, maisRecente.deputadoId));
+
+      return {
+        deputadoId: maisRecente.deputadoId,
+        externalIdDeputado: maisRecente.externalIdDeputado,
+        nome: maisRecente.nome,
+        partido: maisRecente.partido,
+        siglaUf: maisRecente.siglaUf as SiglaUf,
+        urlFoto: maisRecente.urlFoto,
+        eventos: historico,
+      };
     },
   };
 }

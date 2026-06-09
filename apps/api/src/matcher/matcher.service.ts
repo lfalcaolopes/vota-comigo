@@ -1,14 +1,23 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { POSICOES_COMPUTAVEIS } from '@vota-comigo/shared-types';
 import type {
+  MatcherDeputadoDetalhe,
   MatcherExecucaoRequest,
+  MatcherExecucaoResumo,
   MatcherResultado,
   PosicaoMatcher,
 } from '@vota-comigo/shared-types';
 
 import { MATCHER_REPOSITORY } from './matcher.repository';
 import type { MatcherRepository } from './matcher.repository';
+import { toMatcherDeputadoDetalhe } from './mappers/compatibilidade-detalhe.mapper';
 import { toMatcherResultado } from './mappers/compatibilidade-resumida.mapper';
+import { computeCompatibilidadeDetalhe } from './rules/compatibilidade-detalhe';
 import { computeCompatibilidadeResumida } from './rules/compatibilidade-resumida';
 import { validateExecucao } from './rules/matcher-execucao-validation';
 import type { Pagination } from './rules/pagination';
@@ -19,6 +28,11 @@ import type {
 } from './types/compatibilidade.types';
 
 const COMPATIBILIDADE_BOM_MATCH_MINIMA = 60;
+
+type PreparedMatcherExecucao = {
+  resumo: MatcherExecucaoResumo;
+  posicoes: PosicaoComputavel[];
+};
 
 type PosicaoComputavelMatcher = PosicaoMatcher & {
   posicao: PosicaoComputavelValue;
@@ -37,10 +51,9 @@ export class MatcherService {
     private readonly repository: MatcherRepository,
   ) {}
 
-  async execute(
+  private async prepareExecucao(
     request: MatcherExecucaoRequest,
-    pagination: Pagination,
-  ): Promise<MatcherResultado> {
+  ): Promise<PreparedMatcherExecucao> {
     const externalIdProposicoes = request.posicoes.map(
       (posicao) => posicao.externalIdProposicao,
     );
@@ -80,11 +93,21 @@ export class MatcherService {
         {
           externalIdProposicao: posicao.externalIdProposicao,
           posicao: posicao.posicao,
+          proposicao: referencia.proposicao,
           votacaoReferencia: referencia.votacaoReferencia,
           votosByDeputado: referencia.votosByDeputado,
         },
       ];
     });
+
+    return { resumo: validation.resumo, posicoes };
+  }
+
+  async execute(
+    request: MatcherExecucaoRequest,
+    pagination: Pagination,
+  ): Promise<MatcherResultado> {
+    const { resumo, posicoes } = await this.prepareExecucao(request);
 
     const deputados = await this.repository.loadDeputadosByEscopoWithHistorico(
       request.escopo,
@@ -94,7 +117,7 @@ export class MatcherService {
     const resultado = computeCompatibilidadeResumida({
       posicoes,
       deputados,
-      totalPosicoesComputaveis: validation.resumo.totalPosicoesComputaveis,
+      totalPosicoesComputaveis: resumo.totalPosicoesComputaveis,
     });
 
     const ordenados = sortRanking(
@@ -111,12 +134,37 @@ export class MatcherService {
     );
 
     return toMatcherResultado(
-      validation.resumo,
+      resumo,
       request.escopo,
       resultado,
       pagina,
       { limit: pagination.limit, offset: pagination.offset, total },
       semBomMatch,
     );
+  }
+
+  async detail(
+    externalIdDeputado: number,
+    request: MatcherExecucaoRequest,
+  ): Promise<MatcherDeputadoDetalhe> {
+    const { resumo, posicoes } = await this.prepareExecucao(request);
+    const deputado =
+      await this.repository.loadDeputadoByExternalIdWithHistorico(
+        request.escopo,
+        request.siglaUf,
+        externalIdDeputado,
+      );
+
+    if (deputado === null) {
+      throw new NotFoundException('deputado nao encontrado');
+    }
+
+    const detalhe = computeCompatibilidadeDetalhe({
+      posicoes,
+      deputado,
+      totalPosicoesComputaveis: resumo.totalPosicoesComputaveis,
+    });
+
+    return toMatcherDeputadoDetalhe(resumo, detalhe);
   }
 }
