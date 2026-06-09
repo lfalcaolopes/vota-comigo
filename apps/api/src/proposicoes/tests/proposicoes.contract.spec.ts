@@ -256,9 +256,11 @@ describe('GET /proposicoes/search', () => {
         proposicoesSearchResponseSchema.safeParse(response.body).success,
       ).toBe(true);
       expect(response.body.query).toBe('saúde');
-      expect(response.body.items.map((item: { externalIdProposicao: number }) =>
-        item.externalIdProposicao,
-      )).toEqual([1]);
+      expect(
+        response.body.items.map(
+          (item: { externalIdProposicao: number }) => item.externalIdProposicao,
+        ),
+      ).toEqual([1]);
     });
 
     it('caps limit at 100 and honours the offset query param', async () => {
@@ -298,7 +300,11 @@ describe('GET /proposicoes/search', () => {
 
       // Assert
       expect(response.status).toBe(200);
-      expect(response.body).toMatchObject({ items: [], total: 0, query: 'zzz' });
+      expect(response.body).toMatchObject({
+        items: [],
+        total: 0,
+        query: 'zzz',
+      });
     });
   });
 });
@@ -328,9 +334,7 @@ describe('GET /proposicoes/:externalIdProposicao', () => {
   describe('when the proposicao exists and is computavel', () => {
     it('returns a valid detalhe contract with temas as an empty list', async () => {
       // Act
-      const response = await request(app.getHttpServer()).get(
-        '/proposicoes/1',
-      );
+      const response = await request(app.getHttpServer()).get('/proposicoes/1');
 
       // Assert
       expect(response.status).toBe(200);
