@@ -2,7 +2,7 @@ import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import {
   matcherExecucaoRequestSchema,
   type MatcherExecucaoRequest,
-  type MatcherExecucaoResumo,
+  type MatcherResultado,
 } from '@vota-comigo/shared-types';
 
 import { ZodValidationPipe } from '@/shared/validation/zod-validation.pipe';
@@ -15,10 +15,10 @@ export class MatcherController {
 
   @Post()
   @HttpCode(200)
-  async validate(
+  async execute(
     @Body(new ZodValidationPipe(matcherExecucaoRequestSchema))
     body: MatcherExecucaoRequest,
-  ): Promise<MatcherExecucaoResumo> {
-    return this.service.validateExecucao(body);
+  ): Promise<MatcherResultado> {
+    return this.service.execute(body);
   }
 }

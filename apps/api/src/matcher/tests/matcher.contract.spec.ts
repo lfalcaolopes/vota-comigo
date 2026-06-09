@@ -2,6 +2,7 @@ import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import {
   matcherExecucaoResumoSchema,
+  matcherResultadoSchema,
   type PosicaoMatcher,
 } from '@vota-comigo/shared-types';
 import request from 'supertest';
@@ -25,6 +26,8 @@ function fakeRepository(
   return {
     loadExternalIdProposicoesComputaveis: async () =>
       externalIdProposicoesComputaveis,
+    loadVotacoesReferenciaWithVotos: async () => [],
+    loadDeputadosByEstadoWithHistorico: async () => [],
   };
 }
 
@@ -84,6 +87,34 @@ describe('POST /matcher', () => {
         cidade: 'Recife',
         totalProposicoesSelecionadas: 3,
         totalPosicoesComputaveis: 3,
+      });
+    });
+
+    it('returns 200 with the estadual result contract', async () => {
+      // Act
+      const response = await request(app.getHttpServer())
+        .post('/matcher')
+        .send({
+          siglaUf: 'PE',
+          cidade: 'Recife',
+          posicoes: [
+            posicao({ externalIdProposicao: 1 }),
+            posicao({
+              externalIdProposicao: 2,
+              posicao: 'rejeitar',
+            }),
+            posicao({ externalIdProposicao: 3 }),
+          ],
+        });
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = matcherResultadoSchema.parse(response.body as unknown);
+      expect(body).toMatchObject({
+        escopo: 'estadual',
+        deputados: [],
+        totalDeputadosAvaliados: 0,
+        deputadosHistoricoIncompleto: 0,
       });
     });
 
