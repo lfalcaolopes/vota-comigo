@@ -30,7 +30,7 @@ _Avoid_: Parlamentar, congressista, representante.
 
 **Intervalo de exercício**: Período contínuo em que um deputado esteve habilitado a votar, aberto por posse ou reassunção e fechado por afastamento, fim de mandato ou vacância.
 
-**Em exercício**: Condição de um deputado estar habilitado a votar em uma data específica, determinada pelos intervalos de exercício.
+**Em exercício**: Condição de um deputado estar habilitado a votar em uma data específica, determinada pelos intervalos de exercício; um registro de voto na votação também caracteriza exercício e prevalece sobre o histórico.
 _Avoid_: Apto a votar, elegível para votar.
 
 **Em atividade**: Condição de um deputado com intervalo de exercício aberto no snapshot mais recente conhecido, usada como desempate no matcher.
@@ -201,10 +201,10 @@ _Avoid_: Proposições que marcaram.
 - O **Matcher** desconsidera uma **Votação nominal** para um **Deputado** quando ele não estava **Em exercício** ou quando seu registro é **Artigo 17**.
 - A condição **Em exercício** é avaliada na data e hora da **Votação nominal** quando esse horário está disponível.
 - O **Matcher** desconsidera uma **Votação nominal** para um **Deputado** quando seu registro é **Voto não informado**.
-- O **Matcher** exclui do ranking deputados sem histórico suficiente para determinar **Intervalos de exercício**, contabilizando-os como lacuna de dados.
-- Um voto registrado não substitui o histórico do deputado para determinar **Em exercício**.
+- O **Matcher** trata como **Lacuna de dados** o par sem registro de voto e sem histórico suficiente para determinar **Intervalos de exercício**, excluindo-o do ranking.
+- Um registro de voto na **Votação nominal** implica que o **Deputado** estava **Em exercício** e sobrepõe o histórico; o histórico só determina **Em exercício** quando não há registro de voto.
 - Uma **Ausência sem motivo conhecido** conta como discordância no **Matcher**.
-- Para cada par **Deputado** e **Votação nominal**, o **Matcher** classifica primeiro **Lacuna de dados**, depois ausência de **Em exercício**, depois **Artigo 17**, depois **Voto não informado**, depois voto computável, e por fim **Ausência sem motivo conhecido**.
+- Para cada par **Deputado** e **Votação nominal**, o **Matcher** classifica primeiro pelo registro de voto quando ele existe — **Artigo 17**, depois **Voto não informado**, depois voto computável — e, sem registro, avalia o histórico: **Lacuna de dados**, depois ausência de **Em exercício**, e por fim **Ausência sem motivo conhecido**.
 - A apresentação do **Matcher** preserva a diferença entre voto `sim`, voto `não`, **Abstenção**, **Obstrução** e **Ausência sem motivo conhecido**, mesmo quando esses casos têm o mesmo efeito na **Compatibilidade**.
 - A visualização padrão do **Matcher** usa a **UF de resultado do matcher**, enquanto a condição **Em exercício** continua sendo avaliada na data de cada **Votação de referência do matcher**.
 - A **Cidade informada no matcher** é preservada como contexto de produto futuro, mas não altera a **Compatibilidade**, o score de ordenação nem o escopo de resultado no MVP.

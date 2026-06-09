@@ -8,7 +8,7 @@ Ver também: [ADR 016](../adr/016-derivacao-intervalos-exercicio-deputado-histor
 
 `deputado_historico` é a fonte canônica para derivar **Intervalos de exercício** e partido vigente no tempo.
 
-`votacao_votos` não determina **Em exercício**. Ela complementa a análise apenas com o voto individual registrado.
+Um registro em `votacao_votos` é evidência mais confiável de que o deputado estava **Em exercício** na votação e prevalece sobre o histórico: havendo registro, o par é classificado pelo voto. O histórico só decide **Em exercício** quando não há registro de voto.
 
 ## Regra de intervalo
 
@@ -41,14 +41,14 @@ Para classificar um par deputado/votação, avaliar o último evento efetivo ant
 
 ## Classificação deputado/votação
 
-Classificar cada par **Deputado** e **Votação nominal** nesta ordem:
+Classificar cada par **Deputado** e **Votação nominal** nesta ordem. O registro de voto vem primeiro porque sobrepõe o histórico; o histórico só é avaliado quando não há registro:
 
-1. **Lacuna de dados**: não há histórico suficiente ou não há data utilizável da votação.
-2. **Fora de exercício**: o deputado não estava **Em exercício** na data/hora da votação.
-3. **Artigo 17**: há impedimento regimental registrado em `votacao_votos`.
-4. **Voto não informado**: o voto individual veio vazio na fonte.
-5. Voto computável: `sim`, `nao`, `abstencao` ou `obstrucao`.
-6. **Ausência sem motivo conhecido**: o deputado estava **Em exercício**, mas não aparece em nenhuma categoria de `votacao_votos`.
+1. **Artigo 17**: há impedimento regimental registrado em `votacao_votos`.
+2. **Voto não informado**: o voto individual veio vazio na fonte.
+3. Voto computável: `sim`, `nao`, `abstencao` ou `obstrucao`.
+4. **Lacuna de dados**: sem registro de voto e sem histórico suficiente ou sem data utilizável da votação.
+5. **Fora de exercício**: sem registro de voto e o deputado não estava **Em exercício** na data/hora da votação.
+6. **Ausência sem motivo conhecido**: sem registro de voto e o deputado estava **Em exercício**.
 
 ## Efeito no matcher
 
@@ -88,4 +88,5 @@ Eventos de **Alteração de partido** atualizam o partido vigente, mas não abre
 16. Deputado fora de exercício sem registro em `votacao_votos` fica fora do denominador.
 17. Deputado em exercício com `Artigo 17` fica fora do denominador sem fechar intervalo.
 18. Deputado em exercício com **Voto não informado** fica fora do denominador por qualidade de dado.
-19. Votação sem data utilizável vira **Lacuna de dados** para a classificação.
+19. Votação sem data utilizável e sem registro de voto vira **Lacuna de dados** para a classificação.
+20. Deputado fora de exercício pelo histórico, mas com registro de voto, é classificado pelo voto, que sobrepõe o histórico.
