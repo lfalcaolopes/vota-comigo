@@ -78,6 +78,25 @@ export const matcherExecucaoResumoSchema = z.object({
   totalPosicoesComputaveis: z.number().int().nonnegative(),
 });
 
+export const escopoMatcherEnum = z.enum(['estadual']); // #27 adiciona 'nacional'
+
+export const matcherDeputadoResumoSchema = z.object({
+  externalIdDeputado: z.number().int().positive(),
+  nome: z.string().nullable(),
+  partido: z.string().nullable(),
+  siglaUf: siglaUfEnum,
+  urlFoto: z.string().nullable(),
+  compatibilidadeBruta: z.number().min(0).max(100),
+  amostraComparavel: z.number().int().positive(),
+});
+
+export const matcherResultadoSchema = matcherExecucaoResumoSchema.extend({
+  escopo: escopoMatcherEnum,
+  deputados: z.array(matcherDeputadoResumoSchema),
+  totalDeputadosAvaliados: z.number().int().nonnegative(),
+  deputadosHistoricoIncompleto: z.number().int().nonnegative(),
+});
+
 export type SiglaUf = z.infer<typeof siglaUfEnum>;
 export type PosicaoUsuarioMatcher = z.infer<typeof posicaoUsuarioMatcherEnum>;
 export type PosicaoMatcher = z.infer<typeof posicaoMatcherSchema>;
@@ -85,3 +104,6 @@ export type MatcherExecucaoRequest = z.infer<
   typeof matcherExecucaoRequestSchema
 >;
 export type MatcherExecucaoResumo = z.infer<typeof matcherExecucaoResumoSchema>;
+export type EscopoMatcher = z.infer<typeof escopoMatcherEnum>;
+export type MatcherDeputadoResumo = z.infer<typeof matcherDeputadoResumoSchema>;
+export type MatcherResultado = z.infer<typeof matcherResultadoSchema>;
