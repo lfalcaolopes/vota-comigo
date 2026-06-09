@@ -47,6 +47,12 @@ export function isEmExercicio(
   );
 }
 
+export function isEmAtividade(eventos: readonly EventoExercicio[]): boolean {
+  return deriveIntervalosExercicio(eventos).some(
+    (intervalo) => intervalo.closedAt === null,
+  );
+}
+
 export function getPartidoVigente(
   eventos: readonly EventoExercicio[],
   instante: string,
