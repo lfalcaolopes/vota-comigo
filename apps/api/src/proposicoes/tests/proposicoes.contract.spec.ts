@@ -18,6 +18,13 @@ import type {
 import { PROPOSICOES_REPOSITORY } from '../proposicoes.repository';
 import { ProposicoesService } from '../proposicoes.service';
 
+type TestServer = Parameters<typeof request>[0];
+
+function getTestServer(app: INestApplication): TestServer {
+  const server: unknown = app.getHttpServer();
+  return server as TestServer;
+}
+
 function joinRow(
   overrides: Partial<ProposicaoVotacaoJoinRow> = {},
 ): ProposicaoVotacaoJoinRow {
@@ -128,57 +135,58 @@ describe('GET /proposicoes/mais-votadas', () => {
   describe('when no pagination is provided', () => {
     it('applies the default limit 20 and offset 0 and returns a valid contract', async () => {
       // Act
-      const response = await request(app.getHttpServer()).get(
+      const response = await request(getTestServer(app)).get(
         '/proposicoes/mais-votadas',
       );
 
       // Assert
       expect(response.status).toBe(200);
-      expect(maisVotadasResponseSchema.safeParse(response.body).success).toBe(
-        true,
-      );
-      expect(response.body).toMatchObject({ limit: 20, offset: 0 });
+      const body = maisVotadasResponseSchema.parse(response.body as unknown);
+      expect(body).toMatchObject({ limit: 20, offset: 0 });
     });
 
     it('does not expose an internal UUID id on the card', async () => {
       // Act
-      const response = await request(app.getHttpServer()).get(
+      const response = await request(getTestServer(app)).get(
         '/proposicoes/mais-votadas',
       );
 
       // Assert
-      expect(response.body.items[0]).not.toHaveProperty('id');
-      expect(response.body.items[0].externalIdProposicao).toBe(1);
+      const body = maisVotadasResponseSchema.parse(response.body as unknown);
+      expect(body.items[0]).not.toHaveProperty('id');
+      expect(body.items[0].externalIdProposicao).toBe(1);
     });
   });
 
   describe('when limit and offset are out of range', () => {
     it('caps limit at 100 and floors offset at 0', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .get('/proposicoes/mais-votadas')
         .query({ limit: 999, offset: -5 });
 
       // Assert
       expect(response.status).toBe(200);
-      expect(response.body).toMatchObject({ limit: 100, offset: 0 });
+      const body = maisVotadasResponseSchema.parse(response.body as unknown);
+      expect(body).toMatchObject({ limit: 100, offset: 0 });
     });
 
     it('raises a zero limit to 1', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .get('/proposicoes/mais-votadas')
         .query({ limit: 0 });
 
       // Assert
-      expect(response.body.limit).toBe(1);
+      const body = maisVotadasResponseSchema.parse(response.body as unknown);
+      expect(body.limit).toBe(1);
     });
   });
 
   describe('when limit or offset are not integers', () => {
     it.each(['abc', '20.5'])('rejects limit=%s with 400', async (limit) => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .get('/proposicoes/mais-votadas')
         .query({ limit });
 
@@ -188,7 +196,7 @@ describe('GET /proposicoes/mais-votadas', () => {
 
     it('rejects a non-integer offset with 400', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .get('/proposicoes/mais-votadas')
         .query({ offset: 'abc' });
 
@@ -213,13 +221,14 @@ describe('GET /proposicoes/mais-votadas with no computavel proposicao', () => {
 
   it('returns an empty page instead of an error', async () => {
     // Act
-    const response = await request(app.getHttpServer()).get(
+    const response = await request(getTestServer(app)).get(
       '/proposicoes/mais-votadas',
     );
 
     // Assert
     expect(response.status).toBe(200);
-    expect(response.body).toMatchObject({ items: [], total: 0 });
+    const body = maisVotadasResponseSchema.parse(response.body as unknown);
+    expect(body).toMatchObject({ items: [], total: 0 });
   });
 });
 
@@ -246,18 +255,18 @@ describe('GET /proposicoes/search', () => {
   describe('when the query matches computavel proposicoes', () => {
     it('returns a valid contract and echoes the query', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .get('/proposicoes/search')
         .query({ q: 'saúde' });
 
       // Assert
       expect(response.status).toBe(200);
+      const body = proposicoesSearchResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.query).toBe('saúde');
       expect(
-        proposicoesSearchResponseSchema.safeParse(response.body).success,
-      ).toBe(true);
-      expect(response.body.query).toBe('saúde');
-      expect(
-        response.body.items.map(
+        body.items.map(
           (item: { externalIdProposicao: number }) => item.externalIdProposicao,
         ),
       ).toEqual([1]);
@@ -265,13 +274,16 @@ describe('GET /proposicoes/search', () => {
 
     it('caps limit at 100 and honours the offset query param', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .get('/proposicoes/search')
         .query({ q: 'dispõe', limit: 999, offset: 1 });
 
       // Assert
-      expect(response.body.limit).toBe(100);
-      expect(response.body.offset).toBe(1);
+      const body = proposicoesSearchResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.limit).toBe(100);
+      expect(body.offset).toBe(1);
     });
   });
 
@@ -282,7 +294,7 @@ describe('GET /proposicoes/search', () => {
       ['separator only', '/'],
     ])('rejects %s with 400', async (_label, q) => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .get('/proposicoes/search')
         .query(q === undefined ? {} : { q });
 
@@ -294,13 +306,16 @@ describe('GET /proposicoes/search', () => {
   describe('when the query is valid but matches nothing', () => {
     it('returns an empty page, not an error', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .get('/proposicoes/search')
         .query({ q: 'zzz' });
 
       // Assert
       expect(response.status).toBe(200);
-      expect(response.body).toMatchObject({
+      const body = proposicoesSearchResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body).toMatchObject({
         items: [],
         total: 0,
         query: 'zzz',
@@ -334,22 +349,20 @@ describe('GET /proposicoes/:externalIdProposicao', () => {
   describe('when the proposicao exists and is computavel', () => {
     it('returns a valid detalhe contract with temas as an empty list', async () => {
       // Act
-      const response = await request(app.getHttpServer()).get('/proposicoes/1');
+      const response = await request(getTestServer(app)).get('/proposicoes/1');
 
       // Assert
       expect(response.status).toBe(200);
-      expect(proposicaoDetalheSchema.safeParse(response.body).success).toBe(
-        true,
-      );
-      expect(response.body.temas).toEqual([]);
-      expect(response.body).not.toHaveProperty('id');
+      const body = proposicaoDetalheSchema.parse(response.body as unknown);
+      expect(body.temas).toEqual([]);
+      expect(body).not.toHaveProperty('id');
     });
   });
 
   describe('when the externalId is not a public proposicao identity', () => {
     it('returns 404 for a numeric id that does not exist', async () => {
       // Act
-      const response = await request(app.getHttpServer()).get(
+      const response = await request(getTestServer(app)).get(
         '/proposicoes/999',
       );
 
@@ -359,7 +372,7 @@ describe('GET /proposicoes/:externalIdProposicao', () => {
 
     it('rejects a non-numeric id with 400', async () => {
       // Act
-      const response = await request(app.getHttpServer()).get(
+      const response = await request(getTestServer(app)).get(
         '/proposicoes/abc',
       );
 
@@ -369,7 +382,7 @@ describe('GET /proposicoes/:externalIdProposicao', () => {
 
     it('rejects an internal UUID with 400 instead of treating it as identity', async () => {
       // Act
-      const response = await request(app.getHttpServer()).get(
+      const response = await request(getTestServer(app)).get(
         '/proposicoes/550e8400-e29b-41d4-a716-446655440000',
       );
 
@@ -383,7 +396,7 @@ describe('GET /proposicoes/:externalIdProposicao', () => {
       'does not let the :externalIdProposicao route swallow %s',
       async (path) => {
         // Act
-        const response = await request(app.getHttpServer())
+        const response = await request(getTestServer(app))
           .get(path)
           .query(path.endsWith('search') ? { q: 'saúde' } : {});
 

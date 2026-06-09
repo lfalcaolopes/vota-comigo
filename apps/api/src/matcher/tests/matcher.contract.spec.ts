@@ -12,6 +12,13 @@ import { MATCHER_REPOSITORY } from '../matcher.repository';
 import type { MatcherRepository } from '../matcher.repository';
 import { MatcherService } from '../matcher.service';
 
+type TestServer = Parameters<typeof request>[0];
+
+function getTestServer(app: INestApplication): TestServer {
+  const server: unknown = app.getHttpServer();
+  return server as TestServer;
+}
+
 function posicao(overrides: Partial<PosicaoMatcher> = {}): PosicaoMatcher {
   return {
     externalIdProposicao: 1,
@@ -64,7 +71,7 @@ describe('POST /matcher', () => {
   describe('when the execution is valid', () => {
     it('returns 200 with a normalized execution summary contract', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .post('/matcher')
         .send({
           siglaUf: 'PE',
@@ -92,7 +99,7 @@ describe('POST /matcher', () => {
 
     it('returns 200 with the estadual result contract', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .post('/matcher')
         .send({
           siglaUf: 'PE',
@@ -120,7 +127,7 @@ describe('POST /matcher', () => {
 
     it('coalesces a missing cidade to null', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .post('/matcher')
         .send({
           siglaUf: 'PE',
@@ -155,7 +162,7 @@ describe('POST /matcher', () => {
       ];
 
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .post('/matcher')
         .send({ siglaUf: 'PE', posicoes });
 
@@ -170,7 +177,7 @@ describe('POST /matcher', () => {
   describe('when positions are sent as query string instead of body', () => {
     it('rejects with 400 because positions must travel in the body', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .post('/matcher')
         .query({ siglaUf: 'PE' })
         .send();
@@ -183,7 +190,7 @@ describe('POST /matcher', () => {
   describe('when posicoes is a map keyed by id instead of a list', () => {
     it('rejects with 400', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .post('/matcher')
         .send({
           siglaUf: 'PE',
@@ -198,7 +205,7 @@ describe('POST /matcher', () => {
   describe('when siglaUf is invalid or missing', () => {
     it('rejects an unknown UF with 400', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .post('/matcher')
         .send({
           siglaUf: 'XX',
@@ -218,7 +225,7 @@ describe('POST /matcher', () => {
 
     it('rejects a missing UF with 400', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .post('/matcher')
         .send({
           posicoes: [
@@ -239,7 +246,7 @@ describe('POST /matcher', () => {
   describe('when a proposicao is duplicated', () => {
     it('rejects with 400 and names the duplicate', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .post('/matcher')
         .send({
           siglaUf: 'PE',
@@ -267,7 +274,7 @@ describe('POST /matcher', () => {
       );
 
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .post('/matcher')
         .send({ siglaUf: 'PE', posicoes });
 
@@ -279,7 +286,7 @@ describe('POST /matcher', () => {
   describe('when fewer than three computavel positions are sent', () => {
     it('rejects with 400, ignoring nao_sei for the minimum', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .post('/matcher')
         .send({
           siglaUf: 'PE',
@@ -301,7 +308,7 @@ describe('POST /matcher', () => {
   describe('when a computavel position is not computavel pelo matcher', () => {
     it('rejects with 400 naming the offending proposicao', async () => {
       // Act
-      const response = await request(app.getHttpServer())
+      const response = await request(getTestServer(app))
         .post('/matcher')
         .send({
           siglaUf: 'PE',
