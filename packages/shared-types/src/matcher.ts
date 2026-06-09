@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+import { proposicaoCardSchema } from './proposicoes';
+import { deputadoVotacaoClassification } from './exercicio';
+
 export const siglaUfEnum = z.enum([
   'AC',
   'AL',
@@ -40,6 +43,7 @@ export const POSICOES_COMPUTAVEIS = [
   'aprovar',
   'rejeitar',
 ] as const;
+export const posicaoComputavelMatcherEnum = z.enum(POSICOES_COMPUTAVEIS);
 
 export const MAX_POSICOES = 30;
 export const MIN_POSICOES_COMPUTAVEIS = 3;
@@ -107,6 +111,42 @@ export const matcherResultadoSchema = matcherExecucaoResumoSchema.extend({
   semBomMatch: z.boolean(),
 });
 
+export const matcherEffectEnum = z.enum([
+  'concordancia',
+  'discordancia',
+  'fora_do_denominador',
+]);
+
+export const matcherDetalheMetricsSchema = z.object({
+  totalConcordancias: z.number().int().nonnegative(),
+  totalDiscordancias: z.number().int().nonnegative(),
+  totalForaDoDenominador: z.number().int().nonnegative(),
+  amostraComparavel: z.number().int().nonnegative(),
+  coberturaExercicio: z.number().int().nonnegative(),
+  compatibilidadeBruta: z.number().min(0).max(100),
+  scoreOrdenacaoPercentual: z.number().min(0).max(100),
+  alertas: z.array(alertaMatcherEnum),
+});
+
+export const matcherVotoDetalheSchema = z.object({
+  proposicao: proposicaoCardSchema,
+  posicaoUsuario: posicaoComputavelMatcherEnum,
+  votacaoReferencia: proposicaoCardSchema.shape.votacaoReferencia,
+  situacaoDeputadoVotacao: deputadoVotacaoClassification,
+  matcherEffect: matcherEffectEnum,
+});
+
+export const matcherDeputadoDetalheSchema = matcherExecucaoResumoSchema.extend({
+  deputado: matcherDeputadoResumoSchema.omit({
+    compatibilidadeBruta: true,
+    amostraComparavel: true,
+    scoreOrdenacaoPercentual: true,
+    alertas: true,
+  }),
+  metrics: matcherDetalheMetricsSchema,
+  votos: z.array(matcherVotoDetalheSchema),
+});
+
 export type SiglaUf = z.infer<typeof siglaUfEnum>;
 export type PosicaoUsuarioMatcher = z.infer<typeof posicaoUsuarioMatcherEnum>;
 export type PosicaoMatcher = z.infer<typeof posicaoMatcherSchema>;
@@ -118,3 +158,11 @@ export type EscopoMatcher = z.infer<typeof escopoMatcherEnum>;
 export type AlertaMatcher = z.infer<typeof alertaMatcherEnum>;
 export type MatcherDeputadoResumo = z.infer<typeof matcherDeputadoResumoSchema>;
 export type MatcherResultado = z.infer<typeof matcherResultadoSchema>;
+export type MatcherEffect = z.infer<typeof matcherEffectEnum>;
+export type MatcherDetalheMetrics = z.infer<
+  typeof matcherDetalheMetricsSchema
+>;
+export type MatcherVotoDetalhe = z.infer<typeof matcherVotoDetalheSchema>;
+export type MatcherDeputadoDetalhe = z.infer<
+  typeof matcherDeputadoDetalheSchema
+>;
