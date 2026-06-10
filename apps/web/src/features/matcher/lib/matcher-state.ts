@@ -53,7 +53,9 @@ export type MatcherAction =
   | { type: "goToStep"; step: MatcherStep }
   | { type: "runStart" }
   | { type: "runOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
-  | { type: "runError" };
+  | { type: "runError" }
+  | { type: "setEscopo"; escopo: EscopoMatcher }
+  | { type: "loadMoreOk"; escopo: EscopoMatcher; resultado: MatcherResultado };
 
 export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
   return {
@@ -126,6 +128,24 @@ export function matcherReducer(
       };
     case "runError":
       return { ...state, status: "error" };
+    case "setEscopo":
+      return { ...state, escopo: action.escopo };
+    case "loadMoreOk": {
+      const existing = state.resultados[action.escopo];
+      if (existing === null) return state;
+      return {
+        ...state,
+        status: "idle",
+        resultados: {
+          ...state.resultados,
+          [action.escopo]: {
+            ...action.resultado,
+            deputados: [...existing.deputados, ...action.resultado.deputados],
+            total: existing.total,
+          },
+        },
+      };
+    }
   }
 }
 
@@ -146,4 +166,9 @@ export function canRunMatcher(state: MatcherState): boolean {
 
 export function activeResultado(state: MatcherState): MatcherResultado | null {
   return state.resultados[state.escopo];
+}
+
+export function hasMoreDeputados(state: MatcherState): boolean {
+  const r = activeResultado(state);
+  return r ? r.deputados.length < r.total : false;
 }

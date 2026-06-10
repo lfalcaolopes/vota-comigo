@@ -84,7 +84,11 @@ export function Matcher({ initialProposicoes, initialTotal }: MatcherProps) {
 
       {state.step === "resultado" ? (
         <StepResultado
+          escopo={matcher.escopo}
+          hasMore={matcher.hasMore}
           onBack={() => matcher.goToStep("posicoes")}
+          onEscopoChange={matcher.setEscopo}
+          onLoadMore={matcher.loadMore}
           onRetry={matcher.execute}
           resultado={matcher.resultado}
           status={state.status}

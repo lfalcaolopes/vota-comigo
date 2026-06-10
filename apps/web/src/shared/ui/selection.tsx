@@ -100,12 +100,14 @@ type SegmentedControlProps = {
   activeId: string;
   items: TabItem[];
   label: string;
+  onSelect?: (id: string) => void;
 };
 
 export function SegmentedControl({
   activeId,
   items,
   label,
+  onSelect,
 }: SegmentedControlProps) {
   return (
     <div aria-label={label} className={tabBar} role="group">
@@ -117,6 +119,7 @@ export function SegmentedControl({
             "aria-pressed:bg-white aria-pressed:text-ink",
           )}
           key={item.id}
+          onClick={() => onSelect?.(item.id)}
           type="button"
         >
           {item.label}

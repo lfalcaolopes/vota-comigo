@@ -1,6 +1,7 @@
 "use client";
 
 import type {
+  EscopoMatcher,
   PosicaoUsuarioMatcher,
   ProposicaoCard,
   SiglaUf,
@@ -14,6 +15,7 @@ import {
   activeResultado,
   canRunMatcher,
   executionValidation,
+  hasMoreDeputados,
   initMatcherState,
   matcherReducer,
   selectionCount,
@@ -48,7 +50,7 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     dispatch({ type: "goToStep", step });
   }
 
-  async function execute() {
+  async function runFetch(escopo: EscopoMatcher, offset: number, append: boolean) {
     if (state.siglaUf === null || !canRunMatcher(state)) return;
     if (state.status === "loading") return;
 
@@ -57,19 +59,37 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     try {
       const request = buildExecucaoRequest({
         siglaUf: state.siglaUf,
-        escopo: state.escopo,
+        escopo,
         cidade: state.cidade,
         posicoes: state.posicoes,
       });
-      const resultado = await runMatcher(request, {
-        limit: PAGE_SIZE,
-        offset: 0,
-      });
-      dispatch({ type: "runOk", escopo: state.escopo, resultado });
-    } catch (error) {
-      console.error("matcher execution failed", error);
+      const resultado = await runMatcher(request, { limit: PAGE_SIZE, offset });
+      if (append) {
+        dispatch({ type: "loadMoreOk", escopo, resultado });
+      } else {
+        dispatch({ type: "runOk", escopo, resultado });
+      }
+    } catch {
       dispatch({ type: "runError" });
     }
+  }
+
+  async function execute() {
+    await runFetch(state.escopo, 0, false);
+  }
+
+  async function setEscopo(escopo: EscopoMatcher) {
+    if (escopo === state.escopo) return;
+    dispatch({ type: "setEscopo", escopo });
+    if (state.resultados[escopo] === null) {
+      await runFetch(escopo, 0, false);
+    }
+  }
+
+  async function loadMore() {
+    const r = activeResultado(state);
+    if (!r || r.deputados.length >= r.total) return;
+    await runFetch(state.escopo, r.deputados.length, true);
   }
 
   return {
@@ -78,10 +98,14 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     canRun: canRunMatcher(state),
     selectionCount: selectionCount(state),
     resultado: activeResultado(state),
+    escopo: state.escopo,
+    hasMore: hasMoreDeputados(state),
     setLocal,
     toggleProposicao,
     setPosicao,
     goToStep,
     execute,
+    setEscopo,
+    loadMore,
   };
 }

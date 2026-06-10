@@ -1,8 +1,15 @@
-import type { ProposicaoCard } from "@vota-comigo/shared-types";
+import type {
+  EscopoMatcher,
+  MatcherDeputadoResumo,
+  MatcherResultado,
+  ProposicaoCard,
+} from "@vota-comigo/shared-types";
 import { describe, expect, it } from "vitest";
 
 import {
+  activeResultado,
   canRunMatcher,
+  hasMoreDeputados,
   initMatcherState,
   matcherReducer,
   selectionCount,
@@ -19,6 +26,39 @@ function card(externalIdProposicao: number): ProposicaoCard {
     dataApresentacao: "2023-05-10",
     volumeVotacoesPlenario: 9,
     dataUltimaVotacao: "2025-03-14",
+  };
+}
+
+function deputado(externalIdDeputado: number): MatcherDeputadoResumo {
+  return {
+    externalIdDeputado,
+    nome: `Deputado ${externalIdDeputado}`,
+    partido: "PP",
+    siglaUf: "SP",
+    urlFoto: null,
+    emAtividade: true,
+    compatibilidadeBruta: 80,
+    amostraComparavel: 10,
+    scoreOrdenacaoPercentual: 80,
+    alertas: [],
+  };
+}
+
+function resultado(escopo: EscopoMatcher, overrides: Partial<MatcherResultado> = {}): MatcherResultado {
+  return {
+    siglaUf: "SP",
+    cidade: null,
+    totalProposicoesSelecionadas: 3,
+    totalPosicoesComputaveis: 3,
+    escopo,
+    deputados: [],
+    totalDeputadosAvaliados: 0,
+    deputadosHistoricoIncompleto: 0,
+    total: 0,
+    limit: 20,
+    offset: 0,
+    semBomMatch: false,
+    ...overrides,
   };
 }
 
@@ -244,6 +284,146 @@ describe("matcherReducer", () => {
       expect(stepStatus("resultado", "local")).toBe("done");
       expect(stepStatus("resultado", "selecao")).toBe("done");
       expect(stepStatus("resultado", "posicoes")).toBe("done");
+    });
+  });
+
+  describe("setEscopo", () => {
+    it("flips the active escopo without touching selected or posicoes", () => {
+      // Arrange
+      let state = initMatcherState(candidates);
+      state = matcherReducer(state, { type: "setLocal", siglaUf: "SP", cidade: "" });
+      state = matcherReducer(state, {
+        type: "setPosicao",
+        externalIdProposicao: 1,
+        posicao: "aprovar",
+      });
+
+      // Act
+      const next = matcherReducer(state, { type: "setEscopo", escopo: "nacional" });
+
+      // Assert
+      expect(next.escopo).toBe("nacional");
+      expect(next.selected).toEqual(state.selected);
+      expect(next.posicoes).toEqual(state.posicoes);
+    });
+
+    it("returns the cached resultado for the new escopo when present", () => {
+      // Arrange
+      let state = initMatcherState(candidates);
+      const estadualResultado = resultado("estadual", { deputados: [deputado(1)], total: 1 });
+      const nacionalResultado = resultado("nacional", { deputados: [deputado(2)], total: 1 });
+      state = matcherReducer(state, { type: "runOk", escopo: "estadual", resultado: estadualResultado });
+      state = matcherReducer(state, { type: "runOk", escopo: "nacional", resultado: nacionalResultado });
+
+      // Act
+      const next = matcherReducer(state, { type: "setEscopo", escopo: "estadual" });
+
+      // Assert
+      expect(next.escopo).toBe("estadual");
+      expect(activeResultado(next)).toEqual(estadualResultado);
+    });
+
+    it("returns null for the new escopo when not yet cached", () => {
+      // Arrange
+      let state = initMatcherState(candidates);
+      const estadualResultado = resultado("estadual", { deputados: [deputado(1)], total: 1 });
+      state = matcherReducer(state, { type: "runOk", escopo: "estadual", resultado: estadualResultado });
+
+      // Act
+      const next = matcherReducer(state, { type: "setEscopo", escopo: "nacional" });
+
+      // Assert
+      expect(next.escopo).toBe("nacional");
+      expect(activeResultado(next)).toBeNull();
+    });
+  });
+
+  describe("loadMoreOk", () => {
+    it("appends deputados to the active scope and preserves total", () => {
+      // Arrange
+      const page1 = resultado("estadual", { deputados: [deputado(1), deputado(2)], total: 5 });
+      let state = matcherReducer(initMatcherState(candidates), {
+        type: "runOk",
+        escopo: "estadual",
+        resultado: page1,
+      });
+
+      const page2 = resultado("estadual", { deputados: [deputado(3), deputado(4)], total: 5, offset: 2 });
+
+      // Act
+      const next = matcherReducer(state, { type: "loadMoreOk", escopo: "estadual", resultado: page2 });
+
+      // Assert
+      const active = activeResultado(next)!;
+      expect(active.deputados.map((d) => d.externalIdDeputado)).toEqual([1, 2, 3, 4]);
+      expect(active.total).toBe(5);
+    });
+
+    it("leaves the other scope's cache untouched", () => {
+      // Arrange
+      const estadualResultado = resultado("estadual", { deputados: [deputado(1)], total: 2 });
+      const nacionalResultado = resultado("nacional", { deputados: [deputado(10)], total: 2 });
+      let state = matcherReducer(initMatcherState(candidates), {
+        type: "runOk",
+        escopo: "estadual",
+        resultado: estadualResultado,
+      });
+      state = matcherReducer(state, { type: "runOk", escopo: "nacional", resultado: nacionalResultado });
+      state = matcherReducer(state, { type: "setEscopo", escopo: "estadual" });
+
+      const morePage = resultado("estadual", { deputados: [deputado(2)], total: 2, offset: 1 });
+
+      // Act
+      const next = matcherReducer(state, { type: "loadMoreOk", escopo: "estadual", resultado: morePage });
+
+      // Assert
+      expect(next.resultados.nacional!.deputados.map((d) => d.externalIdDeputado)).toEqual([10]);
+    });
+
+    it("is a no-op when the scope slot is null", () => {
+      // Arrange
+      const state = initMatcherState(candidates);
+      const page = resultado("estadual", { deputados: [deputado(1)], total: 1 });
+
+      // Act
+      const next = matcherReducer(state, { type: "loadMoreOk", escopo: "estadual", resultado: page });
+
+      // Assert
+      expect(next.resultados.estadual).toBeNull();
+    });
+  });
+
+  describe("hasMoreDeputados", () => {
+    it("is true when deputados.length is less than total", () => {
+      // Arrange
+      let state = matcherReducer(initMatcherState(candidates), {
+        type: "runOk",
+        escopo: "estadual",
+        resultado: resultado("estadual", { deputados: [deputado(1), deputado(2)], total: 5 }),
+      });
+
+      // Act / Assert
+      expect(hasMoreDeputados(state)).toBe(true);
+    });
+
+    it("is false when deputados.length equals total", () => {
+      // Arrange
+      let state = matcherReducer(initMatcherState(candidates), {
+        type: "runOk",
+        escopo: "estadual",
+        resultado: resultado("estadual", { deputados: [deputado(1)], total: 1 }),
+      });
+
+      // Act / Assert
+      expect(hasMoreDeputados(state)).toBe(false);
+    });
+
+    it("is false when there is no active resultado", () => {
+      // Arrange
+      const state = initMatcherState(candidates);
+
+      // Act / Assert
+      expect(hasMoreDeputados(state)).toBe(false);
     });
   });
 
