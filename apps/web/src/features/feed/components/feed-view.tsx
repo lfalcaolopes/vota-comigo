@@ -3,7 +3,7 @@
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
 import { useState } from "react";
 
-import { useFeedState } from "../hooks/use-feed-state";
+import { useFeedState } from "@/shared/proposicao";
 
 import { FeedList } from "./feed-list";
 import { FeedSearch } from "./feed-search";

@@ -3,7 +3,7 @@
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
 import { useReducer } from "react";
 
-import { maisVotadas, search } from "@/shared/proposicao";
+import { maisVotadas, search } from "./queries";
 
 import {
   activeFeed,
@@ -15,7 +15,7 @@ import {
   type FeedDisplay,
   type FeedMode,
   type FeedStatus,
-} from "../lib/feed-state";
+} from "./feed-state";
 
 const PAGE_SIZE = 20;
 

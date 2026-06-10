@@ -8,7 +8,7 @@ import {
   SkeletonRows,
 } from "@/shared/ui";
 
-import type { FeedDisplay, FeedStatus } from "../lib/feed-state";
+import type { FeedDisplay, FeedStatus } from "@/shared/proposicao";
 
 type FeedListProps = {
   items: ProposicaoCard[];
