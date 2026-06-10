@@ -1,8 +1,18 @@
-import type { Resultado, VotacaoNominal } from "@vota-comigo/shared-types";
+import type {
+  PlacarVotacao,
+  Resultado,
+  VotacaoNominal,
+} from "@vota-comigo/shared-types";
 
 export { formatShortDate } from "../proposicao/presentation";
 
 export type ResultadoTone = "neutral" | "success" | "danger";
+
+export type PlacarCategoria = {
+  label: string;
+  votos: number;
+  tone: ResultadoTone;
+};
 
 export function toResultadoLabel(resultado: Resultado): string {
   if (resultado === "aprovada") return "Aprovada";
@@ -20,6 +30,30 @@ export function toComparadorLabel(
   votacao: Pick<VotacaoNominal, "isReferenciaMatcher">,
 ): string | null {
   return votacao.isReferenciaMatcher ? "Votação usada no comparador" : null;
+}
+
+export function toPlacarCategorias(placar: PlacarVotacao): PlacarCategoria[] {
+  const votosOutros = placar.placarCompleto
+    ? placar.votosAbstencao +
+      placar.votosObstrucao +
+      placar.votosArtigo17 +
+      placar.votosNaoInformado
+    : placar.votosOutros;
+
+  const outros: PlacarCategoria[] =
+    votosOutros > 0
+      ? [{ label: "Outros", votos: votosOutros, tone: "neutral" }]
+      : [];
+
+  return [
+    { label: "Sim", votos: placar.votosSim, tone: "success" },
+    { label: "Não", votos: placar.votosNao, tone: "danger" },
+    ...outros,
+  ];
+}
+
+export function toPlacarResumidoLabel(placar: PlacarVotacao): string | null {
+  return placar.placarCompleto ? null : "Placar resumido";
 }
 
 export function sortByDataDesc(votacoes: VotacaoNominal[]): VotacaoNominal[] {
