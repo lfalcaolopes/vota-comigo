@@ -15,6 +15,22 @@ import {
 
 export type MatcherStep = "local" | "selecao" | "posicoes" | "resultado";
 export type MatcherStatus = "idle" | "loading" | "error";
+export type StepStatus = "done" | "current" | "upcoming";
+
+export const STEP_ORDER: MatcherStep[] = [
+  "local",
+  "selecao",
+  "posicoes",
+  "resultado",
+];
+
+export function stepStatus(current: MatcherStep, step: MatcherStep): StepStatus {
+  const currentIndex = STEP_ORDER.indexOf(current);
+  const stepIndex = STEP_ORDER.indexOf(step);
+  if (stepIndex < currentIndex) return "done";
+  if (stepIndex === currentIndex) return "current";
+  return "upcoming";
+}
 
 const PRESELECTED_COUNT = 5;
 

@@ -4,6 +4,7 @@ import type { ProposicaoCard } from "@vota-comigo/shared-types";
 
 import { useMatcherState } from "../hooks/use-matcher-state";
 import type { MatcherStep } from "../lib/matcher-state";
+import { StepIndicator } from "./step-indicator";
 import { StepLocal } from "./step-local";
 import { StepPosicoes } from "./step-posicoes";
 import { StepResultado } from "./step-resultado";
@@ -20,8 +21,6 @@ const STEP_LABELS: Record<MatcherStep, string> = {
   resultado: "Quem vota com você",
 };
 
-const STEP_ORDER: MatcherStep[] = ["local", "selecao", "posicoes", "resultado"];
-
 export function Matcher({ initialProposicoes }: MatcherProps) {
   const matcher = useMatcherState(initialProposicoes);
   const { state } = matcher;
@@ -33,17 +32,7 @@ export function Matcher({ initialProposicoes }: MatcherProps) {
         <h1 className="text-2xl leading-tight font-[720] tracking-[-0.02em] text-ink">
           {STEP_LABELS[state.step]}
         </h1>
-        <ol className="flex flex-wrap gap-2 text-xs font-[650] text-muted">
-          {STEP_ORDER.map((step, position) => (
-            <li
-              aria-current={step === state.step ? "step" : undefined}
-              className="rounded-full border border-border px-2.5 py-1 aria-[current=step]:border-primary aria-[current=step]:bg-primary-soft aria-[current=step]:text-ink"
-              key={step}
-            >
-              {position + 1}. {STEP_LABELS[step]}
-            </li>
-          ))}
-        </ol>
+        <StepIndicator current={state.step} onNavigate={matcher.goToStep} />
       </header>
 
       {state.step === "local" ? (

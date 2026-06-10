@@ -6,6 +6,7 @@ import {
   initMatcherState,
   matcherReducer,
   selectionCount,
+  stepStatus,
 } from "../lib/matcher-state";
 
 function card(externalIdProposicao: number): ProposicaoCard {
@@ -203,6 +204,46 @@ describe("matcherReducer", () => {
 
       // Assert
       expect(next.status).toBe("error");
+    });
+  });
+
+  describe("step indicator navigation", () => {
+    it("returns 'done' for steps before the current one", () => {
+      // Arrange / Act / Assert
+      expect(stepStatus("selecao", "local")).toBe("done");
+      expect(stepStatus("posicoes", "local")).toBe("done");
+      expect(stepStatus("posicoes", "selecao")).toBe("done");
+      expect(stepStatus("resultado", "local")).toBe("done");
+      expect(stepStatus("resultado", "selecao")).toBe("done");
+      expect(stepStatus("resultado", "posicoes")).toBe("done");
+    });
+
+    it("returns 'current' for the active step", () => {
+      // Arrange / Act / Assert
+      expect(stepStatus("local", "local")).toBe("current");
+      expect(stepStatus("selecao", "selecao")).toBe("current");
+      expect(stepStatus("posicoes", "posicoes")).toBe("current");
+      expect(stepStatus("resultado", "resultado")).toBe("current");
+    });
+
+    it("returns 'upcoming' for steps after the current one", () => {
+      // Arrange / Act / Assert
+      expect(stepStatus("local", "selecao")).toBe("upcoming");
+      expect(stepStatus("local", "posicoes")).toBe("upcoming");
+      expect(stepStatus("local", "resultado")).toBe("upcoming");
+      expect(stepStatus("selecao", "posicoes")).toBe("upcoming");
+      expect(stepStatus("selecao", "resultado")).toBe("upcoming");
+      expect(stepStatus("posicoes", "resultado")).toBe("upcoming");
+    });
+
+    it("works at the extremes: 'local' has no done steps, 'resultado' has no upcoming steps", () => {
+      // Arrange / Act / Assert
+      expect(stepStatus("local", "selecao")).toBe("upcoming");
+      expect(stepStatus("local", "posicoes")).toBe("upcoming");
+      expect(stepStatus("local", "resultado")).toBe("upcoming");
+      expect(stepStatus("resultado", "local")).toBe("done");
+      expect(stepStatus("resultado", "selecao")).toBe("done");
+      expect(stepStatus("resultado", "posicoes")).toBe("done");
     });
   });
 
