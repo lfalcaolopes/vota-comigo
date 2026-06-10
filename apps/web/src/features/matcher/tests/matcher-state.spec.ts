@@ -342,7 +342,7 @@ describe("matcherReducer", () => {
     it("appends deputados to the active scope and preserves total", () => {
       // Arrange
       const page1 = resultado("estadual", { deputados: [deputado(1), deputado(2)], total: 5 });
-      let state = matcherReducer(initMatcherState(candidates), {
+      const state = matcherReducer(initMatcherState(candidates), {
         type: "runOk",
         escopo: "estadual",
         resultado: page1,
@@ -396,7 +396,7 @@ describe("matcherReducer", () => {
   describe("hasMoreDeputados", () => {
     it("is true when deputados.length is less than total", () => {
       // Arrange
-      let state = matcherReducer(initMatcherState(candidates), {
+      const state = matcherReducer(initMatcherState(candidates), {
         type: "runOk",
         escopo: "estadual",
         resultado: resultado("estadual", { deputados: [deputado(1), deputado(2)], total: 5 }),
@@ -408,7 +408,7 @@ describe("matcherReducer", () => {
 
     it("is false when deputados.length equals total", () => {
       // Arrange
-      let state = matcherReducer(initMatcherState(candidates), {
+      const state = matcherReducer(initMatcherState(candidates), {
         type: "runOk",
         escopo: "estadual",
         resultado: resultado("estadual", { deputados: [deputado(1)], total: 1 }),
