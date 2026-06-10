@@ -5,7 +5,7 @@ import type {
 } from "@vota-comigo/shared-types";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { EmptyQueryError } from "../../lib/api-client";
+import { ApiError, EmptyQueryError, NotFoundError } from "../../lib/api-client";
 import { detalhe, maisVotadas, search } from "../queries";
 
 const response: MaisVotadasResponse = {
@@ -229,6 +229,42 @@ describe("detalhe", () => {
       expect(fetchSpy).toHaveBeenCalledWith(
         "http://localhost:3001/proposicoes/42",
       );
+    });
+  });
+
+  describe("when the proposicao does not exist", () => {
+    it("rejects with NotFoundError on a 404 response", async () => {
+      // Arrange
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue({
+          ok: false,
+          status: 404,
+          json: () => ({}),
+        }),
+      );
+
+      // Act / Assert
+      await expect(detalhe(99)).rejects.toBeInstanceOf(NotFoundError);
+    });
+  });
+
+  describe("when the request fails transiently", () => {
+    it("rejects with an ApiError that is not a NotFoundError on a 503 response", async () => {
+      // Arrange
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue({
+          ok: false,
+          status: 503,
+          json: () => ({}),
+        }),
+      );
+
+      // Act / Assert
+      const error = await detalhe(42).catch((caught: unknown) => caught);
+      expect(error).toBeInstanceOf(ApiError);
+      expect(error).not.toBeInstanceOf(NotFoundError);
     });
   });
 });
