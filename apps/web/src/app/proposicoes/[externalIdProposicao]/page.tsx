@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
+import { NotFoundError } from "@/shared/lib/api-client";
 import {
   ProposicaoBreadcrumb,
   ProposicaoDetalhe,
@@ -17,7 +19,17 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { externalIdProposicao } = await params;
-  const proposicao = await detalhe(Number(externalIdProposicao));
+
+  let proposicao;
+  try {
+    proposicao = await detalhe(Number(externalIdProposicao));
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      notFound();
+    }
+    // Transient failure: render a safe title and let the page body surface the error boundary.
+    return { title: "Proposição | Quem Vota Comigo" };
+  }
 
   const identificador = toIdentificadorLegislativo(proposicao) ?? "Proposição";
   const inicioEmenta = proposicao.ementa?.slice(0, 80).trim();
@@ -32,7 +44,16 @@ export async function generateMetadata({
 
 export default async function ProposicaoDetalhePage({ params }: PageProps) {
   const { externalIdProposicao } = await params;
-  const proposicao = await detalhe(Number(externalIdProposicao));
+
+  let proposicao;
+  try {
+    proposicao = await detalhe(Number(externalIdProposicao));
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      notFound();
+    }
+    throw error;
+  }
 
   return (
     <main className="min-h-screen w-full min-w-0 overflow-x-hidden bg-bg text-ink">
