@@ -1,13 +1,13 @@
 "use client";
 
-import type {
-  MatcherDeputadoResumo,
-  MatcherResultado,
-} from "@vota-comigo/shared-types";
+import type { MatcherResultado } from "@vota-comigo/shared-types";
 
 import { Button, ErrorState, SkeletonRows } from "@/shared/ui";
 
 import type { MatcherStatus } from "../lib/matcher-state";
+import { CoberturaBanner } from "./cobertura-banner";
+import { DeputadoCard } from "./deputado-card";
+import { OrdenacaoDisclosure } from "./ordenacao-disclosure";
 
 type StepResultadoProps = {
   status: MatcherStatus;
@@ -45,16 +45,15 @@ export function StepResultado({
 
   return (
     <div className="grid gap-5">
-      <p className="text-sm leading-normal text-muted">
-        Cobertura limitada a deputados federais com histórico de votação. O
-        percentual vem sempre colado à amostra comparável.
-      </p>
+      <CoberturaBanner />
+      <OrdenacaoDisclosure />
 
-      <ul className="grid gap-2">
+      <ul className="grid">
         {resultado.deputados.map((deputado) => (
-          <DeputadoRow
+          <DeputadoCard
             deputado={deputado}
             key={deputado.externalIdDeputado}
+            totalPosicoesComputaveis={resultado.totalPosicoesComputaveis}
           />
         ))}
       </ul>
@@ -63,26 +62,5 @@ export function StepResultado({
         Voltar
       </Button>
     </div>
-  );
-}
-
-function DeputadoRow({ deputado }: { deputado: MatcherDeputadoResumo }) {
-  const compatibilidade = Math.round(deputado.compatibilidadeBruta);
-
-  return (
-    <li className="flex items-baseline justify-between gap-4 border-b border-border py-3">
-      <span className="font-[650] text-ink">
-        {deputado.nome ?? "Sem nome"}
-        <span className="ml-2 text-sm font-normal text-muted">
-          {deputado.partido ?? "—"} · {deputado.siglaUf}
-        </span>
-      </span>
-      <span className="text-sm font-[650] text-ink">
-        {compatibilidade}% ·{" "}
-        <span className="font-normal text-muted">
-          {deputado.amostraComparavel} comparada(s)
-        </span>
-      </span>
-    </li>
   );
 }

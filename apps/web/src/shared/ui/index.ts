@@ -1,5 +1,6 @@
 export { Button, ButtonLink, IconButton } from "./button";
 export { SearchField, TextField } from "./field";
+export type { BadgeTone } from "./selection";
 export {
   Badge,
   Checkbox,

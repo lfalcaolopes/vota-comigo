@@ -28,7 +28,7 @@ export function Chip({
   );
 }
 
-type BadgeTone = "neutral" | "info" | "success" | "warning" | "danger";
+export type BadgeTone = "neutral" | "info" | "success" | "warning" | "danger";
 
 const badgeTones: Record<BadgeTone, string> = {
   neutral: "border-border bg-surface-muted text-muted",
