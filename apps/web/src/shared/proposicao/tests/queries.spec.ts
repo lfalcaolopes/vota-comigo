@@ -1,11 +1,12 @@
 import type {
   MaisVotadasResponse,
+  ProposicaoDetalhe,
   ProposicoesSearchResponse,
 } from "@vota-comigo/shared-types";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { EmptyQueryError } from "../../lib/api-client";
-import { maisVotadas, search } from "../queries";
+import { detalhe, maisVotadas, search } from "../queries";
 
 const response: MaisVotadasResponse = {
   items: [
@@ -163,6 +164,71 @@ describe("search", () => {
       // Act / Assert
       await expect(search("   ")).rejects.toBeInstanceOf(EmptyQueryError);
       expect(fetchSpy).not.toHaveBeenCalled();
+    });
+  });
+});
+
+const detalheResponse: ProposicaoDetalhe = {
+  externalIdProposicao: 42,
+  siglaTipo: "PL",
+  numero: 1234,
+  ano: 2023,
+  ementa: "Dispõe sobre alguma coisa.",
+  dataApresentacao: "2023-05-10",
+  ementaDetalhada: "Texto mais longo explicando a proposição.",
+  status: {
+    siglaOrgao: "PLEN",
+    situacao: "Pronta para Pauta",
+    regime: "Prioridade",
+    dataHora: "2025-03-14T15:00",
+  },
+  fonteOficial: "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=42",
+  temas: [{ externalCodTema: 37, tema: "Saúde" }],
+  votacoes: [],
+};
+
+describe("detalhe", () => {
+  describe("when the request succeeds", () => {
+    it("returns the typed proposicao detalhe from the response", async () => {
+      // Arrange
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue({
+          ok: true,
+          status: 200,
+          json: () => detalheResponse,
+        }),
+      );
+
+      // Act
+      const result = await detalhe(42);
+
+      // Assert
+      expect(result.externalIdProposicao).toBe(42);
+      expect(result.ementaDetalhada).toBe(
+        "Texto mais longo explicando a proposição.",
+      );
+      expect(result.temas[0].tema).toBe("Saúde");
+    });
+  });
+
+  describe("when given an external id", () => {
+    it("builds the correct resource path", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => detalheResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      await detalhe(42);
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/proposicoes/42",
+      );
     });
   });
 });

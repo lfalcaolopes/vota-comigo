@@ -1,5 +1,6 @@
 import type {
   MaisVotadasResponse,
+  ProposicaoDetalhe,
   ProposicoesSearchResponse,
 } from "@vota-comigo/shared-types";
 
@@ -27,4 +28,10 @@ export function search(
   return apiGet<ProposicoesSearchResponse>(
     `/proposicoes/search?q=${encodeURIComponent(term)}&limit=${limit}&offset=${offset}`,
   );
+}
+
+export function detalhe(
+  externalIdProposicao: number,
+): Promise<ProposicaoDetalhe> {
+  return apiGet<ProposicaoDetalhe>(`/proposicoes/${externalIdProposicao}`);
 }
