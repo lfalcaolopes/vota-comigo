@@ -1,6 +1,6 @@
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
 
-import { FeedList } from "./feed-list";
+import { FeedView } from "./feed-view";
 
 type FeedProps = {
   initialItems: ProposicaoCard[];
@@ -21,7 +21,7 @@ export function Feed({ initialItems, total }: FeedProps) {
         </p>
       </header>
 
-      <FeedList initialItems={initialItems} initialTotal={total} />
+      <FeedView initialItems={initialItems} initialTotal={total} />
     </section>
   );
 }

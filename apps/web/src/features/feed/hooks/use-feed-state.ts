@@ -3,13 +3,15 @@
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
 import { useReducer } from "react";
 
-import { maisVotadas } from "@/shared/proposicao";
+import { maisVotadas, search } from "@/shared/proposicao";
 
 import {
+  activeFeed,
   feedReducer,
   hasMore,
   initFeedState,
   nextOffset,
+  type FeedMode,
   type FeedStatus,
 } from "../lib/feed-state";
 
@@ -19,7 +21,11 @@ export type UseFeedState = {
   items: ProposicaoCard[];
   total: number;
   status: FeedStatus;
+  mode: FeedMode;
+  query: string;
   canLoadMore: boolean;
+  submitSearch: (raw: string) => Promise<void>;
+  clearSearch: () => void;
   loadMore: () => Promise<void>;
 };
 
@@ -32,15 +38,41 @@ export function useFeedState(
     initFeedState(initialItems, initialTotal),
   );
 
+  async function submitSearch(raw: string) {
+    const term = raw.trim();
+    if (term.length === 0) {
+      dispatch({ type: "clearSearch" });
+      return;
+    }
+    if (state.status === "loading") return;
+
+    dispatch({ type: "searchStart", query: term });
+
+    try {
+      const page = await search(term, PAGE_SIZE, 0);
+      dispatch({ type: "searchSuccess", items: page.items, total: page.total });
+    } catch {
+      dispatch({ type: "loadError" });
+    }
+  }
+
+  function clearSearch() {
+    dispatch({ type: "clearSearch" });
+  }
+
   async function loadMore() {
     if (state.status === "loading") return;
 
-    dispatch({ type: "loadStart" });
+    dispatch({ type: "loadMoreStart" });
 
     try {
-      const page = await maisVotadas(PAGE_SIZE, nextOffset(state));
+      const offset = nextOffset(state);
+      const page =
+        state.mode === "search"
+          ? await search(state.query, PAGE_SIZE, offset)
+          : await maisVotadas(PAGE_SIZE, offset);
       dispatch({
-        type: "loadSuccess",
+        type: "loadMoreSuccess",
         items: page.items,
         total: page.total,
       });
@@ -49,11 +81,17 @@ export function useFeedState(
     }
   }
 
+  const feed = activeFeed(state);
+
   return {
-    items: state.items,
-    total: state.total,
+    items: feed.items,
+    total: feed.total,
     status: state.status,
+    mode: state.mode,
+    query: state.query,
     canLoadMore: hasMore(state),
+    submitSearch,
+    clearSearch,
     loadMore,
   };
 }

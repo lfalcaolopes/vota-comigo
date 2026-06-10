@@ -7,6 +7,7 @@ const fieldControl =
 type TextFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   error?: string;
   helperText?: string;
+  hideLabel?: boolean;
   label: string;
 };
 
@@ -14,6 +15,7 @@ export function TextField({
   className,
   error,
   helperText,
+  hideLabel = false,
   id,
   label,
   ...props
@@ -23,7 +25,14 @@ export function TextField({
 
   return (
     <label className="grid gap-2" htmlFor={id}>
-      <span className="text-sm font-[650] leading-[1.3] text-ink">{label}</span>
+      <span
+        className={joinClassNames(
+          "text-sm font-[650] leading-[1.3] text-ink",
+          hideLabel && "sr-only",
+        )}
+      >
+        {label}
+      </span>
       <input
         aria-describedby={messageId}
         aria-invalid={error ? true : undefined}

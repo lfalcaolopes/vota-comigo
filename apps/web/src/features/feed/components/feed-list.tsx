@@ -1,22 +1,52 @@
-"use client";
-
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
 
 import { ProposicaoRow } from "@/shared/proposicao";
-import { Button, InlineMessage, SkeletonRows } from "@/shared/ui";
+import {
+  Button,
+  EmptyState,
+  InlineMessage,
+  SkeletonRows,
+} from "@/shared/ui";
 
-import { useFeedState } from "../hooks/use-feed-state";
+import type { FeedStatus } from "../lib/feed-state";
 
 type FeedListProps = {
-  initialItems: ProposicaoCard[];
-  initialTotal: number;
+  items: ProposicaoCard[];
+  total: number;
+  status: FeedStatus;
+  canLoadMore: boolean;
+  onLoadMore: () => void;
+  isSearching: boolean;
+  onClearSearch: () => void;
 };
 
-export function FeedList({ initialItems, initialTotal }: FeedListProps) {
-  const { items, total, status, canLoadMore, loadMore } = useFeedState(
-    initialItems,
-    initialTotal,
-  );
+export function FeedList({
+  items,
+  total,
+  status,
+  canLoadMore,
+  onLoadMore,
+  isSearching,
+  onClearSearch,
+}: FeedListProps) {
+  if (items.length === 0 && status !== "loading" && status !== "error") {
+    return isSearching ? (
+      <EmptyState
+        action={
+          <Button onClick={onClearSearch} variant="secondary">
+            Limpar busca
+          </Button>
+        }
+        body="Tente outro identificador legislativo ou termo da ementa."
+        title="Nenhuma proposição encontrada"
+      />
+    ) : (
+      <EmptyState
+        body="Assim que houver votações nominais em plenário, elas aparecem aqui."
+        title="Ainda não há proposições"
+      />
+    );
+  }
 
   return (
     <div className="grid min-w-0 gap-6">
@@ -29,7 +59,7 @@ export function FeedList({ initialItems, initialTotal }: FeedListProps) {
 
       {status === "error" ? (
         <InlineMessage
-          body="Não foi possível carregar mais proposições. Tente novamente."
+          body="Não foi possível carregar as proposições. Tente novamente."
           title="Erro ao carregar"
           tone="danger"
         />
@@ -41,13 +71,13 @@ export function FeedList({ initialItems, initialTotal }: FeedListProps) {
         </p>
 
         {status === "error" ? (
-          <Button onClick={loadMore} variant="secondary">
+          <Button onClick={onLoadMore} variant="secondary">
             Tentar novamente
           </Button>
         ) : canLoadMore ? (
           <Button
             disabled={status === "loading"}
-            onClick={loadMore}
+            onClick={onLoadMore}
             variant="secondary"
           >
             {status === "loading" ? "Carregando…" : "Carregar mais"}
