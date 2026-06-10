@@ -1,0 +1,9 @@
+# Fluxo do matcher no front é wizard client-side com estado efêmero
+
+O front do matcher (MVP-2) é um wizard client-side numa rota única `/matcher`, com o estado do fluxo — UF e cidade, proposições selecionadas, posições declaradas, resultado e detalhe aberto — mantido em memória por um `useReducer` na feature `matcher`. O detalhe de um deputado é uma sub-view do mesmo cliente e re-submete o mesmo corpo da execução para `POST /matcher/deputados/:externalIdDeputado`. Diferente do feed e do detalhe de proposição, que são renderizados no servidor a partir de rotas GET, a tela de resultado do matcher não é renderizada no servidor nem é compartilhável por URL no MVP-2.
+
+A decisão decorre do contrato: o matcher é POST-only e o corpo carrega a entrada inteira do usuário (`siglaUf`, `escopo`, `cidade`, `posicoes[]`). Não há recurso identificável por URL para fazer SSR ou link compartilhável de um resultado, e compartilhamento é escopo explícito do MVP-6. Manter o estado em memória, sem URL nem storage, mantém a entrega mínima e coerente com esse corte.
+
+Foram consideradas duas alternativas. Rotas por passo com estado em `sessionStorage` ou na URL dariam back/forward do browser e sobrevivência a refresh, mas exigem serializar e reidratar o corpo da execução em cada rota e re-POSTar, somando peça que o MVP-2 não precisa. Um overlay ou modal sobre o feed acopla o matcher ao feed e contraria o corte do MVP-1, que já adiou overlay no detalhe de proposição.
+
+Como consequência, refresh ou navegação para fora de `/matcher` reinicia o fluxo, o que é aceitável no MVP-2. Quando o MVP-6 (compartilhamento) entrar, será preciso introduzir estado serializável — URL ou identificador de execução — e este ADR registra que essa ausência é deliberada, não esquecimento. A coleta anonimizada de respostas (MVP-7) não está neste fluxo: não há backend de coleta e o `matcher.service` apenas lê; é feature própria, com backend a construir.
