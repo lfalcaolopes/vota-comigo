@@ -68,7 +68,7 @@ export function computeCompatibilidadeDetalhe(
     return {
       proposicao: posicao.proposicao,
       posicaoUsuario: posicao.posicao,
-      votacaoReferencia: posicao.proposicao.votacaoReferencia,
+      votacaoReferencia: posicao.votacaoReferenciaResumo,
       situacaoDeputadoVotacao,
       matcherEffect: effect,
     };

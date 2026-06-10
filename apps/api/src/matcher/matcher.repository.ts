@@ -7,7 +7,10 @@ import type {
 
 import { toProposicoesComputaveis } from '@/proposicoes/rules/proposicoes-computaveis';
 import type { ProposicaoVotacaoJoinRow } from '@/proposicoes/proposicoes.repository';
-import { toProposicaoCard } from '@/proposicoes/mappers/proposicao-card.mapper';
+import {
+  toProposicaoCard,
+  toVotacaoReferenciaResumo,
+} from '@/proposicoes/mappers/proposicao-card.mapper';
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
   deputado,
@@ -55,6 +58,7 @@ function selectProposicaoVotacaoJoin(
       numero: proposicao.numero,
       ano: proposicao.ano,
       ementa: proposicao.ementa,
+      dataApresentacao: proposicao.dataApresentacao,
       ultimoStatusSiglaOrgao: proposicao.ultimoStatusSiglaOrgao,
       ultimoStatusDescricaoSituacao: proposicao.ultimoStatusDescricaoSituacao,
       ultimoStatusRegime: proposicao.ultimoStatusRegime,
@@ -150,6 +154,7 @@ export function createMatcherRepository(
           dataHoraRegistro: item.referencia.dataHoraRegistro,
           data: item.referencia.data,
         },
+        votacaoReferenciaResumo: toVotacaoReferenciaResumo(item.referencia),
         votosByDeputado:
           votosByVotacao.get(item.referencia.externalIdVotacao) ??
           new Map<string, VotoCategoria>(),

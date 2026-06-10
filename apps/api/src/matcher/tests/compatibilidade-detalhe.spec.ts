@@ -22,23 +22,9 @@ function proposicao(externalIdProposicao: number): ProposicaoCard {
     numero: externalIdProposicao,
     ano: 2024,
     ementa: 'Proposição de teste',
-    status: {
-      siglaOrgao: 'MESA',
-      situacao: 'Pronta para Pauta',
-      regime: null,
-      dataHora: '2024-01-01T00:00:00Z',
-    },
+    dataApresentacao: '2023-12-01T10:00:00Z',
     volumeVotacoesPlenario: 1,
-    votacaoReferencia: {
-      externalIdVotacao: String(externalIdProposicao),
-      data: '2024-01-01',
-      descricao: 'Aprovado o projeto de lei',
-      pattern: 'projeto_de_lei',
-      votosSim: 1,
-      votosNao: 0,
-      votosOutros: 0,
-      resultado: 'aprovada',
-    },
+    dataUltimaVotacao: '2024-01-01',
   };
 }
 
@@ -54,6 +40,16 @@ function posicao(
     votacaoReferencia: {
       dataHoraRegistro: '2024-01-01T12:00:00Z',
       data: '2024-01-01',
+    },
+    votacaoReferenciaResumo: {
+      externalIdVotacao: String(externalIdProposicao),
+      data: '2024-01-01',
+      descricao: 'Aprovado o projeto de lei',
+      pattern: 'projeto_de_lei',
+      votosSim: 1,
+      votosNao: 0,
+      votosOutros: 0,
+      resultado: 'aprovada',
     },
     votosByDeputado: voto === null ? new Map() : new Map([['dep-1', voto]]),
     ...overrides,

@@ -17,6 +17,8 @@ function head(
     numero: 100,
     ano: 2024,
     ementa: 'Dispõe sobre algo',
+    dataApresentacao: '2024-04-15T10:00:00Z',
+    ementaDetalhada: 'Detalha o alcance da proposição.',
     ultimoStatusSiglaOrgao: 'PLEN',
     ultimoStatusDescricaoSituacao: 'Aprovada',
     ultimoStatusRegime: 'Urgência',
@@ -89,6 +91,8 @@ describe('ProposicoesService.detalhe', () => {
       expect(detail.numero).toBe(100);
       expect(detail.ano).toBe(2024);
       expect(detail.ementa).toBe('Dispõe sobre algo');
+      expect(detail.dataApresentacao).toBe('2024-04-15T10:00:00Z');
+      expect(detail.ementaDetalhada).toBe('Detalha o alcance da proposição.');
       expect(detail.status).toEqual({
         siglaOrgao: 'PLEN',
         situacao: 'Aprovada',

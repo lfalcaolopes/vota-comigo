@@ -44,9 +44,9 @@ export const proposicaoCardSchema = z.object({
   numero: z.number().nullable(),
   ano: z.number().nullable(),
   ementa: z.string().nullable(),
-  status: proposicaoStatusResumoSchema,
+  dataApresentacao: z.string().nullable(),
   volumeVotacoesPlenario: z.number(),
-  votacaoReferencia: votacaoReferenciaResumoSchema,
+  dataUltimaVotacao: z.string().nullable(),
 });
 
 export const placarVotacaoSchema = z.discriminatedUnion('placarCompleto', [
@@ -87,6 +87,8 @@ export const proposicaoDetalheSchema = z.object({
   numero: z.number().nullable(),
   ano: z.number().nullable(),
   ementa: z.string().nullable(),
+  dataApresentacao: z.string().nullable(),
+  ementaDetalhada: z.string().nullable(),
   status: proposicaoStatusResumoSchema,
   fonteOficial: z.string(),
   temas: z.array(temaOficialSchema),

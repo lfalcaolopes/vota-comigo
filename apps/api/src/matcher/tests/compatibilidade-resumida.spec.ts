@@ -52,7 +52,27 @@ function posicao(
   return {
     externalIdProposicao: 1,
     posicao: 'aprovar',
+    proposicao: {
+      externalIdProposicao: 1,
+      siglaTipo: 'PL',
+      numero: 1,
+      ano: 2024,
+      ementa: 'Proposição de teste',
+      dataApresentacao: '2023-12-01T10:00:00Z',
+      volumeVotacoesPlenario: 1,
+      dataUltimaVotacao: '2023-06-01',
+    },
     votacaoReferencia: instanteDentro,
+    votacaoReferenciaResumo: {
+      externalIdVotacao: '1',
+      data: '2023-06-01',
+      descricao: 'Aprovado o projeto de lei',
+      pattern: 'projeto_de_lei',
+      votosSim: 1,
+      votosNao: 0,
+      votosOutros: 0,
+      resultado: 'aprovada',
+    },
     votosByDeputado: new Map(),
     ...overrides,
   };

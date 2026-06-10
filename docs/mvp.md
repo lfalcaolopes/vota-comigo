@@ -24,25 +24,57 @@ O produto no MVP cobre exclusivamente **deputados federais com histórico de vot
 
 Lista pública, sem necessidade de login, das proposições computáveis pelo matcher com maior volume de votações nominais em plenário, conforme a regra definida no Protótipo.
 
+No MVP-1, a rota inicial do produto (`/`) é o próprio feed público. Uma landing page institucional fica fora desse corte para que a primeira tela já entregue a lista de proposições.
+
 **Apresentação em lista:**
-- Informações enxutas: título, data, tipo de proposição, resultado
+- Informações enxutas da proposição: identificador legislativo curto como título (`{siglaTipo} {numero}/{ano}`), ementa como descrição, data de apresentação da proposição e tipo de proposição
+- O card exibe apenas dois agregados de votações no MVP-1: volume total de votações nominais em plenário e data da última votação
+- O card não exibe informações de uma votação específica, nem mesmo da votação de referência do matcher
+- O card não exibe o último status da proposição
+- O card não exibe resultado; no domínio atual existe **Resultado da votação**, mas não existe resultado único da proposição
 - Ordenada por volume de votações nominais em plenário
 - Cada proposição exibida precisa ter uma votação de referência do matcher
 - A lista retorna apenas o resumo necessário para o card; detalhes completos são carregados quando o usuário abre a proposição
+- O contrato público das rotas de proposições precisa expor a data de apresentação da proposição nos cards e no detalhe.
+- A busca do feed consome a rota existente `/proposicoes/search`, que busca por identificador legislativo (`siglaTipo`, `numero`, `ano`) e `ementa`; o front não redefine a regra de busca no MVP-1.
+- O frontend do MVP-1 consome as rotas reais de proposições desde o início; mocks locais ficam restritos a testes de componente quando necessários.
+- A primeira carga do feed em `/` é renderizada no servidor; busca e "carregar mais" são interações client-side sobre as rotas existentes.
+- As páginas públicas do MVP-1 têm `title` e `description` básicos; OpenGraph e Twitter cards completos ficam para o MVP-6.
+- Quando a busca está vazia, a tela exibe o feed padrão de **Proposições mais votadas em plenário** e não chama `/proposicoes/search`.
+- A paginação do feed usa ação "carregar mais" sobre o `limit`/`offset` das rotas existentes, sem paginação numerada no MVP-1.
+- O feed carrega 20 itens inicialmente e mais 20 a cada ação de "carregar mais", acompanhando o padrão das rotas existentes.
+- Quando o feed padrão não tiver itens, a tela informa que ainda não há proposições computáveis para exibir.
+- Quando uma busca não tiver resultados, a tela informa que nenhuma proposição foi encontrada para a busca e oferece ação para limpar a busca e voltar ao feed padrão.
+- Erros de carregamento no feed e no detalhe usam mensagem genérica com ação "Tentar novamente"; detalhes técnicos não aparecem na UI pública.
+- Em mobile, o card do feed mantém as mesmas informações do desktop; apenas layout e densidade visual se adaptam ao espaço disponível.
 
-**Modal / expansão ao clicar:**
-- Detalhes completos da votação
+**Detalhe ao clicar:**
+- Cada proposição tem URL própria canônica (`/proposicoes/{externalIdProposicao}`) desde o MVP-1, para permitir link compartilhável e meta tags no MVP.
+- A primeira carga da página de detalhe é renderizada no servidor.
+- No MVP-1, o clique no card navega para a rota normal de detalhe; overlay ou modal preservando contexto de lista fica fora desse corte.
+- Quando a API retornar 404 para uma proposição, a rota de detalhe usa a página de não encontrado; falhas transitórias de carregamento usam erro genérico com tentativa de recarregar.
+- A página de detalhe exibe breadcrumb no topo no formato "Proposições > {siglaTipo} {numero}/{ano}", com "Proposições" apontando para o feed público em `/`.
+- Detalhes completos da proposição
+- Ementa detalhada quando disponível, como complemento à ementa principal e não como substituta
+- Último status da proposição exibido no detalhe como situação ou tramitação atual
+- Temas oficiais da proposição quando disponíveis, exibidos apenas no detalhe
 - Votações nominais em plenário vinculadas à proposição, sem duplicatas
-- Votação de referência do matcher exibida como uma votação normal da lista, marcada visualmente como referência
+- Votação de referência do matcher exibida como uma votação normal da lista, marcada visualmente com o texto público "Votação usada no comparador"
+- A lista de votações no detalhe é exibida da mais recente para a mais antiga; a votação de referência permanece na posição cronológica normal e não é promovida para o topo
 - Orientações de bancada quando disponíveis via API/cache, em corte posterior do MVP-1
-- Placar completo
-- Link para a fonte oficial da proposição e, em cada votação listada, link para a fonte oficial da votação
+- Cada card de votação exibe data, descrição, resultado da votação, placar e marcador visual quando for a votação de referência do matcher
+- Quando o contrato indicar `placarCompleto: true`, o card exibe as categorias completas; quando indicar `placarCompleto: false`, exibe `Sim`, `Não` e `Outros` com rótulo discreto de placar resumido, sem tentar decompor `Outros` no front
+- O detalhe exibe link para a fonte oficial da proposição; o MVP-1 não exige link oficial por votação, porque o contrato atual não expõe essa URL
 - Contexto adicional quando disponível (regime de urgência, destaques, etc.)
 
 **Não entra no MVP:**
 - Resumo por IA
 - Classificação "quem é afetado"
 - Filtros por categoria/comissão temática
+- Apelido popular como título ou campo exibido no card
+- Link direto para inteiro teor da proposição (`urlInteiroTeor`)
+- CTA funcional para iniciar o matcher a partir do feed enquanto o frontend do MVP-2 não existir
+- Decisão formal de configuração pública da URL da API no frontend
 
 ### MVP-2. Matcher — "Quem vota com você"
 

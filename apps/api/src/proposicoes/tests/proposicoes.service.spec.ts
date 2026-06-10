@@ -13,6 +13,7 @@ function joinRow(
     numero: 100,
     ano: 2024,
     ementa: 'Dispõe sobre algo',
+    dataApresentacao: '2024-04-15T10:00:00Z',
     ultimoStatusSiglaOrgao: 'PLEN',
     ultimoStatusDescricaoSituacao: 'Aprovada',
     ultimoStatusRegime: 'Urgência',
@@ -46,7 +47,7 @@ function createService(rows: readonly ProposicaoVotacaoJoinRow[]) {
 
 describe('ProposicoesService.maisVotadas', () => {
   describe('when a proposicao has a classifiable plenary vote', () => {
-    it('returns a card with identity, volume and the reference summary', async () => {
+    it('returns a card with proposicao identity and voting aggregates', async () => {
       // Arrange
       const service = createService([joinRow()]);
 
@@ -62,23 +63,9 @@ describe('ProposicoesService.maisVotadas', () => {
         numero: 100,
         ano: 2024,
         ementa: 'Dispõe sobre algo',
-        status: {
-          siglaOrgao: 'PLEN',
-          situacao: 'Aprovada',
-          regime: 'Urgência',
-          dataHora: '2024-06-01T10:00:00Z',
-        },
+        dataApresentacao: '2024-04-15T10:00:00Z',
         volumeVotacoesPlenario: 1,
-        votacaoReferencia: {
-          externalIdVotacao: '1-1',
-          data: '2024-05-01',
-          descricao: 'Aprovado o Projeto de Lei',
-          pattern: 'projeto_de_lei',
-          votosSim: 300,
-          votosNao: 100,
-          votosOutros: 5,
-          resultado: 'aprovada',
-        },
+        dataUltimaVotacao: '2024-05-01',
       });
     });
   });
@@ -133,6 +120,7 @@ describe('ProposicoesService.maisVotadas', () => {
         2, 1,
       ]);
       expect(page.items[0].volumeVotacoesPlenario).toBe(2);
+      expect(page.items[0].dataUltimaVotacao).toBe('2024-05-01');
     });
 
     it('breaks volume ties by ano desc, numero desc, siglaTipo asc, externalId asc', async () => {

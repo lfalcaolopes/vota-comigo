@@ -80,6 +80,40 @@ const posse = {
   partido: 'PT',
 };
 
+function votacaoReferenciaVotos(
+  externalIdProposicao: number,
+  votosByDeputado: ReadonlyMap<string, 'sim' | 'nao'>,
+): VotacaoReferenciaVotos {
+  return {
+    externalIdProposicao,
+    proposicao: {
+      externalIdProposicao,
+      siglaTipo: 'PL',
+      numero: externalIdProposicao,
+      ano: 2024,
+      ementa: 'Proposição de teste',
+      dataApresentacao: '2023-12-01T10:00:00Z',
+      volumeVotacoesPlenario: 1,
+      dataUltimaVotacao: '2023-06-01',
+    },
+    votacaoReferencia: {
+      dataHoraRegistro: '2023-06-01T15:00:00Z',
+      data: '2023-06-01',
+    },
+    votacaoReferenciaResumo: {
+      externalIdVotacao: String(externalIdProposicao),
+      data: '2023-06-01',
+      descricao: 'Aprovado o projeto de lei',
+      pattern: 'projeto_de_lei',
+      votosSim: 1,
+      votosNao: 0,
+      votosOutros: 0,
+      resultado: 'aprovada',
+    },
+    votosByDeputado,
+  };
+}
+
 const pagina = { limit: 20, offset: 0 };
 
 describe('MatcherService.execute', () => {
@@ -87,14 +121,7 @@ describe('MatcherService.execute', () => {
     it('returns the estadual result with the validation summary and engine deputados', async () => {
       // Arrange
       const votacoes: VotacaoReferenciaVotos[] = [
-        {
-          externalIdProposicao: 1,
-          votacaoReferencia: {
-            dataHoraRegistro: '2023-06-01T15:00:00Z',
-            data: '2023-06-01',
-          },
-          votosByDeputado: new Map([['dep-1', 'sim']]),
-        },
+        votacaoReferenciaVotos(1, new Map([['dep-1', 'sim']])),
       ];
       const deputados: DeputadoCompatibilidadeInput[] = [
         {
@@ -168,39 +195,27 @@ describe('MatcherService.execute', () => {
 
   describe('when the escopo is nacional', () => {
     const votacoes: VotacaoReferenciaVotos[] = [
-      {
-        externalIdProposicao: 1,
-        votacaoReferencia: {
-          dataHoraRegistro: '2023-06-01T15:00:00Z',
-          data: '2023-06-01',
-        },
-        votosByDeputado: new Map([
+      votacaoReferenciaVotos(
+        1,
+        new Map([
           ['dep-sp', 'sim'],
           ['dep-pe', 'nao'],
         ]),
-      },
-      {
-        externalIdProposicao: 2,
-        votacaoReferencia: {
-          dataHoraRegistro: '2023-06-01T15:00:00Z',
-          data: '2023-06-01',
-        },
-        votosByDeputado: new Map([
+      ),
+      votacaoReferenciaVotos(
+        2,
+        new Map([
           ['dep-sp', 'sim'],
           ['dep-pe', 'nao'],
         ]),
-      },
-      {
-        externalIdProposicao: 3,
-        votacaoReferencia: {
-          dataHoraRegistro: '2023-06-01T15:00:00Z',
-          data: '2023-06-01',
-        },
-        votosByDeputado: new Map([
+      ),
+      votacaoReferenciaVotos(
+        3,
+        new Map([
           ['dep-sp', 'sim'],
           ['dep-pe', 'nao'],
         ]),
-      },
+      ),
     ];
 
     // dep-sp concorda em tudo (bruta 100), dep-pe discorda em tudo (bruta 0)
@@ -276,17 +291,14 @@ describe('MatcherService.execute', () => {
     it('floats deputados from the informed UF above tied ones from other UFs', async () => {
       // Arrange: dep-pe e dep-sp votam igual em tudo -> mesmo score e bruta
       const empate: VotacaoReferenciaVotos[] = [1, 2, 3].map(
-        (externalIdProposicao) => ({
-          externalIdProposicao,
-          votacaoReferencia: {
-            dataHoraRegistro: '2023-06-01T15:00:00Z',
-            data: '2023-06-01',
-          },
-          votosByDeputado: new Map([
-            ['dep-sp', 'sim'],
-            ['dep-pe', 'sim'],
-          ]),
-        }),
+        (externalIdProposicao) =>
+          votacaoReferenciaVotos(
+            externalIdProposicao,
+            new Map([
+              ['dep-sp', 'sim'],
+              ['dep-pe', 'sim'],
+            ]),
+          ),
       );
       const service = new MatcherService(
         fakeRepository({
@@ -362,14 +374,7 @@ describe('MatcherService.execute', () => {
       externalIdProposicao: number,
       votos: ReadonlyMap<string, 'sim' | 'nao'>,
     ): VotacaoReferenciaVotos {
-      return {
-        externalIdProposicao,
-        votacaoReferencia: {
-          dataHoraRegistro: '2023-06-01T15:00:00Z',
-          data: '2023-06-01',
-        },
-        votosByDeputado: votos,
-      };
+      return votacaoReferenciaVotos(externalIdProposicao, votos);
     }
 
     function dep(

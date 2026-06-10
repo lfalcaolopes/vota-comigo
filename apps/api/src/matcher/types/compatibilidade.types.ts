@@ -21,6 +21,7 @@ export type PosicaoComputavel = {
   posicao: PosicaoComputavelValue;
   proposicao: ProposicaoCard;
   votacaoReferencia: VotacaoRef;
+  votacaoReferenciaResumo: VotacaoReferenciaResumo;
   votosByDeputado: ReadonlyMap<string, VotoCategoria>;
 };
 
@@ -94,5 +95,6 @@ export type VotacaoReferenciaVotos = {
   externalIdProposicao: number;
   proposicao: ProposicaoCard;
   votacaoReferencia: VotacaoRef;
+  votacaoReferenciaResumo: VotacaoReferenciaResumo;
   votosByDeputado: ReadonlyMap<string, VotoCategoria>;
 };

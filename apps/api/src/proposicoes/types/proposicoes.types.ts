@@ -9,6 +9,7 @@ export type ProposicaoWithVotacoes = {
   numero: number | null;
   ano: number | null;
   ementa: string | null;
+  dataApresentacao: string | null;
   ultimoStatusSiglaOrgao: string | null;
   ultimoStatusDescricaoSituacao: string | null;
   ultimoStatusRegime: string | null;

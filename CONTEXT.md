@@ -60,6 +60,8 @@ _Avoid_: Matéria.
 
 **Proposição afetada**: Proposição vinculada a uma votação pelo CSV `votacoesProposicoes-{ano}.csv`. É a fonte canônica do vínculo votação-proposição e a unidade de exibição do produto no MVP.
 
+**Data de apresentação da proposição**: Momento em que a proposição foi apresentada formalmente à Câmara, conforme o campo `dataApresentacao` da fonte.
+
 **Proposição computável pelo matcher**: Proposição com pelo menos uma votação nominal em plenário vinculada e uma votação de referência do matcher escolhida.
 
 **Votação**: Sessão deliberativa em que deputados registram voto sobre uma ou mais proposições afetadas. Identificada por `idVotacao`.
@@ -232,3 +234,5 @@ _Avoid_: Proposições que marcaram.
 - **Fórmula de relevância** e **Proposições que marcaram** foram usados para um ranking por importância pública. Resolvido: no MVP, o ranking é **Ranking de volume de votações em plenário** e o nome público é **Proposições mais votadas em plenário**; ele não mede relevância, saliência pública ou importância política.
 - **Proposições sem votação de referência do matcher** não entram no **Feed de proposições do MVP** nem na escolha do **Matcher**. O **Ranking de volume de votações em plenário** continua existindo como ordenação metodológica, mas o produto público do MVP só exibe proposições com uma votação nominal representativa da decisão substantiva.
 - **MVP-1** se refere à feature **Feed / Ranking de Proposições Importantes** descrita em `docs/mvp.md`, não ao MVP inteiro nem à primeira entrega técnica do backend.
+- **Data** no card do **Feed de proposições do MVP** é ambígua entre apresentação, último status e votação de referência. Resolvido: no card, a data exibida é a **Data de apresentação da proposição**.
+- **Resultado da proposição** não é um conceito do domínio atual. Resolvido: há **Resultado da votação**, exibido apenas no contexto de uma **Votação** específica; o card do **Feed de proposições do MVP** não exibe resultado.

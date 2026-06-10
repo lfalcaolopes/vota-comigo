@@ -95,6 +95,7 @@ export class MatcherService {
           posicao: posicao.posicao,
           proposicao: referencia.proposicao,
           votacaoReferencia: referencia.votacaoReferencia,
+          votacaoReferenciaResumo: referencia.votacaoReferenciaResumo,
           votosByDeputado: referencia.votosByDeputado,
         },
       ];

@@ -81,6 +81,8 @@ describe('ProposicoesController.detalhe', () => {
     numero: 100,
     ano: 2024,
     ementa: 'Dispõe sobre algo',
+    dataApresentacao: '2024-04-15T10:00:00Z',
+    ementaDetalhada: null,
     status: { siglaOrgao: null, situacao: null, regime: null, dataHora: null },
     fonteOficial:
       'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=1',

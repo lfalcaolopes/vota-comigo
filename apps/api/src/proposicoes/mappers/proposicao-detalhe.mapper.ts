@@ -58,6 +58,8 @@ export function toProposicaoDetalhe(
     numero: proposicao.numero,
     ano: proposicao.ano,
     ementa: proposicao.ementa,
+    dataApresentacao: proposicao.dataApresentacao,
+    ementaDetalhada: proposicao.ementaDetalhada,
     status: {
       siglaOrgao: proposicao.ultimoStatusSiglaOrgao,
       situacao: proposicao.ultimoStatusDescricaoSituacao,

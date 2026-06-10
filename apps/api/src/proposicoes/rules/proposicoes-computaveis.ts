@@ -39,6 +39,7 @@ function groupByProposicao(
         numero: row.numero,
         ano: row.ano,
         ementa: row.ementa,
+        dataApresentacao: row.dataApresentacao,
         ultimoStatusSiglaOrgao: row.ultimoStatusSiglaOrgao,
         ultimoStatusDescricaoSituacao: row.ultimoStatusDescricaoSituacao,
         ultimoStatusRegime: row.ultimoStatusRegime,

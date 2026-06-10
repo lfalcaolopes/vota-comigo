@@ -18,6 +18,7 @@ export type ProposicaoVotacaoJoinRow = {
   numero: number | null;
   ano: number | null;
   ementa: string | null;
+  dataApresentacao: string | null;
   ultimoStatusSiglaOrgao: string | null;
   ultimoStatusDescricaoSituacao: string | null;
   ultimoStatusRegime: string | null;
@@ -40,6 +41,8 @@ export type ProposicaoDetalheHead = {
   numero: number | null;
   ano: number | null;
   ementa: string | null;
+  dataApresentacao: string | null;
+  ementaDetalhada: string | null;
   ultimoStatusSiglaOrgao: string | null;
   ultimoStatusDescricaoSituacao: string | null;
   ultimoStatusRegime: string | null;
@@ -98,6 +101,7 @@ export function createProposicoesRepository(
           numero: proposicao.numero,
           ano: proposicao.ano,
           ementa: proposicao.ementa,
+          dataApresentacao: proposicao.dataApresentacao,
           ultimoStatusSiglaOrgao: proposicao.ultimoStatusSiglaOrgao,
           ultimoStatusDescricaoSituacao:
             proposicao.ultimoStatusDescricaoSituacao,
@@ -133,6 +137,8 @@ export function createProposicoesRepository(
           numero: proposicao.numero,
           ano: proposicao.ano,
           ementa: proposicao.ementa,
+          dataApresentacao: proposicao.dataApresentacao,
+          ementaDetalhada: proposicao.ementaDetalhada,
           ultimoStatusSiglaOrgao: proposicao.ultimoStatusSiglaOrgao,
           ultimoStatusDescricaoSituacao:
             proposicao.ultimoStatusDescricaoSituacao,
