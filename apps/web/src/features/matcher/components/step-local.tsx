@@ -28,8 +28,8 @@ export function StepLocal({ siglaUf, cidade, onConfirm }: StepLocalProps) {
       }}
     >
       <p className="text-sm leading-normal text-muted">
-        Pedimos seu estado para mostrar primeiro os deputados que representam
-        você. A cidade é opcional
+        Usamos seu estado para mostrar primeiro os deputados que te representam.
+        A cidade é opcional e não altera o cálculo.
       </p>
 
       <label className="grid gap-2" htmlFor="matcher-uf">
@@ -61,6 +61,7 @@ export function StepLocal({ siglaUf, cidade, onConfirm }: StepLocalProps) {
         <input
           className="min-h-11 w-full rounded-md border border-border bg-white px-3 py-2.5 text-base text-ink"
           id="matcher-cidade"
+          maxLength={120}
           onChange={(event) => setCidadeValue(event.target.value)}
           value={cidadeValue}
         />

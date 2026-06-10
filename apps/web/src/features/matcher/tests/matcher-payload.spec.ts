@@ -52,6 +52,24 @@ describe("buildExecucaoRequest", () => {
       // Assert
       expect(request.cidade).toBe("Niterói");
     });
+
+    it("includes a cidade of exactly 120 characters", () => {
+      // Arrange
+      const cidadeMax = "A".repeat(120);
+      const input = {
+        siglaUf: "SP" as const,
+        escopo: "estadual" as const,
+        cidade: cidadeMax,
+        posicoes: posicoesMap([[1, "aprovar"]]),
+      };
+
+      // Act
+      const request = buildExecucaoRequest(input);
+
+      // Assert
+      expect(request.cidade).toBe(cidadeMax);
+      expect(request.cidade!.length).toBe(120);
+    });
   });
 
   describe("when no cidade is informed", () => {
