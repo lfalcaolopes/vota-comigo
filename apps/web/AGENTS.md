@@ -1,19 +1,13 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
-
 ## Frontend structure
 
-Product code lives under `src/`; the `app/` directory follows Next.js App Router conventions and holds routing only.
+All product code lives under `src/`, including the App Router; `src/app/` follows Next.js conventions and holds routing only.
 
 The app has three layers with a one-way dependency rule: `app` imports from `features` and `shared`; `features` import from `shared`, never from each other; `shared` imports from nothing above it.
 
 ```txt
 apps/web/
-  app/         # routing, layouts, metadata
   src/
+    app/       # routing, layouts, metadata
     features/  # flows with their own behavior
     shared/    # reusable blocks owned by no feature
 ```

@@ -15,7 +15,7 @@ import {
   Switch,
   Tabs,
   TextField,
-} from "@/components/ui";
+} from "@/shared/ui";
 
 const colorTokens = [
   ["bg", "oklch(1 0 0)", "var(--color-bg)"],
