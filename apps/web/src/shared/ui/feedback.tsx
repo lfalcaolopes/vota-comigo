@@ -14,13 +14,19 @@ type PanelProps = PropsWithChildren<
 
 export function Panel({ children, className, title, ...props }: PanelProps) {
   return (
-    <section className={joinClassNames("vc-panel", className)} {...props}>
+    <section
+      className={joinClassNames(
+        "min-w-0 rounded-lg border border-border bg-surface",
+        className,
+      )}
+      {...props}
+    >
       {title ? (
-        <div className="vc-panel__header">
-          <h2 className="vc-panel__title">{title}</h2>
+        <div className="flex items-start justify-between gap-4 px-5 pt-5">
+          <h2 className="text-lg font-[680] leading-snug text-ink">{title}</h2>
         </div>
       ) : null}
-      <div className="vc-panel__body">{children}</div>
+      <div className="grid min-w-0 gap-4 p-5">{children}</div>
     </section>
   );
 }
@@ -39,13 +45,15 @@ export function InlineMessage({
   return (
     <div
       className={joinClassNames(
-        "vc-message",
-        tone === "danger" && "vc-message--danger",
+        "grid gap-2 rounded-md border p-4 text-ink",
+        tone === "danger"
+          ? "border-danger-border bg-danger-soft"
+          : "border-border bg-surface-muted",
       )}
       role={tone === "danger" ? "alert" : "status"}
     >
-      <p className="vc-message__title">{title}</p>
-      <p className="vc-message__body">{body}</p>
+      <p className="text-sm font-[720]">{title}</p>
+      <p className="text-sm leading-normal text-muted">{body}</p>
     </div>
   );
 }
@@ -58,9 +66,9 @@ type EmptyStateProps = {
 
 export function EmptyState({ action, body, title }: EmptyStateProps) {
   return (
-    <div className="vc-empty">
-      <h2 className="vc-empty__title">{title}</h2>
-      <p className="vc-empty__body">{body}</p>
+    <div className="grid justify-items-start gap-3 rounded-lg border border-dashed border-border-strong bg-surface p-6">
+      <h2 className="text-lg font-bold">{title}</h2>
+      <p className="leading-normal text-muted">{body}</p>
       {action}
     </div>
   );
@@ -70,7 +78,13 @@ type SourceLinkProps = AnchorHTMLAttributes<HTMLAnchorElement>;
 
 export function SourceLink({ children, className, ...props }: SourceLinkProps) {
   return (
-    <a className={joinClassNames("vc-source-link", className)} {...props}>
+    <a
+      className={joinClassNames(
+        "inline-flex items-center gap-2 text-sm font-[650] text-info underline decoration-info/35 underline-offset-[0.18em]",
+        className,
+      )}
+      {...props}
+    >
       <span>{children}</span>
       <svg aria-hidden="true" fill="none" height="16" viewBox="0 0 16 16" width="16">
         <path
@@ -91,13 +105,24 @@ type SkeletonRowsProps = {
 
 export function SkeletonRows({ count = 3 }: SkeletonRowsProps) {
   return (
-    <div aria-label="Carregando conteúdo" className="vc-skeleton" role="status">
+    <div aria-label="Carregando conteúdo" className="grid gap-3" role="status">
       {Array.from({ length: count }, (_, index) => (
-        <div className="vc-skeleton__row" key={index}>
-          <span className="vc-skeleton__line vc-skeleton__line--medium" />
-          <span className="vc-skeleton__line vc-skeleton__line--short" />
+        <div className="grid gap-2 border-b border-border py-3" key={index}>
+          <SkeletonLine className="w-[68%]" />
+          <SkeletonLine className="w-[42%]" />
         </div>
       ))}
     </div>
+  );
+}
+
+function SkeletonLine({ className }: { className?: string }) {
+  return (
+    <span
+      className={joinClassNames(
+        "h-3 animate-skeleton rounded-full bg-[length:200%_100%] bg-[linear-gradient(90deg,var(--color-surface-muted),var(--color-border),var(--color-surface-muted))]",
+        className,
+      )}
+    />
   );
 }
