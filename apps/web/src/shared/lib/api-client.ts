@@ -18,6 +18,13 @@ export class NotFoundError extends ApiError {
   }
 }
 
+export class EmptyQueryError extends Error {
+  constructor(message = "Busca exige um termo") {
+    super(message);
+    this.name = "EmptyQueryError";
+  }
+}
+
 export async function apiGet<T>(path: string): Promise<T> {
   const res = await fetch(API_BASE_URL + path);
 

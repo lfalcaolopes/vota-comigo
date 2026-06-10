@@ -1,4 +1,4 @@
-export { maisVotadas } from "./queries";
+export { maisVotadas, search } from "./queries";
 export { ProposicaoRow } from "./proposicao-row";
 export {
   formatShortDate,
