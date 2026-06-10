@@ -1,9 +1,11 @@
-import type { VotacaoNominal } from "@vota-comigo/shared-types";
+import type { PlacarVotacao, VotacaoNominal } from "@vota-comigo/shared-types";
 import { describe, expect, it } from "vitest";
 
 import {
   sortByDataDesc,
   toComparadorLabel,
+  toPlacarCategorias,
+  toPlacarResumidoLabel,
   toResultadoLabel,
   toResultadoTone,
 } from "../presentation";
@@ -99,6 +101,171 @@ describe("toComparadorLabel", () => {
 
       // Act / Assert
       expect(toComparadorLabel(votacao)).toBeNull();
+    });
+  });
+});
+
+describe("toPlacarCategorias", () => {
+  describe("when placarCompleto is true", () => {
+    const placar: PlacarVotacao = {
+      placarCompleto: true,
+      votosSim: 300,
+      votosNao: 100,
+      votosAbstencao: 5,
+      votosObstrucao: 10,
+      votosArtigo17: 2,
+      votosNaoInformado: 1,
+    };
+
+    it("returns exactly Sim, Não, Outros", () => {
+      // Act
+      const categorias = toPlacarCategorias(placar);
+
+      // Assert
+      expect(categorias.map((c) => c.label)).toEqual(["Sim", "Não", "Outros"]);
+    });
+
+    it("aggregates all secondary votes into Outros", () => {
+      // Act
+      const outros = toPlacarCategorias(placar).find(
+        (c) => c.label === "Outros",
+      );
+
+      // Assert — 5 + 10 + 2 + 1 = 18
+      expect(outros?.votos).toBe(18);
+    });
+
+    it("omits Outros when all secondary votes are 0", () => {
+      // Arrange
+      const noSecondary: PlacarVotacao = {
+        placarCompleto: true,
+        votosSim: 300,
+        votosNao: 100,
+        votosAbstencao: 0,
+        votosObstrucao: 0,
+        votosArtigo17: 0,
+        votosNaoInformado: 0,
+      };
+
+      // Act
+      const categorias = toPlacarCategorias(noSecondary);
+
+      // Assert
+      expect(categorias.map((c) => c.label)).toEqual(["Sim", "Não"]);
+    });
+
+    it("includes Sim even when votosSim is 0", () => {
+      // Arrange
+      const zeroSim: PlacarVotacao = { ...placar, votosSim: 0 };
+
+      // Act
+      const categorias = toPlacarCategorias(zeroSim);
+
+      // Assert
+      expect(categorias.find((c) => c.label === "Sim")?.votos).toBe(0);
+    });
+
+    it("includes Não even when votosNao is 0", () => {
+      // Arrange
+      const zeroNao: PlacarVotacao = { ...placar, votosNao: 0 };
+
+      // Act
+      const categorias = toPlacarCategorias(zeroNao);
+
+      // Assert
+      expect(categorias.find((c) => c.label === "Não")?.votos).toBe(0);
+    });
+
+    it("assigns success tone to Sim, danger to Não, neutral to Outros", () => {
+      // Act
+      const categorias = toPlacarCategorias(placar);
+
+      // Assert
+      expect(categorias.find((c) => c.label === "Sim")?.tone).toBe("success");
+      expect(categorias.find((c) => c.label === "Não")?.tone).toBe("danger");
+      expect(categorias.find((c) => c.label === "Outros")?.tone).toBe(
+        "neutral",
+      );
+    });
+  });
+
+  describe("when placarCompleto is false", () => {
+    const placar: PlacarVotacao = {
+      placarCompleto: false,
+      votosSim: 10,
+      votosNao: 5,
+      votosOutros: 2,
+    };
+
+    it("returns exactly Sim, Não, Outros when all > 0", () => {
+      // Act
+      const categorias = toPlacarCategorias(placar);
+
+      // Assert
+      expect(categorias.map((c) => c.label)).toEqual(["Sim", "Não", "Outros"]);
+    });
+
+    it("omits Outros when votosOutros is 0", () => {
+      // Arrange
+      const noOutros: PlacarVotacao = {
+        placarCompleto: false,
+        votosSim: 10,
+        votosNao: 5,
+        votosOutros: 0,
+      };
+
+      // Act
+      const categorias = toPlacarCategorias(noOutros);
+
+      // Assert
+      expect(categorias.map((c) => c.label)).toEqual(["Sim", "Não"]);
+    });
+
+    it("assigns correct tones", () => {
+      // Act
+      const categorias = toPlacarCategorias(placar);
+
+      // Assert
+      expect(categorias.find((c) => c.label === "Sim")?.tone).toBe("success");
+      expect(categorias.find((c) => c.label === "Não")?.tone).toBe("danger");
+      expect(categorias.find((c) => c.label === "Outros")?.tone).toBe(
+        "neutral",
+      );
+    });
+  });
+});
+
+describe("toPlacarResumidoLabel", () => {
+  describe("when placarCompleto is false", () => {
+    it("returns 'Placar resumido'", () => {
+      // Arrange
+      const placar: PlacarVotacao = {
+        placarCompleto: false,
+        votosSim: 10,
+        votosNao: 5,
+        votosOutros: 2,
+      };
+
+      // Act / Assert
+      expect(toPlacarResumidoLabel(placar)).toBe("Placar resumido");
+    });
+  });
+
+  describe("when placarCompleto is true", () => {
+    it("returns null", () => {
+      // Arrange
+      const placar: PlacarVotacao = {
+        placarCompleto: true,
+        votosSim: 300,
+        votosNao: 100,
+        votosAbstencao: 0,
+        votosObstrucao: 0,
+        votosArtigo17: 0,
+        votosNaoInformado: 0,
+      };
+
+      // Act / Assert
+      expect(toPlacarResumidoLabel(placar)).toBeNull();
     });
   });
 });
