@@ -2,6 +2,8 @@
 
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
 
+import { useFeedState } from "@/shared/proposicao";
+
 import { useMatcherState } from "../hooks/use-matcher-state";
 import type { MatcherStep } from "../lib/matcher-state";
 import { StepIndicator } from "./step-indicator";
@@ -12,6 +14,7 @@ import { StepSelecao } from "./step-selecao";
 
 type MatcherProps = {
   initialProposicoes: ProposicaoCard[];
+  initialTotal: number;
 };
 
 const STEP_LABELS: Record<MatcherStep, string> = {
@@ -21,9 +24,11 @@ const STEP_LABELS: Record<MatcherStep, string> = {
   resultado: "Quem vota com você",
 };
 
-export function Matcher({ initialProposicoes }: MatcherProps) {
+export function Matcher({ initialProposicoes, initialTotal }: MatcherProps) {
   const matcher = useMatcherState(initialProposicoes);
   const { state } = matcher;
+
+  const feed = useFeedState(initialProposicoes, initialTotal);
 
   return (
     <section className="grid gap-8">
@@ -48,11 +53,21 @@ export function Matcher({ initialProposicoes }: MatcherProps) {
 
       {state.step === "selecao" ? (
         <StepSelecao
-          candidates={initialProposicoes}
+          canLoadMore={feed.canLoadMore}
+          display={feed.display}
+          items={feed.items}
           onAdvance={() => matcher.goToStep("posicoes")}
           onBack={() => matcher.goToStep("local")}
+          onClearSearch={feed.clearSearch}
+          onLoadMore={feed.loadMore}
+          onSubmitSearch={feed.submitSearch}
           onToggle={matcher.toggleProposicao}
+          query={feed.query}
           selected={state.selected}
+          status={feed.status}
+          total={feed.total}
+          totalComputaveis={matcher.validation.totalComputaveis}
+          totalSelecionadas={matcher.validation.totalSelecionadas}
         />
       ) : null}
 
