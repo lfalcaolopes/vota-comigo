@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { getInitials } from "../lib/matcher-presentation";
 
 type DeputadoAvatarProps = {
@@ -10,10 +12,12 @@ export function DeputadoAvatar({ nome, urlFoto }: DeputadoAvatarProps) {
 
   if (urlFoto) {
     return (
-      <img
+      <Image
         alt={displayName}
         className="size-10 rounded-full border border-border object-cover"
+        height={40}
         src={urlFoto}
+        width={40}
       />
     );
   }
