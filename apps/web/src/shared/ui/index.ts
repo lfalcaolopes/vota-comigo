@@ -11,6 +11,7 @@ export {
 } from "./selection";
 export {
   EmptyState,
+  ErrorState,
   InlineMessage,
   Panel,
   SkeletonRows,

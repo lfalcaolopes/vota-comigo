@@ -4,6 +4,7 @@ import type {
   PropsWithChildren,
   ReactNode,
 } from "react";
+import { Button } from "./button";
 import { joinClassNames } from "./utils";
 
 type PanelProps = PropsWithChildren<
@@ -70,6 +71,21 @@ export function EmptyState({ action, body, title }: EmptyStateProps) {
       <h2 className="text-lg font-bold">{title}</h2>
       <p className="leading-normal text-muted">{body}</p>
       {action}
+    </div>
+  );
+}
+
+export function ErrorState({ onRetry }: { onRetry: () => void }) {
+  return (
+    <div className="grid gap-4">
+      <InlineMessage
+        body="Não foi possível carregar esta proposição. Tente novamente."
+        title="Erro ao carregar"
+        tone="danger"
+      />
+      <Button className="justify-self-start" onClick={onRetry} variant="secondary">
+        Tentar novamente
+      </Button>
     </div>
   );
 }
