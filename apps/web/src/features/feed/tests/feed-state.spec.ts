@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   activeFeed,
+  feedDisplay,
   feedReducer,
   hasMore,
   initFeedState,
@@ -246,6 +247,104 @@ describe("hasMore", () => {
 
       // Act / Assert
       expect(hasMore(state)).toBe(false);
+    });
+  });
+});
+
+describe("feedDisplay", () => {
+  describe("in the default feed", () => {
+    it("shows results when there are items", () => {
+      // Arrange
+      const state = initFeedState(firstPage, 50);
+
+      // Act / Assert
+      expect(feedDisplay(state)).toBe("results");
+    });
+
+    it("shows the default empty state when there are no items", () => {
+      // Arrange
+      const state = initFeedState([], 0);
+
+      // Act / Assert
+      expect(feedDisplay(state)).toBe("empty-default");
+    });
+
+    it("keeps showing results while loading more over existing items", () => {
+      // Arrange
+      const state = feedReducer(initFeedState(firstPage, 50), {
+        type: "loadMoreStart",
+      });
+
+      // Act / Assert
+      expect(feedDisplay(state)).toBe("results");
+    });
+  });
+
+  describe("in the search feed", () => {
+    it("shows loading while the initial search is in flight", () => {
+      // Arrange
+      const state = feedReducer(initFeedState(firstPage, 50), {
+        type: "searchStart",
+        query: "saúde",
+      });
+
+      // Act / Assert
+      expect(feedDisplay(state)).toBe("loading");
+    });
+
+    it("shows results when matches arrive", () => {
+      // Arrange
+      const state = feedReducer(
+        feedReducer(initFeedState(firstPage, 50), {
+          type: "searchStart",
+          query: "saúde",
+        }),
+        { type: "searchSuccess", items: [card(7)], total: 1 },
+      );
+
+      // Act / Assert
+      expect(feedDisplay(state)).toBe("results");
+    });
+
+    it("shows the search empty state when there are no matches", () => {
+      // Arrange
+      const state = feedReducer(
+        feedReducer(initFeedState(firstPage, 50), {
+          type: "searchStart",
+          query: "xyz",
+        }),
+        { type: "searchSuccess", items: [], total: 0 },
+      );
+
+      // Act / Assert
+      expect(feedDisplay(state)).toBe("empty-search");
+    });
+  });
+
+  describe("when a load fails", () => {
+    it("shows the error state when no items are left to show", () => {
+      // Arrange
+      const state = feedReducer(
+        feedReducer(initFeedState(firstPage, 50), {
+          type: "searchStart",
+          query: "saúde",
+        }),
+        { type: "loadError" },
+      );
+
+      // Act / Assert
+      expect(feedDisplay(state)).toBe("error");
+    });
+
+    it("keeps showing results when items remain for inline retry", () => {
+      // Arrange
+      const state = feedReducer(
+        feedReducer(initFeedState(firstPage, 50), { type: "loadMoreStart" }),
+        { type: "loadError" },
+      );
+
+      // Act / Assert
+      expect(feedDisplay(state)).toBe("results");
     });
   });
 });

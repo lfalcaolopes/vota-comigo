@@ -90,6 +90,20 @@ export function feedReducer(state: FeedState, action: FeedAction): FeedState {
   }
 }
 
+export type FeedDisplay =
+  | "results"
+  | "loading"
+  | "empty-default"
+  | "empty-search"
+  | "error";
+
+export function feedDisplay(state: FeedState): FeedDisplay {
+  if (activeFeed(state).items.length > 0) return "results";
+  if (state.status === "error") return "error";
+  if (state.status === "loading") return "loading";
+  return state.mode === "search" ? "empty-search" : "empty-default";
+}
+
 export function nextOffset(state: FeedState): number {
   return activeFeed(state).items.length;
 }
