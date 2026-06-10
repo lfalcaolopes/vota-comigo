@@ -8,15 +8,15 @@ import {
   SkeletonRows,
 } from "@/shared/ui";
 
-import type { FeedStatus } from "../lib/feed-state";
+import type { FeedDisplay, FeedStatus } from "../lib/feed-state";
 
 type FeedListProps = {
   items: ProposicaoCard[];
   total: number;
   status: FeedStatus;
+  display: FeedDisplay;
   canLoadMore: boolean;
   onLoadMore: () => void;
-  isSearching: boolean;
   onClearSearch: () => void;
 };
 
@@ -24,13 +24,26 @@ export function FeedList({
   items,
   total,
   status,
+  display,
   canLoadMore,
   onLoadMore,
-  isSearching,
   onClearSearch,
 }: FeedListProps) {
-  if (items.length === 0 && status !== "loading" && status !== "error") {
-    return isSearching ? (
+  if (display === "loading") {
+    return <SkeletonRows count={3} />;
+  }
+
+  if (display === "empty-default") {
+    return (
+      <EmptyState
+        body="Ainda não há proposições computáveis para exibir."
+        title="Nada para exibir ainda"
+      />
+    );
+  }
+
+  if (display === "empty-search") {
+    return (
       <EmptyState
         action={
           <Button onClick={onClearSearch} variant="secondary">
@@ -40,11 +53,21 @@ export function FeedList({
         body="Tente outro identificador legislativo ou termo da ementa."
         title="Nenhuma proposição encontrada"
       />
-    ) : (
-      <EmptyState
-        body="Assim que houver votações nominais em plenário, elas aparecem aqui."
-        title="Ainda não há proposições"
-      />
+    );
+  }
+
+  if (display === "error") {
+    return (
+      <div className="grid gap-4">
+        <InlineMessage
+          body="Não foi possível carregar as proposições. Tente novamente."
+          title="Erro ao carregar"
+          tone="danger"
+        />
+        <Button className="justify-self-start" onClick={onLoadMore} variant="secondary">
+          Tentar novamente
+        </Button>
+      </div>
     );
   }
 

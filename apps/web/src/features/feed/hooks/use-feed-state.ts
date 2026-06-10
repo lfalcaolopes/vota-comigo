@@ -7,10 +7,12 @@ import { maisVotadas, search } from "@/shared/proposicao";
 
 import {
   activeFeed,
+  feedDisplay,
   feedReducer,
   hasMore,
   initFeedState,
   nextOffset,
+  type FeedDisplay,
   type FeedMode,
   type FeedStatus,
 } from "../lib/feed-state";
@@ -23,6 +25,7 @@ export type UseFeedState = {
   status: FeedStatus;
   mode: FeedMode;
   query: string;
+  display: FeedDisplay;
   canLoadMore: boolean;
   submitSearch: (raw: string) => Promise<void>;
   clearSearch: () => void;
@@ -51,7 +54,8 @@ export function useFeedState(
     try {
       const page = await search(term, PAGE_SIZE, 0);
       dispatch({ type: "searchSuccess", items: page.items, total: page.total });
-    } catch {
+    } catch (error) {
+      console.error("feed search failed", error);
       dispatch({ type: "loadError" });
     }
   }
@@ -76,7 +80,8 @@ export function useFeedState(
         items: page.items,
         total: page.total,
       });
-    } catch {
+    } catch (error) {
+      console.error("feed load more failed", error);
       dispatch({ type: "loadError" });
     }
   }
@@ -89,6 +94,7 @@ export function useFeedState(
     status: state.status,
     mode: state.mode,
     query: state.query,
+    display: feedDisplay(state),
     canLoadMore: hasMore(state),
     submitSearch,
     clearSearch,

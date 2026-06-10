@@ -20,6 +20,7 @@ export function FeedView({ initialItems, initialTotal }: FeedViewProps) {
     status,
     mode,
     query,
+    display,
     canLoadMore,
     submitSearch,
     clearSearch,
@@ -47,7 +48,7 @@ export function FeedView({ initialItems, initialTotal }: FeedViewProps) {
 
       <FeedList
         canLoadMore={canLoadMore}
-        isSearching={mode === "search"}
+        display={display}
         items={items}
         onClearSearch={handleClear}
         onLoadMore={loadMore}
