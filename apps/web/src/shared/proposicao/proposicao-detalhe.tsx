@@ -4,6 +4,7 @@ import type {
   TemaOficial,
 } from "@vota-comigo/shared-types";
 
+import { Votacoes } from "../votacao/votacoes";
 import { formatShortDate, toIdentificadorLegislativo } from "./presentation";
 
 export function ProposicaoDetalhe({
@@ -42,6 +43,10 @@ export function ProposicaoDetalhe({
         temas={proposicao.temas}
         fonteOficial={proposicao.fonteOficial}
       />
+
+      <section className="grid gap-6 border-t border-border pt-6">
+        <Votacoes votacoes={proposicao.votacoes} />
+      </section>
     </div>
   );
 }
