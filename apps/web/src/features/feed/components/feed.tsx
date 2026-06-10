@@ -1,8 +1,13 @@
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
 
-import { ProposicaoRow } from "@/shared/proposicao";
+import { FeedList } from "./feed-list";
 
-export function Feed({ items }: { items: ProposicaoCard[] }) {
+type FeedProps = {
+  initialItems: ProposicaoCard[];
+  total: number;
+};
+
+export function Feed({ initialItems, total }: FeedProps) {
   return (
     <section>
       <header className="mb-10 grid max-w-[68ch] gap-4">
@@ -16,11 +21,7 @@ export function Feed({ items }: { items: ProposicaoCard[] }) {
         </p>
       </header>
 
-      <div className="grid min-w-0 border-t border-border">
-        {items.map((card) => (
-          <ProposicaoRow card={card} key={card.externalIdProposicao} />
-        ))}
-      </div>
+      <FeedList initialItems={initialItems} initialTotal={total} />
     </section>
   );
 }
