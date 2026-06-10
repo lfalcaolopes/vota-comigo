@@ -128,15 +128,16 @@ export function SegmentedControl({
 
 type ChoiceProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
+  hideLabel?: boolean;
 };
 
 const choice = "inline-flex items-center gap-2 text-sm font-semibold text-ink";
 
-export function Checkbox({ className, label, ...props }: ChoiceProps) {
+export function Checkbox({ className, hideLabel = false, label, ...props }: ChoiceProps) {
   return (
     <label className={joinClassNames(choice, className)}>
       <input className="size-4.5 accent-primary" type="checkbox" {...props} />
-      <span>{label}</span>
+      <span className={hideLabel ? "sr-only" : undefined}>{label}</span>
     </label>
   );
 }
