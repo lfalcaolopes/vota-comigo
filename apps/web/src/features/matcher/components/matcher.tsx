@@ -66,7 +66,6 @@ export function Matcher({ initialProposicoes, initialTotal }: MatcherProps) {
           selected={state.selected}
           status={feed.status}
           total={feed.total}
-          totalComputaveis={matcher.validation.totalComputaveis}
           totalSelecionadas={matcher.validation.totalSelecionadas}
         />
       ) : null}

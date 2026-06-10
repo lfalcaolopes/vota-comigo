@@ -19,7 +19,6 @@ type StepSelecaoProps = {
   query: string;
   selected: ProposicaoCard[];
   totalSelecionadas: number;
-  totalComputaveis: number;
   onToggle: (proposicao: ProposicaoCard) => void;
   onSubmitSearch: (raw: string) => Promise<void>;
   onClearSearch: () => void;
@@ -37,7 +36,6 @@ export function StepSelecao({
   query,
   selected,
   totalSelecionadas,
-  totalComputaveis,
   onToggle,
   onSubmitSearch,
   onClearSearch,
@@ -78,8 +76,7 @@ export function StepSelecao({
       />
 
       <p className="text-sm leading-normal text-muted">
-        Selecionadas: {totalSelecionadas} de até {MAX_POSICOES} · Posições
-        computáveis: {totalComputaveis}
+        Selecionadas: {totalSelecionadas} de até {MAX_POSICOES}
       </p>
 
       {atLimit ? (
