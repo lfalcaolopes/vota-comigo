@@ -91,6 +91,7 @@ export function Matcher({ initialProposicoes, initialTotal }: MatcherProps) {
           onLoadMore={matcher.loadMore}
           onRetry={matcher.execute}
           resultado={matcher.resultado}
+          state={state}
           status={state.status}
         />
       ) : null}

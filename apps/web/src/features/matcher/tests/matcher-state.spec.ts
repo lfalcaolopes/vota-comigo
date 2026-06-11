@@ -11,8 +11,11 @@ import {
   canRunMatcher,
   hasMoreDeputados,
   initMatcherState,
+  isSemBomMatch,
   matcherReducer,
+  resultadoDisplay,
   selectionCount,
+  shouldSuggestNacional,
   stepStatus,
 } from "../lib/matcher-state";
 
@@ -424,6 +427,171 @@ describe("matcherReducer", () => {
 
       // Act / Assert
       expect(hasMoreDeputados(state)).toBe(false);
+    });
+  });
+
+  describe("resultadoDisplay", () => {
+    describe("when loading and no resultado cached", () => {
+      it("returns 'loading'", () => {
+        // Arrange
+        const state = matcherReducer(initMatcherState(candidates), { type: "runStart" });
+
+        // Act / Assert
+        expect(resultadoDisplay(state)).toBe("loading");
+      });
+    });
+
+    describe("when error and no resultado cached", () => {
+      it("returns 'error'", () => {
+        // Arrange
+        const loading = matcherReducer(initMatcherState(candidates), { type: "runStart" });
+        const state = matcherReducer(loading, { type: "runError" });
+
+        // Act / Assert
+        expect(resultadoDisplay(state)).toBe("error");
+      });
+    });
+
+    describe("when resultado has no deputados", () => {
+      it("returns 'empty'", () => {
+        // Arrange
+        const state = matcherReducer(initMatcherState(candidates), {
+          type: "runOk",
+          escopo: "estadual",
+          resultado: resultado("estadual", { deputados: [], total: 0 }),
+        });
+
+        // Act / Assert
+        expect(resultadoDisplay(state)).toBe("empty");
+      });
+    });
+
+    describe("when resultado is null for the active escopo", () => {
+      it("returns 'empty'", () => {
+        // Arrange
+        const estadualResultado = resultado("estadual", { deputados: [deputado(1)], total: 1 });
+        let state = matcherReducer(initMatcherState(candidates), {
+          type: "runOk",
+          escopo: "estadual",
+          resultado: estadualResultado,
+        });
+        state = matcherReducer(state, { type: "setEscopo", escopo: "nacional" });
+
+        // Act / Assert
+        expect(resultadoDisplay(state)).toBe("empty");
+      });
+    });
+
+    describe("when resultado has deputados", () => {
+      it("returns 'results'", () => {
+        // Arrange
+        const state = matcherReducer(initMatcherState(candidates), {
+          type: "runOk",
+          escopo: "estadual",
+          resultado: resultado("estadual", { deputados: [deputado(1)], total: 1 }),
+        });
+
+        // Act / Assert
+        expect(resultadoDisplay(state)).toBe("results");
+      });
+
+      it("returns 'results' even while loading more", () => {
+        // Arrange
+        let state = matcherReducer(initMatcherState(candidates), {
+          type: "runOk",
+          escopo: "estadual",
+          resultado: resultado("estadual", { deputados: [deputado(1)], total: 2 }),
+        });
+        state = matcherReducer(state, { type: "runStart" });
+
+        // Act / Assert
+        expect(resultadoDisplay(state)).toBe("results");
+      });
+    });
+  });
+
+  describe("isSemBomMatch", () => {
+    describe("when resultado is null", () => {
+      it("returns false", () => {
+        // Act / Assert
+        expect(isSemBomMatch(null)).toBe(false);
+      });
+    });
+
+    describe("when semBomMatch is false", () => {
+      it("returns false", () => {
+        // Arrange
+        const r = resultado("estadual", { semBomMatch: false });
+
+        // Act / Assert
+        expect(isSemBomMatch(r)).toBe(false);
+      });
+    });
+
+    describe("when semBomMatch is true", () => {
+      it("returns true", () => {
+        // Arrange
+        const r = resultado("estadual", { semBomMatch: true });
+
+        // Act / Assert
+        expect(isSemBomMatch(r)).toBe(true);
+      });
+    });
+  });
+
+  describe("shouldSuggestNacional", () => {
+    describe("when escopo is nacional", () => {
+      it("returns false regardless of results", () => {
+        // Arrange
+        const nacionalResultado = resultado("nacional", { deputados: [deputado(1)], total: 1 });
+        let state = matcherReducer(initMatcherState(candidates), {
+          type: "runOk",
+          escopo: "nacional",
+          resultado: nacionalResultado,
+        });
+        state = matcherReducer(state, { type: "setEscopo", escopo: "nacional" });
+
+        // Act / Assert
+        expect(shouldSuggestNacional(state)).toBe(false);
+      });
+    });
+
+    describe("when escopo is estadual and no resultado", () => {
+      it("returns false", () => {
+        // Arrange
+        const state = initMatcherState(candidates);
+
+        // Act / Assert
+        expect(shouldSuggestNacional(state)).toBe(false);
+      });
+    });
+
+    describe("when escopo is estadual and resultado has no deputados", () => {
+      it("returns false", () => {
+        // Arrange
+        const state = matcherReducer(initMatcherState(candidates), {
+          type: "runOk",
+          escopo: "estadual",
+          resultado: resultado("estadual", { deputados: [], total: 0 }),
+        });
+
+        // Act / Assert
+        expect(shouldSuggestNacional(state)).toBe(false);
+      });
+    });
+
+    describe("when escopo is estadual and resultado has deputados", () => {
+      it("returns true", () => {
+        // Arrange
+        const state = matcherReducer(initMatcherState(candidates), {
+          type: "runOk",
+          escopo: "estadual",
+          resultado: resultado("estadual", { deputados: [deputado(1)], total: 1 }),
+        });
+
+        // Act / Assert
+        expect(shouldSuggestNacional(state)).toBe(true);
+      });
     });
   });
 

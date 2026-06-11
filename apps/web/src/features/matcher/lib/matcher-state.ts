@@ -172,3 +172,23 @@ export function hasMoreDeputados(state: MatcherState): boolean {
   const r = activeResultado(state);
   return r ? r.deputados.length < r.total : false;
 }
+
+export type ResultadoDisplay = "loading" | "error" | "empty" | "results";
+
+export function resultadoDisplay(state: MatcherState): ResultadoDisplay {
+  const r = activeResultado(state);
+  if (state.status === "loading" && !r) return "loading";
+  if (state.status === "error" && !r) return "error";
+  if (!r || r.deputados.length === 0) return "empty";
+  return "results";
+}
+
+export function isSemBomMatch(resultado: MatcherResultado | null): boolean {
+  return resultado?.semBomMatch === true;
+}
+
+export function shouldSuggestNacional(state: MatcherState): boolean {
+  if (state.escopo !== "estadual") return false;
+  const r = activeResultado(state);
+  return (r?.deputados.length ?? 0) > 0;
+}

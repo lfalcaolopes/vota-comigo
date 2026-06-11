@@ -35,7 +35,7 @@ export function Panel({ children, className, title, ...props }: PanelProps) {
 type InlineMessageProps = {
   body: string;
   title: string;
-  tone?: "neutral" | "danger";
+  tone?: "neutral" | "danger" | "warning";
 };
 
 export function InlineMessage({
@@ -43,14 +43,15 @@ export function InlineMessage({
   title,
   tone = "neutral",
 }: InlineMessageProps) {
+  function toneClass() {
+    if (tone === "danger") return "border-danger-border bg-danger-soft";
+    if (tone === "warning") return "border-warning-border bg-warning-soft";
+    return "border-border bg-surface-muted";
+  }
+
   return (
     <div
-      className={joinClassNames(
-        "grid gap-2 rounded-md border p-4 text-ink",
-        tone === "danger"
-          ? "border-danger-border bg-danger-soft"
-          : "border-border bg-surface-muted",
-      )}
+      className={joinClassNames("grid gap-2 rounded-md border p-4 text-ink", toneClass())}
       role={tone === "danger" ? "alert" : "status"}
     >
       <p className="text-sm font-[720]">{title}</p>

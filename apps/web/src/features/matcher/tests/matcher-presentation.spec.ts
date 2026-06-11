@@ -2,6 +2,10 @@ import type { AlertaMatcher, MatcherDeputadoResumo } from "@vota-comigo/shared-t
 import { describe, expect, it } from "vitest";
 
 import {
+  ESCOPO_NACIONAL_BANNER_BODY,
+  ESCOPO_NACIONAL_BANNER_TITLE,
+  SEM_BOM_MATCH_BANNER_BODY,
+  SEM_BOM_MATCH_BANNER_TITLE,
   formatPercentual,
   getInitials,
   toAlertaLabel,
@@ -206,5 +210,37 @@ describe("getInitials", () => {
       // Act / Assert
       expect(getInitials("   ")).toBe("?");
     });
+  });
+});
+
+describe("SEM_BOM_MATCH_BANNER_TITLE", () => {
+  it("is a non-empty string", () => {
+    // Act / Assert
+    expect(typeof SEM_BOM_MATCH_BANNER_TITLE).toBe("string");
+    expect(SEM_BOM_MATCH_BANNER_TITLE.length).toBeGreaterThan(0);
+  });
+});
+
+describe("SEM_BOM_MATCH_BANNER_BODY", () => {
+  it("is a non-empty string", () => {
+    // Act / Assert
+    expect(typeof SEM_BOM_MATCH_BANNER_BODY).toBe("string");
+    expect(SEM_BOM_MATCH_BANNER_BODY.length).toBeGreaterThan(0);
+  });
+});
+
+describe("ESCOPO_NACIONAL_BANNER_TITLE", () => {
+  it("is a non-empty string", () => {
+    // Act / Assert
+    expect(typeof ESCOPO_NACIONAL_BANNER_TITLE).toBe("string");
+    expect(ESCOPO_NACIONAL_BANNER_TITLE.length).toBeGreaterThan(0);
+  });
+});
+
+describe("ESCOPO_NACIONAL_BANNER_BODY", () => {
+  it("is a non-empty string", () => {
+    // Act / Assert
+    expect(typeof ESCOPO_NACIONAL_BANNER_BODY).toBe("string");
+    expect(ESCOPO_NACIONAL_BANNER_BODY.length).toBeGreaterThan(0);
   });
 });
