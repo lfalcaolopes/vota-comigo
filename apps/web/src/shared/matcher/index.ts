@@ -1,1 +1,1 @@
-export { runMatcher } from "./queries";
+export { getDeputadoDetalhe, runMatcher } from "./queries";

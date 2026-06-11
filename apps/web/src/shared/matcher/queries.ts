@@ -1,4 +1,5 @@
 import type {
+  MatcherDeputadoDetalhe,
   MatcherExecucaoRequest,
   MatcherResultado,
 } from "@vota-comigo/shared-types";
@@ -16,6 +17,16 @@ export function runMatcher(
 ): Promise<MatcherResultado> {
   return apiPost<MatcherResultado>(
     `/matcher?limit=${limit}&offset=${offset}`,
+    request,
+  );
+}
+
+export function getDeputadoDetalhe(
+  externalIdDeputado: number,
+  request: MatcherExecucaoRequest,
+): Promise<MatcherDeputadoDetalhe> {
+  return apiPost<MatcherDeputadoDetalhe>(
+    `/matcher/deputados/${externalIdDeputado}`,
     request,
   );
 }

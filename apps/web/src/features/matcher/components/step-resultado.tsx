@@ -28,6 +28,7 @@ type StepResultadoProps = {
   onRetry: () => void;
   onEscopoChange: (escopo: EscopoMatcher) => void;
   onLoadMore: () => void;
+  onOpenDetalhe: (externalIdDeputado: number) => void;
 };
 
 export function StepResultado({
@@ -40,6 +41,7 @@ export function StepResultado({
   onRetry,
   onEscopoChange,
   onLoadMore,
+  onOpenDetalhe,
 }: StepResultadoProps) {
   const escopoControl = (
     <SegmentedControl
@@ -94,6 +96,7 @@ export function StepResultado({
           <DeputadoCard
             deputado={deputado}
             key={deputado.externalIdDeputado}
+            onOpen={onOpenDetalhe}
             totalPosicoesComputaveis={resultado!.totalPosicoesComputaveis}
           />
         ))}

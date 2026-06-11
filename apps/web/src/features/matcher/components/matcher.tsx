@@ -6,6 +6,7 @@ import { useFeedState } from "@/shared/proposicao";
 
 import { useMatcherState } from "../hooks/use-matcher-state";
 import type { MatcherStep } from "../lib/matcher-state";
+import { DeputadoDetalhe } from "./deputado-detalhe";
 import { StepIndicator } from "./step-indicator";
 import { StepLocal } from "./step-local";
 import { StepPosicoes } from "./step-posicoes";
@@ -83,17 +84,28 @@ export function Matcher({ initialProposicoes, initialTotal }: MatcherProps) {
       ) : null}
 
       {state.step === "resultado" ? (
-        <StepResultado
-          escopo={matcher.escopo}
-          hasMore={matcher.hasMore}
-          onBack={() => matcher.goToStep("posicoes")}
-          onEscopoChange={matcher.setEscopo}
-          onLoadMore={matcher.loadMore}
-          onRetry={matcher.execute}
-          resultado={matcher.resultado}
-          state={state}
-          status={state.status}
-        />
+        matcher.isDetalheOpen ? (
+          <DeputadoDetalhe
+            detalhe={matcher.detalhe}
+            detalheDeputadoId={state.detalheDeputadoId}
+            onBack={matcher.closeDetalhe}
+            onRetry={matcher.openDetalhe}
+            status={matcher.detalheStatus}
+          />
+        ) : (
+          <StepResultado
+            escopo={matcher.escopo}
+            hasMore={matcher.hasMore}
+            onBack={() => matcher.goToStep("posicoes")}
+            onEscopoChange={matcher.setEscopo}
+            onLoadMore={matcher.loadMore}
+            onOpenDetalhe={matcher.openDetalhe}
+            onRetry={matcher.execute}
+            resultado={matcher.resultado}
+            state={state}
+            status={state.status}
+          />
+        )
       ) : null}
     </section>
   );

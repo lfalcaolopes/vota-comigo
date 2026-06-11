@@ -43,6 +43,8 @@ export type MatcherState = {
   resultados: Record<EscopoMatcher, MatcherResultado | null>;
   escopo: EscopoMatcher;
   detalhe: MatcherDeputadoDetalhe | null;
+  detalheStatus: MatcherStatus;
+  detalheDeputadoId: number | null;
   status: MatcherStatus;
 };
 
@@ -55,7 +57,11 @@ export type MatcherAction =
   | { type: "runOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
   | { type: "runError" }
   | { type: "setEscopo"; escopo: EscopoMatcher }
-  | { type: "loadMoreOk"; escopo: EscopoMatcher; resultado: MatcherResultado };
+  | { type: "loadMoreOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
+  | { type: "openDetalheStart"; externalIdDeputado: number }
+  | { type: "openDetalheOk"; detalhe: MatcherDeputadoDetalhe }
+  | { type: "openDetalheError" }
+  | { type: "closeDetalhe" };
 
 export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
   return {
@@ -67,6 +73,8 @@ export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
     resultados: { estadual: null, nacional: null },
     escopo: "estadual",
     detalhe: null,
+    detalheStatus: "idle",
+    detalheDeputadoId: null,
     status: "idle",
   };
 }
@@ -146,6 +154,24 @@ export function matcherReducer(
         },
       };
     }
+    case "openDetalheStart":
+      return {
+        ...state,
+        detalheStatus: "loading",
+        detalheDeputadoId: action.externalIdDeputado,
+        detalhe: null,
+      };
+    case "openDetalheOk":
+      return { ...state, detalheStatus: "idle", detalhe: action.detalhe };
+    case "openDetalheError":
+      return { ...state, detalheStatus: "error" };
+    case "closeDetalhe":
+      return {
+        ...state,
+        detalhe: null,
+        detalheDeputadoId: null,
+        detalheStatus: "idle",
+      };
   }
 }
 
@@ -191,4 +217,8 @@ export function shouldSuggestNacional(state: MatcherState): boolean {
   if (state.escopo !== "estadual") return false;
   const r = activeResultado(state);
   return (r?.deputados.length ?? 0) > 0;
+}
+
+export function isDetalheOpen(state: MatcherState): boolean {
+  return state.detalheDeputadoId !== null;
 }

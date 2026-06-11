@@ -1,5 +1,6 @@
 import type {
   EscopoMatcher,
+  MatcherDeputadoDetalhe,
   MatcherDeputadoResumo,
   MatcherResultado,
   ProposicaoCard,
@@ -11,6 +12,7 @@ import {
   canRunMatcher,
   hasMoreDeputados,
   initMatcherState,
+  isDetalheOpen,
   isSemBomMatch,
   matcherReducer,
   resultadoDisplay,
@@ -592,6 +594,151 @@ describe("matcherReducer", () => {
         // Act / Assert
         expect(shouldSuggestNacional(state)).toBe(true);
       });
+    });
+  });
+
+  describe("detalhe lifecycle", () => {
+    function makeDetalhe(externalIdDeputado: number): MatcherDeputadoDetalhe {
+      return {
+        siglaUf: "SP",
+        cidade: null,
+        totalProposicoesSelecionadas: 3,
+        totalPosicoesComputaveis: 3,
+        deputado: {
+          externalIdDeputado,
+          nome: `Deputado ${externalIdDeputado}`,
+          partido: "PP",
+          siglaUf: "SP",
+          urlFoto: null,
+          emAtividade: true,
+        },
+        metrics: {
+          totalConcordancias: 2,
+          totalDiscordancias: 1,
+          totalForaDoDenominador: 0,
+          amostraComparavel: 3,
+          coberturaExercicio: 3,
+          compatibilidadeBruta: 66.7,
+          scoreOrdenacaoPercentual: 70,
+          alertas: [],
+        },
+        votos: [],
+      };
+    }
+
+    describe("openDetalheStart", () => {
+      it("sets detalheStatus to loading and records the deputado id", () => {
+        // Arrange
+        const state = initMatcherState(candidates);
+
+        // Act
+        const next = matcherReducer(state, {
+          type: "openDetalheStart",
+          externalIdDeputado: 99,
+        });
+
+        // Assert
+        expect(next.detalheStatus).toBe("loading");
+        expect(next.detalheDeputadoId).toBe(99);
+        expect(next.detalhe).toBeNull();
+      });
+    });
+
+    describe("openDetalheOk", () => {
+      it("stores the detalhe and resets status to idle", () => {
+        // Arrange
+        const loading = matcherReducer(initMatcherState(candidates), {
+          type: "openDetalheStart",
+          externalIdDeputado: 42,
+        });
+        const detalhe = makeDetalhe(42);
+
+        // Act
+        const next = matcherReducer(loading, {
+          type: "openDetalheOk",
+          detalhe,
+        });
+
+        // Assert
+        expect(next.detalheStatus).toBe("idle");
+        expect(next.detalhe).toEqual(detalhe);
+      });
+    });
+
+    describe("openDetalheError", () => {
+      it("sets detalheStatus to error", () => {
+        // Arrange
+        const loading = matcherReducer(initMatcherState(candidates), {
+          type: "openDetalheStart",
+          externalIdDeputado: 42,
+        });
+
+        // Act
+        const next = matcherReducer(loading, { type: "openDetalheError" });
+
+        // Assert
+        expect(next.detalheStatus).toBe("error");
+      });
+    });
+
+    describe("closeDetalhe", () => {
+      it("resets detalhe fields without touching resultados", () => {
+        // Arrange
+        const withResultado = matcherReducer(initMatcherState(candidates), {
+          type: "runOk",
+          escopo: "estadual",
+          resultado: resultado("estadual", {
+            deputados: [deputado(1)],
+            total: 1,
+          }),
+        });
+        const withDetalhe = matcherReducer(withResultado, {
+          type: "openDetalheOk",
+          detalhe: makeDetalhe(1),
+        });
+
+        // Act
+        const next = matcherReducer(withDetalhe, { type: "closeDetalhe" });
+
+        // Assert
+        expect(next.detalhe).toBeNull();
+        expect(next.detalheDeputadoId).toBeNull();
+        expect(next.detalheStatus).toBe("idle");
+        expect(next.resultados.estadual).not.toBeNull();
+      });
+    });
+  });
+
+  describe("isDetalheOpen", () => {
+    it("is false when no detalhe has been opened", () => {
+      // Arrange
+      const state = initMatcherState(candidates);
+
+      // Act / Assert
+      expect(isDetalheOpen(state)).toBe(false);
+    });
+
+    it("is true after openDetalheStart", () => {
+      // Arrange
+      const state = matcherReducer(initMatcherState(candidates), {
+        type: "openDetalheStart",
+        externalIdDeputado: 5,
+      });
+
+      // Act / Assert
+      expect(isDetalheOpen(state)).toBe(true);
+    });
+
+    it("is false after closeDetalhe", () => {
+      // Arrange
+      const opened = matcherReducer(initMatcherState(candidates), {
+        type: "openDetalheStart",
+        externalIdDeputado: 5,
+      });
+      const closed = matcherReducer(opened, { type: "closeDetalhe" });
+
+      // Act / Assert
+      expect(isDetalheOpen(closed)).toBe(false);
     });
   });
 

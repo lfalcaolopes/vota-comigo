@@ -1,11 +1,12 @@
 import type {
+  MatcherDeputadoDetalhe,
   MatcherExecucaoRequest,
   MatcherResultado,
 } from "@vota-comigo/shared-types";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError, NotFoundError } from "../../lib/api-client";
-import { runMatcher } from "../queries";
+import { getDeputadoDetalhe, runMatcher } from "../queries";
 
 const request: MatcherExecucaoRequest = {
   siglaUf: "SP",
@@ -120,6 +121,80 @@ describe("runMatcher", () => {
       );
       expect(error).toBeInstanceOf(ApiError);
       expect(error).not.toBeInstanceOf(NotFoundError);
+    });
+  });
+});
+
+const detalhe: MatcherDeputadoDetalhe = {
+  siglaUf: "SP",
+  cidade: null,
+  totalProposicoesSelecionadas: 3,
+  totalPosicoesComputaveis: 3,
+  deputado: {
+    externalIdDeputado: 42,
+    nome: "Fulano da Silva",
+    partido: "PP",
+    siglaUf: "SP",
+    urlFoto: null,
+    emAtividade: true,
+  },
+  metrics: {
+    totalConcordancias: 2,
+    totalDiscordancias: 1,
+    totalForaDoDenominador: 0,
+    amostraComparavel: 3,
+    coberturaExercicio: 3,
+    compatibilidadeBruta: 66.7,
+    scoreOrdenacaoPercentual: 70,
+    alertas: [],
+  },
+  votos: [],
+};
+
+describe("getDeputadoDetalhe", () => {
+  describe("when the execution succeeds", () => {
+    it("posts to /matcher/deputados/:id and returns the typed detalhe", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => detalhe,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      const result = await getDeputadoDetalhe(42, request);
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/matcher/deputados/42",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(request),
+        },
+      );
+      expect(result.deputado.externalIdDeputado).toBe(42);
+    });
+  });
+
+  describe("when the deputado is not found", () => {
+    it("rejects with a NotFoundError on a 404 response", async () => {
+      // Arrange
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue({
+          ok: false,
+          status: 404,
+          json: () => ({}),
+        }),
+      );
+
+      // Act / Assert
+      const error = await getDeputadoDetalhe(42, request).catch(
+        (caught: unknown) => caught,
+      );
+      expect(error).toBeInstanceOf(NotFoundError);
     });
   });
 });

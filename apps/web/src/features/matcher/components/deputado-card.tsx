@@ -13,16 +13,22 @@ import { DeputadoAvatar } from "./deputado-avatar";
 type DeputadoCardProps = {
   deputado: MatcherDeputadoResumo;
   totalPosicoesComputaveis: number;
+  onOpen: (externalIdDeputado: number) => void;
 };
 
-export function DeputadoCard({ deputado, totalPosicoesComputaveis }: DeputadoCardProps) {
+export function DeputadoCard({ deputado, totalPosicoesComputaveis, onOpen }: DeputadoCardProps) {
   const compatibilidadeLabel = toCompatibilidadeAmostraLabel(deputado, totalPosicoesComputaveis);
   const atividadeLabel = toAtividadeLabel(deputado.emAtividade);
   const atividadeTone = toAtividadeTone(deputado.emAtividade);
   const hasAlertaAmostra = deputado.alertas.includes("amostra_pequena");
 
   return (
-    <li className="grid gap-3 border-b border-border py-3">
+    <li className="border-b border-border">
+      <button
+        className="grid w-full gap-3 py-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        onClick={() => onOpen(deputado.externalIdDeputado)}
+        type="button"
+      >
       <div className="flex items-center gap-3">
         <DeputadoAvatar nome={deputado.nome} urlFoto={deputado.urlFoto} />
         <div className="min-w-0">
@@ -65,6 +71,7 @@ export function DeputadoCard({ deputado, totalPosicoesComputaveis }: DeputadoCar
           </Badge>
         )}
       </div>
+      </button>
     </li>
   );
 }
