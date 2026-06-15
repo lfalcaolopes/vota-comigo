@@ -42,6 +42,7 @@ export type MatcherState = {
   posicoes: Map<number, PosicaoUsuarioMatcher>;
   resultados: Record<EscopoMatcher, MatcherResultado | null>;
   escopo: EscopoMatcher;
+  apenasEmAtividade: boolean;
   detalhe: MatcherDeputadoDetalhe | null;
   detalheStatus: MatcherStatus;
   detalheDeputadoId: number | null;
@@ -57,6 +58,7 @@ export type MatcherAction =
   | { type: "runOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
   | { type: "runError" }
   | { type: "setEscopo"; escopo: EscopoMatcher }
+  | { type: "setApenasEmAtividade"; value: boolean }
   | { type: "loadMoreOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
   | { type: "openDetalheStart"; externalIdDeputado: number }
   | { type: "openDetalheOk"; detalhe: MatcherDeputadoDetalhe }
@@ -72,6 +74,7 @@ export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
     posicoes: new Map(),
     resultados: { estadual: null, nacional: null },
     escopo: "estadual",
+    apenasEmAtividade: false,
     detalhe: null,
     detalheStatus: "idle",
     detalheDeputadoId: null,
@@ -138,6 +141,12 @@ export function matcherReducer(
       return { ...state, status: "error" };
     case "setEscopo":
       return { ...state, escopo: action.escopo };
+    case "setApenasEmAtividade":
+      return {
+        ...state,
+        apenasEmAtividade: action.value,
+        resultados: { estadual: null, nacional: null },
+      };
     case "loadMoreOk": {
       const existing = state.resultados[action.escopo];
       if (existing === null) return state;

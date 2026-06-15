@@ -2,7 +2,7 @@
 
 import type { EscopoMatcher, MatcherResultado } from "@vota-comigo/shared-types";
 
-import { Button, ErrorState, SegmentedControl, SkeletonRows } from "@/shared/ui";
+import { Button, ErrorState, SegmentedControl, SkeletonRows, Switch } from "@/shared/ui";
 
 import type { MatcherState, MatcherStatus } from "../lib/matcher-state";
 import { isSemBomMatch, resultadoDisplay, shouldSuggestNacional } from "../lib/matcher-state";
@@ -23,10 +23,12 @@ type StepResultadoProps = {
   status: MatcherStatus;
   resultado: MatcherResultado | null;
   escopo: EscopoMatcher;
+  apenasEmAtividade: boolean;
   hasMore: boolean;
   onBack: () => void;
   onRetry: () => void;
   onEscopoChange: (escopo: EscopoMatcher) => void;
+  onApenasEmAtividadeChange: (value: boolean) => void;
   onLoadMore: () => void;
   onOpenDetalhe: (externalIdDeputado: number) => void;
 };
@@ -36,20 +38,29 @@ export function StepResultado({
   status,
   resultado,
   escopo,
+  apenasEmAtividade,
   hasMore,
   onBack,
   onRetry,
   onEscopoChange,
+  onApenasEmAtividadeChange,
   onLoadMore,
   onOpenDetalhe,
 }: StepResultadoProps) {
   const escopoControl = (
-    <SegmentedControl
-      activeId={escopo}
-      items={ESCOPO_ITEMS}
-      label="Escopo dos resultados"
-      onSelect={(id) => onEscopoChange(id as EscopoMatcher)}
-    />
+    <div className="flex flex-wrap items-center gap-4">
+      <SegmentedControl
+        activeId={escopo}
+        items={ESCOPO_ITEMS}
+        label="Escopo dos resultados"
+        onSelect={(id) => onEscopoChange(id as EscopoMatcher)}
+      />
+      <Switch
+        checked={apenasEmAtividade}
+        label="Apenas em atividade"
+        onChange={(e) => onApenasEmAtividadeChange(e.target.checked)}
+      />
+    </div>
   );
 
   const display = resultadoDisplay(state);

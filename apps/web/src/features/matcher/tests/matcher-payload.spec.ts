@@ -1,4 +1,7 @@
-import type { PosicaoUsuarioMatcher } from "@vota-comigo/shared-types";
+import {
+  matcherExecucaoRequestSchema,
+  type PosicaoUsuarioMatcher,
+} from "@vota-comigo/shared-types";
 import { describe, expect, it } from "vitest";
 
 import { buildExecucaoRequest } from "../lib/matcher-payload";
@@ -9,6 +12,43 @@ function posicoesMap(
   return new Map(entries);
 }
 
+describe("matcherExecucaoRequestSchema", () => {
+  describe("when apenasEmAtividade is omitted", () => {
+    it("defaults to false", () => {
+      // Arrange
+      const partial = {
+        siglaUf: "SP" as const,
+        escopo: "estadual" as const,
+        posicoes: [{ externalIdProposicao: 1, posicao: "aprovar" as const }],
+      };
+
+      // Act
+      const parsed = matcherExecucaoRequestSchema.parse(partial);
+
+      // Assert
+      expect(parsed.apenasEmAtividade).toBe(false);
+    });
+  });
+
+  describe("when apenasEmAtividade is explicitly true", () => {
+    it("preserves the value", () => {
+      // Arrange
+      const payload = {
+        siglaUf: "RJ" as const,
+        escopo: "nacional" as const,
+        posicoes: [{ externalIdProposicao: 2, posicao: "rejeitar" as const }],
+        apenasEmAtividade: true,
+      };
+
+      // Act
+      const parsed = matcherExecucaoRequestSchema.parse(payload);
+
+      // Assert
+      expect(parsed.apenasEmAtividade).toBe(true);
+    });
+  });
+});
+
 describe("buildExecucaoRequest", () => {
   describe("when positions mix computable and nao_sei", () => {
     it("includes only the computable positions and omits nao_sei", () => {
@@ -16,6 +56,7 @@ describe("buildExecucaoRequest", () => {
       const input = {
         siglaUf: "SP" as const,
         escopo: "estadual" as const,
+        apenasEmAtividade: false,
         posicoes: posicoesMap([
           [1, "aprovar"],
           [2, "nao_sei"],
@@ -36,6 +77,40 @@ describe("buildExecucaoRequest", () => {
     });
   });
 
+  describe("when apenasEmAtividade is forwarded", () => {
+    it("includes apenasEmAtividade in the request", () => {
+      // Arrange
+      const input = {
+        siglaUf: "SP" as const,
+        escopo: "estadual" as const,
+        apenasEmAtividade: true,
+        posicoes: posicoesMap([[1, "aprovar"]]),
+      };
+
+      // Act
+      const request = buildExecucaoRequest(input);
+
+      // Assert
+      expect(request.apenasEmAtividade).toBe(true);
+    });
+
+    it("forwards false as well", () => {
+      // Arrange
+      const input = {
+        siglaUf: "SP" as const,
+        escopo: "estadual" as const,
+        apenasEmAtividade: false,
+        posicoes: posicoesMap([[1, "aprovar"]]),
+      };
+
+      // Act
+      const request = buildExecucaoRequest(input);
+
+      // Assert
+      expect(request.apenasEmAtividade).toBe(false);
+    });
+  });
+
   describe("when a cidade is informed", () => {
     it("attaches the trimmed cidade to the request", () => {
       // Arrange
@@ -43,6 +118,7 @@ describe("buildExecucaoRequest", () => {
         siglaUf: "RJ" as const,
         escopo: "estadual" as const,
         cidade: "  Niterói  ",
+        apenasEmAtividade: false,
         posicoes: posicoesMap([[1, "aprovar"]]),
       };
 
@@ -60,6 +136,7 @@ describe("buildExecucaoRequest", () => {
         siglaUf: "SP" as const,
         escopo: "estadual" as const,
         cidade: cidadeMax,
+        apenasEmAtividade: false,
         posicoes: posicoesMap([[1, "aprovar"]]),
       };
 
@@ -79,6 +156,7 @@ describe("buildExecucaoRequest", () => {
         siglaUf: "RJ" as const,
         escopo: "nacional" as const,
         cidade: "   ",
+        apenasEmAtividade: false,
         posicoes: posicoesMap([[1, "aprovar"]]),
       };
 

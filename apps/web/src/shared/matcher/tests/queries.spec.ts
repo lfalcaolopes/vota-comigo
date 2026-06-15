@@ -11,6 +11,7 @@ import { getDeputadoDetalhe, runMatcher } from "../queries";
 const request: MatcherExecucaoRequest = {
   siglaUf: "SP",
   escopo: "estadual",
+  apenasEmAtividade: false,
   posicoes: [
     { externalIdProposicao: 1, posicao: "aprovar" },
     { externalIdProposicao: 2, posicao: "rejeitar" },

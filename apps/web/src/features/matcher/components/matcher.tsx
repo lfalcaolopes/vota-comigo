@@ -107,8 +107,10 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
           />
         ) : (
           <StepResultado
+            apenasEmAtividade={matcher.apenasEmAtividade}
             escopo={matcher.escopo}
             hasMore={matcher.hasMore}
+            onApenasEmAtividadeChange={matcher.setApenasEmAtividade}
             onBack={() => matcher.goToStep("posicoes")}
             onEscopoChange={matcher.setEscopo}
             onLoadMore={matcher.loadMore}

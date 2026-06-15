@@ -12,6 +12,7 @@ export type ExecucaoPayloadInput = {
   escopo: EscopoMatcher;
   cidade?: string;
   posicoes: ReadonlyMap<number, PosicaoUsuarioMatcher>;
+  apenasEmAtividade: boolean;
 };
 
 function isComputavel(posicao: PosicaoUsuarioMatcher): boolean {
@@ -34,6 +35,7 @@ export function buildExecucaoRequest(
     siglaUf: input.siglaUf,
     escopo: input.escopo,
     posicoes,
+    apenasEmAtividade: input.apenasEmAtividade,
     ...(cidade ? { cidade } : {}),
   };
 }

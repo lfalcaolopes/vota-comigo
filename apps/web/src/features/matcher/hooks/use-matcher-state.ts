@@ -51,7 +51,12 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     dispatch({ type: "goToStep", step });
   }
 
-  async function runFetch(escopo: EscopoMatcher, offset: number, append: boolean) {
+  async function runFetch(
+    escopo: EscopoMatcher,
+    offset: number,
+    append: boolean,
+    apenasEmAtividade: boolean = state.apenasEmAtividade,
+  ) {
     if (state.siglaUf === null || !canRunMatcher(state)) return;
     if (state.status === "loading") return;
 
@@ -63,6 +68,7 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
         escopo,
         cidade: state.cidade,
         posicoes: state.posicoes,
+        apenasEmAtividade,
       });
       const resultado = await runMatcher(request, { limit: PAGE_SIZE, offset });
       if (append) {
@@ -93,6 +99,11 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     await runFetch(state.escopo, r.deputados.length, true);
   }
 
+  async function setApenasEmAtividade(value: boolean) {
+    dispatch({ type: "setApenasEmAtividade", value });
+    await runFetch(state.escopo, 0, false, value);
+  }
+
   async function openDetalhe(externalIdDeputado: number) {
     if (state.siglaUf === null || !canRunMatcher(state)) return;
 
@@ -104,6 +115,7 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
         escopo: state.escopo,
         cidade: state.cidade,
         posicoes: state.posicoes,
+        apenasEmAtividade: state.apenasEmAtividade,
       });
       const detalhe = await getDeputadoDetalhe(externalIdDeputado, request);
       dispatch({ type: "openDetalheOk", detalhe });
@@ -123,6 +135,7 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     selectionCount: selectionCount(state),
     resultado: activeResultado(state),
     escopo: state.escopo,
+    apenasEmAtividade: state.apenasEmAtividade,
     hasMore: hasMoreDeputados(state),
     detalhe: state.detalhe,
     detalheStatus: state.detalheStatus,
@@ -133,6 +146,7 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     goToStep,
     execute,
     setEscopo,
+    setApenasEmAtividade,
     loadMore,
     openDetalhe,
     closeDetalhe,

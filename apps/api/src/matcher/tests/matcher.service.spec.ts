@@ -27,6 +27,7 @@ function request(
   return {
     siglaUf: 'PE',
     escopo: 'estadual',
+    apenasEmAtividade: false,
     posicoes: [
       posicao({ externalIdProposicao: 1, posicao: 'aprovar' }),
       posicao({ externalIdProposicao: 2, posicao: 'rejeitar' }),
@@ -70,6 +71,7 @@ function fakeRepository(options: FakeRepoOptions): FakeRepo {
       escopoCalls.push({ escopo, siglaUf });
       return options.deputados ?? [];
     },
+    loadDeputadoByExternalIdWithHistorico: async () => null,
   };
 }
 
@@ -345,6 +347,124 @@ describe('MatcherService.execute', () => {
       await expect(service.execute(request(), pagina)).rejects.toBeInstanceOf(
         BadRequestException,
       );
+    });
+  });
+
+  describe('when filtering by emAtividade', () => {
+    const votacoes: VotacaoReferenciaVotos[] = [
+      votacaoReferenciaVotos(1, new Map([['dep-ativo', 'sim'], ['dep-inativo', 'sim']])),
+      votacaoReferenciaVotos(2, new Map([['dep-ativo', 'sim'], ['dep-inativo', 'sim']])),
+      votacaoReferenciaVotos(3, new Map([['dep-ativo', 'sim'], ['dep-inativo', 'sim']])),
+    ];
+
+    // dep-ativo tem eventos de posse; dep-inativo tem apenas evento de saída
+    const deputadoAtivo: DeputadoCompatibilidadeInput = {
+      deputadoId: 'dep-ativo',
+      externalIdDeputado: 1,
+      nome: 'Ativo',
+      partido: 'PT',
+      siglaUf: 'PE',
+      urlFoto: null,
+      eventos: [posse],
+    };
+    const deputadoInativo: DeputadoCompatibilidadeInput = {
+      deputadoId: 'dep-inativo',
+      externalIdDeputado: 2,
+      nome: 'Inativo',
+      partido: 'PT',
+      siglaUf: 'PE',
+      urlFoto: null,
+      eventos: [
+        posse,
+        {
+          dataHora: '2024-01-01T12:00:00Z',
+          situacao: 'Afastado',
+          descricaoStatus: 'Saída - Fim do Mandato',
+          partido: 'PT',
+        },
+      ],
+    };
+
+    const reqAprovar = (overrides: Partial<MatcherExecucaoRequest> = {}): MatcherExecucaoRequest =>
+      request({
+        posicoes: [
+          posicao({ externalIdProposicao: 1, posicao: 'aprovar' }),
+          posicao({ externalIdProposicao: 2, posicao: 'aprovar' }),
+          posicao({ externalIdProposicao: 3, posicao: 'aprovar' }),
+        ],
+        ...overrides,
+      });
+
+    it('includes both active and inactive deputados when apenasEmAtividade is false (default)', async () => {
+      // Arrange
+      const service = new MatcherService(
+        fakeRepository({
+          computaveis: new Set([1, 2, 3]),
+          votacoes,
+          deputados: [deputadoAtivo, deputadoInativo],
+        }),
+      );
+
+      // Act
+      const resultado = await service.execute(reqAprovar({ apenasEmAtividade: false }), pagina);
+
+      // Assert
+      expect(resultado.total).toBe(2);
+      expect(resultado.deputados.map((d) => d.externalIdDeputado)).toContain(1);
+      expect(resultado.deputados.map((d) => d.externalIdDeputado)).toContain(2);
+    });
+
+    it('excludes inactive deputados when apenasEmAtividade is true', async () => {
+      // Arrange
+      const service = new MatcherService(
+        fakeRepository({
+          computaveis: new Set([1, 2, 3]),
+          votacoes,
+          deputados: [deputadoAtivo, deputadoInativo],
+        }),
+      );
+
+      // Act
+      const resultado = await service.execute(reqAprovar({ apenasEmAtividade: true }), pagina);
+
+      // Assert
+      expect(resultado.total).toBe(1);
+      expect(resultado.deputados.map((d) => d.externalIdDeputado)).toEqual([1]);
+    });
+
+    it('keeps totalDeputadosAvaliados unchanged regardless of the filter', async () => {
+      // Arrange
+      const service = new MatcherService(
+        fakeRepository({
+          computaveis: new Set([1, 2, 3]),
+          votacoes,
+          deputados: [deputadoAtivo, deputadoInativo],
+        }),
+      );
+
+      // Act
+      const resultado = await service.execute(reqAprovar({ apenasEmAtividade: true }), pagina);
+
+      // Assert: both were evaluated; only the display set is filtered
+      expect(resultado.totalDeputadosAvaliados).toBe(2);
+    });
+
+    it('derives semBomMatch from the filtered set when apenasEmAtividade is true', async () => {
+      // Arrange: only inactive deputados evaluated
+      const service = new MatcherService(
+        fakeRepository({
+          computaveis: new Set([1, 2, 3]),
+          votacoes,
+          deputados: [deputadoInativo],
+        }),
+      );
+
+      // Act: filter active only -> empty set
+      const resultado = await service.execute(reqAprovar({ apenasEmAtividade: true }), pagina);
+
+      // Assert: empty filtered set -> semBomMatch true
+      expect(resultado.total).toBe(0);
+      expect(resultado.semBomMatch).toBe(true);
     });
   });
 

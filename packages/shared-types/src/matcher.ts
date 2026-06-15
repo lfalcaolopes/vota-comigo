@@ -76,6 +76,7 @@ export const matcherExecucaoRequestSchema = z.object({
         seen.add(posicao.externalIdProposicao);
       });
     }),
+  apenasEmAtividade: z.boolean().default(false),
 });
 
 export const matcherExecucaoResumoSchema = z.object({

@@ -767,6 +767,68 @@ describe("matcherReducer", () => {
     });
   });
 
+  describe("setApenasEmAtividade", () => {
+    it("sets apenasEmAtividade to true", () => {
+      // Arrange
+      const state = initMatcherState(candidates);
+
+      // Act
+      const next = matcherReducer(state, { type: "setApenasEmAtividade", value: true });
+
+      // Assert
+      expect(next.apenasEmAtividade).toBe(true);
+    });
+
+    it("sets apenasEmAtividade to false", () => {
+      // Arrange
+      const state = { ...initMatcherState(candidates), apenasEmAtividade: true };
+
+      // Act
+      const next = matcherReducer(state, { type: "setApenasEmAtividade", value: false });
+
+      // Assert
+      expect(next.apenasEmAtividade).toBe(false);
+    });
+
+    it("clears both resultado caches when toggled", () => {
+      // Arrange
+      const r = resultado("estadual");
+      const state = {
+        ...initMatcherState(candidates),
+        resultados: { estadual: r, nacional: r },
+      };
+
+      // Act
+      const next = matcherReducer(state, { type: "setApenasEmAtividade", value: true });
+
+      // Assert
+      expect(next.resultados.estadual).toBeNull();
+      expect(next.resultados.nacional).toBeNull();
+    });
+
+    it("does not affect other state fields", () => {
+      // Arrange
+      const state = { ...initMatcherState(candidates), escopo: "nacional" as const };
+
+      // Act
+      const next = matcherReducer(state, { type: "setApenasEmAtividade", value: true });
+
+      // Assert
+      expect(next.escopo).toBe("nacional");
+      expect(next.step).toBe(state.step);
+    });
+  });
+
+  describe("initMatcherState", () => {
+    it("initialises apenasEmAtividade to false", () => {
+      // Act
+      const state = initMatcherState([]);
+
+      // Assert
+      expect(state.apenasEmAtividade).toBe(false);
+    });
+  });
+
   describe("canRunMatcher", () => {
     function withComputaveis(state = initMatcherState(candidates)) {
       let next = matcherReducer(state, {

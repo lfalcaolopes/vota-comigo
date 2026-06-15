@@ -19,6 +19,7 @@ import { toMatcherDeputadoDetalhe } from './mappers/compatibilidade-detalhe.mapp
 import { toMatcherResultado } from './mappers/compatibilidade-resumida.mapper';
 import { computeCompatibilidadeDetalhe } from './rules/compatibilidade-detalhe';
 import { computeCompatibilidadeResumida } from './rules/compatibilidade-resumida';
+import { filtrarPorAtividade } from './rules/filtro-atividade';
 import { validateExecucao } from './rules/matcher-execucao-validation';
 import type { Pagination } from './rules/pagination';
 import { sortRanking } from './rules/ranking';
@@ -121,8 +122,12 @@ export class MatcherService {
       totalPosicoesComputaveis: resumo.totalPosicoesComputaveis,
     });
 
-    const ordenados = sortRanking(
+    const elegiveis = filtrarPorAtividade(
       resultado.deputados,
+      request.apenasEmAtividade,
+    );
+    const ordenados = sortRanking(
+      elegiveis,
       request.escopo === 'nacional' ? request.siglaUf : undefined,
     );
     const semBomMatch =
