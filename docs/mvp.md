@@ -22,29 +22,48 @@ O produto no MVP cobre exclusivamente **deputados federais com histórico de vot
 
 ### MVP-1. Feed / Ranking de Proposições Importantes
 
-Lista pública, sem necessidade de login, das proposições computáveis pelo matcher com maior volume de votações nominais em plenário, conforme a regra definida no Protótipo.
+Lista pública, sem necessidade de login, das proposições computáveis pelo matcher, com ordenação padrão por maior volume de votações nominais em plenário, conforme a regra definida no Protótipo.
 
 No MVP-1, a rota inicial do produto (`/`) é o próprio feed público. Uma landing page institucional fica fora desse corte para que a primeira tela já entregue a lista de proposições.
 
 **Apresentação em lista:**
+- O título público da página é "Proposições"; "Mais votadas" aparece como rótulo do modo de ordenação padrão, não como título da experiência inteira
+- O metadata da página usa "Proposições | Quem Vota Comigo" e descreve a exploração por tema e ordenação, sem limitar a página a "mais votadas"
 - Informações enxutas da proposição: identificador legislativo curto como título (`{siglaTipo} {numero}/{ano}`), ementa como descrição, data de apresentação da proposição e tipo de proposição
 - O card exibe apenas dois agregados de votações no MVP-1: volume total de votações nominais em plenário e data da última votação
 - O card não exibe informações de uma votação específica, nem mesmo da votação de referência do matcher
 - O card não exibe o último status da proposição
 - O card não exibe resultado; no domínio atual existe **Resultado da votação**, mas não existe resultado único da proposição
-- Ordenada por volume de votações nominais em plenário
+- O card não exibe temas; temas ficam como filtro no feed e como informação no detalhe da proposição
+- Ordenada por volume de votações nominais em plenário por padrão; o rótulo público do controle é "Mais votadas"
+- Pode ser ordenada por proposições mais recentes, usando a data de apresentação da proposição; o rótulo público do controle é "Mais recentes"
+- Os valores públicos de ordenação são `mais-votadas` e `mais-recentes`, definidos uma única vez no contrato compartilhado.
+- Pode ser filtrada por um único tema oficial disponível no feed
+- Ausência de tema selecionado representa o feed sem filtro de tema; a UI não precisa exibir uma opção "Todos os temas" dentro da lista de temas.
+- A lista de temas do filtro vem de `/proposicoes/feed/temas`, consulta própria sobre todos os **Temas disponíveis no feed**, não da página atual do feed.
+- A consulta de temas não tem busca textual e não depende dos filtros ativos; ela sempre retorna todos os **Temas disponíveis no feed**.
+- A lista pública de temas exibe apenas temas com texto oficial, ordenados alfabeticamente pelo texto e com `externalCodTema` como desempate.
+- A lista pública de temas não exibe contagem de proposições por tema no MVP.
+- Na API do feed, ordenação inválida e tema não numérico retornam `400`; tema numérico sem resultados retorna lista vazia.
 - Cada proposição exibida precisa ter uma votação de referência do matcher
 - A lista retorna apenas o resumo necessário para o card; detalhes completos são carregados quando o usuário abre a proposição
 - O contrato público das rotas de proposições precisa expor a data de apresentação da proposição nos cards e no detalhe.
-- A busca do feed consome a rota existente `/proposicoes/search`, que busca por identificador legislativo (`siglaTipo`, `numero`, `ano`) e `ementa`; o front não redefine a regra de busca no MVP-1.
+- O contrato público do feed usa a semântica `/proposicoes/feed`; a rota antiga `/proposicoes/mais-votadas` não precisa ser mantida.
+- A busca do feed busca por identificador legislativo (`siglaTipo`, `numero`, `ano`) e `ementa`, podendo ser combinada com filtro de tema e ordenação.
+- Busca, filtro de tema e ordenação aparecem como controles principais do feed; em mobile podem ser compactados sem esconder sua disponibilidade.
+- Quando busca ou tema estiverem ativos, a UI oferece ação para limpar filtros, voltando para sem busca e sem tema, preservando a ordenação ativa.
 - O frontend do MVP-1 consome as rotas reais de proposições desde o início; mocks locais ficam restritos a testes de componente quando necessários.
 - A primeira carga do feed em `/` é renderizada no servidor; busca e "carregar mais" são interações client-side sobre as rotas existentes.
+- Busca, filtro de tema e ordenação ficam refletidos na URL para permitir compartilhamento, refresh e primeira renderização já filtrada.
+- Os parâmetros públicos são `q` para busca textual, `tema` para `externalCodTema` e `ordenacao` para `mais-votadas` ou `mais-recentes`.
 - As páginas públicas do MVP-1 têm `title` e `description` básicos; OpenGraph e Twitter cards completos ficam para o MVP-6.
-- Quando a busca está vazia, a tela exibe o feed padrão de **Proposições mais votadas em plenário** e não chama `/proposicoes/search`.
+- Quando a busca está vazia, a tela exibe o feed padrão de **Proposições mais votadas em plenário** sem parâmetro textual de busca.
 - A paginação do feed usa ação "carregar mais" sobre o `limit`/`offset` das rotas existentes, sem paginação numerada no MVP-1.
+- Alterar busca, filtro de tema ou ordenação reinicia a paginação do feed no primeiro lote do novo recorte.
 - O feed carrega 20 itens inicialmente e mais 20 a cada ação de "carregar mais", acompanhando o padrão das rotas existentes.
 - Quando o feed padrão não tiver itens, a tela informa que ainda não há proposições computáveis para exibir.
-- Quando uma busca não tiver resultados, a tela informa que nenhuma proposição foi encontrada para a busca e oferece ação para limpar a busca e voltar ao feed padrão.
+- Quando uma busca não tiver resultados, a tela informa que nenhuma proposição foi encontrada para a busca e os filtros utilizados, oferecendo ação para limpar busca e tema, preservando a ordenação ativa.
+- Na rota pública `/`, parâmetros inválidos de busca, tema ou ordenação não exibem erro técnico ao usuário; a tela volta ao recorte padrão ou normalizado.
 - Erros de carregamento no feed e no detalhe usam mensagem genérica com ação "Tentar novamente"; detalhes técnicos não aparecem na UI pública.
 - Em mobile, o card do feed mantém as mesmas informações do desktop; apenas layout e densidade visual se adaptam ao espaço disponível.
 
@@ -70,7 +89,6 @@ No MVP-1, a rota inicial do produto (`/`) é o próprio feed público. Uma landi
 **Não entra no MVP:**
 - Resumo por IA
 - Classificação "quem é afetado"
-- Filtros por categoria/comissão temática
 - Apelido popular como título ou campo exibido no card
 - Link direto para inteiro teor da proposição (`urlInteiroTeor`)
 - CTA funcional para iniciar o matcher a partir do feed enquanto o frontend do MVP-2 não existir
@@ -87,7 +105,9 @@ Ferramenta de compatibilidade entre usuário e deputados com base nos votos. Fra
    - Expandir para ver/selecionar mais proposições
    - Desselecionar proposições pré-selecionadas
    - Buscar proposições específicas por texto
+   - Filtrar por tema e ordenar a lista com a mesma semântica do feed público
    - Selecionar uma lista única de proposições computáveis pelo matcher
+   - Manter proposições já selecionadas ao aplicar busca, filtro ou ordenação; esses controles alteram apenas a lista disponível para novas seleções
 4. Para cada proposição selecionada: contexto inicial, resultado da votação de referência, link para fonte, usuário informa se a proposição deveria ser aprovada, não deveria ser aprovada ou não sabe. `Não sei` tem o mesmo efeito de não selecionar a proposição: é completamente desconsiderado no cálculo.
 5. Resultado: lista ordenada por % de concordância
 

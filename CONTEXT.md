@@ -137,12 +137,19 @@ _Avoid_: Liderança (ambíguo).
 **Ranking de volume de votações em plenário**: Ordenação de proposições afetadas com pelo menos uma votação nominal em plenário vinculada, pela quantidade dessas votações, sem filtro adicional por placar agregado, com empates resolvidos por `ano desc`, `numero desc`, `siglaTipo asc` e `idProposicao asc` apenas como heurística de estabilidade.
 _Avoid_: Fórmula de relevância, ranking de relevância.
 
-**Feed de proposições do MVP**: Lista pública de proposições computáveis pelo matcher, ordenada pelo ranking de volume de votações em plenário.
+**Feed de proposições**: Lista pública de proposições computáveis pelo matcher, filtrável por tema oficial e ordenável por volume de votações em plenário ou por data de apresentação.
 
-**Proposições mais votadas em plenário**: Nome público do feed de proposições do MVP.
+**Proposições mais votadas em plenário**: Modo de ordenação padrão do feed de proposições, baseado no ranking de volume de votações em plenário.
 _Avoid_: Proposições que marcaram.
 
-**Sugestão inicial de proposições**: Lista inicial de proposições computáveis pelo matcher apresentada ao usuário a partir do ranking de volume de votações em plenário.
+**Proposições mais recentes**: Modo de ordenação do feed de proposições pela data de apresentação da proposição, com empates resolvidos por `ano desc`, `numero desc`, `siglaTipo asc` e `idProposicao asc`, restrito às proposições computáveis pelo matcher já ingeridas.
+_Avoid_: Votadas recentemente.
+
+**Tema disponível no feed**: Tema oficial com texto público associado a pelo menos uma proposição computável pelo matcher, identificado publicamente pelo `externalCodTema` e rotulado pelo texto oficial do tema.
+
+**Busca no feed**: Recorte textual do feed de proposições por identificador legislativo ou ementa, sem busca por nome de tema, combinável com filtro de tema e modo de ordenação.
+
+**Sugestão inicial de proposições**: Lista inicial de proposições computáveis pelo matcher apresentada ao usuário a partir do feed de proposições no modo de ordenação padrão.
 
 **Polarização**: Medida de quão apertado foi o placar de uma votação.
 
@@ -188,8 +195,16 @@ _Avoid_: Proposições que marcaram.
 - Uma **Votação** tem **Escopo de votação** igual a `plenario` ou `comissao`.
 - Uma **Votação nominal** registra **Votos computáveis** dos **Deputados em exercício** naquela data.
 - O **Partido** de um **Deputado** na data de uma **Votação nominal** é derivado do histórico do deputado, não do registro individual de voto.
-- O **Feed de proposições do MVP** usa o **Ranking de volume de votações em plenário**, mas só inclui **Proposições computáveis pelo matcher**.
-- A **Sugestão inicial de proposições** usa as primeiras **Proposições** do **Feed de proposições do MVP**.
+- O **Feed de proposições** inclui apenas **Proposições computáveis pelo matcher**.
+- O filtro de tema do **Feed de proposições** oferece apenas **Temas disponíveis no feed**.
+- Sem filtro de tema selecionado, o **Feed de proposições** inclui **Proposições computáveis pelo matcher** com ou sem tema oficial associado.
+- Quando uma **Proposição computável pelo matcher** tem múltiplos **Temas disponíveis no feed**, ela aparece no filtro de qualquer um deles.
+- O **Feed de proposições** pode ser ordenado por **Proposições mais votadas em plenário** ou por **Proposições mais recentes**.
+- A **Busca no feed**, o filtro por **Tema disponível no feed** e o modo de ordenação do **Feed de proposições** podem ser combinados; busca e filtro reduzem o conjunto antes da ordenação e paginação.
+- O filtro por **Tema disponível no feed** não recalcula a métrica de **Proposições mais votadas em plenário**; ele apenas restringe o conjunto ordenado pelo volume total de votações nominais em plenário.
+- Os critérios ativos do **Feed de proposições** são estado público da URL para permitir compartilhamento, refresh e primeira renderização com o mesmo recorte.
+- A seleção de proposições do **Matcher** usa a mesma semântica de busca, filtro por tema e ordenação do **Feed de proposições**.
+- A **Sugestão inicial de proposições** usa as primeiras **Proposições** do **Feed de proposições** no modo de ordenação padrão.
 - O usuário pode escolher manualmente qualquer **Proposição computável pelo matcher**, mesmo que ela não esteja na **Sugestão inicial de proposições**.
 - Para cada **Proposição** selecionada, o **Matcher** compara a **Posição do usuário** com os votos dos deputados na **Votação de referência do matcher**.
 - A **Compatibilidade** não inverte a concordância pelo **Resultado da votação**: posição "deveria ser aprovada" concorda com voto `sim`, e posição "não deveria ser aprovada" concorda com voto `não`.
@@ -232,7 +247,7 @@ _Avoid_: Proposições que marcaram.
 - **Liderança** foi usada para se referir tanto a bancadas formais quanto a Governo/Oposição/Maioria/Minoria. Resolvido: bancadas formais são **partido**, **federação** ou **bloco**; os outros quatro são **liderança suprapartidária**. "Liderança" sozinho deve ser evitado.
 - **Parlamentar** foi usado intercambiavelmente com **deputado**. Resolvido: no escopo do MVP, só existem **deputados**. Quando o produto cobrir Senado, **senador** entra como termo distinto e **parlamentar** pode reaparecer como guarda-chuva.
 - **Fórmula de relevância** e **Proposições que marcaram** foram usados para um ranking por importância pública. Resolvido: no MVP, o ranking é **Ranking de volume de votações em plenário** e o nome público é **Proposições mais votadas em plenário**; ele não mede relevância, saliência pública ou importância política.
-- **Proposições sem votação de referência do matcher** não entram no **Feed de proposições do MVP** nem na escolha do **Matcher**. O **Ranking de volume de votações em plenário** continua existindo como ordenação metodológica, mas o produto público do MVP só exibe proposições com uma votação nominal representativa da decisão substantiva.
+- **Proposições sem votação de referência do matcher** não entram no **Feed de proposições** nem na escolha do **Matcher**. O **Ranking de volume de votações em plenário** continua existindo como ordenação metodológica, mas o produto público do MVP só exibe proposições com uma votação nominal representativa da decisão substantiva.
 - **MVP-1** se refere à feature **Feed / Ranking de Proposições Importantes** descrita em `docs/mvp.md`, não ao MVP inteiro nem à primeira entrega técnica do backend.
-- **Data** no card do **Feed de proposições do MVP** é ambígua entre apresentação, último status e votação de referência. Resolvido: no card, a data exibida é a **Data de apresentação da proposição**.
-- **Resultado da proposição** não é um conceito do domínio atual. Resolvido: há **Resultado da votação**, exibido apenas no contexto de uma **Votação** específica; o card do **Feed de proposições do MVP** não exibe resultado.
+- **Data** no card do **Feed de proposições** é ambígua entre apresentação, último status e votação de referência. Resolvido: no card, a data exibida é a **Data de apresentação da proposição**.
+- **Resultado da proposição** não é um conceito do domínio atual. Resolvido: há **Resultado da votação**, exibido apenas no contexto de uma **Votação** específica; o card do **Feed de proposições** não exibe resultado.
