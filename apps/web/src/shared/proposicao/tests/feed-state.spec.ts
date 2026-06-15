@@ -8,6 +8,7 @@ import {
   hasMore,
   initFeedState,
   nextOffset,
+  type FeedOrdenacao,
 } from "../feed-state";
 
 function card(externalIdProposicao: number): ProposicaoCard {
@@ -37,6 +38,72 @@ describe("feedReducer", () => {
       expect(activeFeed(state).items).toEqual(firstPage);
       expect(activeFeed(state).total).toBe(50);
       expect(state.status).toBe("idle");
+    });
+
+    it("starts with ordenacao mais-votadas", () => {
+      // Arrange / Act
+      const state = initFeedState(firstPage, 50);
+
+      // Assert
+      expect(state.ordenacao).toBe("mais-votadas");
+    });
+
+    it("accepts a custom initial ordenacao", () => {
+      // Arrange / Act
+      const state = initFeedState(firstPage, 50, "mais-recentes");
+
+      // Assert
+      expect(state.ordenacao).toBe("mais-recentes");
+    });
+  });
+
+  describe("when ordenacao is changed", () => {
+    it("records the new ordenacao and resets the default feed to loading", () => {
+      // Arrange
+      const state = initFeedState(firstPage, 50);
+
+      // Act
+      const next = feedReducer(state, {
+        type: "changeOrdenacao",
+        ordenacao: "mais-recentes",
+      });
+
+      // Assert
+      expect(next.ordenacao).toBe("mais-recentes");
+      expect(next.status).toBe("loading");
+      expect(activeFeed(next).items).toEqual([]);
+    });
+
+    it("preserves the active mode as default", () => {
+      // Arrange
+      const state = initFeedState(firstPage, 50);
+
+      // Act
+      const next = feedReducer(state, {
+        type: "changeOrdenacao",
+        ordenacao: "mais-recentes",
+      });
+
+      // Assert
+      expect(next.mode).toBe("default");
+    });
+
+    it("switching ordenacao back preserves no stale items", () => {
+      // Arrange
+      const withNewOrdenacao = feedReducer(initFeedState(firstPage, 50), {
+        type: "changeOrdenacao",
+        ordenacao: "mais-recentes",
+      });
+
+      // Act
+      const back = feedReducer(withNewOrdenacao, {
+        type: "changeOrdenacao",
+        ordenacao: "mais-votadas",
+      });
+
+      // Assert
+      expect(back.ordenacao).toBe("mais-votadas");
+      expect(activeFeed(back).items).toEqual([]);
     });
   });
 

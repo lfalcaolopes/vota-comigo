@@ -1,6 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 
 import type {
+  FeedOrdenacao,
   ProposicoesFeedResponse,
   ProposicaoDetalhe,
   ProposicoesSearchResponse,
@@ -15,7 +16,7 @@ import {
   type ProposicoesRepository,
 } from './proposicoes.repository';
 import { toProposicoesComputaveis } from './rules/proposicoes-computaveis';
-import { compareRanking } from './rules/proposicoes-ranking';
+import { selectComparator } from './rules/proposicoes-ranking';
 import {
   compareSearchRelevance,
   matchesAllTokens,
@@ -34,9 +35,10 @@ export class ProposicoesService {
   async feed(
     limit: number,
     offset: number,
+    ordenacao: FeedOrdenacao = 'mais-votadas',
   ): Promise<ProposicoesFeedResponse> {
     const rows = await this.repository.loadProposicoesWithVotacoesPlenario();
-    const ranked = [...toProposicoesComputaveis(rows)].sort(compareRanking);
+    const ranked = [...toProposicoesComputaveis(rows)].sort(selectComparator(ordenacao));
 
     return {
       items: ranked.slice(offset, offset + limit).map(toProposicaoCard),

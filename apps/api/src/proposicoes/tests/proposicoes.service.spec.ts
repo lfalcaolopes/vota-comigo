@@ -92,6 +92,60 @@ describe('ProposicoesService.feed', () => {
     });
   });
 
+  describe('when ordering by mais recentes', () => {
+    it('orders by dataApresentacao descending instead of by volume', async () => {
+      // Arrange: id=2 has more votes but older date; id=1 has fewer votes but newer date
+      const newerFewVotes = joinRow({
+        externalIdProposicao: 1,
+        dataApresentacao: '2024-06-01T00:00:00Z',
+        externalIdVotacao: '1-1',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const olderManyVotesA = joinRow({
+        externalIdProposicao: 2,
+        dataApresentacao: '2022-03-10T00:00:00Z',
+        externalIdVotacao: '2-1',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const olderManyVotesB = joinRow({
+        externalIdProposicao: 2,
+        dataApresentacao: '2022-03-10T00:00:00Z',
+        externalIdVotacao: '2-2',
+        descricao: 'Aprovada a Medida Provisória',
+      });
+      const service = createService([olderManyVotesA, olderManyVotesB, newerFewVotes]);
+
+      // Act
+      const page = await service.feed(20, 0, 'mais-recentes');
+
+      // Assert: id=1 first because newer date, even though id=2 has more votes
+      expect(page.items.map((item) => item.externalIdProposicao)).toEqual([1, 2]);
+    });
+
+    it('puts proposicoes without dataApresentacao at the end', async () => {
+      // Arrange
+      const withDate = joinRow({
+        externalIdProposicao: 1,
+        dataApresentacao: '2023-01-01T00:00:00Z',
+        externalIdVotacao: '1-1',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const nullDateHighVolume = joinRow({
+        externalIdProposicao: 2,
+        dataApresentacao: null,
+        externalIdVotacao: '2-1',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const service = createService([nullDateHighVolume, withDate]);
+
+      // Act
+      const page = await service.feed(20, 0, 'mais-recentes');
+
+      // Assert: id=1 first because it has a date; id=2 goes last despite higher tie-break id
+      expect(page.items.map((item) => item.externalIdProposicao)).toEqual([1, 2]);
+    });
+  });
+
   describe('when ranking computable proposicoes', () => {
     it('orders by volume of plenary votes descending', async () => {
       // Arrange

@@ -1,6 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 import type {
+  FeedOrdenacao,
   ProposicoesFeedResponse,
   ProposicaoDetalhe,
   ProposicoesSearchResponse,
@@ -43,17 +44,31 @@ const emptySearchResponse: ProposicoesSearchResponse = {
 
 describe('ProposicoesController.feed', () => {
   describe('when query params are valid', () => {
-    it('delegates to the service with the parsed pagination', async () => {
+    it('delegates to the service with pagination and ordenacao', async () => {
       // Arrange
       const { service, feed } = fakeService(emptyResponse);
       const controller = new ProposicoesController(service);
 
       // Act
-      const result = await controller.feed(10, 5);
+      const result = await controller.feed(10, 5, 'mais-recentes');
 
       // Assert
-      expect(feed).toHaveBeenCalledWith(10, 5);
+      expect(feed).toHaveBeenCalledWith(10, 5, 'mais-recentes');
       expect(result).toBe(emptyResponse);
+    });
+  });
+
+  describe('when ordenacao is absent', () => {
+    it('defaults to mais-votadas', async () => {
+      // Arrange
+      const { service, feed } = fakeService(emptyResponse);
+      const controller = new ProposicoesController(service);
+
+      // Act
+      await controller.feed(10, 5, 'mais-votadas');
+
+      // Assert
+      expect(feed).toHaveBeenCalledWith(10, 5, 'mais-votadas');
     });
   });
 
@@ -64,12 +79,12 @@ describe('ProposicoesController.feed', () => {
       const controller = new ProposicoesController(service);
 
       // Act
-      await controller.feed(undefined, undefined);
-      await controller.feed(999, -3);
+      await controller.feed(undefined, undefined, 'mais-votadas');
+      await controller.feed(999, -3, 'mais-votadas');
 
       // Assert
-      expect(feed).toHaveBeenNthCalledWith(1, 20, 0);
-      expect(feed).toHaveBeenNthCalledWith(2, 100, 0);
+      expect(feed).toHaveBeenNthCalledWith(1, 20, 0, 'mais-votadas');
+      expect(feed).toHaveBeenNthCalledWith(2, 100, 0, 'mais-votadas');
     });
   });
 });

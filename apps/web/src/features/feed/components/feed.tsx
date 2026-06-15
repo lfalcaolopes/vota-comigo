@@ -1,13 +1,14 @@
-import type { ProposicaoCard } from "@vota-comigo/shared-types";
+import type { FeedOrdenacao, ProposicaoCard } from "@vota-comigo/shared-types";
 
 import { FeedView } from "./feed-view";
 
 type FeedProps = {
   initialItems: ProposicaoCard[];
   total: number;
+  initialOrdenacao?: FeedOrdenacao;
 };
 
-export function Feed({ initialItems, total }: FeedProps) {
+export function Feed({ initialItems, total, initialOrdenacao }: FeedProps) {
   return (
     <section>
       <header className="mb-10 grid max-w-[68ch] gap-4">
@@ -15,13 +16,13 @@ export function Feed({ initialItems, total }: FeedProps) {
         <h1 className="text-3xl leading-tight font-[720] tracking-[-0.02em] text-balance text-ink">
           Proposições
         </h1>
-        <p className="text-lg leading-normal text-pretty text-muted">
-          Ordenadas pelo número de votações nominais em plenário, a partir dos
-          dados abertos oficiais da Câmara.
-        </p>
       </header>
 
-      <FeedView initialItems={initialItems} initialTotal={total} />
+      <FeedView
+        initialItems={initialItems}
+        initialTotal={total}
+        initialOrdenacao={initialOrdenacao}
+      />
     </section>
   );
 }

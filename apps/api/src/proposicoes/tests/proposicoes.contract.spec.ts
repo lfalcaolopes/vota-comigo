@@ -209,6 +209,72 @@ describe('GET /proposicoes/feed', () => {
   });
 });
 
+describe('GET /proposicoes/feed with ordenacao param', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    app = await buildApp({
+      lista: [
+        joinRow({
+          externalIdProposicao: 1,
+          dataApresentacao: '2024-06-01T00:00:00Z',
+          externalIdVotacao: '1-1',
+        }),
+        joinRow({
+          externalIdProposicao: 2,
+          dataApresentacao: '2022-03-10T00:00:00Z',
+          externalIdVotacao: '2-1',
+        }),
+      ],
+    });
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('when ordenacao=mais-recentes', () => {
+    it('returns a valid contract ordered by date descending', async () => {
+      // Act
+      const response = await request(getTestServer(app))
+        .get('/proposicoes/feed')
+        .query({ ordenacao: 'mais-recentes' });
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
+      expect(body.items.map((item) => item.externalIdProposicao)).toEqual([1, 2]);
+    });
+  });
+
+  describe('when ordenacao is absent', () => {
+    it('defaults to mais-votadas and returns a valid contract', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get('/proposicoes/feed');
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
+      expect(body.items).toHaveLength(2);
+    });
+  });
+
+  describe('when ordenacao is an invalid value', () => {
+    it.each(['invalida', 'random', '123'])(
+      'rejects ordenacao=%s with 400',
+      async (ordenacao) => {
+        // Act
+        const response = await request(getTestServer(app))
+          .get('/proposicoes/feed')
+          .query({ ordenacao });
+
+        // Assert
+        expect(response.status).toBe(400);
+      },
+    );
+  });
+});
+
 describe('GET /proposicoes/feed as initial matcher suggestion source', () => {
   let app: INestApplication;
 

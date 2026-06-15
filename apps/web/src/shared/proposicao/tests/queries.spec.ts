@@ -68,11 +68,11 @@ describe("feed", () => {
 
       // Assert
       expect(fetchSpy).toHaveBeenCalledWith(
-        "http://localhost:3001/proposicoes/feed?limit=5&offset=40",
+        "http://localhost:3001/proposicoes/feed?limit=5&offset=40&ordenacao=mais-votadas",
       );
     });
 
-    it("defaults to limit 20 and offset 0", async () => {
+    it("defaults to limit 20, offset 0, and ordenacao mais-votadas", async () => {
       // Arrange
       const fetchSpy = vi.fn().mockResolvedValue({
         ok: true,
@@ -86,7 +86,27 @@ describe("feed", () => {
 
       // Assert
       expect(fetchSpy).toHaveBeenCalledWith(
-        "http://localhost:3001/proposicoes/feed?limit=20&offset=0",
+        "http://localhost:3001/proposicoes/feed?limit=20&offset=0&ordenacao=mais-votadas",
+      );
+    });
+  });
+
+  describe("when given ordenacao mais-recentes", () => {
+    it("includes ordenacao=mais-recentes in the query string", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => response,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      await feed(20, 0, "mais-recentes");
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/proposicoes/feed?limit=20&offset=0&ordenacao=mais-recentes",
       );
     });
   });

@@ -1,4 +1,6 @@
-import type { ProposicaoCard } from "@vota-comigo/shared-types";
+import type { FeedOrdenacao, ProposicaoCard } from "@vota-comigo/shared-types";
+
+export type { FeedOrdenacao };
 
 export type FeedMode = "default" | "search";
 export type FeedStatus = "idle" | "loading" | "error";
@@ -11,6 +13,7 @@ type Page = {
 export type FeedState = {
   mode: FeedMode;
   query: string;
+  ordenacao: FeedOrdenacao;
   defaultFeed: Page;
   searchFeed: Page;
   status: FeedStatus;
@@ -22,17 +25,20 @@ export type FeedAction =
   | { type: "loadMoreStart" }
   | { type: "loadMoreSuccess"; items: ProposicaoCard[]; total: number }
   | { type: "loadError" }
-  | { type: "clearSearch" };
+  | { type: "clearSearch" }
+  | { type: "changeOrdenacao"; ordenacao: FeedOrdenacao };
 
 const emptyPage: Page = { items: [], total: 0 };
 
 export function initFeedState(
   items: ProposicaoCard[],
   total: number,
+  ordenacao: FeedOrdenacao = 'mais-votadas',
 ): FeedState {
   return {
     mode: "default",
     query: "",
+    ordenacao,
     defaultFeed: { items, total },
     searchFeed: emptyPage,
     status: "idle",
@@ -86,6 +92,14 @@ export function feedReducer(state: FeedState, action: FeedAction): FeedState {
         query: "",
         searchFeed: emptyPage,
         status: "idle",
+      };
+    case "changeOrdenacao":
+      return {
+        ...state,
+        ordenacao: action.ordenacao,
+        mode: "default",
+        defaultFeed: emptyPage,
+        status: "loading",
       };
   }
 }

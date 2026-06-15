@@ -1,4 +1,5 @@
 import type {
+  FeedOrdenacao,
   ProposicoesFeedResponse,
   ProposicaoDetalhe,
   ProposicoesSearchResponse,
@@ -9,9 +10,10 @@ import { EmptyQueryError, apiGet } from "@/shared/lib/api-client";
 export function feed(
   limit = 20,
   offset = 0,
+  ordenacao: FeedOrdenacao = 'mais-votadas',
 ): Promise<ProposicoesFeedResponse> {
   return apiGet<ProposicoesFeedResponse>(
-    `/proposicoes/feed?limit=${limit}&offset=${offset}`,
+    `/proposicoes/feed?limit=${limit}&offset=${offset}&ordenacao=${ordenacao}`,
   );
 }
 

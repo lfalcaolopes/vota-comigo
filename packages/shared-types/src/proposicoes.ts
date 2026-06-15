@@ -20,6 +20,8 @@ export const resultadoVotacao = z.enum([
   'indisponivel',
 ]);
 
+export const feedOrdenacao = z.enum(['mais-votadas', 'mais-recentes']);
+
 export const votacaoReferenciaResumoSchema = z.object({
   externalIdVotacao: z.string(),
   data: z.string().nullable(),
@@ -112,6 +114,7 @@ export const proposicoesSearchResponseSchema = z.object({
 
 export type VotacaoReferenciaPattern = z.infer<typeof votacaoReferenciaPattern>;
 export type Resultado = z.infer<typeof resultadoVotacao>;
+export type FeedOrdenacao = z.infer<typeof feedOrdenacao>;
 export type VotacaoReferenciaResumo = z.infer<
   typeof votacaoReferenciaResumoSchema
 >;

@@ -11,5 +11,6 @@ export { useFeedState, type UseFeedState } from "./use-feed-state";
 export {
   type FeedDisplay,
   type FeedMode,
+  type FeedOrdenacao,
   type FeedStatus,
 } from "./feed-state";
