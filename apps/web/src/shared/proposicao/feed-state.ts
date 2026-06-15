@@ -22,6 +22,7 @@ export type FeedAction =
   | { type: "clearSearch" }
   | { type: "changeOrdenacao"; ordenacao: FeedOrdenacao }
   | { type: "changeTema"; tema: number }
+  | { type: "clearTema" }
   | { type: "clearFilters" }
   | { type: "loadMoreStart" }
   | { type: "loadMoreSuccess"; items: ProposicaoCard[]; total: number }
@@ -73,6 +74,13 @@ export function feedReducer(state: FeedState, action: FeedAction): FeedState {
       return {
         ...state,
         tema: action.tema,
+        feed: emptyPage,
+        status: "loading",
+      };
+    case "clearTema":
+      return {
+        ...state,
+        tema: null,
         feed: emptyPage,
         status: "loading",
       };

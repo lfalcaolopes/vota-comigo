@@ -63,7 +63,7 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
           onChangeOrdenacao={feed.changeOrdenacao}
           onChangeTema={(cod) => {
             if (feed.tema === cod) {
-              void feed.clearFilters();
+              void feed.clearTema();
             } else {
               void feed.changeTema(cod);
             }

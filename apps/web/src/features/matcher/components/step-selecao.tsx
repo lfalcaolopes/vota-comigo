@@ -120,7 +120,6 @@ export function StepSelecao({
         display={display}
         items={items}
         onClearFilters={onClearFilters}
-        onClearSearch={handleClear}
         onLoadMore={onLoadMore}
         onToggle={onToggle}
         selectedIds={selectedIds}

@@ -17,7 +17,6 @@ type FeedListProps = {
   display: FeedDisplay;
   canLoadMore: boolean;
   onLoadMore: () => void;
-  onClearSearch: () => void;
   onClearFilters: () => void;
   itemSearchParams?: string;
 };
@@ -29,7 +28,6 @@ export function FeedList({
   display,
   canLoadMore,
   onLoadMore,
-  onClearSearch,
   onClearFilters,
   itemSearchParams = "",
 }: FeedListProps) {

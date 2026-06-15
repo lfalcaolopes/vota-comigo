@@ -211,6 +211,23 @@ describe("feedReducer", () => {
     });
   });
 
+  describe("when clearTema is dispatched", () => {
+    it("clears only tema while preserving query and ordenacao, and starts loading", () => {
+      // Arrange
+      const state = initFeedState(firstPage, 50, "mais-recentes", 37, "saúde");
+
+      // Act
+      const next = feedReducer(state, { type: "clearTema" });
+
+      // Assert
+      expect(next.tema).toBeNull();
+      expect(next.query).toBe("saúde");
+      expect(next.ordenacao).toBe("mais-recentes");
+      expect(next.feed.items).toEqual([]);
+      expect(next.status).toBe("loading");
+    });
+  });
+
   describe("when clearFilters is dispatched", () => {
     it("clears query and tema while preserving ordenacao, and starts loading", () => {
       // Arrange

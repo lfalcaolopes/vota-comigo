@@ -20,7 +20,6 @@ type SelecaoListProps = {
   atLimit: boolean;
   onToggle: (proposicao: ProposicaoCard) => void;
   onLoadMore: () => Promise<void>;
-  onClearSearch: () => void;
   onClearFilters: () => Promise<void>;
 };
 
@@ -34,7 +33,6 @@ export function SelecaoList({
   atLimit,
   onToggle,
   onLoadMore,
-  onClearSearch,
   onClearFilters,
 }: SelecaoListProps) {
   if (display === "loading") {
@@ -58,7 +56,7 @@ export function SelecaoList({
             Limpar filtros
           </Button>
         }
-        body="Tente outro identificador legislativo, termo da ementa ou tema."
+        body="Nenhuma proposição foi encontrada com a busca e os filtros utilizados."
         title="Nenhuma proposição encontrada"
       />
     );

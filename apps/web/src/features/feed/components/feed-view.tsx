@@ -53,6 +53,7 @@ export function FeedView({
     loadMore,
     changeOrdenacao,
     changeTema,
+    clearTema,
     clearFilters,
   } = useFeedState(
     initialItems,
@@ -100,7 +101,7 @@ export function FeedView({
       buildFeedHref(pathname, { ordenacao, query: activeQuery, tema: next }),
     );
     if (next === null) {
-      await clearFilters();
+      await clearTema();
     } else {
       await changeTema(next);
     }
@@ -142,7 +143,6 @@ export function FeedView({
         items={items}
         itemSearchParams={itemSearchParams}
         onClearFilters={handleClearFilters}
-        onClearSearch={handleClear}
         onLoadMore={loadMore}
         status={status}
         total={total}

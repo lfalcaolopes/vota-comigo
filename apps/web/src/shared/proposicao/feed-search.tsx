@@ -49,7 +49,7 @@ export function FeedSearch({
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
           <p className="text-muted">
             Resultados para{" "}
-            <span className="font-[650] text-ink">"{query}"</span>
+            <span className="font-[650] text-ink">&quot;{query}&quot;</span>
           </p>
           <button
             className="font-[650] text-muted underline decoration-border underline-offset-2 transition-colors duration-[140ms] ease-standard hover:text-ink hover:decoration-current"

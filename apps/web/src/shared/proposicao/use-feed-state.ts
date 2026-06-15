@@ -32,6 +32,7 @@ export type UseFeedState = {
   loadMore: () => Promise<void>;
   changeOrdenacao: (value: FeedOrdenacao) => Promise<void>;
   changeTema: (tema: number) => Promise<void>;
+  clearTema: () => Promise<void>;
   clearFilters: () => Promise<void>;
 };
 
@@ -163,6 +164,26 @@ export function useFeedState(
     }
   }
 
+  async function clearTema() {
+    if (state.status === "loading") return;
+
+    dispatch({ type: "clearTema" });
+
+    try {
+      const page = await fetchFeed(
+        PAGE_SIZE,
+        0,
+        state.ordenacao,
+        undefined,
+        state.query || undefined,
+      );
+      dispatch({ type: "feedSuccess", items: page.items, total: page.total });
+    } catch (error) {
+      console.error("feed clear tema failed", error);
+      dispatch({ type: "loadError" });
+    }
+  }
+
   async function clearFilters() {
     if (state.status === "loading") return;
 
@@ -197,6 +218,7 @@ export function useFeedState(
     loadMore,
     changeOrdenacao,
     changeTema,
+    clearTema,
     clearFilters,
   };
 }
