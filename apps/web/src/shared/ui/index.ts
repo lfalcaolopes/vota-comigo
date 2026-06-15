@@ -11,6 +11,7 @@ export {
   Tabs,
 } from "./selection";
 export {
+  Disclosure,
   EmptyState,
   ErrorState,
   InlineMessage,

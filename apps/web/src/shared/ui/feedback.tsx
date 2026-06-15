@@ -51,12 +51,56 @@ export function InlineMessage({
 
   return (
     <div
-      className={joinClassNames("grid gap-2 rounded-md border p-4 text-ink", toneClass())}
+      className={joinClassNames(
+        "grid gap-2 rounded-md border p-4 text-ink",
+        toneClass(),
+      )}
       role={tone === "danger" ? "alert" : "status"}
     >
       <p className="text-sm font-[720]">{title}</p>
       <p className="text-sm leading-normal text-muted">{body}</p>
     </div>
+  );
+}
+
+type DisclosureProps = PropsWithChildren<{
+  summary: string;
+  defaultOpen?: boolean;
+}>;
+
+export function Disclosure({
+  summary,
+  children,
+  defaultOpen = false,
+}: DisclosureProps) {
+  return (
+    <details
+      className="group rounded-md border border-border bg-surface-muted text-sm"
+      open={defaultOpen}
+    >
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 font-[650] text-ink [&::-webkit-details-marker]:hidden">
+        <span>{summary}</span>
+        <svg
+          aria-hidden="true"
+          className="shrink-0 text-subtle transition-transform group-open:rotate-180"
+          fill="none"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+        >
+          <path
+            d="M4 6l4 4 4-4"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
+      </summary>
+      <div className="grid gap-2 border-t border-border px-4 py-3 leading-normal text-muted">
+        {children}
+      </div>
+    </details>
   );
 }
 
@@ -84,7 +128,11 @@ export function ErrorState({ onRetry }: { onRetry: () => void }) {
         title="Erro ao carregar"
         tone="danger"
       />
-      <Button className="justify-self-start" onClick={onRetry} variant="secondary">
+      <Button
+        className="justify-self-start"
+        onClick={onRetry}
+        variant="secondary"
+      >
         Tentar novamente
       </Button>
     </div>
@@ -103,7 +151,13 @@ export function SourceLink({ children, className, ...props }: SourceLinkProps) {
       {...props}
     >
       <span>{children}</span>
-      <svg aria-hidden="true" fill="none" height="16" viewBox="0 0 16 16" width="16">
+      <svg
+        aria-hidden="true"
+        fill="none"
+        height="16"
+        viewBox="0 0 16 16"
+        width="16"
+      >
         <path
           d="M6.25 3.75h6m0 0v6m0-6-7 7M4.75 5.5H3.5a1.5 1.5 0 0 0-1.5 1.5v5.5A1.5 1.5 0 0 0 3.5 14h5.5a1.5 1.5 0 0 0 1.5-1.5v-1.25"
           stroke="currentColor"

@@ -222,12 +222,6 @@ export function isSemBomMatch(resultado: MatcherResultado | null): boolean {
   return resultado?.semBomMatch === true;
 }
 
-export function shouldSuggestNacional(state: MatcherState): boolean {
-  if (state.escopo !== "estadual") return false;
-  const r = activeResultado(state);
-  return (r?.deputados.length ?? 0) > 0;
-}
-
 export function isDetalheOpen(state: MatcherState): boolean {
   return state.detalheDeputadoId !== null;
 }

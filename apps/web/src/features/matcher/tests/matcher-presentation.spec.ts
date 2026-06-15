@@ -2,8 +2,6 @@ import type { AlertaMatcher, MatcherDeputadoResumo } from "@vota-comigo/shared-t
 import { describe, expect, it } from "vitest";
 
 import {
-  ESCOPO_NACIONAL_BANNER_BODY,
-  ESCOPO_NACIONAL_BANNER_TITLE,
   SEM_BOM_MATCH_BANNER_BODY,
   SEM_BOM_MATCH_BANNER_TITLE,
   formatPercentual,
@@ -65,7 +63,7 @@ describe("formatPercentual", () => {
 
 describe("toAmostraComparavelLabel", () => {
   describe("when deputado has a valid sample and totalPosicoesComputaveis", () => {
-    it("returns the sample fraction against the total comparadas", () => {
+    it("returns the sample fraction against the total computable positions", () => {
       // Arrange
       const deputado = makeDeputado({ amostraComparavel: 8 });
 
@@ -73,7 +71,7 @@ describe("toAmostraComparavelLabel", () => {
       const label = toAmostraComparavelLabel(deputado, 10);
 
       // Assert
-      expect(label).toBe("8 de 10 comparadas");
+      expect(label).toBe("8 de 10 votações comparáveis");
     });
   });
 
@@ -207,21 +205,5 @@ describe("SEM_BOM_MATCH_BANNER_BODY", () => {
     // Act / Assert
     expect(typeof SEM_BOM_MATCH_BANNER_BODY).toBe("string");
     expect(SEM_BOM_MATCH_BANNER_BODY.length).toBeGreaterThan(0);
-  });
-});
-
-describe("ESCOPO_NACIONAL_BANNER_TITLE", () => {
-  it("is a non-empty string", () => {
-    // Act / Assert
-    expect(typeof ESCOPO_NACIONAL_BANNER_TITLE).toBe("string");
-    expect(ESCOPO_NACIONAL_BANNER_TITLE.length).toBeGreaterThan(0);
-  });
-});
-
-describe("ESCOPO_NACIONAL_BANNER_BODY", () => {
-  it("is a non-empty string", () => {
-    // Act / Assert
-    expect(typeof ESCOPO_NACIONAL_BANNER_BODY).toBe("string");
-    expect(ESCOPO_NACIONAL_BANNER_BODY.length).toBeGreaterThan(0);
   });
 });

@@ -7,10 +7,6 @@ export const SEM_BOM_MATCH_BANNER_TITLE =
 export const SEM_BOM_MATCH_BANNER_BODY =
   "Candidatos que ainda não têm histórico de votação federal podem estar mais alinhados com suas posições. Eleições são o momento de renovar a representação.";
 
-export const ESCOPO_NACIONAL_BANNER_TITLE = "Ver deputados de todo o Brasil";
-export const ESCOPO_NACIONAL_BANNER_BODY =
-  "Deputados de outros estados não são candidatos votáveis por você, mas permitem comparar perfis e referências de atuação.";
-
 const PARTICLES = new Set(["de", "da", "do", "dos", "das", "e", "e"]);
 
 export function formatPercentual(value: number): string {
@@ -21,7 +17,7 @@ export function toAmostraComparavelLabel(
   deputado: MatcherDeputadoResumo,
   totalPosicoesComputaveis: number,
 ): string {
-  return `${deputado.amostraComparavel} de ${totalPosicoesComputaveis} comparadas`;
+  return `${deputado.amostraComparavel} de ${totalPosicoesComputaveis} votações comparáveis`;
 }
 
 export function toAlertaLabel(alerta: AlertaMatcher): string {

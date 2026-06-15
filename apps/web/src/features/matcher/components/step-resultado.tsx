@@ -5,10 +5,8 @@ import type { EscopoMatcher, MatcherResultado } from "@vota-comigo/shared-types"
 import { Button, ErrorState, SegmentedControl, SkeletonRows, Switch } from "@/shared/ui";
 
 import type { MatcherState, MatcherStatus } from "../lib/matcher-state";
-import { isSemBomMatch, resultadoDisplay, shouldSuggestNacional } from "../lib/matcher-state";
-import { CoberturaBanner } from "./cobertura-banner";
+import { isSemBomMatch, resultadoDisplay } from "../lib/matcher-state";
 import { DeputadoCard } from "./deputado-card";
-import { EscopoNacionalBanner } from "./escopo-nacional-banner";
 import { OrdenacaoDisclosure } from "./ordenacao-disclosure";
 import { ResultadoVazio } from "./resultado-vazio";
 import { SemBomMatchBanner } from "./sem-bom-match-banner";
@@ -95,11 +93,7 @@ export function StepResultado({
   return (
     <div className="grid gap-5">
       {escopoControl}
-      <CoberturaBanner />
       {isSemBomMatch(resultado) && <SemBomMatchBanner />}
-      {shouldSuggestNacional(state) && (
-        <EscopoNacionalBanner onEscopoChange={onEscopoChange} />
-      )}
       <OrdenacaoDisclosure />
 
       <ul className="grid">
@@ -113,24 +107,22 @@ export function StepResultado({
         ))}
       </ul>
 
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <Button className="justify-self-start" onClick={onBack}>
-          Voltar
-        </Button>
-
-        {status === "error" ? (
+      {status === "error" ? (
+        <div className="flex justify-center">
           <Button onClick={onLoadMore} variant="secondary">
             Tentar novamente
           </Button>
-        ) : hasMore ? (
-          <Button
-            disabled={status === "loading"}
-            onClick={onLoadMore}
-            variant="secondary"
-          >
+        </div>
+      ) : hasMore ? (
+        <div className="flex justify-center">
+          <Button disabled={status === "loading"} onClick={onLoadMore} variant="secondary">
             {status === "loading" ? "Carregando…" : "Carregar mais"}
           </Button>
-        ) : null}
+        </div>
+      ) : null}
+
+      <div>
+        <Button onClick={onBack}>Voltar</Button>
       </div>
     </div>
   );
