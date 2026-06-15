@@ -6,9 +6,11 @@ import type {
 import { describe, expect, it } from "vitest";
 
 import {
+  AMOSTRA_PEQUENA_CAVEAT,
   FORA_DO_DENOMINADOR_EXPLICACAO,
   countVotosByFiltro,
   filterVotos,
+  formatAmostraComparavel,
   groupVotosByMatcherEffect,
   sortVotosByVotacaoDataDesc,
   toFiltroLabel,
@@ -378,5 +380,36 @@ describe("FORA_DO_DENOMINADOR_EXPLICACAO", () => {
     // Act / Assert
     expect(typeof FORA_DO_DENOMINADOR_EXPLICACAO).toBe("string");
     expect(FORA_DO_DENOMINADOR_EXPLICACAO.length).toBeGreaterThan(0);
+  });
+});
+
+describe("formatAmostraComparavel", () => {
+  describe("when there are no comparable votações", () => {
+    it("states the absence in plain language", () => {
+      // Act / Assert
+      expect(formatAmostraComparavel(0)).toBe("sem votações comparáveis");
+    });
+  });
+
+  describe("when there is exactly one comparable votação", () => {
+    it("uses the singular noun", () => {
+      // Act / Assert
+      expect(formatAmostraComparavel(1)).toBe("em 1 votação comparável");
+    });
+  });
+
+  describe("when there are several comparable votações", () => {
+    it("uses the plural noun", () => {
+      // Act / Assert
+      expect(formatAmostraComparavel(4)).toBe("em 4 votações comparáveis");
+    });
+  });
+});
+
+describe("AMOSTRA_PEQUENA_CAVEAT", () => {
+  it("is a non-empty cautionary string", () => {
+    // Act / Assert
+    expect(typeof AMOSTRA_PEQUENA_CAVEAT).toBe("string");
+    expect(AMOSTRA_PEQUENA_CAVEAT.length).toBeGreaterThan(0);
   });
 });

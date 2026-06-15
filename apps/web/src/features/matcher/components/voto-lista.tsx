@@ -27,9 +27,7 @@ export function VotoLista({ votos }: VotoListaProps) {
 
   const counts = countVotosByFiltro(votos);
   const visiveis = sortVotosByVotacaoDataDesc(filterVotos(votos, filtro));
-  const mostraExplicacao = visiveis.some(
-    (voto) => voto.matcherEffect === "fora_do_denominador",
-  );
+  const mostraExplicacao = filtro === "fora" && visiveis.length > 0;
 
   return (
     <section aria-label="Proposições avaliadas" className="grid gap-3">

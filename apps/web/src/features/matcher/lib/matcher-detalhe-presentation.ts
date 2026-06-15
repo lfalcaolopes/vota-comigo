@@ -7,6 +7,15 @@ import type {
 export const FORA_DO_DENOMINADOR_EXPLICACAO =
   "Estas proposições não entraram no cálculo de compatibilidade porque o deputado estava fora de exercício ou teve impedimento regimental na votação.";
 
+export const AMOSTRA_PEQUENA_CAVEAT =
+  "Amostra pequena: o deputado tem voto comparável em menos da metade das proposições que você selecionou, então esta compatibilidade é menos confiável.";
+
+export function formatAmostraComparavel(amostraComparavel: number): string {
+  if (amostraComparavel === 0) return "sem votações comparáveis";
+  if (amostraComparavel === 1) return "em 1 votação comparável";
+  return `em ${amostraComparavel} votações comparáveis`;
+}
+
 export function groupVotosByMatcherEffect(
   votos: MatcherVotoDetalhe[],
 ): Record<MatcherEffect, MatcherVotoDetalhe[]> {
