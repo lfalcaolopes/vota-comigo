@@ -1,6 +1,12 @@
 import type { MatcherVotoDetalhe } from "@vota-comigo/shared-types";
+import Link from "next/link";
+import type { ReactNode } from "react";
+
+import { formatShortDate, toIdentificadorLegislativo } from "@/shared/proposicao";
+import { Badge } from "@/shared/ui";
 
 import {
+  toMatcherEffectVerdict,
   toPosicaoLabel,
   toSituacaoLabel,
 } from "../lib/matcher-detalhe-presentation";
@@ -10,53 +16,69 @@ type VotoDetalheItemProps = {
 };
 
 export function VotoDetalheItem({ voto }: VotoDetalheItemProps) {
-  const { proposicao, posicaoUsuario, situacaoDeputadoVotacao } = voto;
+  const { proposicao, posicaoUsuario, situacaoDeputadoVotacao, matcherEffect } =
+    voto;
 
-  const identificador = [proposicao.siglaTipo, proposicao.numero, proposicao.ano]
-    .filter(Boolean)
-    .join(" ");
+  const identificador =
+    toIdentificadorLegislativo(proposicao) ??
+    `Proposição ${proposicao.externalIdProposicao}`;
+  const verdict = toMatcherEffectVerdict(matcherEffect);
+  const dataVotacao = formatShortDate(voto.votacaoReferencia.data);
 
   return (
-    <div className="grid gap-1 border-b border-border py-3">
-      <p className="text-sm font-[650] text-ink">
-        {identificador || `Proposição ${proposicao.externalIdProposicao}`}
-      </p>
-      {proposicao.ementa && (
-        <p className="line-clamp-2 text-sm leading-normal text-muted">
-          {proposicao.ementa}
-        </p>
-      )}
-      <div className="mt-1 flex flex-wrap gap-3 text-xs">
-        <span className="flex items-center gap-1.5">
-          <svg aria-hidden="true" fill="none" height="12" viewBox="0 0 12 12" width="12">
-            <circle cx="6" cy="6" fill="currentColor" opacity="0.4" r="5" />
-            <path
-              d="M3.5 6l2 2 3-3"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.5"
-            />
-          </svg>
-          <span className="text-muted">Sua posição:</span>
-          <span className="font-[650] text-ink">{toPosicaoLabel(posicaoUsuario)}</span>
-        </span>
-        <span className="flex items-center gap-1.5">
-          <svg aria-hidden="true" fill="none" height="12" viewBox="0 0 12 12" width="12">
-            <rect fill="currentColor" height="8" opacity="0.4" rx="1" width="8" x="2" y="2" />
-            <path
-              d="M4.5 6h3M6 4.5v3"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="1.5"
-            />
-          </svg>
-          <span className="text-muted">Deputado votou:</span>
-          <span className="font-[650] text-ink">
+    <article className="border-b border-border">
+      <Link
+        className="-mx-2 grid gap-2 rounded-md px-2 py-3 transition-[background-color] duration-[180ms] ease-standard hover:bg-surface focus-visible:bg-surface"
+        href={`/proposicoes/${proposicao.externalIdProposicao}`}
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm font-[650] text-ink">{identificador}</p>
+          <Badge className="shrink-0" tone={verdict.tone}>
+            {verdict.label}
+          </Badge>
+        </div>
+
+        {proposicao.ementa ? (
+          <p className="line-clamp-2 text-sm leading-normal text-muted">
+            {proposicao.ementa}
+          </p>
+        ) : null}
+
+        <dl className="mt-1 flex flex-wrap gap-x-5 gap-y-2 text-xs">
+          <MetaItem label="Sua posição">
+            {toPosicaoLabel(posicaoUsuario)}
+          </MetaItem>
+          <MetaItem label="Deputado votou">
             {toSituacaoLabel(situacaoDeputadoVotacao)}
-          </span>
-        </span>
-      </div>
+          </MetaItem>
+          {dataVotacao ? (
+            <MetaItem label="Votação" mono>
+              {dataVotacao}
+            </MetaItem>
+          ) : null}
+        </dl>
+      </Link>
+    </article>
+  );
+}
+
+function MetaItem({
+  children,
+  label,
+  mono = false,
+}: {
+  children: ReactNode;
+  label: string;
+  mono?: boolean;
+}) {
+  return (
+    <div className="flex min-w-0 items-baseline gap-2">
+      <dt className="text-muted">{label}</dt>
+      <dd className={mono ? "font-mono font-medium text-muted" : "font-[650] text-ink"}>
+        {children}
+      </dd>
     </div>
   );
 }

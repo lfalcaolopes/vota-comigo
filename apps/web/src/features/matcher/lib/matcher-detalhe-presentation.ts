@@ -50,3 +50,16 @@ export function toMatcherEffectLabel(effect: MatcherEffect): string {
   if (effect === "discordancia") return "Discordou";
   return "Fora do denominador";
 }
+
+export type MatcherVerdictTone = "success" | "danger" | "neutral";
+
+export type MatcherVerdict = {
+  label: string;
+  tone: MatcherVerdictTone;
+};
+
+export function toMatcherEffectVerdict(effect: MatcherEffect): MatcherVerdict {
+  if (effect === "concordancia") return { label: "Alinhado", tone: "success" };
+  if (effect === "discordancia") return { label: "Divergente", tone: "danger" };
+  return { label: "Fora do cálculo", tone: "neutral" };
+}

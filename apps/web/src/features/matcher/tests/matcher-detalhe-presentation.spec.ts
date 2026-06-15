@@ -9,6 +9,7 @@ import {
   FORA_DO_DENOMINADOR_EXPLICACAO,
   groupVotosByMatcherEffect,
   toMatcherEffectLabel,
+  toMatcherEffectVerdict,
   toPosicaoLabel,
   toSituacaoLabel,
 } from "../lib/matcher-detalhe-presentation";
@@ -178,6 +179,38 @@ describe("toMatcherEffectLabel", () => {
       expect(toMatcherEffectLabel("fora_do_denominador")).toBe(
         "Fora do denominador",
       );
+    });
+  });
+});
+
+describe("toMatcherEffectVerdict", () => {
+  describe("when effect is concordancia", () => {
+    it("reads as aligned with a success tone", () => {
+      // Act
+      const verdict = toMatcherEffectVerdict("concordancia");
+
+      // Assert
+      expect(verdict).toEqual({ label: "Alinhado", tone: "success" });
+    });
+  });
+
+  describe("when effect is discordancia", () => {
+    it("reads as divergent with a danger tone", () => {
+      // Act
+      const verdict = toMatcherEffectVerdict("discordancia");
+
+      // Assert
+      expect(verdict).toEqual({ label: "Divergente", tone: "danger" });
+    });
+  });
+
+  describe("when effect is fora_do_denominador", () => {
+    it("reads as outside the calculation with a neutral tone", () => {
+      // Act
+      const verdict = toMatcherEffectVerdict("fora_do_denominador");
+
+      // Assert
+      expect(verdict).toEqual({ label: "Fora do cálculo", tone: "neutral" });
     });
   });
 });
