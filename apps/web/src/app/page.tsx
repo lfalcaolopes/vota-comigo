@@ -4,7 +4,6 @@ import { Feed } from "@/features/feed";
 import {
   feed,
   parseFeedUrlState,
-  search,
   temasDisponiveis,
   type FeedSearchParams,
 } from "@/shared/proposicao";
@@ -25,9 +24,7 @@ export default async function Home({
   const { ordenacao, query, tema } = parseFeedUrlState(await searchParams);
 
   const [{ items, total }, { items: temas }] = await Promise.all([
-    query
-      ? search(query, 20, 0)
-      : feed(20, 0, ordenacao, tema ?? undefined),
+    feed(20, 0, ordenacao, tema ?? undefined, query ?? undefined),
     temasDisponiveis(),
   ]);
 

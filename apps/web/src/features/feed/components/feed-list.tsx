@@ -48,20 +48,6 @@ export function FeedList({
     );
   }
 
-  if (display === "empty-search") {
-    return (
-      <EmptyState
-        action={
-          <Button onClick={onClearSearch} variant="secondary">
-            Limpar busca
-          </Button>
-        }
-        body="Tente outro identificador legislativo ou termo da ementa."
-        title="Nenhuma proposição encontrada"
-      />
-    );
-  }
-
   if (display === "empty-filtered") {
     return (
       <EmptyState
@@ -70,7 +56,7 @@ export function FeedList({
             Limpar filtros
           </Button>
         }
-        body="Não há proposições computáveis para o tema selecionado."
+        body="Nenhuma proposição foi encontrada com a busca e os filtros utilizados."
         title="Nenhuma proposição encontrada"
       />
     );

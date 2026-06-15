@@ -48,7 +48,7 @@ export function SelecaoList({
     );
   }
 
-  if (display === "empty-search") {
+  if (display === "empty-filtered") {
     return (
       <EmptyState
         action={

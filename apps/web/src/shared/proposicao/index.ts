@@ -1,4 +1,4 @@
-export { detalhe, feed, search, temasDisponiveis } from "./queries";
+export { detalhe, feed, temasDisponiveis } from "./queries";
 export {
   buildFeedHref,
   buildFeedSearchParams,
@@ -17,7 +17,6 @@ export {
 export { useFeedState, type UseFeedState } from "./use-feed-state";
 export {
   type FeedDisplay,
-  type FeedMode,
   type FeedOrdenacao,
   type FeedStatus,
   type FeedState,

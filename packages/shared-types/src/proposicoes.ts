@@ -113,14 +113,6 @@ export const proposicoesFeedResponseSchema = z.object({
   offset: z.number(),
 });
 
-export const proposicoesSearchResponseSchema = z.object({
-  items: z.array(proposicaoCardSchema),
-  total: z.number(),
-  limit: z.number(),
-  offset: z.number(),
-  query: z.string(),
-});
-
 export type VotacaoReferenciaPattern = z.infer<typeof votacaoReferenciaPattern>;
 export type Resultado = z.infer<typeof resultadoVotacao>;
 export type FeedOrdenacao = z.infer<typeof feedOrdenacao>;
@@ -138,6 +130,3 @@ export type ProposicaoDetalhe = z.infer<typeof proposicaoDetalheSchema>;
 export type TemaDisponivel = z.infer<typeof temaDisponivelSchema>;
 export type TemasDisponiveisResponse = z.infer<typeof temasDisponiveisResponseSchema>;
 export type ProposicoesFeedResponse = z.infer<typeof proposicoesFeedResponseSchema>;
-export type ProposicoesSearchResponse = z.infer<
-  typeof proposicoesSearchResponseSchema
->;

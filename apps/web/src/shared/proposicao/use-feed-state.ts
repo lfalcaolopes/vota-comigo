@@ -3,17 +3,15 @@
 import type { FeedOrdenacao, ProposicaoCard } from "@vota-comigo/shared-types";
 import { useReducer } from "react";
 
-import { feed as fetchFeed, search } from "./queries";
+import { feed as fetchFeed } from "./queries";
 
 import {
-  activeFeed,
   feedDisplay,
   feedReducer,
   hasMore,
   initFeedState,
   nextOffset,
   type FeedDisplay,
-  type FeedMode,
   type FeedStatus,
   type FeedState,
 } from "./feed-state";
@@ -24,7 +22,6 @@ export type UseFeedState = {
   items: ProposicaoCard[];
   total: number;
   status: FeedStatus;
-  mode: FeedMode;
   query: string;
   ordenacao: FeedOrdenacao;
   tema: FeedState["tema"];
@@ -64,11 +61,17 @@ export function useFeedState(
     }
     if (state.status === "loading") return;
 
-    dispatch({ type: "searchStart", query: term });
+    dispatch({ type: "changeQuery", query: term });
 
     try {
-      const page = await search(term, PAGE_SIZE, 0);
-      dispatch({ type: "searchSuccess", items: page.items, total: page.total });
+      const page = await fetchFeed(
+        PAGE_SIZE,
+        0,
+        state.ordenacao,
+        state.tema ?? undefined,
+        term,
+      );
+      dispatch({ type: "feedSuccess", items: page.items, total: page.total });
     } catch (error) {
       console.error("feed search failed", error);
       dispatch({ type: "loadError" });
@@ -78,11 +81,7 @@ export function useFeedState(
   async function clearSearch() {
     if (state.status === "loading") return;
 
-    const hasDefaultFeed = state.defaultFeed.items.length > 0;
     dispatch({ type: "clearSearch" });
-    if (hasDefaultFeed) return;
-
-    dispatch({ type: "loadMoreStart" });
 
     try {
       const page = await fetchFeed(
@@ -90,12 +89,9 @@ export function useFeedState(
         0,
         state.ordenacao,
         state.tema ?? undefined,
+        undefined,
       );
-      dispatch({
-        type: "loadMoreSuccess",
-        items: page.items,
-        total: page.total,
-      });
+      dispatch({ type: "feedSuccess", items: page.items, total: page.total });
     } catch (error) {
       console.error("feed clear search failed", error);
       dispatch({ type: "loadError" });
@@ -109,10 +105,13 @@ export function useFeedState(
 
     try {
       const offset = nextOffset(state);
-      const page =
-        state.mode === "search"
-          ? await search(state.query, PAGE_SIZE, offset)
-          : await fetchFeed(PAGE_SIZE, offset, state.ordenacao, state.tema ?? undefined);
+      const page = await fetchFeed(
+        PAGE_SIZE,
+        offset,
+        state.ordenacao,
+        state.tema ?? undefined,
+        state.query || undefined,
+      );
       dispatch({
         type: "loadMoreSuccess",
         items: page.items,
@@ -130,12 +129,14 @@ export function useFeedState(
     dispatch({ type: "changeOrdenacao", ordenacao: value });
 
     try {
-      const page = await fetchFeed(PAGE_SIZE, 0, value, state.tema ?? undefined);
-      dispatch({
-        type: "loadMoreSuccess",
-        items: page.items,
-        total: page.total,
-      });
+      const page = await fetchFeed(
+        PAGE_SIZE,
+        0,
+        value,
+        state.tema ?? undefined,
+        state.query || undefined,
+      );
+      dispatch({ type: "feedSuccess", items: page.items, total: page.total });
     } catch (error) {
       console.error("feed change ordenacao failed", error);
       dispatch({ type: "loadError" });
@@ -148,12 +149,14 @@ export function useFeedState(
     dispatch({ type: "changeTema", tema });
 
     try {
-      const page = await fetchFeed(PAGE_SIZE, 0, state.ordenacao, tema);
-      dispatch({
-        type: "loadMoreSuccess",
-        items: page.items,
-        total: page.total,
-      });
+      const page = await fetchFeed(
+        PAGE_SIZE,
+        0,
+        state.ordenacao,
+        tema,
+        state.query || undefined,
+      );
+      dispatch({ type: "feedSuccess", items: page.items, total: page.total });
     } catch (error) {
       console.error("feed change tema failed", error);
       dispatch({ type: "loadError" });
@@ -166,25 +169,24 @@ export function useFeedState(
     dispatch({ type: "clearFilters" });
 
     try {
-      const page = await fetchFeed(PAGE_SIZE, 0, state.ordenacao, undefined);
-      dispatch({
-        type: "loadMoreSuccess",
-        items: page.items,
-        total: page.total,
-      });
+      const page = await fetchFeed(
+        PAGE_SIZE,
+        0,
+        state.ordenacao,
+        undefined,
+        undefined,
+      );
+      dispatch({ type: "feedSuccess", items: page.items, total: page.total });
     } catch (error) {
       console.error("feed clear filters failed", error);
       dispatch({ type: "loadError" });
     }
   }
 
-  const activePage = activeFeed(state);
-
   return {
-    items: activePage.items,
-    total: activePage.total,
+    items: state.feed.items,
+    total: state.feed.total,
     status: state.status,
-    mode: state.mode,
     query: state.query,
     ordenacao: state.ordenacao,
     tema: state.tema,

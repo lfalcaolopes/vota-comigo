@@ -4,7 +4,6 @@ import type {
   FeedOrdenacao,
   ProposicoesFeedResponse,
   ProposicaoDetalhe,
-  ProposicoesSearchResponse,
   TemasDisponiveisResponse,
 } from '@vota-comigo/shared-types';
 
@@ -17,18 +16,9 @@ import {
   type ProposicoesRepository,
 } from './proposicoes.repository';
 import { toProposicoesComputaveis } from './rules/proposicoes-computaveis';
-import { compareRanking, selectComparator } from './rules/proposicoes-ranking';
+import { selectComparator } from './rules/proposicoes-ranking';
 import { toTemasDisponiveis } from './rules/temas-disponiveis';
-import {
-  compareSearchRelevance,
-  matchesCitation,
-  matchesAllTokens,
-  parseCitation,
-  referenceMatchCount,
-  tokenizeQuery,
-  toSearchableProposicao,
-} from './rules/proposicoes-search';
-import type { RankedProposicao } from './types/proposicoes.types';
+import { filterProposicoesByQuery } from './rules/proposicoes-search';
 
 @Injectable()
 export class ProposicoesService {
@@ -42,12 +32,16 @@ export class ProposicoesService {
     offset: number,
     ordenacao: FeedOrdenacao = 'mais-votadas',
     tema?: number,
+    q?: string,
   ): Promise<ProposicoesFeedResponse> {
     const rows =
       await this.repository.loadProposicoesWithVotacoesPlenario(tema);
-    const ranked = [...toProposicoesComputaveis(rows)].sort(
-      selectComparator(ordenacao),
-    );
+    const computaveis = toProposicoesComputaveis(rows);
+    const filtered =
+      q !== undefined && q.trim().length > 0
+        ? filterProposicoesByQuery(computaveis, q.trim())
+        : computaveis;
+    const ranked = [...filtered].sort(selectComparator(ordenacao));
 
     return {
       items: ranked.slice(offset, offset + limit).map(toProposicaoCard),
@@ -82,55 +76,5 @@ export class ProposicoesService {
     }
 
     return toProposicaoDetalhe(result, referencia.externalIdVotacao);
-  }
-
-  async search(
-    query: string,
-    limit: number,
-    offset: number,
-  ): Promise<ProposicoesSearchResponse> {
-    const rows = await this.repository.loadProposicoesWithVotacoesPlenario();
-    const computaveis = toProposicoesComputaveis(rows);
-
-    const citation = parseCitation(query);
-    if (citation !== null) {
-      const exact = computaveis
-        .filter((r) =>
-          matchesCitation(toSearchableProposicao(r.proposicao), citation),
-        )
-        .sort(compareRanking);
-      return this.buildSearchResponse(exact, query, limit, offset);
-    }
-
-    const tokens = tokenizeQuery(query);
-    const matched = computaveis
-      .flatMap((ranked) => {
-        const fields = toSearchableProposicao(ranked.proposicao);
-        if (!matchesAllTokens(fields, tokens)) return [];
-        return [{ ranked, refMatches: referenceMatchCount(fields, tokens) }];
-      })
-      .sort(compareSearchRelevance);
-
-    return this.buildSearchResponse(
-      matched.map((m) => m.ranked),
-      query,
-      limit,
-      offset,
-    );
-  }
-
-  private buildSearchResponse(
-    ranked: readonly RankedProposicao[],
-    query: string,
-    limit: number,
-    offset: number,
-  ): ProposicoesSearchResponse {
-    return {
-      items: ranked.slice(offset, offset + limit).map(toProposicaoCard),
-      total: ranked.length,
-      limit,
-      offset,
-      query,
-    };
   }
 }

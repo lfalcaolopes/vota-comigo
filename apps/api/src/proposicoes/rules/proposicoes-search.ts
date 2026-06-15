@@ -4,6 +4,25 @@ import type {
   RankedProposicao,
 } from '../types/proposicoes.types';
 
+export function filterProposicoesByQuery(
+  computaveis: readonly RankedProposicao[],
+  q: string,
+): readonly RankedProposicao[] {
+  const tokens = tokenizeQuery(q);
+  if (tokens.length === 0) return computaveis;
+
+  const citation = parseCitation(q);
+  if (citation !== null) {
+    return computaveis.filter((r) =>
+      matchesCitation(toSearchableProposicao(r.proposicao), citation),
+    );
+  }
+
+  return computaveis.filter((r) =>
+    matchesAllTokens(toSearchableProposicao(r.proposicao), tokens),
+  );
+}
+
 export function normalizeText(value: string): string {
   return value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }

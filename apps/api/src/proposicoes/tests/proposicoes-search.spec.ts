@@ -1,4 +1,5 @@
 import {
+  filterProposicoesByQuery,
   matchesCitation,
   matchesAllTokens,
   parseCitation,
@@ -7,6 +8,40 @@ import {
   type Citation,
   type SearchableProposicao,
 } from '../rules/proposicoes-search';
+import { toProposicoesComputaveis } from '../rules/proposicoes-computaveis';
+import type { ProposicaoVotacaoJoinRow } from '../proposicoes.repository';
+
+function joinRow(
+  overrides: Partial<ProposicaoVotacaoJoinRow> = {},
+): ProposicaoVotacaoJoinRow {
+  return {
+    externalIdProposicao: 1,
+    siglaTipo: 'PL',
+    numero: 100,
+    ano: 2024,
+    ementa: 'Dispõe sobre saúde pública',
+    dataApresentacao: '2024-04-15T10:00:00Z',
+    ultimoStatusSiglaOrgao: 'PLEN',
+    ultimoStatusDescricaoSituacao: 'Aprovada',
+    ultimoStatusRegime: 'Urgência',
+    ultimoStatusDataHora: '2024-06-01T10:00:00Z',
+    externalIdVotacao: '1-1',
+    data: '2024-05-01',
+    dataHoraRegistro: '2024-05-01T12:00:00Z',
+    descricao: 'Aprovado o Projeto de Lei',
+    ultimaAberturaVotacaoDescricao: null,
+    ultimaApresentacaoProposicaoDescricao: null,
+    votosSim: 300,
+    votosNao: 100,
+    votosOutros: 5,
+    aprovacao: 1,
+    ...overrides,
+  };
+}
+
+function computaveis(...rows: ProposicaoVotacaoJoinRow[]) {
+  return toProposicoesComputaveis(rows);
+}
 
 function searchable(
   overrides: Partial<SearchableProposicao> = {},
@@ -234,6 +269,113 @@ describe('matchesCitation', () => {
 
       // Act & Assert
       expect(matchesCitation(fields, citation)).toBe(true);
+    });
+  });
+});
+
+describe('filterProposicoesByQuery', () => {
+  describe('when the query is a citation', () => {
+    it('returns only the exact match, excluding ementa coincidences', () => {
+      // Arrange
+      const target = joinRow({
+        externalIdProposicao: 10,
+        siglaTipo: 'PEC',
+        numero: 3,
+        ano: 2021,
+        ementa: 'Altera a Constituição',
+        externalIdVotacao: '10-1',
+      });
+      const ementaCoincidence = joinRow({
+        externalIdProposicao: 11,
+        siglaTipo: 'PL',
+        numero: 100,
+        ano: 2020,
+        ementa: 'Texto sobre 3 itens publicado em 2021',
+        externalIdVotacao: '11-1',
+      });
+      const items = computaveis(target, ementaCoincidence);
+
+      // Act
+      const result = filterProposicoesByQuery(items, 'pec 3/2021');
+
+      // Assert
+      expect(result.map((r) => r.proposicao.externalIdProposicao)).toEqual([10]);
+    });
+  });
+
+  describe('when the query is a plain text term', () => {
+    it('returns items where every token matches ementa or identifier (AND)', () => {
+      // Arrange
+      const saude = joinRow({
+        externalIdProposicao: 1,
+        ementa: 'Dispõe sobre saúde pública',
+        externalIdVotacao: '1-1',
+      });
+      const educacao = joinRow({
+        externalIdProposicao: 2,
+        ementa: 'Dispõe sobre educação',
+        externalIdVotacao: '2-1',
+      });
+      const items = computaveis(saude, educacao);
+
+      // Act
+      const result = filterProposicoesByQuery(items, 'saúde');
+
+      // Assert
+      expect(result.map((r) => r.proposicao.externalIdProposicao)).toEqual([1]);
+    });
+
+    it('does not match a theme name that only appears as a category, not in the ementa or identifier', () => {
+      // Arrange
+      const row = joinRow({
+        externalIdProposicao: 1,
+        siglaTipo: 'PL',
+        numero: 100,
+        ano: 2024,
+        ementa: 'Dispõe sobre finanças municipais',
+        externalIdVotacao: '1-1',
+      });
+      const items = computaveis(row);
+
+      // Act — "saúde" is a tema category name, not in this proposicao's identifier or ementa
+      const result = filterProposicoesByQuery(items, 'saúde');
+
+      // Assert
+      expect(result).toHaveLength(0);
+    });
+
+    it('requires every token to match (AND semantics)', () => {
+      // Arrange
+      const row = joinRow({
+        externalIdProposicao: 1,
+        ementa: 'Dispõe sobre saúde pública',
+        externalIdVotacao: '1-1',
+      });
+      const items = computaveis(row);
+
+      // Act
+      const result = filterProposicoesByQuery(items, 'saúde educação');
+
+      // Assert
+      expect(result).toHaveLength(0);
+    });
+  });
+
+  describe('when the query is empty or contains only separators', () => {
+    it.each([
+      ['empty string', ''],
+      ['whitespace only', '   '],
+      ['separator only', '/'],
+    ])('returns all items unchanged for %s', (_label, q) => {
+      // Arrange
+      const row = joinRow({ externalIdVotacao: '1-1' });
+      const items = computaveis(row);
+
+      // Act
+      const result = filterProposicoesByQuery(items, q);
+
+      // Assert
+      expect(result).toHaveLength(items.length);
     });
   });
 });

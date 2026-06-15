@@ -43,7 +43,6 @@ export function FeedView({
     items,
     total,
     status,
-    mode,
     query,
     ordenacao,
     tema,
@@ -64,7 +63,7 @@ export function FeedView({
   );
 
   const [draft, setDraft] = useState(initialQuery ?? "");
-  const activeQuery = mode === "search" ? query : null;
+  const activeQuery = query || null;
   const itemSearchParams = buildFeedSearchParams({
     ordenacao,
     query: activeQuery,
@@ -90,7 +89,7 @@ export function FeedView({
 
   async function handleOrdenacao(value: FeedOrdenacao) {
     router.replace(
-      buildFeedHref(pathname, { ordenacao: value, query: null, tema }),
+      buildFeedHref(pathname, { ordenacao: value, query: activeQuery, tema }),
     );
     await changeOrdenacao(value);
   }
@@ -98,7 +97,7 @@ export function FeedView({
   async function handleTema(cod: number) {
     const next = tema === cod ? null : cod;
     router.replace(
-      buildFeedHref(pathname, { ordenacao, query: null, tema: next }),
+      buildFeedHref(pathname, { ordenacao, query: activeQuery, tema: next }),
     );
     if (next === null) {
       await clearFilters();
@@ -119,7 +118,7 @@ export function FeedView({
       <div className="flex flex-wrap items-center justify-between gap-4">
         <FeedSearch
           disabled={status === "loading"}
-          isSearching={mode === "search"}
+          isSearching={query !== ""}
           onChange={setDraft}
           onClear={handleClear}
           onSubmit={handleSearch}

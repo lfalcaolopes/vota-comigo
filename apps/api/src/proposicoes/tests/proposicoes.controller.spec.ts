@@ -1,9 +1,8 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 
 import type {
   ProposicoesFeedResponse,
   ProposicaoDetalhe,
-  ProposicoesSearchResponse,
 } from '@vota-comigo/shared-types';
 
 import { ProposicoesController } from '../proposicoes.controller';
@@ -13,12 +12,6 @@ function fakeService(response: ProposicoesFeedResponse) {
   const feed = jest.fn().mockResolvedValue(response);
   const service = { feed } as unknown as ProposicoesService;
   return { service, feed };
-}
-
-function fakeSearchService(response: ProposicoesSearchResponse) {
-  const search = jest.fn().mockResolvedValue(response);
-  const service = { search } as unknown as ProposicoesService;
-  return { service, search };
 }
 
 function fakeDetalheService(impl: jest.Mock) {
@@ -33,14 +26,6 @@ const emptyResponse: ProposicoesFeedResponse = {
   offset: 0,
 };
 
-const emptySearchResponse: ProposicoesSearchResponse = {
-  items: [],
-  total: 0,
-  limit: 20,
-  offset: 0,
-  query: 'saude',
-};
-
 describe('ProposicoesController.feed', () => {
   describe('when query params are valid', () => {
     it('delegates to the service with pagination and ordenacao', async () => {
@@ -52,7 +37,7 @@ describe('ProposicoesController.feed', () => {
       const result = await controller.feed(10, 5, 'mais-recentes');
 
       // Assert
-      expect(feed).toHaveBeenCalledWith(10, 5, 'mais-recentes', undefined);
+      expect(feed).toHaveBeenCalledWith(10, 5, 'mais-recentes', undefined, undefined);
       expect(result).toBe(emptyResponse);
     });
   });
@@ -67,7 +52,7 @@ describe('ProposicoesController.feed', () => {
       await controller.feed(10, 5, 'mais-votadas');
 
       // Assert
-      expect(feed).toHaveBeenCalledWith(10, 5, 'mais-votadas', undefined);
+      expect(feed).toHaveBeenCalledWith(10, 5, 'mais-votadas', undefined, undefined);
     });
   });
 
@@ -82,8 +67,24 @@ describe('ProposicoesController.feed', () => {
       await controller.feed(999, -3, 'mais-votadas');
 
       // Assert
-      expect(feed).toHaveBeenNthCalledWith(1, 20, 0, 'mais-votadas', undefined);
-      expect(feed).toHaveBeenNthCalledWith(2, 100, 0, 'mais-votadas', undefined);
+      expect(feed).toHaveBeenNthCalledWith(1, 20, 0, 'mais-votadas', undefined, undefined);
+      expect(feed).toHaveBeenNthCalledWith(2, 100, 0, 'mais-votadas', undefined, undefined);
+    });
+  });
+
+  describe('when q is provided', () => {
+    it('passes the trimmed q to the service and treats blank as undefined', async () => {
+      // Arrange
+      const { service, feed } = fakeService(emptyResponse);
+      const controller = new ProposicoesController(service);
+
+      // Act
+      await controller.feed(20, 0, 'mais-votadas', undefined, '  saúde  ');
+      await controller.feed(20, 0, 'mais-votadas', undefined, '   ');
+
+      // Assert
+      expect(feed).toHaveBeenNthCalledWith(1, 20, 0, 'mais-votadas', undefined, 'saúde');
+      expect(feed).toHaveBeenNthCalledWith(2, 20, 0, 'mais-votadas', undefined, undefined);
     });
   });
 });
@@ -134,51 +135,5 @@ describe('ProposicoesController.detalhe', () => {
         NotFoundException,
       );
     });
-  });
-});
-
-describe('ProposicoesController.search', () => {
-  describe('when the query is useful', () => {
-    it('delegates with the trimmed query and clamped limit/offset', async () => {
-      // Arrange
-      const { service, search } = fakeSearchService(emptySearchResponse);
-      const controller = new ProposicoesController(service);
-
-      // Act
-      const result = await controller.search('  saúde  ', 999, 5);
-
-      // Assert
-      expect(search).toHaveBeenCalledWith('saúde', 100, 5);
-      expect(result).toBe(emptySearchResponse);
-    });
-
-    it('applies the default pagination when limit and offset are missing', async () => {
-      // Arrange
-      const { service, search } = fakeSearchService(emptySearchResponse);
-      const controller = new ProposicoesController(service);
-
-      // Act
-      await controller.search('saúde', undefined, undefined);
-
-      // Assert
-      expect(search).toHaveBeenCalledWith('saúde', 20, 0);
-    });
-  });
-
-  describe('when the query has no useful text', () => {
-    it.each([undefined, '', '   '])(
-      'rejects %p with a BadRequestException',
-      async (q) => {
-        // Arrange
-        const { service, search } = fakeSearchService(emptySearchResponse);
-        const controller = new ProposicoesController(service);
-
-        // Act / Assert
-        await expect(controller.search(q, undefined)).rejects.toBeInstanceOf(
-          BadRequestException,
-        );
-        expect(search).not.toHaveBeenCalled();
-      },
-    );
   });
 });

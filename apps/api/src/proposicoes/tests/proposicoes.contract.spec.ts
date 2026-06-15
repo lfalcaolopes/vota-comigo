@@ -3,7 +3,6 @@ import { Test } from '@nestjs/testing';
 import {
   proposicaoDetalheSchema,
   proposicoesFeedResponseSchema,
-  proposicoesSearchResponseSchema,
   temasDisponiveisResponseSchema,
 } from '@vota-comigo/shared-types';
 import request from 'supertest';
@@ -367,7 +366,7 @@ describe('GET /proposicoes/feed with no computavel proposicao', () => {
   });
 });
 
-describe('GET /proposicoes/search', () => {
+describe('GET /proposicoes/feed with q param', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -387,34 +386,29 @@ describe('GET /proposicoes/search', () => {
     await app.close();
   });
 
-  describe('when the query matches computavel proposicoes', () => {
-    it('returns a valid contract and echoes the query', async () => {
+  describe('when q matches computavel proposicoes', () => {
+    it('returns a valid feed contract with only the matching items', async () => {
       // Act
       const response = await request(getTestServer(app))
-        .get('/proposicoes/search')
+        .get('/proposicoes/feed')
         .query({ q: 'saúde' });
 
       // Assert
       expect(response.status).toBe(200);
-      const body = proposicoesSearchResponseSchema.parse(
+      const body = proposicoesFeedResponseSchema.parse(
         response.body as unknown,
       );
-      expect(body.query).toBe('saúde');
-      expect(
-        body.items.map(
-          (item: { externalIdProposicao: number }) => item.externalIdProposicao,
-        ),
-      ).toEqual([1]);
+      expect(body.items.map((item) => item.externalIdProposicao)).toEqual([1]);
     });
 
     it('caps limit at 100 and honours the offset query param', async () => {
       // Act
       const response = await request(getTestServer(app))
-        .get('/proposicoes/search')
+        .get('/proposicoes/feed')
         .query({ q: 'dispõe', limit: 999, offset: 1 });
 
       // Assert
-      const body = proposicoesSearchResponseSchema.parse(
+      const body = proposicoesFeedResponseSchema.parse(
         response.body as unknown,
       );
       expect(body.limit).toBe(100);
@@ -422,44 +416,44 @@ describe('GET /proposicoes/search', () => {
     });
   });
 
-  describe('when the query is empty or only separators', () => {
+  describe('when q is empty or missing', () => {
     it.each([
-      ['missing q', undefined],
-      ['blank q', '   '],
-      ['separator only', '/'],
-    ])('rejects %s with 400', async (_label, q) => {
+      ['missing q', {}],
+      ['blank q', { q: '   ' }],
+      ['separator only', { q: '/' }],
+    ])('returns 200 with all items for %s', async (_label, query) => {
       // Act
       const response = await request(getTestServer(app))
-        .get('/proposicoes/search')
-        .query(q === undefined ? {} : { q });
+        .get('/proposicoes/feed')
+        .query(query);
 
       // Assert
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(200);
+      const body = proposicoesFeedResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.total).toBe(2);
     });
   });
 
-  describe('when the query is valid but matches nothing', () => {
+  describe('when q matches nothing', () => {
     it('returns an empty page, not an error', async () => {
       // Act
       const response = await request(getTestServer(app))
-        .get('/proposicoes/search')
+        .get('/proposicoes/feed')
         .query({ q: 'zzz' });
 
       // Assert
       expect(response.status).toBe(200);
-      const body = proposicoesSearchResponseSchema.parse(
+      const body = proposicoesFeedResponseSchema.parse(
         response.body as unknown,
       );
-      expect(body).toMatchObject({
-        items: [],
-        total: 0,
-        query: 'zzz',
-      });
+      expect(body).toMatchObject({ items: [], total: 0 });
     });
   });
 });
 
-describe('GET /proposicoes/search with citation query', () => {
+describe('GET /proposicoes/feed with citation q', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -492,12 +486,12 @@ describe('GET /proposicoes/search with citation query', () => {
   it('returns only the exact proposicao for "pec 3/2021", ignoring ementa coincidences', async () => {
     // Act
     const response = await request(getTestServer(app))
-      .get('/proposicoes/search')
+      .get('/proposicoes/feed')
       .query({ q: 'pec 3/2021' });
 
     // Assert
     expect(response.status).toBe(200);
-    const body = proposicoesSearchResponseSchema.parse(response.body as unknown);
+    const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
     expect(body.total).toBe(1);
     expect(body.items.map((item) => item.externalIdProposicao)).toEqual([42]);
   });
@@ -571,15 +565,13 @@ describe('GET /proposicoes/:externalIdProposicao', () => {
   });
 
   describe('route precedence', () => {
-    it.each(['/proposicoes/feed', '/proposicoes/search'])(
+    it.each(['/proposicoes/feed', '/proposicoes/feed/temas'])(
       'does not let the :externalIdProposicao route swallow %s',
       async (path) => {
         // Act
-        const response = await request(getTestServer(app))
-          .get(path)
-          .query(path.endsWith('search') ? { q: 'saúde' } : {});
+        const response = await request(getTestServer(app)).get(path);
 
-        // Assert: a list/search payload, never a single detalhe
+        // Assert: a list payload, never a single detalhe
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('items');
       },

@@ -12,13 +12,11 @@ import {
   type FeedOrdenacao,
   type ProposicoesFeedResponse,
   type ProposicaoDetalhe,
-  type ProposicoesSearchResponse,
   type TemasDisponiveisResponse,
 } from '@vota-comigo/shared-types';
 
 import { ProposicoesService } from './proposicoes.service';
 import { normalizePagination } from './rules/pagination';
-import { tokenizeQuery } from './rules/proposicoes-search';
 import { ZodValidationPipe } from '../shared/validation/zod-validation.pipe';
 
 function parseTema(raw: string | undefined): number | undefined {
@@ -49,29 +47,18 @@ export class ProposicoesController {
     )
     ordenacao: FeedOrdenacao = 'mais-votadas',
     @Query('tema') temaParam?: string,
+    @Query('q') qParam?: string,
   ): Promise<ProposicoesFeedResponse> {
     const pagination = normalizePagination(limit, offset);
     const tema = parseTema(temaParam);
+    const q = (qParam ?? '').trim() || undefined;
     return this.service.feed(
       pagination.limit,
       pagination.offset,
       ordenacao,
       tema,
+      q,
     );
-  }
-
-  @Get('search')
-  async search(
-    @Query('q') q?: string,
-    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
-    @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
-  ): Promise<ProposicoesSearchResponse> {
-    const query = (q ?? '').trim();
-    if (tokenizeQuery(query).length === 0) {
-      throw new BadRequestException('q must be a useful search query');
-    }
-    const pagination = normalizePagination(limit, offset);
-    return this.service.search(query, pagination.limit, pagination.offset);
   }
 
   @Get(':externalIdProposicao')
