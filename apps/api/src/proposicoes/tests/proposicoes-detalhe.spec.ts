@@ -19,6 +19,8 @@ function head(
     ementa: 'Dispõe sobre algo',
     dataApresentacao: '2024-04-15T10:00:00Z',
     ementaDetalhada: 'Detalha o alcance da proposição.',
+    urlInteiroTeor:
+      'https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=1',
     ultimoStatusSiglaOrgao: 'PLEN',
     ultimoStatusDescricaoSituacao: 'Aprovada',
     ultimoStatusRegime: 'Urgência',
@@ -69,6 +71,7 @@ function fakeRepository(
   return {
     loadProposicoesWithVotacoesPlenario: async () => [],
     loadProposicaoDetalhe: async () => result,
+    loadProposicaoTemas: async () => [],
   };
 }
 
@@ -93,6 +96,9 @@ describe('ProposicoesService.detalhe', () => {
       expect(detail.ementa).toBe('Dispõe sobre algo');
       expect(detail.dataApresentacao).toBe('2024-04-15T10:00:00Z');
       expect(detail.ementaDetalhada).toBe('Detalha o alcance da proposição.');
+      expect(detail.urlInteiroTeor).toBe(
+        'https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=1',
+      );
       expect(detail.status).toEqual({
         siglaOrgao: 'PLEN',
         situacao: 'Aprovada',
@@ -102,6 +108,21 @@ describe('ProposicoesService.detalhe', () => {
       expect(detail.fonteOficial).toBe(
         'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=1',
       );
+    });
+
+    it('keeps a null inteiro teor URL when the source has no PDF link', async () => {
+      // Arrange
+      const service = createService(
+        detailResult({
+          proposicao: head({ urlInteiroTeor: null }),
+        }),
+      );
+
+      // Act
+      const detail = await service.detalhe(1);
+
+      // Assert
+      expect(detail.urlInteiroTeor).toBeNull();
     });
 
     it('lists the linked votacao with full placar, resultado and reference mark', async () => {

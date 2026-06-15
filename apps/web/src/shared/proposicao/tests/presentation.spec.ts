@@ -2,7 +2,10 @@ import type { ProposicaoCard } from "@vota-comigo/shared-types";
 import { describe, expect, it } from "vitest";
 
 import {
+  formatDateWithRelativeTime,
+  formatRelativeDate,
   formatShortDate,
+  maxIsoDate,
   toAnoApresentacao,
   toIdentificadorLegislativo,
 } from "../presentation";
@@ -97,6 +100,77 @@ describe("formatShortDate", () => {
     it("returns null", () => {
       // Act / Assert
       expect(formatShortDate(null)).toBeNull();
+    });
+  });
+});
+
+describe("formatRelativeDate", () => {
+  const referenceDate = new Date(2026, 5, 15);
+
+  describe("when the date is less than a month before the reference date", () => {
+    it("formats the distance in days", () => {
+      // Act / Assert
+      expect(formatRelativeDate("2026-06-10", referenceDate)).toBe("há 5 dias");
+    });
+  });
+
+  describe("when the date is less than a year before the reference date", () => {
+    it("formats the distance in months", () => {
+      // Act / Assert
+      expect(formatRelativeDate("2026-03-15", referenceDate)).toBe("há 3 meses");
+    });
+  });
+
+  describe("when the date is at least a year before the reference date", () => {
+    it("formats the distance in years", () => {
+      // Act / Assert
+      expect(formatRelativeDate("2025-03-14", referenceDate)).toBe("há 1 ano");
+    });
+  });
+
+  describe("when there is no date", () => {
+    it("returns null", () => {
+      // Act / Assert
+      expect(formatRelativeDate(null, referenceDate)).toBeNull();
+    });
+  });
+});
+
+describe("formatDateWithRelativeTime", () => {
+  describe("when the date is valid", () => {
+    it("formats the absolute date with relative context", () => {
+      // Arrange
+      const referenceDate = new Date(2026, 5, 15);
+
+      // Act / Assert
+      expect(formatDateWithRelativeTime("2025-03-14", referenceDate)).toBe(
+        "14 mar 2025 (há 1 ano)",
+      );
+    });
+  });
+
+  describe("when the date is missing", () => {
+    it("returns null", () => {
+      // Act / Assert
+      expect(formatDateWithRelativeTime(null)).toBeNull();
+    });
+  });
+});
+
+describe("maxIsoDate", () => {
+  describe("when dates and null values are mixed", () => {
+    it("returns the latest date string", () => {
+      // Act / Assert
+      expect(maxIsoDate([null, "2025-03-14", "2024-12-31"])).toBe(
+        "2025-03-14",
+      );
+    });
+  });
+
+  describe("when every value is null", () => {
+    it("returns null", () => {
+      // Act / Assert
+      expect(maxIsoDate([null, null])).toBeNull();
     });
   });
 });

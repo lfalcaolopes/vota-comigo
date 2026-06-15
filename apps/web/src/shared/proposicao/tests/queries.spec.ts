@@ -263,6 +263,8 @@ const detalheResponse: ProposicaoDetalhe = {
   ementa: "Dispõe sobre alguma coisa.",
   dataApresentacao: "2023-05-10",
   ementaDetalhada: "Texto mais longo explicando a proposição.",
+  urlInteiroTeor:
+    "https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=42",
   status: {
     siglaOrgao: "PLEN",
     situacao: "Pronta para Pauta",
@@ -294,6 +296,9 @@ describe("detalhe", () => {
       expect(result.externalIdProposicao).toBe(42);
       expect(result.ementaDetalhada).toBe(
         "Texto mais longo explicando a proposição.",
+      );
+      expect(result.urlInteiroTeor).toBe(
+        "https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=42",
       );
       expect(result.temas[0].tema).toBe("Saúde");
     });

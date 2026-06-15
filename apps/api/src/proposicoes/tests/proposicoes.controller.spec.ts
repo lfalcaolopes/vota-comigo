@@ -37,7 +37,13 @@ describe('ProposicoesController.feed', () => {
       const result = await controller.feed(10, 5, 'mais-recentes');
 
       // Assert
-      expect(feed).toHaveBeenCalledWith(10, 5, 'mais-recentes', undefined, undefined);
+      expect(feed).toHaveBeenCalledWith(
+        10,
+        5,
+        'mais-recentes',
+        undefined,
+        undefined,
+      );
       expect(result).toBe(emptyResponse);
     });
   });
@@ -52,7 +58,13 @@ describe('ProposicoesController.feed', () => {
       await controller.feed(10, 5, 'mais-votadas');
 
       // Assert
-      expect(feed).toHaveBeenCalledWith(10, 5, 'mais-votadas', undefined, undefined);
+      expect(feed).toHaveBeenCalledWith(
+        10,
+        5,
+        'mais-votadas',
+        undefined,
+        undefined,
+      );
     });
   });
 
@@ -67,8 +79,22 @@ describe('ProposicoesController.feed', () => {
       await controller.feed(999, -3, 'mais-votadas');
 
       // Assert
-      expect(feed).toHaveBeenNthCalledWith(1, 20, 0, 'mais-votadas', undefined, undefined);
-      expect(feed).toHaveBeenNthCalledWith(2, 100, 0, 'mais-votadas', undefined, undefined);
+      expect(feed).toHaveBeenNthCalledWith(
+        1,
+        20,
+        0,
+        'mais-votadas',
+        undefined,
+        undefined,
+      );
+      expect(feed).toHaveBeenNthCalledWith(
+        2,
+        100,
+        0,
+        'mais-votadas',
+        undefined,
+        undefined,
+      );
     });
   });
 
@@ -83,8 +109,22 @@ describe('ProposicoesController.feed', () => {
       await controller.feed(20, 0, 'mais-votadas', undefined, '   ');
 
       // Assert
-      expect(feed).toHaveBeenNthCalledWith(1, 20, 0, 'mais-votadas', undefined, 'saúde');
-      expect(feed).toHaveBeenNthCalledWith(2, 20, 0, 'mais-votadas', undefined, undefined);
+      expect(feed).toHaveBeenNthCalledWith(
+        1,
+        20,
+        0,
+        'mais-votadas',
+        undefined,
+        'saúde',
+      );
+      expect(feed).toHaveBeenNthCalledWith(
+        2,
+        20,
+        0,
+        'mais-votadas',
+        undefined,
+        undefined,
+      );
     });
   });
 });
@@ -98,6 +138,7 @@ describe('ProposicoesController.detalhe', () => {
     ementa: 'Dispõe sobre algo',
     dataApresentacao: '2024-04-15T10:00:00Z',
     ementaDetalhada: null,
+    urlInteiroTeor: null,
     status: { siglaOrgao: null, situacao: null, regime: null, dataHora: null },
     fonteOficial:
       'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=1',

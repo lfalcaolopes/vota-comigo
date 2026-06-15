@@ -38,6 +38,7 @@ function fakeRepository(
   return {
     loadProposicoesWithVotacoesPlenario: async () => rows,
     loadProposicaoDetalhe: async () => null,
+    loadProposicaoTemas: async () => [],
   };
 }
 
@@ -285,11 +286,19 @@ describe('ProposicoesService.feed with text query', () => {
       ]);
 
       // Act
-      const result = await service.feed(20, 0, 'mais-votadas', undefined, 'saúde');
+      const result = await service.feed(
+        20,
+        0,
+        'mais-votadas',
+        undefined,
+        'saúde',
+      );
 
       // Assert
       expect(result.total).toBe(1);
-      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([1]);
+      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([
+        1,
+      ]);
     });
   });
 
@@ -315,7 +324,9 @@ describe('ProposicoesService.feed with text query', () => {
       const result = await service.feed(20, 0, 'mais-votadas', undefined, term);
 
       // Assert
-      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([7]);
+      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([
+        7,
+      ]);
     });
   });
 
@@ -343,11 +354,19 @@ describe('ProposicoesService.feed with text query', () => {
       const service = createService([target, ementaCoincidence]);
 
       // Act
-      const result = await service.feed(20, 0, 'mais-votadas', undefined, 'pec 3/2021');
+      const result = await service.feed(
+        20,
+        0,
+        'mais-votadas',
+        undefined,
+        'pec 3/2021',
+      );
 
       // Assert
       expect(result.total).toBe(1);
-      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([10]);
+      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([
+        10,
+      ]);
     });
   });
 
@@ -405,10 +424,18 @@ describe('ProposicoesService.feed with text query', () => {
       const service = createService([newer, olderMoreVotesA, olderMoreVotesB]);
 
       // Act
-      const result = await service.feed(20, 0, 'mais-recentes', undefined, 'saúde');
+      const result = await service.feed(
+        20,
+        0,
+        'mais-recentes',
+        undefined,
+        'saúde',
+      );
 
       // Assert: ordered by date not by volume
-      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([1, 2]);
+      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([
+        1, 2,
+      ]);
     });
   });
 
@@ -416,8 +443,16 @@ describe('ProposicoesService.feed with text query', () => {
     it('returns all computavel items without filtering', async () => {
       // Arrange
       const service = createService([
-        joinRow({ externalIdProposicao: 1, externalIdVotacao: '1-1', descricao: 'Aprovado o Projeto de Lei' }),
-        joinRow({ externalIdProposicao: 2, externalIdVotacao: '2-1', descricao: 'Aprovado o Projeto de Lei' }),
+        joinRow({
+          externalIdProposicao: 1,
+          externalIdVotacao: '1-1',
+          descricao: 'Aprovado o Projeto de Lei',
+        }),
+        joinRow({
+          externalIdProposicao: 2,
+          externalIdVotacao: '2-1',
+          descricao: 'Aprovado o Projeto de Lei',
+        }),
       ]);
 
       // Act
@@ -456,7 +491,13 @@ describe('ProposicoesService.feed with text query', () => {
       const service = createService(rows);
 
       // Act
-      const result = await service.feed(2, 1, 'mais-votadas', undefined, 'saúde');
+      const result = await service.feed(
+        2,
+        1,
+        'mais-votadas',
+        undefined,
+        'saúde',
+      );
 
       // Assert
       expect(result.total).toBe(4);

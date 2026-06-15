@@ -13,7 +13,10 @@ export { ProposicaoRow } from "./proposicao-row";
 export { ProposicaoBreadcrumb } from "./proposicao-breadcrumb";
 export { ProposicaoDetalhe } from "./proposicao-detalhe";
 export {
+  formatDateWithRelativeTime,
+  formatRelativeDate,
   formatShortDate,
+  maxIsoDate,
   toAnoApresentacao,
   toIdentificadorLegislativo,
 } from "./presentation";
