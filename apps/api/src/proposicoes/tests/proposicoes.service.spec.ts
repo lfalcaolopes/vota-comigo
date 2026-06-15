@@ -113,13 +113,19 @@ describe('ProposicoesService.feed', () => {
         externalIdVotacao: '2-2',
         descricao: 'Aprovada a Medida Provisória',
       });
-      const service = createService([olderManyVotesA, olderManyVotesB, newerFewVotes]);
+      const service = createService([
+        olderManyVotesA,
+        olderManyVotesB,
+        newerFewVotes,
+      ]);
 
       // Act
       const page = await service.feed(20, 0, 'mais-recentes');
 
       // Assert: id=1 first because newer date, even though id=2 has more votes
-      expect(page.items.map((item) => item.externalIdProposicao)).toEqual([1, 2]);
+      expect(page.items.map((item) => item.externalIdProposicao)).toEqual([
+        1, 2,
+      ]);
     });
 
     it('puts proposicoes without dataApresentacao at the end', async () => {
@@ -142,7 +148,9 @@ describe('ProposicoesService.feed', () => {
       const page = await service.feed(20, 0, 'mais-recentes');
 
       // Assert: id=1 first because it has a date; id=2 goes last despite higher tie-break id
-      expect(page.items.map((item) => item.externalIdProposicao)).toEqual([1, 2]);
+      expect(page.items.map((item) => item.externalIdProposicao)).toEqual([
+        1, 2,
+      ]);
     });
   });
 

@@ -8,7 +8,6 @@ import {
   hasMore,
   initFeedState,
   nextOffset,
-  type FeedOrdenacao,
 } from "../feed-state";
 
 function card(externalIdProposicao: number): ProposicaoCard {

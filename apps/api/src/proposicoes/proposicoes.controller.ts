@@ -28,7 +28,10 @@ export class ProposicoesController {
   async feed(
     @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
     @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
-    @Query('ordenacao', new ZodValidationPipe(feedOrdenacao.default('mais-votadas')))
+    @Query(
+      'ordenacao',
+      new ZodValidationPipe(feedOrdenacao.default('mais-votadas')),
+    )
     ordenacao: FeedOrdenacao = 'mais-votadas',
   ): Promise<ProposicoesFeedResponse> {
     const pagination = normalizePagination(limit, offset);

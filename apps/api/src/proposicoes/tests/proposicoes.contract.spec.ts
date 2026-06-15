@@ -144,7 +144,9 @@ describe('GET /proposicoes/feed', () => {
 
       // Assert
       expect(response.status).toBe(200);
-      const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
+      const body = proposicoesFeedResponseSchema.parse(
+        response.body as unknown,
+      );
       expect(body).toMatchObject({ limit: 20, offset: 0 });
     });
 
@@ -155,7 +157,9 @@ describe('GET /proposicoes/feed', () => {
       );
 
       // Assert
-      const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
+      const body = proposicoesFeedResponseSchema.parse(
+        response.body as unknown,
+      );
       expect(body.items[0]).not.toHaveProperty('id');
       expect(body.items[0].externalIdProposicao).toBe(1);
     });
@@ -170,7 +174,9 @@ describe('GET /proposicoes/feed', () => {
 
       // Assert
       expect(response.status).toBe(200);
-      const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
+      const body = proposicoesFeedResponseSchema.parse(
+        response.body as unknown,
+      );
       expect(body).toMatchObject({ limit: 100, offset: 0 });
     });
 
@@ -181,7 +187,9 @@ describe('GET /proposicoes/feed', () => {
         .query({ limit: 0 });
 
       // Assert
-      const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
+      const body = proposicoesFeedResponseSchema.parse(
+        response.body as unknown,
+      );
       expect(body.limit).toBe(1);
     });
   });
@@ -242,19 +250,27 @@ describe('GET /proposicoes/feed with ordenacao param', () => {
 
       // Assert
       expect(response.status).toBe(200);
-      const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
-      expect(body.items.map((item) => item.externalIdProposicao)).toEqual([1, 2]);
+      const body = proposicoesFeedResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.items.map((item) => item.externalIdProposicao)).toEqual([
+        1, 2,
+      ]);
     });
   });
 
   describe('when ordenacao is absent', () => {
     it('defaults to mais-votadas and returns a valid contract', async () => {
       // Act
-      const response = await request(getTestServer(app)).get('/proposicoes/feed');
+      const response = await request(getTestServer(app)).get(
+        '/proposicoes/feed',
+      );
 
       // Assert
       expect(response.status).toBe(200);
-      const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
+      const body = proposicoesFeedResponseSchema.parse(
+        response.body as unknown,
+      );
       expect(body.items).toHaveLength(2);
     });
   });
@@ -329,9 +345,7 @@ describe('GET /proposicoes/feed with no computavel proposicao', () => {
 
   it('returns an empty page instead of an error', async () => {
     // Act
-    const response = await request(getTestServer(app)).get(
-      '/proposicoes/feed',
-    );
+    const response = await request(getTestServer(app)).get('/proposicoes/feed');
 
     // Assert
     expect(response.status).toBe(200);

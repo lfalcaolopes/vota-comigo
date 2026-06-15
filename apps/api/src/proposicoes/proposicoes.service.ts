@@ -38,7 +38,9 @@ export class ProposicoesService {
     ordenacao: FeedOrdenacao = 'mais-votadas',
   ): Promise<ProposicoesFeedResponse> {
     const rows = await this.repository.loadProposicoesWithVotacoesPlenario();
-    const ranked = [...toProposicoesComputaveis(rows)].sort(selectComparator(ordenacao));
+    const ranked = [...toProposicoesComputaveis(rows)].sort(
+      selectComparator(ordenacao),
+    );
 
     return {
       items: ranked.slice(offset, offset + limit).map(toProposicaoCard),

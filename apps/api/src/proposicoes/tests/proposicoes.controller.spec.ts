@@ -1,7 +1,6 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 import type {
-  FeedOrdenacao,
   ProposicoesFeedResponse,
   ProposicaoDetalhe,
   ProposicoesSearchResponse,
