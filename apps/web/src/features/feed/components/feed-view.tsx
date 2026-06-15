@@ -11,13 +11,13 @@ import { useState } from "react";
 import {
   buildFeedHref,
   buildFeedSearchParams,
+  FeedOrdenacaoControl,
+  FeedSearch,
+  FeedTemaControl,
   useFeedState,
 } from "@/shared/proposicao";
 
 import { FeedList } from "./feed-list";
-import { FeedOrdenacao as FeedOrdenacaoControl } from "./feed-ordenacao";
-import { FeedSearch } from "./feed-search";
-import { FeedTemaControl } from "./feed-tema";
 
 type FeedViewProps = {
   initialItems: ProposicaoCard[];

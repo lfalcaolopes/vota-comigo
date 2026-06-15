@@ -1,14 +1,18 @@
 "use client";
 
 import { MAX_POSICOES } from "@vota-comigo/shared-types";
-import type { ProposicaoCard } from "@vota-comigo/shared-types";
+import type { FeedOrdenacao, ProposicaoCard, TemaDisponivel } from "@vota-comigo/shared-types";
 import { useState } from "react";
 
 import type { FeedDisplay, FeedStatus } from "@/shared/proposicao";
+import {
+  FeedOrdenacaoControl,
+  FeedSearch,
+  FeedTemaControl,
+} from "@/shared/proposicao";
 import { Button, InlineMessage } from "@/shared/ui";
 
 import { SelecaoList } from "./selecao-list";
-import { SelecaoSearch } from "./selecao-search";
 
 type StepSelecaoProps = {
   items: ProposicaoCard[];
@@ -17,11 +21,17 @@ type StepSelecaoProps = {
   display: FeedDisplay;
   canLoadMore: boolean;
   query: string;
+  ordenacao: FeedOrdenacao;
+  tema: number | null;
+  temas: readonly TemaDisponivel[];
   selected: ProposicaoCard[];
   totalSelecionadas: number;
   onToggle: (proposicao: ProposicaoCard) => void;
   onSubmitSearch: (raw: string) => Promise<void>;
   onClearSearch: () => void;
+  onChangeOrdenacao: (value: FeedOrdenacao) => Promise<void>;
+  onChangeTema: (cod: number) => void;
+  onClearFilters: () => Promise<void>;
   onLoadMore: () => Promise<void>;
   onBack: () => void;
   onAdvance: () => void;
@@ -34,11 +44,17 @@ export function StepSelecao({
   display,
   canLoadMore,
   query,
+  ordenacao,
+  tema,
+  temas,
   selected,
   totalSelecionadas,
   onToggle,
   onSubmitSearch,
   onClearSearch,
+  onChangeOrdenacao,
+  onChangeTema,
+  onClearFilters,
   onLoadMore,
   onBack,
   onAdvance,
@@ -55,25 +71,37 @@ export function StepSelecao({
     onClearSearch();
   }
 
-  function handleSearchSubmit(event: React.FormEvent) {
-    event.preventDefault();
-    if (draft.trim().length === 0) {
+  function handleSearchSubmit() {
+    const term = draft.trim();
+    if (term.length === 0) {
       handleClear();
       return;
     }
-    onSubmitSearch(draft);
+    void onSubmitSearch(term);
   }
 
   return (
     <div className="grid gap-5">
-      <SelecaoSearch
-        disabled={status === "loading"}
-        draft={draft}
-        onChange={setDraft}
-        onClear={handleClear}
-        onSubmit={handleSearchSubmit}
-        query={query}
-      />
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <FeedSearch
+          disabled={status === "loading"}
+          isSearching={query !== ""}
+          onChange={setDraft}
+          onClear={handleClear}
+          onSubmit={handleSearchSubmit}
+          query={query}
+          value={draft}
+        />
+        <FeedOrdenacaoControl value={ordenacao} onChange={onChangeOrdenacao} />
+      </div>
+
+      {temas.length > 0 && (
+        <FeedTemaControl
+          activeTema={tema}
+          onSelect={onChangeTema}
+          temas={temas}
+        />
+      )}
 
       <p className="text-sm leading-normal text-muted">
         Selecionadas: {totalSelecionadas} de até {MAX_POSICOES}
@@ -91,6 +119,7 @@ export function StepSelecao({
         canLoadMore={canLoadMore}
         display={display}
         items={items}
+        onClearFilters={onClearFilters}
         onClearSearch={handleClear}
         onLoadMore={onLoadMore}
         onToggle={onToggle}

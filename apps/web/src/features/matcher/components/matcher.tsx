@@ -1,6 +1,6 @@
 "use client";
 
-import type { ProposicaoCard } from "@vota-comigo/shared-types";
+import type { ProposicaoCard, TemaDisponivel } from "@vota-comigo/shared-types";
 
 import { useFeedState } from "@/shared/proposicao";
 
@@ -16,6 +16,7 @@ import { StepSelecao } from "./step-selecao";
 type MatcherProps = {
   initialProposicoes: ProposicaoCard[];
   initialTotal: number;
+  temas: readonly TemaDisponivel[];
 };
 
 const STEP_LABELS: Record<MatcherStep, string> = {
@@ -25,7 +26,7 @@ const STEP_LABELS: Record<MatcherStep, string> = {
   resultado: "Quem vota com você",
 };
 
-export function Matcher({ initialProposicoes, initialTotal }: MatcherProps) {
+export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProps) {
   const matcher = useMatcherState(initialProposicoes);
   const { state } = matcher;
 
@@ -59,13 +60,25 @@ export function Matcher({ initialProposicoes, initialTotal }: MatcherProps) {
           items={feed.items}
           onAdvance={() => matcher.goToStep("posicoes")}
           onBack={() => matcher.goToStep("local")}
+          onChangeOrdenacao={feed.changeOrdenacao}
+          onChangeTema={(cod) => {
+            if (feed.tema === cod) {
+              void feed.clearFilters();
+            } else {
+              void feed.changeTema(cod);
+            }
+          }}
+          onClearFilters={feed.clearFilters}
           onClearSearch={feed.clearSearch}
           onLoadMore={feed.loadMore}
           onSubmitSearch={feed.submitSearch}
           onToggle={matcher.toggleProposicao}
+          ordenacao={feed.ordenacao}
           query={feed.query}
           selected={state.selected}
           status={feed.status}
+          tema={feed.tema}
+          temas={temas}
           total={feed.total}
           totalSelecionadas={matcher.validation.totalSelecionadas}
         />

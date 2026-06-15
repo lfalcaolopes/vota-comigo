@@ -1,4 +1,7 @@
 export { detalhe, feed, temasDisponiveis } from "./queries";
+export { FeedSearch } from "./feed-search";
+export { FeedTemaControl } from "./feed-tema";
+export { FeedOrdenacaoControl } from "./feed-ordenacao";
 export {
   buildFeedHref,
   buildFeedSearchParams,

@@ -21,6 +21,7 @@ type SelecaoListProps = {
   onToggle: (proposicao: ProposicaoCard) => void;
   onLoadMore: () => Promise<void>;
   onClearSearch: () => void;
+  onClearFilters: () => Promise<void>;
 };
 
 export function SelecaoList({
@@ -34,6 +35,7 @@ export function SelecaoList({
   onToggle,
   onLoadMore,
   onClearSearch,
+  onClearFilters,
 }: SelecaoListProps) {
   if (display === "loading") {
     return <SkeletonRows count={4} />;
@@ -52,11 +54,11 @@ export function SelecaoList({
     return (
       <EmptyState
         action={
-          <Button onClick={onClearSearch} variant="secondary">
-            Limpar busca
+          <Button onClick={() => void onClearFilters()} variant="secondary">
+            Limpar filtros
           </Button>
         }
-        body="Tente outro identificador legislativo ou termo da ementa."
+        body="Tente outro identificador legislativo, termo da ementa ou tema."
         title="Nenhuma proposição encontrada"
       />
     );

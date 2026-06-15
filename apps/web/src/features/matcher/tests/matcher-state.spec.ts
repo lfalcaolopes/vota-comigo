@@ -742,6 +742,31 @@ describe("matcherReducer", () => {
     });
   });
 
+  describe("when selected proposicoes are absent from the visible feed items", () => {
+    it("selectionCount counts all selected items regardless of what the feed is currently showing", () => {
+      // Arrange — 5 proposicoes pre-selected from initial candidates
+      const state = initMatcherState(candidates);
+      expect(selectionCount(state)).toBe(5);
+
+      // Simulate the user toggling an extra card (may come from any feed filter)
+      const withExtra = matcherReducer(state, {
+        type: "toggleProposicao",
+        proposicao: card(6),
+      });
+      expect(selectionCount(withExtra)).toBe(6);
+
+      // Act — navigating between steps (which happens when feed controls fire) must
+      // not touch selected; the feed state lives in a separate reducer
+      const forward = matcherReducer(withExtra, { type: "goToStep", step: "posicoes" });
+      const back = matcherReducer(forward, { type: "goToStep", step: "selecao" });
+
+      // Assert — selection is intact even though none of cards 1–6 may be visible
+      // in the feed when a tema or ordenacao filter is active
+      expect(selectionCount(back)).toBe(6);
+      expect(back.selected.map((c) => c.externalIdProposicao)).toEqual([1, 2, 3, 4, 5, 6]);
+    });
+  });
+
   describe("canRunMatcher", () => {
     function withComputaveis(state = initMatcherState(candidates)) {
       let next = matcherReducer(state, {

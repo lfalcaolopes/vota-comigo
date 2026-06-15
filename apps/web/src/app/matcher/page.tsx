@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { Matcher } from "@/features/matcher";
-import { feed } from "@/shared/proposicao";
+import { feed, temasDisponiveis } from "@/shared/proposicao";
 
 export const dynamic = "force-dynamic";
 
@@ -12,12 +12,15 @@ export const metadata: Metadata = {
 };
 
 export default async function MatcherPage() {
-  const { items, total } = await feed(20, 0);
+  const [{ items, total }, { items: temas }] = await Promise.all([
+    feed(20, 0),
+    temasDisponiveis(),
+  ]);
 
   return (
     <main className="min-h-screen w-full min-w-0 overflow-x-hidden bg-bg text-ink">
       <div className="mx-auto w-full min-w-0 max-w-2xl px-4 pt-8 pb-16 md:pt-12">
-        <Matcher initialProposicoes={items} initialTotal={total} />
+        <Matcher initialProposicoes={items} initialTotal={total} temas={temas} />
       </div>
     </main>
   );

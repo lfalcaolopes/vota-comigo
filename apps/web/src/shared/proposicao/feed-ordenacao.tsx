@@ -1,4 +1,4 @@
-import type { FeedOrdenacao } from "@/shared/proposicao";
+import type { FeedOrdenacao } from "@vota-comigo/shared-types";
 import { SegmentedControl } from "@/shared/ui";
 
 const ITEMS = [
@@ -6,12 +6,12 @@ const ITEMS = [
   { id: "mais-recentes", label: "Mais recentes" },
 ];
 
-type FeedOrdenacaoProps = {
+type FeedOrdenacaoControlProps = {
   value: FeedOrdenacao;
   onChange: (value: FeedOrdenacao) => void;
 };
 
-export function FeedOrdenacao({ value, onChange }: FeedOrdenacaoProps) {
+export function FeedOrdenacaoControl({ value, onChange }: FeedOrdenacaoControlProps) {
   return (
     <SegmentedControl
       activeId={value}
