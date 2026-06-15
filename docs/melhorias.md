@@ -88,6 +88,10 @@ Adicionar ao perfil essencial do MVP os dados complementares que ficaram fora:
 
 Cada item é um sub-projeto próprio de ingestão e apresentação.
 
+### Busca e listagem de deputados
+
+Criar uma experiência pública para encontrar deputados por nome, partido e UF, apontando para o **Perfil do deputado**. Fora do MVP-3 para evitar abrir uma experiência de descoberta própria antes de validar os acessos vindos do matcher e antes da integração com candidatos novos.
+
 ### Indicador de alinhamento com orientação no detalhe do voto
 
 Ao exibir o voto de um deputado em uma votação específica (no perfil do deputado ou no detalhe da votação), mostrar se ele seguiu ou votou contra a orientação efetiva da sua bancada. A orientação efetiva é resolvida pela cascata partido individual → federação → não computável, conforme ADR 0005.

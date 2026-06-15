@@ -179,6 +179,21 @@ _Avoid_: Votadas recentemente.
 
 **Detalhe de resultado do matcher**: Apresentação expandida de um deputado no matcher, com métricas completas e detalhamento voto a voto.
 
+**Perfil do deputado**: Página pública que reúne dados básicos, presença e histórico partidário de um deputado federal coberto pelo produto.
+_Avoid_: Perfil do político.
+
+**Snapshot público do deputado**: Estado mais recente conhecido de um deputado para exibição pública, derivado do último evento em seu histórico parlamentar.
+_Avoid_: Cadastro atual do deputado.
+
+**Nome público do deputado**: Nome exibido ao usuário para um deputado, usando o nome eleitoral do snapshot público quando disponível e caindo para o nome cadastral ou nome civil.
+_Avoid_: Nome legal como título principal.
+
+**Resumo de presença do deputado**: Agregado público de participação de um deputado em votações nominais de plenário nas quais estava em exercício, sem listar votos individuais.
+_Avoid_: Lista de presença.
+
+**Histórico partidário do deputado**: Linha do tempo condensada dos partidos de um deputado, derivada de mudanças no histórico parlamentar, sem listar eventos administrativos brutos.
+_Avoid_: Histórico bruto do deputado.
+
 ## Relationships
 
 - Uma **Legislatura** contém múltiplos **Deputados** com **Mandatos**.
@@ -229,6 +244,19 @@ _Avoid_: Votadas recentemente.
 - O ranking do **Matcher** é ordenado pelo **Score Wilson do matcher**, preservando a **Compatibilidade bruta** e a amostra comparável para exibição.
 - O **Resumo de resultado do matcher** preserva a transparência de amostra sem exibir todas as métricas; o **Detalhe de resultado do matcher** contém métricas completas e detalhamento voto a voto.
 - O **Matcher** sinaliza **Sem bom match** quando o melhor resultado do escopo consultado tem **Compatibilidade bruta** menor que 60%.
+- Um **Perfil do deputado** pertence a exatamente um **Deputado**.
+- O **Perfil do deputado** usa dados cadastrais estáveis do **Deputado** e o **Snapshot público do deputado** para partido, UF representada, foto e outros dados públicos atuais.
+- O **Perfil do deputado** e os cards de resultado do **Matcher** usam a mesma regra de **Nome público do deputado**.
+- O **Perfil do deputado** exibe um **Resumo de presença do deputado**, não uma lista de votos.
+- No **Resumo de presença do deputado**, o denominador inclui apenas **Votações nominais** de **Plenário** em que o **Deputado** estava **Em exercício**.
+- No **Resumo de presença do deputado**, qualquer registro individual na **Votação nominal** conta como presença; **Ausência sem motivo conhecido** conta como ausência; fora de exercício não entra no denominador.
+- O **Resumo de presença do deputado** usa toda a base ingerida disponível e não cria comparação ou ranking global de presença no MVP.
+- O **Perfil do deputado** exibe o **Histórico partidário do deputado** como períodos por partido, não como eventos brutos do histórico parlamentar.
+- O **Histórico partidário do deputado** ignora eventos sem partido resolvido; quando não há nenhum evento com partido, o perfil trata o histórico partidário como indisponível.
+- Um **Perfil do deputado** existe quando o **Deputado** está cadastrado; ausência de histórico parlamentar é **Lacuna de dados**, não ausência do perfil.
+- O cargo exibido no **Perfil do deputado** é "Deputado federal"; condições como **Titular**, **Suplente**, **Licença**, **Em exercício** e **Em atividade** não substituem o cargo.
+- O **Perfil do deputado** pode exibir **Em atividade** como status público separado do cargo, usando a mesma regra derivada por intervalos de exercício do **Matcher**.
+- O **Perfil do deputado** exibe fonte oficial da Câmara derivada do `externalIdDeputado`, sem buscar dados em runtime na fonte.
 - Uma **Bancada** emite **Orientação** para uma **Votação**.
 - Um **Partido** pertence a zero ou uma **Federação** e a zero ou um **Bloco** em uma dada **Legislatura**.
 - Quando uma **Federação** orienta, os **Partidos** membros não orientam separadamente naquela **Votação**.
@@ -251,3 +279,5 @@ _Avoid_: Votadas recentemente.
 - **MVP-1** se refere à feature **Feed / Ranking de Proposições Importantes** descrita em `docs/mvp.md`, não ao MVP inteiro nem à primeira entrega técnica do backend.
 - **Data** no card do **Feed de proposições** é ambígua entre apresentação, último status e votação de referência. Resolvido: no card, a data exibida é a **Data de apresentação da proposição**.
 - **Resultado da proposição** não é um conceito do domínio atual. Resolvido: há **Resultado da votação**, exibido apenas no contexto de uma **Votação** específica; o card do **Feed de proposições** não exibe resultado.
+- **Perfil do político** foi usado como nome inicial do MVP-3. Resolvido: o termo canônico é **Perfil do deputado**, porque o MVP cobre apenas deputados federais com histórico de votação registrado.
+- **Lista de votos no Perfil do deputado** foi considerada para o MVP-3. Resolvido: não entra no MVP-3; votos individuais continuam aparecendo no matcher, no detalhe contextual do matcher e futuramente no comparativo.

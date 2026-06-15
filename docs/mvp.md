@@ -175,15 +175,62 @@ Ordenação secundária considera tamanho de amostra entre deputados empatados e
 - **Pesquisa por deputado fora da base.** Se o usuário pesquisa por nome de político que não está no sistema, exibir mensagem explicando que o MVP mapeia apenas deputados federais que já estiveram em atividade na Câmara. Candidatos novos, vereadores, deputados estaduais e senadores serão cobertos em versões futuras.
 - **Matcher sem bom match.** Se o resultado do matcher não tem deputado com compatibilidade alta (threshold a definir — ex.: top resultado < 60%), complementar a mensagem de resultado com sugestão explícita ao usuário: considerar candidatos novos fora da base atual. Converte frustração em ação cívica consistente com a missão do produto.
 
-### MVP-3. Perfil do Político — versão essencial
+### MVP-3. Perfil do Deputado — versão essencial
+
+Cada deputado tem URL própria canônica (`/deputados/{externalIdDeputado}`) desde o MVP-3, usando o identificador público da Câmara. A primeira carga da página de perfil é renderizada no servidor.
+
+A página exibe breadcrumb no formato "Início > {nome público do deputado}", com "Início" apontando para o feed público em `/`.
+
+Quando `externalIdDeputado` não existir na tabela `deputado`, a rota retorna não encontrado. Quando o deputado existe, mas não tem `deputado_historico`, o perfil continua existindo com dados cadastrais básicos e mensagens de lacuna para snapshot atual, presença e histórico partidário.
+
+O MVP-3 não inclui busca ou listagem própria de deputados; o perfil é acessado por links de outras experiências, como os resultados do matcher.
+
+Os cards e detalhes de resultado do matcher passam a oferecer link para `/deputados/{externalIdDeputado}`. O detalhe do matcher continua sendo a visão contextual da execução; o perfil do deputado é página pública independente.
+
+O contrato público do perfil do deputado é definido em `@vota-comigo/shared-types`, em schemas próprios de deputados, e consumido pela API e pelo frontend sem redeclaração paralela.
+
+O contrato expõe flags explícitas de disponibilidade para evitar inferência por `null` ou lista vazia: disponibilidade do snapshot público, disponibilidade do resumo de presença e disponibilidade do histórico partidário.
+
+A API pública do perfil usa `GET /deputados/{externalIdDeputado}` e retorna o contrato compartilhado do perfil. A rota não recebe filtros no MVP-3.
 
 **Entra no MVP:**
-- Dados básicos (nome, partido atual, estado, foto, cargo)
-- Votos nas proposições mais bem posicionadas no ranking público (lista com filtro)
-- Presença em votações nominais e ausências sem motivo conhecido
+- Dados básicos: identidade cadastral estável vinda de `deputado` e snapshot público atual vindo do último `deputado_historico`
+- Nome, partido atual, UF representada, foto e cargo público "Deputado federal"
+  - O nome exibido usa `nomeEleitoral` do snapshot público quando disponível, com fallback para `deputado.nome` e `nomeCivil`
+  - Quando `nomeCivil` existir e for diferente do nome exibido, o perfil mostra `nomeCivil` como metadado secundário com rótulo "Nome civil"
+  - Os cards de resultado do matcher usam a mesma regra de nome exibido para manter consistência com o perfil
+  - Exibe status `emAtividade` como badge separado do cargo, usando a mesma derivação por intervalos de exercício já usada no matcher
+  - A foto usa a mesma URL exposta nos resultados do matcher: `urlFoto` do snapshot público mais recente
+  - Quando não houver `urlFoto`, o perfil usa o mesmo fallback visual dos cards do matcher, adaptado ao tamanho do cabeçalho
+  - Links de redes sociais vindos de `deputado.urlRedeSocial`, exibidos como links individuais quando o campo trouxer múltiplas URLs separadas por vírgula
+  - Entradas vazias ou que não sejam URLs `http`/`https` são omitidas; se não restar nenhum link válido, o bloco de redes sociais não é exibido
+- Metadados públicos de baixo custo já persistidos podem ser exibidos quando disponíveis, sem novo fetch ou nova ingestão: município/UF de nascimento, data de nascimento e legislaturas inicial/final
+- Link para a fonte oficial da Câmara, derivado do `externalIdDeputado`
+- Resumo agregado de presença em votações nominais de plenário e ausências sem motivo conhecido, sem lista de votos
+  - Denominador: votações nominais de plenário em que o deputado estava em exercício
+  - Presença: qualquer registro individual na votação, incluindo `sim`, `não`, `abstenção`, `obstrução`, `Artigo 17` ou voto não informado
+  - `Artigo 17` conta como presença por ter registro individual, mas não recebe contagem separada no MVP-3
+  - Voto não informado conta como presença por ter registro individual, mas não recebe contagem separada no MVP-3
+  - Ausência sem motivo conhecido: deputado em exercício sem registro individual naquela votação
+  - Fora de exercício não entra no denominador
+  - Recorte temporal: toda a base ingerida disponível, com texto público deixando claro que a métrica cobre as votações nominais de plenário presentes na base
+  - Exibição mínima: percentual de presença, presenças sobre total de votações em exercício, total de ausências sem motivo conhecido e texto do recorte
+  - Quando o total de votações em exercício for zero, o bloco informa que a presença está indisponível, sem exibir `0%`
+  - O MVP-3 não cria ranking global de presença nem labels comparativos como "mais presente" ou "mais faltoso"
 - Histórico de partidos
+  - Exibido como linha do tempo condensada por partido, não como lista bruta de eventos administrativos
+  - Períodos consecutivos com o mesmo partido são agrupados
+  - A lista é exibida do período mais recente para o mais antigo
+  - O último partido aparece como atual quando houver partido no snapshot público mais recente
+  - A ordenação usa `dataHora`, mas a apresentação pública mostra apenas datas, sem hora
+  - A data final de um período é a data da próxima mudança de partido, sem subtrair dia artificialmente
+  - Eventos sem partido resolvido são ignorados; se nenhum evento tiver partido, o bloco informa que o histórico partidário está indisponível na base
 
 **Não entra no MVP:**
+- Lista de votos no perfil do deputado
+- Busca ou listagem própria de deputados
+- Website do deputado (`urlWebsite`)
+- Email do deputado
 - Cota parlamentar / gastos
 - Projetos apresentados
 - Frentes parlamentares
