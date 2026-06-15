@@ -44,6 +44,7 @@ export type ProposicaoDetalheHead = {
   ementa: string | null;
   dataApresentacao: string | null;
   ementaDetalhada: string | null;
+  urlInteiroTeor: string | null;
   ultimoStatusSiglaOrgao: string | null;
   ultimoStatusDescricaoSituacao: string | null;
   ultimoStatusRegime: string | null;
@@ -162,6 +163,7 @@ export function createProposicoesRepository(
           ementa: proposicao.ementa,
           dataApresentacao: proposicao.dataApresentacao,
           ementaDetalhada: proposicao.ementaDetalhada,
+          urlInteiroTeor: proposicao.urlInteiroTeor,
           ultimoStatusSiglaOrgao: proposicao.ultimoStatusSiglaOrgao,
           ultimoStatusDescricaoSituacao:
             proposicao.ultimoStatusDescricaoSituacao,

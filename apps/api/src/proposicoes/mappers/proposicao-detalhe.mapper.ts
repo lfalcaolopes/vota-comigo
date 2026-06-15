@@ -60,6 +60,7 @@ export function toProposicaoDetalhe(
     ementa: proposicao.ementa,
     dataApresentacao: proposicao.dataApresentacao,
     ementaDetalhada: proposicao.ementaDetalhada,
+    urlInteiroTeor: proposicao.urlInteiroTeor,
     status: {
       siglaOrgao: proposicao.ultimoStatusSiglaOrgao,
       situacao: proposicao.ultimoStatusDescricaoSituacao,

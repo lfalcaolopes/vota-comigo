@@ -5,7 +5,12 @@ import type {
 } from "@vota-comigo/shared-types";
 
 import { Votacoes } from "../votacao/votacoes";
-import { formatShortDate, toIdentificadorLegislativo } from "./presentation";
+import {
+  formatDateWithRelativeTime,
+  formatShortDate,
+  maxIsoDate,
+  toIdentificadorLegislativo,
+} from "./presentation";
 
 export function ProposicaoDetalhe({
   proposicao,
@@ -39,9 +44,11 @@ export function ProposicaoDetalhe({
       ) : null}
 
       <Metadados
+        proposicao={proposicao}
         status={proposicao.status}
         temas={proposicao.temas}
         fonteOficial={proposicao.fonteOficial}
+        urlInteiroTeor={proposicao.urlInteiroTeor}
       />
 
       <section className="grid gap-6 border-t border-border pt-6">
@@ -52,20 +59,55 @@ export function ProposicaoDetalhe({
 }
 
 function Metadados({
+  proposicao,
   status,
   temas,
   fonteOficial,
+  urlInteiroTeor,
 }: {
+  proposicao: ProposicaoDetalheData;
   status: ProposicaoStatusResumo;
   temas: TemaOficial[];
   fonteOficial: string;
+  urlInteiroTeor: string | null;
 }) {
   return (
     <section className="grid gap-6 border-t border-border pt-6">
+      <Estatisticas proposicao={proposicao} />
       <TramitacaoAtual status={status} />
       <TemasOficiais temas={temas} />
-      <FonteOficialLink href={fonteOficial} />
+      <LinksOficiais
+        fonteOficial={fonteOficial}
+        urlInteiroTeor={urlInteiroTeor}
+      />
     </section>
+  );
+}
+
+function Estatisticas({
+  proposicao,
+}: {
+  proposicao: ProposicaoDetalheData;
+}) {
+  const dataUltimaVotacao = maxIsoDate(
+    proposicao.votacoes.map((votacao) => votacao.data),
+  );
+  const ultimaVotacao = formatDateWithRelativeTime(dataUltimaVotacao);
+
+  return (
+    <div className="grid gap-3">
+      <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
+        Estatísticas
+      </h2>
+      <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+        <StatusItem label="Total de votações nominais" mono>
+          {proposicao.votacoes.length}
+        </StatusItem>
+        <StatusItem label="Última votação" mono>
+          {ultimaVotacao}
+        </StatusItem>
+      </dl>
+    </div>
   );
 }
 
@@ -78,9 +120,7 @@ function TramitacaoAtual({ status }: { status: ProposicaoStatusResumo }) {
         Tramitação atual
       </h2>
       <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
-        <StatusItem label="Órgão">{status.siglaOrgao}</StatusItem>
         <StatusItem label="Situação">{status.situacao}</StatusItem>
-        <StatusItem label="Regime">{status.regime}</StatusItem>
         <StatusItem label="Data" mono>
           {data}
         </StatusItem>
@@ -142,15 +182,38 @@ function TemasOficiais({ temas }: { temas: TemaOficial[] }) {
   );
 }
 
-function FonteOficialLink({ href }: { href: string }) {
+function LinksOficiais({
+  fonteOficial,
+  urlInteiroTeor,
+}: {
+  fonteOficial: string;
+  urlInteiroTeor: string | null;
+}) {
+  return (
+    <div className="flex flex-wrap gap-x-4 gap-y-2">
+      {urlInteiroTeor ? (
+        <LinkOficial href={urlInteiroTeor}>Ver PDF da proposição</LinkOficial>
+      ) : null}
+      <LinkOficial href={fonteOficial}>Ver fonte oficial na Câmara</LinkOficial>
+    </div>
+  );
+}
+
+function LinkOficial({
+  children,
+  href,
+}: {
+  children: React.ReactNode;
+  href: string;
+}) {
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="justify-self-start text-sm text-info underline-offset-2 hover:underline"
+      className="text-sm text-info underline-offset-2 hover:underline"
     >
-      Ver fonte oficial na Câmara
+      {children}
     </a>
   );
 }

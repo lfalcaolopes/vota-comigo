@@ -66,6 +66,8 @@ function detalheHead(
     ementa: 'Dispõe sobre saúde pública',
     dataApresentacao: '2024-04-15T10:00:00Z',
     ementaDetalhada: 'Detalha regras de saúde pública.',
+    urlInteiroTeor:
+      'https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=1',
     ultimoStatusSiglaOrgao: 'PLEN',
     ultimoStatusDescricaoSituacao: 'Aprovada',
     ultimoStatusRegime: 'Urgência',
@@ -497,7 +499,9 @@ describe('GET /proposicoes/search with citation query', () => {
 
     // Assert
     expect(response.status).toBe(200);
-    const body = proposicoesSearchResponseSchema.parse(response.body as unknown);
+    const body = proposicoesSearchResponseSchema.parse(
+      response.body as unknown,
+    );
     expect(body.total).toBe(1);
     expect(body.items.map((item) => item.externalIdProposicao)).toEqual([42]);
   });
@@ -534,6 +538,9 @@ describe('GET /proposicoes/:externalIdProposicao', () => {
       expect(response.status).toBe(200);
       const body = proposicaoDetalheSchema.parse(response.body as unknown);
       expect(body.temas).toEqual([]);
+      expect(body.urlInteiroTeor).toBe(
+        'https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=1',
+      );
       expect(body).not.toHaveProperty('id');
     });
   });

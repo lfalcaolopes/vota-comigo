@@ -91,6 +91,7 @@ export const proposicaoDetalheSchema = z.object({
   ementa: z.string().nullable(),
   dataApresentacao: z.string().nullable(),
   ementaDetalhada: z.string().nullable(),
+  urlInteiroTeor: z.string().nullable(),
   status: proposicaoStatusResumoSchema,
   fonteOficial: z.string(),
   temas: z.array(temaOficialSchema),

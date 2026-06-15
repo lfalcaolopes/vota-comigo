@@ -38,6 +38,7 @@ function fakeRepository(
   return {
     loadProposicoesWithVotacoesPlenario: async () => rows,
     loadProposicaoDetalhe: async () => null,
+    loadProposicaoTemas: async () => [],
   };
 }
 
@@ -478,14 +479,20 @@ describe('ProposicoesService.search', () => {
         externalIdVotacao: '12-1',
         descricao: 'Aprovado o Projeto de Lei',
       });
-      const service = createService([target, ementaContains3, ementaContains2021]);
+      const service = createService([
+        target,
+        ementaContains3,
+        ementaContains2021,
+      ]);
 
       // Act
       const result = await service.search('pec 3/2021', 20, 0);
 
       // Assert
       expect(result.total).toBe(1);
-      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([10]);
+      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([
+        10,
+      ]);
     });
 
     it('returns multiple results for "tipo numero" when the numero matches across different anos', async () => {
@@ -515,8 +522,12 @@ describe('ProposicoesService.search', () => {
 
       // Assert
       expect(result.total).toBe(2);
-      expect(result.items.map((item) => item.externalIdProposicao)).toContain(1);
-      expect(result.items.map((item) => item.externalIdProposicao)).toContain(2);
+      expect(result.items.map((item) => item.externalIdProposicao)).toContain(
+        1,
+      );
+      expect(result.items.map((item) => item.externalIdProposicao)).toContain(
+        2,
+      );
     });
 
     it('returns multiple results for "numero/ano" when the pair matches across different siglaTipos', async () => {
