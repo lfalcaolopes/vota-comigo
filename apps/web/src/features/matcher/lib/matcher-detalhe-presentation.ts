@@ -51,6 +51,68 @@ export function toMatcherEffectLabel(effect: MatcherEffect): string {
   return "Fora do denominador";
 }
 
+export const VOTO_FILTROS = [
+  "todos",
+  "alinhados",
+  "divergentes",
+  "fora",
+] as const;
+
+export type VotoFiltro = (typeof VOTO_FILTROS)[number];
+
+const FILTRO_EFFECT: Record<Exclude<VotoFiltro, "todos">, MatcherEffect> = {
+  alinhados: "concordancia",
+  divergentes: "discordancia",
+  fora: "fora_do_denominador",
+};
+
+const FILTRO_LABELS: Record<VotoFiltro, string> = {
+  todos: "Todos",
+  alinhados: "Alinhados",
+  divergentes: "Divergentes",
+  fora: "Fora do cálculo",
+};
+
+export function toFiltroLabel(filtro: VotoFiltro): string {
+  return FILTRO_LABELS[filtro];
+}
+
+export function filterVotos(
+  votos: MatcherVotoDetalhe[],
+  filtro: VotoFiltro,
+): MatcherVotoDetalhe[] {
+  if (filtro === "todos") return votos;
+  return votos.filter((v) => v.matcherEffect === FILTRO_EFFECT[filtro]);
+}
+
+export function countVotosByFiltro(
+  votos: MatcherVotoDetalhe[],
+): Record<VotoFiltro, number> {
+  const groups = groupVotosByMatcherEffect(votos);
+
+  return {
+    todos: votos.length,
+    alinhados: groups.concordancia.length,
+    divergentes: groups.discordancia.length,
+    fora: groups.fora_do_denominador.length,
+  };
+}
+
+export function sortVotosByVotacaoDataDesc(
+  votos: MatcherVotoDetalhe[],
+): MatcherVotoDetalhe[] {
+  return [...votos].sort((a, b) => {
+    const da = a.votacaoReferencia.data;
+    const db = b.votacaoReferencia.data;
+
+    if (da === db) return 0;
+    if (da === null) return 1;
+    if (db === null) return -1;
+
+    return da < db ? 1 : -1;
+  });
+}
+
 export type MatcherVerdictTone = "success" | "danger" | "neutral";
 
 export type MatcherVerdict = {

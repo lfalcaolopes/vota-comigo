@@ -7,7 +7,11 @@ import { describe, expect, it } from "vitest";
 
 import {
   FORA_DO_DENOMINADOR_EXPLICACAO,
+  countVotosByFiltro,
+  filterVotos,
   groupVotosByMatcherEffect,
+  sortVotosByVotacaoDataDesc,
+  toFiltroLabel,
   toMatcherEffectLabel,
   toMatcherEffectVerdict,
   toPosicaoLabel,
@@ -18,6 +22,7 @@ function voto(
   matcherEffect: MatcherEffect,
   situacao: DeputadoVotacaoClassification = "sim",
   posicaoUsuario: "aprovar" | "rejeitar" = "aprovar",
+  data: string | null = "2024-06-01",
 ): MatcherVotoDetalhe {
   return {
     proposicao: {
@@ -32,8 +37,8 @@ function voto(
     },
     posicaoUsuario,
     votacaoReferencia: {
-      externalIdVotacao: "abc123",
-      data: "2024-06-01",
+      externalIdVotacao: `voto-${data ?? "null"}-${Math.random()}`,
+      data,
       descricao: null,
       pattern: "projeto_de_lei",
       votosSim: 300,
@@ -213,6 +218,159 @@ describe("toMatcherEffectVerdict", () => {
       expect(verdict).toEqual({ label: "Fora do cálculo", tone: "neutral" });
     });
   });
+});
+
+describe("filterVotos", () => {
+  describe("when the filter is 'todos'", () => {
+    it("returns every voto regardless of effect", () => {
+      // Arrange
+      const votos = [
+        voto("concordancia"),
+        voto("discordancia"),
+        voto("fora_do_denominador"),
+      ];
+
+      // Act
+      const result = filterVotos(votos, "todos");
+
+      // Assert
+      expect(result).toEqual(votos);
+    });
+  });
+
+  describe("when the filter targets a single effect", () => {
+    it("keeps only the votos for the matching effect", () => {
+      // Arrange
+      const alinhado = voto("concordancia");
+      const divergente = voto("discordancia");
+      const fora = voto("fora_do_denominador");
+      const votos = [alinhado, divergente, fora];
+
+      // Act / Assert
+      expect(filterVotos(votos, "alinhados")).toEqual([alinhado]);
+      expect(filterVotos(votos, "divergentes")).toEqual([divergente]);
+      expect(filterVotos(votos, "fora")).toEqual([fora]);
+    });
+  });
+
+  describe("immutability", () => {
+    it("does not mutate the input array", () => {
+      // Arrange
+      const votos = [voto("concordancia"), voto("discordancia")];
+      const snapshot = [...votos];
+
+      // Act
+      filterVotos(votos, "alinhados");
+
+      // Assert
+      expect(votos).toEqual(snapshot);
+    });
+  });
+});
+
+describe("countVotosByFiltro", () => {
+  describe("when votos span every effect", () => {
+    it("counts each filter plus the total", () => {
+      // Arrange
+      const votos = [
+        voto("concordancia"),
+        voto("concordancia"),
+        voto("discordancia"),
+        voto("fora_do_denominador"),
+      ];
+
+      // Act
+      const counts = countVotosByFiltro(votos);
+
+      // Assert
+      expect(counts).toEqual({
+        todos: 4,
+        alinhados: 2,
+        divergentes: 1,
+        fora: 1,
+      });
+    });
+  });
+
+  describe("when votos is empty", () => {
+    it("returns zero for every filter", () => {
+      // Act
+      const counts = countVotosByFiltro([]);
+
+      // Assert
+      expect(counts).toEqual({
+        todos: 0,
+        alinhados: 0,
+        divergentes: 0,
+        fora: 0,
+      });
+    });
+  });
+});
+
+describe("sortVotosByVotacaoDataDesc", () => {
+  describe("when votos have distinct votação dates", () => {
+    it("orders the most recent votação first", () => {
+      // Arrange
+      const older = voto("concordancia", "sim", "aprovar", "2020-01-01");
+      const newer = voto("concordancia", "sim", "aprovar", "2024-06-01");
+      const middle = voto("concordancia", "sim", "aprovar", "2022-03-15");
+
+      // Act
+      const result = sortVotosByVotacaoDataDesc([older, newer, middle]);
+
+      // Assert
+      expect(result).toEqual([newer, middle, older]);
+    });
+  });
+
+  describe("when some votos have no votação date", () => {
+    it("places votos without a date last", () => {
+      // Arrange
+      const dated = voto("concordancia", "sim", "aprovar", "2021-05-10");
+      const undated = voto("concordancia", "sim", "aprovar", null);
+
+      // Act
+      const result = sortVotosByVotacaoDataDesc([undated, dated]);
+
+      // Assert
+      expect(result).toEqual([dated, undated]);
+    });
+  });
+
+  describe("immutability", () => {
+    it("returns a new array without mutating the input", () => {
+      // Arrange
+      const votos = [
+        voto("concordancia", "sim", "aprovar", "2020-01-01"),
+        voto("concordancia", "sim", "aprovar", "2024-06-01"),
+      ];
+      const snapshot = [...votos];
+
+      // Act
+      const result = sortVotosByVotacaoDataDesc(votos);
+
+      // Assert
+      expect(votos).toEqual(snapshot);
+      expect(result).not.toBe(votos);
+    });
+  });
+});
+
+describe("toFiltroLabel", () => {
+  const cases: [Parameters<typeof toFiltroLabel>[0], string][] = [
+    ["todos", "Todos"],
+    ["alinhados", "Alinhados"],
+    ["divergentes", "Divergentes"],
+    ["fora", "Fora do cálculo"],
+  ];
+
+  for (const [filtro, expected] of cases) {
+    it(`maps '${filtro}' to '${expected}'`, () => {
+      // Act / Assert
+      expect(toFiltroLabel(filtro)).toBe(expected);
+    });
+  }
 });
 
 describe("FORA_DO_DENOMINADOR_EXPLICACAO", () => {

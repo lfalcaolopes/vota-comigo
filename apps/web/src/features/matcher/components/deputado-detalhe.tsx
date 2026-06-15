@@ -5,10 +5,9 @@ import type { MatcherDeputadoDetalhe } from "@vota-comigo/shared-types";
 import { Button, ErrorState, SkeletonRows } from "@/shared/ui";
 
 import type { MatcherStatus } from "../lib/matcher-state";
-import { groupVotosByMatcherEffect } from "../lib/matcher-detalhe-presentation";
 import { DeputadoAvatar } from "./deputado-avatar";
 import { DetalheMetricas } from "./detalhe-metricas";
-import { VotoGrupo } from "./voto-grupo";
+import { VotoLista } from "./voto-lista";
 
 type DeputadoDetalheProps = {
   detalhe: MatcherDeputadoDetalhe | null;
@@ -54,7 +53,6 @@ export function DeputadoDetalhe({
   if (!detalhe) return null;
 
   const { deputado, metrics, votos } = detalhe;
-  const groups = groupVotosByMatcherEffect(votos);
 
   return (
     <div className="grid gap-6">
@@ -76,11 +74,7 @@ export function DeputadoDetalhe({
 
       <DetalheMetricas metrics={metrics} />
 
-      <div className="grid gap-6">
-        <VotoGrupo effect="concordancia" votos={groups.concordancia} />
-        <VotoGrupo effect="discordancia" votos={groups.discordancia} />
-        <VotoGrupo effect="fora_do_denominador" votos={groups.fora_do_denominador} />
-      </div>
+      <VotoLista votos={votos} />
     </div>
   );
 }

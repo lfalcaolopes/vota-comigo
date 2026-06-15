@@ -6,47 +6,45 @@ type DetalheMetricasProps = {
   metrics: MatcherDetalheMetrics;
 };
 
-type MetricItemProps = {
+export function DetalheMetricas({ metrics }: DetalheMetricasProps) {
+  return (
+    <dl className="flex flex-wrap items-baseline gap-x-8 gap-y-4 rounded-lg border border-border bg-surface-muted p-4">
+      <Stat
+        emphasis
+        label="Compatibilidade"
+        value={formatPercentual(metrics.compatibilidadeBruta)}
+      />
+      <Stat
+        label="Amostra comparável"
+        value={String(metrics.amostraComparavel)}
+      />
+      <Stat
+        label="Cobertura de exercício"
+        value={String(metrics.coberturaExercicio)}
+      />
+    </dl>
+  );
+}
+
+type StatProps = {
+  emphasis?: boolean;
   label: string;
   value: string;
 };
 
-function MetricItem({ label, value }: MetricItemProps) {
+function Stat({ emphasis = false, label, value }: StatProps) {
   return (
     <div className="grid gap-0.5">
-      <p className="text-xs text-muted">{label}</p>
-      <p className="text-base font-[680] text-ink">{value}</p>
-    </div>
-  );
-}
-
-export function DetalheMetricas({ metrics }: DetalheMetricasProps) {
-  return (
-    <div className="grid grid-cols-2 gap-4 rounded-lg border border-border bg-surface-muted p-4 sm:grid-cols-3">
-      <MetricItem
-        label="Concordâncias"
-        value={String(metrics.totalConcordancias)}
-      />
-      <MetricItem
-        label="Discordâncias"
-        value={String(metrics.totalDiscordancias)}
-      />
-      <MetricItem
-        label="Fora do denominador"
-        value={String(metrics.totalForaDoDenominador)}
-      />
-      <MetricItem
-        label="Amostra comparável"
-        value={String(metrics.amostraComparavel)}
-      />
-      <MetricItem
-        label="Cobertura de exercício"
-        value={String(metrics.coberturaExercicio)}
-      />
-      <MetricItem
-        label="Compatibilidade"
-        value={formatPercentual(metrics.compatibilidadeBruta)}
-      />
+      <dt className="text-xs text-muted">{label}</dt>
+      <dd
+        className={
+          emphasis
+            ? "text-2xl font-[680] tabular-nums text-ink"
+            : "text-base font-[680] tabular-nums text-ink"
+        }
+      >
+        {value}
+      </dd>
     </div>
   );
 }
