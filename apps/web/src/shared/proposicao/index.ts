@@ -1,4 +1,11 @@
 export { detalhe, feed, search, temasDisponiveis } from "./queries";
+export {
+  buildFeedHref,
+  buildFeedSearchParams,
+  parseFeedUrlState,
+  type FeedSearchParams,
+  type FeedUrlState,
+} from "./feed-url";
 export { ProposicaoRow } from "./proposicao-row";
 export { ProposicaoBreadcrumb } from "./proposicao-breadcrumb";
 export { ProposicaoDetalhe } from "./proposicao-detalhe";

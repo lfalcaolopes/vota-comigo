@@ -19,6 +19,7 @@ type FeedListProps = {
   onLoadMore: () => void;
   onClearSearch: () => void;
   onClearFilters: () => void;
+  itemSearchParams?: string;
 };
 
 export function FeedList({
@@ -30,7 +31,10 @@ export function FeedList({
   onLoadMore,
   onClearSearch,
   onClearFilters,
+  itemSearchParams = "",
 }: FeedListProps) {
+  const itemSearchSuffix = itemSearchParams ? `?${itemSearchParams}` : "";
+
   if (display === "loading") {
     return <SkeletonRows count={3} />;
   }
@@ -91,7 +95,11 @@ export function FeedList({
     <div className="grid min-w-0 gap-6">
       <div className="grid min-w-0 border-t border-border">
         {items.map((card) => (
-          <ProposicaoRow card={card} key={card.externalIdProposicao} />
+          <ProposicaoRow
+            card={card}
+            href={`/proposicoes/${card.externalIdProposicao}${itemSearchSuffix}`}
+            key={card.externalIdProposicao}
+          />
         ))}
         {status === "loading" ? <SkeletonRows count={3} /> : null}
       </div>

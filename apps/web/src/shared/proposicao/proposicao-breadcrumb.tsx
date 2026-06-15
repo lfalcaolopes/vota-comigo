@@ -4,8 +4,10 @@ import Link from "next/link";
 import { toIdentificadorLegislativo } from "./presentation";
 
 export function ProposicaoBreadcrumb({
+  feedHref = "/",
   proposicao,
 }: {
+  feedHref?: string;
   proposicao: Pick<ProposicaoDetalhe, "siglaTipo" | "numero" | "ano">;
 }) {
   const identificador = toIdentificadorLegislativo(proposicao);
@@ -16,7 +18,7 @@ export function ProposicaoBreadcrumb({
       className="flex flex-wrap items-center gap-2 text-sm text-subtle"
     >
       <Link
-        href="/"
+        href={feedHref}
         className="text-muted underline-offset-2 hover:text-ink hover:underline"
       >
         Proposições

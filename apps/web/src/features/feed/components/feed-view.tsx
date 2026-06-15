@@ -8,7 +8,11 @@ import type {
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { useFeedState } from "@/shared/proposicao";
+import {
+  buildFeedHref,
+  buildFeedSearchParams,
+  useFeedState,
+} from "@/shared/proposicao";
 
 import { FeedList } from "./feed-list";
 import { FeedOrdenacao as FeedOrdenacaoControl } from "./feed-ordenacao";
@@ -19,6 +23,7 @@ type FeedViewProps = {
   initialItems: ProposicaoCard[];
   initialTotal: number;
   initialOrdenacao?: FeedOrdenacao;
+  initialQuery?: string | null;
   initialTema?: number | null;
   temas?: readonly TemaDisponivel[];
 };
@@ -27,6 +32,7 @@ export function FeedView({
   initialItems,
   initialTotal,
   initialOrdenacao = "mais-votadas",
+  initialQuery = null,
   initialTema = null,
   temas = [],
 }: FeedViewProps) {
@@ -49,27 +55,51 @@ export function FeedView({
     changeOrdenacao,
     changeTema,
     clearFilters,
-  } = useFeedState(initialItems, initialTotal, initialOrdenacao, initialTema);
+  } = useFeedState(
+    initialItems,
+    initialTotal,
+    initialOrdenacao,
+    initialTema,
+    initialQuery ?? "",
+  );
 
-  const [draft, setDraft] = useState("");
+  const [draft, setDraft] = useState(initialQuery ?? "");
+  const activeQuery = mode === "search" ? query : null;
+  const itemSearchParams = buildFeedSearchParams({
+    ordenacao,
+    query: activeQuery,
+    tema,
+  }).toString();
 
-  function handleClear() {
+  async function handleClear() {
     setDraft("");
-    clearSearch();
+    router.replace(buildFeedHref(pathname, { ordenacao, query: null, tema }));
+    await clearSearch();
+  }
+
+  async function handleSearch() {
+    const term = draft.trim();
+    if (term.length === 0) {
+      await handleClear();
+      return;
+    }
+
+    router.replace(buildFeedHref(pathname, { ordenacao, query: term, tema }));
+    await submitSearch(term);
   }
 
   async function handleOrdenacao(value: FeedOrdenacao) {
-    const params = buildUrlParams(value, tema);
-    const search = params.toString();
-    router.replace(search ? `${pathname}?${search}` : pathname);
+    router.replace(
+      buildFeedHref(pathname, { ordenacao: value, query: null, tema }),
+    );
     await changeOrdenacao(value);
   }
 
   async function handleTema(cod: number) {
     const next = tema === cod ? null : cod;
-    const params = buildUrlParams(ordenacao, next);
-    const search = params.toString();
-    router.replace(search ? `${pathname}?${search}` : pathname);
+    router.replace(
+      buildFeedHref(pathname, { ordenacao, query: null, tema: next }),
+    );
     if (next === null) {
       await clearFilters();
     } else {
@@ -78,9 +108,9 @@ export function FeedView({
   }
 
   async function handleClearFilters() {
-    const params = buildUrlParams(ordenacao, null);
-    const search = params.toString();
-    router.replace(search ? `${pathname}?${search}` : pathname);
+    router.replace(
+      buildFeedHref(pathname, { ordenacao, query: null, tema: null }),
+    );
     await clearFilters();
   }
 
@@ -92,7 +122,7 @@ export function FeedView({
           isSearching={mode === "search"}
           onChange={setDraft}
           onClear={handleClear}
-          onSubmit={() => submitSearch(draft)}
+          onSubmit={handleSearch}
           query={query}
           value={draft}
         />
@@ -111,6 +141,7 @@ export function FeedView({
         canLoadMore={canLoadMore}
         display={display}
         items={items}
+        itemSearchParams={itemSearchParams}
         onClearFilters={handleClearFilters}
         onClearSearch={handleClear}
         onLoadMore={loadMore}
@@ -119,14 +150,4 @@ export function FeedView({
       />
     </div>
   );
-}
-
-function buildUrlParams(
-  ordenacao: FeedOrdenacao,
-  tema: number | null,
-): URLSearchParams {
-  const params = new URLSearchParams();
-  if (ordenacao !== "mais-votadas") params.set("ordenacao", ordenacao);
-  if (tema !== null) params.set("tema", String(tema));
-  return params;
 }

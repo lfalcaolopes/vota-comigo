@@ -31,7 +31,7 @@ export type UseFeedState = {
   display: FeedDisplay;
   canLoadMore: boolean;
   submitSearch: (raw: string) => Promise<void>;
-  clearSearch: () => void;
+  clearSearch: () => Promise<void>;
   loadMore: () => Promise<void>;
   changeOrdenacao: (value: FeedOrdenacao) => Promise<void>;
   changeTema: (tema: number) => Promise<void>;
@@ -43,16 +43,23 @@ export function useFeedState(
   initialTotal: number,
   initialOrdenacao: FeedOrdenacao = 'mais-votadas',
   initialTema: number | null = null,
+  initialQuery = "",
 ): UseFeedState {
   const [state, dispatch] = useReducer(
     feedReducer,
-    initFeedState(initialItems, initialTotal, initialOrdenacao, initialTema),
+    initFeedState(
+      initialItems,
+      initialTotal,
+      initialOrdenacao,
+      initialTema,
+      initialQuery,
+    ),
   );
 
   async function submitSearch(raw: string) {
     const term = raw.trim();
     if (term.length === 0) {
-      dispatch({ type: "clearSearch" });
+      await clearSearch();
       return;
     }
     if (state.status === "loading") return;
@@ -68,8 +75,31 @@ export function useFeedState(
     }
   }
 
-  function clearSearch() {
+  async function clearSearch() {
+    if (state.status === "loading") return;
+
+    const hasDefaultFeed = state.defaultFeed.items.length > 0;
     dispatch({ type: "clearSearch" });
+    if (hasDefaultFeed) return;
+
+    dispatch({ type: "loadMoreStart" });
+
+    try {
+      const page = await fetchFeed(
+        PAGE_SIZE,
+        0,
+        state.ordenacao,
+        state.tema ?? undefined,
+      );
+      dispatch({
+        type: "loadMoreSuccess",
+        items: page.items,
+        total: page.total,
+      });
+    } catch (error) {
+      console.error("feed clear search failed", error);
+      dispatch({ type: "loadError" });
+    }
   }
 
   async function loadMore() {

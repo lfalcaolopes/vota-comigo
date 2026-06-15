@@ -3,16 +3,20 @@ import { notFound } from "next/navigation";
 
 import { NotFoundError } from "@/shared/lib/api-client";
 import {
+  buildFeedHref,
   ProposicaoBreadcrumb,
   ProposicaoDetalhe,
   detalhe,
+  parseFeedUrlState,
   toIdentificadorLegislativo,
+  type FeedSearchParams,
 } from "@/shared/proposicao";
 
 export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ externalIdProposicao: string }>;
+  searchParams: Promise<FeedSearchParams>;
 };
 
 export async function generateMetadata({
@@ -42,8 +46,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProposicaoDetalhePage({ params }: PageProps) {
+export default async function ProposicaoDetalhePage({
+  params,
+  searchParams,
+}: PageProps) {
   const { externalIdProposicao } = await params;
+  const feedHref = buildFeedHref("/", parseFeedUrlState(await searchParams));
 
   let proposicao;
   try {
@@ -58,7 +66,7 @@ export default async function ProposicaoDetalhePage({ params }: PageProps) {
   return (
     <main className="min-h-screen w-full min-w-0 overflow-x-hidden bg-bg text-ink">
       <div className="mx-auto grid w-full min-w-0 max-w-200 gap-8 px-4 pt-8 pb-16 md:pt-12">
-        <ProposicaoBreadcrumb proposicao={proposicao} />
+        <ProposicaoBreadcrumb feedHref={feedHref} proposicao={proposicao} />
         <ProposicaoDetalhe proposicao={proposicao} />
       </div>
     </main>

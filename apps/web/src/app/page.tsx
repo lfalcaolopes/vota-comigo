@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 
-import { feedOrdenacao } from "@vota-comigo/shared-types";
-
 import { Feed } from "@/features/feed";
-import { feed, temasDisponiveis } from "@/shared/proposicao";
+import {
+  feed,
+  parseFeedUrlState,
+  search,
+  temasDisponiveis,
+  type FeedSearchParams,
+} from "@/shared/proposicao";
 
 export const dynamic = "force-dynamic";
 
@@ -13,25 +17,17 @@ export const metadata: Metadata = {
     "Proposições computáveis pelo matcher na Câmara dos Deputados, a partir dos dados abertos oficiais.",
 };
 
-type HomeSearchParams = {
-  ordenacao?: string;
-  tema?: string;
-};
-
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<HomeSearchParams>;
+  searchParams: Promise<FeedSearchParams>;
 }) {
-  const params = await searchParams;
-  const ordenacao = feedOrdenacao
-    .catch(() => 'mais-votadas' as const)
-    .parse(params.ordenacao);
-
-  const temaParam = parseTemaParam(params.tema);
+  const { ordenacao, query, tema } = parseFeedUrlState(await searchParams);
 
   const [{ items, total }, { items: temas }] = await Promise.all([
-    feed(20, 0, ordenacao, temaParam ?? undefined),
+    query
+      ? search(query, 20, 0)
+      : feed(20, 0, ordenacao, tema ?? undefined),
     temasDisponiveis(),
   ]);
 
@@ -42,17 +38,11 @@ export default async function Home({
           initialItems={items}
           total={total}
           initialOrdenacao={ordenacao}
-          initialTema={temaParam}
+          initialQuery={query}
+          initialTema={tema}
           temas={temas}
         />
       </div>
     </main>
   );
-}
-
-function parseTemaParam(raw: string | undefined): number | null {
-  if (raw === undefined) return null;
-  const n = Number(raw);
-  if (!Number.isInteger(n) || n <= 0) return null;
-  return n;
 }

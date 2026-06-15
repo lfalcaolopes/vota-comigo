@@ -38,7 +38,21 @@ export function initFeedState(
   total: number,
   ordenacao: FeedOrdenacao = 'mais-votadas',
   tema: number | null = null,
+  query = "",
 ): FeedState {
+  const term = query.trim();
+  if (term.length > 0) {
+    return {
+      mode: "search",
+      query: term,
+      ordenacao,
+      tema,
+      defaultFeed: emptyPage,
+      searchFeed: { items, total },
+      status: "idle",
+    };
+  }
+
   return {
     mode: "default",
     query: "",

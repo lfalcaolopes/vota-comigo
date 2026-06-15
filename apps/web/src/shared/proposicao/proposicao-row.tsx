@@ -1,4 +1,6 @@
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
+import Link from "next/link";
+import type { ReactNode } from "react";
 
 import {
   formatShortDate,
@@ -6,13 +8,41 @@ import {
   toIdentificadorLegislativo,
 } from "./presentation";
 
-export function ProposicaoRow({ card }: { card: ProposicaoCard }) {
+type ProposicaoRowProps = {
+  card: ProposicaoCard;
+  href?: string;
+};
+
+export function ProposicaoRow({ card, href }: ProposicaoRowProps) {
+  const content = <ProposicaoRowContent card={card} />;
+
+  if (href) {
+    return (
+      <article className="border-b border-border">
+        <Link
+          className="-mx-2 grid gap-2 rounded-md px-2 py-4 transition-[background-color] duration-[180ms] ease-standard hover:bg-surface focus-visible:bg-surface"
+          href={href}
+        >
+          {content}
+        </Link>
+      </article>
+    );
+  }
+
+  return (
+    <article className="grid gap-2 border-b border-border py-4">
+      {content}
+    </article>
+  );
+}
+
+function ProposicaoRowContent({ card }: { card: ProposicaoCard }) {
   const identificador = toIdentificadorLegislativo(card);
   const ultimaVotacao = formatShortDate(card.dataUltimaVotacao);
   const anoApresentacao = toAnoApresentacao(card);
 
   return (
-    <article className="grid gap-2 border-b border-border py-4">
+    <>
       <p className="font-mono text-sm font-[650] tracking-[-0.01em] text-ink">
         {identificador ?? "Sem identificador"}
       </p>
@@ -40,7 +70,7 @@ export function ProposicaoRow({ card }: { card: ProposicaoCard }) {
           </MetaItem>
         ) : null}
       </dl>
-    </article>
+    </>
   );
 }
 
@@ -49,7 +79,7 @@ function MetaItem({
   label,
   mono = false,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   label: string;
   mono?: boolean;
 }) {

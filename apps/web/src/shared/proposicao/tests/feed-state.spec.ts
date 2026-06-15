@@ -54,6 +54,25 @@ describe("feedReducer", () => {
       // Assert
       expect(state.ordenacao).toBe("mais-recentes");
     });
+
+    it("starts in search mode when initial query is present", () => {
+      // Arrange / Act
+      const state = initFeedState(
+        firstPage,
+        2,
+        "mais-recentes",
+        37,
+        " saúde ",
+      );
+
+      // Assert
+      expect(state.mode).toBe("search");
+      expect(state.query).toBe("saúde");
+      expect(state.ordenacao).toBe("mais-recentes");
+      expect(state.tema).toBe(37);
+      expect(activeFeed(state).items).toEqual(firstPage);
+      expect(activeFeed(state).total).toBe(2);
+    });
   });
 
   describe("when ordenacao is changed", () => {

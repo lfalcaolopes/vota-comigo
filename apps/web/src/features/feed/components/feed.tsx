@@ -10,6 +10,7 @@ type FeedProps = {
   initialItems: ProposicaoCard[];
   total: number;
   initialOrdenacao?: FeedOrdenacao;
+  initialQuery?: string | null;
   initialTema?: number | null;
   temas?: readonly TemaDisponivel[];
 };
@@ -18,6 +19,7 @@ export function Feed({
   initialItems,
   total,
   initialOrdenacao,
+  initialQuery,
   initialTema,
   temas,
 }: FeedProps) {
@@ -34,6 +36,7 @@ export function Feed({
         initialItems={initialItems}
         initialTotal={total}
         initialOrdenacao={initialOrdenacao}
+        initialQuery={initialQuery}
         initialTema={initialTema}
         temas={temas}
       />
