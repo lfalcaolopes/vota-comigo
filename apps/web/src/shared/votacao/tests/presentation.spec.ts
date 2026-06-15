@@ -117,75 +117,34 @@ describe("toPlacarCategorias", () => {
       votosNaoInformado: 1,
     };
 
-    it("returns exactly Sim, Não, Outros", () => {
+    it("returns Sim and Não with success and danger tones", () => {
       // Act
       const categorias = toPlacarCategorias(placar);
 
       // Assert
-      expect(categorias.map((c) => c.label)).toEqual(["Sim", "Não", "Outros"]);
+      expect(categorias).toEqual([
+        { label: "Sim", votos: 300, tone: "success" },
+        { label: "Não", votos: 100, tone: "danger" },
+      ]);
     });
 
-    it("aggregates all secondary votes into Outros", () => {
+    it("never includes Outros or other secondary categories", () => {
       // Act
-      const outros = toPlacarCategorias(placar).find(
-        (c) => c.label === "Outros",
-      );
-
-      // Assert — 5 + 10 + 2 + 1 = 18
-      expect(outros?.votos).toBe(18);
-    });
-
-    it("omits Outros when all secondary votes are 0", () => {
-      // Arrange
-      const noSecondary: PlacarVotacao = {
-        placarCompleto: true,
-        votosSim: 300,
-        votosNao: 100,
-        votosAbstencao: 0,
-        votosObstrucao: 0,
-        votosArtigo17: 0,
-        votosNaoInformado: 0,
-      };
-
-      // Act
-      const categorias = toPlacarCategorias(noSecondary);
+      const categorias = toPlacarCategorias(placar);
 
       // Assert
       expect(categorias.map((c) => c.label)).toEqual(["Sim", "Não"]);
     });
 
-    it("includes Sim even when votosSim is 0", () => {
+    it("keeps Sim and Não even when their votes are 0", () => {
       // Arrange
-      const zeroSim: PlacarVotacao = { ...placar, votosSim: 0 };
+      const zeroed: PlacarVotacao = { ...placar, votosSim: 0, votosNao: 0 };
 
       // Act
-      const categorias = toPlacarCategorias(zeroSim);
+      const categorias = toPlacarCategorias(zeroed);
 
       // Assert
-      expect(categorias.find((c) => c.label === "Sim")?.votos).toBe(0);
-    });
-
-    it("includes Não even when votosNao is 0", () => {
-      // Arrange
-      const zeroNao: PlacarVotacao = { ...placar, votosNao: 0 };
-
-      // Act
-      const categorias = toPlacarCategorias(zeroNao);
-
-      // Assert
-      expect(categorias.find((c) => c.label === "Não")?.votos).toBe(0);
-    });
-
-    it("assigns success tone to Sim, danger to Não, neutral to Outros", () => {
-      // Act
-      const categorias = toPlacarCategorias(placar);
-
-      // Assert
-      expect(categorias.find((c) => c.label === "Sim")?.tone).toBe("success");
-      expect(categorias.find((c) => c.label === "Não")?.tone).toBe("danger");
-      expect(categorias.find((c) => c.label === "Outros")?.tone).toBe(
-        "neutral",
-      );
+      expect(categorias.map((c) => c.votos)).toEqual([0, 0]);
     });
   });
 
@@ -197,40 +156,15 @@ describe("toPlacarCategorias", () => {
       votosOutros: 2,
     };
 
-    it("returns exactly Sim, Não, Outros when all > 0", () => {
+    it("returns only Sim and Não, ignoring votosOutros", () => {
       // Act
       const categorias = toPlacarCategorias(placar);
 
       // Assert
-      expect(categorias.map((c) => c.label)).toEqual(["Sim", "Não", "Outros"]);
-    });
-
-    it("omits Outros when votosOutros is 0", () => {
-      // Arrange
-      const noOutros: PlacarVotacao = {
-        placarCompleto: false,
-        votosSim: 10,
-        votosNao: 5,
-        votosOutros: 0,
-      };
-
-      // Act
-      const categorias = toPlacarCategorias(noOutros);
-
-      // Assert
-      expect(categorias.map((c) => c.label)).toEqual(["Sim", "Não"]);
-    });
-
-    it("assigns correct tones", () => {
-      // Act
-      const categorias = toPlacarCategorias(placar);
-
-      // Assert
-      expect(categorias.find((c) => c.label === "Sim")?.tone).toBe("success");
-      expect(categorias.find((c) => c.label === "Não")?.tone).toBe("danger");
-      expect(categorias.find((c) => c.label === "Outros")?.tone).toBe(
-        "neutral",
-      );
+      expect(categorias).toEqual([
+        { label: "Sim", votos: 10, tone: "success" },
+        { label: "Não", votos: 5, tone: "danger" },
+      ]);
     });
   });
 });

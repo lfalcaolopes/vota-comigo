@@ -11,7 +11,7 @@ export type ResultadoTone = "neutral" | "success" | "danger";
 export type PlacarCategoria = {
   label: string;
   votos: number;
-  tone: ResultadoTone;
+  tone: "success" | "danger";
 };
 
 export function toResultadoLabel(resultado: Resultado): string {
@@ -33,22 +33,9 @@ export function toComparadorLabel(
 }
 
 export function toPlacarCategorias(placar: PlacarVotacao): PlacarCategoria[] {
-  const votosOutros = placar.placarCompleto
-    ? placar.votosAbstencao +
-      placar.votosObstrucao +
-      placar.votosArtigo17 +
-      placar.votosNaoInformado
-    : placar.votosOutros;
-
-  const outros: PlacarCategoria[] =
-    votosOutros > 0
-      ? [{ label: "Outros", votos: votosOutros, tone: "neutral" }]
-      : [];
-
   return [
     { label: "Sim", votos: placar.votosSim, tone: "success" },
     { label: "Não", votos: placar.votosNao, tone: "danger" },
-    ...outros,
   ];
 }
 
