@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 
 import type {
-  MaisVotadasResponse,
+  ProposicoesFeedResponse,
   ProposicaoDetalhe,
   ProposicoesSearchResponse,
 } from '@vota-comigo/shared-types';
@@ -31,10 +31,10 @@ export class ProposicoesService {
     private readonly repository: ProposicoesRepository,
   ) {}
 
-  async maisVotadas(
+  async feed(
     limit: number,
     offset: number,
-  ): Promise<MaisVotadasResponse> {
+  ): Promise<ProposicoesFeedResponse> {
     const rows = await this.repository.loadProposicoesWithVotacoesPlenario();
     const ranked = [...toProposicoesComputaveis(rows)].sort(compareRanking);
 

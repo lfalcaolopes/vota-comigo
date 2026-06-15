@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 
 import type {
-  MaisVotadasResponse,
+  ProposicoesFeedResponse,
   ProposicaoDetalhe,
   ProposicoesSearchResponse,
 } from '@vota-comigo/shared-types';
@@ -21,13 +21,13 @@ import { tokenizeQuery } from './rules/proposicoes-search';
 export class ProposicoesController {
   constructor(private readonly service: ProposicoesService) {}
 
-  @Get('mais-votadas')
-  async maisVotadas(
+  @Get('feed')
+  async feed(
     @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
     @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
-  ): Promise<MaisVotadasResponse> {
+  ): Promise<ProposicoesFeedResponse> {
     const pagination = normalizePagination(limit, offset);
-    return this.service.maisVotadas(pagination.limit, pagination.offset);
+    return this.service.feed(pagination.limit, pagination.offset);
   }
 
   @Get('search')

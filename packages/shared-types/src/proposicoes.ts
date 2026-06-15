@@ -95,7 +95,7 @@ export const proposicaoDetalheSchema = z.object({
   votacoes: z.array(votacaoNominalSchema),
 });
 
-export const maisVotadasResponseSchema = z.object({
+export const proposicoesFeedResponseSchema = z.object({
   items: z.array(proposicaoCardSchema),
   total: z.number(),
   limit: z.number(),
@@ -123,7 +123,7 @@ export type PlacarVotacao = z.infer<typeof placarVotacaoSchema>;
 export type VotacaoNominal = z.infer<typeof votacaoNominalSchema>;
 export type TemaOficial = z.infer<typeof temaOficialSchema>;
 export type ProposicaoDetalhe = z.infer<typeof proposicaoDetalheSchema>;
-export type MaisVotadasResponse = z.infer<typeof maisVotadasResponseSchema>;
+export type ProposicoesFeedResponse = z.infer<typeof proposicoesFeedResponseSchema>;
 export type ProposicoesSearchResponse = z.infer<
   typeof proposicoesSearchResponseSchema
 >;

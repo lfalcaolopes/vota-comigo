@@ -38,11 +38,11 @@ describe("apiGet", () => {
       vi.stubGlobal("fetch", fetchSpy);
 
       // Act
-      await apiGet("/proposicoes/mais-votadas");
+      await apiGet("/proposicoes/feed");
 
       // Assert
       expect(fetchSpy).toHaveBeenCalledWith(
-        "http://localhost:3001/proposicoes/mais-votadas",
+        "http://localhost:3001/proposicoes/feed",
       );
     });
   });

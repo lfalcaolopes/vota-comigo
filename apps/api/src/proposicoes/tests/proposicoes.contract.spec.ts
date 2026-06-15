@@ -1,8 +1,8 @@
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import {
-  maisVotadasResponseSchema,
   proposicaoDetalheSchema,
+  proposicoesFeedResponseSchema,
   proposicoesSearchResponseSchema,
 } from '@vota-comigo/shared-types';
 import request from 'supertest';
@@ -124,7 +124,7 @@ async function buildApp(data: FakeData): Promise<INestApplication> {
   return app;
 }
 
-describe('GET /proposicoes/mais-votadas', () => {
+describe('GET /proposicoes/feed', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -139,23 +139,23 @@ describe('GET /proposicoes/mais-votadas', () => {
     it('applies the default limit 20 and offset 0 and returns a valid contract', async () => {
       // Act
       const response = await request(getTestServer(app)).get(
-        '/proposicoes/mais-votadas',
+        '/proposicoes/feed',
       );
 
       // Assert
       expect(response.status).toBe(200);
-      const body = maisVotadasResponseSchema.parse(response.body as unknown);
+      const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
       expect(body).toMatchObject({ limit: 20, offset: 0 });
     });
 
     it('does not expose an internal UUID id on the card', async () => {
       // Act
       const response = await request(getTestServer(app)).get(
-        '/proposicoes/mais-votadas',
+        '/proposicoes/feed',
       );
 
       // Assert
-      const body = maisVotadasResponseSchema.parse(response.body as unknown);
+      const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
       expect(body.items[0]).not.toHaveProperty('id');
       expect(body.items[0].externalIdProposicao).toBe(1);
     });
@@ -165,23 +165,23 @@ describe('GET /proposicoes/mais-votadas', () => {
     it('caps limit at 100 and floors offset at 0', async () => {
       // Act
       const response = await request(getTestServer(app))
-        .get('/proposicoes/mais-votadas')
+        .get('/proposicoes/feed')
         .query({ limit: 999, offset: -5 });
 
       // Assert
       expect(response.status).toBe(200);
-      const body = maisVotadasResponseSchema.parse(response.body as unknown);
+      const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
       expect(body).toMatchObject({ limit: 100, offset: 0 });
     });
 
     it('raises a zero limit to 1', async () => {
       // Act
       const response = await request(getTestServer(app))
-        .get('/proposicoes/mais-votadas')
+        .get('/proposicoes/feed')
         .query({ limit: 0 });
 
       // Assert
-      const body = maisVotadasResponseSchema.parse(response.body as unknown);
+      const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
       expect(body.limit).toBe(1);
     });
   });
@@ -190,7 +190,7 @@ describe('GET /proposicoes/mais-votadas', () => {
     it.each(['abc', '20.5'])('rejects limit=%s with 400', async (limit) => {
       // Act
       const response = await request(getTestServer(app))
-        .get('/proposicoes/mais-votadas')
+        .get('/proposicoes/feed')
         .query({ limit });
 
       // Assert
@@ -200,7 +200,7 @@ describe('GET /proposicoes/mais-votadas', () => {
     it('rejects a non-integer offset with 400', async () => {
       // Act
       const response = await request(getTestServer(app))
-        .get('/proposicoes/mais-votadas')
+        .get('/proposicoes/feed')
         .query({ offset: 'abc' });
 
       // Assert
@@ -209,7 +209,7 @@ describe('GET /proposicoes/mais-votadas', () => {
   });
 });
 
-describe('GET /proposicoes/mais-votadas as initial matcher suggestion source', () => {
+describe('GET /proposicoes/feed as initial matcher suggestion source', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -235,12 +235,12 @@ describe('GET /proposicoes/mais-votadas as initial matcher suggestion source', (
   it('serves five public cards when the initial matcher flow requests limit 5', async () => {
     // Act
     const response = await request(getTestServer(app))
-      .get('/proposicoes/mais-votadas')
+      .get('/proposicoes/feed')
       .query({ limit: 5 });
 
     // Assert
     expect(response.status).toBe(200);
-    const body = maisVotadasResponseSchema.parse(response.body as unknown);
+    const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
     expect(body.limit).toBe(5);
     expect(body.items).toHaveLength(5);
     expect(body.total).toBe(6);
@@ -248,7 +248,7 @@ describe('GET /proposicoes/mais-votadas as initial matcher suggestion source', (
   });
 });
 
-describe('GET /proposicoes/mais-votadas with no computavel proposicao', () => {
+describe('GET /proposicoes/feed with no computavel proposicao', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -264,12 +264,12 @@ describe('GET /proposicoes/mais-votadas with no computavel proposicao', () => {
   it('returns an empty page instead of an error', async () => {
     // Act
     const response = await request(getTestServer(app)).get(
-      '/proposicoes/mais-votadas',
+      '/proposicoes/feed',
     );
 
     // Assert
     expect(response.status).toBe(200);
-    const body = maisVotadasResponseSchema.parse(response.body as unknown);
+    const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
     expect(body).toMatchObject({ items: [], total: 0 });
   });
 });
@@ -434,7 +434,7 @@ describe('GET /proposicoes/:externalIdProposicao', () => {
   });
 
   describe('route precedence', () => {
-    it.each(['/proposicoes/mais-votadas', '/proposicoes/search'])(
+    it.each(['/proposicoes/feed', '/proposicoes/search'])(
       'does not let the :externalIdProposicao route swallow %s',
       async (path) => {
         // Act

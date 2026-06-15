@@ -45,14 +45,14 @@ function createService(rows: readonly ProposicaoVotacaoJoinRow[]) {
   return new ProposicoesService(fakeRepository(rows));
 }
 
-describe('ProposicoesService.maisVotadas', () => {
+describe('ProposicoesService.feed', () => {
   describe('when a proposicao has a classifiable plenary vote', () => {
     it('returns a card with proposicao identity and voting aggregates', async () => {
       // Arrange
       const service = createService([joinRow()]);
 
       // Act
-      const page = await service.maisVotadas(20, 0);
+      const page = await service.feed(20, 0);
 
       // Assert
       expect(page.total).toBe(1);
@@ -84,7 +84,7 @@ describe('ProposicoesService.maisVotadas', () => {
       const service = createService([computavel, naoComputavel]);
 
       // Act
-      const page = await service.maisVotadas(20, 0);
+      const page = await service.feed(20, 0);
 
       // Assert
       expect(page.total).toBe(1);
@@ -113,7 +113,7 @@ describe('ProposicoesService.maisVotadas', () => {
       const service = createService([umaVotacao, duasVotacoesA, duasVotacoesB]);
 
       // Act
-      const page = await service.maisVotadas(20, 0);
+      const page = await service.feed(20, 0);
 
       // Assert
       expect(page.items.map((item) => item.externalIdProposicao)).toEqual([
@@ -155,7 +155,7 @@ describe('ProposicoesService.maisVotadas', () => {
       const service = createService(rows);
 
       // Act
-      const page = await service.maisVotadas(20, 0);
+      const page = await service.feed(20, 0);
 
       // Assert
       expect(page.items.map((item) => item.externalIdProposicao)).toEqual([
@@ -181,7 +181,7 @@ describe('ProposicoesService.maisVotadas', () => {
       const service = createService(threeComputaveis());
 
       // Act
-      const page = await service.maisVotadas(2, 1);
+      const page = await service.feed(2, 1);
 
       // Assert
       expect(page.total).toBe(3);
@@ -195,7 +195,7 @@ describe('ProposicoesService.maisVotadas', () => {
       const service = createService(threeComputaveis());
 
       // Act
-      const page = await service.maisVotadas(20, 99);
+      const page = await service.feed(20, 99);
 
       // Assert
       expect(page.total).toBe(3);

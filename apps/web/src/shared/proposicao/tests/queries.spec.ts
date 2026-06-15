@@ -1,14 +1,14 @@
 import type {
-  MaisVotadasResponse,
+  ProposicoesFeedResponse,
   ProposicaoDetalhe,
   ProposicoesSearchResponse,
 } from "@vota-comigo/shared-types";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError, EmptyQueryError, NotFoundError } from "../../lib/api-client";
-import { detalhe, maisVotadas, search } from "../queries";
+import { detalhe, feed, search } from "../queries";
 
-const response: MaisVotadasResponse = {
+const response: ProposicoesFeedResponse = {
   items: [
     {
       externalIdProposicao: 42,
@@ -30,7 +30,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe("maisVotadas", () => {
+describe("feed", () => {
   describe("when the request succeeds", () => {
     it("returns the typed items from the response wrapper", async () => {
       // Arrange
@@ -44,7 +44,7 @@ describe("maisVotadas", () => {
       );
 
       // Act
-      const result = await maisVotadas(20, 0);
+      const result = await feed(20, 0);
 
       // Assert
       expect(result.items).toHaveLength(1);
@@ -64,11 +64,11 @@ describe("maisVotadas", () => {
       vi.stubGlobal("fetch", fetchSpy);
 
       // Act
-      await maisVotadas(5, 40);
+      await feed(5, 40);
 
       // Assert
       expect(fetchSpy).toHaveBeenCalledWith(
-        "http://localhost:3001/proposicoes/mais-votadas?limit=5&offset=40",
+        "http://localhost:3001/proposicoes/feed?limit=5&offset=40",
       );
     });
 
@@ -82,11 +82,11 @@ describe("maisVotadas", () => {
       vi.stubGlobal("fetch", fetchSpy);
 
       // Act
-      await maisVotadas();
+      await feed();
 
       // Assert
       expect(fetchSpy).toHaveBeenCalledWith(
-        "http://localhost:3001/proposicoes/mais-votadas?limit=20&offset=0",
+        "http://localhost:3001/proposicoes/feed?limit=20&offset=0",
       );
     });
   });

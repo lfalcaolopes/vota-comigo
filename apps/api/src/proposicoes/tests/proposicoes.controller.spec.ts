@@ -1,7 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 import type {
-  MaisVotadasResponse,
+  ProposicoesFeedResponse,
   ProposicaoDetalhe,
   ProposicoesSearchResponse,
 } from '@vota-comigo/shared-types';
@@ -9,10 +9,10 @@ import type {
 import { ProposicoesController } from '../proposicoes.controller';
 import type { ProposicoesService } from '../proposicoes.service';
 
-function fakeService(response: MaisVotadasResponse) {
-  const maisVotadas = jest.fn().mockResolvedValue(response);
-  const service = { maisVotadas } as unknown as ProposicoesService;
-  return { service, maisVotadas };
+function fakeService(response: ProposicoesFeedResponse) {
+  const feed = jest.fn().mockResolvedValue(response);
+  const service = { feed } as unknown as ProposicoesService;
+  return { service, feed };
 }
 
 function fakeSearchService(response: ProposicoesSearchResponse) {
@@ -26,7 +26,7 @@ function fakeDetalheService(impl: jest.Mock) {
   return { service, detalhe: impl };
 }
 
-const emptyResponse: MaisVotadasResponse = {
+const emptyResponse: ProposicoesFeedResponse = {
   items: [],
   total: 0,
   limit: 20,
@@ -41,18 +41,18 @@ const emptySearchResponse: ProposicoesSearchResponse = {
   query: 'saude',
 };
 
-describe('ProposicoesController.maisVotadas', () => {
+describe('ProposicoesController.feed', () => {
   describe('when query params are valid', () => {
     it('delegates to the service with the parsed pagination', async () => {
       // Arrange
-      const { service, maisVotadas } = fakeService(emptyResponse);
+      const { service, feed } = fakeService(emptyResponse);
       const controller = new ProposicoesController(service);
 
       // Act
-      const result = await controller.maisVotadas(10, 5);
+      const result = await controller.feed(10, 5);
 
       // Assert
-      expect(maisVotadas).toHaveBeenCalledWith(10, 5);
+      expect(feed).toHaveBeenCalledWith(10, 5);
       expect(result).toBe(emptyResponse);
     });
   });
@@ -60,16 +60,16 @@ describe('ProposicoesController.maisVotadas', () => {
   describe('when query params are missing or out of range', () => {
     it('applies defaults and clamps before delegating', async () => {
       // Arrange
-      const { service, maisVotadas } = fakeService(emptyResponse);
+      const { service, feed } = fakeService(emptyResponse);
       const controller = new ProposicoesController(service);
 
       // Act
-      await controller.maisVotadas(undefined, undefined);
-      await controller.maisVotadas(999, -3);
+      await controller.feed(undefined, undefined);
+      await controller.feed(999, -3);
 
       // Assert
-      expect(maisVotadas).toHaveBeenNthCalledWith(1, 20, 0);
-      expect(maisVotadas).toHaveBeenNthCalledWith(2, 100, 0);
+      expect(feed).toHaveBeenNthCalledWith(1, 20, 0);
+      expect(feed).toHaveBeenNthCalledWith(2, 100, 0);
     });
   });
 });

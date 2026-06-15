@@ -3,7 +3,7 @@
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
 import { useReducer } from "react";
 
-import { maisVotadas, search } from "./queries";
+import { feed, search } from "./queries";
 
 import {
   activeFeed,
@@ -74,7 +74,7 @@ export function useFeedState(
       const page =
         state.mode === "search"
           ? await search(state.query, PAGE_SIZE, offset)
-          : await maisVotadas(PAGE_SIZE, offset);
+          : await feed(PAGE_SIZE, offset);
       dispatch({
         type: "loadMoreSuccess",
         items: page.items,

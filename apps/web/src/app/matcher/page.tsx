@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { Matcher } from "@/features/matcher";
-import { maisVotadas } from "@/shared/proposicao";
+import { feed } from "@/shared/proposicao";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function MatcherPage() {
-  const { items, total } = await maisVotadas(20, 0);
+  const { items, total } = await feed(20, 0);
 
   return (
     <main className="min-h-screen w-full min-w-0 overflow-x-hidden bg-bg text-ink">

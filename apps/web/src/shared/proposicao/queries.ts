@@ -1,17 +1,17 @@
 import type {
-  MaisVotadasResponse,
+  ProposicoesFeedResponse,
   ProposicaoDetalhe,
   ProposicoesSearchResponse,
 } from "@vota-comigo/shared-types";
 
 import { EmptyQueryError, apiGet } from "@/shared/lib/api-client";
 
-export function maisVotadas(
+export function feed(
   limit = 20,
   offset = 0,
-): Promise<MaisVotadasResponse> {
-  return apiGet<MaisVotadasResponse>(
-    `/proposicoes/mais-votadas?limit=${limit}&offset=${offset}`,
+): Promise<ProposicoesFeedResponse> {
+  return apiGet<ProposicoesFeedResponse>(
+    `/proposicoes/feed?limit=${limit}&offset=${offset}`,
   );
 }
 
