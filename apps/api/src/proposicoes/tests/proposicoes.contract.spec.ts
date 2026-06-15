@@ -459,6 +459,50 @@ describe('GET /proposicoes/search', () => {
   });
 });
 
+describe('GET /proposicoes/search with citation query', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    app = await buildApp({
+      lista: [
+        joinRow({
+          externalIdProposicao: 42,
+          siglaTipo: 'PEC',
+          numero: 3,
+          ano: 2021,
+          ementa: 'Altera a Constituição Federal',
+          externalIdVotacao: '42-1',
+        }),
+        joinRow({
+          externalIdProposicao: 99,
+          siglaTipo: 'PL',
+          numero: 100,
+          ano: 2020,
+          ementa: 'Texto com 3 itens publicado em 2021 sobre pec',
+          externalIdVotacao: '99-1',
+        }),
+      ],
+    });
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('returns only the exact proposicao for "pec 3/2021", ignoring ementa coincidences', async () => {
+    // Act
+    const response = await request(getTestServer(app))
+      .get('/proposicoes/search')
+      .query({ q: 'pec 3/2021' });
+
+    // Assert
+    expect(response.status).toBe(200);
+    const body = proposicoesSearchResponseSchema.parse(response.body as unknown);
+    expect(body.total).toBe(1);
+    expect(body.items.map((item) => item.externalIdProposicao)).toEqual([42]);
+  });
+});
+
 describe('GET /proposicoes/:externalIdProposicao', () => {
   let app: INestApplication;
 

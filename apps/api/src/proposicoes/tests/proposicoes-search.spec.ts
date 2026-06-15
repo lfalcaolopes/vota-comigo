@@ -1,7 +1,10 @@
 import {
+  matchesCitation,
   matchesAllTokens,
+  parseCitation,
   referenceMatchCount,
   tokenizeQuery,
+  type Citation,
   type SearchableProposicao,
 } from '../rules/proposicoes-search';
 
@@ -101,6 +104,136 @@ describe('referenceMatchCount', () => {
 
       // Assert
       expect(count).toBe(1);
+    });
+  });
+});
+
+describe('parseCitation', () => {
+  describe('when the query is "tipo numero/ano"', () => {
+    it('returns siglaTipo, numero and ano', () => {
+      // Arrange & Act
+      const result = parseCitation('PEC 3/2021');
+
+      // Assert
+      expect(result).toEqual<Citation>({ siglaTipo: 'pec', numero: '3', ano: '2021' });
+    });
+  });
+
+  describe('when the query is "tipo numero" without ano', () => {
+    it('returns siglaTipo and numero only', () => {
+      // Arrange & Act
+      const result = parseCitation('pl 1234');
+
+      // Assert
+      expect(result).toEqual<Citation>({ siglaTipo: 'pl', numero: '1234' });
+    });
+  });
+
+  describe('when the query is "numero/ano" without tipo', () => {
+    it('returns numero and ano only', () => {
+      // Arrange & Act
+      const result = parseCitation('3/2021');
+
+      // Assert
+      expect(result).toEqual<Citation>({ numero: '3', ano: '2021' });
+    });
+  });
+
+  describe('when the numero has leading zeros', () => {
+    it('strips leading zeros from numero', () => {
+      // Arrange & Act
+      const result = parseCitation('pec 03/2021');
+
+      // Assert
+      expect(result).toEqual<Citation>({ siglaTipo: 'pec', numero: '3', ano: '2021' });
+    });
+  });
+
+  describe('when the query is not a citation', () => {
+    it.each([
+      ['a single word', 'saude'],
+      ['multiple alpha words', 'reforma tributaria 2021'],
+      ['a single number', '1234'],
+    ])('returns null for %s', (_label, query) => {
+      // Arrange & Act
+      const result = parseCitation(query);
+
+      // Assert
+      expect(result).toBeNull();
+    });
+  });
+});
+
+describe('matchesCitation', () => {
+  function citationSearchable(
+    overrides: Partial<SearchableProposicao> = {},
+  ): SearchableProposicao {
+    return {
+      ementa: 'texto qualquer',
+      siglaTipo: 'pec',
+      numero: '3',
+      ano: '2021',
+      ...overrides,
+    };
+  }
+
+  describe('when all citation fields are present', () => {
+    it('matches when siglaTipo, numero and ano all agree', () => {
+      // Arrange
+      const fields = citationSearchable();
+      const citation: Citation = { siglaTipo: 'pec', numero: '3', ano: '2021' };
+
+      // Act & Assert
+      expect(matchesCitation(fields, citation)).toBe(true);
+    });
+
+    it('does not match when siglaTipo differs', () => {
+      // Arrange
+      const fields = citationSearchable({ siglaTipo: 'pl' });
+      const citation: Citation = { siglaTipo: 'pec', numero: '3', ano: '2021' };
+
+      // Act & Assert
+      expect(matchesCitation(fields, citation)).toBe(false);
+    });
+
+    it('does not match when numero differs', () => {
+      // Arrange
+      const fields = citationSearchable({ numero: '5' });
+      const citation: Citation = { siglaTipo: 'pec', numero: '3', ano: '2021' };
+
+      // Act & Assert
+      expect(matchesCitation(fields, citation)).toBe(false);
+    });
+
+    it('does not match when ano differs', () => {
+      // Arrange
+      const fields = citationSearchable({ ano: '2022' });
+      const citation: Citation = { siglaTipo: 'pec', numero: '3', ano: '2021' };
+
+      // Act & Assert
+      expect(matchesCitation(fields, citation)).toBe(false);
+    });
+  });
+
+  describe('when siglaTipo is absent from the citation', () => {
+    it('matches any siglaTipo when numero and ano agree', () => {
+      // Arrange
+      const fields = citationSearchable({ siglaTipo: 'pl' });
+      const citation: Citation = { numero: '3', ano: '2021' };
+
+      // Act & Assert
+      expect(matchesCitation(fields, citation)).toBe(true);
+    });
+  });
+
+  describe('when ano is absent from the citation', () => {
+    it('matches any ano when siglaTipo and numero agree', () => {
+      // Arrange
+      const fields = citationSearchable({ ano: '2023' });
+      const citation: Citation = { siglaTipo: 'pec', numero: '3' };
+
+      // Act & Assert
+      expect(matchesCitation(fields, citation)).toBe(true);
     });
   });
 });

@@ -74,6 +74,60 @@ export function referenceMatchCount(
   return tokens.filter((token) => tokenMatchesIdentifier(fields, token)).length;
 }
 
+export type Citation = {
+  siglaTipo?: string;
+  numero: string;
+  ano?: string;
+};
+
+export function parseCitation(query: string): Citation | null {
+  const tokens = tokenizeQuery(query);
+  const alphas: string[] = [];
+  const nums: string[] = [];
+
+  for (const token of tokens) {
+    if (/^[a-z]+$/.test(token)) {
+      alphas.push(token);
+    } else if (/^\d+$/.test(token)) {
+      nums.push(token);
+    } else {
+      return null;
+    }
+  }
+
+  if (alphas.length === 1 && nums.length === 2) {
+    return {
+      siglaTipo: alphas[0],
+      numero: String(Number(nums[0])),
+      ano: nums[1],
+    };
+  }
+
+  if (alphas.length === 1 && nums.length === 1) {
+    return { siglaTipo: alphas[0], numero: String(Number(nums[0])) };
+  }
+
+  if (alphas.length === 0 && nums.length === 2) {
+    return { numero: String(Number(nums[0])), ano: nums[1] };
+  }
+
+  return null;
+}
+
+export function matchesCitation(
+  fields: SearchableProposicao,
+  citation: Citation,
+): boolean {
+  if (fields.numero !== citation.numero) return false;
+  if (
+    citation.siglaTipo !== undefined &&
+    fields.siglaTipo !== citation.siglaTipo
+  )
+    return false;
+  if (citation.ano !== undefined && fields.ano !== citation.ano) return false;
+  return true;
+}
+
 export function compareSearchRelevance(
   a: ProposicaoSearchMatch,
   b: ProposicaoSearchMatch,

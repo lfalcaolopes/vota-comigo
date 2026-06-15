@@ -448,6 +448,146 @@ describe('ProposicoesService.search', () => {
     });
   });
 
+  describe('when the query is a citation', () => {
+    it('returns only the exact match for "tipo numero/ano", excluding ementa coincidences', async () => {
+      // Arrange: PEC 3/2021 exists; other proposicoes contain "3", "2021" or "pec" in their ementa
+      const target = joinRow({
+        externalIdProposicao: 10,
+        siglaTipo: 'PEC',
+        numero: 3,
+        ano: 2021,
+        ementa: 'Altera a Constituição Federal',
+        externalIdVotacao: '10-1',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const ementaContains3 = joinRow({
+        externalIdProposicao: 11,
+        siglaTipo: 'PL',
+        numero: 100,
+        ano: 2020,
+        ementa: 'Texto sobre 3 espécies vegetais',
+        externalIdVotacao: '11-1',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const ementaContains2021 = joinRow({
+        externalIdProposicao: 12,
+        siglaTipo: 'PL',
+        numero: 200,
+        ano: 2019,
+        ementa: 'Lei publicada em 2021',
+        externalIdVotacao: '12-1',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const service = createService([target, ementaContains3, ementaContains2021]);
+
+      // Act
+      const result = await service.search('pec 3/2021', 20, 0);
+
+      // Assert
+      expect(result.total).toBe(1);
+      expect(result.items.map((item) => item.externalIdProposicao)).toEqual([10]);
+    });
+
+    it('returns multiple results for "tipo numero" when the numero matches across different anos', async () => {
+      // Arrange
+      const pec3in2021 = joinRow({
+        externalIdProposicao: 1,
+        siglaTipo: 'PEC',
+        numero: 3,
+        ano: 2021,
+        ementa: 'Texto A',
+        externalIdVotacao: '1-1',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const pec3in2022 = joinRow({
+        externalIdProposicao: 2,
+        siglaTipo: 'PEC',
+        numero: 3,
+        ano: 2022,
+        ementa: 'Texto B',
+        externalIdVotacao: '2-1',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const service = createService([pec3in2021, pec3in2022]);
+
+      // Act
+      const result = await service.search('pec 3', 20, 0);
+
+      // Assert
+      expect(result.total).toBe(2);
+      expect(result.items.map((item) => item.externalIdProposicao)).toContain(1);
+      expect(result.items.map((item) => item.externalIdProposicao)).toContain(2);
+    });
+
+    it('returns multiple results for "numero/ano" when the pair matches across different siglaTipos', async () => {
+      // Arrange
+      const pl3in2021 = joinRow({
+        externalIdProposicao: 1,
+        siglaTipo: 'PL',
+        numero: 3,
+        ano: 2021,
+        ementa: 'Texto A',
+        externalIdVotacao: '1-1',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const pec3in2021 = joinRow({
+        externalIdProposicao: 2,
+        siglaTipo: 'PEC',
+        numero: 3,
+        ano: 2021,
+        ementa: 'Texto B',
+        externalIdVotacao: '2-1',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const service = createService([pl3in2021, pec3in2021]);
+
+      // Act
+      const result = await service.search('3/2021', 20, 0);
+
+      // Assert
+      expect(result.total).toBe(2);
+    });
+
+    it('returns empty when the citation has no match, even if tokens appear in ementas', async () => {
+      // Arrange: no PEC 99/2099, but an ementa containing "2099"
+      const ementaMatch = joinRow({
+        externalIdProposicao: 1,
+        siglaTipo: 'PL',
+        numero: 100,
+        ano: 2020,
+        ementa: 'Texto publicado em 2099',
+        externalIdVotacao: '1-1',
+        descricao: 'Aprovado o Projeto de Lei',
+      });
+      const service = createService([ementaMatch]);
+
+      // Act
+      const result = await service.search('pec 99/2099', 20, 0);
+
+      // Assert
+      expect(result.total).toBe(0);
+      expect(result.items).toEqual([]);
+    });
+
+    it('a non-citation query still uses ementa search', async () => {
+      // Arrange
+      const service = createService([
+        joinRow({
+          externalIdProposicao: 1,
+          ementa: 'Dispõe sobre saúde pública',
+          descricao: 'Aprovado o Projeto de Lei',
+        }),
+      ]);
+
+      // Act
+      const result = await service.search('saude', 20, 0);
+
+      // Assert
+      expect(result.total).toBe(1);
+      expect(result.items[0].externalIdProposicao).toBe(1);
+    });
+  });
+
   describe('pagination', () => {
     function fourMatches() {
       return [2024, 2023, 2022, 2021].map((ano, index) =>

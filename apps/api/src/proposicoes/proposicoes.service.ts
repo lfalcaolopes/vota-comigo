@@ -17,15 +17,18 @@ import {
   type ProposicoesRepository,
 } from './proposicoes.repository';
 import { toProposicoesComputaveis } from './rules/proposicoes-computaveis';
-import { selectComparator } from './rules/proposicoes-ranking';
+import { compareRanking, selectComparator } from './rules/proposicoes-ranking';
 import { toTemasDisponiveis } from './rules/temas-disponiveis';
 import {
   compareSearchRelevance,
+  matchesCitation,
   matchesAllTokens,
+  parseCitation,
   referenceMatchCount,
   tokenizeQuery,
   toSearchableProposicao,
 } from './rules/proposicoes-search';
+import type { RankedProposicao } from './types/proposicoes.types';
 
 @Injectable()
 export class ProposicoesService {
@@ -87,23 +90,44 @@ export class ProposicoesService {
     offset: number,
   ): Promise<ProposicoesSearchResponse> {
     const rows = await this.repository.loadProposicoesWithVotacoesPlenario();
-    const tokens = tokenizeQuery(query);
+    const computaveis = toProposicoesComputaveis(rows);
 
-    const matched = toProposicoesComputaveis(rows)
+    const citation = parseCitation(query);
+    if (citation !== null) {
+      const exact = computaveis
+        .filter((r) =>
+          matchesCitation(toSearchableProposicao(r.proposicao), citation),
+        )
+        .sort(compareRanking);
+      return this.buildSearchResponse(exact, query, limit, offset);
+    }
+
+    const tokens = tokenizeQuery(query);
+    const matched = computaveis
       .flatMap((ranked) => {
         const fields = toSearchableProposicao(ranked.proposicao);
-        if (!matchesAllTokens(fields, tokens)) {
-          return [];
-        }
+        if (!matchesAllTokens(fields, tokens)) return [];
         return [{ ranked, refMatches: referenceMatchCount(fields, tokens) }];
       })
       .sort(compareSearchRelevance);
 
+    return this.buildSearchResponse(
+      matched.map((m) => m.ranked),
+      query,
+      limit,
+      offset,
+    );
+  }
+
+  private buildSearchResponse(
+    ranked: readonly RankedProposicao[],
+    query: string,
+    limit: number,
+    offset: number,
+  ): ProposicoesSearchResponse {
     return {
-      items: matched
-        .slice(offset, offset + limit)
-        .map((entry) => toProposicaoCard(entry.ranked)),
-      total: matched.length,
+      items: ranked.slice(offset, offset + limit).map(toProposicaoCard),
+      total: ranked.length,
       limit,
       offset,
       query,
