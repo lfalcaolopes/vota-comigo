@@ -8,12 +8,10 @@ type DeputadoAvatarProps = {
 };
 
 export function DeputadoAvatar({ nome, urlFoto }: DeputadoAvatarProps) {
-  const displayName = nome ?? "Deputado";
-
   if (urlFoto) {
     return (
       <Image
-        alt={displayName}
+        alt=""
         className="size-10 rounded-full border border-border object-cover"
         height={40}
         src={urlFoto}
@@ -24,10 +22,10 @@ export function DeputadoAvatar({ nome, urlFoto }: DeputadoAvatarProps) {
 
   return (
     <span
-      aria-label={displayName}
+      aria-hidden="true"
       className="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-surface-muted text-sm font-[680] text-muted"
     >
-      <span aria-hidden="true">{getInitials(nome)}</span>
+      {getInitials(nome)}
     </span>
   );
 }

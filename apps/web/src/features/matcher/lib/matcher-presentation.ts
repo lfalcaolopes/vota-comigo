@@ -17,12 +17,11 @@ export function formatPercentual(value: number): string {
   return `${Math.round(value)}%`;
 }
 
-export function toCompatibilidadeAmostraLabel(
+export function toAmostraComparavelLabel(
   deputado: MatcherDeputadoResumo,
   totalPosicoesComputaveis: number,
 ): string {
-  const percentual = formatPercentual(deputado.compatibilidadeBruta);
-  return `${percentual} · ${deputado.amostraComparavel} de ${totalPosicoesComputaveis} comparadas`;
+  return `${deputado.amostraComparavel} de ${totalPosicoesComputaveis} comparadas`;
 }
 
 export function toAlertaLabel(alerta: AlertaMatcher): string {

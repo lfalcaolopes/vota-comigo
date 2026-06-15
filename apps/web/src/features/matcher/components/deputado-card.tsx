@@ -3,10 +3,11 @@ import type { MatcherDeputadoResumo } from "@vota-comigo/shared-types";
 import { Badge } from "@/shared/ui";
 
 import {
+  formatPercentual,
   toAlertaLabel,
+  toAmostraComparavelLabel,
   toAtividadeLabel,
   toAtividadeTone,
-  toCompatibilidadeAmostraLabel,
 } from "../lib/matcher-presentation";
 import { DeputadoAvatar } from "./deputado-avatar";
 
@@ -17,7 +18,8 @@ type DeputadoCardProps = {
 };
 
 export function DeputadoCard({ deputado, totalPosicoesComputaveis, onOpen }: DeputadoCardProps) {
-  const compatibilidadeLabel = toCompatibilidadeAmostraLabel(deputado, totalPosicoesComputaveis);
+  const percentualLabel = formatPercentual(deputado.compatibilidadeBruta);
+  const amostraLabel = toAmostraComparavelLabel(deputado, totalPosicoesComputaveis);
   const atividadeLabel = toAtividadeLabel(deputado.emAtividade);
   const atividadeTone = toAtividadeTone(deputado.emAtividade);
   const hasAlertaAmostra = deputado.alertas.includes("amostra_pequena");
@@ -25,21 +27,42 @@ export function DeputadoCard({ deputado, totalPosicoesComputaveis, onOpen }: Dep
   return (
     <li className="border-b border-border">
       <button
-        className="grid w-full gap-3 py-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        className="group grid w-full cursor-pointer gap-3 py-3 text-left transition-colors duration-[180ms] ease-standard hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         onClick={() => onOpen(deputado.externalIdDeputado)}
         type="button"
       >
       <div className="flex items-center gap-3">
         <DeputadoAvatar nome={deputado.nome} urlFoto={deputado.urlFoto} />
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="font-[650] text-ink">{deputado.nome ?? "Sem nome"}</p>
           <p className="text-sm text-muted">
             {deputado.partido ?? "—"} · {deputado.siglaUf}
           </p>
         </div>
+        <div className="flex shrink-0 flex-col items-end">
+          <p className="text-lg font-[680] leading-none tabular-nums text-ink">
+            <span className="sr-only">Compatibilidade </span>
+            {percentualLabel}
+          </p>
+          <p className="mt-1 text-xs text-muted">{amostraLabel}</p>
+        </div>
+        <svg
+          aria-hidden="true"
+          className="shrink-0 text-subtle transition-[transform,color] duration-[180ms] ease-standard group-hover:translate-x-0.5 group-hover:text-muted"
+          fill="none"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+        >
+          <path
+            d="m6 4 4 4-4 4"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
       </div>
-
-      <p className="text-sm font-[650] text-ink">{compatibilidadeLabel}</p>
 
       <div className="flex flex-wrap gap-2">
         <Badge tone={atividadeTone}>

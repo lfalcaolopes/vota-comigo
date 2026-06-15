@@ -9,9 +9,9 @@ import {
   formatPercentual,
   getInitials,
   toAlertaLabel,
+  toAmostraComparavelLabel,
   toAtividadeLabel,
   toAtividadeTone,
-  toCompatibilidadeAmostraLabel,
 } from "../lib/matcher-presentation";
 
 function makeDeputado(
@@ -63,34 +63,17 @@ describe("formatPercentual", () => {
   });
 });
 
-describe("toCompatibilidadeAmostraLabel", () => {
+describe("toAmostraComparavelLabel", () => {
   describe("when deputado has a valid sample and totalPosicoesComputaveis", () => {
-    it("returns percentual combined with the sample fraction", () => {
+    it("returns the sample fraction against the total comparadas", () => {
       // Arrange
-      const deputado = makeDeputado({
-        compatibilidadeBruta: 72,
-        amostraComparavel: 8,
-      });
+      const deputado = makeDeputado({ amostraComparavel: 8 });
 
       // Act
-      const label = toCompatibilidadeAmostraLabel(deputado, 10);
+      const label = toAmostraComparavelLabel(deputado, 10);
 
       // Assert
-      expect(label).toBe("72% · 8 de 10 comparadas");
-    });
-
-    it("rounds the compatibilidade to the nearest integer", () => {
-      // Arrange
-      const deputado = makeDeputado({
-        compatibilidadeBruta: 72.6,
-        amostraComparavel: 3,
-      });
-
-      // Act
-      const label = toCompatibilidadeAmostraLabel(deputado, 5);
-
-      // Assert
-      expect(label).toBe("73% · 3 de 5 comparadas");
+      expect(label).toBe("8 de 10 comparadas");
     });
   });
 
@@ -98,19 +81,17 @@ describe("toCompatibilidadeAmostraLabel", () => {
     it("returns the same label regardless of alertas content", () => {
       // Arrange
       const withAlerta = makeDeputado({
-        compatibilidadeBruta: 50,
         amostraComparavel: 3,
         alertas: ["amostra_pequena"],
       });
       const withoutAlerta = makeDeputado({
-        compatibilidadeBruta: 50,
         amostraComparavel: 3,
         alertas: [],
       });
 
       // Act
-      const labelWith = toCompatibilidadeAmostraLabel(withAlerta, 10);
-      const labelWithout = toCompatibilidadeAmostraLabel(withoutAlerta, 10);
+      const labelWith = toAmostraComparavelLabel(withAlerta, 10);
+      const labelWithout = toAmostraComparavelLabel(withoutAlerta, 10);
 
       // Assert
       expect(labelWith).toBe(labelWithout);
