@@ -3,6 +3,7 @@ import type {
   ProposicoesFeedResponse,
   ProposicaoDetalhe,
   ProposicoesSearchResponse,
+  TemasDisponiveisResponse,
 } from "@vota-comigo/shared-types";
 
 import { EmptyQueryError, apiGet } from "@/shared/lib/api-client";
@@ -11,10 +12,16 @@ export function feed(
   limit = 20,
   offset = 0,
   ordenacao: FeedOrdenacao = 'mais-votadas',
+  tema?: number,
 ): Promise<ProposicoesFeedResponse> {
+  const temaParam = tema !== undefined ? `&tema=${tema}` : '';
   return apiGet<ProposicoesFeedResponse>(
-    `/proposicoes/feed?limit=${limit}&offset=${offset}&ordenacao=${ordenacao}`,
+    `/proposicoes/feed?limit=${limit}&offset=${offset}&ordenacao=${ordenacao}${temaParam}`,
   );
+}
+
+export function temasDisponiveis(): Promise<TemasDisponiveisResponse> {
+  return apiGet<TemasDisponiveisResponse>('/proposicoes/feed/temas');
 }
 
 export function search(

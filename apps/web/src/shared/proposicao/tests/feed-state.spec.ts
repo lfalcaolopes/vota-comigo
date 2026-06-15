@@ -414,3 +414,116 @@ describe("feedDisplay", () => {
     });
   });
 });
+
+describe("tema filter", () => {
+  describe("when changeTema is dispatched", () => {
+    it("sets the tema and resets the default feed to loading", () => {
+      // Arrange
+      const state = initFeedState(firstPage, 50);
+
+      // Act
+      const next = feedReducer(state, { type: "changeTema", tema: 37 });
+
+      // Assert
+      expect(next.tema).toBe(37);
+      expect(next.status).toBe("loading");
+      expect(activeFeed(next).items).toEqual([]);
+    });
+
+    it("preserves the ordenacao", () => {
+      // Arrange
+      const state = initFeedState(firstPage, 50, "mais-recentes");
+
+      // Act
+      const next = feedReducer(state, { type: "changeTema", tema: 37 });
+
+      // Assert
+      expect(next.ordenacao).toBe("mais-recentes");
+    });
+  });
+
+  describe("when loadMore is dispatched with a tema active", () => {
+    it("appends items and keeps the tema", () => {
+      // Arrange
+      const withTema = feedReducer(initFeedState(firstPage, 50), {
+        type: "changeTema",
+        tema: 37,
+      });
+      const loading = feedReducer(withTema, { type: "loadMoreStart" });
+      const secondPage = [card(3)];
+
+      // Act
+      const next = feedReducer(loading, {
+        type: "loadMoreSuccess",
+        items: secondPage,
+        total: 3,
+      });
+
+      // Assert
+      expect(next.tema).toBe(37);
+    });
+  });
+
+  describe("when clearFilters is dispatched", () => {
+    it("clears the tema while preserving the ordenacao", () => {
+      // Arrange
+      const state = feedReducer(
+        initFeedState(firstPage, 50, "mais-recentes"),
+        { type: "changeTema", tema: 37 },
+      );
+
+      // Act
+      const next = feedReducer(state, { type: "clearFilters" });
+
+      // Assert
+      expect(next.tema).toBeNull();
+      expect(next.ordenacao).toBe("mais-recentes");
+      expect(next.status).toBe("loading");
+      expect(activeFeed(next).items).toEqual([]);
+    });
+  });
+
+  describe("feedDisplay with empty-filtered", () => {
+    it("shows empty-filtered when tema is active and the feed is empty and idle", () => {
+      // Arrange
+      const withTema = feedReducer(initFeedState([], 0), {
+        type: "changeTema",
+        tema: 37,
+      });
+      const loaded = feedReducer(withTema, {
+        type: "loadMoreSuccess",
+        items: [],
+        total: 0,
+      });
+
+      // Act / Assert
+      expect(feedDisplay(loaded)).toBe("empty-filtered");
+    });
+
+    it("shows empty-default when no tema is active and the feed is empty", () => {
+      // Arrange
+      const state = initFeedState([], 0);
+
+      // Act / Assert
+      expect(feedDisplay(state)).toBe("empty-default");
+    });
+  });
+
+  describe("hydration with initial tema", () => {
+    it("accepts an initial tema and stores it in state", () => {
+      // Arrange / Act
+      const state = initFeedState(firstPage, 50, "mais-votadas", 37);
+
+      // Assert
+      expect(state.tema).toBe(37);
+    });
+
+    it("defaults tema to null when not provided", () => {
+      // Arrange / Act
+      const state = initFeedState(firstPage, 50);
+
+      // Assert
+      expect(state.tema).toBeNull();
+    });
+  });
+});

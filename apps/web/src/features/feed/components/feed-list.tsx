@@ -18,6 +18,7 @@ type FeedListProps = {
   canLoadMore: boolean;
   onLoadMore: () => void;
   onClearSearch: () => void;
+  onClearFilters: () => void;
 };
 
 export function FeedList({
@@ -28,6 +29,7 @@ export function FeedList({
   canLoadMore,
   onLoadMore,
   onClearSearch,
+  onClearFilters,
 }: FeedListProps) {
   if (display === "loading") {
     return <SkeletonRows count={3} />;
@@ -51,6 +53,20 @@ export function FeedList({
           </Button>
         }
         body="Tente outro identificador legislativo ou termo da ementa."
+        title="Nenhuma proposição encontrada"
+      />
+    );
+  }
+
+  if (display === "empty-filtered") {
+    return (
+      <EmptyState
+        action={
+          <Button onClick={onClearFilters} variant="secondary">
+            Limpar filtros
+          </Button>
+        }
+        body="Não há proposições computáveis para o tema selecionado."
         title="Nenhuma proposição encontrada"
       />
     );

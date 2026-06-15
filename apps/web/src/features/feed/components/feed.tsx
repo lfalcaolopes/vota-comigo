@@ -1,4 +1,8 @@
-import type { FeedOrdenacao, ProposicaoCard } from "@vota-comigo/shared-types";
+import type {
+  FeedOrdenacao,
+  ProposicaoCard,
+  TemaDisponivel,
+} from "@vota-comigo/shared-types";
 
 import { FeedView } from "./feed-view";
 
@@ -6,9 +10,17 @@ type FeedProps = {
   initialItems: ProposicaoCard[];
   total: number;
   initialOrdenacao?: FeedOrdenacao;
+  initialTema?: number | null;
+  temas?: readonly TemaDisponivel[];
 };
 
-export function Feed({ initialItems, total, initialOrdenacao }: FeedProps) {
+export function Feed({
+  initialItems,
+  total,
+  initialOrdenacao,
+  initialTema,
+  temas,
+}: FeedProps) {
   return (
     <section>
       <header className="mb-10 grid max-w-[68ch] gap-4">
@@ -22,6 +34,8 @@ export function Feed({ initialItems, total, initialOrdenacao }: FeedProps) {
         initialItems={initialItems}
         initialTotal={total}
         initialOrdenacao={initialOrdenacao}
+        initialTema={initialTema}
+        temas={temas}
       />
     </section>
   );

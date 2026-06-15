@@ -14,6 +14,7 @@ export type FeedState = {
   mode: FeedMode;
   query: string;
   ordenacao: FeedOrdenacao;
+  tema: number | null;
   defaultFeed: Page;
   searchFeed: Page;
   status: FeedStatus;
@@ -26,7 +27,9 @@ export type FeedAction =
   | { type: "loadMoreSuccess"; items: ProposicaoCard[]; total: number }
   | { type: "loadError" }
   | { type: "clearSearch" }
-  | { type: "changeOrdenacao"; ordenacao: FeedOrdenacao };
+  | { type: "changeOrdenacao"; ordenacao: FeedOrdenacao }
+  | { type: "changeTema"; tema: number }
+  | { type: "clearFilters" };
 
 const emptyPage: Page = { items: [], total: 0 };
 
@@ -34,11 +37,13 @@ export function initFeedState(
   items: ProposicaoCard[],
   total: number,
   ordenacao: FeedOrdenacao = 'mais-votadas',
+  tema: number | null = null,
 ): FeedState {
   return {
     mode: "default",
     query: "",
     ordenacao,
+    tema,
     defaultFeed: { items, total },
     searchFeed: emptyPage,
     status: "idle",
@@ -101,6 +106,22 @@ export function feedReducer(state: FeedState, action: FeedAction): FeedState {
         defaultFeed: emptyPage,
         status: "loading",
       };
+    case "changeTema":
+      return {
+        ...state,
+        tema: action.tema,
+        mode: "default",
+        defaultFeed: emptyPage,
+        status: "loading",
+      };
+    case "clearFilters":
+      return {
+        ...state,
+        tema: null,
+        mode: "default",
+        defaultFeed: emptyPage,
+        status: "loading",
+      };
   }
 }
 
@@ -109,13 +130,16 @@ export type FeedDisplay =
   | "loading"
   | "empty-default"
   | "empty-search"
+  | "empty-filtered"
   | "error";
 
 export function feedDisplay(state: FeedState): FeedDisplay {
   if (activeFeed(state).items.length > 0) return "results";
   if (state.status === "error") return "error";
   if (state.status === "loading") return "loading";
-  return state.mode === "search" ? "empty-search" : "empty-default";
+  if (state.mode === "search") return "empty-search";
+  if (state.tema !== null) return "empty-filtered";
+  return "empty-default";
 }
 
 export function nextOffset(state: FeedState): number {

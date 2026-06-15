@@ -15,6 +15,7 @@ import {
   type FeedDisplay,
   type FeedMode,
   type FeedStatus,
+  type FeedState,
 } from "./feed-state";
 
 const PAGE_SIZE = 20;
@@ -26,22 +27,26 @@ export type UseFeedState = {
   mode: FeedMode;
   query: string;
   ordenacao: FeedOrdenacao;
+  tema: FeedState["tema"];
   display: FeedDisplay;
   canLoadMore: boolean;
   submitSearch: (raw: string) => Promise<void>;
   clearSearch: () => void;
   loadMore: () => Promise<void>;
   changeOrdenacao: (value: FeedOrdenacao) => Promise<void>;
+  changeTema: (tema: number) => Promise<void>;
+  clearFilters: () => Promise<void>;
 };
 
 export function useFeedState(
   initialItems: ProposicaoCard[],
   initialTotal: number,
   initialOrdenacao: FeedOrdenacao = 'mais-votadas',
+  initialTema: number | null = null,
 ): UseFeedState {
   const [state, dispatch] = useReducer(
     feedReducer,
-    initFeedState(initialItems, initialTotal, initialOrdenacao),
+    initFeedState(initialItems, initialTotal, initialOrdenacao, initialTema),
   );
 
   async function submitSearch(raw: string) {
@@ -77,7 +82,7 @@ export function useFeedState(
       const page =
         state.mode === "search"
           ? await search(state.query, PAGE_SIZE, offset)
-          : await fetchFeed(PAGE_SIZE, offset, state.ordenacao);
+          : await fetchFeed(PAGE_SIZE, offset, state.ordenacao, state.tema ?? undefined);
       dispatch({
         type: "loadMoreSuccess",
         items: page.items,
@@ -95,7 +100,7 @@ export function useFeedState(
     dispatch({ type: "changeOrdenacao", ordenacao: value });
 
     try {
-      const page = await fetchFeed(PAGE_SIZE, 0, value);
+      const page = await fetchFeed(PAGE_SIZE, 0, value, state.tema ?? undefined);
       dispatch({
         type: "loadMoreSuccess",
         items: page.items,
@@ -103,6 +108,42 @@ export function useFeedState(
       });
     } catch (error) {
       console.error("feed change ordenacao failed", error);
+      dispatch({ type: "loadError" });
+    }
+  }
+
+  async function changeTema(tema: number) {
+    if (state.status === "loading") return;
+
+    dispatch({ type: "changeTema", tema });
+
+    try {
+      const page = await fetchFeed(PAGE_SIZE, 0, state.ordenacao, tema);
+      dispatch({
+        type: "loadMoreSuccess",
+        items: page.items,
+        total: page.total,
+      });
+    } catch (error) {
+      console.error("feed change tema failed", error);
+      dispatch({ type: "loadError" });
+    }
+  }
+
+  async function clearFilters() {
+    if (state.status === "loading") return;
+
+    dispatch({ type: "clearFilters" });
+
+    try {
+      const page = await fetchFeed(PAGE_SIZE, 0, state.ordenacao, undefined);
+      dispatch({
+        type: "loadMoreSuccess",
+        items: page.items,
+        total: page.total,
+      });
+    } catch (error) {
+      console.error("feed clear filters failed", error);
       dispatch({ type: "loadError" });
     }
   }
@@ -116,11 +157,14 @@ export function useFeedState(
     mode: state.mode,
     query: state.query,
     ordenacao: state.ordenacao,
+    tema: state.tema,
     display: feedDisplay(state),
     canLoadMore: hasMore(state),
     submitSearch,
     clearSearch,
     loadMore,
     changeOrdenacao,
+    changeTema,
+    clearFilters,
   };
 }

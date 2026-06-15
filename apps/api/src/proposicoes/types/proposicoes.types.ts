@@ -22,3 +22,9 @@ export type RankedProposicao = {
   volumeVotacoesPlenario: number;
   referencia: ClassifiedVotacao;
 };
+
+export type ProposicaoTemaRow = {
+  externalIdProposicao: number;
+  externalCodTema: number;
+  tema: string | null;
+};

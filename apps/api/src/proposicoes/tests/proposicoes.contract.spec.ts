@@ -4,6 +4,7 @@ import {
   proposicaoDetalheSchema,
   proposicoesFeedResponseSchema,
   proposicoesSearchResponseSchema,
+  temasDisponiveisResponseSchema,
 } from '@vota-comigo/shared-types';
 import request from 'supertest';
 
@@ -11,6 +12,7 @@ import { ProposicoesController } from '../proposicoes.controller';
 import type {
   ProposicaoDetalheHead,
   ProposicaoDetalheResult,
+  ProposicaoTemaRow,
   ProposicaoVotacaoJoinRow,
   ProposicoesRepository,
   VotacaoDetalheRow,
@@ -100,13 +102,24 @@ function votacaoDetalheRow(
 type FakeData = {
   lista?: readonly ProposicaoVotacaoJoinRow[];
   detalhe?: ReadonlyMap<number, ProposicaoDetalheResult>;
+  temas?: readonly ProposicaoTemaRow[];
 };
 
 function fakeRepository(data: FakeData): ProposicoesRepository {
   return {
-    loadProposicoesWithVotacoesPlenario: async () => data.lista ?? [],
+    loadProposicoesWithVotacoesPlenario: async (tema?: number) => {
+      const lista = data.lista ?? [];
+      if (tema === undefined) return lista;
+      const matchingIds = new Set(
+        (data.temas ?? [])
+          .filter((t) => t.externalCodTema === tema)
+          .map((t) => t.externalIdProposicao),
+      );
+      return lista.filter((row) => matchingIds.has(row.externalIdProposicao));
+    },
     loadProposicaoDetalhe: async (externalIdProposicao) =>
       data.detalhe?.get(externalIdProposicao) ?? null,
+    loadProposicaoTemas: async () => data.temas ?? [],
   };
 }
 
@@ -527,5 +540,243 @@ describe('GET /proposicoes/:externalIdProposicao', () => {
         expect(response.body).toHaveProperty('items');
       },
     );
+  });
+});
+
+describe('GET /proposicoes/feed/temas', () => {
+  describe('when there are computavel proposicoes with temas', () => {
+    let app: INestApplication;
+
+    beforeAll(async () => {
+      app = await buildApp({
+        lista: [
+          joinRow({ externalIdProposicao: 1, externalIdVotacao: '1-1' }),
+          joinRow({ externalIdProposicao: 2, externalIdVotacao: '2-1' }),
+          joinRow({
+            externalIdProposicao: 3,
+            externalIdVotacao: '3-1',
+            descricao: 'Requerimento de retirada de pauta',
+          }),
+        ],
+        temas: [
+          { externalIdProposicao: 1, externalCodTema: 30, tema: 'Saúde' },
+          {
+            externalIdProposicao: 2,
+            externalCodTema: 20,
+            tema: 'Administração Pública',
+          },
+          { externalIdProposicao: 3, externalCodTema: 10, tema: 'Educação' },
+          { externalIdProposicao: 1, externalCodTema: 40, tema: null },
+        ],
+      });
+    });
+
+    afterAll(async () => {
+      await app.close();
+    });
+
+    it('returns a valid contract with only temas that have public text and a computavel proposicao', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/proposicoes/feed/temas',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = temasDisponiveisResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.items.map((t) => t.externalCodTema)).toEqual([20, 30]);
+    });
+
+    it('returns temas in alphabetical order (pt-BR)', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/proposicoes/feed/temas',
+      );
+
+      // Assert
+      const body = temasDisponiveisResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.items.map((t) => t.tema)).toEqual([
+        'Administração Pública',
+        'Saúde',
+      ]);
+    });
+
+    it('does not include a count field on each tema', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/proposicoes/feed/temas',
+      );
+
+      // Assert
+      const body = temasDisponiveisResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.items[0]).not.toHaveProperty('count');
+    });
+  });
+
+  describe('route precedence', () => {
+    let app: INestApplication;
+
+    beforeAll(async () => {
+      app = await buildApp({
+        lista: [joinRow()],
+        temas: [
+          { externalIdProposicao: 1, externalCodTema: 30, tema: 'Saúde' },
+        ],
+      });
+    });
+
+    afterAll(async () => {
+      await app.close();
+    });
+
+    it('is not swallowed by the :externalIdProposicao route', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/proposicoes/feed/temas',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('items');
+    });
+  });
+});
+
+describe('GET /proposicoes/feed with tema param', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    app = await buildApp({
+      lista: [
+        joinRow({ externalIdProposicao: 1, externalIdVotacao: '1-1' }),
+        joinRow({ externalIdProposicao: 2, externalIdVotacao: '2-1' }),
+      ],
+      temas: [
+        { externalIdProposicao: 1, externalCodTema: 10, tema: 'Saúde' },
+        { externalIdProposicao: 2, externalCodTema: 20, tema: 'Educação' },
+      ],
+    });
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('when tema is a valid existing cod', () => {
+    it('returns only proposicoes associated with that tema', async () => {
+      // Act
+      const response = await request(getTestServer(app))
+        .get('/proposicoes/feed')
+        .query({ tema: 10 });
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = proposicoesFeedResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.items.map((item) => item.externalIdProposicao)).toEqual([1]);
+    });
+
+    it('returns a valid feed contract', async () => {
+      // Act
+      const response = await request(getTestServer(app))
+        .get('/proposicoes/feed')
+        .query({ tema: 10 });
+
+      // Assert
+      expect(response.status).toBe(200);
+      proposicoesFeedResponseSchema.parse(response.body as unknown);
+    });
+  });
+
+  describe('when tema is absent', () => {
+    it('returns all proposicoes without filtering', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/proposicoes/feed',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = proposicoesFeedResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.total).toBe(2);
+    });
+  });
+
+  describe('when tema is a cod with no results', () => {
+    it('returns an empty list instead of an error', async () => {
+      // Act
+      const response = await request(getTestServer(app))
+        .get('/proposicoes/feed')
+        .query({ tema: 999 });
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = proposicoesFeedResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.items).toEqual([]);
+      expect(body.total).toBe(0);
+    });
+  });
+
+  describe('when tema is not a valid integer', () => {
+    it.each(['abc', '1.5', '-1', '0'])(
+      'rejects tema=%s with 400',
+      async (tema) => {
+        // Act
+        const response = await request(getTestServer(app))
+          .get('/proposicoes/feed')
+          .query({ tema });
+
+        // Assert
+        expect(response.status).toBe(400);
+      },
+    );
+  });
+
+  describe('when a proposicao has multiple temas', () => {
+    it('appears when filtering by any of its temas', async () => {
+      // Arrange — proposicao 1 has temas 10 and 20
+      const appMulti = await buildApp({
+        lista: [joinRow({ externalIdProposicao: 1, externalIdVotacao: '1-1' })],
+        temas: [
+          { externalIdProposicao: 1, externalCodTema: 10, tema: 'Saúde' },
+          { externalIdProposicao: 1, externalCodTema: 20, tema: 'Educação' },
+        ],
+      });
+
+      // Act
+      const [r10, r20] = await Promise.all([
+        request(getTestServer(appMulti))
+          .get('/proposicoes/feed')
+          .query({ tema: 10 }),
+        request(getTestServer(appMulti))
+          .get('/proposicoes/feed')
+          .query({ tema: 20 }),
+      ]);
+
+      // Assert
+      expect(
+        proposicoesFeedResponseSchema
+          .parse(r10.body as unknown)
+          .items.map((i) => i.externalIdProposicao),
+      ).toContain(1);
+      expect(
+        proposicoesFeedResponseSchema
+          .parse(r20.body as unknown)
+          .items.map((i) => i.externalIdProposicao),
+      ).toContain(1);
+
+      await appMulti.close();
+    });
   });
 });

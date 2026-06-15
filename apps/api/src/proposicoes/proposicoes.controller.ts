@@ -13,6 +13,7 @@ import {
   type ProposicoesFeedResponse,
   type ProposicaoDetalhe,
   type ProposicoesSearchResponse,
+  type TemasDisponiveisResponse,
 } from '@vota-comigo/shared-types';
 
 import { ProposicoesService } from './proposicoes.service';
@@ -20,9 +21,23 @@ import { normalizePagination } from './rules/pagination';
 import { tokenizeQuery } from './rules/proposicoes-search';
 import { ZodValidationPipe } from '../shared/validation/zod-validation.pipe';
 
+function parseTema(raw: string | undefined): number | undefined {
+  if (raw === undefined) return undefined;
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n <= 0) {
+    throw new BadRequestException('tema must be a positive integer');
+  }
+  return n;
+}
+
 @Controller('proposicoes')
 export class ProposicoesController {
   constructor(private readonly service: ProposicoesService) {}
+
+  @Get('feed/temas')
+  async feedTemas(): Promise<TemasDisponiveisResponse> {
+    return this.service.temasDisponiveis();
+  }
 
   @Get('feed')
   async feed(
@@ -33,9 +48,16 @@ export class ProposicoesController {
       new ZodValidationPipe(feedOrdenacao.default('mais-votadas')),
     )
     ordenacao: FeedOrdenacao = 'mais-votadas',
+    @Query('tema') temaParam?: string,
   ): Promise<ProposicoesFeedResponse> {
     const pagination = normalizePagination(limit, offset);
-    return this.service.feed(pagination.limit, pagination.offset, ordenacao);
+    const tema = parseTema(temaParam);
+    return this.service.feed(
+      pagination.limit,
+      pagination.offset,
+      ordenacao,
+      tema,
+    );
   }
 
   @Get('search')

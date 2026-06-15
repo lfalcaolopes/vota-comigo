@@ -5,6 +5,7 @@ import type {
   ProposicoesFeedResponse,
   ProposicaoDetalhe,
   ProposicoesSearchResponse,
+  TemasDisponiveisResponse,
 } from '@vota-comigo/shared-types';
 
 import { selectVotacaoReferencia } from '@/matcher/rules/votacao-referencia';
@@ -17,6 +18,7 @@ import {
 } from './proposicoes.repository';
 import { toProposicoesComputaveis } from './rules/proposicoes-computaveis';
 import { selectComparator } from './rules/proposicoes-ranking';
+import { toTemasDisponiveis } from './rules/temas-disponiveis';
 import {
   compareSearchRelevance,
   matchesAllTokens,
@@ -36,8 +38,10 @@ export class ProposicoesService {
     limit: number,
     offset: number,
     ordenacao: FeedOrdenacao = 'mais-votadas',
+    tema?: number,
   ): Promise<ProposicoesFeedResponse> {
-    const rows = await this.repository.loadProposicoesWithVotacoesPlenario();
+    const rows =
+      await this.repository.loadProposicoesWithVotacoesPlenario(tema);
     const ranked = [...toProposicoesComputaveis(rows)].sort(
       selectComparator(ordenacao),
     );
@@ -48,6 +52,18 @@ export class ProposicoesService {
       limit,
       offset,
     };
+  }
+
+  async temasDisponiveis(): Promise<TemasDisponiveisResponse> {
+    const [rows, temaRows] = await Promise.all([
+      this.repository.loadProposicoesWithVotacoesPlenario(),
+      this.repository.loadProposicaoTemas(),
+    ]);
+    const computaveis = toProposicoesComputaveis(rows);
+    const computableIds = new Set(
+      computaveis.map((r) => r.proposicao.externalIdProposicao),
+    );
+    return { items: [...toTemasDisponiveis(temaRows, computableIds)] };
   }
 
   async detalhe(externalIdProposicao: number): Promise<ProposicaoDetalhe> {

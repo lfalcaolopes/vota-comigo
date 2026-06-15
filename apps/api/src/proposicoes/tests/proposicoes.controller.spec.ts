@@ -52,7 +52,7 @@ describe('ProposicoesController.feed', () => {
       const result = await controller.feed(10, 5, 'mais-recentes');
 
       // Assert
-      expect(feed).toHaveBeenCalledWith(10, 5, 'mais-recentes');
+      expect(feed).toHaveBeenCalledWith(10, 5, 'mais-recentes', undefined);
       expect(result).toBe(emptyResponse);
     });
   });
@@ -67,7 +67,7 @@ describe('ProposicoesController.feed', () => {
       await controller.feed(10, 5, 'mais-votadas');
 
       // Assert
-      expect(feed).toHaveBeenCalledWith(10, 5, 'mais-votadas');
+      expect(feed).toHaveBeenCalledWith(10, 5, 'mais-votadas', undefined);
     });
   });
 
@@ -82,8 +82,8 @@ describe('ProposicoesController.feed', () => {
       await controller.feed(999, -3, 'mais-votadas');
 
       // Assert
-      expect(feed).toHaveBeenNthCalledWith(1, 20, 0, 'mais-votadas');
-      expect(feed).toHaveBeenNthCalledWith(2, 100, 0, 'mais-votadas');
+      expect(feed).toHaveBeenNthCalledWith(1, 20, 0, 'mais-votadas', undefined);
+      expect(feed).toHaveBeenNthCalledWith(2, 100, 0, 'mais-votadas', undefined);
     });
   });
 });

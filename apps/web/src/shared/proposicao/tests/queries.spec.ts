@@ -2,11 +2,12 @@ import type {
   ProposicoesFeedResponse,
   ProposicaoDetalhe,
   ProposicoesSearchResponse,
+  TemasDisponiveisResponse,
 } from "@vota-comigo/shared-types";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError, EmptyQueryError, NotFoundError } from "../../lib/api-client";
-import { detalhe, feed, search } from "../queries";
+import { detalhe, feed, search, temasDisponiveis } from "../queries";
 
 const response: ProposicoesFeedResponse = {
   items: [
@@ -107,6 +108,92 @@ describe("feed", () => {
       // Assert
       expect(fetchSpy).toHaveBeenCalledWith(
         "http://localhost:3001/proposicoes/feed?limit=20&offset=0&ordenacao=mais-recentes",
+      );
+    });
+  });
+
+  describe("when given a tema", () => {
+    it("appends tema to the query string", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => response,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      await feed(20, 0, "mais-votadas", 37);
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/proposicoes/feed?limit=20&offset=0&ordenacao=mais-votadas&tema=37",
+      );
+    });
+
+    it("omits tema from the query string when undefined", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => response,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      await feed(20, 0, "mais-votadas", undefined);
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/proposicoes/feed?limit=20&offset=0&ordenacao=mais-votadas",
+      );
+    });
+  });
+});
+
+const temasResponse: TemasDisponiveisResponse = {
+  items: [
+    { externalCodTema: 20, tema: "Administração Pública" },
+    { externalCodTema: 37, tema: "Saúde" },
+  ],
+};
+
+describe("temasDisponiveis", () => {
+  describe("when the request succeeds", () => {
+    it("returns the typed temas from the response", async () => {
+      // Arrange
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue({
+          ok: true,
+          status: 200,
+          json: () => temasResponse,
+        }),
+      );
+
+      // Act
+      const result = await temasDisponiveis();
+
+      // Assert
+      expect(result.items).toHaveLength(2);
+      expect(result.items[0].tema).toBe("Administração Pública");
+    });
+
+    it("builds the correct resource path", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => temasResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      await temasDisponiveis();
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/proposicoes/feed/temas",
       );
     });
   });

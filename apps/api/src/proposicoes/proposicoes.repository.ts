@@ -1,6 +1,7 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, exists, sql } from 'drizzle-orm';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
+import type { ProposicaoTemaRow } from './types/proposicoes.types';
 import {
   proposicao,
   proposicaoTema,
@@ -80,20 +81,38 @@ export type ProposicaoDetalheResult = {
   temas: readonly TemaRow[];
 };
 
+export type { ProposicaoTemaRow };
+
 export type ProposicoesRepository = {
-  loadProposicoesWithVotacoesPlenario(): Promise<
-    readonly ProposicaoVotacaoJoinRow[]
-  >;
+  loadProposicoesWithVotacoesPlenario(
+    tema?: number,
+  ): Promise<readonly ProposicaoVotacaoJoinRow[]>;
   loadProposicaoDetalhe(
     externalIdProposicao: number,
   ): Promise<ProposicaoDetalheResult | null>;
+  loadProposicaoTemas(): Promise<readonly ProposicaoTemaRow[]>;
 };
 
 export function createProposicoesRepository(
   db: DrizzleDatabase,
 ): ProposicoesRepository {
   return {
-    async loadProposicoesWithVotacoesPlenario() {
+    async loadProposicoesWithVotacoesPlenario(tema?: number) {
+      const temaCondition =
+        tema !== undefined
+          ? exists(
+              db
+                .select({ _: sql`1` })
+                .from(proposicaoTema)
+                .where(
+                  and(
+                    eq(proposicaoTema.proposicaoId, proposicao.id),
+                    eq(proposicaoTema.externalCodTema, tema),
+                  ),
+                ),
+            )
+          : undefined;
+
       return db
         .select({
           externalIdProposicao: proposicao.externalIdProposicao,
@@ -126,7 +145,11 @@ export function createProposicoesRepository(
           proposicao,
           eq(votacaoProposicao.proposicaoId, proposicao.id),
         )
-        .where(eq(votacao.escopoVotacao, 'plenario'));
+        .where(
+          temaCondition !== undefined
+            ? and(eq(votacao.escopoVotacao, 'plenario'), temaCondition)
+            : eq(votacao.escopoVotacao, 'plenario'),
+        );
     },
 
     async loadProposicaoDetalhe(externalIdProposicao) {
@@ -196,6 +219,18 @@ export function createProposicoesRepository(
         .where(eq(proposicaoTema.externalIdProposicao, externalIdProposicao));
 
       return { proposicao: head, votacoes, temas };
+    },
+
+    async loadProposicaoTemas() {
+      return db
+        .select({
+          externalIdProposicao: proposicaoTema.externalIdProposicao,
+          externalCodTema: proposicaoTema.externalCodTema,
+          tema: tema.tema,
+        })
+        .from(proposicaoTema)
+        .innerJoin(tema, eq(proposicaoTema.temaId, tema.id))
+        .where(sql`${tema.tema} is not null`);
     },
   };
 }

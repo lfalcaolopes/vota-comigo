@@ -1,4 +1,4 @@
-export { detalhe, feed, search } from "./queries";
+export { detalhe, feed, search, temasDisponiveis } from "./queries";
 export { ProposicaoRow } from "./proposicao-row";
 export { ProposicaoBreadcrumb } from "./proposicao-breadcrumb";
 export { ProposicaoDetalhe } from "./proposicao-detalhe";
@@ -13,4 +13,5 @@ export {
   type FeedMode,
   type FeedOrdenacao,
   type FeedStatus,
+  type FeedState,
 } from "./feed-state";
