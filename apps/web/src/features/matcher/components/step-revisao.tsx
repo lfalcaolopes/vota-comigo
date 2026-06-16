@@ -1,5 +1,6 @@
 "use client";
 
+import { MIN_POSICOES_COMPUTAVEIS } from "@vota-comigo/shared-types";
 import type {
   PosicaoUsuarioMatcher,
   ProposicaoCard,
@@ -15,6 +16,7 @@ type StepRevisaoProps = {
   posicoes: Map<number, PosicaoUsuarioMatcher>;
   faltamComputaveis: number;
   canRun: boolean;
+  highlightIndex: number;
   onEditar: (index: number) => void;
   onBack: () => void;
   onRun: () => void;
@@ -25,6 +27,7 @@ export function StepRevisao({
   posicoes,
   faltamComputaveis,
   canRun,
+  highlightIndex,
   onEditar,
   onBack,
   onRun,
@@ -34,7 +37,7 @@ export function StepRevisao({
   return (
     <div className="grid gap-6">
       <div>
-        <h2 className="text-base font-[680] text-ink">Revise suas posições</h2>
+        <h2 className="text-base font-[680] text-ink">Suas posições</h2>
         <p className="mt-1 text-sm text-muted">
           Confira cada proposição antes de ver o resultado.
         </p>
@@ -47,7 +50,10 @@ export function StepRevisao({
           const label = posicaoLabel(item.posicao);
 
           return (
-            <li className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 py-4" key={item.card.externalIdProposicao}>
+            <li
+              className={`grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 py-4 ${index === highlightIndex ? "lg:-mx-3 lg:rounded-md lg:bg-surface-muted lg:px-3" : ""}`}
+              key={item.card.externalIdProposicao}
+            >
               <div className="min-w-0">
                 <p className="truncate font-mono text-sm font-[650] tracking-[-0.01em] text-ink">
                   {identificador ?? "Sem identificador"}
@@ -83,14 +89,16 @@ export function StepRevisao({
 
       {!canRun && faltamComputaveis > 0 ? (
         <p className="rounded-md border border-border bg-surface-muted px-4 py-3 text-sm text-muted" role="status">
-          Para ver o resultado, posicione-se (aprovar ou não) em pelo menos 3
-          proposições. Faltam{" "}
+          Para ver o resultado, responda Sim ou Não em pelo menos{" "}
+          {MIN_POSICOES_COMPUTAVEIS} proposições. Faltam{" "}
           <strong className="font-[720] text-ink">{faltamComputaveis}</strong>.
         </p>
       ) : null}
 
       <div className="flex flex-wrap items-center gap-3">
-        <Button onClick={onBack}>Voltar</Button>
+        <Button className="lg:hidden" onClick={onBack}>
+          Voltar
+        </Button>
         <Button disabled={!canRun} onClick={onRun} variant="primary">
           Ver resultado
         </Button>

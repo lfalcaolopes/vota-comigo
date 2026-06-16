@@ -1,5 +1,6 @@
 "use client";
 
+import { MIN_POSICOES_COMPUTAVEIS } from "@vota-comigo/shared-types";
 import type {
   PosicaoUsuarioMatcher,
   ProposicaoCard,
@@ -9,7 +10,10 @@ import { useState } from "react";
 import { ProposicaoRow } from "@/shared/proposicao";
 import { Button, SourceLink } from "@/shared/ui";
 
+import { PosicaoChoices } from "./posicao-choices";
 import { StepRevisao } from "./step-revisao";
+
+const QUESTION_ID = "matcher-posicao-pergunta";
 
 type StepPosicoesProps = {
   selected: ProposicaoCard[];
@@ -23,12 +27,6 @@ type StepPosicoesProps = {
   onBack: () => void;
   onRun: () => void;
 };
-
-const OPTIONS: { posicao: PosicaoUsuarioMatcher; label: string }[] = [
-  { posicao: "aprovar", label: "Sim, deveria ser aprovada" },
-  { posicao: "rejeitar", label: "Não deveria ser aprovada" },
-  { posicao: "nao_sei", label: "Não sei · não entra no cálculo" },
-];
 
 type View = "card" | "revisao";
 
@@ -46,7 +44,7 @@ export function StepPosicoes({
 
   if (selected.length === 0) {
     return (
-      <div className="grid gap-4">
+      <div className="mx-auto grid w-full max-w-2xl gap-4">
         <p className="text-sm text-muted">Nenhuma proposição selecionada.</p>
         <Button className="justify-self-start" onClick={onBack}>
           Voltar
@@ -55,31 +53,13 @@ export function StepPosicoes({
     );
   }
 
-  if (view === "revisao") {
-    return (
-      <StepRevisao
-        canRun={canRun}
-        faltamComputaveis={faltamComputaveis}
-        onBack={() => {
-          setIndex(selected.length - 1);
-          setView("card");
-        }}
-        onEditar={(editIndex) => {
-          setIndex(editIndex);
-          setView("card");
-        }}
-        onRun={onRun}
-        posicoes={posicoes}
-        selected={selected}
-      />
-    );
-  }
-
   const card = selected[index];
   const isFirst = index === 0;
   const isLast = index === selected.length - 1;
   const current = posicoes.get(card.externalIdProposicao);
 
+  // On mobile the review replaces the card as a final step; from lg up both
+  // panes are always shown, so advancing past the last card is a visual no-op.
   function goNext() {
     if (isLast) {
       setView("revisao");
@@ -97,49 +77,81 @@ export function StepPosicoes({
   }
 
   return (
-    <div className="grid gap-5">
-      <div className="flex items-center justify-between">
-        <Button onClick={goBack} variant="ghost">
-          ← Voltar
-        </Button>
-        <p className="text-sm font-[650] text-muted">
-          {index + 1} de {selected.length}
-        </p>
-      </div>
+    <div className="mx-auto grid w-full max-w-2xl gap-6 lg:max-w-5xl lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-8">
+      <div className={`${view === "revisao" ? "hidden lg:grid" : "grid"} gap-6`}>
+        <div className="flex items-center justify-between gap-4">
+          <Button onClick={goBack} variant="ghost">
+            ← Voltar
+          </Button>
+          <p className="text-sm font-[650] tabular-nums text-muted">
+            {index + 1} de {selected.length}
+          </p>
+        </div>
 
-      <ProposicaoRow card={card} />
+        <div className="grid gap-3">
+          <ProposicaoRow card={card} />
 
-      <SourceLink
-        href={`/proposicoes/${card.externalIdProposicao}`}
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        Ver proposição
-      </SourceLink>
+          <SourceLink
+            href={`/proposicoes/${card.externalIdProposicao}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Ver proposição
+          </SourceLink>
+        </div>
 
-      <p className="text-base font-[680] text-ink">
-        Na sua opinião, deveria ser aprovada?
-      </p>
+        <div className="grid gap-4">
+          <p className="text-base font-[680] text-ink" id={QUESTION_ID}>
+            Na sua opinião, deveria ser aprovada?
+          </p>
 
-      <div className="grid gap-2">
-        {OPTIONS.map((option) => (
-          <Button
-            aria-pressed={current === option.posicao}
-            className="justify-start aria-pressed:border-primary aria-pressed:bg-primary-soft"
-            key={option.posicao}
-            onClick={() => {
-              onSetPosicao(card.externalIdProposicao, option.posicao);
+          <PosicaoChoices
+            labelledBy={QUESTION_ID}
+            onSelect={(posicao) => {
+              onSetPosicao(card.externalIdProposicao, posicao);
               goNext();
             }}
+            value={current}
+          />
+
+          {faltamComputaveis > 0 ? (
+            <p className="text-sm leading-normal text-muted lg:hidden" role="status">
+              Responda Sim ou Não em pelo menos {MIN_POSICOES_COMPUTAVEIS}{" "}
+              proposições para ver o resultado. Faltam{" "}
+              <strong className="font-[720] text-ink">{faltamComputaveis}</strong>.
+            </p>
+          ) : null}
+
+          <Button
+            className="justify-self-start"
+            onClick={goNext}
+            variant="ghost"
           >
-            {option.label}
+            Decidir depois
           </Button>
-        ))}
+        </div>
       </div>
 
-      <Button className="justify-self-start" onClick={goNext} variant="ghost">
-        Pular por enquanto
-      </Button>
+      <div
+        className={`${view === "card" ? "hidden lg:block" : "block"} lg:sticky lg:top-6 lg:self-start lg:rounded-lg lg:border lg:border-border lg:bg-surface lg:p-5`}
+      >
+        <StepRevisao
+          canRun={canRun}
+          faltamComputaveis={faltamComputaveis}
+          highlightIndex={index}
+          onBack={() => {
+            setIndex(selected.length - 1);
+            setView("card");
+          }}
+          onEditar={(editIndex) => {
+            setIndex(editIndex);
+            setView("card");
+          }}
+          onRun={onRun}
+          posicoes={posicoes}
+          selected={selected}
+        />
+      </div>
     </div>
   );
 }

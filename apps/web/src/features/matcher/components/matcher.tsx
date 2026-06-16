@@ -34,7 +34,7 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
 
   return (
     <section className="grid gap-8">
-      <header className="grid gap-3">
+      <header className="mx-auto grid w-full max-w-2xl gap-3">
         <p className="text-sm font-[650] text-primary">Quem vota comigo</p>
         <h1 className="text-2xl leading-tight font-[720] tracking-[-0.02em] text-ink">
           {STEP_LABELS[state.step]}
@@ -43,18 +43,21 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
       </header>
 
       {state.step === "local" ? (
-        <StepLocal
-          cidade={state.cidade}
-          onConfirm={(siglaUf, cidade) => {
-            matcher.setLocal(siglaUf, cidade);
-            matcher.goToStep("selecao");
-          }}
-          siglaUf={state.siglaUf}
-        />
+        <div className="mx-auto w-full max-w-2xl">
+          <StepLocal
+            cidade={state.cidade}
+            onConfirm={(siglaUf, cidade) => {
+              matcher.setLocal(siglaUf, cidade);
+              matcher.goToStep("selecao");
+            }}
+            siglaUf={state.siglaUf}
+          />
+        </div>
       ) : null}
 
       {state.step === "selecao" ? (
-        <StepSelecao
+        <div className="mx-auto w-full max-w-2xl">
+          <StepSelecao
           canLoadMore={feed.canLoadMore}
           display={feed.display}
           items={feed.items}
@@ -81,7 +84,8 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
           temas={temas}
           total={feed.total}
           totalSelecionadas={matcher.validation.totalSelecionadas}
-        />
+          />
+        </div>
       ) : null}
 
       {state.step === "posicoes" ? (
@@ -97,30 +101,32 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
       ) : null}
 
       {state.step === "resultado" ? (
-        matcher.isDetalheOpen ? (
-          <DeputadoDetalhe
-            detalhe={matcher.detalhe}
-            detalheDeputadoId={state.detalheDeputadoId}
-            onBack={matcher.closeDetalhe}
-            onRetry={matcher.openDetalhe}
-            status={matcher.detalheStatus}
-          />
-        ) : (
-          <StepResultado
-            apenasEmAtividade={matcher.apenasEmAtividade}
-            escopo={matcher.escopo}
-            hasMore={matcher.hasMore}
-            onApenasEmAtividadeChange={matcher.setApenasEmAtividade}
-            onBack={() => matcher.goToStep("posicoes")}
-            onEscopoChange={matcher.setEscopo}
-            onLoadMore={matcher.loadMore}
-            onOpenDetalhe={matcher.openDetalhe}
-            onRetry={matcher.execute}
-            resultado={matcher.resultado}
-            state={state}
-            status={state.status}
-          />
-        )
+        <div className="mx-auto w-full max-w-2xl">
+          {matcher.isDetalheOpen ? (
+            <DeputadoDetalhe
+              detalhe={matcher.detalhe}
+              detalheDeputadoId={state.detalheDeputadoId}
+              onBack={matcher.closeDetalhe}
+              onRetry={matcher.openDetalhe}
+              status={matcher.detalheStatus}
+            />
+          ) : (
+            <StepResultado
+              apenasEmAtividade={matcher.apenasEmAtividade}
+              escopo={matcher.escopo}
+              hasMore={matcher.hasMore}
+              onApenasEmAtividadeChange={matcher.setApenasEmAtividade}
+              onBack={() => matcher.goToStep("posicoes")}
+              onEscopoChange={matcher.setEscopo}
+              onLoadMore={matcher.loadMore}
+              onOpenDetalhe={matcher.openDetalhe}
+              onRetry={matcher.execute}
+              resultado={matcher.resultado}
+              state={state}
+              status={state.status}
+            />
+          )}
+        </div>
       ) : null}
     </section>
   );
