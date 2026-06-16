@@ -1,5 +1,3 @@
-import { describe, expect, it } from '@jest/globals';
-
 import type { ProposicaoTemaRow } from '../rules/temas-disponiveis';
 import { toTemasDisponiveis } from '../rules/temas-disponiveis';
 

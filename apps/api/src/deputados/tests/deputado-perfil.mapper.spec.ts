@@ -159,8 +159,7 @@ describe('toDeputadoPerfil', () => {
     it('maps redesSociais from urlRedeSocial', () => {
       // Arrange
       const row = source({
-        urlRedeSocial:
-          'https://twitter.com/maria,https://instagram.com/maria',
+        urlRedeSocial: 'https://twitter.com/maria,https://instagram.com/maria',
       });
 
       // Act

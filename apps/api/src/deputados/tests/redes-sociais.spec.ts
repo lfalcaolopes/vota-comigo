@@ -30,8 +30,7 @@ describe('parseRedesSociais', () => {
   describe('when there are multiple valid URLs separated by commas', () => {
     it('returns all trimmed URLs in order', () => {
       // Arrange
-      const input =
-        'https://twitter.com/maria , https://instagram.com/maria';
+      const input = 'https://twitter.com/maria , https://instagram.com/maria';
 
       // Act / Assert
       expect(parseRedesSociais(input)).toEqual([

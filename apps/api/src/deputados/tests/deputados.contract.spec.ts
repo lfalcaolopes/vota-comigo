@@ -103,7 +103,13 @@ describe('GET /deputados/:externalIdDeputado', () => {
       new Map([
         [
           'aaaaaaaa-0000-0000-0000-000000000300',
-          [{ dataHoraRegistro: '2023-06-01T12:00:00+00:00', data: '2023-06-01', voto: 'sim' }],
+          [
+            {
+              dataHoraRegistro: '2023-06-01T12:00:00+00:00',
+              data: '2023-06-01',
+              voto: 'sim',
+            },
+          ],
         ],
       ]),
     );
@@ -207,7 +213,9 @@ describe('GET /deputados/:externalIdDeputado', () => {
       expect(response.status).toBe(200);
       const body = deputadoPerfilSchema.parse(response.body as unknown);
       expect(typeof body.resumoPresencaDisponivel).toBe('boolean');
-      expect(body.resumoPresenca === null || typeof body.resumoPresenca === 'object').toBe(true);
+      expect(
+        body.resumoPresenca === null || typeof body.resumoPresenca === 'object',
+      ).toBe(true);
     });
 
     it('includes historicoPartidario flagged as available', async () => {
@@ -271,7 +279,9 @@ describe('GET /deputados/:externalIdDeputado', () => {
 
     it('produces a history-available perfil with presenca unavailable that parses', async () => {
       // Act
-      const response = await request(getTestServer(app)).get('/deputados/220593');
+      const response = await request(getTestServer(app)).get(
+        '/deputados/220593',
+      );
 
       // Assert
       expect(response.status).toBe(200);

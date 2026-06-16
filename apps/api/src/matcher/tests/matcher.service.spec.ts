@@ -358,9 +358,27 @@ describe('MatcherService.execute', () => {
 
   describe('when filtering by emAtividade', () => {
     const votacoes: VotacaoReferenciaVotos[] = [
-      votacaoReferenciaVotos(1, new Map([['dep-ativo', 'sim'], ['dep-inativo', 'sim']])),
-      votacaoReferenciaVotos(2, new Map([['dep-ativo', 'sim'], ['dep-inativo', 'sim']])),
-      votacaoReferenciaVotos(3, new Map([['dep-ativo', 'sim'], ['dep-inativo', 'sim']])),
+      votacaoReferenciaVotos(
+        1,
+        new Map([
+          ['dep-ativo', 'sim'],
+          ['dep-inativo', 'sim'],
+        ]),
+      ),
+      votacaoReferenciaVotos(
+        2,
+        new Map([
+          ['dep-ativo', 'sim'],
+          ['dep-inativo', 'sim'],
+        ]),
+      ),
+      votacaoReferenciaVotos(
+        3,
+        new Map([
+          ['dep-ativo', 'sim'],
+          ['dep-inativo', 'sim'],
+        ]),
+      ),
     ];
 
     // dep-ativo tem eventos de posse; dep-inativo tem apenas evento de saída
@@ -395,7 +413,9 @@ describe('MatcherService.execute', () => {
       ],
     };
 
-    const reqAprovar = (overrides: Partial<MatcherExecucaoRequest> = {}): MatcherExecucaoRequest =>
+    const reqAprovar = (
+      overrides: Partial<MatcherExecucaoRequest> = {},
+    ): MatcherExecucaoRequest =>
       request({
         posicoes: [
           posicao({ externalIdProposicao: 1, posicao: 'aprovar' }),
@@ -416,7 +436,10 @@ describe('MatcherService.execute', () => {
       );
 
       // Act
-      const resultado = await service.execute(reqAprovar({ apenasEmAtividade: false }), pagina);
+      const resultado = await service.execute(
+        reqAprovar({ apenasEmAtividade: false }),
+        pagina,
+      );
 
       // Assert
       expect(resultado.total).toBe(2);
@@ -435,7 +458,10 @@ describe('MatcherService.execute', () => {
       );
 
       // Act
-      const resultado = await service.execute(reqAprovar({ apenasEmAtividade: true }), pagina);
+      const resultado = await service.execute(
+        reqAprovar({ apenasEmAtividade: true }),
+        pagina,
+      );
 
       // Assert
       expect(resultado.total).toBe(1);
@@ -453,7 +479,10 @@ describe('MatcherService.execute', () => {
       );
 
       // Act
-      const resultado = await service.execute(reqAprovar({ apenasEmAtividade: true }), pagina);
+      const resultado = await service.execute(
+        reqAprovar({ apenasEmAtividade: true }),
+        pagina,
+      );
 
       // Assert: both were evaluated; only the display set is filtered
       expect(resultado.totalDeputadosAvaliados).toBe(2);
@@ -470,7 +499,10 @@ describe('MatcherService.execute', () => {
       );
 
       // Act: filter active only -> empty set
-      const resultado = await service.execute(reqAprovar({ apenasEmAtividade: true }), pagina);
+      const resultado = await service.execute(
+        reqAprovar({ apenasEmAtividade: true }),
+        pagina,
+      );
 
       // Assert: empty filtered set -> semBomMatch true
       expect(resultado.total).toBe(0);

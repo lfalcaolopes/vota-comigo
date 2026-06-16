@@ -150,7 +150,11 @@ describe('parseCitation', () => {
       const result = parseCitation('PEC 3/2021');
 
       // Assert
-      expect(result).toEqual<Citation>({ siglaTipo: 'pec', numero: '3', ano: '2021' });
+      expect(result).toEqual<Citation>({
+        siglaTipo: 'pec',
+        numero: '3',
+        ano: '2021',
+      });
     });
   });
 
@@ -180,7 +184,11 @@ describe('parseCitation', () => {
       const result = parseCitation('pec 03/2021');
 
       // Assert
-      expect(result).toEqual<Citation>({ siglaTipo: 'pec', numero: '3', ano: '2021' });
+      expect(result).toEqual<Citation>({
+        siglaTipo: 'pec',
+        numero: '3',
+        ano: '2021',
+      });
     });
   });
 
@@ -299,7 +307,9 @@ describe('filterProposicoesByQuery', () => {
       const result = filterProposicoesByQuery(items, 'pec 3/2021');
 
       // Assert
-      expect(result.map((r) => r.proposicao.externalIdProposicao)).toEqual([10]);
+      expect(result.map((r) => r.proposicao.externalIdProposicao)).toEqual([
+        10,
+      ]);
     });
   });
 

@@ -21,7 +21,10 @@ function votacao(
   overrides: Partial<VotacaoParaPresenca> = {},
 ): VotacaoParaPresenca {
   return {
-    votacao: { dataHoraRegistro: '2023-06-01T10:00:00+00:00', data: '2023-06-01' },
+    votacao: {
+      dataHoraRegistro: '2023-06-01T10:00:00+00:00',
+      data: '2023-06-01',
+    },
     voto: null,
     ...overrides,
   };
@@ -238,12 +241,18 @@ describe('deriveResumoPresenca', () => {
           // in exercise, 2023-06-01
           votacao({
             voto: 'sim' as const,
-            votacao: { dataHoraRegistro: '2023-06-01T10:00:00+00:00', data: '2023-06-01' },
+            votacao: {
+              dataHoraRegistro: '2023-06-01T10:00:00+00:00',
+              data: '2023-06-01',
+            },
           }),
           // fora de exercicio: before any exercise interval
           votacao({
             voto: null,
-            votacao: { dataHoraRegistro: '2019-01-01T10:00:00+00:00', data: '2019-01-01' },
+            votacao: {
+              dataHoraRegistro: '2019-01-01T10:00:00+00:00',
+              data: '2019-01-01',
+            },
           }),
         ],
       };

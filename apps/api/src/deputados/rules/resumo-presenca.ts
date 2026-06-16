@@ -5,7 +5,10 @@ import type {
 } from '@vota-comigo/shared-types';
 
 import { classifyDeputadoVotacao } from '@/exercicio/rules/deputado-votacao';
-import type { EventoExercicio, VotacaoRef } from '@/exercicio/types/exercicio.types';
+import type {
+  EventoExercicio,
+  VotacaoRef,
+} from '@/exercicio/types/exercicio.types';
 
 const PRESENCA_CATEGORIAS = new Set<DeputadoVotacaoClassification>([
   'sim',
