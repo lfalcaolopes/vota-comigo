@@ -3,10 +3,11 @@
 import {
   STEP_ORDER,
   stepStatus,
+  type MainMatcherStep,
   type MatcherStep,
 } from "../lib/matcher-state";
 
-const STEP_LABELS: Record<MatcherStep, string> = {
+const STEP_LABELS: Record<MainMatcherStep, string> = {
   local: "Onde você vota",
   selecao: "Escolha proposições",
   posicoes: "Sua posição",

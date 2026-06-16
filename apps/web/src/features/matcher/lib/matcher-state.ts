@@ -2,6 +2,7 @@ import { MAX_POSICOES } from "@vota-comigo/shared-types";
 import type {
   EscopoMatcher,
   MatcherDeputadoDetalhe,
+  MatcherDeputadoResumo,
   MatcherResultado,
   PosicaoUsuarioMatcher,
   ProposicaoCard,
@@ -13,19 +14,26 @@ import {
   type ExecucaoValidation,
 } from "./matcher-validation";
 
-export type MatcherStep = "local" | "selecao" | "posicoes" | "resultado";
+export type MatcherStep =
+  | "local"
+  | "selecao"
+  | "posicoes"
+  | "resultado"
+  | "comparativo";
 export type MatcherStatus = "idle" | "loading" | "error";
 export type StepStatus = "done" | "current" | "upcoming";
+export type MainMatcherStep = Exclude<MatcherStep, "comparativo">;
 
-export const STEP_ORDER: MatcherStep[] = [
+export const STEP_ORDER: MainMatcherStep[] = [
   "local",
   "selecao",
   "posicoes",
   "resultado",
 ];
 
-export function stepStatus(current: MatcherStep, step: MatcherStep): StepStatus {
-  const currentIndex = STEP_ORDER.indexOf(current);
+export function stepStatus(current: MatcherStep, step: MainMatcherStep): StepStatus {
+  const currentIndex =
+    current === "comparativo" ? STEP_ORDER.length : STEP_ORDER.indexOf(current);
   const stepIndex = STEP_ORDER.indexOf(step);
   if (stepIndex < currentIndex) return "done";
   if (stepIndex === currentIndex) return "current";
@@ -33,6 +41,8 @@ export function stepStatus(current: MatcherStep, step: MatcherStep): StepStatus 
 }
 
 const PRESELECTED_COUNT = 5;
+const MIN_COMPARATIVO_DEPUTADOS = 2;
+const MAX_COMPARATIVO_DEPUTADOS = 3;
 
 export type MatcherState = {
   step: MatcherStep;
@@ -47,6 +57,8 @@ export type MatcherState = {
   detalheStatus: MatcherStatus;
   detalheDeputadoId: number | null;
   status: MatcherStatus;
+  isSelectingComparativoDeputados: boolean;
+  selectedComparativoDeputados: MatcherDeputadoResumo[];
 };
 
 export type MatcherAction =
@@ -63,7 +75,12 @@ export type MatcherAction =
   | { type: "openDetalheStart"; externalIdDeputado: number }
   | { type: "openDetalheOk"; detalhe: MatcherDeputadoDetalhe }
   | { type: "openDetalheError" }
-  | { type: "closeDetalhe" };
+  | { type: "closeDetalhe" }
+  | { type: "startComparativoSelection" }
+  | { type: "toggleComparativoDeputado"; deputado: MatcherDeputadoResumo }
+  | { type: "cancelComparativoSelection" }
+  | { type: "openComparativo" }
+  | { type: "backFromComparativo" };
 
 export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
   return {
@@ -79,6 +96,8 @@ export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
     detalheStatus: "idle",
     detalheDeputadoId: null,
     status: "idle",
+    isSelectingComparativoDeputados: false,
+    selectedComparativoDeputados: [],
   };
 }
 
@@ -100,6 +119,27 @@ function deselect(
       (card) => card.externalIdProposicao !== externalIdProposicao,
     ),
     posicoes,
+  };
+}
+
+function hasSelectedComparativoDeputado(
+  state: MatcherState,
+  externalIdDeputado: number,
+): boolean {
+  return state.selectedComparativoDeputados.some(
+    (deputado) => deputado.externalIdDeputado === externalIdDeputado,
+  );
+}
+
+function deselectComparativoDeputado(
+  state: MatcherState,
+  externalIdDeputado: number,
+): MatcherState {
+  return {
+    ...state,
+    selectedComparativoDeputados: state.selectedComparativoDeputados.filter(
+      (deputado) => deputado.externalIdDeputado !== externalIdDeputado,
+    ),
   };
 }
 
@@ -181,6 +221,51 @@ export function matcherReducer(
         detalheDeputadoId: null,
         detalheStatus: "idle",
       };
+    case "startComparativoSelection":
+      return {
+        ...state,
+        isSelectingComparativoDeputados: true,
+        selectedComparativoDeputados: [],
+        detalhe: null,
+        detalheDeputadoId: null,
+        detalheStatus: "idle",
+      };
+    case "toggleComparativoDeputado": {
+      const id = action.deputado.externalIdDeputado;
+      if (hasSelectedComparativoDeputado(state, id)) {
+        return deselectComparativoDeputado(state, id);
+      }
+      if (state.selectedComparativoDeputados.length >= MAX_COMPARATIVO_DEPUTADOS) {
+        return state;
+      }
+      return {
+        ...state,
+        selectedComparativoDeputados: [
+          ...state.selectedComparativoDeputados,
+          action.deputado,
+        ],
+      };
+    }
+    case "cancelComparativoSelection":
+      return {
+        ...state,
+        isSelectingComparativoDeputados: false,
+        selectedComparativoDeputados: [],
+      };
+    case "openComparativo":
+      if (!canOpenComparativo(state)) return state;
+      return {
+        ...state,
+        step: "comparativo",
+        isSelectingComparativoDeputados: false,
+      };
+    case "backFromComparativo":
+      return {
+        ...state,
+        step: "resultado",
+        isSelectingComparativoDeputados: false,
+        selectedComparativoDeputados: [],
+      };
   }
 }
 
@@ -224,4 +309,19 @@ export function isSemBomMatch(resultado: MatcherResultado | null): boolean {
 
 export function isDetalheOpen(state: MatcherState): boolean {
   return state.detalheDeputadoId !== null;
+}
+
+export function isComparativoSelectionMode(state: MatcherState): boolean {
+  return state.isSelectingComparativoDeputados;
+}
+
+export function canOpenComparativo(state: MatcherState): boolean {
+  return (
+    state.selectedComparativoDeputados.length >= MIN_COMPARATIVO_DEPUTADOS &&
+    state.selectedComparativoDeputados.length <= MAX_COMPARATIVO_DEPUTADOS
+  );
+}
+
+export function hasComparativoDeputadoLimit(state: MatcherState): boolean {
+  return state.selectedComparativoDeputados.length >= MAX_COMPARATIVO_DEPUTADOS;
 }

@@ -5,7 +5,13 @@ import type { EscopoMatcher, MatcherResultado } from "@vota-comigo/shared-types"
 import { Button, ErrorState, SegmentedControl, SkeletonRows, Switch } from "@/shared/ui";
 
 import type { MatcherState, MatcherStatus } from "../lib/matcher-state";
-import { isSemBomMatch, resultadoDisplay } from "../lib/matcher-state";
+import {
+  canOpenComparativo,
+  hasComparativoDeputadoLimit,
+  isComparativoSelectionMode,
+  isSemBomMatch,
+  resultadoDisplay,
+} from "../lib/matcher-state";
 import { DeputadoCard } from "./deputado-card";
 import { OrdenacaoDisclosure } from "./ordenacao-disclosure";
 import { ResultadoVazio } from "./resultado-vazio";
@@ -29,6 +35,10 @@ type StepResultadoProps = {
   onApenasEmAtividadeChange: (value: boolean) => void;
   onLoadMore: () => void;
   onOpenDetalhe: (externalIdDeputado: number) => void;
+  onStartComparativoSelection: () => void;
+  onToggleComparativoDeputado: (externalIdDeputado: number) => void;
+  onCancelComparativoSelection: () => void;
+  onOpenComparativo: () => void;
 };
 
 export function StepResultado({
@@ -44,7 +54,14 @@ export function StepResultado({
   onApenasEmAtividadeChange,
   onLoadMore,
   onOpenDetalhe,
+  onStartComparativoSelection,
+  onToggleComparativoDeputado,
+  onCancelComparativoSelection,
+  onOpenComparativo,
 }: StepResultadoProps) {
+  const isSelectingComparativo = isComparativoSelectionMode(state);
+  const canCompare = canOpenComparativo(state);
+  const hasDeputadoLimit = hasComparativoDeputadoLimit(state);
   const escopoControl = (
     <div className="flex flex-wrap items-center gap-4">
       <SegmentedControl
@@ -93,18 +110,63 @@ export function StepResultado({
   return (
     <div className="grid gap-5">
       {escopoControl}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="text-sm text-muted">
+          {isSelectingComparativo ? (
+            hasDeputadoLimit ? (
+              <p>Você pode comparar até 3 deputados.</p>
+            ) : (
+              <p>Selecione 2 ou 3 deputados para comparar.</p>
+            )
+          ) : null}
+        </div>
+        {isSelectingComparativo ? (
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={onCancelComparativoSelection} variant="ghost">
+              Cancelar
+            </Button>
+            <Button
+              disabled={!canCompare}
+              onClick={onOpenComparativo}
+              variant="primary"
+            >
+              Comparar
+            </Button>
+          </div>
+        ) : (
+          <Button onClick={onStartComparativoSelection} variant="secondary">
+            Comparar deputados
+          </Button>
+        )}
+      </div>
       {isSemBomMatch(resultado) && <SemBomMatchBanner />}
       <OrdenacaoDisclosure />
 
       <ul className="grid">
-        {resultado!.deputados.map((deputado) => (
-          <DeputadoCard
-            deputado={deputado}
-            key={deputado.externalIdDeputado}
-            onOpen={onOpenDetalhe}
-            totalPosicoesComputaveis={resultado!.totalPosicoesComputaveis}
-          />
-        ))}
+        {resultado!.deputados.map((deputado) => {
+          const isSelected = state.selectedComparativoDeputados.some(
+            (selected) =>
+              selected.externalIdDeputado === deputado.externalIdDeputado,
+          );
+
+          return (
+            <DeputadoCard
+              comparativoSelection={
+                isSelectingComparativo
+                  ? {
+                      disabled: hasDeputadoLimit && !isSelected,
+                      onToggle: onToggleComparativoDeputado,
+                      selected: isSelected,
+                    }
+                  : undefined
+              }
+              deputado={deputado}
+              key={deputado.externalIdDeputado}
+              onOpen={onOpenDetalhe}
+              totalPosicoesComputaveis={resultado!.totalPosicoesComputaveis}
+            />
+          );
+        })}
       </ul>
 
       {status === "error" ? (

@@ -10,8 +10,11 @@ import { describe, expect, it } from "vitest";
 import {
   activeResultado,
   canRunMatcher,
+  canOpenComparativo,
   hasMoreDeputados,
+  hasComparativoDeputadoLimit,
   initMatcherState,
+  isComparativoSelectionMode,
   isDetalheOpen,
   isSemBomMatch,
   matcherReducer,
@@ -649,6 +652,210 @@ describe("matcherReducer", () => {
         expect(next.detalheStatus).toBe("idle");
         expect(next.resultados.estadual).not.toBeNull();
       });
+    });
+  });
+
+  describe("comparativo selection lifecycle", () => {
+    it("starts resultado in normal mode without selected deputados", () => {
+      // Arrange / Act
+      const state = initMatcherState(candidates);
+
+      // Assert
+      expect(isComparativoSelectionMode(state)).toBe(false);
+      expect(state.selectedComparativoDeputados).toEqual([]);
+      expect(canOpenComparativo(state)).toBe(false);
+    });
+
+    it("enters selection mode without changing the active resultado", () => {
+      // Arrange
+      const r = resultado("estadual", { deputados: [deputado(1), deputado(2)], total: 2 });
+      const state = matcherReducer(initMatcherState(candidates), {
+        type: "runOk",
+        escopo: "estadual",
+        resultado: r,
+      });
+
+      // Act
+      const next = matcherReducer(state, { type: "startComparativoSelection" });
+
+      // Assert
+      expect(isComparativoSelectionMode(next)).toBe(true);
+      expect(activeResultado(next)).toEqual(r);
+      expect(next.selectedComparativoDeputados).toEqual([]);
+    });
+
+    it("selects and deselects deputados while preserving the selection order", () => {
+      // Arrange
+      let state = matcherReducer(initMatcherState(candidates), {
+        type: "startComparativoSelection",
+      });
+
+      // Act
+      state = matcherReducer(state, {
+        type: "toggleComparativoDeputado",
+        deputado: deputado(3),
+      });
+      state = matcherReducer(state, {
+        type: "toggleComparativoDeputado",
+        deputado: deputado(1),
+      });
+      state = matcherReducer(state, {
+        type: "toggleComparativoDeputado",
+        deputado: deputado(3),
+      });
+
+      // Assert
+      expect(
+        state.selectedComparativoDeputados.map((d) => d.externalIdDeputado),
+      ).toEqual([1]);
+    });
+
+    it("allows opening the comparativo only with two or three deputados", () => {
+      // Arrange
+      let state = matcherReducer(initMatcherState(candidates), {
+        type: "startComparativoSelection",
+      });
+
+      // Act / Assert
+      expect(canOpenComparativo(state)).toBe(false);
+
+      state = matcherReducer(state, {
+        type: "toggleComparativoDeputado",
+        deputado: deputado(1),
+      });
+      expect(canOpenComparativo(state)).toBe(false);
+
+      state = matcherReducer(state, {
+        type: "toggleComparativoDeputado",
+        deputado: deputado(2),
+      });
+      expect(canOpenComparativo(state)).toBe(true);
+
+      state = matcherReducer(state, {
+        type: "toggleComparativoDeputado",
+        deputado: deputado(3),
+      });
+      expect(canOpenComparativo(state)).toBe(true);
+    });
+
+    it("blocks selecting more than three deputados", () => {
+      // Arrange
+      let state = matcherReducer(initMatcherState(candidates), {
+        type: "startComparativoSelection",
+      });
+      for (const id of [1, 2, 3]) {
+        state = matcherReducer(state, {
+          type: "toggleComparativoDeputado",
+          deputado: deputado(id),
+        });
+      }
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "toggleComparativoDeputado",
+        deputado: deputado(4),
+      });
+
+      // Assert
+      expect(hasComparativoDeputadoLimit(next)).toBe(true);
+      expect(
+        next.selectedComparativoDeputados.map((d) => d.externalIdDeputado),
+      ).toEqual([1, 2, 3]);
+    });
+
+    it("cancels selection and clears temporary deputados", () => {
+      // Arrange
+      let state = matcherReducer(initMatcherState(candidates), {
+        type: "startComparativoSelection",
+      });
+      state = matcherReducer(state, {
+        type: "toggleComparativoDeputado",
+        deputado: deputado(1),
+      });
+
+      // Act
+      const next = matcherReducer(state, { type: "cancelComparativoSelection" });
+
+      // Assert
+      expect(isComparativoSelectionMode(next)).toBe(false);
+      expect(next.selectedComparativoDeputados).toEqual([]);
+      expect(next.step).toBe("local");
+    });
+
+    it("opens the comparativo with deputados in the order selected", () => {
+      // Arrange
+      let state = matcherReducer(initMatcherState(candidates), {
+        type: "runOk",
+        escopo: "estadual",
+        resultado: resultado("estadual"),
+      });
+      state = matcherReducer(state, { type: "startComparativoSelection" });
+      state = matcherReducer(state, {
+        type: "toggleComparativoDeputado",
+        deputado: deputado(7),
+      });
+      state = matcherReducer(state, {
+        type: "toggleComparativoDeputado",
+        deputado: deputado(5),
+      });
+
+      // Act
+      const next = matcherReducer(state, { type: "openComparativo" });
+
+      // Assert
+      expect(next.step).toBe("comparativo");
+      expect(isComparativoSelectionMode(next)).toBe(false);
+      expect(
+        next.selectedComparativoDeputados.map((d) => d.externalIdDeputado),
+      ).toEqual([7, 5]);
+    });
+
+    it("does not open the comparativo with fewer than two deputados", () => {
+      // Arrange
+      let state = matcherReducer(initMatcherState(candidates), {
+        type: "runOk",
+        escopo: "estadual",
+        resultado: resultado("estadual"),
+      });
+      state = matcherReducer(state, { type: "startComparativoSelection" });
+      state = matcherReducer(state, {
+        type: "toggleComparativoDeputado",
+        deputado: deputado(7),
+      });
+
+      // Act
+      const next = matcherReducer(state, { type: "openComparativo" });
+
+      // Assert
+      expect(next.step).toBe("resultado");
+      expect(isComparativoSelectionMode(next)).toBe(true);
+    });
+
+    it("returns from comparativo to resultado in normal mode", () => {
+      // Arrange
+      let state = matcherReducer(initMatcherState(candidates), {
+        type: "runOk",
+        escopo: "estadual",
+        resultado: resultado("estadual"),
+      });
+      state = matcherReducer(state, { type: "startComparativoSelection" });
+      state = matcherReducer(state, {
+        type: "toggleComparativoDeputado",
+        deputado: deputado(1),
+      });
+      state = matcherReducer(state, {
+        type: "toggleComparativoDeputado",
+        deputado: deputado(2),
+      });
+      state = matcherReducer(state, { type: "openComparativo" });
+
+      // Act
+      const next = matcherReducer(state, { type: "backFromComparativo" });
+
+      // Assert
+      expect(next.step).toBe("resultado");
+      expect(isComparativoSelectionMode(next)).toBe(false);
+      expect(next.selectedComparativoDeputados).toEqual([]);
     });
   });
 

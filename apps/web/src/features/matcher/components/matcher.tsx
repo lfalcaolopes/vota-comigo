@@ -7,6 +7,7 @@ import { useFeedState } from "@/shared/proposicao";
 import { useMatcherState } from "../hooks/use-matcher-state";
 import type { MatcherStep } from "../lib/matcher-state";
 import { DeputadoDetalhe } from "./deputado-detalhe";
+import { StepComparativo } from "./step-comparativo";
 import { StepIndicator } from "./step-indicator";
 import { StepLocal } from "./step-local";
 import { StepPosicoes } from "./step-posicoes";
@@ -24,6 +25,7 @@ const STEP_LABELS: Record<MatcherStep, string> = {
   selecao: "Escolha proposições",
   posicoes: "Sua posição",
   resultado: "Quem vota com você",
+  comparativo: "Comparativo de deputados",
 };
 
 export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProps) {
@@ -119,13 +121,26 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
               onBack={() => matcher.goToStep("posicoes")}
               onEscopoChange={matcher.setEscopo}
               onLoadMore={matcher.loadMore}
+              onCancelComparativoSelection={matcher.cancelComparativoSelection}
+              onOpenComparativo={matcher.openComparativo}
               onOpenDetalhe={matcher.openDetalhe}
               onRetry={matcher.execute}
+              onStartComparativoSelection={matcher.startComparativoSelection}
+              onToggleComparativoDeputado={matcher.toggleComparativoDeputado}
               resultado={matcher.resultado}
               state={state}
               status={state.status}
             />
           )}
+        </div>
+      ) : null}
+
+      {state.step === "comparativo" ? (
+        <div className="mx-auto w-full max-w-2xl">
+          <StepComparativo
+            deputados={state.selectedComparativoDeputados}
+            onBack={matcher.backFromComparativo}
+          />
         </div>
       ) : null}
     </section>

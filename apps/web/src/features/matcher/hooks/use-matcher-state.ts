@@ -128,6 +128,31 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     dispatch({ type: "closeDetalhe" });
   }
 
+  function startComparativoSelection() {
+    dispatch({ type: "startComparativoSelection" });
+  }
+
+  function toggleComparativoDeputado(externalIdDeputado: number) {
+    const deputado = activeResultado(state)?.deputados.find(
+      (item) => item.externalIdDeputado === externalIdDeputado,
+    );
+    if (!deputado) return;
+
+    dispatch({ type: "toggleComparativoDeputado", deputado });
+  }
+
+  function cancelComparativoSelection() {
+    dispatch({ type: "cancelComparativoSelection" });
+  }
+
+  function openComparativo() {
+    dispatch({ type: "openComparativo" });
+  }
+
+  function backFromComparativo() {
+    dispatch({ type: "backFromComparativo" });
+  }
+
   return {
     state,
     validation: executionValidation(state),
@@ -150,5 +175,10 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     loadMore,
     openDetalhe,
     closeDetalhe,
+    startComparativoSelection,
+    toggleComparativoDeputado,
+    cancelComparativoSelection,
+    openComparativo,
+    backFromComparativo,
   };
 }
