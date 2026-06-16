@@ -172,7 +172,7 @@ Ordenação secundária considera tamanho de amostra entre deputados empatados e
 
 **Comportamentos de borda:**
 
-- **Pesquisa por deputado fora da base.** Se o usuário pesquisa por nome de político que não está no sistema, exibir mensagem explicando que o MVP mapeia apenas deputados federais que já estiveram em atividade na Câmara. Candidatos novos, vereadores, deputados estaduais e senadores serão cobertos em versões futuras.
+- **Pesquisa por deputado fora da base.** Se o usuário pesquisa por nome de uma pessoa que não está no sistema, exibir mensagem explicando que o MVP mapeia apenas deputados federais que já estiveram em atividade na Câmara. Candidatos novos, vereadores, deputados estaduais e senadores serão cobertos em versões futuras.
 - **Matcher sem bom match.** Se o resultado do matcher não tem deputado com compatibilidade alta (threshold a definir — ex.: top resultado < 60%), complementar a mensagem de resultado com sugestão explícita ao usuário: considerar candidatos novos fora da base atual. Converte frustração em ação cívica consistente com a missão do produto.
 
 ### MVP-3. Perfil do Deputado — versão essencial
@@ -245,26 +245,48 @@ A API pública do perfil usa `GET /deputados/{externalIdDeputado}` e retorna o c
 
 Incluído no MVP por reutilizar deputados, partidos, proposições e votações já ingeridos. As orientações são contexto sob demanda e não bloqueiam as engines centrais quando a API da Câmara estiver indisponível.
 
-### MVP-5. Comparativo de Políticos
+### MVP-5. Comparativo de Deputados
 
-Duas entradas para a mesma tela de comparação, com escopo lado a lado (inspiração: comparativo de especificações de celular).
+Tela de comparação lado a lado entre deputados selecionados a partir do resultado do matcher (inspiração: comparativo de especificações de celular).
 
-**Entrada A — Comparativo geral:**
-- Usuário busca políticos por nome/estado
-- Seleciona 2-3 políticos
-- Vê comparação de informações consolidadas (presença, partidos, votos em proposições relevantes, etc.)
+O MVP-5 implementa apenas a entrada contextual pós-matcher. O comparativo geral, com busca independente de deputados, fica fora deste corte.
 
-**Entrada B — Comparativo contextual pós-matcher:**
-- Na tela de resultado do matcher, usuário seleciona 2-3 dos resultados
-- Abre a mesma tela de comparação, com os políticos pré-selecionados
-- Default: focar nas proposições escolhidas no matcher — comparação exibe as informações no contexto dessas proposições
-- Toggle para expandir a visualização para as informações consolidadas dos políticos (mesma visão da Entrada A)
-
-**Implementação:** a engine de comparação é a mesma. A diferença está nos pontos de entrada e no filtro padrão dos dados exibidos.
+- Na tela de resultado do matcher, o usuário seleciona 2-3 deputados dos resultados.
+- No modo normal dos resultados, os cards não exibem seleção e continuam abrindo o detalhe como hoje.
+- Uma ação secundária "Comparar deputados" acima da lista entra no modo de seleção para comparativo.
+- No modo de seleção, os cards exibem checkboxes e ações "Cancelar" e "Comparar".
+- No modo de seleção, clicar no card seleciona ou desmarca o deputado; abrir detalhe fica restrito ao modo normal.
+- A ação "Comparar" fica habilitada apenas com 2 ou 3 deputados selecionados; ao atingir 3, novas seleções ficam bloqueadas com microcopy curta.
+- A ação "Cancelar" volta ao modo normal e limpa a seleção temporária.
+- A comparação abre com os deputados pré-selecionados.
+- O comparativo abre como uma etapa interna do fluxo do matcher, substituindo a tela de resultados e oferecendo ação para voltar aos resultados.
+- Ao voltar do comparativo, a tela retorna aos resultados no modo normal, não no modo de seleção para comparativo.
+- As colunas seguem a ordem de seleção do usuário.
+- O comparativo não permite remover, trocar ou buscar deputados dentro da própria tela; para ajustar a seleção, o usuário volta aos resultados.
+- O comparativo foca nas proposições escolhidas no matcher e exibe as informações no contexto dessas proposições.
+- Em telas pequenas, o comparativo mantém deputados como colunas com rolagem horizontal, preservando o modelo de grid lado a lado.
+- Cada coluna de deputado tem cabeçalho com informações básicas do deputado: foto, nome público, partido atual, status **Em atividade** e entrada para o **Perfil do deputado**.
+- A entrada para o **Perfil do deputado** abre em nova aba, preservando o comparativo efêmero.
+- No MVP-5, o comparativo não precisa ter URL própria compartilhável nem sobreviver a refresh; ele pode depender do estado atual da execução do matcher no cliente.
+- Cada célula deputado × proposição exibe o voto real do deputado na votação de referência e um indicador de concordância com a posição do usuário, usando a mesma semântica de concordância/discordância/fora do denominador do matcher.
+- Cada linha de proposição exibe também a posição computável do usuário usada na comparação.
+- A linha de proposição pode exibir metadados enxutos da votação de referência; as células não repetem data ou descrição da votação.
+- Quando uma célula estiver fora do denominador, ela preserva o motivo específico já classificado pelo matcher, em vez de mostrar apenas um rótulo genérico.
+- No MVP-5, a posição do usuário usada pelo comparativo vem da execução atual do matcher; não há persistência de execução nem de respostas do usuário.
+- O comparativo inclui apenas proposições com posição computável do usuário (`aprovar` ou `rejeitar`); respostas `não sei` são excluídas como no matcher.
+- As linhas de proposições seguem a ordem da execução atual do matcher.
+- O comparativo deve reaproveitar a semântica do matcher sempre que possível, mantendo o menor número de regras próprias.
+- A implementação do MVP-5 pode montar o comparativo chamando o detalhe do matcher para cada deputado selecionado, sem criar endpoint agregado próprio de comparativo.
+- O **Resumo de presença do deputado** no comparativo pode vir da mesma rota pública do perfil (`GET /deputados/{externalIdDeputado}`), enquanto votos e indicadores de concordância vêm do detalhe do matcher.
+- Se qualquer chamada necessária para montar o comparativo falhar, a tela exibe erro global com ação "Tentar novamente", sem renderizar comparação parcial.
+- Por depender da execução efêmera do matcher no MVP-5, a UI do comparativo pode ser implementada dentro de `features/matcher`; uma feature independente `comparativo` fica para quando houver entrada geral ou rota própria.
+- Abaixo das linhas de votos, o comparativo exibe apenas o **Resumo de presença do deputado** como informação consolidada adicional por deputado, usando o mesmo recorte do perfil. As demais informações do perfil ficam fora do comparativo.
+- Quando o **Resumo de presença do deputado** estiver indisponível, o comparativo segue o perfil: mostra estado indisponível e não exibe `0%`.
+- O comparativo não exibe métricas do matcher como compatibilidade bruta, score Wilson ou amostra comparável; essas métricas permanecem nos resultados e no detalhe do matcher.
 
 ### MVP-6. Compartilhamento básico
 
-- Link compartilhável para cada página pública (perfil de político, resultado de matcher, proposição específica, comparativo)
+- Link compartilhável para cada página pública (perfil de deputado, resultado de matcher, proposição específica)
 - Meta tags OpenGraph básicas no `<head>` de cada tipo de página: `og:title`, `og:description`, `og:image`, `og:url`
 - Tags `twitter:card` para previews no Twitter/X
 - Imagem genérica do produto serve como `og:image` no MVP — geração dinâmica de cards por conteúdo fica para melhoria
@@ -274,7 +296,7 @@ Duas entradas para a mesma tela de comparação, com escopo lado a lado (inspira
 **Racional:** investimento mínimo (poucas tags HTML por tipo de página) com retorno desproporcional. Link nu no WhatsApp tem taxa de clique muito inferior a link com preview decente.
 
 **Não entra no MVP:**
-- Geração dinâmica de imagens de card por conteúdo (por político, por resultado de matcher, etc.)
+- Geração dinâmica de imagens de card por conteúdo (por deputado, por resultado de matcher, etc.)
 - Exportação em formato de imagem com marca d'água
 - Compartilhamento em redes sociais específicas
 
