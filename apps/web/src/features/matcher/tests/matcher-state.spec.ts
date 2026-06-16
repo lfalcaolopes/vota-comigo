@@ -1,4 +1,5 @@
 import type {
+  DeputadoPerfil,
   EscopoMatcher,
   MatcherDeputadoDetalhe,
   MatcherDeputadoResumo,
@@ -684,6 +685,34 @@ describe("matcherReducer", () => {
       };
     }
 
+    function makePerfil(externalIdDeputado: number): DeputadoPerfil {
+      return {
+        externalIdDeputado,
+        nomePublico: `Deputado ${externalIdDeputado}`,
+        nomeCivil: null,
+        fonteOficial: `https://www.camara.leg.br/deputados/${externalIdDeputado}`,
+        historicoParlamentarDisponivel: true,
+        snapshotPublicoDisponivel: true,
+        snapshotPublico: {
+          nomeEleitoral: `Deputado ${externalIdDeputado}`,
+          siglaPartido: "PP",
+          siglaUf: "SP",
+          urlFoto: null,
+        },
+        emAtividade: true,
+        redesSociais: [],
+        dataNascimento: null,
+        municipioNascimento: null,
+        ufNascimento: null,
+        externalIdLegislaturaInicial: null,
+        externalIdLegislaturaFinal: null,
+        resumoPresencaDisponivel: false,
+        resumoPresenca: null,
+        historicoPartidarioDisponivel: false,
+        historicoPartidario: [],
+      };
+    }
+
     it("starts resultado in normal mode without selected deputados", () => {
       // Arrange / Act
       const state = initMatcherState(candidates);
@@ -693,6 +722,7 @@ describe("matcherReducer", () => {
       expect(state.selectedComparativoDeputados).toEqual([]);
       expect(state.comparativoStatus).toBe("idle");
       expect(state.comparativoDetalhes).toEqual([]);
+      expect(state.comparativoPerfis).toEqual([]);
       expect(canOpenComparativo(state)).toBe(false);
     });
 
@@ -836,6 +866,7 @@ describe("matcherReducer", () => {
       expect(next.step).toBe("comparativo");
       expect(next.comparativoStatus).toBe("loading");
       expect(next.comparativoDetalhes).toEqual([]);
+      expect(next.comparativoPerfis).toEqual([]);
       expect(isComparativoSelectionMode(next)).toBe(false);
       expect(
         next.selectedComparativoDeputados.map((d) => d.externalIdDeputado),
@@ -864,25 +895,28 @@ describe("matcherReducer", () => {
       expect(isComparativoSelectionMode(next)).toBe(true);
     });
 
-    it("stores comparativo detalhes after loading succeeds", () => {
+    it("stores comparativo detalhes and perfis after loading succeeds", () => {
       // Arrange
       const loading = matcherReducer(initMatcherState(candidates), {
         type: "openComparativoStart",
       });
       const detalhes = [makeDetalhe(7), makeDetalhe(5)];
+      const perfis = [makePerfil(7), makePerfil(5)];
 
       // Act
       const next = matcherReducer(loading, {
         type: "openComparativoOk",
         detalhes,
+        perfis,
       });
 
       // Assert
       expect(next.comparativoStatus).toBe("idle");
       expect(next.comparativoDetalhes).toEqual(detalhes);
+      expect(next.comparativoPerfis).toEqual(perfis);
     });
 
-    it("shows a comparativo error without keeping partial detalhes", () => {
+    it("shows a comparativo error without keeping partial detalhes or perfis", () => {
       // Arrange
       const loading = matcherReducer(initMatcherState(candidates), {
         type: "openComparativoStart",
@@ -894,6 +928,7 @@ describe("matcherReducer", () => {
       // Assert
       expect(next.comparativoStatus).toBe("error");
       expect(next.comparativoDetalhes).toEqual([]);
+      expect(next.comparativoPerfis).toEqual([]);
     });
 
     it("returns from comparativo to resultado in normal mode", () => {
@@ -916,6 +951,7 @@ describe("matcherReducer", () => {
       state = matcherReducer(state, {
         type: "openComparativoOk",
         detalhes: [makeDetalhe(1), makeDetalhe(2)],
+        perfis: [makePerfil(1), makePerfil(2)],
       });
 
       // Act
@@ -927,6 +963,7 @@ describe("matcherReducer", () => {
       expect(next.selectedComparativoDeputados).toEqual([]);
       expect(next.comparativoStatus).toBe("idle");
       expect(next.comparativoDetalhes).toEqual([]);
+      expect(next.comparativoPerfis).toEqual([]);
     });
   });
 

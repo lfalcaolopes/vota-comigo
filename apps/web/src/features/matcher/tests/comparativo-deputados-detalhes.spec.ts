@@ -1,11 +1,12 @@
 import type {
+  DeputadoPerfil,
   MatcherDeputadoDetalhe,
   MatcherDeputadoResumo,
   MatcherExecucaoRequest,
 } from "@vota-comigo/shared-types";
 import { describe, expect, it, vi } from "vitest";
 
-import { loadComparativoDeputadosDetalhes } from "../lib/comparativo-deputados-detalhes";
+import { loadComparativoDeputadosData } from "../lib/comparativo-deputados-detalhes";
 
 function deputado(externalIdDeputado: number): MatcherDeputadoResumo {
   return {
@@ -50,9 +51,37 @@ function detalhe(externalIdDeputado: number): MatcherDeputadoDetalhe {
   };
 }
 
-describe("loadComparativoDeputadosDetalhes", () => {
+function perfil(externalIdDeputado: number): DeputadoPerfil {
+  return {
+    externalIdDeputado,
+    nomePublico: `Deputado ${externalIdDeputado}`,
+    nomeCivil: null,
+    fonteOficial: `https://www.camara.leg.br/deputados/${externalIdDeputado}`,
+    historicoParlamentarDisponivel: true,
+    snapshotPublicoDisponivel: true,
+    snapshotPublico: {
+      nomeEleitoral: `Deputado ${externalIdDeputado}`,
+      siglaPartido: "PP",
+      siglaUf: "SP",
+      urlFoto: null,
+    },
+    emAtividade: true,
+    redesSociais: [],
+    dataNascimento: null,
+    municipioNascimento: null,
+    ufNascimento: null,
+    externalIdLegislaturaInicial: null,
+    externalIdLegislaturaFinal: null,
+    resumoPresencaDisponivel: false,
+    resumoPresenca: null,
+    historicoPartidarioDisponivel: false,
+    historicoPartidario: [],
+  };
+}
+
+describe("loadComparativoDeputadosData", () => {
   describe("when loading selected deputados", () => {
-    it("calls the detalhe endpoint once per deputado with the current request and preserves selection order", async () => {
+    it("loads detalhes and perfis once per deputado and preserves selection order", async () => {
       // Arrange
       const request: MatcherExecucaoRequest = {
         siglaUf: "SP",
@@ -68,12 +97,16 @@ describe("loadComparativoDeputadosDetalhes", () => {
       const getDeputadoDetalhe = vi.fn(async (externalIdDeputado: number) =>
         detalhe(externalIdDeputado),
       );
+      const getDeputadoPerfil = vi.fn(async (externalIdDeputado: number) =>
+        perfil(externalIdDeputado),
+      );
 
       // Act
-      const detalhes = await loadComparativoDeputadosDetalhes({
+      const data = await loadComparativoDeputadosData({
         selectedDeputados: [deputado(20), deputado(10), deputado(30)],
         request,
         getDeputadoDetalhe,
+        getDeputadoPerfil,
       });
 
       // Assert
@@ -81,7 +114,16 @@ describe("loadComparativoDeputadosDetalhes", () => {
       expect(getDeputadoDetalhe).toHaveBeenNthCalledWith(1, 20, request);
       expect(getDeputadoDetalhe).toHaveBeenNthCalledWith(2, 10, request);
       expect(getDeputadoDetalhe).toHaveBeenNthCalledWith(3, 30, request);
-      expect(detalhes.map((item) => item.deputado.externalIdDeputado)).toEqual([
+      expect(getDeputadoPerfil).toHaveBeenCalledTimes(3);
+      expect(getDeputadoPerfil).toHaveBeenNthCalledWith(1, 20);
+      expect(getDeputadoPerfil).toHaveBeenNthCalledWith(2, 10);
+      expect(getDeputadoPerfil).toHaveBeenNthCalledWith(3, 30);
+      expect(data.detalhes.map((item) => item.deputado.externalIdDeputado)).toEqual([
+        20,
+        10,
+        30,
+      ]);
+      expect(data.perfis.map((item) => item.externalIdDeputado)).toEqual([
         20,
         10,
         30,

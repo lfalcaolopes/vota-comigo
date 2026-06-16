@@ -153,6 +153,7 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
             detalhes={state.comparativoDetalhes}
             onBack={matcher.backFromComparativo}
             onRetry={matcher.openComparativo}
+            perfis={state.comparativoPerfis}
             posicoes={comparativoPosicoes}
             status={state.comparativoStatus}
           />

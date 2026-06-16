@@ -1,5 +1,6 @@
 import { MAX_POSICOES } from "@vota-comigo/shared-types";
 import type {
+  DeputadoPerfil,
   EscopoMatcher,
   MatcherDeputadoDetalhe,
   MatcherDeputadoResumo,
@@ -61,6 +62,7 @@ export type MatcherState = {
   selectedComparativoDeputados: MatcherDeputadoResumo[];
   comparativoStatus: MatcherStatus;
   comparativoDetalhes: MatcherDeputadoDetalhe[];
+  comparativoPerfis: DeputadoPerfil[];
 };
 
 export type MatcherAction =
@@ -82,7 +84,11 @@ export type MatcherAction =
   | { type: "toggleComparativoDeputado"; deputado: MatcherDeputadoResumo }
   | { type: "cancelComparativoSelection" }
   | { type: "openComparativoStart" }
-  | { type: "openComparativoOk"; detalhes: MatcherDeputadoDetalhe[] }
+  | {
+      type: "openComparativoOk";
+      detalhes: MatcherDeputadoDetalhe[];
+      perfis: DeputadoPerfil[];
+    }
   | { type: "openComparativoError" }
   | { type: "backFromComparativo" };
 
@@ -104,6 +110,7 @@ export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
     selectedComparativoDeputados: [],
     comparativoStatus: "idle",
     comparativoDetalhes: [],
+    comparativoPerfis: [],
   };
 }
 
@@ -234,6 +241,7 @@ export function matcherReducer(
         selectedComparativoDeputados: [],
         comparativoStatus: "idle",
         comparativoDetalhes: [],
+        comparativoPerfis: [],
         detalhe: null,
         detalheDeputadoId: null,
         detalheStatus: "idle",
@@ -261,6 +269,7 @@ export function matcherReducer(
         selectedComparativoDeputados: [],
         comparativoStatus: "idle",
         comparativoDetalhes: [],
+        comparativoPerfis: [],
       };
     case "openComparativoStart":
       if (!canOpenComparativo(state)) return state;
@@ -269,6 +278,7 @@ export function matcherReducer(
         step: "comparativo",
         comparativoStatus: "loading",
         comparativoDetalhes: [],
+        comparativoPerfis: [],
         isSelectingComparativoDeputados: false,
       };
     case "openComparativoOk":
@@ -276,12 +286,14 @@ export function matcherReducer(
         ...state,
         comparativoStatus: "idle",
         comparativoDetalhes: action.detalhes,
+        comparativoPerfis: action.perfis,
       };
     case "openComparativoError":
       return {
         ...state,
         comparativoStatus: "error",
         comparativoDetalhes: [],
+        comparativoPerfis: [],
       };
     case "backFromComparativo":
       return {
@@ -291,6 +303,7 @@ export function matcherReducer(
         selectedComparativoDeputados: [],
         comparativoStatus: "idle",
         comparativoDetalhes: [],
+        comparativoPerfis: [],
       };
   }
 }

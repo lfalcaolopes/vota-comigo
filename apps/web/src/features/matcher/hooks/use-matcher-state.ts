@@ -8,9 +8,10 @@ import type {
 } from "@vota-comigo/shared-types";
 import { useReducer } from "react";
 
+import { perfil as getDeputadoPerfil } from "@/shared/deputado";
 import { getDeputadoDetalhe, runMatcher } from "@/shared/matcher";
 
-import { loadComparativoDeputadosDetalhes } from "../lib/comparativo-deputados-detalhes";
+import { loadComparativoDeputadosData } from "../lib/comparativo-deputados-detalhes";
 import { buildExecucaoRequest } from "../lib/matcher-payload";
 import {
   activeResultado,
@@ -161,12 +162,17 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
         posicoes: state.posicoes,
         apenasEmAtividade: state.apenasEmAtividade,
       });
-      const detalhes = await loadComparativoDeputadosDetalhes({
+      const data = await loadComparativoDeputadosData({
         selectedDeputados: state.selectedComparativoDeputados,
         request,
         getDeputadoDetalhe,
+        getDeputadoPerfil,
       });
-      dispatch({ type: "openComparativoOk", detalhes });
+      dispatch({
+        type: "openComparativoOk",
+        detalhes: data.detalhes,
+        perfis: data.perfis,
+      });
     } catch {
       dispatch({ type: "openComparativoError" });
     }

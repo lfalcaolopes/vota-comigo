@@ -1,4 +1,5 @@
 import type {
+  DeputadoPerfil,
   MatcherDeputadoDetalhe,
   MatcherDeputadoResumo,
   MatcherVotoDetalhe,
@@ -93,9 +94,55 @@ function detalhe(
   };
 }
 
+function perfil(
+  externalIdDeputado: number,
+  overrides: Partial<DeputadoPerfil> = {},
+): DeputadoPerfil {
+  const base: DeputadoPerfil = {
+    externalIdDeputado,
+    nomePublico: `Deputado ${externalIdDeputado}`,
+    nomeCivil: `Nome Civil ${externalIdDeputado}`,
+    fonteOficial: `https://www.camara.leg.br/deputados/${externalIdDeputado}`,
+    historicoParlamentarDisponivel: true,
+    snapshotPublicoDisponivel: true,
+    snapshotPublico: {
+      nomeEleitoral: `Deputado ${externalIdDeputado}`,
+      siglaPartido: "PP",
+      siglaUf: "SP",
+      urlFoto: null,
+    },
+    emAtividade: true,
+    redesSociais: ["https://example.com/rede-social"],
+    dataNascimento: "1980-01-01",
+    municipioNascimento: "Santos",
+    ufNascimento: "SP",
+    externalIdLegislaturaInicial: 56,
+    externalIdLegislaturaFinal: null,
+    resumoPresencaDisponivel: true,
+    resumoPresenca: {
+      percentualPresenca: 82.4,
+      presencas: 103,
+      totalVotacoesEmExercicio: 125,
+      ausenciasSemMotivoConhecido: 22,
+    },
+    historicoPartidarioDisponivel: true,
+    historicoPartidario: [
+      {
+        siglaPartido: "PP",
+        dataInicio: "2023-02-01",
+        dataFim: null,
+        atual: true,
+      },
+    ],
+  };
+
+  return { ...base, ...overrides };
+}
+
 function render(props: {
   deputados?: MatcherDeputadoResumo[];
   detalhes?: MatcherDeputadoDetalhe[];
+  perfis?: DeputadoPerfil[];
   posicoes?: PosicaoMatcher[];
   status?: "idle" | "loading" | "error";
 }): string {
@@ -103,6 +150,7 @@ function render(props: {
     createElement(StepComparativo, {
       deputados: props.deputados ?? [deputado(20), deputado(10)],
       detalhes: props.detalhes ?? [],
+      perfis: props.perfis ?? [perfil(20), perfil(10)],
       posicoes:
         props.posicoes ?? [
           { externalIdProposicao: 1, posicao: "aprovar" },
@@ -202,6 +250,57 @@ describe("StepComparativo", () => {
       expect(html).not.toContain("Placar");
       expect(html).not.toContain("300 sim");
       expect(html).not.toContain("Votação 1");
+    });
+
+    it("shows deputado headers from perfil with profile links opening in a new tab", () => {
+      // Arrange / Act
+      const html = render({
+        status: "idle",
+        deputados: [deputado(20), deputado(10)],
+        detalhes: [detalhe(20, [voto(1)]), detalhe(10, [voto(1)])],
+        perfis: [perfil(20), perfil(10)],
+      });
+
+      // Assert
+      expect(html).toContain("Deputado 20");
+      expect(html).toContain("PP · SP");
+      expect(html).toContain("Em atividade");
+      expect(html).toContain('href="/deputados/20"');
+      expect(html).toContain('target="_blank"');
+      expect(html).toContain('rel="noopener noreferrer"');
+    });
+
+    it("shows resumo de presença from perfil without rendering profile details outside the comparativo scope", () => {
+      // Arrange / Act
+      const html = render({
+        status: "idle",
+        deputados: [deputado(20), deputado(10)],
+        detalhes: [detalhe(20, [voto(1)]), detalhe(10, [voto(1)])],
+        perfis: [
+          perfil(20),
+          perfil(10, {
+            resumoPresencaDisponivel: false,
+            resumoPresenca: null,
+          }),
+        ],
+      });
+
+      // Assert
+      expect(html).toContain("Presença");
+      expect(html).toContain("82%");
+      expect(html).toContain("103 de 125 votações em exercício");
+      expect(html).toContain("22 ausências sem motivo conhecido");
+      expect(html).toContain("votações nominais de plenário presentes na base");
+      expect(html).toContain("Presença indisponível");
+      expect(html).not.toContain("Nome Civil 20");
+      expect(html).not.toContain("rede-social");
+      expect(html).not.toContain("Nascimento");
+      expect(html).not.toContain("Legislatura");
+      expect(html).not.toContain("Fonte oficial");
+      expect(html).not.toContain("Compatibilidade");
+      expect(html).not.toContain("Score Wilson");
+      expect(html).not.toContain("Amostra comparável");
+      expect(html).not.toContain("0%");
     });
   });
 });

@@ -1,6 +1,7 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import type {
+  DeputadoPerfil,
   MatcherDeputadoDetalhe,
   MatcherDeputadoResumo,
 } from "@vota-comigo/shared-types";
@@ -52,6 +53,34 @@ function resumo(): MatcherDeputadoResumo {
     scoreOrdenacaoPercentual: 60,
     alertas: [],
     emAtividade: true,
+  };
+}
+
+function perfil(externalIdDeputado: number, nomePublico: string): DeputadoPerfil {
+  return {
+    externalIdDeputado,
+    nomePublico,
+    nomeCivil: null,
+    fonteOficial: `https://www.camara.leg.br/deputados/${externalIdDeputado}`,
+    historicoParlamentarDisponivel: true,
+    snapshotPublicoDisponivel: true,
+    snapshotPublico: {
+      nomeEleitoral: nomePublico,
+      siglaPartido: "PT",
+      siglaUf: "PE",
+      urlFoto: null,
+    },
+    emAtividade: true,
+    redesSociais: [],
+    dataNascimento: null,
+    municipioNascimento: null,
+    ufNascimento: null,
+    externalIdLegislaturaInicial: null,
+    externalIdLegislaturaFinal: null,
+    resumoPresencaDisponivel: false,
+    resumoPresenca: null,
+    historicoPartidarioDisponivel: false,
+    historicoPartidario: [],
   };
 }
 
@@ -252,6 +281,7 @@ describe("StepComparativo", () => {
             { ...resumo(), externalIdDeputado: 1, nome: "Deputado A" },
           ],
           detalhes: [],
+          perfis: [perfil(2, "Deputada B"), perfil(1, "Deputado A")],
           onBack: () => {},
           onRetry: () => {},
           posicoes: [],

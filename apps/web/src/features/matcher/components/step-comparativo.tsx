@@ -1,4 +1,5 @@
 import type {
+  DeputadoPerfil,
   MatcherDeputadoDetalhe,
   MatcherDeputadoResumo,
   PosicaoMatcher,
@@ -6,8 +7,24 @@ import type {
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import {
+  RECORTE_BASE_PRESENCA,
+  formatPercentual,
+  nomePublicoLabel,
+  toAtividadeAriaLabel,
+  toAtividadeLabel,
+  toAtividadeTone,
+  toPresencaAmostrasLabel,
+  toPresencaAriaLabel,
+} from "@/shared/deputado/presentation";
 import { toIdentificadorLegislativo } from "@/shared/proposicao";
-import { Badge, Button, ErrorState, SkeletonRows } from "@/shared/ui";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  InlineMessage,
+  SkeletonRows,
+} from "@/shared/ui";
 
 import { buildComparativoDeputadosGrid } from "../lib/comparativo-deputados-grid";
 import type { MatcherStatus } from "../lib/matcher-state";
@@ -16,6 +33,7 @@ import { DeputadoAvatar } from "./deputado-avatar";
 type StepComparativoProps = {
   deputados: MatcherDeputadoResumo[];
   detalhes: MatcherDeputadoDetalhe[];
+  perfis: DeputadoPerfil[];
   posicoes: PosicaoMatcher[];
   status: MatcherStatus;
   onBack: () => void;
@@ -25,6 +43,7 @@ type StepComparativoProps = {
 export function StepComparativo({
   deputados,
   detalhes,
+  perfis,
   posicoes,
   status,
   onBack,
@@ -35,6 +54,9 @@ export function StepComparativo({
     detalhes,
     posicoes,
   });
+  const perfisByDeputado = new Map(
+    perfis.map((perfil) => [perfil.externalIdDeputado, perfil]),
+  );
   const gridTemplateColumns = `minmax(16rem,1.25fr) repeat(${grid.columns.length}, minmax(11rem,1fr))`;
 
   return (
@@ -60,25 +82,11 @@ export function StepComparativo({
               Proposição
             </div>
             {grid.columns.map(({ deputado }) => (
-              <div
-                className="border-b border-border p-3"
+              <ComparativoDeputadoHeader
+                deputado={deputado}
                 key={deputado.externalIdDeputado}
-              >
-                <div className="flex items-center gap-3">
-                  <DeputadoAvatar
-                    nome={deputado.nome}
-                    urlFoto={deputado.urlFoto}
-                  />
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-[650] text-ink">
-                      {deputado.nome ?? "Sem nome"}
-                    </p>
-                    <p className="text-xs text-muted">
-                      {deputado.partido ?? "—"} · {deputado.siglaUf}
-                    </p>
-                  </div>
-                </div>
-              </div>
+                perfil={perfisByDeputado.get(deputado.externalIdDeputado)}
+              />
             ))}
 
             {grid.rows.map((row) => (
@@ -87,9 +95,68 @@ export function StepComparativo({
                 row={row}
               />
             ))}
+
+            <div className="border-b border-border p-3">
+              <p className="text-sm font-[650] text-ink">Presença</p>
+              <p className="mt-1 text-xs leading-normal text-muted">
+                Mesmo recorte do Perfil do deputado.
+              </p>
+            </div>
+            {grid.columns.map(({ deputado }) => (
+              <ComparativoPresencaCell
+                key={`presenca-${deputado.externalIdDeputado}`}
+                perfil={perfisByDeputado.get(deputado.externalIdDeputado)}
+              />
+            ))}
           </div>
         </div>
       ) : null}
+    </div>
+  );
+}
+
+type ComparativoDeputadoHeaderProps = {
+  deputado: MatcherDeputadoResumo;
+  perfil: DeputadoPerfil | undefined;
+};
+
+function ComparativoDeputadoHeader({
+  deputado,
+  perfil,
+}: ComparativoDeputadoHeaderProps) {
+  const nome = perfil ? nomePublicoLabel(perfil) : deputado.nome;
+  const snapshot = perfil?.snapshotPublico ?? null;
+  const siglaPartido = snapshot?.siglaPartido ?? deputado.partido ?? "—";
+  const siglaUf = snapshot?.siglaUf ?? deputado.siglaUf ?? "—";
+  const urlFoto = snapshot?.urlFoto ?? deputado.urlFoto;
+  const emAtividade = perfil?.emAtividade ?? deputado.emAtividade;
+
+  return (
+    <div className="border-b border-border p-3">
+      <div className="grid gap-3">
+        <div className="flex items-start gap-3">
+          <DeputadoAvatar nome={nome} urlFoto={urlFoto} />
+          <div className="min-w-0">
+            <Link
+              className="block truncate text-sm font-[650] text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+              href={`/deputados/${deputado.externalIdDeputado}`}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {nome ?? "Sem nome"}
+            </Link>
+            <p className="mt-1 text-xs text-muted">
+              {siglaPartido} · {siglaUf}
+            </p>
+          </div>
+        </div>
+        <Badge
+          aria-label={toAtividadeAriaLabel(emAtividade)}
+          tone={toAtividadeTone(emAtividade)}
+        >
+          {toAtividadeLabel(emAtividade)}
+        </Badge>
+      </div>
     </div>
   );
 }
@@ -117,7 +184,7 @@ function ComparativoRow({ row }: ComparativoRowProps) {
         {row.proposicao.ementa ? (
           <p className="mt-1 line-clamp-2 text-sm leading-normal text-muted">
             {row.proposicao.ementa}
-        </p>
+          </p>
         ) : null}
         <dl className="mt-3 grid gap-1.5 text-xs">
           <MetaItem label="Sua posição">{row.posicaoUsuarioLabel}</MetaItem>
@@ -138,6 +205,58 @@ function ComparativoRow({ row }: ComparativoRowProps) {
         </div>
       ))}
     </>
+  );
+}
+
+function ComparativoPresencaCell({
+  perfil,
+}: {
+  perfil: DeputadoPerfil | undefined;
+}) {
+  const resumo = perfil?.resumoPresenca ?? null;
+
+  if (!perfil?.resumoPresencaDisponivel || resumo === null) {
+    return (
+      <div className="border-b border-border p-3">
+        <InlineMessage
+          body="Não há votações nominais de plenário em exercício na base para este deputado."
+          title="Presença indisponível"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="border-b border-border p-3">
+      <div className="grid gap-1">
+        <p
+          aria-label={toPresencaAriaLabel(
+            resumo.percentualPresenca,
+            resumo.presencas,
+            resumo.totalVotacoesEmExercicio,
+          )}
+          className="text-lg font-[680] leading-tight tabular-nums text-ink"
+        >
+          {formatPercentual(resumo.percentualPresenca)}
+        </p>
+        <p className="text-sm leading-normal text-muted">
+          {toPresencaAmostrasLabel(
+            resumo.presencas,
+            resumo.totalVotacoesEmExercicio,
+          )}
+        </p>
+        {resumo.ausenciasSemMotivoConhecido > 0 ? (
+          <p className="text-sm leading-normal text-muted">
+            {resumo.ausenciasSemMotivoConhecido} ausência
+            {resumo.ausenciasSemMotivoConhecido > 1 ? "s" : ""} sem motivo
+            conhecido
+          </p>
+        ) : null}
+        <p className="mt-1 text-xs leading-normal text-subtle">
+          {RECORTE_BASE_PRESENCA}
+        </p>
+      </div>
+    </div>
   );
 }
 
