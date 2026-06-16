@@ -14,6 +14,20 @@ function makePerfil(
     nomeCivil: "Maria Aparecida da Silva",
     fonteOficial: "https://www.camara.leg.br/deputados/220593",
     historicoParlamentarDisponivel: true,
+    snapshotPublicoDisponivel: true,
+    snapshotPublico: {
+      nomeEleitoral: "Maria da Silva",
+      siglaPartido: "PT",
+      siglaUf: "SP",
+      urlFoto: "https://example.com/foto.jpg",
+    },
+    emAtividade: true,
+    redesSociais: ["https://twitter.com/maria"],
+    dataNascimento: "1980-05-10",
+    municipioNascimento: "São Paulo",
+    ufNascimento: "SP",
+    externalIdLegislaturaInicial: 55,
+    externalIdLegislaturaFinal: 57,
     ...overrides,
   };
 }
@@ -61,6 +75,176 @@ describe("DeputadoPerfil", () => {
 
       // Assert
       expect(html.match(/Maria da Silva/g)).toHaveLength(1);
+    });
+  });
+
+  describe("snapshot e atividade", () => {
+    it("shows partido and UF from the snapshot", () => {
+      // Arrange
+      const perfil = makePerfil();
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("PT");
+      expect(html).toContain("SP");
+    });
+
+    it("shows em atividade badge when deputado is active", () => {
+      // Arrange
+      const perfil = makePerfil({ emAtividade: true });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Em atividade");
+    });
+
+    it("shows mandato encerrado badge when deputado is inactive", () => {
+      // Arrange
+      const perfil = makePerfil({ emAtividade: false });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Mandato encerrado");
+    });
+
+    it("shows the avatar image when urlFoto is available", () => {
+      // Arrange
+      const perfil = makePerfil();
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("<img");
+      expect(html).toContain("example.com");
+    });
+
+    it("shows initials fallback when urlFoto is null", () => {
+      // Arrange
+      const perfil = makePerfil({
+        snapshotPublico: {
+          nomeEleitoral: "Maria da Silva",
+          siglaPartido: "PT",
+          siglaUf: "SP",
+          urlFoto: null,
+        },
+      });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("MS");
+      expect(html).not.toContain("<img");
+    });
+
+    it("shows dash when siglaPartido is null", () => {
+      // Arrange
+      const perfil = makePerfil({
+        snapshotPublico: {
+          nomeEleitoral: "Maria da Silva",
+          siglaPartido: null,
+          siglaUf: "SP",
+          urlFoto: null,
+        },
+      });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("—");
+    });
+  });
+
+  describe("redes sociais", () => {
+    it("renders links for each rede social", () => {
+      // Arrange
+      const perfil = makePerfil({
+        redesSociais: [
+          "https://twitter.com/maria",
+          "https://instagram.com/maria",
+        ],
+      });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("https://twitter.com/maria");
+      expect(html).toContain("https://instagram.com/maria");
+    });
+
+    it("omits the redes sociais section when the list is empty", () => {
+      // Arrange
+      const perfil = makePerfil({ redesSociais: [] });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).not.toContain("Redes sociais");
+    });
+  });
+
+  describe("metadados publicos", () => {
+    it("shows birth metadata when available", () => {
+      // Arrange
+      const perfil = makePerfil();
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("São Paulo");
+      expect(html).toContain("1980-05-10");
+    });
+
+    it("omits birth metadata when not available", () => {
+      // Arrange
+      const perfil = makePerfil({
+        dataNascimento: null,
+        municipioNascimento: null,
+        ufNascimento: null,
+      });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).not.toContain("Nascimento");
+    });
+
+    it("shows legislatura metadata when available", () => {
+      // Arrange
+      const perfil = makePerfil();
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("55");
+      expect(html).toContain("57");
+    });
+
+    it("omits legislatura metadata when not available", () => {
+      // Arrange
+      const perfil = makePerfil({
+        externalIdLegislaturaInicial: null,
+        externalIdLegislaturaFinal: null,
+      });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).not.toContain("Legislatura inicial");
     });
   });
 

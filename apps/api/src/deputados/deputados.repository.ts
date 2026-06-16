@@ -1,7 +1,13 @@
-import { eq, exists } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
-import { deputado, deputadoHistorico } from '@/shared/database/schema';
+import {
+  deputado,
+  deputadoHistorico,
+  legislatura,
+  partido,
+} from '@/shared/database/schema';
 
 import type { DeputadoPerfilSource } from './types/deputados.types';
 
@@ -18,19 +24,32 @@ export function createDeputadosRepository(
 ): DeputadosRepository {
   return {
     async loadDeputadoPerfil(externalIdDeputado) {
+      const legislaturaInicial = alias(legislatura, 'legislatura_inicial');
+      const legislaturaFinal = alias(legislatura, 'legislatura_final');
+
       const [row] = await db
         .select({
+          id: deputado.id,
           externalIdDeputado: deputado.externalIdDeputado,
           nome: deputado.nome,
           nomeCivil: deputado.nomeCivil,
-          temHistoricoParlamentar: exists(
-            db
-              .select({ one: deputadoHistorico.id })
-              .from(deputadoHistorico)
-              .where(eq(deputadoHistorico.deputadoId, deputado.id)),
-          ),
+          dataNascimento: deputado.dataNascimento,
+          municipioNascimento: deputado.municipioNascimento,
+          ufNascimento: deputado.ufNascimento,
+          urlRedeSocial: deputado.urlRedeSocial,
+          externalIdLegislaturaInicial:
+            legislaturaInicial.externalIdLegislatura,
+          externalIdLegislaturaFinal: legislaturaFinal.externalIdLegislatura,
         })
         .from(deputado)
+        .leftJoin(
+          legislaturaInicial,
+          eq(deputado.legislaturaInicialId, legislaturaInicial.id),
+        )
+        .leftJoin(
+          legislaturaFinal,
+          eq(deputado.legislaturaFinalId, legislaturaFinal.id),
+        )
         .where(eq(deputado.externalIdDeputado, externalIdDeputado))
         .limit(1);
 
@@ -38,11 +57,31 @@ export function createDeputadosRepository(
         return null;
       }
 
+      const eventos = await db
+        .select({
+          dataHora: deputadoHistorico.dataHora,
+          situacao: deputadoHistorico.situacao,
+          descricaoStatus: deputadoHistorico.descricaoStatus,
+          nomeEleitoral: deputadoHistorico.nomeEleitoral,
+          siglaUf: deputadoHistorico.siglaUf,
+          urlFoto: deputadoHistorico.urlFoto,
+          siglaPartido: partido.sigla,
+        })
+        .from(deputadoHistorico)
+        .leftJoin(partido, eq(deputadoHistorico.partidoId, partido.id))
+        .where(eq(deputadoHistorico.deputadoId, row.id));
+
       return {
         externalIdDeputado: row.externalIdDeputado,
         nome: row.nome,
         nomeCivil: row.nomeCivil,
-        temHistoricoParlamentar: Boolean(row.temHistoricoParlamentar),
+        dataNascimento: row.dataNascimento,
+        municipioNascimento: row.municipioNascimento,
+        ufNascimento: row.ufNascimento,
+        urlRedeSocial: row.urlRedeSocial,
+        externalIdLegislaturaInicial: row.externalIdLegislaturaInicial ?? null,
+        externalIdLegislaturaFinal: row.externalIdLegislaturaFinal ?? null,
+        eventos,
       };
     },
   };

@@ -23,9 +23,25 @@ function source(
 ): DeputadoPerfilSource {
   return {
     externalIdDeputado: 220593,
-    nome: 'Maria da Silva',
+    nome: 'Maria Nome Cadastro',
     nomeCivil: 'Maria Aparecida da Silva',
-    temHistoricoParlamentar: true,
+    dataNascimento: '1980-05-10',
+    municipioNascimento: 'São Paulo',
+    ufNascimento: 'SP',
+    urlRedeSocial: 'https://twitter.com/maria',
+    externalIdLegislaturaInicial: 55,
+    externalIdLegislaturaFinal: 57,
+    eventos: [
+      {
+        dataHora: '2023-01-01T00:00:00+00:00',
+        situacao: 'Exercício',
+        descricaoStatus: 'Entrada - Posse',
+        nomeEleitoral: 'Maria da Silva',
+        siglaPartido: 'PT',
+        siglaUf: 'SP',
+        urlFoto: 'https://example.com/foto.jpg',
+      },
+    ],
     ...overrides,
   };
 }
@@ -62,10 +78,7 @@ describe('GET /deputados/:externalIdDeputado', () => {
     app = await buildApp(
       new Map([
         [220593, source()],
-        [
-          74,
-          source({ externalIdDeputado: 74, temHistoricoParlamentar: false }),
-        ],
+        [74, source({ externalIdDeputado: 74, eventos: [] })],
       ]),
     );
   });
@@ -74,8 +87,8 @@ describe('GET /deputados/:externalIdDeputado', () => {
     await app.close();
   });
 
-  describe('when the deputado is registered', () => {
-    it('returns a valid perfil contract derived from the externalId', async () => {
+  describe('when the deputado has history events', () => {
+    it('returns a valid perfil contract parseable by the schema', async () => {
       // Act
       const response = await request(getTestServer(app)).get(
         '/deputados/220593',
@@ -84,13 +97,68 @@ describe('GET /deputados/:externalIdDeputado', () => {
       // Assert
       expect(response.status).toBe(200);
       const body = deputadoPerfilSchema.parse(response.body as unknown);
-      expect(body).toEqual({
-        externalIdDeputado: 220593,
-        nomePublico: 'Maria da Silva',
-        nomeCivil: 'Maria Aparecida da Silva',
-        fonteOficial: 'https://www.camara.leg.br/deputados/220593',
-        historicoParlamentarDisponivel: true,
+      expect(body.externalIdDeputado).toBe(220593);
+      expect(body.nomePublico).toBe('Maria da Silva');
+      expect(body.fonteOficial).toBe(
+        'https://www.camara.leg.br/deputados/220593',
+      );
+      expect(body.historicoParlamentarDisponivel).toBe(true);
+    });
+
+    it('populates snapshotPublico and flags snapshotPublicoDisponivel', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/220593',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoPerfilSchema.parse(response.body as unknown);
+      expect(body.snapshotPublicoDisponivel).toBe(true);
+      expect(body.snapshotPublico).toEqual({
+        nomeEleitoral: 'Maria da Silva',
+        siglaPartido: 'PT',
+        siglaUf: 'SP',
+        urlFoto: 'https://example.com/foto.jpg',
       });
+    });
+
+    it('includes emAtividade derived from events', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/220593',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoPerfilSchema.parse(response.body as unknown);
+      expect(typeof body.emAtividade).toBe('boolean');
+    });
+
+    it('includes redesSociais', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/220593',
+      );
+
+      // Assert
+      const body = deputadoPerfilSchema.parse(response.body as unknown);
+      expect(body.redesSociais).toEqual(['https://twitter.com/maria']);
+    });
+
+    it('includes nascimento and legislatura metadata', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/220593',
+      );
+
+      // Assert
+      const body = deputadoPerfilSchema.parse(response.body as unknown);
+      expect(body.dataNascimento).toBe('1980-05-10');
+      expect(body.municipioNascimento).toBe('São Paulo');
+      expect(body.ufNascimento).toBe('SP');
+      expect(body.externalIdLegislaturaInicial).toBe(55);
+      expect(body.externalIdLegislaturaFinal).toBe(57);
     });
 
     it('does not expose an internal UUID id', async () => {
@@ -104,8 +172,8 @@ describe('GET /deputados/:externalIdDeputado', () => {
     });
   });
 
-  describe('when the deputado has no parliamentary history', () => {
-    it('still returns the perfil flagging the parliamentary history as unavailable', async () => {
+  describe('when the deputado has no history events', () => {
+    it('returns perfil with snapshot null and flags false', async () => {
       // Act
       const response = await request(getTestServer(app)).get('/deputados/74');
 
@@ -113,6 +181,8 @@ describe('GET /deputados/:externalIdDeputado', () => {
       expect(response.status).toBe(200);
       const body = deputadoPerfilSchema.parse(response.body as unknown);
       expect(body.historicoParlamentarDisponivel).toBe(false);
+      expect(body.snapshotPublicoDisponivel).toBe(false);
+      expect(body.snapshotPublico).toBeNull();
     });
   });
 

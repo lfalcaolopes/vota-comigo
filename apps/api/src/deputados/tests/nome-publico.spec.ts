@@ -1,42 +1,64 @@
 import { nomePublicoDeputado } from '../rules/nome-publico';
 
 describe('nomePublicoDeputado', () => {
-  describe('when the registered nome is present', () => {
-    it('uses nome as the public name', () => {
+  describe('when nomeEleitoral is present', () => {
+    it('uses nomeEleitoral as the public name', () => {
       // Arrange
-      const cadastro = {
-        nome: 'Maria da Silva',
+      const input = {
+        nomeEleitoral: 'Maria da Silva',
+        nome: 'Maria Nome Cadastro',
         nomeCivil: 'Maria Aparecida da Silva',
       };
 
       // Act
-      const nome = nomePublicoDeputado(cadastro);
+      const nome = nomePublicoDeputado(input);
 
       // Assert
       expect(nome).toBe('Maria da Silva');
     });
   });
 
-  describe('when nome is absent but nomeCivil is present', () => {
-    it('falls back to nomeCivil', () => {
+  describe('when nomeEleitoral is absent but nome is present', () => {
+    it('falls back to nome', () => {
       // Arrange
-      const cadastro = { nome: null, nomeCivil: 'Maria Aparecida da Silva' };
+      const input = {
+        nomeEleitoral: null,
+        nome: 'Maria Nome Cadastro',
+        nomeCivil: 'Maria Aparecida da Silva',
+      };
 
       // Act
-      const nome = nomePublicoDeputado(cadastro);
+      const nome = nomePublicoDeputado(input);
+
+      // Assert
+      expect(nome).toBe('Maria Nome Cadastro');
+    });
+  });
+
+  describe('when nomeEleitoral and nome are absent but nomeCivil is present', () => {
+    it('falls back to nomeCivil', () => {
+      // Arrange
+      const input = {
+        nomeEleitoral: null,
+        nome: null,
+        nomeCivil: 'Maria Aparecida da Silva',
+      };
+
+      // Act
+      const nome = nomePublicoDeputado(input);
 
       // Assert
       expect(nome).toBe('Maria Aparecida da Silva');
     });
   });
 
-  describe('when neither nome nor nomeCivil is present', () => {
+  describe('when none of the name fields are present', () => {
     it('returns null', () => {
       // Arrange
-      const cadastro = { nome: null, nomeCivil: null };
+      const input = { nomeEleitoral: null, nome: null, nomeCivil: null };
 
       // Act
-      const nome = nomePublicoDeputado(cadastro);
+      const nome = nomePublicoDeputado(input);
 
       // Assert
       expect(nome).toBeNull();

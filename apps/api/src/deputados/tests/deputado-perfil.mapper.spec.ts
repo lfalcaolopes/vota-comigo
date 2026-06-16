@@ -1,23 +1,47 @@
 import { deputadoPerfilSchema } from '@vota-comigo/shared-types';
 
 import { toDeputadoPerfil } from '../mappers/deputado-perfil.mapper';
-import type { DeputadoPerfilSource } from '../types/deputados.types';
+import type {
+  DeputadoHistoricoEventoSource,
+  DeputadoPerfilSource,
+} from '../types/deputados.types';
+
+function evento(
+  overrides: Partial<DeputadoHistoricoEventoSource> = {},
+): DeputadoHistoricoEventoSource {
+  return {
+    dataHora: '2023-01-01T00:00:00+00:00',
+    situacao: 'Exercício',
+    descricaoStatus: 'Exercício',
+    nomeEleitoral: 'Maria da Silva',
+    siglaPartido: 'PT',
+    siglaUf: 'SP',
+    urlFoto: 'https://example.com/foto.jpg',
+    ...overrides,
+  };
+}
 
 function source(
   overrides: Partial<DeputadoPerfilSource> = {},
 ): DeputadoPerfilSource {
   return {
     externalIdDeputado: 220593,
-    nome: 'Maria da Silva',
+    nome: 'Maria Nome Cadastro',
     nomeCivil: 'Maria Aparecida da Silva',
-    temHistoricoParlamentar: true,
+    dataNascimento: '1980-05-10',
+    municipioNascimento: 'São Paulo',
+    ufNascimento: 'SP',
+    urlRedeSocial: 'https://twitter.com/maria',
+    externalIdLegislaturaInicial: 55,
+    externalIdLegislaturaFinal: 57,
+    eventos: [evento()],
     ...overrides,
   };
 }
 
 describe('toDeputadoPerfil', () => {
-  describe('when the deputado has parliamentary history', () => {
-    it('maps a registered deputado into a valid perfil with the official source link', () => {
+  describe('when the deputado has history events', () => {
+    it('produces a valid perfil that parses against the schema', () => {
       // Arrange
       const row = source();
 
@@ -25,34 +49,180 @@ describe('toDeputadoPerfil', () => {
       const perfil = toDeputadoPerfil(row);
 
       // Assert
-      expect(deputadoPerfilSchema.parse(perfil)).toEqual({
-        externalIdDeputado: 220593,
-        nomePublico: 'Maria da Silva',
-        nomeCivil: 'Maria Aparecida da Silva',
-        fonteOficial: 'https://www.camara.leg.br/deputados/220593',
-        historicoParlamentarDisponivel: true,
-      });
+      expect(() => deputadoPerfilSchema.parse(perfil)).not.toThrow();
     });
-  });
 
-  describe('when the deputado has no parliamentary history', () => {
-    it('still produces a perfil flagging the parliamentary history as unavailable', () => {
+    it('populates snapshotPublico from the most recent event', () => {
       // Arrange
-      const row = source({ temHistoricoParlamentar: false });
+      const row = source({
+        eventos: [
+          evento({
+            dataHora: '2021-01-01T00:00:00+00:00',
+            nomeEleitoral: 'Maria Antiga',
+            siglaPartido: 'MDB',
+            siglaUf: 'RJ',
+            urlFoto: null,
+          }),
+          evento({
+            dataHora: '2023-06-15T10:00:00+00:00',
+            nomeEleitoral: 'Maria da Silva',
+            siglaPartido: 'PT',
+            siglaUf: 'SP',
+            urlFoto: 'https://example.com/foto.jpg',
+          }),
+        ],
+      });
 
       // Act
       const perfil = toDeputadoPerfil(row);
 
       // Assert
+      expect(perfil.snapshotPublicoDisponivel).toBe(true);
+      expect(perfil.snapshotPublico).toEqual({
+        nomeEleitoral: 'Maria da Silva',
+        siglaPartido: 'PT',
+        siglaUf: 'SP',
+        urlFoto: 'https://example.com/foto.jpg',
+      });
+    });
+
+    it('derives nomePublico from nomeEleitoral in the snapshot', () => {
+      // Arrange
+      const row = source({
+        nome: 'Maria Nome Cadastro',
+        eventos: [evento({ nomeEleitoral: 'Maria Eleitoral' })],
+      });
+
+      // Act
+      const perfil = toDeputadoPerfil(row);
+
+      // Assert
+      expect(perfil.nomePublico).toBe('Maria Eleitoral');
+    });
+
+    it('derives emAtividade as true when the last interval has no closedAt', () => {
+      // Arrange
+      const row = source({
+        eventos: [
+          evento({
+            dataHora: '2023-01-01T00:00:00+00:00',
+            situacao: 'Exercício',
+            descricaoStatus: 'Entrada - Posse',
+          }),
+        ],
+      });
+
+      // Act
+      const perfil = toDeputadoPerfil(row);
+
+      // Assert
+      expect(perfil.emAtividade).toBe(true);
+    });
+
+    it('derives emAtividade as false when all intervals are closed', () => {
+      // Arrange
+      const row = source({
+        eventos: [
+          evento({
+            dataHora: '2019-02-01T00:00:00+00:00',
+            situacao: 'Exercício',
+            descricaoStatus: 'Entrada - Posse',
+          }),
+          evento({
+            dataHora: '2023-01-31T00:00:00+00:00',
+            situacao: 'Fim de Mandato',
+            descricaoStatus: 'Saída - Fim de Mandato',
+          }),
+        ],
+      });
+
+      // Act
+      const perfil = toDeputadoPerfil(row);
+
+      // Assert
+      expect(perfil.emAtividade).toBe(false);
+    });
+
+    it('maps redesSociais from urlRedeSocial', () => {
+      // Arrange
+      const row = source({
+        urlRedeSocial:
+          'https://twitter.com/maria,https://instagram.com/maria',
+      });
+
+      // Act
+      const perfil = toDeputadoPerfil(row);
+
+      // Assert
+      expect(perfil.redesSociais).toEqual([
+        'https://twitter.com/maria',
+        'https://instagram.com/maria',
+      ]);
+    });
+
+    it('maps nascimento and legislatura metadata', () => {
+      // Arrange
+      const row = source();
+
+      // Act
+      const perfil = toDeputadoPerfil(row);
+
+      // Assert
+      expect(perfil.dataNascimento).toBe('1980-05-10');
+      expect(perfil.municipioNascimento).toBe('São Paulo');
+      expect(perfil.ufNascimento).toBe('SP');
+      expect(perfil.externalIdLegislaturaInicial).toBe(55);
+      expect(perfil.externalIdLegislaturaFinal).toBe(57);
+    });
+  });
+
+  describe('when the deputado has no history events', () => {
+    it('sets snapshotPublico to null and snapshotPublicoDisponivel to false', () => {
+      // Arrange
+      const row = source({ eventos: [] });
+
+      // Act
+      const perfil = toDeputadoPerfil(row);
+
+      // Assert
+      expect(perfil.snapshotPublico).toBeNull();
+      expect(perfil.snapshotPublicoDisponivel).toBe(false);
       expect(perfil.historicoParlamentarDisponivel).toBe(false);
+    });
+
+    it('falls back to nome for nomePublico when there is no snapshot', () => {
+      // Arrange
+      const row = source({
+        nome: 'Maria Nome Cadastro',
+        nomeCivil: 'Maria Civil',
+        eventos: [],
+      });
+
+      // Act
+      const perfil = toDeputadoPerfil(row);
+
+      // Assert
+      expect(perfil.nomePublico).toBe('Maria Nome Cadastro');
+    });
+
+    it('still maps cadastral metadata even without events', () => {
+      // Arrange
+      const row = source({ eventos: [] });
+
+      // Act
+      const perfil = toDeputadoPerfil(row);
+
+      // Assert
+      expect(perfil.dataNascimento).toBe('1980-05-10');
+      expect(perfil.externalIdLegislaturaInicial).toBe(55);
       expect(deputadoPerfilSchema.safeParse(perfil).success).toBe(true);
     });
   });
 
-  describe('when neither nome nor nomeCivil is registered', () => {
+  describe('when neither nome nor nomeCivil is present and there is no snapshot', () => {
     it('maps the public name to null', () => {
       // Arrange
-      const row = source({ nome: null, nomeCivil: null });
+      const row = source({ nome: null, nomeCivil: null, eventos: [] });
 
       // Act
       const perfil = toDeputadoPerfil(row);
