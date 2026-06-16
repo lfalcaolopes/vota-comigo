@@ -270,6 +270,44 @@ describe("StepComparativo", () => {
       expect(html).toContain('rel="noopener noreferrer"');
     });
 
+    it("keeps the label column sticky so the reading anchor stays visible while scrolling horizontally", () => {
+      // Arrange / Act
+      const html = render({
+        status: "idle",
+        deputados: [deputado(20), deputado(10)],
+        detalhes: [detalhe(20, [voto(1)]), detalhe(10, [voto(1)])],
+      });
+
+      // Assert
+      expect(html).toContain("sticky left-0");
+    });
+
+    it("keeps deputado names recognizable on narrow columns instead of truncating them", () => {
+      // Arrange / Act
+      const html = render({
+        status: "idle",
+        deputados: [deputado(20), deputado(10)],
+        detalhes: [detalhe(20, [voto(1)]), detalhe(10, [voto(1)])],
+      });
+
+      // Assert
+      expect(html).toContain("line-clamp-2");
+      expect(html).not.toContain("block truncate");
+    });
+
+    it("guides small viewport users to scroll horizontally to reach every deputado", () => {
+      // Arrange / Act
+      const html = render({
+        status: "idle",
+        deputados: [deputado(20), deputado(10)],
+        detalhes: [detalhe(20, [voto(1)]), detalhe(10, [voto(1)])],
+      });
+
+      // Assert
+      expect(html).toContain('role="status"');
+      expect(html).toContain("Role na horizontal para ver todos os deputados.");
+    });
+
     it("shows resumo de presença from perfil without rendering profile details outside the comparativo scope", () => {
       // Arrange / Act
       const html = render({

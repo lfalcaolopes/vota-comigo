@@ -30,6 +30,9 @@ import { buildComparativoDeputadosGrid } from "../lib/comparativo-deputados-grid
 import type { MatcherStatus } from "../lib/matcher-state";
 import { DeputadoAvatar } from "./deputado-avatar";
 
+const labelColumnClassName =
+  "sticky left-0 z-10 border-r border-b border-border bg-bg p-3";
+
 type StepComparativoProps = {
   deputados: MatcherDeputadoResumo[];
   detalhes: MatcherDeputadoDetalhe[];
@@ -57,7 +60,7 @@ export function StepComparativo({
   const perfisByDeputado = new Map(
     perfis.map((perfil) => [perfil.externalIdDeputado, perfil]),
   );
-  const gridTemplateColumns = `minmax(16rem,1.25fr) repeat(${grid.columns.length}, minmax(11rem,1fr))`;
+  const gridTemplateColumns = `minmax(12rem,1.1fr) repeat(${grid.columns.length}, minmax(13rem,1fr))`;
 
   return (
     <div className="grid gap-5">
@@ -76,40 +79,50 @@ export function StepComparativo({
       ) : null}
 
       {status === "idle" ? (
-        <div className="overflow-x-auto pb-2">
-          <div className="grid min-w-[42rem]" style={{ gridTemplateColumns }}>
-            <div className="border-b border-border p-3 text-sm font-[650] text-muted">
-              Proposição
-            </div>
-            {grid.columns.map(({ deputado }) => (
-              <ComparativoDeputadoHeader
-                deputado={deputado}
-                key={deputado.externalIdDeputado}
-                perfil={perfisByDeputado.get(deputado.externalIdDeputado)}
-              />
-            ))}
+        <>
+          <p
+            className="text-sm leading-normal text-muted lg:hidden"
+            role="status"
+          >
+            Role na horizontal para ver todos os deputados.
+          </p>
+          <div className="overflow-x-auto pb-2">
+            <div className="grid" style={{ gridTemplateColumns }}>
+              <div
+                className={`${labelColumnClassName} text-sm font-[650] text-muted`}
+              >
+                Proposição
+              </div>
+              {grid.columns.map(({ deputado }) => (
+                <ComparativoDeputadoHeader
+                  deputado={deputado}
+                  key={deputado.externalIdDeputado}
+                  perfil={perfisByDeputado.get(deputado.externalIdDeputado)}
+                />
+              ))}
 
-            {grid.rows.map((row) => (
-              <ComparativoRow
-                key={row.proposicao.externalIdProposicao}
-                row={row}
-              />
-            ))}
+              {grid.rows.map((row) => (
+                <ComparativoRow
+                  key={row.proposicao.externalIdProposicao}
+                  row={row}
+                />
+              ))}
 
-            <div className="border-b border-border p-3">
-              <p className="text-sm font-[650] text-ink">Presença</p>
-              <p className="mt-1 text-xs leading-normal text-muted">
-                Mesmo recorte do Perfil do deputado.
-              </p>
+              <div className={labelColumnClassName}>
+                <p className="text-sm font-[650] text-ink">Presença</p>
+                <p className="mt-1 text-xs leading-normal text-muted">
+                  Mesmo recorte do Perfil do deputado.
+                </p>
+              </div>
+              {grid.columns.map(({ deputado }) => (
+                <ComparativoPresencaCell
+                  key={`presenca-${deputado.externalIdDeputado}`}
+                  perfil={perfisByDeputado.get(deputado.externalIdDeputado)}
+                />
+              ))}
             </div>
-            {grid.columns.map(({ deputado }) => (
-              <ComparativoPresencaCell
-                key={`presenca-${deputado.externalIdDeputado}`}
-                perfil={perfisByDeputado.get(deputado.externalIdDeputado)}
-              />
-            ))}
           </div>
-        </div>
+        </>
       ) : null}
     </div>
   );
@@ -138,7 +151,7 @@ function ComparativoDeputadoHeader({
           <DeputadoAvatar nome={nome} urlFoto={urlFoto} />
           <div className="min-w-0">
             <Link
-              className="block truncate text-sm font-[650] text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+              className="block line-clamp-2 break-words text-sm font-[650] text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
               href={`/deputados/${deputado.externalIdDeputado}`}
               rel="noopener noreferrer"
               target="_blank"
@@ -172,9 +185,9 @@ function ComparativoRow({ row }: ComparativoRowProps) {
 
   return (
     <>
-      <div className="border-b border-border p-3">
+      <div className={labelColumnClassName}>
         <Link
-          className="text-sm font-[650] text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+          className="block break-words text-sm font-[650] text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
           href={`/proposicoes/${row.proposicao.externalIdProposicao}`}
           rel="noopener noreferrer"
           target="_blank"
@@ -200,7 +213,9 @@ function ComparativoRow({ row }: ComparativoRowProps) {
             <Badge tone={cell.matcherEffectVerdict.tone}>
               {cell.matcherEffectVerdict.label}
             </Badge>
-            <p className="text-sm font-[650] text-ink">{cell.situacaoLabel}</p>
+            <p className="break-words text-sm font-[650] text-ink">
+              {cell.situacaoLabel}
+            </p>
           </div>
         </div>
       ))}
@@ -260,13 +275,7 @@ function ComparativoPresencaCell({
   );
 }
 
-function MetaItem({
-  children,
-  label,
-}: {
-  children: ReactNode;
-  label: string;
-}) {
+function MetaItem({ children, label }: { children: ReactNode; label: string }) {
   return (
     <div className="flex min-w-0 items-baseline gap-2">
       <dt className="text-muted">{label}</dt>
