@@ -2,10 +2,12 @@ import type { DeputadoPerfil } from "@vota-comigo/shared-types";
 import { describe, expect, it } from "vitest";
 
 import {
+  formatPercentual,
   getInitials,
   nomePublicoLabel,
   toAtividadeLabel,
   toAtividadeTone,
+  toPresencaAmostrasLabel,
 } from "../presentation";
 
 function makePerfil(overrides: Partial<DeputadoPerfil> = {}): DeputadoPerfil {
@@ -29,6 +31,8 @@ function makePerfil(overrides: Partial<DeputadoPerfil> = {}): DeputadoPerfil {
     ufNascimento: null,
     externalIdLegislaturaInicial: null,
     externalIdLegislaturaFinal: null,
+    resumoPresencaDisponivel: false,
+    resumoPresenca: null,
     ...overrides,
   };
 }
@@ -130,6 +134,63 @@ describe("getInitials", () => {
     it("returns the fallback ?", () => {
       // Act / Assert
       expect(getInitials("   ")).toBe("?");
+    });
+  });
+});
+
+describe("formatPercentual", () => {
+  describe("when the value is an integer", () => {
+    it("returns the value formatted as integer percentage", () => {
+      // Act / Assert
+      expect(formatPercentual(72)).toBe("72%");
+    });
+  });
+
+  describe("when the value is 0", () => {
+    it("returns 0%", () => {
+      // Act / Assert
+      expect(formatPercentual(0)).toBe("0%");
+    });
+  });
+
+  describe("when the value is 100", () => {
+    it("returns 100%", () => {
+      // Act / Assert
+      expect(formatPercentual(100)).toBe("100%");
+    });
+  });
+
+  describe("when the value has a decimal below 0.5", () => {
+    it("rounds down", () => {
+      // Act / Assert
+      expect(formatPercentual(49.4)).toBe("49%");
+    });
+  });
+
+  describe("when the value has a decimal at or above 0.5", () => {
+    it("rounds up", () => {
+      // Act / Assert
+      expect(formatPercentual(49.6)).toBe("50%");
+    });
+  });
+});
+
+describe("toPresencaAmostrasLabel", () => {
+  describe("when given presencas and total", () => {
+    it("returns the formatted sample label", () => {
+      // Act / Assert
+      expect(toPresencaAmostrasLabel(80, 100)).toBe(
+        "80 de 100 votações em exercício",
+      );
+    });
+  });
+
+  describe("when presencas is 0", () => {
+    it("shows zero presencas", () => {
+      // Act / Assert
+      expect(toPresencaAmostrasLabel(0, 10)).toBe(
+        "0 de 10 votações em exercício",
+      );
     });
   });
 });

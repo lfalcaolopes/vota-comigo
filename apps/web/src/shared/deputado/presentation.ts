@@ -4,6 +4,9 @@ import type { BadgeTone } from "@/shared/ui";
 
 export const CARGO_DEPUTADO = "Deputado federal";
 
+export const RECORTE_BASE_PRESENCA =
+  "votações nominais de plenário presentes na base";
+
 export function nomePublicoLabel(perfil: DeputadoPerfil): string {
   return perfil.nomePublico ?? CARGO_DEPUTADO;
 }
@@ -14,6 +17,17 @@ export function toAtividadeLabel(emAtividade: boolean): string {
 
 export function toAtividadeTone(emAtividade: boolean): BadgeTone {
   return emAtividade ? "success" : "neutral";
+}
+
+export function formatPercentual(value: number): string {
+  return `${Math.round(value)}%`;
+}
+
+export function toPresencaAmostrasLabel(
+  presencas: number,
+  total: number,
+): string {
+  return `${presencas} de ${total} votações em exercício`;
 }
 
 const PARTICLES = new Set(["de", "da", "do", "dos", "das", "e"]);

@@ -7,6 +7,13 @@ export const deputadoSnapshotPublicoSchema = z.object({
   urlFoto: z.string().nullable(),
 });
 
+export const deputadoResumoPresencaSchema = z.object({
+  percentualPresenca: z.number().min(0).max(100),
+  presencas: z.number().int().nonnegative(),
+  totalVotacoesEmExercicio: z.number().int().nonnegative(),
+  ausenciasSemMotivoConhecido: z.number().int().nonnegative(),
+});
+
 export const deputadoPerfilSchema = z.object({
   externalIdDeputado: z.number(),
   nomePublico: z.string().nullable(),
@@ -22,7 +29,10 @@ export const deputadoPerfilSchema = z.object({
   ufNascimento: z.string().nullable(),
   externalIdLegislaturaInicial: z.number().nullable(),
   externalIdLegislaturaFinal: z.number().nullable(),
+  resumoPresencaDisponivel: z.boolean(),
+  resumoPresenca: deputadoResumoPresencaSchema.nullable(),
 });
 
 export type DeputadoSnapshotPublico = z.infer<typeof deputadoSnapshotPublicoSchema>;
+export type DeputadoResumoPresenca = z.infer<typeof deputadoResumoPresencaSchema>;
 export type DeputadoPerfil = z.infer<typeof deputadoPerfilSchema>;

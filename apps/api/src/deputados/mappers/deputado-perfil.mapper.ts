@@ -5,11 +5,18 @@ import type { EventoExercicio } from '@/exercicio/types/exercicio.types';
 
 import { nomePublicoDeputado } from '../rules/nome-publico';
 import { parseRedesSociais } from '../rules/redes-sociais';
+import { deriveResumoPresenca } from '../rules/resumo-presenca';
 import { deriveSnapshotPublico } from '../rules/snapshot-publico';
-import type { DeputadoPerfilSource } from '../types/deputados.types';
+import type {
+  DeputadoPerfilSource,
+  VotacaoPlenarioRow,
+} from '../types/deputados.types';
 import { fonteOficialDeputado } from './camara-portal-url';
 
-export function toDeputadoPerfil(source: DeputadoPerfilSource): DeputadoPerfil {
+export function toDeputadoPerfil(
+  source: DeputadoPerfilSource,
+  votacoesPlenario: readonly VotacaoPlenarioRow[],
+): DeputadoPerfil {
   const snapshot = deriveSnapshotPublico(source.eventos);
 
   const nomePublico = nomePublicoDeputado({
@@ -27,6 +34,14 @@ export function toDeputadoPerfil(source: DeputadoPerfilSource): DeputadoPerfil {
     }),
   );
 
+  const { resumoPresencaDisponivel, resumoPresenca } = deriveResumoPresenca({
+    eventos: eventosExercicio,
+    votacoes: votacoesPlenario.map((v) => ({
+      votacao: { dataHoraRegistro: v.dataHoraRegistro, data: v.data },
+      voto: v.voto,
+    })),
+  });
+
   return {
     externalIdDeputado: source.externalIdDeputado,
     nomePublico,
@@ -42,5 +57,7 @@ export function toDeputadoPerfil(source: DeputadoPerfilSource): DeputadoPerfil {
     ufNascimento: source.ufNascimento,
     externalIdLegislaturaInicial: source.externalIdLegislaturaInicial,
     externalIdLegislaturaFinal: source.externalIdLegislaturaFinal,
+    resumoPresencaDisponivel,
+    resumoPresenca,
   };
 }

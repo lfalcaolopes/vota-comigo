@@ -4,6 +4,7 @@ import { toDeputadoPerfil } from '../mappers/deputado-perfil.mapper';
 import type {
   DeputadoHistoricoEventoSource,
   DeputadoPerfilSource,
+  VotacaoPlenarioRow,
 } from '../types/deputados.types';
 
 function evento(
@@ -25,6 +26,7 @@ function source(
   overrides: Partial<DeputadoPerfilSource> = {},
 ): DeputadoPerfilSource {
   return {
+    id: 'aaaaaaaa-0000-0000-0000-000000000001',
     externalIdDeputado: 220593,
     nome: 'Maria Nome Cadastro',
     nomeCivil: 'Maria Aparecida da Silva',
@@ -39,6 +41,17 @@ function source(
   };
 }
 
+function votacaoPlenario(
+  overrides: Partial<VotacaoPlenarioRow> = {},
+): VotacaoPlenarioRow {
+  return {
+    dataHoraRegistro: '2023-06-01T10:00:00+00:00',
+    data: '2023-06-01',
+    voto: 'sim',
+    ...overrides,
+  };
+}
+
 describe('toDeputadoPerfil', () => {
   describe('when the deputado has history events', () => {
     it('produces a valid perfil that parses against the schema', () => {
@@ -46,7 +59,7 @@ describe('toDeputadoPerfil', () => {
       const row = source();
 
       // Act
-      const perfil = toDeputadoPerfil(row);
+      const perfil = toDeputadoPerfil(row, []);
 
       // Assert
       expect(() => deputadoPerfilSchema.parse(perfil)).not.toThrow();
@@ -74,7 +87,7 @@ describe('toDeputadoPerfil', () => {
       });
 
       // Act
-      const perfil = toDeputadoPerfil(row);
+      const perfil = toDeputadoPerfil(row, []);
 
       // Assert
       expect(perfil.snapshotPublicoDisponivel).toBe(true);
@@ -94,7 +107,7 @@ describe('toDeputadoPerfil', () => {
       });
 
       // Act
-      const perfil = toDeputadoPerfil(row);
+      const perfil = toDeputadoPerfil(row, []);
 
       // Assert
       expect(perfil.nomePublico).toBe('Maria Eleitoral');
@@ -113,7 +126,7 @@ describe('toDeputadoPerfil', () => {
       });
 
       // Act
-      const perfil = toDeputadoPerfil(row);
+      const perfil = toDeputadoPerfil(row, []);
 
       // Assert
       expect(perfil.emAtividade).toBe(true);
@@ -137,7 +150,7 @@ describe('toDeputadoPerfil', () => {
       });
 
       // Act
-      const perfil = toDeputadoPerfil(row);
+      const perfil = toDeputadoPerfil(row, []);
 
       // Assert
       expect(perfil.emAtividade).toBe(false);
@@ -151,7 +164,7 @@ describe('toDeputadoPerfil', () => {
       });
 
       // Act
-      const perfil = toDeputadoPerfil(row);
+      const perfil = toDeputadoPerfil(row, []);
 
       // Assert
       expect(perfil.redesSociais).toEqual([
@@ -165,7 +178,7 @@ describe('toDeputadoPerfil', () => {
       const row = source();
 
       // Act
-      const perfil = toDeputadoPerfil(row);
+      const perfil = toDeputadoPerfil(row, []);
 
       // Assert
       expect(perfil.dataNascimento).toBe('1980-05-10');
@@ -182,7 +195,7 @@ describe('toDeputadoPerfil', () => {
       const row = source({ eventos: [] });
 
       // Act
-      const perfil = toDeputadoPerfil(row);
+      const perfil = toDeputadoPerfil(row, []);
 
       // Assert
       expect(perfil.snapshotPublico).toBeNull();
@@ -199,7 +212,7 @@ describe('toDeputadoPerfil', () => {
       });
 
       // Act
-      const perfil = toDeputadoPerfil(row);
+      const perfil = toDeputadoPerfil(row, []);
 
       // Assert
       expect(perfil.nomePublico).toBe('Maria Nome Cadastro');
@@ -210,7 +223,7 @@ describe('toDeputadoPerfil', () => {
       const row = source({ eventos: [] });
 
       // Act
-      const perfil = toDeputadoPerfil(row);
+      const perfil = toDeputadoPerfil(row, []);
 
       // Assert
       expect(perfil.dataNascimento).toBe('1980-05-10');
@@ -225,10 +238,77 @@ describe('toDeputadoPerfil', () => {
       const row = source({ nome: null, nomeCivil: null, eventos: [] });
 
       // Act
-      const perfil = toDeputadoPerfil(row);
+      const perfil = toDeputadoPerfil(row, []);
 
       // Assert
       expect(perfil.nomePublico).toBeNull();
+    });
+  });
+
+  describe('resumo de presenca', () => {
+    describe('when there are votacoes nominais in exercise', () => {
+      it('sets resumoPresencaDisponivel true and populates resumoPresenca', () => {
+        // Arrange
+        const row = source({
+          eventos: [
+            {
+              dataHora: '2023-01-01T00:00:00+00:00',
+              situacao: 'Exercício',
+              descricaoStatus: 'Entrada - Posse',
+              nomeEleitoral: 'Maria da Silva',
+              siglaPartido: 'PT',
+              siglaUf: 'SP',
+              urlFoto: null,
+            },
+          ],
+        });
+        const votacoes = [
+          votacaoPlenario({ voto: 'sim' }),
+          votacaoPlenario({ voto: 'nao' }),
+          votacaoPlenario({ voto: null }),
+        ];
+
+        // Act
+        const perfil = toDeputadoPerfil(row, votacoes);
+
+        // Assert
+        expect(perfil.resumoPresencaDisponivel).toBe(true);
+        expect(perfil.resumoPresenca).not.toBeNull();
+        expect(perfil.resumoPresenca?.presencas).toBe(2);
+        expect(perfil.resumoPresenca?.ausenciasSemMotivoConhecido).toBe(1);
+        expect(perfil.resumoPresenca?.totalVotacoesEmExercicio).toBe(3);
+        expect(deputadoPerfilSchema.safeParse(perfil).success).toBe(true);
+      });
+    });
+
+    describe('when there are no votacoes', () => {
+      it('sets resumoPresencaDisponivel false and resumoPresenca null', () => {
+        // Arrange
+        const row = source();
+
+        // Act
+        const perfil = toDeputadoPerfil(row, []);
+
+        // Assert
+        expect(perfil.resumoPresencaDisponivel).toBe(false);
+        expect(perfil.resumoPresenca).toBeNull();
+        expect(deputadoPerfilSchema.safeParse(perfil).success).toBe(true);
+      });
+    });
+
+    describe('when the deputado has no history events', () => {
+      it('sets resumoPresencaDisponivel false regardless of votacoes', () => {
+        // Arrange
+        const row = source({ eventos: [] });
+        const votacoes = [votacaoPlenario({ voto: null })];
+
+        // Act
+        const perfil = toDeputadoPerfil(row, votacoes);
+
+        // Assert
+        expect(perfil.resumoPresencaDisponivel).toBe(false);
+        expect(perfil.resumoPresenca).toBeNull();
+      });
     });
   });
 });

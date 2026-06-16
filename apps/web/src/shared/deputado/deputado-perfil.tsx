@@ -5,9 +5,12 @@ import { Badge, InlineMessage, SourceLink } from "@/shared/ui";
 import { DeputadoAvatar } from "./deputado-avatar";
 import {
   CARGO_DEPUTADO,
+  RECORTE_BASE_PRESENCA,
+  formatPercentual,
   nomePublicoLabel,
   toAtividadeLabel,
   toAtividadeTone,
+  toPresencaAmostrasLabel,
 } from "./presentation";
 
 export function DeputadoPerfil({ perfil }: { perfil: DeputadoPerfilData }) {
@@ -117,6 +120,40 @@ export function DeputadoPerfil({ perfil }: { perfil: DeputadoPerfilData }) {
           </dl>
         </section>
       ) : null}
+
+      <section className="grid gap-3 border-t border-border pt-6">
+        <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
+          Presença
+        </h2>
+        {perfil.resumoPresencaDisponivel && perfil.resumoPresenca !== null ? (
+          <div className="grid gap-1">
+            <p className="text-2xl font-[680] leading-tight tabular-nums text-ink">
+              {formatPercentual(perfil.resumoPresenca.percentualPresenca)}
+            </p>
+            <p className="text-sm text-muted">
+              {toPresencaAmostrasLabel(
+                perfil.resumoPresenca.presencas,
+                perfil.resumoPresenca.totalVotacoesEmExercicio,
+              )}
+            </p>
+            {perfil.resumoPresenca.ausenciasSemMotivoConhecido > 0 ? (
+              <p className="text-sm text-muted">
+                {perfil.resumoPresenca.ausenciasSemMotivoConhecido} ausência
+                {perfil.resumoPresenca.ausenciasSemMotivoConhecido > 1
+                  ? "s"
+                  : ""}{" "}
+                sem motivo conhecido
+              </p>
+            ) : null}
+            <p className="mt-1 text-xs text-subtle">{RECORTE_BASE_PRESENCA}</p>
+          </div>
+        ) : (
+          <InlineMessage
+            title="Presença indisponível"
+            body="Não há votações nominais de plenário em exercício na base para este deputado."
+          />
+        )}
+      </section>
 
       <section className="grid gap-3 border-t border-border pt-6">
         <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">

@@ -28,6 +28,13 @@ function makePerfil(
     ufNascimento: "SP",
     externalIdLegislaturaInicial: 55,
     externalIdLegislaturaFinal: 57,
+    resumoPresencaDisponivel: true,
+    resumoPresenca: {
+      percentualPresenca: 80,
+      presencas: 80,
+      totalVotacoesEmExercicio: 100,
+      ausenciasSemMotivoConhecido: 20,
+    },
     ...overrides,
   };
 }
@@ -269,6 +276,103 @@ describe("DeputadoPerfil", () => {
 
       // Assert
       expect(html).not.toContain("Sem histórico parlamentar");
+    });
+  });
+
+  describe("resumo de presenca", () => {
+    describe("when resumoPresencaDisponivel is true", () => {
+      it("shows the percentual, sample label, ausencias and recorte text", () => {
+        // Arrange
+        const perfil = makePerfil({
+          resumoPresencaDisponivel: true,
+          resumoPresenca: {
+            percentualPresenca: 75,
+            presencas: 75,
+            totalVotacoesEmExercicio: 100,
+            ausenciasSemMotivoConhecido: 25,
+          },
+        });
+
+        // Act
+        const html = render(perfil);
+
+        // Assert
+        expect(html).toContain("75%");
+        expect(html).toContain("75 de 100 votações em exercício");
+        expect(html).toContain("25");
+        expect(html).toContain("sem motivo conhecido");
+        expect(html).toContain("votações nominais de plenário");
+      });
+
+      it("shows the correct percentage without the unavailable message", () => {
+        // Arrange
+        const perfil = makePerfil({
+          resumoPresencaDisponivel: true,
+          resumoPresenca: {
+            percentualPresenca: 100,
+            presencas: 10,
+            totalVotacoesEmExercicio: 10,
+            ausenciasSemMotivoConhecido: 0,
+          },
+        });
+
+        // Act
+        const html = render(perfil);
+
+        // Assert
+        expect(html).toContain("100%");
+        expect(html).not.toContain("Presença indisponível");
+      });
+
+      it("omits the ausencias line when ausenciasSemMotivoConhecido is zero", () => {
+        // Arrange
+        const perfil = makePerfil({
+          resumoPresencaDisponivel: true,
+          resumoPresenca: {
+            percentualPresenca: 100,
+            presencas: 5,
+            totalVotacoesEmExercicio: 5,
+            ausenciasSemMotivoConhecido: 0,
+          },
+        });
+
+        // Act
+        const html = render(perfil);
+
+        // Assert
+        expect(html).not.toContain("sem motivo conhecido");
+      });
+    });
+
+    describe("when resumoPresencaDisponivel is false", () => {
+      it("shows the unavailable message without displaying 0%", () => {
+        // Arrange
+        const perfil = makePerfil({
+          resumoPresencaDisponivel: false,
+          resumoPresenca: null,
+        });
+
+        // Act
+        const html = render(perfil);
+
+        // Assert
+        expect(html).toContain("Presença indisponível");
+        expect(html).not.toContain("0%");
+      });
+
+      it("does not show votacoes em exercicio sample label", () => {
+        // Arrange
+        const perfil = makePerfil({
+          resumoPresencaDisponivel: false,
+          resumoPresenca: null,
+        });
+
+        // Act
+        const html = render(perfil);
+
+        // Assert
+        expect(html).not.toContain("votações em exercício");
+      });
     });
   });
 });

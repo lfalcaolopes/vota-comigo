@@ -20,6 +20,8 @@ export class DeputadosService {
     if (source === null) {
       throw new NotFoundException('deputado nao encontrado');
     }
-    return toDeputadoPerfil(source);
+    const votacoesPlenario =
+      await this.repository.loadVotacoesPlenarioForDeputado(source.id);
+    return toDeputadoPerfil(source, votacoesPlenario);
   }
 }

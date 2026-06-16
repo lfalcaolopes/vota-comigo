@@ -14,6 +14,17 @@ function makePerfil(
     nomeCivil: "Maria Aparecida da Silva",
     fonteOficial: "https://www.camara.leg.br/deputados/220593",
     historicoParlamentarDisponivel: true,
+    snapshotPublicoDisponivel: false,
+    snapshotPublico: null,
+    emAtividade: true,
+    redesSociais: [],
+    dataNascimento: null,
+    municipioNascimento: null,
+    ufNascimento: null,
+    externalIdLegislaturaInicial: null,
+    externalIdLegislaturaFinal: null,
+    resumoPresencaDisponivel: false,
+    resumoPresenca: null,
     ...overrides,
   };
 }

@@ -22,6 +22,7 @@ function source(
   overrides: Partial<DeputadoPerfilSource> = {},
 ): DeputadoPerfilSource {
   return {
+    id: 'aaaaaaaa-0000-0000-0000-000000000001',
     externalIdDeputado: 220593,
     nome: 'Maria Nome Cadastro',
     nomeCivil: 'Maria Aparecida da Silva',
@@ -52,6 +53,7 @@ function fakeRepository(
   return {
     loadDeputadoPerfil: async (externalIdDeputado) =>
       byExternalId.get(externalIdDeputado) ?? null,
+    loadVotacoesPlenarioForDeputado: async () => [],
   };
 }
 
@@ -169,6 +171,19 @@ describe('GET /deputados/:externalIdDeputado', () => {
 
       // Assert
       expect(response.body).not.toHaveProperty('id');
+    });
+
+    it('includes resumoPresencaDisponivel and resumoPresenca in the response', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/220593',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoPerfilSchema.parse(response.body as unknown);
+      expect(typeof body.resumoPresencaDisponivel).toBe('boolean');
+      expect(body.resumoPresenca === null || typeof body.resumoPresenca === 'object').toBe(true);
     });
   });
 

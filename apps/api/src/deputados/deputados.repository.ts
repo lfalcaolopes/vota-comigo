@@ -1,15 +1,22 @@
 import { eq } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
+import type { VotoCategoria } from '@vota-comigo/shared-types';
+
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
   deputado,
   deputadoHistorico,
   legislatura,
   partido,
+  votacao,
+  votacaoVotos,
 } from '@/shared/database/schema';
 
-import type { DeputadoPerfilSource } from './types/deputados.types';
+import type {
+  DeputadoPerfilSource,
+  VotacaoPlenarioRow,
+} from './types/deputados.types';
 
 export const DEPUTADOS_REPOSITORY = Symbol('DEPUTADOS_REPOSITORY');
 
@@ -17,6 +24,21 @@ export interface DeputadosRepository {
   loadDeputadoPerfil(
     externalIdDeputado: number,
   ): Promise<DeputadoPerfilSource | null>;
+  loadVotacoesPlenarioForDeputado(
+    deputadoId: string,
+  ): Promise<VotacaoPlenarioRow[]>;
+}
+
+function invertVotos(
+  votosJson: Record<VotoCategoria, readonly string[]>,
+): ReadonlyMap<string, VotoCategoria> {
+  const votosByDeputado = new Map<string, VotoCategoria>();
+  for (const categoria of Object.keys(votosJson) as VotoCategoria[]) {
+    for (const deputadoId of votosJson[categoria]) {
+      votosByDeputado.set(deputadoId, categoria);
+    }
+  }
+  return votosByDeputado;
 }
 
 export function createDeputadosRepository(
@@ -72,6 +94,7 @@ export function createDeputadosRepository(
         .where(eq(deputadoHistorico.deputadoId, row.id));
 
       return {
+        id: row.id,
         externalIdDeputado: row.externalIdDeputado,
         nome: row.nome,
         nomeCivil: row.nomeCivil,
@@ -83,6 +106,29 @@ export function createDeputadosRepository(
         externalIdLegislaturaFinal: row.externalIdLegislaturaFinal ?? null,
         eventos,
       };
+    },
+
+    async loadVotacoesPlenarioForDeputado(deputadoId) {
+      const rows = await db
+        .select({
+          dataHoraRegistro: votacao.dataHoraRegistro,
+          data: votacao.data,
+          votosJson: votacaoVotos.votosJson,
+        })
+        .from(votacao)
+        .innerJoin(votacaoVotos, eq(votacaoVotos.votacaoId, votacao.id))
+        .where(eq(votacao.escopoVotacao, 'plenario'));
+
+      return rows.map((row) => {
+        const votos = invertVotos(
+          row.votosJson as Record<VotoCategoria, string[]>,
+        );
+        return {
+          dataHoraRegistro: row.dataHoraRegistro,
+          data: row.data,
+          voto: votos.get(deputadoId) ?? null,
+        };
+      });
     },
   };
 }
