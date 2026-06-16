@@ -1,6 +1,6 @@
 # Quem Vota Comigo
 
-Plataforma de transparência política que ajuda cidadãos brasileiros a avaliar deputados federais pelo comportamento real em votações, oferecendo ranking de proposições votadas, matcher de compatibilidade e comparativo entre políticos.
+Plataforma de transparência política que ajuda cidadãos brasileiros a avaliar deputados federais pelo comportamento real em votações, oferecendo ranking de proposições votadas, matcher de compatibilidade e comparativo entre deputados.
 
 ## Language
 
@@ -179,6 +179,11 @@ _Avoid_: Votadas recentemente.
 
 **Detalhe de resultado do matcher**: Apresentação expandida de um deputado no matcher, com métricas completas e detalhamento voto a voto.
 
+**Comparativo de deputados**: Experiência pública que coloca dois ou três deputados lado a lado para comparar seus votos e dados consolidados em um recorte de proposições.
+_Avoid_: Comparativo de políticos.
+
+**Concordância no comparativo**: Indicador de uma célula do Comparativo de deputados que reutiliza a mesma semântica de concordância, discordância e fora do denominador do Matcher.
+
 **Perfil do deputado**: Página pública que reúne dados básicos, presença e histórico partidário de um deputado federal coberto pelo produto.
 _Avoid_: Perfil do político.
 
@@ -244,6 +249,15 @@ _Avoid_: Histórico bruto do deputado.
 - O ranking do **Matcher** é ordenado pelo **Score Wilson do matcher**, preservando a **Compatibilidade bruta** e a amostra comparável para exibição.
 - O **Resumo de resultado do matcher** preserva a transparência de amostra sem exibir todas as métricas; o **Detalhe de resultado do matcher** contém métricas completas e detalhamento voto a voto.
 - O **Matcher** sinaliza **Sem bom match** quando o melhor resultado do escopo consultado tem **Compatibilidade bruta** menor que 60%.
+- O **Comparativo de deputados** compara apenas **Deputados** cobertos pelo produto no MVP.
+- No MVP-5, o **Comparativo de deputados** contextual reutiliza a **Posição do usuário** da execução atual do **Matcher**, sem persisti-la.
+- A **Concordância no comparativo** usa o mesmo efeito calculado pelo **Matcher** para a **Compatibilidade**, preservando a diferença entre concordância, discordância e fora do denominador.
+- O **Comparativo de deputados** contextual inclui apenas **Posições do usuário** computáveis e evita regras próprias quando a semântica já puder ser inferida do **Matcher**.
+- Uma célula fora do denominador no **Comparativo de deputados** preserva a classificação do par **Deputado** e **Votação nominal** usada pelo **Matcher**, em vez de colapsar todos os casos em um rótulo único.
+- No MVP-5, o **Comparativo de deputados** contextual é aberto a partir da seleção de dois ou três **Deputados** no resultado do **Matcher**.
+- O **Comparativo de deputados** usa **Em atividade** como status público atual do deputado, não **Em exercício**.
+- O **Comparativo de deputados** oferece entrada para o **Perfil do deputado** no cabeçalho de cada deputado comparado.
+- O **Resumo de presença do deputado** exibido no **Comparativo de deputados** usa o mesmo recorte do **Perfil do deputado**, não apenas as proposições comparadas.
 - Um **Perfil do deputado** pertence a exatamente um **Deputado**.
 - O **Perfil do deputado** usa dados cadastrais estáveis do **Deputado** e o **Snapshot público do deputado** para partido, UF representada, foto e outros dados públicos atuais.
 - O **Perfil do deputado** e os cards de resultado do **Matcher** usam a mesma regra de **Nome público do deputado**.
@@ -281,3 +295,4 @@ _Avoid_: Histórico bruto do deputado.
 - **Resultado da proposição** não é um conceito do domínio atual. Resolvido: há **Resultado da votação**, exibido apenas no contexto de uma **Votação** específica; o card do **Feed de proposições** não exibe resultado.
 - **Perfil do político** foi usado como nome inicial do MVP-3. Resolvido: o termo canônico é **Perfil do deputado**, porque o MVP cobre apenas deputados federais com histórico de votação registrado.
 - **Lista de votos no Perfil do deputado** foi considerada para o MVP-3. Resolvido: não entra no MVP-3; votos individuais continuam aparecendo no matcher, no detalhe contextual do matcher e futuramente no comparativo.
+- **Comparativo de políticos** foi usado como nome inicial do MVP-5. Resolvido: o termo canônico é **Comparativo de deputados**, porque o MVP compara apenas deputados federais cobertos pelo produto.
