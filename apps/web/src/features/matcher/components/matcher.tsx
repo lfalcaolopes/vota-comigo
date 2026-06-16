@@ -5,6 +5,7 @@ import type { ProposicaoCard, TemaDisponivel } from "@vota-comigo/shared-types";
 import { useFeedState } from "@/shared/proposicao";
 
 import { useMatcherState } from "../hooks/use-matcher-state";
+import { buildExecucaoRequest } from "../lib/matcher-payload";
 import type { MatcherStep } from "../lib/matcher-state";
 import { DeputadoDetalhe } from "./deputado-detalhe";
 import { StepComparativo } from "./step-comparativo";
@@ -31,6 +32,16 @@ const STEP_LABELS: Record<MatcherStep, string> = {
 export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProps) {
   const matcher = useMatcherState(initialProposicoes);
   const { state } = matcher;
+  const comparativoPosicoes =
+    state.siglaUf === null
+      ? []
+      : buildExecucaoRequest({
+          siglaUf: state.siglaUf,
+          escopo: state.escopo,
+          cidade: state.cidade,
+          posicoes: state.posicoes,
+          apenasEmAtividade: state.apenasEmAtividade,
+        }).posicoes;
 
   const feed = useFeedState(initialProposicoes, initialTotal);
 
@@ -136,10 +147,14 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
       ) : null}
 
       {state.step === "comparativo" ? (
-        <div className="mx-auto w-full max-w-2xl">
+        <div className="mx-auto w-full max-w-6xl">
           <StepComparativo
             deputados={state.selectedComparativoDeputados}
+            detalhes={state.comparativoDetalhes}
             onBack={matcher.backFromComparativo}
+            onRetry={matcher.openComparativo}
+            posicoes={comparativoPosicoes}
+            status={state.comparativoStatus}
           />
         </div>
       ) : null}

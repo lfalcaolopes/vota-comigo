@@ -251,7 +251,11 @@ describe("StepComparativo", () => {
             { ...resumo(), externalIdDeputado: 2, nome: "Deputada B" },
             { ...resumo(), externalIdDeputado: 1, nome: "Deputado A" },
           ],
+          detalhes: [],
           onBack: () => {},
+          onRetry: () => {},
+          posicoes: [],
+          status: "idle",
         }),
       );
 

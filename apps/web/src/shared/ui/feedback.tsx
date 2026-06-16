@@ -120,12 +120,20 @@ export function EmptyState({ action, body, title }: EmptyStateProps) {
   );
 }
 
-export function ErrorState({ onRetry }: { onRetry: () => void }) {
+export function ErrorState({
+  body = "Não foi possível carregar esta proposição. Tente novamente.",
+  onRetry,
+  title = "Erro ao carregar",
+}: {
+  body?: string;
+  onRetry: () => void;
+  title?: string;
+}) {
   return (
     <div className="grid gap-4">
       <InlineMessage
-        body="Não foi possível carregar esta proposição. Tente novamente."
-        title="Erro ao carregar"
+        body={body}
+        title={title}
         tone="danger"
       />
       <Button

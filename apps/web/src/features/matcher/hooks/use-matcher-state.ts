@@ -10,9 +10,11 @@ import { useReducer } from "react";
 
 import { getDeputadoDetalhe, runMatcher } from "@/shared/matcher";
 
+import { loadComparativoDeputadosDetalhes } from "../lib/comparativo-deputados-detalhes";
 import { buildExecucaoRequest } from "../lib/matcher-payload";
 import {
   activeResultado,
+  canOpenComparativo,
   canRunMatcher,
   executionValidation,
   hasMoreDeputados,
@@ -145,8 +147,29 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     dispatch({ type: "cancelComparativoSelection" });
   }
 
-  function openComparativo() {
-    dispatch({ type: "openComparativo" });
+  async function openComparativo() {
+    if (state.siglaUf === null || !canRunMatcher(state)) return;
+    if (!canOpenComparativo(state)) return;
+
+    dispatch({ type: "openComparativoStart" });
+
+    try {
+      const request = buildExecucaoRequest({
+        siglaUf: state.siglaUf,
+        escopo: state.escopo,
+        cidade: state.cidade,
+        posicoes: state.posicoes,
+        apenasEmAtividade: state.apenasEmAtividade,
+      });
+      const detalhes = await loadComparativoDeputadosDetalhes({
+        selectedDeputados: state.selectedComparativoDeputados,
+        request,
+        getDeputadoDetalhe,
+      });
+      dispatch({ type: "openComparativoOk", detalhes });
+    } catch {
+      dispatch({ type: "openComparativoError" });
+    }
   }
 
   function backFromComparativo() {
