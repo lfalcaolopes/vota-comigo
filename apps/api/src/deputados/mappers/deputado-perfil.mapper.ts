@@ -3,6 +3,7 @@ import type { DeputadoPerfil } from '@vota-comigo/shared-types';
 import { isEmAtividade } from '@/exercicio/rules/intervalos-exercicio';
 import type { EventoExercicio } from '@/exercicio/types/exercicio.types';
 
+import { deriveHistoricoPartidario } from '../rules/historico-partidario';
 import { nomePublicoDeputado } from '../rules/nome-publico';
 import { parseRedesSociais } from '../rules/redes-sociais';
 import { deriveResumoPresenca } from '../rules/resumo-presenca';
@@ -42,6 +43,9 @@ export function toDeputadoPerfil(
     })),
   });
 
+  const { historicoPartidarioDisponivel, historicoPartidario } =
+    deriveHistoricoPartidario({ eventos: source.eventos, snapshot });
+
   return {
     externalIdDeputado: source.externalIdDeputado,
     nomePublico,
@@ -59,5 +63,7 @@ export function toDeputadoPerfil(
     externalIdLegislaturaFinal: source.externalIdLegislaturaFinal,
     resumoPresencaDisponivel,
     resumoPresenca,
+    historicoPartidarioDisponivel,
+    historicoPartidario,
   };
 }

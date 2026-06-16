@@ -35,6 +35,15 @@ function makePerfil(
       totalVotacoesEmExercicio: 100,
       ausenciasSemMotivoConhecido: 20,
     },
+    historicoPartidarioDisponivel: true,
+    historicoPartidario: [
+      {
+        siglaPartido: "PT",
+        dataInicio: "2021-02-01",
+        dataFim: null,
+        atual: true,
+      },
+    ],
     ...overrides,
   };
 }
@@ -372,6 +381,61 @@ describe("DeputadoPerfil", () => {
 
         // Assert
         expect(html).not.toContain("votações em exercício");
+      });
+    });
+  });
+
+  describe("historico partidario", () => {
+    describe("when historicoPartidarioDisponivel is true", () => {
+      it("lists periods from most recent to oldest with the current badge", () => {
+        // Arrange
+        const perfil = makePerfil({
+          historicoPartidarioDisponivel: true,
+          historicoPartidario: [
+            {
+              siglaPartido: "PSB",
+              dataInicio: "2023-01-01",
+              dataFim: null,
+              atual: true,
+            },
+            {
+              siglaPartido: "PT",
+              dataInicio: "2021-02-01",
+              dataFim: "2023-01-01",
+              atual: false,
+            },
+          ],
+        });
+
+        // Act
+        const html = render(perfil);
+
+        // Assert
+        expect(html).toContain("Histórico partidário");
+        expect(html).toContain("PSB");
+        expect(html).toContain("Atual");
+        expect(html).toContain("jan/2023 – atual");
+        expect(html).toContain("fev/2021 – jan/2023");
+        expect(html.indexOf("jan/2023 – atual")).toBeLessThan(
+          html.indexOf("fev/2021 – jan/2023"),
+        );
+      });
+    });
+
+    describe("when historicoPartidarioDisponivel is false", () => {
+      it("shows the gap message", () => {
+        // Arrange
+        const perfil = makePerfil({
+          historicoPartidarioDisponivel: false,
+          historicoPartidario: [],
+        });
+
+        // Act
+        const html = render(perfil);
+
+        // Assert
+        expect(html).toContain("Histórico partidário");
+        expect(html).toContain("histórico partidário na base");
       });
     });
   });

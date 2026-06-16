@@ -185,6 +185,26 @@ describe('GET /deputados/:externalIdDeputado', () => {
       expect(typeof body.resumoPresencaDisponivel).toBe('boolean');
       expect(body.resumoPresenca === null || typeof body.resumoPresenca === 'object').toBe(true);
     });
+
+    it('includes historicoPartidario flagged as available', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/220593',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoPerfilSchema.parse(response.body as unknown);
+      expect(body.historicoPartidarioDisponivel).toBe(true);
+      expect(body.historicoPartidario).toEqual([
+        {
+          siglaPartido: 'PT',
+          dataInicio: '2023-01-01',
+          dataFim: null,
+          atual: true,
+        },
+      ]);
+    });
   });
 
   describe('when the deputado has no history events', () => {
@@ -198,6 +218,17 @@ describe('GET /deputados/:externalIdDeputado', () => {
       expect(body.historicoParlamentarDisponivel).toBe(false);
       expect(body.snapshotPublicoDisponivel).toBe(false);
       expect(body.snapshotPublico).toBeNull();
+    });
+
+    it('flags historicoPartidario as unavailable with an empty list', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get('/deputados/74');
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoPerfilSchema.parse(response.body as unknown);
+      expect(body.historicoPartidarioDisponivel).toBe(false);
+      expect(body.historicoPartidario).toEqual([]);
     });
   });
 

@@ -1,4 +1,7 @@
-import type { DeputadoPerfil } from "@vota-comigo/shared-types";
+import type {
+  DeputadoPerfil,
+  DeputadoPeriodoPartidario,
+} from "@vota-comigo/shared-types";
 
 import type { BadgeTone } from "@/shared/ui";
 
@@ -6,6 +9,38 @@ export const CARGO_DEPUTADO = "Deputado federal";
 
 export const RECORTE_BASE_PRESENCA =
   "votações nominais de plenário presentes na base";
+
+export const HISTORICO_PARTIDARIO_INDISPONIVEL =
+  "Não há histórico partidário na base para este deputado.";
+
+const mesAnoFormatter = new Intl.DateTimeFormat("pt-BR", {
+  month: "short",
+  year: "numeric",
+});
+
+function formatMesAno(iso: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+  if (!match) return iso;
+
+  const [, year, month, day] = match;
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
+  const parts = mesAnoFormatter.formatToParts(date);
+  const value = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((part) => part.type === type)?.value.replace(".", "") ?? "";
+
+  return `${value("month")}/${value("year")}`;
+}
+
+export function toPeriodoPartidarioLabel(
+  periodo: DeputadoPeriodoPartidario,
+): string {
+  const inicio = formatMesAno(periodo.dataInicio);
+
+  if (periodo.atual) return `${inicio} – atual`;
+  if (periodo.dataFim !== null) return `${inicio} – ${formatMesAno(periodo.dataFim)}`;
+
+  return inicio;
+}
 
 export function nomePublicoLabel(perfil: DeputadoPerfil): string {
   return perfil.nomePublico ?? CARGO_DEPUTADO;

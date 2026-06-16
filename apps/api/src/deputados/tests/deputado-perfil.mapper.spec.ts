@@ -311,4 +311,67 @@ describe('toDeputadoPerfil', () => {
       });
     });
   });
+
+  describe('historico partidario', () => {
+    describe('when the deputado changed party over time', () => {
+      it('builds periods from most recent to oldest and flags the current party', () => {
+        // Arrange
+        const row = source({
+          eventos: [
+            evento({
+              dataHora: '2019-02-01T00:00:00+00:00',
+              siglaPartido: 'MDB',
+            }),
+            evento({
+              dataHora: '2021-02-01T00:00:00+00:00',
+              siglaPartido: 'PT',
+            }),
+          ],
+        });
+
+        // Act
+        const perfil = toDeputadoPerfil(row, []);
+
+        // Assert
+        expect(perfil.historicoPartidarioDisponivel).toBe(true);
+        expect(perfil.historicoPartidario).toEqual([
+          {
+            siglaPartido: 'PT',
+            dataInicio: '2021-02-01',
+            dataFim: null,
+            atual: true,
+          },
+          {
+            siglaPartido: 'MDB',
+            dataInicio: '2019-02-01',
+            dataFim: '2021-02-01',
+            atual: false,
+          },
+        ]);
+        expect(deputadoPerfilSchema.safeParse(perfil).success).toBe(true);
+      });
+    });
+
+    describe('when no event has a resolved partido', () => {
+      it('flags the historico as unavailable with an empty list', () => {
+        // Arrange
+        const row = source({
+          eventos: [
+            evento({
+              dataHora: '2021-02-01T00:00:00+00:00',
+              siglaPartido: null,
+            }),
+          ],
+        });
+
+        // Act
+        const perfil = toDeputadoPerfil(row, []);
+
+        // Assert
+        expect(perfil.historicoPartidarioDisponivel).toBe(false);
+        expect(perfil.historicoPartidario).toEqual([]);
+        expect(deputadoPerfilSchema.safeParse(perfil).success).toBe(true);
+      });
+    });
+  });
 });

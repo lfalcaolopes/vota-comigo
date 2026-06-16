@@ -7,6 +7,7 @@ import {
   nomePublicoLabel,
   toAtividadeLabel,
   toAtividadeTone,
+  toPeriodoPartidarioLabel,
   toPresencaAmostrasLabel,
 } from "../presentation";
 
@@ -33,6 +34,8 @@ function makePerfil(overrides: Partial<DeputadoPerfil> = {}): DeputadoPerfil {
     externalIdLegislaturaFinal: null,
     resumoPresencaDisponivel: false,
     resumoPresenca: null,
+    historicoPartidarioDisponivel: false,
+    historicoPartidario: [],
     ...overrides,
   };
 }
@@ -171,6 +174,50 @@ describe("formatPercentual", () => {
     it("rounds up", () => {
       // Act / Assert
       expect(formatPercentual(49.6)).toBe("50%");
+    });
+  });
+});
+
+describe("toPeriodoPartidarioLabel", () => {
+  describe("when the period is the current one", () => {
+    it("renders the start month and 'atual'", () => {
+      // Act / Assert
+      expect(
+        toPeriodoPartidarioLabel({
+          siglaPartido: "PT",
+          dataInicio: "2021-02-01",
+          dataFim: null,
+          atual: true,
+        }),
+      ).toBe("fev/2021 – atual");
+    });
+  });
+
+  describe("when the period is closed", () => {
+    it("renders the start and end months as a range", () => {
+      // Act / Assert
+      expect(
+        toPeriodoPartidarioLabel({
+          siglaPartido: "MDB",
+          dataInicio: "2019-02-01",
+          dataFim: "2021-02-01",
+          atual: false,
+        }),
+      ).toBe("fev/2019 – fev/2021");
+    });
+  });
+
+  describe("when the period is the most recent but not the current party", () => {
+    it("renders only the start month", () => {
+      // Act / Assert
+      expect(
+        toPeriodoPartidarioLabel({
+          siglaPartido: "PSB",
+          dataInicio: "2023-01-01",
+          dataFim: null,
+          atual: false,
+        }),
+      ).toBe("jan/2023");
     });
   });
 });

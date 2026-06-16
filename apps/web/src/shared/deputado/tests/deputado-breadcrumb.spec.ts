@@ -25,6 +25,8 @@ function makePerfil(
     externalIdLegislaturaFinal: null,
     resumoPresencaDisponivel: false,
     resumoPresenca: null,
+    historicoPartidarioDisponivel: false,
+    historicoPartidario: [],
     ...overrides,
   };
 }

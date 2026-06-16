@@ -5,11 +5,13 @@ import { Badge, InlineMessage, SourceLink } from "@/shared/ui";
 import { DeputadoAvatar } from "./deputado-avatar";
 import {
   CARGO_DEPUTADO,
+  HISTORICO_PARTIDARIO_INDISPONIVEL,
   RECORTE_BASE_PRESENCA,
   formatPercentual,
   nomePublicoLabel,
   toAtividadeLabel,
   toAtividadeTone,
+  toPeriodoPartidarioLabel,
   toPresencaAmostrasLabel,
 } from "./presentation";
 
@@ -151,6 +153,33 @@ export function DeputadoPerfil({ perfil }: { perfil: DeputadoPerfilData }) {
           <InlineMessage
             title="Presença indisponível"
             body="Não há votações nominais de plenário em exercício na base para este deputado."
+          />
+        )}
+      </section>
+
+      <section className="grid gap-3 border-t border-border pt-6">
+        <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
+          Histórico partidário
+        </h2>
+        {perfil.historicoPartidarioDisponivel ? (
+          <ul className="grid gap-2">
+            {perfil.historicoPartidario.map((periodo) => (
+              <li
+                key={`${periodo.siglaPartido}-${periodo.dataInicio}`}
+                className="flex flex-wrap items-center gap-2"
+              >
+                <span className="text-sm text-ink">{periodo.siglaPartido}</span>
+                <span className="text-sm text-muted">
+                  {toPeriodoPartidarioLabel(periodo)}
+                </span>
+                {periodo.atual ? <Badge tone="success">Atual</Badge> : null}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <InlineMessage
+            title="Histórico partidário indisponível"
+            body={HISTORICO_PARTIDARIO_INDISPONIVEL}
           />
         )}
       </section>

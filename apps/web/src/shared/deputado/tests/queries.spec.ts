@@ -21,6 +21,8 @@ const response: DeputadoPerfil = {
   externalIdLegislaturaFinal: null,
   resumoPresencaDisponivel: false,
   resumoPresenca: null,
+  historicoPartidarioDisponivel: false,
+  historicoPartidario: [],
 };
 
 afterEach(() => {
