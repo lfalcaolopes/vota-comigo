@@ -2,6 +2,7 @@
 
 import type { MatcherDeputadoDetalhe } from "@vota-comigo/shared-types";
 
+import { DeputadoPerfilLink } from "@/shared/deputado";
 import { Button, ErrorState, SkeletonRows } from "@/shared/ui";
 
 import type { MatcherStatus } from "../lib/matcher-state";
@@ -60,6 +61,7 @@ export function DeputadoDetalhe({
         <Button onClick={onBack} variant="secondary">
           Voltar ao resultado
         </Button>
+        <DeputadoPerfilLink externalIdDeputado={deputado.externalIdDeputado} />
       </div>
 
       <div className="flex items-center gap-3">

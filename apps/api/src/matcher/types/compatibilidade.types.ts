@@ -29,6 +29,8 @@ export type DeputadoCompatibilidadeInput = {
   deputadoId: string;
   externalIdDeputado: number;
   nome: string | null;
+  nomeEleitoral: string | null;
+  nomeCivil: string | null;
   partido: string | null;
   siglaUf: SiglaUf;
   urlFoto: string | null;
@@ -38,6 +40,8 @@ export type DeputadoCompatibilidadeInput = {
 export type DeputadoResumoComputado = {
   externalIdDeputado: number;
   nome: string | null;
+  nomeEleitoral: string | null;
+  nomeCivil: string | null;
   partido: string | null;
   siglaUf: SiglaUf;
   urlFoto: string | null;
@@ -66,6 +70,8 @@ export type VotoDetalheComputado = {
 export type DeputadoDetalheComputado = {
   externalIdDeputado: number;
   nome: string | null;
+  nomeEleitoral: string | null;
+  nomeCivil: string | null;
   partido: string | null;
   siglaUf: SiglaUf;
   urlFoto: string | null;

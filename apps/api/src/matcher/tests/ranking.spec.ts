@@ -7,6 +7,8 @@ function deputado(
   return {
     externalIdDeputado: 100,
     nome: 'Fulano',
+    nomeEleitoral: null,
+    nomeCivil: null,
     partido: 'PT',
     siglaUf: 'PE',
     urlFoto: null,

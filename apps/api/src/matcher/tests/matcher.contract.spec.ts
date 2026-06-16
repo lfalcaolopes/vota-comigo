@@ -39,6 +39,8 @@ function deputadoInput(
     deputadoId: 'dep-1',
     externalIdDeputado: 100,
     nome: 'Fulano',
+    nomeEleitoral: null,
+    nomeCivil: null,
     partido: 'PT',
     siglaUf: 'PE',
     urlFoto: null,

@@ -87,6 +87,8 @@ export function computeCompatibilidadeDetalhe(
   return {
     externalIdDeputado: input.deputado.externalIdDeputado,
     nome: input.deputado.nome,
+    nomeEleitoral: input.deputado.nomeEleitoral,
+    nomeCivil: input.deputado.nomeCivil,
     partido: input.deputado.partido,
     siglaUf: input.deputado.siglaUf,
     urlFoto: input.deputado.urlFoto,

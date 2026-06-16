@@ -3,8 +3,9 @@ import type { DeputadoPerfil } from '@vota-comigo/shared-types';
 import { isEmAtividade } from '@/exercicio/rules/intervalos-exercicio';
 import type { EventoExercicio } from '@/exercicio/types/exercicio.types';
 
+import { nomePublicoDeputado } from '@/shared/deputado/nome-publico';
+
 import { deriveHistoricoPartidario } from '../rules/historico-partidario';
-import { nomePublicoDeputado } from '../rules/nome-publico';
 import { parseRedesSociais } from '../rules/redes-sociais';
 import { deriveResumoPresenca } from '../rules/resumo-presenca';
 import { deriveSnapshotPublico } from '../rules/snapshot-publico';

@@ -69,6 +69,8 @@ function avaliarDeputado(
   return {
     externalIdDeputado: deputado.externalIdDeputado,
     nome: deputado.nome,
+    nomeEleitoral: deputado.nomeEleitoral,
+    nomeCivil: deputado.nomeCivil,
     partido: deputado.partido,
     siglaUf: deputado.siglaUf,
     urlFoto: deputado.urlFoto,

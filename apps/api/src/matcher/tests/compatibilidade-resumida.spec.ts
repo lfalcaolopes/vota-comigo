@@ -92,6 +92,8 @@ function deputado(
     deputadoId: 'dep-1',
     externalIdDeputado: 100,
     nome: 'Fulano de Tal',
+    nomeEleitoral: null,
+    nomeCivil: null,
     partido: 'PT',
     siglaUf: 'PE',
     urlFoto: 'https://foto/dep-1.jpg',
@@ -359,6 +361,8 @@ describe('computeCompatibilidadeResumida', () => {
       expect(result.deputados[0]).toEqual({
         externalIdDeputado: 204554,
         nome: 'Deputada Exemplo',
+        nomeEleitoral: null,
+        nomeCivil: null,
         partido: 'PSOL',
         siglaUf: 'PE',
         urlFoto: 'https://foto/exemplo.jpg',

@@ -5,6 +5,8 @@ import type {
   MatcherResultado,
 } from '@vota-comigo/shared-types';
 
+import { nomePublicoDeputado } from '@/shared/deputado/nome-publico';
+
 import type {
   CompatibilidadeResumidaResult,
   DeputadoResumoComputado,
@@ -21,7 +23,11 @@ function toDeputadoResumo(
 ): MatcherDeputadoResumo {
   return {
     externalIdDeputado: deputado.externalIdDeputado,
-    nome: deputado.nome,
+    nome: nomePublicoDeputado({
+      nomeEleitoral: deputado.nomeEleitoral,
+      nome: deputado.nome,
+      nomeCivil: deputado.nomeCivil,
+    }),
     partido: deputado.partido,
     siglaUf: deputado.siglaUf,
     urlFoto: deputado.urlFoto,

@@ -1,4 +1,4 @@
-import { nomePublicoDeputado } from '../rules/nome-publico';
+import { nomePublicoDeputado } from '../nome-publico';
 
 describe('nomePublicoDeputado', () => {
   describe('when nomeEleitoral is present', () => {

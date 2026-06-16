@@ -3,6 +3,8 @@ import type {
   MatcherExecucaoResumo,
 } from '@vota-comigo/shared-types';
 
+import { nomePublicoDeputado } from '@/shared/deputado/nome-publico';
+
 import type { DeputadoDetalheComputado } from '../types/compatibilidade.types';
 
 export function toMatcherDeputadoDetalhe(
@@ -13,7 +15,11 @@ export function toMatcherDeputadoDetalhe(
     ...resumo,
     deputado: {
       externalIdDeputado: detalhe.externalIdDeputado,
-      nome: detalhe.nome,
+      nome: nomePublicoDeputado({
+        nomeEleitoral: detalhe.nomeEleitoral,
+        nome: detalhe.nome,
+        nomeCivil: detalhe.nomeCivil,
+      }),
       partido: detalhe.partido,
       siglaUf: detalhe.siglaUf,
       urlFoto: detalhe.urlFoto,

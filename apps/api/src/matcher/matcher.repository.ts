@@ -167,6 +167,7 @@ export function createMatcherRepository(
           deputadoId: deputadoHistorico.deputadoId,
           siglaUf: deputadoHistorico.siglaUf,
           urlFoto: deputadoHistorico.urlFoto,
+          nomeEleitoral: deputadoHistorico.nomeEleitoral,
           partidoId: deputadoHistorico.partidoId,
         })
         .from(deputadoHistorico)
@@ -178,6 +179,7 @@ export function createMatcherRepository(
           deputadoId: maisRecente.deputadoId,
           siglaUf: maisRecente.siglaUf,
           urlFoto: maisRecente.urlFoto,
+          nomeEleitoral: maisRecente.nomeEleitoral,
           partido: partido.sigla,
         })
         .from(maisRecente)
@@ -198,6 +200,7 @@ export function createMatcherRepository(
           deputadoId: deputadoHistorico.deputadoId,
           externalIdDeputado: deputado.externalIdDeputado,
           nome: deputado.nome,
+          nomeCivil: deputado.nomeCivil,
           dataHora: deputadoHistorico.dataHora,
           situacao: deputadoHistorico.situacao,
           descricaoStatus: deputadoHistorico.descricaoStatus,
@@ -213,6 +216,7 @@ export function createMatcherRepository(
         {
           externalIdDeputado: number;
           nome: string | null;
+          nomeCivil: string | null;
           eventos: {
             dataHora: string;
             situacao: string | null;
@@ -234,6 +238,7 @@ export function createMatcherRepository(
           historicoByDeputado.set(row.deputadoId, {
             externalIdDeputado: row.externalIdDeputado,
             nome: row.nome,
+            nomeCivil: row.nomeCivil,
             eventos: [evento],
           });
         } else {
@@ -251,6 +256,8 @@ export function createMatcherRepository(
             deputadoId: row.deputadoId,
             externalIdDeputado: found.externalIdDeputado,
             nome: found.nome,
+            nomeEleitoral: row.nomeEleitoral,
+            nomeCivil: found.nomeCivil,
             partido: row.partido,
             siglaUf: row.siglaUf as SiglaUf,
             urlFoto: row.urlFoto,
@@ -270,6 +277,8 @@ export function createMatcherRepository(
           deputadoId: deputado.id,
           externalIdDeputado: deputado.externalIdDeputado,
           nome: deputado.nome,
+          nomeCivil: deputado.nomeCivil,
+          nomeEleitoral: deputadoHistorico.nomeEleitoral,
           siglaUf: deputadoHistorico.siglaUf,
           urlFoto: deputadoHistorico.urlFoto,
           partido: partido.sigla,
@@ -306,6 +315,8 @@ export function createMatcherRepository(
         deputadoId: maisRecente.deputadoId,
         externalIdDeputado: maisRecente.externalIdDeputado,
         nome: maisRecente.nome,
+        nomeEleitoral: maisRecente.nomeEleitoral,
+        nomeCivil: maisRecente.nomeCivil,
         partido: maisRecente.partido,
         siglaUf: maisRecente.siglaUf as SiglaUf,
         urlFoto: maisRecente.urlFoto,

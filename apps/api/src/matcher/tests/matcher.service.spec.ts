@@ -130,6 +130,8 @@ describe('MatcherService.execute', () => {
           deputadoId: 'dep-1',
           externalIdDeputado: 100,
           nome: 'Fulano',
+          nomeEleitoral: null,
+          nomeCivil: null,
           partido: 'PT',
           siglaUf: 'PE',
           urlFoto: 'https://foto/dep-1.jpg',
@@ -226,6 +228,8 @@ describe('MatcherService.execute', () => {
         deputadoId: 'dep-pe',
         externalIdDeputado: 200,
         nome: 'Pernambucano',
+        nomeEleitoral: null,
+        nomeCivil: null,
         partido: 'PT',
         siglaUf: 'PE',
         urlFoto: null,
@@ -235,6 +239,8 @@ describe('MatcherService.execute', () => {
         deputadoId: 'dep-sp',
         externalIdDeputado: 100,
         nome: 'Paulista',
+        nomeEleitoral: null,
+        nomeCivil: null,
         partido: 'PT',
         siglaUf: 'SP',
         urlFoto: null,
@@ -362,6 +368,8 @@ describe('MatcherService.execute', () => {
       deputadoId: 'dep-ativo',
       externalIdDeputado: 1,
       nome: 'Ativo',
+      nomeEleitoral: null,
+      nomeCivil: null,
       partido: 'PT',
       siglaUf: 'PE',
       urlFoto: null,
@@ -371,6 +379,8 @@ describe('MatcherService.execute', () => {
       deputadoId: 'dep-inativo',
       externalIdDeputado: 2,
       nome: 'Inativo',
+      nomeEleitoral: null,
+      nomeCivil: null,
       partido: 'PT',
       siglaUf: 'PE',
       urlFoto: null,
@@ -505,6 +515,8 @@ describe('MatcherService.execute', () => {
         deputadoId,
         externalIdDeputado,
         nome: `Dep ${externalIdDeputado}`,
+        nomeEleitoral: null,
+        nomeCivil: null,
         partido: 'PT',
         siglaUf: 'PE',
         urlFoto: null,
@@ -642,6 +654,64 @@ describe('MatcherService.execute', () => {
 
       // Assert: dep-a has 3 comparable votes over 3 computable positions
       expect(resultado.deputados[0]?.alertas).toEqual([]);
+    });
+  });
+});
+
+describe('MatcherService and the public name of the deputado', () => {
+  const votacoes: VotacaoReferenciaVotos[] = [
+    votacaoReferenciaVotos(1, new Map([['dep-1', 'sim']])),
+  ];
+
+  // nomeEleitoral do snapshot mais recente é o Nome público do deputado
+  const deputado: DeputadoCompatibilidadeInput = {
+    deputadoId: 'dep-1',
+    externalIdDeputado: 100,
+    nome: 'Jose Nome Cadastro',
+    nomeEleitoral: 'Ze do Povo',
+    nomeCivil: 'Jose da Silva Souza',
+    partido: 'PT',
+    siglaUf: 'PE',
+    urlFoto: 'https://foto/recente.jpg',
+    eventos: [posse],
+  };
+
+  function repository(): MatcherRepository {
+    return {
+      ...fakeRepository({
+        computaveis: new Set([1, 2, 3]),
+        votacoes,
+        deputados: [deputado],
+      }),
+      loadDeputadoByExternalIdWithHistorico: async () => deputado,
+    };
+  }
+
+  describe('when returning the ranked result', () => {
+    it('derives the result nome from the public name', async () => {
+      // Act
+      const resultado = await new MatcherService(repository()).execute(
+        request(),
+        pagina,
+      );
+
+      // Assert
+      expect(resultado.deputados[0]?.nome).toBe('Ze do Povo');
+      expect(resultado.deputados[0]?.urlFoto).toBe('https://foto/recente.jpg');
+    });
+  });
+
+  describe('when returning the detail of a deputado', () => {
+    it('derives the detail nome from the public name', async () => {
+      // Act
+      const detalhe = await new MatcherService(repository()).detail(
+        100,
+        request(),
+      );
+
+      // Assert
+      expect(detalhe.deputado.nome).toBe('Ze do Povo');
+      expect(detalhe.deputado.urlFoto).toBe('https://foto/recente.jpg');
     });
   });
 });
