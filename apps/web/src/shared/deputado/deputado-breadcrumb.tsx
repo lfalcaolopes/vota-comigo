@@ -16,7 +16,9 @@ export function DeputadoBreadcrumb({ perfil }: { perfil: DeputadoPerfilData }) {
         Início
       </Link>
       <span aria-hidden="true">›</span>
-      <span className="text-muted">{nomePublicoLabel(perfil)}</span>
+      <span className="min-w-0 [overflow-wrap:anywhere] text-muted">
+        {nomePublicoLabel(perfil)}
+      </span>
     </nav>
   );
 }

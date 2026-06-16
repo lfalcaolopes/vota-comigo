@@ -9,10 +9,13 @@ import {
   RECORTE_BASE_PRESENCA,
   formatPercentual,
   nomePublicoLabel,
+  toAtividadeAriaLabel,
   toAtividadeLabel,
   toAtividadeTone,
   toPeriodoPartidarioLabel,
   toPresencaAmostrasLabel,
+  toPresencaAriaLabel,
+  toRedeSocialLinkLabel,
 } from "./presentation";
 
 export function DeputadoPerfil({ perfil }: { perfil: DeputadoPerfilData }) {
@@ -44,7 +47,12 @@ export function DeputadoPerfil({ perfil }: { perfil: DeputadoPerfilData }) {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <Badge tone="neutral">{CARGO_DEPUTADO}</Badge>
-              <Badge tone={atividadeTone}>{atividadeLabel}</Badge>
+              <Badge
+                aria-label={toAtividadeAriaLabel(perfil.emAtividade)}
+                tone={atividadeTone}
+              >
+                {atividadeLabel}
+              </Badge>
             </div>
             <h1 className="mt-1 text-xl leading-snug text-pretty text-ink md:text-2xl">
               {nome}
@@ -72,7 +80,12 @@ export function DeputadoPerfil({ perfil }: { perfil: DeputadoPerfilData }) {
           <ul className="grid gap-1">
             {perfil.redesSociais.map((url) => (
               <li key={url}>
-                <SourceLink href={url} rel="noreferrer" target="_blank">
+                <SourceLink
+                  aria-label={toRedeSocialLinkLabel(url)}
+                  href={url}
+                  rel="noreferrer"
+                  target="_blank"
+                >
                   {url}
                 </SourceLink>
               </li>
@@ -129,7 +142,14 @@ export function DeputadoPerfil({ perfil }: { perfil: DeputadoPerfilData }) {
         </h2>
         {perfil.resumoPresencaDisponivel && perfil.resumoPresenca !== null ? (
           <div className="grid gap-1">
-            <p className="text-2xl font-[680] leading-tight tabular-nums text-ink">
+            <p
+              aria-label={toPresencaAriaLabel(
+                perfil.resumoPresenca.percentualPresenca,
+                perfil.resumoPresenca.presencas,
+                perfil.resumoPresenca.totalVotacoesEmExercicio,
+              )}
+              className="text-2xl font-[680] leading-tight tabular-nums text-ink md:text-3xl"
+            >
               {formatPercentual(perfil.resumoPresenca.percentualPresenca)}
             </p>
             <p className="text-sm text-muted">

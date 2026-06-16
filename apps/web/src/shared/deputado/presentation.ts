@@ -54,6 +54,10 @@ export function toAtividadeTone(emAtividade: boolean): BadgeTone {
   return emAtividade ? "success" : "neutral";
 }
 
+export function toAtividadeAriaLabel(emAtividade: boolean): string {
+  return `Situação do mandato: ${toAtividadeLabel(emAtividade)}`;
+}
+
 export function formatPercentual(value: number): string {
   return `${Math.round(value)}%`;
 }
@@ -63,6 +67,25 @@ export function toPresencaAmostrasLabel(
   total: number,
 ): string {
   return `${presencas} de ${total} votações em exercício`;
+}
+
+export function toPresencaAriaLabel(
+  percentual: number,
+  presencas: number,
+  total: number,
+): string {
+  return `Presença: ${formatPercentual(percentual)} — ${toPresencaAmostrasLabel(presencas, total)}`;
+}
+
+export function toRedeSocialLinkLabel(url: string): string {
+  let host = url;
+  try {
+    host = new URL(url).host;
+  } catch {
+    host = url;
+  }
+
+  return `Abrir ${host} em nova aba`;
 }
 
 const PARTICLES = new Set(["de", "da", "do", "dos", "das", "e"]);

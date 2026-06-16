@@ -145,12 +145,12 @@ export function SourceLink({ children, className, ...props }: SourceLinkProps) {
   return (
     <a
       className={joinClassNames(
-        "inline-flex items-center gap-2 text-sm font-[650] text-info underline decoration-info/35 underline-offset-[0.18em]",
+        "inline-flex min-w-0 items-center gap-2 text-sm font-[650] text-info underline decoration-info/35 underline-offset-[0.18em]",
         className,
       )}
       {...props}
     >
-      <span>{children}</span>
+      <span className="[overflow-wrap:anywhere]">{children}</span>
       <svg
         aria-hidden="true"
         fill="none"

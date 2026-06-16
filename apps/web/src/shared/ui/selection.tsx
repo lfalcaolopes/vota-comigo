@@ -42,11 +42,18 @@ type BadgeProps = {
   children: ReactNode;
   className?: string;
   tone?: BadgeTone;
+  "aria-label"?: string;
 };
 
-export function Badge({ children, className, tone = "neutral" }: BadgeProps) {
+export function Badge({
+  children,
+  className,
+  tone = "neutral",
+  "aria-label": ariaLabel,
+}: BadgeProps) {
   return (
     <span
+      aria-label={ariaLabel}
       className={joinClassNames(
         "inline-flex max-w-full min-h-7 items-center gap-1 rounded-full border border-transparent px-2.5 py-1 text-xs font-[680] leading-[1.2] [overflow-wrap:anywhere]",
         badgeTones[tone],

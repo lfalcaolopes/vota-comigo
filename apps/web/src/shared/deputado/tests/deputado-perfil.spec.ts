@@ -90,7 +90,7 @@ describe("DeputadoPerfil", () => {
       const html = render(perfil);
 
       // Assert
-      expect(html.match(/Maria da Silva/g)).toHaveLength(1);
+      expect(html).not.toContain("Nome civil");
     });
   });
 
@@ -261,6 +261,76 @@ describe("DeputadoPerfil", () => {
 
       // Assert
       expect(html).not.toContain("Legislatura inicial");
+    });
+  });
+
+  describe("acessibilidade", () => {
+    it("labels the atividade badge with its meaning beyond color", () => {
+      // Arrange
+      const perfil = makePerfil({ emAtividade: true });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain(
+        'aria-label="Situação do mandato: Em atividade"',
+      );
+    });
+
+    it("gives the presenca percentual a self-contained accessible label", () => {
+      // Arrange
+      const perfil = makePerfil({
+        resumoPresencaDisponivel: true,
+        resumoPresenca: {
+          percentualPresenca: 80,
+          presencas: 80,
+          totalVotacoesEmExercicio: 100,
+          ausenciasSemMotivoConhecido: 20,
+        },
+      });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain(
+        'aria-label="Presença: 80% — 80 de 100 votações em exercício"',
+      );
+    });
+
+    it("describes each rede social link with its host and that it opens a new tab", () => {
+      // Arrange
+      const perfil = makePerfil({
+        redesSociais: ["https://twitter.com/maria"],
+      });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain('aria-label="Abrir twitter.com em nova aba"');
+    });
+  });
+
+  describe("lacuna de snapshot publico", () => {
+    it("relies on the parliamentary history guard message when the snapshot is unavailable", () => {
+      // Arrange
+      const perfil = makePerfil({
+        historicoParlamentarDisponivel: false,
+        snapshotPublicoDisponivel: false,
+        snapshotPublico: null,
+        resumoPresencaDisponivel: false,
+        resumoPresenca: null,
+        historicoPartidarioDisponivel: false,
+        historicoPartidario: [],
+      });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Sem histórico parlamentar");
     });
   });
 

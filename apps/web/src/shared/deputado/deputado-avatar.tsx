@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { getInitials } from "./presentation";
+import { CARGO_DEPUTADO, getInitials } from "./presentation";
 
 type DeputadoAvatarSize = "sm" | "lg";
 
@@ -12,7 +12,7 @@ type DeputadoAvatarProps = {
 
 const SIZE_CONFIG = {
   sm: { px: 40, className: "size-10" },
-  lg: { px: 64, className: "size-16" },
+  lg: { px: 64, className: "size-14 md:size-16" },
 } as const satisfies Record<DeputadoAvatarSize, { px: number; className: string }>;
 
 export function DeputadoAvatar({
@@ -21,11 +21,12 @@ export function DeputadoAvatar({
   size = "sm",
 }: DeputadoAvatarProps) {
   const { px, className } = SIZE_CONFIG[size];
+  const identidade = nome ?? CARGO_DEPUTADO;
 
   if (urlFoto) {
     return (
       <Image
-        alt=""
+        alt={nome ? `Foto de ${nome}` : "Foto do deputado"}
         className={`${className} rounded-full border border-border object-cover`}
         height={px}
         src={urlFoto}
@@ -36,7 +37,8 @@ export function DeputadoAvatar({
 
   return (
     <span
-      aria-hidden="true"
+      aria-label={identidade}
+      role="img"
       className={`inline-flex ${className} shrink-0 items-center justify-center rounded-full border border-border bg-surface-muted text-sm font-[680] text-muted`}
     >
       {getInitials(nome)}

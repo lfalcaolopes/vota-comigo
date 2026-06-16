@@ -21,26 +21,72 @@ export const deputadoPeriodoPartidarioSchema = z.object({
   atual: z.boolean(),
 });
 
-export const deputadoPerfilSchema = z.object({
-  externalIdDeputado: z.number(),
-  nomePublico: z.string().nullable(),
-  nomeCivil: z.string().nullable(),
-  fonteOficial: z.string(),
-  historicoParlamentarDisponivel: z.boolean(),
-  snapshotPublicoDisponivel: z.boolean(),
-  snapshotPublico: deputadoSnapshotPublicoSchema.nullable(),
-  emAtividade: z.boolean(),
-  redesSociais: z.array(z.string()),
-  dataNascimento: z.string().nullable(),
-  municipioNascimento: z.string().nullable(),
-  ufNascimento: z.string().nullable(),
-  externalIdLegislaturaInicial: z.number().nullable(),
-  externalIdLegislaturaFinal: z.number().nullable(),
-  resumoPresencaDisponivel: z.boolean(),
-  resumoPresenca: deputadoResumoPresencaSchema.nullable(),
-  historicoPartidarioDisponivel: z.boolean(),
-  historicoPartidario: z.array(deputadoPeriodoPartidarioSchema),
-});
+export const deputadoPerfilSchema = z
+  .object({
+    externalIdDeputado: z.number(),
+    nomePublico: z.string().nullable(),
+    nomeCivil: z.string().nullable(),
+    fonteOficial: z.string(),
+    historicoParlamentarDisponivel: z.boolean(),
+    snapshotPublicoDisponivel: z.boolean(),
+    snapshotPublico: deputadoSnapshotPublicoSchema.nullable(),
+    emAtividade: z.boolean(),
+    redesSociais: z.array(z.string()),
+    dataNascimento: z.string().nullable(),
+    municipioNascimento: z.string().nullable(),
+    ufNascimento: z.string().nullable(),
+    externalIdLegislaturaInicial: z.number().nullable(),
+    externalIdLegislaturaFinal: z.number().nullable(),
+    resumoPresencaDisponivel: z.boolean(),
+    resumoPresenca: deputadoResumoPresencaSchema.nullable(),
+    historicoPartidarioDisponivel: z.boolean(),
+    historicoPartidario: z.array(deputadoPeriodoPartidarioSchema),
+  })
+  .superRefine((perfil, ctx) => {
+    if (perfil.snapshotPublicoDisponivel === (perfil.snapshotPublico === null)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['snapshotPublico'],
+        message:
+          'snapshotPublicoDisponivel deve coincidir com a presença de snapshotPublico',
+      });
+    }
+
+    if (perfil.resumoPresencaDisponivel === (perfil.resumoPresenca === null)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['resumoPresenca'],
+        message:
+          'resumoPresencaDisponivel deve coincidir com a presença de resumoPresenca',
+      });
+    }
+
+    if (
+      perfil.historicoPartidarioDisponivel ===
+      (perfil.historicoPartidario.length === 0)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['historicoPartidario'],
+        message:
+          'historicoPartidarioDisponivel deve coincidir com a presença de períodos partidários',
+      });
+    }
+
+    if (
+      !perfil.historicoParlamentarDisponivel &&
+      (perfil.snapshotPublicoDisponivel ||
+        perfil.resumoPresencaDisponivel ||
+        perfil.historicoPartidarioDisponivel)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['historicoParlamentarDisponivel'],
+        message:
+          'sem histórico parlamentar, snapshot, presença e histórico partidário devem estar indisponíveis',
+      });
+    }
+  });
 
 export type DeputadoSnapshotPublico = z.infer<typeof deputadoSnapshotPublicoSchema>;
 export type DeputadoResumoPresenca = z.infer<typeof deputadoResumoPresencaSchema>;

@@ -21,6 +21,28 @@ describe("DeputadoAvatar", () => {
       expect(html).toContain("example.com");
       expect(html).toContain("<img");
     });
+
+    it("gives the image a descriptive alt derived from the nome", () => {
+      // Arrange / Act
+      const html = render({
+        nome: "Maria da Silva",
+        urlFoto: "https://example.com/foto.jpg",
+      });
+
+      // Assert
+      expect(html).toContain('alt="Foto de Maria da Silva"');
+    });
+
+    it("falls back to a generic alt when nome is null", () => {
+      // Arrange / Act
+      const html = render({
+        nome: null,
+        urlFoto: "https://example.com/foto.jpg",
+      });
+
+      // Assert
+      expect(html).toContain('alt="Foto do deputado"');
+    });
   });
 
   describe("when urlFoto is null", () => {
@@ -40,15 +62,34 @@ describe("DeputadoAvatar", () => {
       // Assert
       expect(html).toContain("?");
     });
+
+    it("exposes the identity to assistive tech instead of hiding the initials", () => {
+      // Arrange / Act
+      const html = render({ nome: "Maria da Silva", urlFoto: null });
+
+      // Assert
+      expect(html).toContain('role="img"');
+      expect(html).toContain('aria-label="Maria da Silva"');
+      expect(html).not.toContain('aria-hidden="true"');
+    });
+
+    it("labels the initials fallback generically when nome is null", () => {
+      // Arrange / Act
+      const html = render({ nome: null, urlFoto: null });
+
+      // Assert
+      expect(html).toContain('aria-label="Deputado federal"');
+    });
   });
 
   describe("when size is lg", () => {
-    it("renders with the lg size class", () => {
+    it("scales down on small viewports and up on larger ones", () => {
       // Arrange / Act
       const html = render({ nome: "Maria da Silva", urlFoto: null, size: "lg" });
 
       // Assert
-      expect(html).toContain("size-16");
+      expect(html).toContain("size-14");
+      expect(html).toContain("md:size-16");
     });
   });
 

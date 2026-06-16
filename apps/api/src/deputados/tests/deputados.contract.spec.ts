@@ -47,24 +47,35 @@ function source(
   };
 }
 
+type VotacoesById = ReadonlyMap<
+  string,
+  Awaited<ReturnType<DeputadosRepository['loadVotacoesPlenarioForDeputado']>>
+>;
+
 function fakeRepository(
   byExternalId: ReadonlyMap<number, DeputadoPerfilSource>,
+  votacoesById: VotacoesById = new Map(),
 ): DeputadosRepository {
   return {
     loadDeputadoPerfil: async (externalIdDeputado) =>
       byExternalId.get(externalIdDeputado) ?? null,
-    loadVotacoesPlenarioForDeputado: async () => [],
+    loadVotacoesPlenarioForDeputado: async (deputadoId) =>
+      votacoesById.get(deputadoId) ?? [],
   };
 }
 
 async function buildApp(
   byExternalId: ReadonlyMap<number, DeputadoPerfilSource>,
+  votacoesById?: VotacoesById,
 ): Promise<INestApplication> {
   const moduleRef = await Test.createTestingModule({
     controllers: [DeputadosController],
     providers: [
       DeputadosService,
-      { provide: DEPUTADOS_REPOSITORY, useValue: fakeRepository(byExternalId) },
+      {
+        provide: DEPUTADOS_REPOSITORY,
+        useValue: fakeRepository(byExternalId, votacoesById),
+      },
     ],
   }).compile();
 
@@ -81,6 +92,19 @@ describe('GET /deputados/:externalIdDeputado', () => {
       new Map([
         [220593, source()],
         [74, source({ externalIdDeputado: 74, eventos: [] })],
+        [
+          300,
+          source({
+            externalIdDeputado: 300,
+            id: 'aaaaaaaa-0000-0000-0000-000000000300',
+          }),
+        ],
+      ]),
+      new Map([
+        [
+          'aaaaaaaa-0000-0000-0000-000000000300',
+          [{ dataHoraRegistro: '2023-06-01T12:00:00+00:00', data: '2023-06-01', voto: 'sim' }],
+        ],
       ]),
     );
   });
@@ -229,6 +253,45 @@ describe('GET /deputados/:externalIdDeputado', () => {
       const body = deputadoPerfilSchema.parse(response.body as unknown);
       expect(body.historicoPartidarioDisponivel).toBe(false);
       expect(body.historicoPartidario).toEqual([]);
+    });
+  });
+
+  describe('contract validity across gap states', () => {
+    it('produces a snapshot-complete perfil with presenca available that parses', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get('/deputados/300');
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoPerfilSchema.parse(response.body as unknown);
+      expect(body.snapshotPublicoDisponivel).toBe(true);
+      expect(body.resumoPresencaDisponivel).toBe(true);
+      expect(body.resumoPresenca).not.toBeNull();
+    });
+
+    it('produces a history-available perfil with presenca unavailable that parses', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get('/deputados/220593');
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoPerfilSchema.parse(response.body as unknown);
+      expect(body.historicoParlamentarDisponivel).toBe(true);
+      expect(body.resumoPresencaDisponivel).toBe(false);
+      expect(body.resumoPresenca).toBeNull();
+    });
+
+    it('produces an all-unavailable perfil for a deputado without history that parses', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get('/deputados/74');
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoPerfilSchema.parse(response.body as unknown);
+      expect(body.historicoParlamentarDisponivel).toBe(false);
+      expect(body.snapshotPublicoDisponivel).toBe(false);
+      expect(body.resumoPresencaDisponivel).toBe(false);
+      expect(body.historicoPartidarioDisponivel).toBe(false);
     });
   });
 
