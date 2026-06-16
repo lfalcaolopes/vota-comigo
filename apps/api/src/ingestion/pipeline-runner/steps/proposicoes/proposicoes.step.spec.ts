@@ -31,6 +31,10 @@ function voto(idVotacao: string): CsvRecord {
   };
 }
 
+function votacao(id: string, siglaOrgao = 'PLEN'): CsvRecord {
+  return { id, siglaOrgao };
+}
+
 function link(idVotacao: string, id: string, ano: string): CsvRecord {
   return { idVotacao, proposicao_id: id, proposicao_ano: ano };
 }
@@ -128,6 +132,7 @@ describe('proposicoes step', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: {
           2024: [link('2024-1', '111', '2015'), link('2024-1', '222', '2024')],
         },
@@ -159,6 +164,7 @@ describe('proposicoes step', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2007')] },
         proposicoes: {},
       };
@@ -182,6 +188,7 @@ describe('proposicoes step', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2007')] },
         proposicoes: {},
       };
@@ -204,6 +211,7 @@ describe('proposicoes step', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: {
           2024: [link('2024-1', '111', '2015'), link('2024-1', '222', '2015')],
         },
@@ -231,6 +239,7 @@ describe('proposicoes step', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '222', '2015')] },
         proposicoes: { 2015: [proposicaoRecord('111', '2015')] },
       };
@@ -249,6 +258,7 @@ describe('proposicoes step', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2007')] },
         proposicoes: {},
       };

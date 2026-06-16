@@ -21,6 +21,10 @@ function voto(idVotacao: string): CsvRecord {
   };
 }
 
+function votacao(id: string, siglaOrgao = 'PLEN'): CsvRecord {
+  return { id, siglaOrgao };
+}
+
 function link(
   idVotacao: string,
   proposicaoId: string,
@@ -50,6 +54,10 @@ describe('needed proposicoes set', () => {
         votacoesVotos: {
           2024: [voto('2024-1'), voto('2024-2')],
           2025: [voto('2025-1')],
+        },
+        votacoes: {
+          2024: [votacao('2024-1'), votacao('2024-2')],
+          2025: [votacao('2025-1')],
         },
         votacoesProposicoes: {
           2024: [
@@ -102,6 +110,7 @@ describe('needed proposicoes set', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1'), voto('2024-2')] },
+        votacoes: { 2024: [votacao('2024-1'), votacao('2024-2')] },
         votacoesProposicoes: {
           2024: [link('2024-1', '111', '2020'), link('2024-2', '222', '2021')],
         },
@@ -111,6 +120,31 @@ describe('needed proposicoes set', () => {
       const { neededByYear } = await collectNeededProposicoes({
         years: [2024],
         limit: 1,
+        readDataset: readDatasetFrom(datasets),
+      });
+
+      // Assert
+      expect(neededByYear.get(2020)).toEqual(new Set([111]));
+      expect(neededByYear.has(2021)).toBe(false);
+    });
+  });
+
+  describe('when a nominal votacao happened in a committee', () => {
+    it('excludes proposicoes reachable only through committee votacoes', async () => {
+      // Arrange
+      const datasets: Datasets = {
+        votacoesVotos: { 2024: [voto('2024-1'), voto('2024-2')] },
+        votacoes: {
+          2024: [votacao('2024-1', 'PLEN'), votacao('2024-2', 'CCJC')],
+        },
+        votacoesProposicoes: {
+          2024: [link('2024-1', '111', '2020'), link('2024-2', '222', '2021')],
+        },
+      };
+
+      // Act
+      const { neededByYear } = await collectNeededProposicoes({
+        years: [2024],
         readDataset: readDatasetFrom(datasets),
       });
 

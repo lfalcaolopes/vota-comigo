@@ -6,6 +6,7 @@ import type {
   StepRunResult,
 } from '../../types/ingestion-pipeline-runner.types';
 import { normalizeVotacaoVotoRecord } from '../../shared/votacoes-votos.normalizer';
+import { isPlenario } from '../../shared/escopo-votacao';
 import { createProgressLogger, stepLabel } from '../../reporting/step-logging';
 import { StrictModeError } from '../../errors/strict-mode-error';
 import type {
@@ -43,7 +44,7 @@ export function createVotacoesStep(
         recordsRead += 1;
         progress.tick(recordsRead);
 
-        if (!nominalIds.has(record.id)) {
+        if (!nominalIds.has(record.id) || !isPlenario(record.siglaOrgao)) {
           ignored += 1;
           continue;
         }

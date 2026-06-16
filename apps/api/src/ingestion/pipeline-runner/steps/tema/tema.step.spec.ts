@@ -34,6 +34,10 @@ function voto(idVotacao: string): CsvRecord {
   };
 }
 
+function votacao(id: string, siglaOrgao = 'PLEN'): CsvRecord {
+  return { id, siglaOrgao };
+}
+
 function link(idVotacao: string, id: string, ano: string): CsvRecord {
   return { idVotacao, proposicao_id: id, proposicao_ano: ano };
 }
@@ -176,6 +180,7 @@ describe('tema step', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2020')] },
         proposicoesTemas: {
           2020: [
@@ -209,6 +214,7 @@ describe('tema step', () => {
       // Arrange: votacao em 2024 aponta proposicoes apresentadas em 2015 e 2020
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: {
           2024: [link('2024-1', '111', '2015'), link('2024-1', '222', '2020')],
         },
@@ -243,6 +249,7 @@ describe('tema step', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2020')] },
         proposicoesTemas: {
           2020: [
@@ -273,6 +280,7 @@ describe('tema step', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2020')] },
         proposicoesTemas: {
           2020: [
@@ -300,6 +308,7 @@ describe('tema step', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2007')] },
         proposicoesTemas: {},
       };
@@ -325,6 +334,7 @@ describe('tema step', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2007')] },
         proposicoesTemas: {},
       };
@@ -351,6 +361,7 @@ describe('tema step', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: {
           2024: [link('2024-1', '111', '2020'), link('2024-1', '222', '2020')],
         },
@@ -376,6 +387,7 @@ describe('tema step', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '222', '2020')] },
         proposicoesTemas: {
           2020: [temaRecord('111', '34', 'Administração Pública')],
@@ -397,6 +409,7 @@ describe('tema step', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2020')] },
         proposicoesTemas: {
           2020: [temaRecord('111', '34', 'Administração Pública')],
@@ -419,6 +432,7 @@ describe('tema step', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2007')] },
         proposicoesTemas: {},
       };

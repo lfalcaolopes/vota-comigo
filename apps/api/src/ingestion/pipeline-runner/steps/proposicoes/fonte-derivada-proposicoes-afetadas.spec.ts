@@ -23,6 +23,10 @@ function voto(idVotacao: string): CsvRecord {
   };
 }
 
+function votacao(id: string, siglaOrgao = 'PLEN'): CsvRecord {
+  return { id, siglaOrgao };
+}
+
 function link(idVotacao: string, id: string, ano: string): CsvRecord {
   return { idVotacao, proposicao_id: id, proposicao_ano: ano };
 }
@@ -89,6 +93,7 @@ describe('fonte derivada de proposicoes afetadas', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1'), voto('2024-2')] },
+        votacoes: { 2024: [votacao('2024-1'), votacao('2024-2')] },
         votacoesProposicoes: {
           2024: [link('2024-1', '111', '2020'), link('2024-2', '222', '2021')],
         },
@@ -118,10 +123,41 @@ describe('fonte derivada de proposicoes afetadas', () => {
       );
     });
 
+    it('excludes proposicoes reachable only through committee votacoes', async () => {
+      // Arrange
+      const datasets: Datasets = {
+        votacoesVotos: { 2024: [voto('2024-1'), voto('2024-2')] },
+        votacoes: {
+          2024: [votacao('2024-1', 'PLEN'), votacao('2024-2', 'CCJC')],
+        },
+        votacoesProposicoes: {
+          2024: [link('2024-1', '111', '2020'), link('2024-2', '222', '2021')],
+        },
+        proposicoes: {
+          2020: [proposicaoRecord('111', '2020')],
+        },
+      };
+      const fonte = createFonte();
+
+      // Act
+      const prepared = await fonte.prepareProposicoes({
+        years: [2024],
+        canDownload: false,
+        strict: false,
+        readDataset: readDatasetFrom(datasets),
+      });
+
+      // Assert
+      expect(prepared.neededByYear.get(2020)).toEqual(new Set([111]));
+      expect(prepared.neededByYear.has(2021)).toBe(false);
+      expect(prepared.externalGaps).toEqual([]);
+    });
+
     it('downloads missing yearly files when download is enabled', async () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2007')] },
         proposicoes: {},
       };
@@ -147,6 +183,7 @@ describe('fonte derivada de proposicoes afetadas', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2007')] },
         proposicoes: {},
       };
@@ -172,6 +209,7 @@ describe('fonte derivada de proposicoes afetadas', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2007')] },
         proposicoes: {},
       };
@@ -200,6 +238,7 @@ describe('fonte derivada de proposicoes afetadas', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '222', '2020')] },
         proposicoes: { 2020: [proposicaoRecord('111', '2020')] },
       };
@@ -226,6 +265,7 @@ describe('fonte derivada de proposicoes afetadas', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '222', '2020')] },
         proposicoes: { 2020: [proposicaoRecord('111', '2020')] },
       };
@@ -246,6 +286,7 @@ describe('fonte derivada de proposicoes afetadas', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '222', '2020')] },
         proposicoes: { 2020: [proposicaoRecord('111', '2020')] },
       };
@@ -274,6 +315,7 @@ describe('fonte derivada de proposicoes afetadas', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2020')] },
         proposicoesTemas: {},
       };
@@ -305,6 +347,7 @@ describe('fonte derivada de proposicoes afetadas', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2020')] },
         proposicoesTemas: {},
       };
@@ -331,6 +374,7 @@ describe('fonte derivada de proposicoes afetadas', () => {
       // Arrange
       const datasets: Datasets = {
         votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
         votacoesProposicoes: { 2024: [link('2024-1', '111', '2020')] },
         proposicoesTemas: { 2020: [] },
       };

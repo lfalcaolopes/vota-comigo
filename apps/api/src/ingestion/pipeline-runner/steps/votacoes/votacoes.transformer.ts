@@ -1,15 +1,6 @@
 import type { CsvRecord } from '../../sources/csv-reader';
-import type { EscopoVotacao, VotacaoRow } from './votacoes.repository.types';
-
-const PLENARY_ORGAOS = new Set(['PLEN', 'CN']);
-
-export function deriveEscopoVotacao(siglaOrgao: string | null): EscopoVotacao {
-  if (siglaOrgao !== null && PLENARY_ORGAOS.has(siglaOrgao)) {
-    return 'plenario';
-  }
-
-  return 'comissao';
-}
+import { deriveEscopoVotacao } from '../../shared/escopo-votacao';
+import type { VotacaoRow } from './votacoes.repository.types';
 
 export function toVotacaoRow(record: CsvRecord): VotacaoRow {
   const siglaOrgao = emptyToNull(record.siglaOrgao);

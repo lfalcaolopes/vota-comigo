@@ -130,6 +130,35 @@ describe('votacoes step', () => {
     });
   });
 
+  describe('when filtering by escopo', () => {
+    it('ignores committee votacoes even when they have nominal votes', async () => {
+      // Arrange
+      const repository = createFakeRepository();
+      const step = createVotacoesStep(repository);
+      const ctx = context({
+        readRecords: () =>
+          rows([
+            row(votacaoRecord({ id: '2236343-24', siglaOrgao: 'PLEN' })),
+            row(votacaoRecord({ id: '5550000-11', siglaOrgao: 'CCJC' }), 3),
+          ]),
+        readCompanion: () => () =>
+          rows([row(voteRecord('2236343-24')), row(voteRecord('5550000-11'))]),
+      });
+
+      // Act
+      const result = await step.run(ctx);
+
+      // Assert
+      expect(result).toMatchObject({ read: 1, inserted: 1, ignored: 1 });
+      expect(repository.upserted[0]).toEqual([
+        expect.objectContaining({
+          externalIdVotacao: '2236343-24',
+          escopoVotacao: 'plenario',
+        }),
+      ]);
+    });
+  });
+
   describe('when running in dry-run mode', () => {
     it('reads and counts nominal votacoes but never writes the repository', async () => {
       // Arrange

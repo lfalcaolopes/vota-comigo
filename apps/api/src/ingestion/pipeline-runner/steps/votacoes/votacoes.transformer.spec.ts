@@ -1,4 +1,4 @@
-import { deriveEscopoVotacao, toVotacaoRow } from './votacoes.transformer';
+import { toVotacaoRow } from './votacoes.transformer';
 import type { CsvRecord } from '../../sources/csv-reader';
 
 function votacaoRecord(overrides: CsvRecord = {}): CsvRecord {
@@ -29,26 +29,6 @@ function votacaoRecord(overrides: CsvRecord = {}): CsvRecord {
 }
 
 describe('votacoes transformer', () => {
-  describe('when deriving escopo_votacao from siglaOrgao', () => {
-    it('resolves plenario for the plenary chambers PLEN and CN', () => {
-      // Arrange / Act / Assert
-      expect(deriveEscopoVotacao('PLEN')).toBe('plenario');
-      expect(deriveEscopoVotacao('CN')).toBe('plenario');
-    });
-
-    it('resolves comissao for any other siglaOrgao', () => {
-      // Arrange / Act / Assert
-      expect(deriveEscopoVotacao('CCJC')).toBe('comissao');
-      expect(deriveEscopoVotacao('CFT')).toBe('comissao');
-    });
-
-    it('resolves comissao when siglaOrgao is missing', () => {
-      // Arrange / Act / Assert
-      expect(deriveEscopoVotacao(null)).toBe('comissao');
-      expect(deriveEscopoVotacao('')).toBe('comissao');
-    });
-  });
-
   describe('when mapping a votacoes CSV record to a row', () => {
     it('persists the local texts, placar and derived escopo', () => {
       // Arrange

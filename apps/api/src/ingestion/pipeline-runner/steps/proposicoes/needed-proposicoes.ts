@@ -1,6 +1,7 @@
 import type { CsvRowSource } from '../../types/ingestion-pipeline-runner.types';
 import { normalizeVotacaoVotoRecord } from '../../shared/votacoes-votos.normalizer';
 import { normalizeVotacaoProposicaoRecord } from '../../shared/votacoes-proposicoes.normalizer';
+import { isPlenario } from '../../shared/escopo-votacao';
 
 export type NeededProposicoesInput = {
   years: readonly number[];
@@ -15,14 +16,16 @@ export type NeededProposicoes = {
 
 /**
  * Única fonte de verdade do "conjunto necessário": deriva, das votações nominais
- * em escopo (respeitando `--from`/`--to`/`--limit`), as proposições afetadas e o
- * ano de cada uma. Alimenta tanto a validação/download quanto a ingestão, para
- * que não divirjam.
+ * de plenário em escopo (respeitando `--from`/`--to`/`--limit`), as proposições
+ * afetadas e o ano de cada uma. Votações de comissão são descartadas porque o app
+ * só consome plenário, mantendo a base sem proposições inalcançáveis. Alimenta
+ * tanto a validação/download quanto a ingestão, para que não divirjam.
  */
 export async function collectNeededProposicoes(
   input: NeededProposicoesInput,
 ): Promise<NeededProposicoes> {
   const nominalIds = await collectNominalIds(input);
+  const plenarioIds = await collectPlenarioVotacaoIds(input);
   const neededByYear = new Map<number, Set<number>>();
 
   for (const year of input.years) {
@@ -36,7 +39,11 @@ export async function collectNeededProposicoes(
       const { idVotacao, proposicaoId, proposicaoAno } =
         normalizeVotacaoProposicaoRecord(record);
 
-      if (idVotacao === null || !nominalIds.has(idVotacao)) {
+      if (
+        idVotacao === null ||
+        !nominalIds.has(idVotacao) ||
+        !plenarioIds.has(idVotacao)
+      ) {
         continue;
       }
 
@@ -51,6 +58,30 @@ export async function collectNeededProposicoes(
   }
 
   return { neededByYear };
+}
+
+async function collectPlenarioVotacaoIds(
+  input: NeededProposicoesInput,
+): Promise<Set<string>> {
+  const ids = new Set<string>();
+
+  for (const year of input.years) {
+    const votacoes = input.readDataset('votacoes', year);
+
+    if (votacoes === undefined) {
+      continue;
+    }
+
+    for await (const { record } of votacoes()) {
+      const id = (record.id ?? '').trim();
+
+      if (id !== '' && isPlenario(record.siglaOrgao)) {
+        ids.add(id);
+      }
+    }
+  }
+
+  return ids;
 }
 
 async function collectNominalIds(

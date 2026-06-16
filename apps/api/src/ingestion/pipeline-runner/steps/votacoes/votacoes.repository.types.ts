@@ -1,4 +1,6 @@
-export type EscopoVotacao = 'plenario' | 'comissao';
+import type { EscopoVotacao } from '../../shared/escopo-votacao';
+
+export type { EscopoVotacao };
 
 export type VotacaoRow = {
   externalIdVotacao: string;
