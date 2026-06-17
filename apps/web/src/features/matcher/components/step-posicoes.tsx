@@ -18,6 +18,7 @@ const QUESTION_ID = "matcher-posicao-pergunta";
 type StepPosicoesProps = {
   selected: ProposicaoCard[];
   posicoes: Map<number, PosicaoUsuarioMatcher>;
+  faltamRespostas: number;
   faltamComputaveis: number;
   canRun: boolean;
   onSetPosicao: (
@@ -33,6 +34,7 @@ type View = "card" | "revisao";
 export function StepPosicoes({
   selected,
   posicoes,
+  faltamRespostas,
   faltamComputaveis,
   canRun,
   onSetPosicao,
@@ -114,7 +116,13 @@ export function StepPosicoes({
             value={current}
           />
 
-          {faltamComputaveis > 0 ? (
+          {faltamRespostas > 0 ? (
+            <p className="text-sm leading-normal text-muted lg:hidden" role="status">
+              Responda todas as proposições selecionadas para ver o resultado.
+              Faltam{" "}
+              <strong className="font-[720] text-ink">{faltamRespostas}</strong>.
+            </p>
+          ) : faltamComputaveis > 0 ? (
             <p className="text-sm leading-normal text-muted lg:hidden" role="status">
               Responda Sim ou Não em pelo menos {MIN_POSICOES_COMPUTAVEIS}{" "}
               proposições para ver o resultado. Faltam{" "}
@@ -122,13 +130,6 @@ export function StepPosicoes({
             </p>
           ) : null}
 
-          <Button
-            className="justify-self-start"
-            onClick={goNext}
-            variant="ghost"
-          >
-            Decidir depois
-          </Button>
         </div>
       </div>
 
@@ -138,6 +139,7 @@ export function StepPosicoes({
         <StepRevisao
           canRun={canRun}
           faltamComputaveis={faltamComputaveis}
+          faltamRespostas={faltamRespostas}
           highlightIndex={index}
           onBack={() => {
             setIndex(selected.length - 1);

@@ -105,6 +105,7 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
         <StepPosicoes
           canRun={matcher.canRun}
           faltamComputaveis={matcher.validation.faltamComputaveis}
+          faltamRespostas={matcher.validation.faltamRespostas}
           onBack={() => matcher.goToStep("selecao")}
           onRun={matcher.execute}
           onSetPosicao={matcher.setPosicao}

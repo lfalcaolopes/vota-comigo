@@ -14,6 +14,7 @@ import { buildRevisaoItems, posicaoLabel } from "../lib/matcher-revisao";
 type StepRevisaoProps = {
   selected: ProposicaoCard[];
   posicoes: Map<number, PosicaoUsuarioMatcher>;
+  faltamRespostas: number;
   faltamComputaveis: number;
   canRun: boolean;
   highlightIndex: number;
@@ -25,6 +26,7 @@ type StepRevisaoProps = {
 export function StepRevisao({
   selected,
   posicoes,
+  faltamRespostas,
   faltamComputaveis,
   canRun,
   highlightIndex,
@@ -87,7 +89,15 @@ export function StepRevisao({
         })}
       </ul>
 
-      {!canRun && faltamComputaveis > 0 ? (
+      {!canRun && faltamRespostas > 0 ? (
+        <p className="rounded-md border border-border bg-surface-muted px-4 py-3 text-sm text-muted" role="status">
+          Para ver o resultado, responda Sim, Não ou Não sei em todas as
+          proposições selecionadas. Faltam{" "}
+          <strong className="font-[720] text-ink">{faltamRespostas}</strong>.
+        </p>
+      ) : null}
+
+      {!canRun && faltamRespostas === 0 && faltamComputaveis > 0 ? (
         <p className="rounded-md border border-border bg-surface-muted px-4 py-3 text-sm text-muted" role="status">
           Para ver o resultado, responda Sim ou Não em pelo menos{" "}
           {MIN_POSICOES_COMPUTAVEIS} proposições. Faltam{" "}

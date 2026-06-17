@@ -313,9 +313,13 @@ export function selectionCount(state: MatcherState): number {
 }
 
 export function executionValidation(state: MatcherState): ExecucaoValidation {
+  const selectedPosicoes = state.selected
+    .map((card) => state.posicoes.get(card.externalIdProposicao))
+    .filter((posicao): posicao is PosicaoUsuarioMatcher => posicao !== undefined);
+
   return validateExecucao({
     totalSelecionadas: state.selected.length,
-    posicoes: [...state.posicoes.values()],
+    posicoes: selectedPosicoes,
   });
 }
 

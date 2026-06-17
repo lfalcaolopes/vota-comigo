@@ -1101,6 +1101,13 @@ describe("matcherReducer", () => {
           posicao: "aprovar",
         });
       }
+      for (const id of [4, 5]) {
+        next = matcherReducer(next, {
+          type: "setPosicao",
+          externalIdProposicao: id,
+          posicao: "nao_sei",
+        });
+      }
       return next;
     }
 
@@ -1131,7 +1138,26 @@ describe("matcherReducer", () => {
       expect(canRunMatcher(state)).toBe(false);
     });
 
-    it("is true with a UF and at least the minimum computable positions", () => {
+    it("is false while any selected proposicao has no position", () => {
+      // Arrange
+      let state = matcherReducer(initMatcherState(candidates), {
+        type: "setLocal",
+        siglaUf: "SP",
+        cidade: "",
+      });
+      for (const id of [1, 2, 3]) {
+        state = matcherReducer(state, {
+          type: "setPosicao",
+          externalIdProposicao: id,
+          posicao: "aprovar",
+        });
+      }
+
+      // Act / Assert
+      expect(canRunMatcher(state)).toBe(false);
+    });
+
+    it("is true with a UF, enough computable positions, and every selected proposicao answered", () => {
       // Arrange
       const state = withComputaveis();
 

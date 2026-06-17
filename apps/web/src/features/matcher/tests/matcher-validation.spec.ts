@@ -23,7 +23,32 @@ describe("validateExecucao", () => {
 
       // Assert
       expect(result.valid).toBe(true);
+      expect(result.totalRespondidas).toBe(MIN_POSICOES_COMPUTAVEIS);
       expect(result.totalComputaveis).toBe(MIN_POSICOES_COMPUTAVEIS);
+      expect(result.faltamRespostas).toBe(0);
+      expect(result.faltamComputaveis).toBe(0);
+    });
+  });
+
+  describe("when at least one selected proposicao has no position", () => {
+    it("is invalid and reports how many responses are still missing", () => {
+      // Arrange
+      const posicoes = [
+        "aprovar" as const,
+        "rejeitar" as const,
+        "aprovar" as const,
+      ];
+
+      // Act
+      const result = validateExecucao({
+        totalSelecionadas: 5,
+        posicoes,
+      });
+
+      // Assert
+      expect(result.valid).toBe(false);
+      expect(result.totalRespondidas).toBe(3);
+      expect(result.faltamRespostas).toBe(2);
       expect(result.faltamComputaveis).toBe(0);
     });
   });

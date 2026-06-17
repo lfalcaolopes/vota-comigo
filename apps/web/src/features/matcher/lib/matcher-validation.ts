@@ -12,7 +12,9 @@ export type ExecucaoValidationInput = {
 
 export type ExecucaoValidation = {
   totalSelecionadas: number;
+  totalRespondidas: number;
   totalComputaveis: number;
+  faltamRespostas: number;
   faltamComputaveis: number;
   excedeMax: boolean;
   valid: boolean;
@@ -25,7 +27,12 @@ function isComputavel(posicao: PosicaoUsuarioMatcher): boolean {
 export function validateExecucao(
   input: ExecucaoValidationInput,
 ): ExecucaoValidation {
+  const totalRespondidas = input.posicoes.length;
   const totalComputaveis = input.posicoes.filter(isComputavel).length;
+  const faltamRespostas = Math.max(
+    input.totalSelecionadas - totalRespondidas,
+    0,
+  );
   const faltamComputaveis = Math.max(
     MIN_POSICOES_COMPUTAVEIS - totalComputaveis,
     0,
@@ -34,9 +41,11 @@ export function validateExecucao(
 
   return {
     totalSelecionadas: input.totalSelecionadas,
+    totalRespondidas,
     totalComputaveis,
+    faltamRespostas,
     faltamComputaveis,
     excedeMax,
-    valid: faltamComputaveis === 0 && !excedeMax,
+    valid: faltamRespostas === 0 && faltamComputaveis === 0 && !excedeMax,
   };
 }
