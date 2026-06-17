@@ -33,13 +33,13 @@ The downloader writes the Câmara source CSVs to `apps/api/data/raw/{dataset}/..
 
 ## Browser automation
 
-Playwright is configured in `apps/web` for agent-driven browser interaction with the web app.
+Playwright is configured in `apps/web` for agent-driven browser interaction with the web app. Agent browser runs use port `3000`.
 
-- Default E2E command: `pnpm --filter web test:e2e`. It starts Next on `127.0.0.1:3002` through `apps/web/playwright.config.ts` when no explicit base URL is provided.
-- If a Next dev server is already running, do not start another one. Point Playwright at it with `PLAYWRIGHT_BASE_URL=http://127.0.0.1:<port> pnpm --filter web test:e2e`.
-- For headed inspection, use `PLAYWRIGHT_BASE_URL=http://127.0.0.1:<port> pnpm --filter web test:e2e:headed`.
-- Next 16 prevents two `next dev` processes for the same app directory; prefer `PLAYWRIGHT_BASE_URL` when reusing an existing server.
-- In the Codex sandbox, local port bind/connect may fail with `EPERM`; rerun the Playwright command with sandbox escalation when browser automation is required.
+- Default E2E command: `pnpm --filter web test:e2e`. It starts Next on `127.0.0.1:3000` through `apps/web/playwright.config.ts` when no explicit base URL is provided.
+- If a Next dev server is already running on port `3000`, do not start another one. Reuse it with `PLAYWRIGHT_BASE_URL=http://127.0.0.1:3000 pnpm --filter web test:e2e`.
+- For headed inspection, use `PLAYWRIGHT_BASE_URL=http://127.0.0.1:3000 pnpm --filter web test:e2e:headed`.
+- Next 16 prevents two `next dev` processes for the same app directory; use port `3000` whether reusing an existing server or starting a new one.
+- Do not run browser automation inside the Codex sandbox. Run Playwright and browser-driven checks with sandbox escalation because local port bind/connect and Chromium launch can fail with `EPERM`.
 
 ## Commit messages
 
