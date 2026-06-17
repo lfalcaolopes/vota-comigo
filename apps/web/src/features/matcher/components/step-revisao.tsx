@@ -35,7 +35,7 @@ export function StepRevisao({
   const items = buildRevisaoItems(selected, posicoes);
 
   return (
-    <div className="grid gap-6">
+    <div className="grid min-w-0 gap-6">
       <div>
         <h2 className="text-base font-[680] text-ink">Suas posições</h2>
         <p className="mt-1 text-sm text-muted">
@@ -43,7 +43,7 @@ export function StepRevisao({
         </p>
       </div>
 
-      <ul className="grid gap-0 divide-y divide-border">
+      <ul className="-mr-1 grid max-h-96 divide-y divide-border overflow-x-hidden overflow-y-auto pr-1 lg:max-h-[min(55vh,32rem)]">
         {items.map((item, index) => {
           const identificador = toIdentificadorLegislativo(item.card);
           const pendente = item.posicao === null;
@@ -51,7 +51,7 @@ export function StepRevisao({
 
           return (
             <li
-              className={`grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 py-4 ${index === highlightIndex ? "lg:-mx-3 lg:rounded-md lg:bg-surface-muted lg:px-3" : ""}`}
+              className={`grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 py-4 ${index === highlightIndex ? "rounded-md bg-surface-muted px-3" : ""}`}
               key={item.card.externalIdProposicao}
             >
               <div className="min-w-0">

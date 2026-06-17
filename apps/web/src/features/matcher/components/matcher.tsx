@@ -69,7 +69,7 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
       ) : null}
 
       {state.step === "selecao" ? (
-        <div className="mx-auto w-full max-w-5xl">
+        <div className="mx-auto w-full max-w-6xl">
           <StepSelecao
           canLoadMore={feed.canLoadMore}
           display={feed.display}
