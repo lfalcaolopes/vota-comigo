@@ -47,5 +47,4 @@ Blocks reused across features, split into generic and domain.
 ### Visual verification
 
 - For client changes, always run the web app on port `3002`, for example `pnpm --filter web dev -- -p 3002`; ports `3000` and `3001` are almost always in use.
-- Validate the change in a browser, not only by static inspection: check console/runtime errors, the affected user flow, interactive states, overflow, text wrapping, and desktop/mobile layout.
 - Do not use Playwright for verification. Use the system Chromium for headless smoke checks and screenshots when browser automation is needed.
