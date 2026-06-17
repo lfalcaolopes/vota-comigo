@@ -10,7 +10,7 @@ type ChipProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const chip =
-  "inline-flex min-h-9 items-center rounded-full border border-border bg-white px-3 py-1.5 text-sm font-semibold leading-[1.2] text-ink transition-[background-color,border-color,color] duration-[180ms] ease-standard aria-pressed:border-primary aria-pressed:bg-primary-soft disabled:cursor-not-allowed disabled:opacity-55 aria-disabled:cursor-not-allowed aria-disabled:opacity-55";
+  "inline-flex max-w-full min-h-9 items-center rounded-full border border-border bg-white px-3 py-1.5 text-left text-sm font-semibold leading-[1.2] text-ink [overflow-wrap:anywhere] transition-[background-color,border-color,color] duration-[180ms] ease-standard aria-pressed:border-primary aria-pressed:bg-primary-soft disabled:cursor-not-allowed disabled:opacity-55 aria-disabled:cursor-not-allowed aria-disabled:opacity-55";
 
 export function Chip({
   className,
