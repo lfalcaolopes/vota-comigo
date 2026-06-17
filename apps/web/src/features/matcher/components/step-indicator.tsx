@@ -21,7 +21,7 @@ type StepIndicatorProps = {
 
 export function StepIndicator({ current, onNavigate }: StepIndicatorProps) {
   return (
-    <ol className="flex flex-wrap gap-2 text-xs font-[650] text-muted">
+    <ol className="flex flex-wrap justify-center gap-2 text-xs font-[650] text-muted">
       {STEP_ORDER.map((step, position) => {
         const status = stepStatus(current, step);
 

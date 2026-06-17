@@ -47,7 +47,7 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
 
   return (
     <section className="grid gap-8">
-      <header className="mx-auto grid w-full max-w-2xl gap-3">
+      <header className="mx-auto grid w-full max-w-5xl gap-3">
         <p className="text-sm font-[650] text-primary">Quem vota comigo</p>
         <h1 className="text-2xl leading-tight font-[720] tracking-[-0.02em] text-ink">
           {STEP_LABELS[state.step]}
@@ -69,7 +69,7 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
       ) : null}
 
       {state.step === "selecao" ? (
-        <div className="mx-auto w-full max-w-2xl">
+        <div className="mx-auto w-full max-w-5xl">
           <StepSelecao
           canLoadMore={feed.canLoadMore}
           display={feed.display}
@@ -147,7 +147,7 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
       ) : null}
 
       {state.step === "comparativo" ? (
-        <div className="mx-auto w-full max-w-6xl">
+        <div className="mx-auto w-full max-w-5xl">
           <StepComparativo
             deputados={state.selectedComparativoDeputados}
             detalhes={state.comparativoDetalhes}

@@ -44,7 +44,7 @@ export function StepPosicoes({
 
   if (selected.length === 0) {
     return (
-      <div className="mx-auto grid w-full max-w-2xl gap-4">
+      <div className="mx-auto grid w-full max-w-5xl gap-4">
         <p className="text-sm text-muted">Nenhuma proposição selecionada.</p>
         <Button className="justify-self-start" onClick={onBack}>
           Voltar
@@ -77,7 +77,7 @@ export function StepPosicoes({
   }
 
   return (
-    <div className="mx-auto grid w-full max-w-2xl gap-6 lg:max-w-5xl lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-8">
+    <div className="mx-auto grid w-full max-w-5xl gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-8">
       <div className={`${view === "revisao" ? "hidden lg:grid" : "grid"} gap-6`}>
         <div className="flex items-center justify-between gap-4">
           <Button onClick={goBack} variant="ghost">
