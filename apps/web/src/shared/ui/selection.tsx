@@ -105,6 +105,8 @@ export function Tabs({ activeId, items, label }: TabsProps) {
 
 type SegmentedControlProps = {
   activeId: string;
+  className?: string;
+  itemClassName?: string;
   items: TabItem[];
   label: string;
   onSelect?: (id: string) => void;
@@ -112,18 +114,21 @@ type SegmentedControlProps = {
 
 export function SegmentedControl({
   activeId,
+  className,
+  itemClassName,
   items,
   label,
   onSelect,
 }: SegmentedControlProps) {
   return (
-    <div aria-label={label} className={tabBar} role="group">
+    <div aria-label={label} className={joinClassNames(tabBar, className)} role="group">
       {items.map((item) => (
         <button
           aria-pressed={item.id === activeId}
           className={joinClassNames(
             tabItem,
             "aria-pressed:bg-white aria-pressed:text-ink",
+            itemClassName,
           )}
           key={item.id}
           onClick={() => onSelect?.(item.id)}

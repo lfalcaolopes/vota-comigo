@@ -30,7 +30,7 @@ export default async function Home({
 
   return (
     <main className="min-h-screen w-full min-w-0 overflow-x-hidden bg-bg text-ink">
-      <div className="mx-auto w-full min-w-0 max-w-295 px-4 pt-8 pb-16 md:pt-12">
+      <div className="mx-auto box-border w-full min-w-0 max-w-5xl px-4 pt-8 pb-16 md:pt-12">
         <Feed
           initialItems={items}
           total={total}

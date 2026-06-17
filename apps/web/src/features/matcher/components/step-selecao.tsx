@@ -82,8 +82,9 @@ export function StepSelecao({
 
   return (
     <div className="grid gap-5">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="grid min-w-0 gap-4 sm:grid-cols-[auto_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-start">
         <FeedSearch
+          className="w-full sm:col-span-2 lg:col-span-1"
           disabled={status === "loading"}
           isSearching={query !== ""}
           onChange={setDraft}
@@ -92,16 +93,18 @@ export function StepSelecao({
           query={query}
           value={draft}
         />
-        <FeedOrdenacaoControl value={ordenacao} onChange={onChangeOrdenacao} />
-      </div>
 
-      {temas.length > 0 && (
-        <FeedTemaControl
-          activeTema={tema}
-          onSelect={onChangeTema}
-          temas={temas}
-        />
-      )}
+        <FeedOrdenacaoControl value={ordenacao} onChange={onChangeOrdenacao} />
+
+        {temas.length > 0 && (
+          <FeedTemaControl
+            activeTema={tema}
+            onSelect={onChangeTema}
+            spanToolbar
+            temas={temas}
+          />
+        )}
+      </div>
 
       <p className="text-sm leading-normal text-muted">
         Selecionadas: {totalSelecionadas} de até {MAX_POSICOES}

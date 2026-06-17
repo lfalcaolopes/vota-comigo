@@ -107,6 +107,13 @@ export function FeedView({
     }
   }
 
+  async function handleClearTema() {
+    router.replace(
+      buildFeedHref(pathname, { ordenacao, query: activeQuery, tema: null }),
+    );
+    await clearTema();
+  }
+
   async function handleClearFilters() {
     router.replace(
       buildFeedHref(pathname, { ordenacao, query: null, tema: null }),
@@ -115,9 +122,10 @@ export function FeedView({
   }
 
   return (
-    <div className="grid min-w-0 gap-8">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="grid min-w-0 gap-7">
+      <div className="grid min-w-0 gap-4 sm:grid-cols-[auto_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-start">
         <FeedSearch
+          className="w-full sm:col-span-2 lg:col-span-1"
           disabled={status === "loading"}
           isSearching={query !== ""}
           onChange={setDraft}
@@ -126,16 +134,19 @@ export function FeedView({
           query={query}
           value={draft}
         />
-        <FeedOrdenacaoControl value={ordenacao} onChange={handleOrdenacao} />
-      </div>
 
-      {temas.length > 0 && (
-        <FeedTemaControl
-          activeTema={tema}
-          onSelect={handleTema}
-          temas={temas}
-        />
-      )}
+        <FeedOrdenacaoControl value={ordenacao} onChange={handleOrdenacao} />
+
+        {temas.length > 0 && (
+          <FeedTemaControl
+            activeTema={tema}
+            onClear={handleClearTema}
+            onSelect={handleTema}
+            spanToolbar
+            temas={temas}
+          />
+        )}
+      </div>
 
       <FeedList
         canLoadMore={canLoadMore}

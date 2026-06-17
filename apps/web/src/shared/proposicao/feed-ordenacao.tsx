@@ -15,6 +15,8 @@ export function FeedOrdenacaoControl({ value, onChange }: FeedOrdenacaoControlPr
   return (
     <SegmentedControl
       activeId={value}
+      className="h-11 flex-nowrap"
+      itemClassName="h-full !min-h-0"
       items={ITEMS}
       label="Ordenação"
       onSelect={(id) => onChange(id as FeedOrdenacao)}

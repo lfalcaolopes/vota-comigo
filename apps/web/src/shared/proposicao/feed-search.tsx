@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, SearchField } from "@/shared/ui";
+import { joinClassNames } from "@/shared/ui/utils";
 
 type FeedSearchProps = {
   value: string;
@@ -10,9 +11,11 @@ type FeedSearchProps = {
   isSearching: boolean;
   query: string;
   disabled: boolean;
+  className?: string;
 };
 
 export function FeedSearch({
+  className,
   value,
   onChange,
   onSubmit,
@@ -22,9 +25,9 @@ export function FeedSearch({
   disabled,
 }: FeedSearchProps) {
   return (
-    <div className="grid max-w-2xl gap-3">
+    <div className={joinClassNames("grid min-w-0 max-w-full gap-3", className)}>
       <form
-        className="flex items-center gap-2"
+        className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
         onSubmit={(event) => {
           event.preventDefault();
           onSubmit();
@@ -32,6 +35,7 @@ export function FeedSearch({
       >
         <div className="min-w-0 flex-1">
           <SearchField
+            className="h-11"
             hideLabel
             id="feed-search"
             label="Buscar por identificador ou ementa"
@@ -40,7 +44,12 @@ export function FeedSearch({
             value={value}
           />
         </div>
-        <Button className="shrink-0" disabled={disabled} type="submit" variant="primary">
+        <Button
+          className="h-11 sm:shrink-0"
+          disabled={disabled}
+          type="submit"
+          variant="primary"
+        >
           Buscar
         </Button>
       </form>
