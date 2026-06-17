@@ -89,7 +89,7 @@ export function SelecaoList({
           const disabled = !isSelected && atLimit;
           return (
             <li
-              className="flex items-start gap-3 border-b border-border py-1"
+              className="flex items-start gap-3 py-1"
               key={card.externalIdProposicao}
             >
               <Checkbox
