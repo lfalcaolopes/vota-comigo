@@ -3,6 +3,7 @@ import type {
   MatcherDeputadoDetalhe,
   MatcherDeputadoResumo,
   PosicaoMatcher,
+  PosicaoUsuarioMatcher,
 } from "@vota-comigo/shared-types";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -14,7 +15,6 @@ import {
   nomePublicoLabel,
   toAtividadeAriaLabel,
   toAtividadeLabel,
-  toAtividadeTone,
   toPresencaAmostrasLabel,
   toPresencaAriaLabel,
 } from "@/shared/deputado/presentation";
@@ -161,16 +161,32 @@ function ComparativoDeputadoHeader({
             <p className="mt-1 text-xs text-muted">
               {siglaPartido} · {siglaUf}
             </p>
+            <ComparativoAtividadeStatus emAtividade={emAtividade} />
           </div>
         </div>
-        <Badge
-          aria-label={toAtividadeAriaLabel(emAtividade)}
-          tone={toAtividadeTone(emAtividade)}
-        >
-          {toAtividadeLabel(emAtividade)}
-        </Badge>
       </div>
     </div>
+  );
+}
+
+function ComparativoAtividadeStatus({
+  emAtividade,
+}: {
+  emAtividade: boolean;
+}) {
+  return (
+    <span
+      aria-label={toAtividadeAriaLabel(emAtividade)}
+      className="mt-1.5 inline-flex max-w-full items-center gap-1.5 text-xs font-[560] leading-normal text-muted [overflow-wrap:anywhere]"
+    >
+      <span
+        aria-hidden="true"
+        className={`size-1.5 shrink-0 rounded-full ${
+          emAtividade ? "bg-success ring-1 ring-success/35" : "bg-subtle"
+        }`}
+      />
+      {toAtividadeLabel(emAtividade)}
+    </span>
   );
 }
 
@@ -199,9 +215,6 @@ function ComparativoRow({ row }: ComparativoRowProps) {
             {row.proposicao.ementa}
           </p>
         ) : null}
-        <dl className="mt-3 grid gap-1.5 text-xs">
-          <MetaItem label="Sua posição">{row.posicaoUsuarioLabel}</MetaItem>
-        </dl>
       </div>
 
       {row.cells.map((cell) => (
@@ -210,16 +223,45 @@ function ComparativoRow({ row }: ComparativoRowProps) {
           key={`${row.proposicao.externalIdProposicao}-${cell.externalIdDeputado}`}
         >
           <div className="grid gap-2">
-            <Badge tone={cell.matcherEffectVerdict.tone}>
+            <Badge
+              className="justify-self-start"
+              tone={cell.matcherEffectVerdict.tone}
+            >
               {cell.matcherEffectVerdict.label}
             </Badge>
-            <p className="break-words text-sm font-[650] text-ink">
-              {cell.situacaoLabel}
-            </p>
+            <dl className="grid gap-1 text-sm leading-normal">
+              <ComparativoCellFact label="Você">
+                {toPosicaoUsuarioValueLabel(row.posicaoUsuario)}
+              </ComparativoCellFact>
+              <ComparativoCellFact label="Deputado">
+                {cell.situacaoLabel}
+              </ComparativoCellFact>
+            </dl>
           </div>
         </div>
       ))}
     </>
+  );
+}
+
+function toPosicaoUsuarioValueLabel(posicao: PosicaoUsuarioMatcher): string {
+  if (posicao === "aprovar") return "Sim";
+  if (posicao === "rejeitar") return "Não";
+  return "Não sei";
+}
+
+function ComparativoCellFact({
+  children,
+  label,
+}: {
+  children: ReactNode;
+  label: string;
+}) {
+  return (
+    <div className="grid min-w-0 gap-0.5">
+      <dt className="text-xs text-muted">{label}</dt>
+      <dd className="break-words font-[650] text-ink">{children}</dd>
+    </div>
   );
 }
 
@@ -271,15 +313,6 @@ function ComparativoPresencaCell({
           {RECORTE_BASE_PRESENCA}
         </p>
       </div>
-    </div>
-  );
-}
-
-function MetaItem({ children, label }: { children: ReactNode; label: string }) {
-  return (
-    <div className="flex min-w-0 items-baseline gap-2">
-      <dt className="text-muted">{label}</dt>
-      <dd className="font-[650] text-ink">{children}</dd>
     </div>
   );
 }
