@@ -13,7 +13,7 @@ import {
   sortVotosByVotacaoDataDesc,
   toFiltroLabel,
   type VotoFiltro,
-} from "../lib/matcher-detalhe-presentation";
+} from "../../lib/matcher-detalhe-presentation";
 import { VotoDetalheItem } from "./voto-detalhe-item";
 
 type VotoListaProps = {

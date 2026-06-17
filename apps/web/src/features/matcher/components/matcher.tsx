@@ -7,13 +7,13 @@ import { useFeedState } from "@/shared/proposicao";
 import { useMatcherState } from "../hooks/use-matcher-state";
 import { buildExecucaoRequest } from "../lib/matcher-payload";
 import type { MatcherStep } from "../lib/matcher-state";
-import { DeputadoDetalhe } from "./deputado-detalhe";
-import { StepComparativo } from "./step-comparativo";
-import { StepIndicator } from "./step-indicator";
-import { StepLocal } from "./step-local";
-import { StepPosicoes } from "./step-posicoes";
-import { StepResultado } from "./step-resultado";
-import { StepSelecao } from "./step-selecao";
+import { StepComparativo } from "./comparativo/step-comparativo";
+import { DeputadoDetalhe } from "./detalhe/deputado-detalhe";
+import { StepIndicator } from "./flow/step-indicator";
+import { StepLocal } from "./flow/step-local";
+import { StepPosicoes } from "./posicoes/step-posicoes";
+import { StepResultado } from "./resultado/step-resultado";
+import { StepSelecao } from "./selecao/step-selecao";
 
 type MatcherProps = {
   initialProposicoes: ProposicaoCard[];

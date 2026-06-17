@@ -1,5 +1,6 @@
 import type { MatcherDeputadoResumo } from "@vota-comigo/shared-types";
 
+import { DeputadoAvatar } from "@/shared/deputado";
 import { Badge, CheckboxControl } from "@/shared/ui";
 import { joinClassNames } from "@/shared/ui/utils";
 
@@ -9,8 +10,7 @@ import {
   toAmostraComparavelLabel,
   toAtividadeLabel,
   toAtividadeTone,
-} from "../lib/matcher-presentation";
-import { DeputadoAvatar } from "./deputado-avatar";
+} from "../../lib/matcher-presentation";
 
 type DeputadoCardProps = {
   deputado: MatcherDeputadoResumo;

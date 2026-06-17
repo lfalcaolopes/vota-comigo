@@ -5,7 +5,7 @@ import {
   stepStatus,
   type MainMatcherStep,
   type MatcherStep,
-} from "../lib/matcher-state";
+} from "../../lib/matcher-state";
 
 const STEP_LABELS: Record<MainMatcherStep, string> = {
   local: "Onde você vota",

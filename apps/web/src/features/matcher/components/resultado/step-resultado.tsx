@@ -4,14 +4,14 @@ import type { EscopoMatcher, MatcherResultado } from "@vota-comigo/shared-types"
 
 import { Button, ErrorState, SegmentedControl, SkeletonRows, Switch } from "@/shared/ui";
 
-import type { MatcherState, MatcherStatus } from "../lib/matcher-state";
+import type { MatcherState, MatcherStatus } from "../../lib/matcher-state";
 import {
   canOpenComparativo,
   hasComparativoDeputadoLimit,
   isComparativoSelectionMode,
   isSemBomMatch,
   resultadoDisplay,
-} from "../lib/matcher-state";
+} from "../../lib/matcher-state";
 import { DeputadoCard } from "./deputado-card";
 import { OrdenacaoDisclosure } from "./ordenacao-disclosure";
 import { ResultadoVazio } from "./resultado-vazio";

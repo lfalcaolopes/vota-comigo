@@ -3,8 +3,8 @@ import type { MatcherDetalheMetrics } from "@vota-comigo/shared-types";
 import {
   AMOSTRA_PEQUENA_CAVEAT,
   formatAmostraComparavel,
-} from "../lib/matcher-detalhe-presentation";
-import { formatPercentual } from "../lib/matcher-presentation";
+} from "../../lib/matcher-detalhe-presentation";
+import { formatPercentual } from "../../lib/matcher-presentation";
 import { MetricasGlossario } from "./metricas-glossario";
 
 type DetalheMetricasProps = {

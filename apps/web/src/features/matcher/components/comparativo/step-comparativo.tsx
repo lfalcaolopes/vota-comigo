@@ -7,6 +7,7 @@ import type {
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { DeputadoAvatar } from "@/shared/deputado";
 import {
   RECORTE_BASE_PRESENCA,
   formatPercentual,
@@ -26,9 +27,8 @@ import {
   SkeletonRows,
 } from "@/shared/ui";
 
-import { buildComparativoDeputadosGrid } from "../lib/comparativo-deputados-grid";
-import type { MatcherStatus } from "../lib/matcher-state";
-import { DeputadoAvatar } from "./deputado-avatar";
+import { buildComparativoDeputadosGrid } from "../../lib/comparativo-deputados-grid";
+import type { MatcherStatus } from "../../lib/matcher-state";
 
 const labelColumnClassName =
   "sticky left-0 z-10 border-r border-b border-border bg-bg p-3";

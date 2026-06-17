@@ -3,7 +3,7 @@ import { InlineMessage } from "@/shared/ui";
 import {
   SEM_BOM_MATCH_BANNER_BODY,
   SEM_BOM_MATCH_BANNER_TITLE,
-} from "../lib/matcher-presentation";
+} from "../../lib/matcher-presentation";
 
 export function SemBomMatchBanner() {
   return (

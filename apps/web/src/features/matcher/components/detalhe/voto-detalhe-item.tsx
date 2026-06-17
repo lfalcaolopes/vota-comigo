@@ -9,7 +9,7 @@ import {
   toMatcherEffectVerdict,
   toPosicaoLabel,
   toSituacaoLabel,
-} from "../lib/matcher-detalhe-presentation";
+} from "../../lib/matcher-detalhe-presentation";
 
 type VotoDetalheItemProps = {
   voto: MatcherVotoDetalhe;

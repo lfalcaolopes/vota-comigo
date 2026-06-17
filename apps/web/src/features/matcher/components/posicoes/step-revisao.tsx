@@ -9,7 +9,7 @@ import type {
 import { toIdentificadorLegislativo } from "@/shared/proposicao";
 import { Button } from "@/shared/ui";
 
-import { buildRevisaoItems, posicaoLabel } from "../lib/matcher-revisao";
+import { buildRevisaoItems, posicaoLabel } from "../../lib/matcher-revisao";
 
 type StepRevisaoProps = {
   selected: ProposicaoCard[];

@@ -2,11 +2,10 @@
 
 import type { MatcherDeputadoDetalhe } from "@vota-comigo/shared-types";
 
-import { DeputadoPerfilLink } from "@/shared/deputado";
+import { DeputadoAvatar, DeputadoPerfilLink } from "@/shared/deputado";
 import { Button, ErrorState, SkeletonRows } from "@/shared/ui";
 
-import type { MatcherStatus } from "../lib/matcher-state";
-import { DeputadoAvatar } from "./deputado-avatar";
+import type { MatcherStatus } from "../../lib/matcher-state";
 import { DetalheMetricas } from "./detalhe-metricas";
 import { VotoLista } from "./voto-lista";
 

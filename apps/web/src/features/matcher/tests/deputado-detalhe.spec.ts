@@ -7,10 +7,10 @@ import type {
 } from "@vota-comigo/shared-types";
 import { describe, expect, it } from "vitest";
 
-import { DeputadoCard } from "../components/deputado-card";
-import { DeputadoDetalhe } from "../components/deputado-detalhe";
-import { StepComparativo } from "../components/step-comparativo";
-import { StepResultado } from "../components/step-resultado";
+import { StepComparativo } from "../components/comparativo/step-comparativo";
+import { DeputadoDetalhe } from "../components/detalhe/deputado-detalhe";
+import { DeputadoCard } from "../components/resultado/deputado-card";
+import { StepResultado } from "../components/resultado/step-resultado";
 import { initMatcherState, matcherReducer } from "../lib/matcher-state";
 
 function detalhe(): MatcherDeputadoDetalhe {

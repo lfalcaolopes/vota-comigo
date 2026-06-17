@@ -10,7 +10,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-import { StepComparativo } from "../components/step-comparativo";
+import { StepComparativo } from "../components/comparativo/step-comparativo";
 
 function proposicao(externalIdProposicao: number): ProposicaoCard {
   return {
