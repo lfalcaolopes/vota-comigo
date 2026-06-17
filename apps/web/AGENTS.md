@@ -46,5 +46,9 @@ Blocks reused across features, split into generic and domain.
 
 ### Visual verification
 
-- For client changes, always run the web app on port `3002`, for example `pnpm --filter web dev -- -p 3002`; ports `3000` and `3001` are almost always in use.
-- Do not use Playwright for verification. Use the system Chromium for headless smoke checks and screenshots when browser automation is needed.
+- Use Playwright for browser automation and visual verification when the task needs real interaction with the web app.
+- Default E2E command from the repo root: `pnpm --filter web test:e2e`. It starts Next on `127.0.0.1:3002` through `playwright.config.ts` when no explicit base URL is provided.
+- If a Next dev server is already running, do not start another one. Point Playwright at it with `PLAYWRIGHT_BASE_URL=http://127.0.0.1:<port> pnpm --filter web test:e2e`.
+- For headed inspection, use `PLAYWRIGHT_BASE_URL=http://127.0.0.1:<port> pnpm --filter web test:e2e:headed`.
+- Next 16 prevents two `next dev` processes for the same app directory; prefer `PLAYWRIGHT_BASE_URL` when reusing an existing server.
+- In the Codex sandbox, local port bind/connect may fail with `EPERM`; rerun the Playwright command with sandbox escalation when browser automation is required.

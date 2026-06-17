@@ -31,6 +31,16 @@ The downloader writes the Câmara source CSVs to `apps/api/data/raw/{dataset}/..
 - Mock only external dependencies; never mock the unit under test.
 - Unit tests never touch real databases, network, or other modules.
 
+## Browser automation
+
+Playwright is configured in `apps/web` for agent-driven browser interaction with the web app.
+
+- Default E2E command: `pnpm --filter web test:e2e`. It starts Next on `127.0.0.1:3002` through `apps/web/playwright.config.ts` when no explicit base URL is provided.
+- If a Next dev server is already running, do not start another one. Point Playwright at it with `PLAYWRIGHT_BASE_URL=http://127.0.0.1:<port> pnpm --filter web test:e2e`.
+- For headed inspection, use `PLAYWRIGHT_BASE_URL=http://127.0.0.1:<port> pnpm --filter web test:e2e:headed`.
+- Next 16 prevents two `next dev` processes for the same app directory; prefer `PLAYWRIGHT_BASE_URL` when reusing an existing server.
+- In the Codex sandbox, local port bind/connect may fail with `EPERM`; rerun the Playwright command with sandbox escalation when browser automation is required.
+
 ## Commit messages
 
 Conventional Commits: `<type>: <description>`, type one of `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`.
