@@ -4,6 +4,7 @@ export type { BadgeTone } from "./selection";
 export {
   Badge,
   Checkbox,
+  CheckboxControl,
   Chip,
   Radio,
   SegmentedControl,

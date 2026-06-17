@@ -1,6 +1,6 @@
 import type { MatcherDeputadoResumo } from "@vota-comigo/shared-types";
 
-import { Badge } from "@/shared/ui";
+import { Badge, CheckboxControl } from "@/shared/ui";
 import { joinClassNames } from "@/shared/ui/utils";
 
 import {
@@ -41,13 +41,11 @@ export function DeputadoCard({
     <>
       <div className="flex items-center gap-3">
         {comparativoSelection ? (
-          <input
+          <CheckboxControl
             aria-label={`Selecionar ${deputado.nome ?? "deputado"} para comparação`}
             checked={comparativoSelection.selected}
-            className="size-4.5 shrink-0 accent-primary"
             disabled={comparativoSelection.disabled}
             onChange={() => comparativoSelection.onToggle(deputado.externalIdDeputado)}
-            type="checkbox"
           />
         ) : null}
         <DeputadoAvatar nome={deputado.nome} urlFoto={deputado.urlFoto} />

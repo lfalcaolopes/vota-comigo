@@ -148,10 +148,49 @@ type ChoiceProps = InputHTMLAttributes<HTMLInputElement> & {
 
 const choice = "inline-flex items-center gap-2 text-sm font-semibold text-ink";
 
-export function Checkbox({ className, hideLabel = false, label, ...props }: ChoiceProps) {
+type CheckboxControlProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {
+  controlClassName?: string;
+};
+
+const checkboxControl =
+  "relative inline-flex size-5 shrink-0 items-center justify-center rounded-sm border border-border-strong bg-white text-white transition-[background-color,border-color,color,scale] duration-[180ms] ease-standard peer-checked:border-primary peer-checked:bg-primary peer-checked:[&>svg]:opacity-100 peer-enabled:peer-hover:border-primary peer-enabled:peer-active:scale-95 peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus peer-disabled:bg-surface-muted peer-disabled:text-surface-muted";
+
+export function CheckboxControl({
+  className,
+  controlClassName,
+  ...props
+}: CheckboxControlProps) {
+  return (
+    <span className={joinClassNames("inline-flex size-5 shrink-0", className)}>
+      <input className="peer sr-only" type="checkbox" {...props} />
+      <span aria-hidden="true" className={joinClassNames(checkboxControl, controlClassName)}>
+        <svg
+          className="size-3.5 opacity-0 transition-opacity duration-[180ms] ease-standard"
+          fill="none"
+          viewBox="0 0 14 14"
+        >
+          <path
+            d="m3 7.1 2.4 2.4L11 4"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+          />
+        </svg>
+      </span>
+    </span>
+  );
+}
+
+export function Checkbox({
+  className,
+  hideLabel = false,
+  label,
+  ...props
+}: ChoiceProps) {
   return (
     <label className={joinClassNames(choice, className)}>
-      <input className="size-4.5 accent-primary" type="checkbox" {...props} />
+      <CheckboxControl {...props} />
       <span className={hideLabel ? "sr-only" : undefined}>{label}</span>
     </label>
   );
