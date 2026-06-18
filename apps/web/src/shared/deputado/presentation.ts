@@ -13,6 +13,36 @@ export const RECORTE_BASE_PRESENCA =
 export const HISTORICO_PARTIDARIO_INDISPONIVEL =
   "Não há histórico partidário na base para este deputado.";
 
+const ESTADO_LABEL_BY_SIGLA_UF: Record<string, string> = {
+  AC: "Acre",
+  AL: "Alagoas",
+  AP: "Amapá",
+  AM: "Amazonas",
+  BA: "Bahia",
+  CE: "Ceará",
+  DF: "Distrito Federal",
+  ES: "Espírito Santo",
+  GO: "Goiás",
+  MA: "Maranhão",
+  MT: "Mato Grosso",
+  MS: "Mato Grosso do Sul",
+  MG: "Minas Gerais",
+  PA: "Pará",
+  PB: "Paraíba",
+  PR: "Paraná",
+  PE: "Pernambuco",
+  PI: "Piauí",
+  RJ: "Rio de Janeiro",
+  RN: "Rio Grande do Norte",
+  RS: "Rio Grande do Sul",
+  RO: "Rondônia",
+  RR: "Roraima",
+  SC: "Santa Catarina",
+  SP: "São Paulo",
+  SE: "Sergipe",
+  TO: "Tocantins",
+};
+
 const mesAnoFormatter = new Intl.DateTimeFormat("pt-BR", {
   month: "short",
   year: "numeric",
@@ -56,6 +86,10 @@ export function toAtividadeTone(emAtividade: boolean): BadgeTone {
 
 export function toAtividadeAriaLabel(emAtividade: boolean): string {
   return `Situação do mandato: ${toAtividadeLabel(emAtividade)}`;
+}
+
+export function toEstadoLabel(siglaUf: string): string {
+  return ESTADO_LABEL_BY_SIGLA_UF[siglaUf] ?? siglaUf;
 }
 
 export function formatPercentual(value: number): string {

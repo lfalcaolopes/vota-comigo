@@ -9,6 +9,7 @@ import {
   toAtividadeTone,
   toPeriodoPartidarioLabel,
   toPresencaAmostrasLabel,
+  toEstadoLabel,
 } from "../presentation";
 
 function makePerfil(overrides: Partial<DeputadoPerfil> = {}): DeputadoPerfil {
@@ -86,6 +87,23 @@ describe("toAtividadeTone", () => {
     it("returns neutral tone", () => {
       // Act / Assert
       expect(toAtividadeTone(false)).toBe("neutral");
+    });
+  });
+});
+
+describe("toEstadoLabel", () => {
+  describe("when the sigla UF is known", () => {
+    it("returns the estado name", () => {
+      // Act / Assert
+      expect(toEstadoLabel("SP")).toBe("São Paulo");
+      expect(toEstadoLabel("RJ")).toBe("Rio de Janeiro");
+    });
+  });
+
+  describe("when the sigla UF is unknown", () => {
+    it("falls back to the original sigla UF", () => {
+      // Act / Assert
+      expect(toEstadoLabel("ZZ")).toBe("ZZ");
     });
   });
 });

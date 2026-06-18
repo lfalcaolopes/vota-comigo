@@ -6,6 +6,8 @@ import { useId, useState } from "react";
 import { Chip } from "@/shared/ui";
 import { joinClassNames } from "@/shared/ui/utils";
 
+import { toEstadoLabel } from "./presentation";
+
 type DeputadoUfControlProps = {
   ufs: readonly UfDisponivel[];
   activeUf: string | null;
@@ -23,6 +25,7 @@ export function DeputadoUfControl({
 }: DeputadoUfControlProps) {
   const listId = useId();
   const [isOpen, setIsOpen] = useState(false);
+  const activeEstadoLabel = activeUf ? toEstadoLabel(activeUf) : null;
 
   if (ufs.length === 0) return null;
 
@@ -38,10 +41,10 @@ export function DeputadoUfControl({
               onClick={() => setIsOpen((current) => !current)}
               type="button"
             >
-              <span className="min-w-0 truncate">{activeUf}</span>
+              <span className="min-w-0 truncate">{activeEstadoLabel}</span>
             </button>
             <button
-              aria-label={`Limpar UF ${activeUf}`}
+              aria-label={`Limpar filtro de estado ${activeEstadoLabel}`}
               className="inline-flex min-w-10 items-center justify-center border-l border-primary/35 px-2 transition-[background-color,color] duration-[180ms] ease-standard hover:bg-white"
               onClick={() => {
                 setIsOpen(false);
@@ -64,7 +67,7 @@ export function DeputadoUfControl({
             onClick={() => setIsOpen((current) => !current)}
             type="button"
           >
-            UF
+            Estado
             <ChevronIcon open={isOpen} />
           </button>
         )}
@@ -72,23 +75,27 @@ export function DeputadoUfControl({
 
       {isOpen ? (
         <div
-          aria-label="Filtrar por UF"
+          aria-label="Filtrar por estado"
           className="col-span-full flex flex-wrap gap-2 rounded-md border border-border bg-surface px-3 py-3"
           id={listId}
           role="group"
         >
-          {ufs.map((uf) => (
-            <Chip
-              key={uf.siglaUf}
-              onClick={() => {
-                onSelect(uf.siglaUf);
-                setIsOpen(false);
-              }}
-              selected={activeUf === uf.siglaUf}
-            >
-              {uf.siglaUf}
-            </Chip>
-          ))}
+          {ufs.map((uf) => {
+            const estadoLabel = toEstadoLabel(uf.siglaUf);
+
+            return (
+              <Chip
+                key={uf.siglaUf}
+                onClick={() => {
+                  onSelect(uf.siglaUf);
+                  setIsOpen(false);
+                }}
+                selected={activeUf === uf.siglaUf}
+              >
+                {estadoLabel}
+              </Chip>
+            );
+          })}
         </div>
       ) : null}
     </div>
