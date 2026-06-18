@@ -1,8 +1,11 @@
-import type { DeputadoPerfil } from "@vota-comigo/shared-types";
+import type {
+  DeputadoPerfil,
+  DeputadosFeedResponse,
+} from "@vota-comigo/shared-types";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { NotFoundError } from "../../lib/api-client";
-import { perfil } from "../queries";
+import { feed, perfil } from "../queries";
 
 const response: DeputadoPerfil = {
   externalIdDeputado: 220593,
@@ -23,6 +26,23 @@ const response: DeputadoPerfil = {
   resumoPresenca: null,
   historicoPartidarioDisponivel: false,
   historicoPartidario: [],
+};
+
+const feedResponse: DeputadosFeedResponse = {
+  items: [
+    {
+      externalIdDeputado: 220593,
+      nomePublico: "Maria da Silva",
+      nomeCivil: "Maria Aparecida da Silva",
+      siglaPartido: "PT",
+      siglaUf: "SP",
+      urlFoto: "https://example.com/foto.jpg",
+      emAtividade: true,
+    },
+  ],
+  total: 1,
+  limit: 20,
+  offset: 0,
 };
 
 afterEach(() => {
@@ -61,6 +81,29 @@ describe("perfil", () => {
 
       // Act / Assert
       await expect(perfil(999)).rejects.toBeInstanceOf(NotFoundError);
+    });
+  });
+});
+
+describe("feed", () => {
+  describe("when filters are provided", () => {
+    it("builds the deputado feed query string", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => feedResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      const result = await feed(20, 40, "maria silva", true, "SP");
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/feed?limit=20&offset=40&q=maria%20silva&emAtividade=true&uf=SP",
+      );
+      expect(result.items[0].externalIdDeputado).toBe(220593);
     });
   });
 });

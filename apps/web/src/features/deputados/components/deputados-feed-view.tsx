@@ -1,0 +1,218 @@
+"use client";
+
+import type { DeputadoCard, UfDisponivel } from "@vota-comigo/shared-types";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+
+import {
+  buildDeputadosFeedHref,
+  DeputadoUfControl,
+  useDeputadoFeedState,
+} from "@/shared/deputado";
+import { Button, SearchField, Switch } from "@/shared/ui";
+
+import { DeputadosFeedList } from "./deputados-feed-list";
+
+type DeputadosFeedViewProps = {
+  initialItems: DeputadoCard[];
+  initialTotal: number;
+  initialQuery?: string | null;
+  initialEmAtividade?: boolean;
+  initialUf?: string | null;
+  ufs?: readonly UfDisponivel[];
+};
+
+export function DeputadosFeedView({
+  initialItems,
+  initialTotal,
+  initialQuery = null,
+  initialEmAtividade = false,
+  initialUf = null,
+  ufs = [],
+}: DeputadosFeedViewProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const {
+    items,
+    total,
+    status,
+    query,
+    emAtividade,
+    uf,
+    display,
+    canLoadMore,
+    submitSearch,
+    clearSearch,
+    toggleEmAtividade,
+    changeUf,
+    clearUf,
+    clearFilters,
+    loadMore,
+  } = useDeputadoFeedState(
+    initialItems,
+    initialTotal,
+    initialQuery ?? "",
+    initialEmAtividade,
+    initialUf,
+  );
+
+  const [draft, setDraft] = useState(initialQuery ?? "");
+  const activeQuery = query || null;
+
+  async function handleClear() {
+    setDraft("");
+    router.replace(
+      buildDeputadosFeedHref(pathname, {
+        query: null,
+        emAtividade,
+        uf,
+      }),
+    );
+    await clearSearch();
+  }
+
+  async function handleSearch() {
+    const term = draft.trim();
+    if (term.length === 0) {
+      await handleClear();
+      return;
+    }
+
+    router.replace(
+      buildDeputadosFeedHref(pathname, {
+        query: term,
+        emAtividade,
+        uf,
+      }),
+    );
+    await submitSearch(term);
+  }
+
+  async function handleEmAtividade() {
+    const next = !emAtividade;
+    router.replace(
+      buildDeputadosFeedHref(pathname, {
+        query: activeQuery,
+        emAtividade: next,
+        uf,
+      }),
+    );
+    await toggleEmAtividade();
+  }
+
+  async function handleUf(value: string) {
+    const next = uf === value ? null : value;
+    router.replace(
+      buildDeputadosFeedHref(pathname, {
+        query: activeQuery,
+        emAtividade,
+        uf: next,
+      }),
+    );
+    if (next === null) {
+      await clearUf();
+    } else {
+      await changeUf(next);
+    }
+  }
+
+  async function handleClearUf() {
+    router.replace(
+      buildDeputadosFeedHref(pathname, {
+        query: activeQuery,
+        emAtividade,
+        uf: null,
+      }),
+    );
+    await clearUf();
+  }
+
+  async function handleClearFilters() {
+    setDraft("");
+    router.replace(
+      buildDeputadosFeedHref(pathname, {
+        query: null,
+        emAtividade: false,
+        uf: null,
+      }),
+    );
+    await clearFilters();
+  }
+
+  return (
+    <div className="grid min-w-0 gap-7">
+      <div className="grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-start">
+        <div className="grid min-w-0 max-w-full gap-3">
+          <form
+            className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
+            onSubmit={(event) => {
+              event.preventDefault();
+              handleSearch();
+            }}
+          >
+            <div className="min-w-0 flex-1">
+              <SearchField
+                className="h-11"
+                hideLabel
+                id="deputado-feed-search"
+                label="Buscar por nome"
+                onChange={(event) => setDraft(event.target.value)}
+                placeholder="Buscar por nome"
+                value={draft}
+              />
+            </div>
+            <Button
+              className="h-11 sm:shrink-0"
+              disabled={status === "loading"}
+              type="submit"
+              variant="primary"
+            >
+              Buscar
+            </Button>
+          </form>
+
+          {query !== "" ? (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+              <p className="text-muted">
+                Resultados para{" "}
+                <span className="font-[650] text-ink">&quot;{query}&quot;</span>
+              </p>
+              <button
+                className="font-[650] text-muted underline decoration-border underline-offset-2 transition-colors duration-[140ms] ease-standard hover:text-ink hover:decoration-current"
+                onClick={handleClear}
+                type="button"
+              >
+                Limpar busca
+              </button>
+            </div>
+          ) : null}
+        </div>
+
+        <Switch
+          checked={emAtividade}
+          className="h-11 rounded-md border border-border bg-white px-4 py-2.5"
+          disabled={status === "loading"}
+          label="Em atividade"
+          onChange={handleEmAtividade}
+        />
+
+        <DeputadoUfControl
+          activeUf={uf}
+          onClear={handleClearUf}
+          onSelect={handleUf}
+          ufs={ufs}
+        />
+      </div>
+
+      <DeputadosFeedList
+        canLoadMore={canLoadMore}
+        display={display}
+        items={items}
+        onClearFilters={handleClearFilters}
+        onLoadMore={loadMore}
+        status={status}
+        total={total}
+      />
+    </div>
+  );
+}

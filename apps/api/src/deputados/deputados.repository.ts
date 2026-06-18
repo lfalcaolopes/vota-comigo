@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
 import type { VotoCategoria } from '@vota-comigo/shared-types';
@@ -14,6 +14,7 @@ import {
 } from '@/shared/database/schema';
 
 import type {
+  DeputadoHistoricoEventoSource,
   DeputadoPerfilSource,
   VotacaoPlenarioRow,
 } from './types/deputados.types';
@@ -21,6 +22,7 @@ import type {
 export const DEPUTADOS_REPOSITORY = Symbol('DEPUTADOS_REPOSITORY');
 
 export interface DeputadosRepository {
+  loadDeputadosFeed(): Promise<readonly DeputadoPerfilSource[]>;
   loadDeputadoPerfil(
     externalIdDeputado: number,
   ): Promise<DeputadoPerfilSource | null>;
@@ -44,7 +46,85 @@ function invertVotos(
 export function createDeputadosRepository(
   db: DrizzleDatabase,
 ): DeputadosRepository {
+  async function loadEventosByDeputadoId(deputadoId: string) {
+    return db
+      .select({
+        dataHora: deputadoHistorico.dataHora,
+        situacao: deputadoHistorico.situacao,
+        descricaoStatus: deputadoHistorico.descricaoStatus,
+        nomeEleitoral: deputadoHistorico.nomeEleitoral,
+        siglaUf: deputadoHistorico.siglaUf,
+        urlFoto: deputadoHistorico.urlFoto,
+        siglaPartido: partido.sigla,
+      })
+      .from(deputadoHistorico)
+      .leftJoin(partido, eq(deputadoHistorico.partidoId, partido.id))
+      .where(eq(deputadoHistorico.deputadoId, deputadoId));
+  }
+
+  async function loadEventosByDeputadoIds(deputadoIds: readonly string[]) {
+    const byDeputadoId = new Map<string, DeputadoHistoricoEventoSource[]>();
+    if (deputadoIds.length === 0) return byDeputadoId;
+
+    const eventos = await db
+      .select({
+        deputadoId: deputadoHistorico.deputadoId,
+        dataHora: deputadoHistorico.dataHora,
+        situacao: deputadoHistorico.situacao,
+        descricaoStatus: deputadoHistorico.descricaoStatus,
+        nomeEleitoral: deputadoHistorico.nomeEleitoral,
+        siglaUf: deputadoHistorico.siglaUf,
+        urlFoto: deputadoHistorico.urlFoto,
+        siglaPartido: partido.sigla,
+      })
+      .from(deputadoHistorico)
+      .leftJoin(partido, eq(deputadoHistorico.partidoId, partido.id))
+      .where(inArray(deputadoHistorico.deputadoId, deputadoIds));
+
+    for (const evento of eventos) {
+      const { deputadoId, ...source } = evento;
+      byDeputadoId.set(deputadoId, [
+        ...(byDeputadoId.get(deputadoId) ?? []),
+        source,
+      ]);
+    }
+    return byDeputadoId;
+  }
+
   return {
+    async loadDeputadosFeed() {
+      const rows = await db
+        .select({
+          id: deputado.id,
+          externalIdDeputado: deputado.externalIdDeputado,
+          nome: deputado.nome,
+          nomeCivil: deputado.nomeCivil,
+          dataNascimento: deputado.dataNascimento,
+          municipioNascimento: deputado.municipioNascimento,
+          ufNascimento: deputado.ufNascimento,
+          urlRedeSocial: deputado.urlRedeSocial,
+        })
+        .from(deputado);
+
+      const eventosByDeputadoId = await loadEventosByDeputadoIds(
+        rows.map((row) => row.id),
+      );
+
+      return rows.map((row) => ({
+        id: row.id,
+        externalIdDeputado: row.externalIdDeputado,
+        nome: row.nome,
+        nomeCivil: row.nomeCivil,
+        dataNascimento: row.dataNascimento,
+        municipioNascimento: row.municipioNascimento,
+        ufNascimento: row.ufNascimento,
+        urlRedeSocial: row.urlRedeSocial,
+        externalIdLegislaturaInicial: null,
+        externalIdLegislaturaFinal: null,
+        eventos: eventosByDeputadoId.get(row.id) ?? [],
+      }));
+    },
+
     async loadDeputadoPerfil(externalIdDeputado) {
       const legislaturaInicial = alias(legislatura, 'legislatura_inicial');
       const legislaturaFinal = alias(legislatura, 'legislatura_final');
@@ -79,20 +159,6 @@ export function createDeputadosRepository(
         return null;
       }
 
-      const eventos = await db
-        .select({
-          dataHora: deputadoHistorico.dataHora,
-          situacao: deputadoHistorico.situacao,
-          descricaoStatus: deputadoHistorico.descricaoStatus,
-          nomeEleitoral: deputadoHistorico.nomeEleitoral,
-          siglaUf: deputadoHistorico.siglaUf,
-          urlFoto: deputadoHistorico.urlFoto,
-          siglaPartido: partido.sigla,
-        })
-        .from(deputadoHistorico)
-        .leftJoin(partido, eq(deputadoHistorico.partidoId, partido.id))
-        .where(eq(deputadoHistorico.deputadoId, row.id));
-
       return {
         id: row.id,
         externalIdDeputado: row.externalIdDeputado,
@@ -104,7 +170,7 @@ export function createDeputadosRepository(
         urlRedeSocial: row.urlRedeSocial,
         externalIdLegislaturaInicial: row.externalIdLegislaturaInicial ?? null,
         externalIdLegislaturaFinal: row.externalIdLegislaturaFinal ?? null,
-        eventos,
+        eventos: await loadEventosByDeputadoId(row.id),
       };
     },
 

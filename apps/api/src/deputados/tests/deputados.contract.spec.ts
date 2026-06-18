@@ -1,6 +1,10 @@
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { deputadoPerfilSchema } from '@vota-comigo/shared-types';
+import {
+  deputadoFeedResponseSchema,
+  deputadoPerfilSchema,
+  ufsDisponiveisResponseSchema,
+} from '@vota-comigo/shared-types';
 import request from 'supertest';
 
 import { DeputadosController } from '../deputados.controller';
@@ -57,6 +61,7 @@ function fakeRepository(
   votacoesById: VotacoesById = new Map(),
 ): DeputadosRepository {
   return {
+    loadDeputadosFeed: async () => [...byExternalId.values()],
     loadDeputadoPerfil: async (externalIdDeputado) =>
       byExternalId.get(externalIdDeputado) ?? null,
     loadVotacoesPlenarioForDeputado: async (deputadoId) =>
@@ -83,6 +88,306 @@ async function buildApp(
   await app.init();
   return app;
 }
+
+describe('GET /deputados/feed', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    app = await buildApp(new Map([[220593, source()]]));
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('when deputados are available', () => {
+    it('returns a valid feed contract parseable by the schema', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get('/deputados/feed');
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoFeedResponseSchema.parse(response.body as unknown);
+      expect(body).toEqual({
+        items: [
+          {
+            externalIdDeputado: 220593,
+            nomePublico: 'Maria da Silva',
+            nomeCivil: 'Maria Aparecida da Silva',
+            siglaPartido: 'PT',
+            siglaUf: 'SP',
+            urlFoto: 'https://example.com/foto.jpg',
+            emAtividade: true,
+          },
+        ],
+        total: 1,
+        limit: 20,
+        offset: 0,
+      });
+    });
+  });
+});
+
+describe('GET /deputados/feed?q=', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    app = await buildApp(
+      new Map([
+        [220593, source()],
+        [
+          220594,
+          source({
+            id: 'aaaaaaaa-0000-0000-0000-000000000002',
+            externalIdDeputado: 220594,
+            nome: 'Aécio Nome Cadastro',
+            nomeCivil: 'Aécio Pereira',
+            eventos: [
+              {
+                dataHora: '2023-01-01T00:00:00+00:00',
+                situacao: 'Exercício',
+                descricaoStatus: 'Entrada - Posse',
+                nomeEleitoral: 'Aécio Pereira',
+                siglaPartido: 'PSOL',
+                siglaUf: 'RJ',
+                urlFoto: null,
+              },
+            ],
+          }),
+        ],
+      ]),
+    );
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('when q matches a public name with different casing', () => {
+    it('returns only matching deputados', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/feed?q=maria',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoFeedResponseSchema.parse(response.body as unknown);
+      expect(body.total).toBe(1);
+      expect(body.items.map((item) => item.externalIdDeputado)).toEqual([
+        220593,
+      ]);
+    });
+  });
+
+  describe('when q omits accents from a public name', () => {
+    it('returns deputados whose names contain the accented form', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/feed?q=aecio',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoFeedResponseSchema.parse(response.body as unknown);
+      expect(body.total).toBe(1);
+      expect(body.items.map((item) => item.nomePublico)).toEqual([
+        'Aécio Pereira',
+      ]);
+    });
+  });
+});
+
+describe('GET /deputados/feed?emAtividade=true', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    app = await buildApp(
+      new Map([
+        [220593, source()],
+        [
+          220594,
+          source({
+            id: 'aaaaaaaa-0000-0000-0000-000000000002',
+            externalIdDeputado: 220594,
+            eventos: [
+              {
+                dataHora: '2019-02-01T12:00:00+00:00',
+                situacao: 'Exercício',
+                descricaoStatus: 'Entrada - Posse de Eleito Titular',
+                nomeEleitoral: 'José Pereira',
+                siglaPartido: 'PSOL',
+                siglaUf: 'RJ',
+                urlFoto: null,
+              },
+              {
+                dataHora: '2023-01-31T23:59:00+00:00',
+                situacao: 'Fim de Mandato',
+                descricaoStatus: 'Saída - Término da Legislatura',
+                nomeEleitoral: 'José Pereira',
+                siglaPartido: 'PSOL',
+                siglaUf: 'RJ',
+                urlFoto: null,
+              },
+            ],
+          }),
+        ],
+      ]),
+    );
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('when the activity filter is enabled', () => {
+    it('returns only deputados currently in activity', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/feed?emAtividade=true',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoFeedResponseSchema.parse(response.body as unknown);
+      expect(body.total).toBe(1);
+      expect(body.items.map((item) => item.externalIdDeputado)).toEqual([
+        220593,
+      ]);
+    });
+  });
+});
+
+describe('GET /deputados/feed?uf=', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    app = await buildApp(
+      new Map([
+        [220593, source()],
+        [
+          220594,
+          source({
+            id: 'aaaaaaaa-0000-0000-0000-000000000002',
+            externalIdDeputado: 220594,
+            nome: 'José Nome Cadastro',
+            nomeCivil: 'José Pereira',
+            eventos: [
+              {
+                dataHora: '2023-01-01T00:00:00+00:00',
+                situacao: 'Exercício',
+                descricaoStatus: 'Entrada - Posse',
+                nomeEleitoral: 'José Pereira',
+                siglaPartido: 'PSOL',
+                siglaUf: 'RJ',
+                urlFoto: null,
+              },
+            ],
+          }),
+        ],
+      ]),
+    );
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('when uf matches one latest public snapshot', () => {
+    it('returns only deputados from that UF', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/feed?uf=SP',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoFeedResponseSchema.parse(response.body as unknown);
+      expect(body.total).toBe(1);
+      expect(body.items.map((item) => item.siglaUf)).toEqual(['SP']);
+    });
+  });
+});
+
+describe('GET /deputados/feed with invalid pagination', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    app = await buildApp(new Map([[220593, source()]]));
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('when limit is below the accepted range', () => {
+    it('returns 400', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/feed?limit=0',
+      );
+
+      // Assert
+      expect(response.status).toBe(400);
+    });
+  });
+});
+
+describe('GET /deputados/feed/ufs', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    app = await buildApp(
+      new Map([
+        [220593, source()],
+        [
+          220594,
+          source({
+            id: 'aaaaaaaa-0000-0000-0000-000000000002',
+            externalIdDeputado: 220594,
+            eventos: [
+              {
+                dataHora: '2023-01-01T00:00:00+00:00',
+                situacao: 'Exercício',
+                descricaoStatus: 'Entrada - Posse',
+                nomeEleitoral: 'José Pereira',
+                siglaPartido: 'PSOL',
+                siglaUf: 'RJ',
+                urlFoto: null,
+              },
+            ],
+          }),
+        ],
+        [
+          220595,
+          source({
+            id: 'aaaaaaaa-0000-0000-0000-000000000003',
+            externalIdDeputado: 220595,
+            eventos: [],
+          }),
+        ],
+      ]),
+    );
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('when deputados have public snapshots', () => {
+    it('returns distinct available UFs sorted alphabetically', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/feed/ufs',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = ufsDisponiveisResponseSchema.parse(response.body as unknown);
+      expect(body.items).toEqual([{ siglaUf: 'RJ' }, { siglaUf: 'SP' }]);
+    });
+  });
+});
 
 describe('GET /deputados/:externalIdDeputado', () => {
   let app: INestApplication;

@@ -88,7 +88,36 @@ export const deputadoPerfilSchema = z
     }
   });
 
+export const deputadoCardSchema = z.object({
+  externalIdDeputado: z.number(),
+  nomePublico: z.string().nullable(),
+  nomeCivil: z.string().nullable(),
+  siglaPartido: z.string().nullable(),
+  siglaUf: z.string().nullable(),
+  urlFoto: z.string().nullable(),
+  emAtividade: z.boolean(),
+});
+
+export const deputadoFeedResponseSchema = z.object({
+  items: z.array(deputadoCardSchema),
+  total: z.number(),
+  limit: z.number(),
+  offset: z.number(),
+});
+
+export const ufDisponivelSchema = z.object({
+  siglaUf: z.string(),
+});
+
+export const ufsDisponiveisResponseSchema = z.object({
+  items: z.array(ufDisponivelSchema),
+});
+
 export type DeputadoSnapshotPublico = z.infer<typeof deputadoSnapshotPublicoSchema>;
 export type DeputadoResumoPresenca = z.infer<typeof deputadoResumoPresencaSchema>;
 export type DeputadoPeriodoPartidario = z.infer<typeof deputadoPeriodoPartidarioSchema>;
 export type DeputadoPerfil = z.infer<typeof deputadoPerfilSchema>;
+export type DeputadoCard = z.infer<typeof deputadoCardSchema>;
+export type DeputadosFeedResponse = z.infer<typeof deputadoFeedResponseSchema>;
+export type UfDisponivel = z.infer<typeof ufDisponivelSchema>;
+export type UfsDisponiveisResponse = z.infer<typeof ufsDisponiveisResponseSchema>;

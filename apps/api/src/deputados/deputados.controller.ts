@@ -1,12 +1,96 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Query,
+} from '@nestjs/common';
 
-import type { DeputadoPerfil } from '@vota-comigo/shared-types';
+import type {
+  DeputadoPerfil,
+  DeputadosFeedResponse,
+  UfsDisponiveisResponse,
+} from '@vota-comigo/shared-types';
 
 import { DeputadosService } from './deputados.service';
+
+const LIMIT_DEFAULT = 20;
+const LIMIT_MAX = 100;
+const OFFSET_DEFAULT = 0;
+
+type DeputadosFeedPagination = {
+  limit: number;
+  offset: number;
+};
+
+function parsePagination(
+  limit: number | undefined,
+  offset: number | undefined,
+): DeputadosFeedPagination {
+  const normalizedLimit = limit ?? LIMIT_DEFAULT;
+  const normalizedOffset = offset ?? OFFSET_DEFAULT;
+
+  if (
+    !Number.isInteger(normalizedLimit) ||
+    normalizedLimit < 1 ||
+    normalizedLimit > LIMIT_MAX
+  ) {
+    throw new BadRequestException('limit must be between 1 and 100');
+  }
+
+  if (!Number.isInteger(normalizedOffset) || normalizedOffset < 0) {
+    throw new BadRequestException('offset must be zero or positive');
+  }
+
+  return { limit: normalizedLimit, offset: normalizedOffset };
+}
+
+function parseEmAtividade(raw: string | undefined): boolean | undefined {
+  if (raw === undefined) return undefined;
+  if (raw === 'true') return true;
+  if (raw === 'false') return false;
+  throw new BadRequestException('emAtividade must be true or false');
+}
+
+function parseUf(raw: string | undefined): string | undefined {
+  if (raw === undefined) return undefined;
+  const uf = raw.trim().toUpperCase();
+  if (!/^[A-Z]{2}$/.test(uf)) {
+    throw new BadRequestException('uf must have two letters');
+  }
+  return uf;
+}
 
 @Controller('deputados')
 export class DeputadosController {
   constructor(private readonly service: DeputadosService) {}
+
+  @Get('feed/ufs')
+  async feedUfs(): Promise<UfsDisponiveisResponse> {
+    return this.service.ufsDisponiveis();
+  }
+
+  @Get('feed')
+  async feed(
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
+    @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
+    @Query('q') qParam?: string,
+    @Query('emAtividade') emAtividadeParam?: string,
+    @Query('uf') ufParam?: string,
+  ): Promise<DeputadosFeedResponse> {
+    const pagination = parsePagination(limit, offset);
+    const q = (qParam ?? '').trim() || undefined;
+    const emAtividade = parseEmAtividade(emAtividadeParam);
+    const uf = parseUf(ufParam);
+    return this.service.feed(
+      pagination.limit,
+      pagination.offset,
+      q,
+      emAtividade,
+      uf,
+    );
+  }
 
   @Get(':externalIdDeputado')
   async perfil(
