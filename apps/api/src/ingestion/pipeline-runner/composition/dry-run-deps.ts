@@ -7,6 +7,7 @@ import type {
 import type { LegislaturaRepository } from '../steps/legislaturas/legislaturas.repository.types';
 import type { PartidoRepository } from '../steps/partidos/partidos.repository.types';
 import type { ProposicaoRepository } from '../steps/proposicoes/proposicoes.repository.types';
+import type { ProposicaoComputavelRepository } from '../steps/proposicao-computavel/proposicao-computavel.repository.types';
 import type { SanityRepository } from '../steps/sanity/sanity.repository.types';
 import type {
   TemaLookup,
@@ -50,6 +51,12 @@ export const dryRunProposicaoRepository: ProposicaoRepository = {
 export const dryRunVotacaoProposicaoRepository: VotacaoProposicaoRepository = {
   upsert: dryRunWriteGuard,
 };
+
+export const dryRunProposicaoComputavelRepository: ProposicaoComputavelRepository =
+  {
+    loadCandidates: () => Promise.resolve([]),
+    fullReplace: dryRunWriteGuard,
+  };
 
 export const dryRunProposicaoDownloader: DatasetDownloader = {
   download: dryRunReadGuard,

@@ -18,6 +18,7 @@ import type {
 } from '../proposicoes.repository';
 import { PROPOSICOES_REPOSITORY } from '../proposicoes.repository';
 import { ProposicoesService } from '../proposicoes.service';
+import { toProposicoesComputaveis } from '../rules/proposicoes-computaveis';
 
 type TestServer = Parameters<typeof request>[0];
 
@@ -71,6 +72,7 @@ function detalheHead(
     ultimoStatusDescricaoSituacao: 'Aprovada',
     ultimoStatusRegime: 'Urgência',
     ultimoStatusDataHora: '2024-06-01T10:00:00Z',
+    votacaoReferenciaId: 'votacao-1',
     ...overrides,
   };
 }
@@ -79,6 +81,7 @@ function votacaoDetalheRow(
   overrides: Partial<VotacaoDetalheRow> = {},
 ): VotacaoDetalheRow {
   return {
+    votacaoId: 'votacao-1',
     externalIdVotacao: '1-1',
     data: '2024-05-01',
     dataHoraRegistro: '2024-05-01T12:00:00Z',
@@ -96,6 +99,7 @@ function votacaoDetalheRow(
     votosObstrucao: 1,
     votosArtigo17: 1,
     votosNaoInformado: 0,
+    isReferenciaMatcher: true,
     ...overrides,
   };
 }
@@ -108,15 +112,18 @@ type FakeData = {
 
 function fakeRepository(data: FakeData): ProposicoesRepository {
   return {
-    loadProposicoesWithVotacoesPlenario: async (tema?: number) => {
+    loadProposicoesComputaveis: async (tema?: number) => {
       const lista = data.lista ?? [];
-      if (tema === undefined) return lista;
+      const computaveis = toProposicoesComputaveis(lista);
+      if (tema === undefined) return computaveis;
       const matchingIds = new Set(
         (data.temas ?? [])
           .filter((t) => t.externalCodTema === tema)
           .map((t) => t.externalIdProposicao),
       );
-      return lista.filter((row) => matchingIds.has(row.externalIdProposicao));
+      return computaveis.filter((row) =>
+        matchingIds.has(row.proposicao.externalIdProposicao),
+      );
     },
     loadProposicaoDetalhe: async (externalIdProposicao) =>
       data.detalhe?.get(externalIdProposicao) ?? null,

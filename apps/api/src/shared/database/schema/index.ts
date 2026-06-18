@@ -5,6 +5,7 @@ export * from './deputado-historico';
 export * from './votacao';
 export * from './votacao-votos';
 export * from './proposicao';
+export * from './proposicao-computavel';
 export * from './votacao-proposicao';
 export * from './tema';
 export * from './proposicao-tema';

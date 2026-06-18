@@ -1,24 +1,24 @@
-import { and, desc, eq, inArray } from 'drizzle-orm';
+import { desc, eq, inArray } from 'drizzle-orm';
 import type {
   EscopoMatcher,
   SiglaUf,
   VotoCategoria,
 } from '@vota-comigo/shared-types';
+import { votacaoReferenciaPattern } from '@vota-comigo/shared-types';
 
-import { toProposicoesComputaveis } from '@/proposicoes/rules/proposicoes-computaveis';
-import type { ProposicaoVotacaoJoinRow } from '@/proposicoes/proposicoes.repository';
 import {
   toProposicaoCard,
   toVotacaoReferenciaResumo,
 } from '@/proposicoes/mappers/proposicao-card.mapper';
+import type { RankedProposicao } from '@/proposicoes/types/proposicoes.types';
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
   deputado,
   deputadoHistorico,
   partido,
   proposicao,
+  proposicaoComputavel,
   votacao,
-  votacaoProposicao,
   votacaoVotos,
 } from '@/shared/database/schema';
 
@@ -47,11 +47,11 @@ export type MatcherRepository = {
   ): Promise<DeputadoCompatibilidadeInput | null>;
 };
 
-function selectProposicaoVotacaoJoin(
+async function loadRankedProposicoesComputaveis(
   db: DrizzleDatabase,
   externalIdProposicoes: readonly number[],
-) {
-  return db
+): Promise<readonly RankedProposicao[]> {
+  const rows = await db
     .select({
       externalIdProposicao: proposicao.externalIdProposicao,
       siglaTipo: proposicao.siglaTipo,
@@ -63,6 +63,8 @@ function selectProposicaoVotacaoJoin(
       ultimoStatusDescricaoSituacao: proposicao.ultimoStatusDescricaoSituacao,
       ultimoStatusRegime: proposicao.ultimoStatusRegime,
       ultimoStatusDataHora: proposicao.ultimoStatusDataHora,
+      volumeVotacoesPlenario: proposicaoComputavel.volumeVotacoesPlenario,
+      dataUltimaVotacao: proposicaoComputavel.dataUltimaVotacao,
       externalIdVotacao: votacao.externalIdVotacao,
       data: votacao.data,
       dataHoraRegistro: votacao.dataHoraRegistro,
@@ -74,16 +76,50 @@ function selectProposicaoVotacaoJoin(
       votosNao: votacao.votosNao,
       votosOutros: votacao.votosOutros,
       aprovacao: votacao.aprovacao,
+      votacaoReferenciaPattern: proposicaoComputavel.votacaoReferenciaPattern,
     })
-    .from(votacaoProposicao)
-    .innerJoin(votacao, eq(votacaoProposicao.votacaoId, votacao.id))
-    .innerJoin(proposicao, eq(votacaoProposicao.proposicaoId, proposicao.id))
+    .from(proposicaoComputavel)
+    .innerJoin(proposicao, eq(proposicaoComputavel.proposicaoId, proposicao.id))
+    .innerJoin(
+      votacao,
+      eq(proposicaoComputavel.votacaoReferenciaId, votacao.id),
+    )
     .where(
-      and(
-        eq(votacao.escopoVotacao, 'plenario'),
-        inArray(proposicao.externalIdProposicao, [...externalIdProposicoes]),
-      ),
+      inArray(proposicao.externalIdProposicao, [...externalIdProposicoes]),
     );
+
+  return rows.map((row) => ({
+    proposicao: {
+      externalIdProposicao: row.externalIdProposicao,
+      siglaTipo: row.siglaTipo,
+      numero: row.numero,
+      ano: row.ano,
+      ementa: row.ementa,
+      dataApresentacao: row.dataApresentacao,
+      ultimoStatusSiglaOrgao: row.ultimoStatusSiglaOrgao,
+      ultimoStatusDescricaoSituacao: row.ultimoStatusDescricaoSituacao,
+      ultimoStatusRegime: row.ultimoStatusRegime,
+      ultimoStatusDataHora: row.ultimoStatusDataHora,
+    },
+    volumeVotacoesPlenario: row.volumeVotacoesPlenario,
+    dataUltimaVotacao: row.dataUltimaVotacao,
+    referencia: {
+      externalIdVotacao: row.externalIdVotacao,
+      data: row.data,
+      dataHoraRegistro: row.dataHoraRegistro,
+      descricao: row.descricao,
+      ultimaAberturaVotacaoDescricao: row.ultimaAberturaVotacaoDescricao,
+      ultimaApresentacaoProposicaoDescricao:
+        row.ultimaApresentacaoProposicaoDescricao,
+      votosSim: row.votosSim,
+      votosNao: row.votosNao,
+      votosOutros: row.votosOutros,
+      aprovacao: row.aprovacao,
+      classification: {
+        pattern: votacaoReferenciaPattern.parse(row.votacaoReferenciaPattern),
+      },
+    },
+  }));
 }
 
 function invertVotos(
@@ -107,14 +143,20 @@ export function createMatcherRepository(
         return new Set<number>();
       }
 
-      const rows: ProposicaoVotacaoJoinRow[] =
-        await selectProposicaoVotacaoJoin(db, externalIdProposicoes);
+      const rows = await db
+        .select({
+          externalIdProposicao: proposicao.externalIdProposicao,
+        })
+        .from(proposicaoComputavel)
+        .innerJoin(
+          proposicao,
+          eq(proposicaoComputavel.proposicaoId, proposicao.id),
+        )
+        .where(
+          inArray(proposicao.externalIdProposicao, [...externalIdProposicoes]),
+        );
 
-      return new Set(
-        toProposicoesComputaveis(rows).map(
-          (ranked) => ranked.proposicao.externalIdProposicao,
-        ),
-      );
+      return new Set(rows.map((row) => row.externalIdProposicao));
     },
 
     async loadVotacoesReferenciaWithVotos(externalIdProposicoes) {
@@ -122,9 +164,10 @@ export function createMatcherRepository(
         return [];
       }
 
-      const rows: ProposicaoVotacaoJoinRow[] =
-        await selectProposicaoVotacaoJoin(db, externalIdProposicoes);
-      const ranked = toProposicoesComputaveis(rows);
+      const ranked = await loadRankedProposicoesComputaveis(
+        db,
+        externalIdProposicoes,
+      );
       if (ranked.length === 0) {
         return [];
       }

@@ -1,6 +1,6 @@
 import { compareRanking } from './proposicoes-ranking';
 import type {
-  ProposicaoWithVotacoes,
+  ProposicaoResumo,
   RankedProposicao,
 } from '../types/proposicoes.types';
 
@@ -46,7 +46,7 @@ export type ProposicaoSearchMatch = {
 };
 
 export function toSearchableProposicao(
-  proposicao: ProposicaoWithVotacoes,
+  proposicao: ProposicaoResumo,
 ): SearchableProposicao {
   return {
     ementa: normalizeText(proposicao.ementa ?? ''),

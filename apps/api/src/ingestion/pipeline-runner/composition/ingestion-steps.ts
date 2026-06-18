@@ -32,6 +32,8 @@ import {
   createVotacaoLookup,
 } from '../steps/votacao-proposicao/lookups';
 import { createVotacaoProposicaoStep } from '../steps/votacao-proposicao/votacao-proposicao.step';
+import { createProposicaoComputavelRepository } from '../steps/proposicao-computavel/proposicao-computavel.repository';
+import { createProposicaoComputavelStep } from '../steps/proposicao-computavel/proposicao-computavel.step';
 import { createTemaRepository } from '../steps/tema/tema.repository';
 import { createTemaLookup } from '../steps/tema/tema.lookups';
 import { createTemaStep } from '../steps/tema/tema.step';
@@ -47,6 +49,7 @@ import {
   dryRunLegislaturaRepository,
   dryRunPartidoRepository,
   dryRunProposicaoDownloader,
+  dryRunProposicaoComputavelRepository,
   dryRunProposicaoLookup,
   dryRunProposicaoRepository,
   dryRunSanityRepository,
@@ -97,6 +100,7 @@ export function createIngestionSteps(
           votacaoLookup: dryRunVotacaoLookup,
           proposicaoLookup: dryRunProposicaoLookup,
         }),
+        createProposicaoComputavelStep(dryRunProposicaoComputavelRepository),
         createTemaStep({
           repository: dryRunTemaRepository,
           fonteDerivada,
@@ -139,6 +143,7 @@ export function createIngestionSteps(
       votacaoLookup: createVotacaoLookup(db),
       proposicaoLookup: createProposicaoLookup(db),
     }),
+    createProposicaoComputavelStep(createProposicaoComputavelRepository(db)),
     createTemaStep({
       repository: createTemaRepository(db),
       fonteDerivada,

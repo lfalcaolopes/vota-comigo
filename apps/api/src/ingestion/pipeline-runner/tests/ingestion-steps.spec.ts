@@ -28,6 +28,7 @@ describe('ingestion steps provider', () => {
       expect(steps.map((step) => step.name)).toContain('deputado_historico');
       expect(steps.map((step) => step.name)).toContain('votacoes');
       expect(steps.map((step) => step.name)).toContain('votacao_votos');
+      expect(steps.map((step) => step.name)).toContain('proposicao_computavel');
     });
   });
 
@@ -54,6 +55,7 @@ describe('ingestion steps provider', () => {
       expect(steps.map((step) => step.name)).toContain('deputado_historico');
       expect(steps.map((step) => step.name)).toContain('votacoes');
       expect(steps.map((step) => step.name)).toContain('votacao_votos');
+      expect(steps.map((step) => step.name)).toContain('proposicao_computavel');
       expect(closed).toBe(true);
     });
   });

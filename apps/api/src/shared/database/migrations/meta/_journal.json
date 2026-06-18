@@ -50,6 +50,13 @@
       "when": 1780418884715,
       "tag": "0006_panoramic_thor_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1781760183116,
+      "tag": "0007_flat_amphibian",
+      "breakpoints": true
     }
   ]
 }

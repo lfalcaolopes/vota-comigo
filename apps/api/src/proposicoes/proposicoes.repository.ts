@@ -1,9 +1,14 @@
 import { and, eq, exists, sql } from 'drizzle-orm';
+import { votacaoReferenciaPattern } from '@vota-comigo/shared-types';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
-import type { ProposicaoTemaRow } from './types/proposicoes.types';
+import type {
+  ProposicaoTemaRow,
+  RankedProposicao,
+} from './types/proposicoes.types';
 import {
   proposicao,
+  proposicaoComputavel,
   proposicaoTema,
   tema,
   votacao,
@@ -49,9 +54,11 @@ export type ProposicaoDetalheHead = {
   ultimoStatusDescricaoSituacao: string | null;
   ultimoStatusRegime: string | null;
   ultimoStatusDataHora: string | null;
+  votacaoReferenciaId: string | null;
 };
 
 export type VotacaoDetalheRow = {
+  votacaoId: string;
   externalIdVotacao: string;
   data: string | null;
   dataHoraRegistro: string | null;
@@ -69,6 +76,7 @@ export type VotacaoDetalheRow = {
   votosObstrucao: number | null;
   votosArtigo17: number | null;
   votosNaoInformado: number | null;
+  isReferenciaMatcher: boolean;
 };
 
 export type TemaRow = {
@@ -85,9 +93,9 @@ export type ProposicaoDetalheResult = {
 export type { ProposicaoTemaRow };
 
 export type ProposicoesRepository = {
-  loadProposicoesWithVotacoesPlenario(
+  loadProposicoesComputaveis(
     tema?: number,
-  ): Promise<readonly ProposicaoVotacaoJoinRow[]>;
+  ): Promise<readonly RankedProposicao[]>;
   loadProposicaoDetalhe(
     externalIdProposicao: number,
   ): Promise<ProposicaoDetalheResult | null>;
@@ -98,7 +106,7 @@ export function createProposicoesRepository(
   db: DrizzleDatabase,
 ): ProposicoesRepository {
   return {
-    async loadProposicoesWithVotacoesPlenario(tema?: number) {
+    async loadProposicoesComputaveis(tema?: number) {
       const temaCondition =
         tema !== undefined
           ? exists(
@@ -114,7 +122,7 @@ export function createProposicoesRepository(
             )
           : undefined;
 
-      return db
+      const query = db
         .select({
           externalIdProposicao: proposicao.externalIdProposicao,
           siglaTipo: proposicao.siglaTipo,
@@ -127,6 +135,8 @@ export function createProposicoesRepository(
             proposicao.ultimoStatusDescricaoSituacao,
           ultimoStatusRegime: proposicao.ultimoStatusRegime,
           ultimoStatusDataHora: proposicao.ultimoStatusDataHora,
+          volumeVotacoesPlenario: proposicaoComputavel.volumeVotacoesPlenario,
+          dataUltimaVotacao: proposicaoComputavel.dataUltimaVotacao,
           externalIdVotacao: votacao.externalIdVotacao,
           data: votacao.data,
           dataHoraRegistro: votacao.dataHoraRegistro,
@@ -139,18 +149,58 @@ export function createProposicoesRepository(
           votosNao: votacao.votosNao,
           votosOutros: votacao.votosOutros,
           aprovacao: votacao.aprovacao,
+          votacaoReferenciaPattern:
+            proposicaoComputavel.votacaoReferenciaPattern,
         })
-        .from(votacaoProposicao)
-        .innerJoin(votacao, eq(votacaoProposicao.votacaoId, votacao.id))
+        .from(proposicaoComputavel)
         .innerJoin(
           proposicao,
-          eq(votacaoProposicao.proposicaoId, proposicao.id),
+          eq(proposicaoComputavel.proposicaoId, proposicao.id),
         )
-        .where(
-          temaCondition !== undefined
-            ? and(eq(votacao.escopoVotacao, 'plenario'), temaCondition)
-            : eq(votacao.escopoVotacao, 'plenario'),
+        .innerJoin(
+          votacao,
+          eq(proposicaoComputavel.votacaoReferenciaId, votacao.id),
         );
+
+      const rows =
+        temaCondition === undefined
+          ? await query
+          : await query.where(temaCondition);
+
+      return rows.map((row) => ({
+        proposicao: {
+          externalIdProposicao: row.externalIdProposicao,
+          siglaTipo: row.siglaTipo,
+          numero: row.numero,
+          ano: row.ano,
+          ementa: row.ementa,
+          dataApresentacao: row.dataApresentacao,
+          ultimoStatusSiglaOrgao: row.ultimoStatusSiglaOrgao,
+          ultimoStatusDescricaoSituacao: row.ultimoStatusDescricaoSituacao,
+          ultimoStatusRegime: row.ultimoStatusRegime,
+          ultimoStatusDataHora: row.ultimoStatusDataHora,
+        },
+        volumeVotacoesPlenario: row.volumeVotacoesPlenario,
+        dataUltimaVotacao: row.dataUltimaVotacao,
+        referencia: {
+          externalIdVotacao: row.externalIdVotacao,
+          data: row.data,
+          dataHoraRegistro: row.dataHoraRegistro,
+          descricao: row.descricao,
+          ultimaAberturaVotacaoDescricao: row.ultimaAberturaVotacaoDescricao,
+          ultimaApresentacaoProposicaoDescricao:
+            row.ultimaApresentacaoProposicaoDescricao,
+          votosSim: row.votosSim,
+          votosNao: row.votosNao,
+          votosOutros: row.votosOutros,
+          aprovacao: row.aprovacao,
+          classification: {
+            pattern: votacaoReferenciaPattern.parse(
+              row.votacaoReferenciaPattern,
+            ),
+          },
+        },
+      }));
     },
 
     async loadProposicaoDetalhe(externalIdProposicao) {
@@ -169,8 +219,13 @@ export function createProposicoesRepository(
             proposicao.ultimoStatusDescricaoSituacao,
           ultimoStatusRegime: proposicao.ultimoStatusRegime,
           ultimoStatusDataHora: proposicao.ultimoStatusDataHora,
+          votacaoReferenciaId: proposicaoComputavel.votacaoReferenciaId,
         })
         .from(proposicao)
+        .leftJoin(
+          proposicaoComputavel,
+          eq(proposicaoComputavel.proposicaoId, proposicao.id),
+        )
         .where(eq(proposicao.externalIdProposicao, externalIdProposicao))
         .limit(1);
 
@@ -181,6 +236,7 @@ export function createProposicoesRepository(
 
       const votacoes = await db
         .select({
+          votacaoId: votacao.id,
           externalIdVotacao: votacao.externalIdVotacao,
           data: votacao.data,
           dataHoraRegistro: votacao.dataHoraRegistro,
@@ -200,6 +256,7 @@ export function createProposicoesRepository(
           votosObstrucao: votacaoVotos.votosObstrucao,
           votosArtigo17: votacaoVotos.votosArtigo17,
           votosNaoInformado: votacaoVotos.votosNaoInformado,
+          isReferenciaMatcher: sql<boolean>`${votacao.id} = ${head.votacaoReferenciaId}`,
         })
         .from(votacaoProposicao)
         .innerJoin(votacao, eq(votacaoProposicao.votacaoId, votacao.id))

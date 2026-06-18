@@ -1,4 +1,5 @@
 import { buildIngestionPlan } from '../plan/ingestion-plan';
+import { ingestionStepDescriptors } from '../plan/ingestion-step-descriptors';
 import type { IngestionPipelineRunnerConfig } from '../types/ingestion-pipeline-runner.types';
 
 const steps = [
@@ -155,6 +156,38 @@ describe('ingestion plan', () => {
           companionDatasets: ['votacoesVotos'],
           year: 2024,
         },
+      ]);
+    });
+  });
+
+  describe('when building the default ingestion plan', () => {
+    it('includes proposicao_computavel after votacao_proposicao', () => {
+      // Arrange
+      const runnerConfig = config({ years: [2024] });
+
+      // Act
+      const plan = buildIngestionPlan(runnerConfig, ingestionStepDescriptors);
+
+      // Assert
+      const stepNames = plan.map((entry) => entry.stepName);
+      expect(stepNames).toContain('proposicao_computavel');
+      expect(stepNames.indexOf('proposicao_computavel')).toBe(
+        stepNames.indexOf('votacao_proposicao') + 1,
+      );
+    });
+  });
+
+  describe('when --only selects proposicao_computavel', () => {
+    it('plans only that derived step', () => {
+      // Arrange
+      const runnerConfig = config({ only: ['proposicao_computavel'] });
+
+      // Act
+      const plan = buildIngestionPlan(runnerConfig, ingestionStepDescriptors);
+
+      // Assert
+      expect(plan).toEqual([
+        { stepName: 'proposicao_computavel', scope: 'single' },
       ]);
     });
   });

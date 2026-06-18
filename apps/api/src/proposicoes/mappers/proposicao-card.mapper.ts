@@ -3,21 +3,12 @@ import type {
   VotacaoReferenciaResumo,
 } from '@vota-comigo/shared-types';
 
-import {
-  interpretResultado,
-  type ClassifiedVotacao,
-} from '@/matcher/rules/votacao-referencia';
+import { interpretResultado } from '@/matcher/rules/votacao-referencia';
 
-import type { RankedProposicao } from '../types/proposicoes.types';
-
-function maxDate(values: readonly (string | null)[]): string | null {
-  return values.reduce<string | null>((max, value) => {
-    if (value === null) {
-      return max;
-    }
-    return max === null || value > max ? value : max;
-  }, null);
-}
+import type {
+  RankedProposicao,
+  VotacaoReferenciaComputavel,
+} from '../types/proposicoes.types';
 
 export function toProposicaoCard(ranked: RankedProposicao): ProposicaoCard {
   const { proposicao } = ranked;
@@ -29,14 +20,12 @@ export function toProposicaoCard(ranked: RankedProposicao): ProposicaoCard {
     ementa: proposicao.ementa,
     dataApresentacao: proposicao.dataApresentacao,
     volumeVotacoesPlenario: ranked.volumeVotacoesPlenario,
-    dataUltimaVotacao: maxDate(
-      proposicao.votacoesPlenario.map((votacao) => votacao.data),
-    ),
+    dataUltimaVotacao: ranked.dataUltimaVotacao,
   };
 }
 
 export function toVotacaoReferenciaResumo(
-  referencia: ClassifiedVotacao,
+  referencia: VotacaoReferenciaComputavel,
 ): VotacaoReferenciaResumo {
   return {
     externalIdVotacao: referencia.externalIdVotacao,

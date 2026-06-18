@@ -3,6 +3,7 @@ import type {
   ProposicoesRepository,
 } from '../proposicoes.repository';
 import { ProposicoesService } from '../proposicoes.service';
+import { toProposicoesComputaveis } from '../rules/proposicoes-computaveis';
 
 function joinRow(
   overrides: Partial<ProposicaoVotacaoJoinRow> = {},
@@ -36,7 +37,7 @@ function fakeRepository(
   rows: readonly ProposicaoVotacaoJoinRow[],
 ): ProposicoesRepository {
   return {
-    loadProposicoesWithVotacoesPlenario: async () => rows,
+    loadProposicoesComputaveis: async () => toProposicoesComputaveis(rows),
     loadProposicaoDetalhe: async () => null,
     loadProposicaoTemas: async () => [],
   };
@@ -383,7 +384,8 @@ describe('ProposicoesService.feed with text query', () => {
         descricao: 'Aprovado o Projeto de Lei',
       });
       const service = new ProposicoesService({
-        loadProposicoesWithVotacoesPlenario: async () => [matched],
+        loadProposicoesComputaveis: async () =>
+          toProposicoesComputaveis([matched]),
         loadProposicaoDetalhe: async () => null,
         loadProposicaoTemas: async () => [],
       });

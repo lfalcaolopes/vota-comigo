@@ -46,6 +46,7 @@ function ranked(
   return {
     proposicao,
     volumeVotacoesPlenario,
+    dataUltimaVotacao: null,
     referencia: {} as ClassifiedVotacao,
   };
 }

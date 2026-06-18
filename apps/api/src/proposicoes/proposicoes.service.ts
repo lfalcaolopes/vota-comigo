@@ -7,15 +7,12 @@ import type {
   TemasDisponiveisResponse,
 } from '@vota-comigo/shared-types';
 
-import { selectVotacaoReferencia } from '@/matcher/rules/votacao-referencia';
-
 import { toProposicaoCard } from './mappers/proposicao-card.mapper';
 import { toProposicaoDetalhe } from './mappers/proposicao-detalhe.mapper';
 import {
   PROPOSICOES_REPOSITORY,
   type ProposicoesRepository,
 } from './proposicoes.repository';
-import { toProposicoesComputaveis } from './rules/proposicoes-computaveis';
 import { selectComparator } from './rules/proposicoes-ranking';
 import { toTemasDisponiveis } from './rules/temas-disponiveis';
 import { filterProposicoesByQuery } from './rules/proposicoes-search';
@@ -34,9 +31,7 @@ export class ProposicoesService {
     tema?: number,
     q?: string,
   ): Promise<ProposicoesFeedResponse> {
-    const rows =
-      await this.repository.loadProposicoesWithVotacoesPlenario(tema);
-    const computaveis = toProposicoesComputaveis(rows);
+    const computaveis = await this.repository.loadProposicoesComputaveis(tema);
     const filtered =
       q !== undefined && q.trim().length > 0
         ? filterProposicoesByQuery(computaveis, q.trim())
@@ -53,12 +48,11 @@ export class ProposicoesService {
 
   async temasDisponiveis(): Promise<TemasDisponiveisResponse> {
     const [rows, temaRows] = await Promise.all([
-      this.repository.loadProposicoesWithVotacoesPlenario(),
+      this.repository.loadProposicoesComputaveis(),
       this.repository.loadProposicaoTemas(),
     ]);
-    const computaveis = toProposicoesComputaveis(rows);
     const computableIds = new Set(
-      computaveis.map((r) => r.proposicao.externalIdProposicao),
+      rows.map((r) => r.proposicao.externalIdProposicao),
     );
     return { items: [...toTemasDisponiveis(temaRows, computableIds)] };
   }
@@ -70,11 +64,10 @@ export class ProposicoesService {
       throw new NotFoundException('proposicao nao encontrada');
     }
 
-    const referencia = selectVotacaoReferencia(result.votacoes);
-    if (referencia === null) {
+    if (result.proposicao.votacaoReferenciaId === null) {
       throw new NotFoundException('proposicao nao computavel pelo matcher');
     }
 
-    return toProposicaoDetalhe(result, referencia.externalIdVotacao);
+    return toProposicaoDetalhe(result);
   }
 }

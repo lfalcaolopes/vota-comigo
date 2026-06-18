@@ -9,6 +9,15 @@ import type {
   RankedProposicao,
 } from '../types/proposicoes.types';
 
+function maxDate(values: readonly (string | null)[]): string | null {
+  return values.reduce<string | null>((max, value) => {
+    if (value === null) {
+      return max;
+    }
+    return max === null || value > max ? value : max;
+  }, null);
+}
+
 function toCandidate(row: ProposicaoVotacaoJoinRow): VotacaoCandidate {
   return {
     externalIdVotacao: row.externalIdVotacao,
@@ -69,6 +78,9 @@ export function toProposicoesComputaveis(
       {
         proposicao,
         volumeVotacoesPlenario: proposicao.votacoesPlenario.length,
+        dataUltimaVotacao: maxDate(
+          proposicao.votacoesPlenario.map((votacao) => votacao.data),
+        ),
         referencia,
       },
     ];

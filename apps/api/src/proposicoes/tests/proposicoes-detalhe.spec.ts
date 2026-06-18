@@ -25,6 +25,7 @@ function head(
     ultimoStatusDescricaoSituacao: 'Aprovada',
     ultimoStatusRegime: 'Urgência',
     ultimoStatusDataHora: '2024-06-01T10:00:00Z',
+    votacaoReferenciaId: 'votacao-1',
     ...overrides,
   };
 }
@@ -33,6 +34,7 @@ function votacaoRow(
   overrides: Partial<VotacaoDetalheRow> = {},
 ): VotacaoDetalheRow {
   return {
+    votacaoId: 'votacao-1',
     externalIdVotacao: '1-1',
     data: '2024-05-01',
     dataHoraRegistro: '2024-05-01T12:00:00Z',
@@ -50,6 +52,7 @@ function votacaoRow(
     votosObstrucao: 1,
     votosArtigo17: 1,
     votosNaoInformado: 0,
+    isReferenciaMatcher: true,
     ...overrides,
   };
 }
@@ -69,7 +72,7 @@ function fakeRepository(
   result: ProposicaoDetalheResult | null,
 ): ProposicoesRepository {
   return {
-    loadProposicoesWithVotacoesPlenario: async () => [],
+    loadProposicoesComputaveis: async () => [],
     loadProposicaoDetalhe: async () => result,
     loadProposicaoTemas: async () => [],
   };
@@ -255,17 +258,23 @@ describe('ProposicoesService.detalhe', () => {
     it('lists each one once and marks exactly one as the reference', async () => {
       // Arrange
       const projetoDeLei = votacaoRow({
+        votacaoId: 'votacao-1',
         externalIdVotacao: '1-1',
         descricao: 'Aprovado o Projeto de Lei',
+        isReferenciaMatcher: false,
       });
       const pecSegundoTurno = votacaoRow({
+        votacaoId: 'votacao-2',
         externalIdVotacao: '1-2',
         descricao: 'Proposta de Emenda à Constituição',
         ultimaAberturaVotacaoDescricao: 'Votação em segundo turno',
+        isReferenciaMatcher: true,
       });
       const requerimento = votacaoRow({
+        votacaoId: 'votacao-3',
         externalIdVotacao: '1-3',
         descricao: 'Requerimento de retirada de pauta',
+        isReferenciaMatcher: false,
       });
       const service = createService(
         detailResult({
@@ -300,23 +309,22 @@ describe('ProposicoesService.detalhe', () => {
       );
     });
 
-    it('throws NotFound when it has no plenary votacoes', async () => {
+    it('returns empty votacoes when the projected proposicao has no linked plenary votacao', async () => {
       // Arrange
       const service = createService(detailResult({ votacoes: [] }));
 
-      // Act / Assert
-      await expect(service.detalhe(1)).rejects.toBeInstanceOf(
-        NotFoundException,
-      );
+      // Act
+      const detail = await service.detalhe(1);
+
+      // Assert
+      expect(detail.votacoes).toEqual([]);
     });
 
-    it('throws NotFound when no votacao qualifies as referencia (nao computavel)', async () => {
+    it('throws NotFound when the proposicao is imported but not projected', async () => {
       // Arrange
       const service = createService(
         detailResult({
-          votacoes: [
-            votacaoRow({ descricao: 'Requerimento de retirada de pauta' }),
-          ],
+          proposicao: head({ votacaoReferenciaId: null }),
         }),
       );
 

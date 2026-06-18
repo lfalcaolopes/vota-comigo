@@ -1,9 +1,7 @@
-import type {
-  ClassifiedVotacao,
-  VotacaoCandidate,
-} from '@/matcher/rules/votacao-referencia';
+import type { VotacaoReferenciaPattern } from '@vota-comigo/shared-types';
+import type { VotacaoCandidate } from '@/matcher/rules/votacao-referencia';
 
-export type ProposicaoWithVotacoes = {
+export type ProposicaoResumo = {
   externalIdProposicao: number;
   siglaTipo: string | null;
   numero: number | null;
@@ -14,13 +12,23 @@ export type ProposicaoWithVotacoes = {
   ultimoStatusDescricaoSituacao: string | null;
   ultimoStatusRegime: string | null;
   ultimoStatusDataHora: string | null;
+};
+
+export type ProposicaoWithVotacoes = ProposicaoResumo & {
   votacoesPlenario: readonly VotacaoCandidate[];
 };
 
+export type VotacaoReferenciaComputavel = VotacaoCandidate & {
+  classification: {
+    pattern: VotacaoReferenciaPattern;
+  };
+};
+
 export type RankedProposicao = {
-  proposicao: ProposicaoWithVotacoes;
+  proposicao: ProposicaoResumo;
   volumeVotacoesPlenario: number;
-  referencia: ClassifiedVotacao;
+  dataUltimaVotacao: string | null;
+  referencia: VotacaoReferenciaComputavel;
 };
 
 export type ProposicaoTemaRow = {

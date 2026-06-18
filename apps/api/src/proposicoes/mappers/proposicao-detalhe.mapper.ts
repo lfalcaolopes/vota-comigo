@@ -33,23 +33,19 @@ function toPlacar(row: VotacaoDetalheRow): PlacarVotacao {
   };
 }
 
-function toVotacaoNominal(
-  row: VotacaoDetalheRow,
-  referenciaExternalId: string,
-): VotacaoNominal {
+function toVotacaoNominal(row: VotacaoDetalheRow): VotacaoNominal {
   return {
     externalIdVotacao: row.externalIdVotacao,
     data: row.data,
     descricao: row.descricao,
     placar: toPlacar(row),
     resultado: interpretResultado(row.aprovacao),
-    isReferenciaMatcher: row.externalIdVotacao === referenciaExternalId,
+    isReferenciaMatcher: row.isReferenciaMatcher,
   };
 }
 
 export function toProposicaoDetalhe(
   result: ProposicaoDetalheResult,
-  referenciaExternalId: string,
 ): ProposicaoDetalhe {
   const { proposicao } = result;
   return {
@@ -72,8 +68,6 @@ export function toProposicaoDetalhe(
       externalCodTema: tema.externalCodTema,
       tema: tema.tema,
     })),
-    votacoes: result.votacoes.map((row) =>
-      toVotacaoNominal(row, referenciaExternalId),
-    ),
+    votacoes: result.votacoes.map(toVotacaoNominal),
   };
 }
