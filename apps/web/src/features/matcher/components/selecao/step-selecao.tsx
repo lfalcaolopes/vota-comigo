@@ -1,7 +1,14 @@
 "use client";
 
-import { MAX_POSICOES } from "@vota-comigo/shared-types";
-import type { FeedOrdenacao, ProposicaoCard, TemaDisponivel } from "@vota-comigo/shared-types";
+import {
+  MAX_POSICOES,
+  MIN_POSICOES_COMPUTAVEIS,
+} from "@vota-comigo/shared-types";
+import type {
+  FeedOrdenacao,
+  ProposicaoCard,
+  TemaDisponivel,
+} from "@vota-comigo/shared-types";
 import { useState } from "react";
 
 import type { FeedDisplay, FeedStatus } from "@/shared/proposicao";
@@ -27,6 +34,7 @@ type StepSelecaoProps = {
   temas: readonly TemaDisponivel[];
   selected: ProposicaoCard[];
   totalSelecionadas: number;
+  canAdvance: boolean;
   onToggle: (proposicao: ProposicaoCard) => void;
   onSubmitSearch: (raw: string) => Promise<void>;
   onClearSearch: () => void;
@@ -50,6 +58,7 @@ export function StepSelecao({
   temas,
   selected,
   totalSelecionadas,
+  canAdvance,
   onToggle,
   onSubmitSearch,
   onClearSearch,
@@ -66,7 +75,10 @@ export function StepSelecao({
     selected.map((card) => card.externalIdProposicao),
   );
   const atLimit = totalSelecionadas >= MAX_POSICOES;
-  const canAdvance = totalSelecionadas > 0;
+  const faltamSelecionadas = Math.max(
+    MIN_POSICOES_COMPUTAVEIS - totalSelecionadas,
+    0,
+  );
 
   function handleClear() {
     setDraft("");
@@ -115,7 +127,7 @@ export function StepSelecao({
             <p className="text-sm leading-normal text-muted" role="status">
               {canAdvance
                 ? `Selecionadas: ${totalSelecionadas} de até ${MAX_POSICOES}`
-                : "Escolha ao menos 1 proposição para continuar."}
+                : `Escolha pelo menos ${MIN_POSICOES_COMPUTAVEIS} proposições para continuar. Faltam ${faltamSelecionadas}.`}
             </p>
           </div>
 

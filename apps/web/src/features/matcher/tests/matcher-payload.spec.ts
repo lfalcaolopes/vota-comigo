@@ -19,7 +19,11 @@ describe("matcherExecucaoRequestSchema", () => {
       const partial = {
         siglaUf: "SP" as const,
         escopo: "estadual" as const,
-        posicoes: [{ externalIdProposicao: 1, posicao: "aprovar" as const }],
+        posicoes: [
+          { externalIdProposicao: 1, posicao: "aprovar" as const },
+          { externalIdProposicao: 2, posicao: "aprovar" as const },
+          { externalIdProposicao: 3, posicao: "aprovar" as const },
+        ],
       };
 
       // Act
@@ -36,7 +40,11 @@ describe("matcherExecucaoRequestSchema", () => {
       const payload = {
         siglaUf: "RJ" as const,
         escopo: "nacional" as const,
-        posicoes: [{ externalIdProposicao: 2, posicao: "rejeitar" as const }],
+        posicoes: [
+          { externalIdProposicao: 1, posicao: "rejeitar" as const },
+          { externalIdProposicao: 2, posicao: "rejeitar" as const },
+          { externalIdProposicao: 3, posicao: "rejeitar" as const },
+        ],
         apenasEmAtividade: true,
       };
 
@@ -45,6 +53,23 @@ describe("matcherExecucaoRequestSchema", () => {
 
       // Assert
       expect(parsed.apenasEmAtividade).toBe(true);
+    });
+  });
+
+  describe("when fewer than three positions are sent", () => {
+    it("rejects the request", () => {
+      // Arrange
+      const payload = {
+        siglaUf: "SP" as const,
+        escopo: "estadual" as const,
+        posicoes: [
+          { externalIdProposicao: 1, posicao: "aprovar" as const },
+          { externalIdProposicao: 2, posicao: "rejeitar" as const },
+        ],
+      };
+
+      // Act / Assert
+      expect(() => matcherExecucaoRequestSchema.parse(payload)).toThrow();
     });
   });
 });

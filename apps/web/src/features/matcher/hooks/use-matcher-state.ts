@@ -15,6 +15,7 @@ import { loadComparativoDeputadosData } from "../lib/comparativo-deputados-detal
 import { buildExecucaoRequest } from "../lib/matcher-payload";
 import {
   activeResultado,
+  canAdvanceSelecao,
   canOpenComparativo,
   canRunMatcher,
   executionValidation,
@@ -185,6 +186,7 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
   return {
     state,
     validation: executionValidation(state),
+    canAdvanceSelecao: canAdvanceSelecao(state),
     canRun: canRunMatcher(state),
     selectionCount: selectionCount(state),
     resultado: activeResultado(state),

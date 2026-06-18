@@ -71,32 +71,37 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
       {state.step === "selecao" ? (
         <div className="mx-auto w-full max-w-6xl">
           <StepSelecao
-          canLoadMore={feed.canLoadMore}
-          display={feed.display}
-          items={feed.items}
-          onAdvance={() => matcher.goToStep("posicoes")}
-          onBack={() => matcher.goToStep("local")}
-          onChangeOrdenacao={feed.changeOrdenacao}
-          onChangeTema={(cod) => {
-            if (feed.tema === cod) {
-              void feed.clearTema();
-            } else {
-              void feed.changeTema(cod);
-            }
-          }}
-          onClearFilters={feed.clearFilters}
-          onClearSearch={feed.clearSearch}
-          onLoadMore={feed.loadMore}
-          onSubmitSearch={feed.submitSearch}
-          onToggle={matcher.toggleProposicao}
-          ordenacao={feed.ordenacao}
-          query={feed.query}
-          selected={state.selected}
-          status={feed.status}
-          tema={feed.tema}
-          temas={temas}
-          total={feed.total}
-          totalSelecionadas={matcher.validation.totalSelecionadas}
+            canAdvance={matcher.canAdvanceSelecao}
+            canLoadMore={feed.canLoadMore}
+            display={feed.display}
+            items={feed.items}
+            onAdvance={() => {
+              if (matcher.canAdvanceSelecao) {
+                matcher.goToStep("posicoes");
+              }
+            }}
+            onBack={() => matcher.goToStep("local")}
+            onChangeOrdenacao={feed.changeOrdenacao}
+            onChangeTema={(cod) => {
+              if (feed.tema === cod) {
+                void feed.clearTema();
+              } else {
+                void feed.changeTema(cod);
+              }
+            }}
+            onClearFilters={feed.clearFilters}
+            onClearSearch={feed.clearSearch}
+            onLoadMore={feed.loadMore}
+            onSubmitSearch={feed.submitSearch}
+            onToggle={matcher.toggleProposicao}
+            ordenacao={feed.ordenacao}
+            query={feed.query}
+            selected={state.selected}
+            status={feed.status}
+            tema={feed.tema}
+            temas={temas}
+            total={feed.total}
+            totalSelecionadas={matcher.validation.totalSelecionadas}
           />
         </div>
       ) : null}

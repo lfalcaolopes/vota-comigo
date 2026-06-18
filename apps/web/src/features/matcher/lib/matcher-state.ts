@@ -1,4 +1,7 @@
-import { MAX_POSICOES } from "@vota-comigo/shared-types";
+import {
+  MAX_POSICOES,
+  MIN_POSICOES_COMPUTAVEIS,
+} from "@vota-comigo/shared-types";
 import type {
   DeputadoPerfil,
   EscopoMatcher,
@@ -41,7 +44,6 @@ export function stepStatus(current: MatcherStep, step: MainMatcherStep): StepSta
   return "upcoming";
 }
 
-const PRESELECTED_COUNT = 5;
 const MIN_COMPARATIVO_DEPUTADOS = 2;
 const MAX_COMPARATIVO_DEPUTADOS = 3;
 
@@ -93,11 +95,13 @@ export type MatcherAction =
   | { type: "backFromComparativo" };
 
 export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
+  void candidates;
+
   return {
     step: "local",
     siglaUf: null,
     cidade: "",
-    selected: candidates.slice(0, PRESELECTED_COUNT),
+    selected: [],
     posicoes: new Map(),
     resultados: { estadual: null, nacional: null },
     escopo: "estadual",
@@ -310,6 +314,10 @@ export function matcherReducer(
 
 export function selectionCount(state: MatcherState): number {
   return state.selected.length;
+}
+
+export function canAdvanceSelecao(state: MatcherState): boolean {
+  return state.selected.length >= MIN_POSICOES_COMPUTAVEIS;
 }
 
 export function executionValidation(state: MatcherState): ExecucaoValidation {

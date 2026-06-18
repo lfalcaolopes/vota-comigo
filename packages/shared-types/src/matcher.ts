@@ -61,7 +61,7 @@ export const matcherExecucaoRequestSchema = z.object({
   cidade: z.string().trim().min(1).max(120).optional(),
   posicoes: z
     .array(posicaoMatcherSchema)
-    .min(1)
+    .min(MIN_POSICOES_COMPUTAVEIS)
     .max(MAX_POSICOES)
     .superRefine((posicoes, ctx) => {
       const seen = new Set<number>();

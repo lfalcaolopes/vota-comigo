@@ -10,6 +10,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   activeResultado,
+  canAdvanceSelecao,
   canRunMatcher,
   canOpenComparativo,
   hasMoreDeputados,
@@ -74,7 +75,7 @@ const candidates = [card(1), card(2), card(3), card(4), card(5), card(6)];
 
 describe("matcherReducer", () => {
   describe("when initialised with candidate proposicoes", () => {
-    it("starts at the local step with the first five pre-selected", () => {
+    it("starts at the local step without pre-selected proposicoes", () => {
       // Arrange / Act
       const state = initMatcherState(candidates);
 
@@ -83,10 +84,8 @@ describe("matcherReducer", () => {
       expect(state.siglaUf).toBeNull();
       expect(state.escopo).toBe("estadual");
       expect(state.status).toBe("idle");
-      expect(selectionCount(state)).toBe(5);
-      expect(state.selected.map((c) => c.externalIdProposicao)).toEqual([
-        1, 2, 3, 4, 5,
-      ]);
+      expect(selectionCount(state)).toBe(0);
+      expect(state.selected).toEqual([]);
     });
   });
 
@@ -112,7 +111,11 @@ describe("matcherReducer", () => {
   describe("when toggling a proposicao", () => {
     it("removes an already-selected proposicao and its declared position", () => {
       // Arrange
-      const withPosicao = matcherReducer(initMatcherState(candidates), {
+      const selected = matcherReducer(initMatcherState(candidates), {
+        type: "toggleProposicao",
+        proposicao: card(1),
+      });
+      const withPosicao = matcherReducer(selected, {
         type: "setPosicao",
         externalIdProposicao: 1,
         posicao: "aprovar",
@@ -143,7 +146,7 @@ describe("matcherReducer", () => {
 
       // Assert
       expect(next.selected.some((c) => c.externalIdProposicao === 6)).toBe(true);
-      expect(selectionCount(next)).toBe(6);
+      expect(selectionCount(next)).toBe(1);
     });
 
     it("refuses to add beyond the maximum of selected proposicoes", () => {
@@ -168,6 +171,33 @@ describe("matcherReducer", () => {
     });
   });
 
+  describe("canAdvanceSelecao", () => {
+    it("requires at least three selected proposicoes", () => {
+      // Arrange
+      let state = initMatcherState(candidates);
+      state = matcherReducer(state, {
+        type: "toggleProposicao",
+        proposicao: card(1),
+      });
+      state = matcherReducer(state, {
+        type: "toggleProposicao",
+        proposicao: card(2),
+      });
+
+      // Act / Assert
+      expect(canAdvanceSelecao(state)).toBe(false);
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "toggleProposicao",
+        proposicao: card(3),
+      });
+
+      // Assert
+      expect(canAdvanceSelecao(next)).toBe(true);
+    });
+  });
+
   describe("when navigating back to an earlier step", () => {
     it("preserves the UF, selection and declared positions", () => {
       // Arrange
@@ -176,6 +206,10 @@ describe("matcherReducer", () => {
         type: "setLocal",
         siglaUf: "MG",
         cidade: "",
+      });
+      state = matcherReducer(state, {
+        type: "toggleProposicao",
+        proposicao: card(2),
       });
       state = matcherReducer(state, {
         type: "setPosicao",
@@ -190,7 +224,7 @@ describe("matcherReducer", () => {
       // Assert
       expect(back.step).toBe("selecao");
       expect(back.siglaUf).toBe("MG");
-      expect(selectionCount(back)).toBe(5);
+      expect(selectionCount(back)).toBe(1);
       expect(back.posicoes.get(2)).toBe("rejeitar");
     });
   });
@@ -1002,26 +1036,22 @@ describe("matcherReducer", () => {
 
   describe("when selected proposicoes are absent from the visible feed items", () => {
     it("selectionCount counts all selected items regardless of what the feed is currently showing", () => {
-      // Arrange — 5 proposicoes pre-selected from initial candidates
-      const state = initMatcherState(candidates);
-      expect(selectionCount(state)).toBe(5);
+      // Arrange
+      let state = initMatcherState(candidates);
+      for (const proposicao of [card(1), card(2), card(3), card(6)]) {
+        state = matcherReducer(state, { type: "toggleProposicao", proposicao });
+      }
+      expect(selectionCount(state)).toBe(4);
 
-      // Simulate the user toggling an extra card (may come from any feed filter)
-      const withExtra = matcherReducer(state, {
-        type: "toggleProposicao",
-        proposicao: card(6),
-      });
-      expect(selectionCount(withExtra)).toBe(6);
-
-      // Act — navigating between steps (which happens when feed controls fire) must
-      // not touch selected; the feed state lives in a separate reducer
-      const forward = matcherReducer(withExtra, { type: "goToStep", step: "posicoes" });
+      // Act
+      const forward = matcherReducer(state, { type: "goToStep", step: "posicoes" });
       const back = matcherReducer(forward, { type: "goToStep", step: "selecao" });
 
-      // Assert — selection is intact even though none of cards 1–6 may be visible
-      // in the feed when a tema or ordenacao filter is active
-      expect(selectionCount(back)).toBe(6);
-      expect(back.selected.map((c) => c.externalIdProposicao)).toEqual([1, 2, 3, 4, 5, 6]);
+      // Assert
+      expect(selectionCount(back)).toBe(4);
+      expect(back.selected.map((c) => c.externalIdProposicao)).toEqual([
+        1, 2, 3, 6,
+      ]);
     });
   });
 
@@ -1089,7 +1119,14 @@ describe("matcherReducer", () => {
 
   describe("canRunMatcher", () => {
     function withComputaveis(state = initMatcherState(candidates)) {
-      let next = matcherReducer(state, {
+      let next = state;
+      for (const id of [1, 2, 3, 4, 5]) {
+        next = matcherReducer(next, {
+          type: "toggleProposicao",
+          proposicao: card(id),
+        });
+      }
+      next = matcherReducer(next, {
         type: "setLocal",
         siglaUf: "SP",
         cidade: "",
@@ -1114,6 +1151,12 @@ describe("matcherReducer", () => {
     it("is false without a UF even with enough computable positions", () => {
       // Arrange
       let state = initMatcherState(candidates);
+      for (const id of [1, 2, 3]) {
+        state = matcherReducer(state, {
+          type: "toggleProposicao",
+          proposicao: card(id),
+        });
+      }
       for (const id of [1, 2, 3]) {
         state = matcherReducer(state, {
           type: "setPosicao",
@@ -1145,6 +1188,12 @@ describe("matcherReducer", () => {
         siglaUf: "SP",
         cidade: "",
       });
+      for (const id of [1, 2, 3, 4]) {
+        state = matcherReducer(state, {
+          type: "toggleProposicao",
+          proposicao: card(id),
+        });
+      }
       for (const id of [1, 2, 3]) {
         state = matcherReducer(state, {
           type: "setPosicao",
