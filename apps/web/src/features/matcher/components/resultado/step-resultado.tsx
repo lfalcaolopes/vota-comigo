@@ -109,17 +109,8 @@ export function StepResultado({
 
   return (
     <div className="grid gap-5">
-      {escopoControl}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="text-sm text-muted">
-          {isSelectingComparativo ? (
-            hasDeputadoLimit ? (
-              <p>Você pode comparar até 3 deputados.</p>
-            ) : (
-              <p>Selecione 2 ou 3 deputados para comparar.</p>
-            )
-          ) : null}
-        </div>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        {escopoControl}
         {isSelectingComparativo ? (
           <div className="flex flex-wrap gap-2">
             <Button onClick={onCancelComparativoSelection} variant="ghost">
@@ -134,11 +125,24 @@ export function StepResultado({
             </Button>
           </div>
         ) : (
-          <Button onClick={onStartComparativoSelection} variant="secondary">
+          <Button
+            className="shrink-0 !border-border-strong px-5"
+            onClick={onStartComparativoSelection}
+            variant="secondary"
+          >
             Comparar deputados
           </Button>
         )}
       </div>
+      {isSelectingComparativo ? (
+        <div className="text-sm text-muted">
+          {hasDeputadoLimit ? (
+            <p>Você pode comparar até 3 deputados.</p>
+          ) : (
+            <p>Selecione 2 ou 3 deputados para comparar.</p>
+          )}
+        </div>
+      ) : null}
       {isSemBomMatch(resultado) && <SemBomMatchBanner />}
       <OrdenacaoDisclosure />
 
