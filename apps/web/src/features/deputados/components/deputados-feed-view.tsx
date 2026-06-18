@@ -1,11 +1,16 @@
 "use client";
 
-import type { DeputadoCard, UfDisponivel } from "@vota-comigo/shared-types";
+import type {
+  DeputadoCard,
+  PartidoDisponivel,
+  UfDisponivel,
+} from "@vota-comigo/shared-types";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 import {
   buildDeputadosFeedHref,
+  DeputadoPartidoControl,
   DeputadoUfControl,
   useDeputadoFeedState,
 } from "@/shared/deputado";
@@ -19,7 +24,9 @@ type DeputadosFeedViewProps = {
   initialQuery?: string | null;
   initialEmAtividade?: boolean;
   initialUf?: string | null;
+  initialPartido?: string | null;
   ufs?: readonly UfDisponivel[];
+  partidos?: readonly PartidoDisponivel[];
 };
 
 export function DeputadosFeedView({
@@ -28,7 +35,9 @@ export function DeputadosFeedView({
   initialQuery = null,
   initialEmAtividade = false,
   initialUf = null,
+  initialPartido = null,
   ufs = [],
+  partidos = [],
 }: DeputadosFeedViewProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -39,6 +48,7 @@ export function DeputadosFeedView({
     query,
     emAtividade,
     uf,
+    partido,
     display,
     canLoadMore,
     submitSearch,
@@ -46,6 +56,8 @@ export function DeputadosFeedView({
     toggleEmAtividade,
     changeUf,
     clearUf,
+    changePartido,
+    clearPartido,
     clearFilters,
     loadMore,
   } = useDeputadoFeedState(
@@ -54,6 +66,7 @@ export function DeputadosFeedView({
     initialQuery ?? "",
     initialEmAtividade,
     initialUf,
+    initialPartido,
   );
 
   const [draft, setDraft] = useState(initialQuery ?? "");
@@ -66,6 +79,7 @@ export function DeputadosFeedView({
         query: null,
         emAtividade,
         uf,
+        partido,
       }),
     );
     await clearSearch();
@@ -83,6 +97,7 @@ export function DeputadosFeedView({
         query: term,
         emAtividade,
         uf,
+        partido,
       }),
     );
     await submitSearch(term);
@@ -95,6 +110,7 @@ export function DeputadosFeedView({
         query: activeQuery,
         emAtividade: next,
         uf,
+        partido,
       }),
     );
     await toggleEmAtividade();
@@ -107,6 +123,7 @@ export function DeputadosFeedView({
         query: activeQuery,
         emAtividade,
         uf: next,
+        partido,
       }),
     );
     if (next === null) {
@@ -122,9 +139,39 @@ export function DeputadosFeedView({
         query: activeQuery,
         emAtividade,
         uf: null,
+        partido,
       }),
     );
     await clearUf();
+  }
+
+  async function handlePartido(value: string) {
+    const next = partido === value ? null : value;
+    router.replace(
+      buildDeputadosFeedHref(pathname, {
+        query: activeQuery,
+        emAtividade,
+        uf,
+        partido: next,
+      }),
+    );
+    if (next === null) {
+      await clearPartido();
+    } else {
+      await changePartido(next);
+    }
+  }
+
+  async function handleClearPartido() {
+    router.replace(
+      buildDeputadosFeedHref(pathname, {
+        query: activeQuery,
+        emAtividade,
+        uf,
+        partido: null,
+      }),
+    );
+    await clearPartido();
   }
 
   async function handleClearFilters() {
@@ -134,6 +181,7 @@ export function DeputadosFeedView({
         query: null,
         emAtividade: false,
         uf: null,
+        partido: null,
       }),
     );
     await clearFilters();
@@ -141,7 +189,7 @@ export function DeputadosFeedView({
 
   return (
     <div className="grid min-w-0 gap-7">
-      <div className="grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-start">
+      <div className="grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto_auto] lg:items-start">
         <div className="grid min-w-0 max-w-full gap-3">
           <form
             className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
@@ -201,6 +249,13 @@ export function DeputadosFeedView({
           onClear={handleClearUf}
           onSelect={handleUf}
           ufs={ufs}
+        />
+
+        <DeputadoPartidoControl
+          activePartido={partido}
+          onClear={handleClearPartido}
+          onSelect={handlePartido}
+          partidos={partidos}
         />
       </div>
 

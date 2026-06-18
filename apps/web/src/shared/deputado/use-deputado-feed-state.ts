@@ -24,6 +24,7 @@ export type UseDeputadoFeedState = {
   query: string;
   emAtividade: boolean;
   uf: DeputadoFeedState["uf"];
+  partido: DeputadoFeedState["partido"];
   display: DeputadoFeedDisplay;
   canLoadMore: boolean;
   submitSearch: (raw: string) => Promise<void>;
@@ -31,6 +32,8 @@ export type UseDeputadoFeedState = {
   toggleEmAtividade: () => Promise<void>;
   changeUf: (uf: string) => Promise<void>;
   clearUf: () => Promise<void>;
+  changePartido: (partido: string) => Promise<void>;
+  clearPartido: () => Promise<void>;
   clearFilters: () => Promise<void>;
   loadMore: () => Promise<void>;
 };
@@ -41,6 +44,7 @@ export function useDeputadoFeedState(
   initialQuery = "",
   initialEmAtividade = false,
   initialUf: string | null = null,
+  initialPartido: string | null = null,
 ): UseDeputadoFeedState {
   const [state, dispatch] = useReducer(
     deputadoFeedReducer,
@@ -50,6 +54,7 @@ export function useDeputadoFeedState(
       initialQuery,
       initialEmAtividade,
       initialUf,
+      initialPartido,
     ),
   );
 
@@ -57,10 +62,13 @@ export function useDeputadoFeedState(
     query?: string;
     emAtividade?: boolean;
     uf?: string | null;
+    partido?: string | null;
   }) {
     const query = next.query ?? state.query;
     const emAtividade = next.emAtividade ?? state.emAtividade;
     const uf = next.uf === null ? null : next.uf ?? state.uf;
+    const partido =
+      next.partido === null ? null : next.partido ?? state.partido;
 
     const page = await fetchFeed(
       PAGE_SIZE,
@@ -68,6 +76,7 @@ export function useDeputadoFeedState(
       query || undefined,
       emAtividade || undefined,
       uf ?? undefined,
+      partido ?? undefined,
     );
     dispatch({ type: "feedSuccess", items: page.items, total: page.total });
   }
@@ -143,6 +152,32 @@ export function useDeputadoFeedState(
     }
   }
 
+  async function changePartido(partido: string) {
+    if (state.status === "loading") return;
+
+    dispatch({ type: "changePartido", partido });
+
+    try {
+      await reload({ partido });
+    } catch (error) {
+      console.error("deputado feed partido filter failed", error);
+      dispatch({ type: "loadError" });
+    }
+  }
+
+  async function clearPartido() {
+    if (state.status === "loading") return;
+
+    dispatch({ type: "clearPartido" });
+
+    try {
+      await reload({ partido: null });
+    } catch (error) {
+      console.error("deputado feed clear partido failed", error);
+      dispatch({ type: "loadError" });
+    }
+  }
+
   async function clearFilters() {
     if (state.status === "loading") return;
 
@@ -169,6 +204,7 @@ export function useDeputadoFeedState(
         state.query || undefined,
         state.emAtividade || undefined,
         state.uf ?? undefined,
+        state.partido ?? undefined,
       );
       dispatch({
         type: "loadMoreSuccess",
@@ -188,6 +224,7 @@ export function useDeputadoFeedState(
     query: state.query,
     emAtividade: state.emAtividade,
     uf: state.uf,
+    partido: state.partido,
     display: deputadoFeedDisplay(state),
     canLoadMore: deputadoHasMore(state),
     submitSearch,
@@ -195,6 +232,8 @@ export function useDeputadoFeedState(
     toggleEmAtividade,
     changeUf,
     clearUf,
+    changePartido,
+    clearPartido,
     clearFilters,
     loadMore,
   };

@@ -3,6 +3,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import type {
   DeputadoPerfil,
   DeputadosFeedResponse,
+  PartidosDisponiveisResponse,
   UfsDisponiveisResponse,
 } from '@vota-comigo/shared-types';
 
@@ -20,6 +21,10 @@ function normalizeSearchText(value: string): string {
     .toLocaleLowerCase('pt-BR');
 }
 
+function normalizePartidoSigla(value: string): string {
+  return value.trim().toLocaleUpperCase('pt-BR');
+}
+
 @Injectable()
 export class DeputadosService {
   constructor(
@@ -33,6 +38,7 @@ export class DeputadosService {
     q?: string,
     emAtividade?: boolean,
     uf?: string,
+    partido?: string,
   ): Promise<DeputadosFeedResponse> {
     const rows = await this.repository.loadDeputadosFeed();
     const cards = rows.map(toDeputadoCard);
@@ -56,10 +62,19 @@ export class DeputadosService {
       uf === undefined
         ? filtered
         : filtered.filter((card) => card.siglaUf === uf);
+    const partidoFiltered =
+      partido === undefined
+        ? ufFiltered
+        : ufFiltered.filter(
+            (card) =>
+              card.siglaPartido !== null &&
+              normalizePartidoSigla(card.siglaPartido) ===
+                normalizePartidoSigla(partido),
+          );
 
     return {
-      items: ufFiltered.slice(offset, offset + limit),
-      total: ufFiltered.length,
+      items: partidoFiltered.slice(offset, offset + limit),
+      total: partidoFiltered.length,
       limit,
       offset,
     };
@@ -75,6 +90,21 @@ export class DeputadosService {
     );
     return {
       items: [...siglas].sort().map((siglaUf) => ({ siglaUf })),
+    };
+  }
+
+  async partidosDisponiveis(): Promise<PartidosDisponiveisResponse> {
+    const rows = await this.repository.loadDeputadosFeed();
+    const siglas = new Set(
+      rows
+        .map(toDeputadoCard)
+        .map((card) => card.siglaPartido)
+        .filter(
+          (siglaPartido): siglaPartido is string => siglaPartido !== null,
+        ),
+    );
+    return {
+      items: [...siglas].sort().map((siglaPartido) => ({ siglaPartido })),
     };
   }
 

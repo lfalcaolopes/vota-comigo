@@ -1,11 +1,12 @@
 import type {
   DeputadoPerfil,
   DeputadosFeedResponse,
+  PartidosDisponiveisResponse,
 } from "@vota-comigo/shared-types";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { NotFoundError } from "../../lib/api-client";
-import { feed, perfil } from "../queries";
+import { feed, partidosDisponiveis, perfil } from "../queries";
 
 const response: DeputadoPerfil = {
   externalIdDeputado: 220593,
@@ -43,6 +44,10 @@ const feedResponse: DeputadosFeedResponse = {
   total: 1,
   limit: 20,
   offset: 0,
+};
+
+const partidosResponse: PartidosDisponiveisResponse = {
+  items: [{ siglaPartido: "PSOL" }, { siglaPartido: "PT" }],
 };
 
 afterEach(() => {
@@ -97,13 +102,36 @@ describe("feed", () => {
       vi.stubGlobal("fetch", fetchSpy);
 
       // Act
-      const result = await feed(20, 40, "maria silva", true, "SP");
+      const result = await feed(20, 40, "maria silva", true, "SP", "PT");
 
       // Assert
       expect(fetchSpy).toHaveBeenCalledWith(
-        "http://localhost:3001/deputados/feed?limit=20&offset=40&q=maria%20silva&emAtividade=true&uf=SP",
+        "http://localhost:3001/deputados/feed?limit=20&offset=40&q=maria%20silva&emAtividade=true&uf=SP&partido=PT",
       );
       expect(result.items[0].externalIdDeputado).toBe(220593);
+    });
+  });
+});
+
+describe("partidosDisponiveis", () => {
+  describe("when the request succeeds", () => {
+    it("fetches available partidos for the deputado feed", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => partidosResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      const result = await partidosDisponiveis();
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/feed/partidos",
+      );
+      expect(result).toEqual(partidosResponse);
     });
   });
 });

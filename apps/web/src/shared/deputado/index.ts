@@ -1,4 +1,4 @@
-export { feed, perfil, ufsDisponiveis } from "./queries";
+export { feed, partidosDisponiveis, perfil, ufsDisponiveis } from "./queries";
 export {
   buildDeputadosFeedHref,
   buildDeputadosFeedSearchParams,
@@ -22,6 +22,7 @@ export { DeputadoBreadcrumb } from "./deputado-breadcrumb";
 export { DeputadoAvatar } from "./deputado-avatar";
 export { DeputadoPerfilLink } from "./deputado-perfil-link";
 export { DeputadoRow } from "./deputado-row";
+export { DeputadoPartidoControl } from "./deputado-partido-control";
 export { DeputadoUfControl } from "./deputado-uf-control";
 export {
   CARGO_DEPUTADO,

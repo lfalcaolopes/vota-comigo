@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { DeputadosFeed } from "@/features/deputados";
 import {
   feed,
+  partidosDisponiveis,
   parseDeputadosFeedUrlState,
   type DeputadosFeedSearchParams,
   ufsDisponiveis,
@@ -13,7 +14,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Deputados | Quem Vota Comigo",
   description:
-    "Diretório de deputados federais no Quem Vota Comigo, com busca por nome e filtros por atividade e UF.",
+    "Diretório de deputados federais no Quem Vota Comigo, com busca por nome e filtros por atividade, UF e partido.",
 };
 
 export default async function DeputadosPage({
@@ -21,20 +22,23 @@ export default async function DeputadosPage({
 }: {
   searchParams: Promise<DeputadosFeedSearchParams>;
 }) {
-  const { query, emAtividade, uf } = parseDeputadosFeedUrlState(
+  const { query, emAtividade, uf, partido } = parseDeputadosFeedUrlState(
     await searchParams,
   );
 
-  const [{ items, total }, { items: ufs }] = await Promise.all([
-    feed(
-      20,
-      0,
-      query ?? undefined,
-      emAtividade || undefined,
-      uf ?? undefined,
-    ),
-    ufsDisponiveis(),
-  ]);
+  const [{ items, total }, { items: ufs }, { items: partidos }] =
+    await Promise.all([
+      feed(
+        20,
+        0,
+        query ?? undefined,
+        emAtividade || undefined,
+        uf ?? undefined,
+        partido ?? undefined,
+      ),
+      ufsDisponiveis(),
+      partidosDisponiveis(),
+    ]);
 
   return (
     <main className="min-h-screen w-full min-w-0 overflow-x-hidden bg-bg text-ink">
@@ -42,8 +46,10 @@ export default async function DeputadosPage({
         <DeputadosFeed
           initialEmAtividade={emAtividade}
           initialItems={items}
+          initialPartido={partido}
           initialQuery={query}
           initialUf={uf}
+          partidos={partidos}
           total={total}
           ufs={ufs}
         />

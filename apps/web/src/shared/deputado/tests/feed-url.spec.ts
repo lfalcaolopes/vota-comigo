@@ -10,17 +10,19 @@ describe("parseDeputadosFeedUrlState", () => {
   describe("when deputado feed params are present", () => {
     it("parses query, activity, and UF", () => {
       // Arrange / Act
-      const state = parseDeputadosFeedUrlState({
-        q: " maria ",
-        emAtividade: "true",
-        uf: "sp",
-      });
+    const state = parseDeputadosFeedUrlState({
+      q: " maria ",
+      emAtividade: "true",
+      uf: "sp",
+      partido: " PTdoB ",
+    });
 
       // Assert
       expect(state).toEqual({
         query: "maria",
         emAtividade: true,
         uf: "SP",
+        partido: "PTdoB",
       });
     });
   });
@@ -32,6 +34,7 @@ describe("parseDeputadosFeedUrlState", () => {
         q: " /// ",
         emAtividade: "sim",
         uf: "SPP",
+        partido: "PT-SP",
       });
 
       // Assert
@@ -39,6 +42,7 @@ describe("parseDeputadosFeedUrlState", () => {
         query: null,
         emAtividade: false,
         uf: null,
+        partido: null,
       });
     });
   });
@@ -51,11 +55,12 @@ describe("buildDeputadosFeedSearchParams", () => {
       query: "maria silva",
       emAtividade: true,
       uf: "SP",
+      partido: "PT",
     });
 
     // Assert
     expect(params.toString()).toBe(
-      "q=maria+silva&emAtividade=true&uf=SP",
+      "q=maria+silva&emAtividade=true&uf=SP&partido=PT",
     );
   });
 });
@@ -67,9 +72,12 @@ describe("buildDeputadosFeedHref", () => {
       query: "maria",
       emAtividade: true,
       uf: "SP",
+      partido: "PT",
     });
 
     // Assert
-    expect(href).toBe("/deputados?q=maria&emAtividade=true&uf=SP");
+    expect(href).toBe(
+      "/deputados?q=maria&emAtividade=true&uf=SP&partido=PT",
+    );
   });
 });

@@ -1,4 +1,8 @@
-import type { DeputadoCard, UfDisponivel } from "@vota-comigo/shared-types";
+import type {
+  DeputadoCard,
+  PartidoDisponivel,
+  UfDisponivel,
+} from "@vota-comigo/shared-types";
 
 import { DeputadosFeedView } from "./deputados-feed-view";
 
@@ -8,7 +12,9 @@ type DeputadosFeedProps = {
   initialQuery?: string | null;
   initialEmAtividade?: boolean;
   initialUf?: string | null;
+  initialPartido?: string | null;
   ufs?: readonly UfDisponivel[];
+  partidos?: readonly PartidoDisponivel[];
 };
 
 export function DeputadosFeed({
@@ -17,7 +23,9 @@ export function DeputadosFeed({
   initialQuery,
   initialEmAtividade,
   initialUf,
+  initialPartido,
   ufs,
+  partidos,
 }: DeputadosFeedProps) {
   return (
     <section>
@@ -34,7 +42,9 @@ export function DeputadosFeed({
         initialQuery={initialQuery}
         initialTotal={total}
         initialUf={initialUf}
+        initialPartido={initialPartido}
         ufs={ufs}
+        partidos={partidos}
       />
     </section>
   );

@@ -11,6 +11,7 @@ export type DeputadoFeedState = {
   query: string;
   emAtividade: boolean;
   uf: string | null;
+  partido: string | null;
   feed: Page;
   status: DeputadoFeedStatus;
 };
@@ -21,6 +22,8 @@ export type DeputadoFeedAction =
   | { type: "toggleEmAtividade" }
   | { type: "changeUf"; uf: string }
   | { type: "clearUf" }
+  | { type: "changePartido"; partido: string }
+  | { type: "clearPartido" }
   | { type: "clearFilters" }
   | { type: "loadMoreStart" }
   | { type: "loadMoreSuccess"; items: DeputadoCard[]; total: number }
@@ -35,11 +38,13 @@ export function initDeputadoFeedState(
   query = "",
   emAtividade = false,
   uf: string | null = null,
+  partido: string | null = null,
 ): DeputadoFeedState {
   return {
     query: query.trim(),
     emAtividade,
     uf,
+    partido,
     feed: { items, total },
     status: "idle",
   };
@@ -65,12 +70,22 @@ export function deputadoFeedReducer(
       return { ...state, uf: action.uf, feed: emptyPage, status: "loading" };
     case "clearUf":
       return { ...state, uf: null, feed: emptyPage, status: "loading" };
+    case "changePartido":
+      return {
+        ...state,
+        partido: action.partido,
+        feed: emptyPage,
+        status: "loading",
+      };
+    case "clearPartido":
+      return { ...state, partido: null, feed: emptyPage, status: "loading" };
     case "clearFilters":
       return {
         ...state,
         query: "",
         emAtividade: false,
         uf: null,
+        partido: null,
         feed: emptyPage,
         status: "loading",
       };
@@ -109,7 +124,12 @@ export function deputadoFeedDisplay(
   if (state.feed.items.length > 0) return "results";
   if (state.status === "error") return "error";
   if (state.status === "loading") return "loading";
-  if (state.query !== "" || state.emAtividade || state.uf !== null) {
+  if (
+    state.query !== "" ||
+    state.emAtividade ||
+    state.uf !== null ||
+    state.partido !== null
+  ) {
     return "empty-filtered";
   }
   return "empty-default";

@@ -10,6 +10,7 @@ import {
 import type {
   DeputadoPerfil,
   DeputadosFeedResponse,
+  PartidosDisponiveisResponse,
   UfsDisponiveisResponse,
 } from '@vota-comigo/shared-types';
 
@@ -62,6 +63,15 @@ function parseUf(raw: string | undefined): string | undefined {
   return uf;
 }
 
+function parsePartido(raw: string | undefined): string | undefined {
+  if (raw === undefined) return undefined;
+  const partido = raw.trim();
+  if (!/^[\p{L}\p{N}.*]{1,24}$/u.test(partido)) {
+    throw new BadRequestException('partido must have a valid sigla');
+  }
+  return partido;
+}
+
 @Controller('deputados')
 export class DeputadosController {
   constructor(private readonly service: DeputadosService) {}
@@ -71,6 +81,11 @@ export class DeputadosController {
     return this.service.ufsDisponiveis();
   }
 
+  @Get('feed/partidos')
+  async feedPartidos(): Promise<PartidosDisponiveisResponse> {
+    return this.service.partidosDisponiveis();
+  }
+
   @Get('feed')
   async feed(
     @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
@@ -78,17 +93,20 @@ export class DeputadosController {
     @Query('q') qParam?: string,
     @Query('emAtividade') emAtividadeParam?: string,
     @Query('uf') ufParam?: string,
+    @Query('partido') partidoParam?: string,
   ): Promise<DeputadosFeedResponse> {
     const pagination = parsePagination(limit, offset);
     const q = (qParam ?? '').trim() || undefined;
     const emAtividade = parseEmAtividade(emAtividadeParam);
     const uf = parseUf(ufParam);
+    const partido = parsePartido(partidoParam);
     return this.service.feed(
       pagination.limit,
       pagination.offset,
       q,
       emAtividade,
       uf,
+      partido,
     );
   }
 

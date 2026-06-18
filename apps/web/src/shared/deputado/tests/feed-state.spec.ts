@@ -27,12 +27,20 @@ describe("initDeputadoFeedState", () => {
   describe("when initialised with filters", () => {
     it("stores items, total, query, activity, and UF", () => {
       // Arrange / Act
-      const state = initDeputadoFeedState(firstPage, 50, " maria ", true, "SP");
+      const state = initDeputadoFeedState(
+        firstPage,
+        50,
+        " maria ",
+        true,
+        "SP",
+        "PT",
+      );
 
       // Assert
       expect(state.query).toBe("maria");
       expect(state.emAtividade).toBe(true);
       expect(state.uf).toBe("SP");
+      expect(state.partido).toBe("PT");
       expect(state.feed.items).toEqual(firstPage);
       expect(state.feed.total).toBe(50);
       expect(state.status).toBe("idle");
@@ -60,9 +68,16 @@ describe("deputadoFeedReducer", () => {
   });
 
   describe("when toggleEmAtividade is dispatched", () => {
-    it("toggles activity while preserving query and UF", () => {
+    it("toggles activity while preserving query, UF, and partido", () => {
       // Arrange
-      const state = initDeputadoFeedState(firstPage, 50, "maria", false, "SP");
+      const state = initDeputadoFeedState(
+        firstPage,
+        50,
+        "maria",
+        false,
+        "SP",
+        "PT",
+      );
 
       // Act
       const next = deputadoFeedReducer(state, { type: "toggleEmAtividade" });
@@ -71,6 +86,25 @@ describe("deputadoFeedReducer", () => {
       expect(next.emAtividade).toBe(true);
       expect(next.query).toBe("maria");
       expect(next.uf).toBe("SP");
+      expect(next.partido).toBe("PT");
+      expect(next.feed.items).toEqual([]);
+      expect(next.status).toBe("loading");
+    });
+  });
+
+  describe("when changePartido is dispatched", () => {
+    it("records the partido, clears items, and starts loading", () => {
+      // Arrange
+      const state = initDeputadoFeedState(firstPage, 50);
+
+      // Act
+      const next = deputadoFeedReducer(state, {
+        type: "changePartido",
+        partido: "PSOL",
+      });
+
+      // Assert
+      expect(next.partido).toBe("PSOL");
       expect(next.feed.items).toEqual([]);
       expect(next.status).toBe("loading");
     });
@@ -115,7 +149,7 @@ describe("deputadoFeedReducer", () => {
 describe("deputadoFeedDisplay", () => {
   it("uses empty-filtered when filters are active and no items are loaded", () => {
     // Arrange
-    const state = initDeputadoFeedState([], 0, "", true, null);
+    const state = initDeputadoFeedState([], 0, "", false, null, "PT");
 
     // Act / Assert
     expect(deputadoFeedDisplay(state)).toBe("empty-filtered");

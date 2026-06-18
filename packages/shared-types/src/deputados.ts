@@ -113,6 +113,14 @@ export const ufsDisponiveisResponseSchema = z.object({
   items: z.array(ufDisponivelSchema),
 });
 
+export const partidoDisponivelSchema = z.object({
+  siglaPartido: z.string(),
+});
+
+export const partidosDisponiveisResponseSchema = z.object({
+  items: z.array(partidoDisponivelSchema),
+});
+
 export type DeputadoSnapshotPublico = z.infer<typeof deputadoSnapshotPublicoSchema>;
 export type DeputadoResumoPresenca = z.infer<typeof deputadoResumoPresencaSchema>;
 export type DeputadoPeriodoPartidario = z.infer<typeof deputadoPeriodoPartidarioSchema>;
@@ -121,3 +129,5 @@ export type DeputadoCard = z.infer<typeof deputadoCardSchema>;
 export type DeputadosFeedResponse = z.infer<typeof deputadoFeedResponseSchema>;
 export type UfDisponivel = z.infer<typeof ufDisponivelSchema>;
 export type UfsDisponiveisResponse = z.infer<typeof ufsDisponiveisResponseSchema>;
+export type PartidoDisponivel = z.infer<typeof partidoDisponivelSchema>;
+export type PartidosDisponiveisResponse = z.infer<typeof partidosDisponiveisResponseSchema>;
