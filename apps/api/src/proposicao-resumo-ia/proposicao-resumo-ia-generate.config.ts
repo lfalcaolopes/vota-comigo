@@ -37,7 +37,10 @@ export function resolveProposicaoResumoIaGenerateConfig(
   };
 }
 
-function getStringArg(args: readonly string[], name: string): string | undefined {
+function getStringArg(
+  args: readonly string[],
+  name: string,
+): string | undefined {
   return args.find((arg) => arg.startsWith(`${name}=`))?.split('=')[1];
 }
 
@@ -46,7 +49,10 @@ function parseYear(
 ): { ok: true; value: number | undefined } | { ok: false; message: string } {
   if (value === undefined) return { ok: true, value: undefined };
   if (!/^\d{4}$/.test(value)) {
-    return { ok: false, message: '--year deve receber um ano no formato YYYY.' };
+    return {
+      ok: false,
+      message: '--year deve receber um ano no formato YYYY.',
+    };
   }
   return { ok: true, value: Number(value) };
 }

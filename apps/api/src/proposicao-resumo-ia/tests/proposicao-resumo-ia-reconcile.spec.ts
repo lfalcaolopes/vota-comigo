@@ -42,7 +42,9 @@ function validJson(ano: number, items: Record<string, unknown>): string {
   return JSON.stringify({ ano, items });
 }
 
-function item(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+function item(
+  overrides: Record<string, unknown> = {},
+): Record<string, unknown> {
   return {
     sourceHash: 'source-hash',
     generationStatus: 'generated',
@@ -61,7 +63,10 @@ describe('executeProposicaoResumoIaReconcile', () => {
       const currentHash = calculateProposicaoResumoIaSourceHash(src);
       const repository = fakeRepository([src]);
       const files = new Map([
-        ['2024.json', validJson(2024, { '42': item({ sourceHash: currentHash }) })],
+        [
+          '2024.json',
+          validJson(2024, { '42': item({ sourceHash: currentHash }) }),
+        ],
       ]);
       const written = new Map<string, string>();
       const logs: string[] = [];
@@ -74,7 +79,12 @@ describe('executeProposicaoResumoIaReconcile', () => {
         },
         async readFile(filePath) {
           const name = path.basename(filePath);
-          return files.get(name) ?? (() => { throw new Error(`missing ${filePath}`); })();
+          return (
+            files.get(name) ??
+            (() => {
+              throw new Error(`missing ${filePath}`);
+            })()
+          );
         },
         async writeFile(filePath, content) {
           written.set(path.basename(filePath), content);
@@ -83,7 +93,11 @@ describe('executeProposicaoResumoIaReconcile', () => {
       });
 
       // Assert
-      expect(result).toEqual({ ok: true, exitCode: 0, message: 'Reconciliação de resumos concluída.' });
+      expect(result).toEqual({
+        ok: true,
+        exitCode: 0,
+        message: 'Reconciliação de resumos concluída.',
+      });
       expect(written).toHaveProperty('size', 0);
       expect(logs).toEqual([
         'Proposições computáveis: 1',
@@ -101,7 +115,10 @@ describe('executeProposicaoResumoIaReconcile', () => {
       const src = source();
       const repository = fakeRepository([src]);
       const files = new Map([
-        ['2024.json', validJson(2024, { '42': item({ sourceHash: 'old-hash' }) })],
+        [
+          '2024.json',
+          validJson(2024, { '42': item({ sourceHash: 'old-hash' }) }),
+        ],
       ]);
       const written = new Map<string, string>();
       const logs: string[] = [];
@@ -114,7 +131,12 @@ describe('executeProposicaoResumoIaReconcile', () => {
         },
         async readFile(filePath) {
           const name = path.basename(filePath);
-          return files.get(name) ?? (() => { throw new Error(`missing ${filePath}`); })();
+          return (
+            files.get(name) ??
+            (() => {
+              throw new Error(`missing ${filePath}`);
+            })()
+          );
         },
         async writeFile(filePath, content) {
           written.set(path.basename(filePath), content);
@@ -123,9 +145,15 @@ describe('executeProposicaoResumoIaReconcile', () => {
       });
 
       // Assert
-      expect(result).toEqual({ ok: true, exitCode: 0, message: 'Reconciliação de resumos concluída.' });
+      expect(result).toEqual({
+        ok: true,
+        exitCode: 0,
+        message: 'Reconciliação de resumos concluída.',
+      });
       expect(written.has('2024.json')).toBe(true);
-      const writtenJson = JSON.parse(written.get('2024.json')!) as { items: { '42': { reviewStatus: string } } };
+      const writtenJson = JSON.parse(written.get('2024.json')!) as {
+        items: { '42': { reviewStatus: string } };
+      };
       expect(writtenJson.items['42']?.reviewStatus).toBe('stale');
       expect(logs).toEqual([
         'Proposições computáveis: 1',
@@ -153,7 +181,12 @@ describe('executeProposicaoResumoIaReconcile', () => {
           return ['2024.json'];
         },
         async readFile(filePath) {
-          return files.get(path.basename(filePath)) ?? (() => { throw new Error(`missing ${filePath}`); })();
+          return (
+            files.get(path.basename(filePath)) ??
+            (() => {
+              throw new Error(`missing ${filePath}`);
+            })()
+          );
         },
         async writeFile(filePath, content) {
           written.set(path.basename(filePath), content);
@@ -162,7 +195,11 @@ describe('executeProposicaoResumoIaReconcile', () => {
       });
 
       // Assert
-      expect(result).toEqual({ ok: true, exitCode: 1, message: 'Reconciliação de resumos concluída.' });
+      expect(result).toEqual({
+        ok: true,
+        exitCode: 1,
+        message: 'Reconciliação de resumos concluída.',
+      });
       expect(written).toHaveProperty('size', 0);
       expect(logs).toContain('Pendentes: 1');
       expect(logs).toContain('Proposições sem item no JSON: 99');
@@ -212,7 +249,16 @@ describe('executeProposicaoResumoIaReconcile', () => {
           return ['2024.json'];
         },
         async readFile() {
-          return JSON.stringify({ ano: 2024, items: { '42': { sourceHash: '', generationStatus: 'generated', reviewStatus: 'approved' } } });
+          return JSON.stringify({
+            ano: 2024,
+            items: {
+              '42': {
+                sourceHash: '',
+                generationStatus: 'generated',
+                reviewStatus: 'approved',
+              },
+            },
+          });
         },
         async writeFile(filePath, content) {
           written.set(path.basename(filePath), content);
@@ -236,8 +282,14 @@ describe('executeProposicaoResumoIaReconcile', () => {
       const hash2025 = calculateProposicaoResumoIaSourceHash(src2025);
       const repository = fakeRepository([src2024, src2025]);
       const files = new Map([
-        ['2024.json', validJson(2024, { '42': item({ sourceHash: 'old-hash-42' }) })],
-        ['2025.json', validJson(2025, { '43': item({ sourceHash: hash2025 }) })],
+        [
+          '2024.json',
+          validJson(2024, { '42': item({ sourceHash: 'old-hash-42' }) }),
+        ],
+        [
+          '2025.json',
+          validJson(2025, { '43': item({ sourceHash: hash2025 }) }),
+        ],
       ]);
       const written = new Map<string, string>();
 
@@ -248,7 +300,12 @@ describe('executeProposicaoResumoIaReconcile', () => {
           return ['2024.json', '2025.json'];
         },
         async readFile(filePath) {
-          return files.get(path.basename(filePath)) ?? (() => { throw new Error(`missing ${filePath}`); })();
+          return (
+            files.get(path.basename(filePath)) ??
+            (() => {
+              throw new Error(`missing ${filePath}`);
+            })()
+          );
         },
         async writeFile(filePath, content) {
           written.set(path.basename(filePath), content);

@@ -27,7 +27,10 @@ export function selectProposicaoResumoIaGenerationTargets(input: {
     return sources.filter((src) => src.ano !== null);
   }
 
-  const existingItems = new Map<string, ProposicaoResumoIaJson['items'][string]>();
+  const existingItems = new Map<
+    string,
+    ProposicaoResumoIaJson['items'][string]
+  >();
   for (const file of files) {
     for (const [key, item] of Object.entries(file.items)) {
       existingItems.set(`${file.ano}:${key}`, item);
@@ -49,20 +52,28 @@ export function applyProposicaoResumoIaGeneration(input: {
   model: string;
   promptVersion: string;
   generatedAt: string;
-}): { files: readonly ProposicaoResumoIaJson[]; report: ProposicaoResumoIaApplyReport } {
+}): {
+  files: readonly ProposicaoResumoIaJson[];
+  report: ProposicaoResumoIaApplyReport;
+} {
   const { files, results, model, promptVersion, generatedAt } = input;
 
   const filesByAno = new Map<number, ProposicaoResumoIaJson>(
     files.map((f) => [f.ano, f]),
   );
 
-  const updatedItemsByAno = new Map<number, Record<string, ProposicaoResumoIaJson['items'][string]>>(
-    files.map((f) => [f.ano, { ...f.items }]),
-  );
+  const updatedItemsByAno = new Map<
+    number,
+    Record<string, ProposicaoResumoIaJson['items'][string]>
+  >(files.map((f) => [f.ano, { ...f.items }]));
 
   const changedAnos = new Set<number>();
   const newAnoFiles = new Map<number, ProposicaoResumoIaJson>();
-  const report: ProposicaoResumoIaApplyReport = { generated: 0, insufficientSource: 0, error: 0 };
+  const report: ProposicaoResumoIaApplyReport = {
+    generated: 0,
+    insufficientSource: 0,
+    error: 0,
+  };
 
   for (const { source, outcome } of results) {
     const ano = source.ano;
@@ -70,21 +81,33 @@ export function applyProposicaoResumoIaGeneration(input: {
 
     const key = String(source.externalIdProposicao);
     const sourceHash = calculateProposicaoResumoIaSourceHash(source);
-    const newItem = buildItem({ outcome, model, promptVersion, generatedAt, sourceHash });
+    const newItem = buildItem({
+      outcome,
+      model,
+      promptVersion,
+      generatedAt,
+      sourceHash,
+    });
 
     if (filesByAno.has(ano)) {
       updatedItemsByAno.get(ano)![key] = newItem;
       changedAnos.add(ano);
     } else if (newAnoFiles.has(ano)) {
       const newFile = newAnoFiles.get(ano)!;
-      newAnoFiles.set(ano, { ...newFile, items: { ...newFile.items, [key]: newItem } });
+      newAnoFiles.set(ano, {
+        ...newFile,
+        items: { ...newFile.items, [key]: newItem },
+      });
     } else {
       newAnoFiles.set(ano, { ano, items: { [key]: newItem } });
     }
 
     if (outcome.ok && outcome.response.status === 'generated') {
       report.generated++;
-    } else if (outcome.ok && outcome.response.status === 'insufficient_source') {
+    } else if (
+      outcome.ok &&
+      outcome.response.status === 'insufficient_source'
+    ) {
       report.insufficientSource++;
     } else {
       report.error++;

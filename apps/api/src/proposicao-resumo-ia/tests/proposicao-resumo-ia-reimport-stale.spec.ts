@@ -2,7 +2,6 @@ import { reconcileProposicaoResumoIa } from '../proposicao-resumo-ia-reconciler'
 import { importProposicaoResumoIaJson } from '../proposicao-resumo-ia-importer';
 import type {
   ProposicaoResumoIaRepository,
-  ProposicaoResumoIaRow,
   ProposicaoResumoIaUpsertResult,
 } from '../proposicao-resumo-ia.repository.types';
 import type { ProposicaoResumoIaSource } from '../../proposicoes/rules/proposicao-resumo-ia-source';
@@ -83,10 +82,10 @@ describe('reimportação após reconciliação', () => {
 
       // Act — re-import the reconciled file into the repository
       const repository = fakeRepository(new Map([[42, 'proposicao-uuid']]));
-      await importProposicaoResumoIaJson(reconciledFiles[0]!, { repository });
+      await importProposicaoResumoIaJson(reconciledFiles[0], { repository });
 
       // Assert — the stale row was upserted to the database
-      const upsertedRow = repository.upserted[0]?.[0] as ProposicaoResumoIaRow | undefined;
+      const upsertedRow = repository.upserted[0]?.[0];
       expect(upsertedRow?.reviewStatus).toBe('stale');
       expect(upsertedRow?.sourceHash).toBe('hash-antes-da-mudanca');
       expect(upsertedRow?.resumoCard).toBe('Resumo aprovado antigo.');

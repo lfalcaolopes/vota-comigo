@@ -27,14 +27,16 @@ export const proposicaoResumoIaGenerationResponseSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['resumoCard'],
-          message: 'resumoCard deve ser nulo quando status é insufficient_source',
+          message:
+            'resumoCard deve ser nulo quando status é insufficient_source',
         });
       }
       if (data.resumoDetalhe !== null) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['resumoDetalhe'],
-          message: 'resumoDetalhe deve ser nulo quando status é insufficient_source',
+          message:
+            'resumoDetalhe deve ser nulo quando status é insufficient_source',
         });
       }
     }

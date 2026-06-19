@@ -2,11 +2,16 @@ import path from 'node:path';
 import { executeProposicaoResumoIaGenerate } from '../proposicao-resumo-ia-generate';
 import type { ProposicaoResumoIaSource } from '../../proposicoes/rules/proposicao-resumo-ia-source';
 import type { ProposicaoResumoIaRepository } from '../proposicao-resumo-ia.repository.types';
-import type { ResumoIaGenerationClient, ResumoIaGenerationOutcome } from '../openrouter-resumo-ia-client';
+import type {
+  ResumoIaGenerationClient,
+  ResumoIaGenerationOutcome,
+} from '../openrouter-resumo-ia-client';
 
 const GENERATED_DIR = 'data/generated/proposicao-resumos';
 
-function source(overrides: Partial<ProposicaoResumoIaSource> = {}): ProposicaoResumoIaSource {
+function source(
+  overrides: Partial<ProposicaoResumoIaSource> = {},
+): ProposicaoResumoIaSource {
   return {
     externalIdProposicao: 42,
     siglaTipo: 'PL',
@@ -20,24 +25,52 @@ function source(overrides: Partial<ProposicaoResumoIaSource> = {}): ProposicaoRe
   };
 }
 
-function fakeRepository(sources: readonly ProposicaoResumoIaSource[]): ProposicaoResumoIaRepository {
+function fakeRepository(
+  sources: readonly ProposicaoResumoIaSource[],
+): ProposicaoResumoIaRepository {
   return {
-    async resolveProposicaoIds() { return new Map(); },
-    async upsert() { return { inserted: 0, updated: 0 }; },
-    async loadProposicoesComputaveisSources() { return sources; },
+    async resolveProposicaoIds() {
+      return new Map();
+    },
+    async upsert() {
+      return { inserted: 0, updated: 0 };
+    },
+    async loadProposicoesComputaveisSources() {
+      return sources;
+    },
   };
 }
 
-function fakeAiClient(outcome: ResumoIaGenerationOutcome): ResumoIaGenerationClient {
-  return { async generate() { return outcome; } };
+function fakeAiClient(
+  outcome: ResumoIaGenerationOutcome,
+): ResumoIaGenerationClient {
+  return {
+    async generate() {
+      return outcome;
+    },
+  };
 }
 
 function okOutcome(): ResumoIaGenerationOutcome {
-  return { ok: true, response: { status: 'generated', resumoCard: 'Card.', resumoDetalhe: 'Detalhe.' } };
+  return {
+    ok: true,
+    response: {
+      status: 'generated',
+      resumoCard: 'Card.',
+      resumoDetalhe: 'Detalhe.',
+    },
+  };
 }
 
 function insufficientOutcome(): ResumoIaGenerationOutcome {
-  return { ok: true, response: { status: 'insufficient_source', resumoCard: null, resumoDetalhe: null } };
+  return {
+    ok: true,
+    response: {
+      status: 'insufficient_source',
+      resumoCard: null,
+      resumoDetalhe: null,
+    },
+  };
 }
 
 function errorOutcome(): ResumoIaGenerationOutcome {
@@ -60,7 +93,10 @@ function makeFileSystem(existingFiles: Map<string, string> = new Map()) {
     },
     async readFile(filePath: string): Promise<string> {
       const content = existingFiles.get(filePath);
-      if (content === undefined) throw Object.assign(new Error(`missing ${filePath}`), { code: 'ENOENT' });
+      if (content === undefined)
+        throw Object.assign(new Error(`missing ${filePath}`), {
+          code: 'ENOENT',
+        });
       return content;
     },
     async writeFile(filePath: string, content: string): Promise<void> {
@@ -150,7 +186,11 @@ describe('executeProposicaoResumoIaGenerate', () => {
       );
 
       // Assert
-      expect(result).toEqual({ ok: true, exitCode: 0, message: 'Geração de resumos concluída.' });
+      expect(result).toEqual({
+        ok: true,
+        exitCode: 0,
+        message: 'Geração de resumos concluída.',
+      });
       expect(fs.written).toHaveProperty('size', 0);
     });
   });
@@ -168,11 +208,17 @@ describe('executeProposicaoResumoIaGenerate', () => {
       );
 
       // Assert
-      expect(result).toEqual({ ok: true, exitCode: 0, message: 'Geração de resumos concluída.' });
+      expect(result).toEqual({
+        ok: true,
+        exitCode: 0,
+        message: 'Geração de resumos concluída.',
+      });
       expect(fs.written.size).toBe(1);
       const writtenPath = path.join(GENERATED_DIR, '2024.json');
       expect(fs.written.has(writtenPath)).toBe(true);
-      const writtenContent = JSON.parse(fs.written.get(writtenPath)!) as { items: { '42': { generationStatus: string } } };
+      const writtenContent = JSON.parse(fs.written.get(writtenPath)!) as {
+        items: { '42': { generationStatus: string } };
+      };
       expect(writtenContent.items['42']?.generationStatus).toBe('generated');
     });
 
@@ -181,7 +227,10 @@ describe('executeProposicaoResumoIaGenerate', () => {
       const fs = makeFileSystem();
 
       // Act
-      await executeProposicaoResumoIaGenerate([], baseOptions([source()], okOutcome(), fs));
+      await executeProposicaoResumoIaGenerate(
+        [],
+        baseOptions([source()], okOutcome(), fs),
+      );
 
       // Assert
       expect(fs.createdDirs.has(GENERATED_DIR)).toBe(true);
@@ -203,11 +252,19 @@ describe('executeProposicaoResumoIaGenerate', () => {
         generatedAt: '2026-01-01T00:00:00Z',
         reviewedAt: null,
       };
-      const existingJson = JSON.stringify({ ano: 2024, items: { '42': existingItem } });
-      const fs = makeFileSystem(new Map([[path.join(GENERATED_DIR, '2024.json'), existingJson]]));
+      const existingJson = JSON.stringify({
+        ano: 2024,
+        items: { '42': existingItem },
+      });
+      const fs = makeFileSystem(
+        new Map([[path.join(GENERATED_DIR, '2024.json'), existingJson]]),
+      );
 
       // Act
-      await executeProposicaoResumoIaGenerate([], baseOptions([src], okOutcome(), fs));
+      await executeProposicaoResumoIaGenerate(
+        [],
+        baseOptions([src], okOutcome(), fs),
+      );
 
       // Assert
       expect(fs.written).toHaveProperty('size', 0);
@@ -227,15 +284,25 @@ describe('executeProposicaoResumoIaGenerate', () => {
         generatedAt: '2026-01-01T00:00:00Z',
         reviewedAt: null,
       };
-      const existingJson = JSON.stringify({ ano: 2024, items: { '42': errorItem } });
-      const fs = makeFileSystem(new Map([[path.join(GENERATED_DIR, '2024.json'), existingJson]]));
+      const existingJson = JSON.stringify({
+        ano: 2024,
+        items: { '42': errorItem },
+      });
+      const fs = makeFileSystem(
+        new Map([[path.join(GENERATED_DIR, '2024.json'), existingJson]]),
+      );
 
       // Act
-      await executeProposicaoResumoIaGenerate([], baseOptions([src], okOutcome(), fs));
+      await executeProposicaoResumoIaGenerate(
+        [],
+        baseOptions([src], okOutcome(), fs),
+      );
 
       // Assert
       expect(fs.written.size).toBeGreaterThan(0);
-      const writtenContent = JSON.parse(fs.written.get(path.join(GENERATED_DIR, '2024.json'))!) as { items: { '42': { generationStatus: string } } };
+      const writtenContent = JSON.parse(
+        fs.written.get(path.join(GENERATED_DIR, '2024.json'))!,
+      ) as { items: { '42': { generationStatus: string } } };
       expect(writtenContent.items['42']?.generationStatus).toBe('generated');
     });
   });
@@ -255,15 +322,25 @@ describe('executeProposicaoResumoIaGenerate', () => {
         generatedAt: '2026-01-01T00:00:00Z',
         reviewedAt: '2026-01-02T00:00:00Z',
       };
-      const existingJson = JSON.stringify({ ano: 2024, items: { '42': approvedItem } });
-      const fs = makeFileSystem(new Map([[path.join(GENERATED_DIR, '2024.json'), existingJson]]));
+      const existingJson = JSON.stringify({
+        ano: 2024,
+        items: { '42': approvedItem },
+      });
+      const fs = makeFileSystem(
+        new Map([[path.join(GENERATED_DIR, '2024.json'), existingJson]]),
+      );
 
       // Act
-      await executeProposicaoResumoIaGenerate(['--regenerate'], baseOptions([src], okOutcome(), fs));
+      await executeProposicaoResumoIaGenerate(
+        ['--regenerate'],
+        baseOptions([src], okOutcome(), fs),
+      );
 
       // Assert
       expect(fs.written.size).toBeGreaterThan(0);
-      const writtenContent = JSON.parse(fs.written.get(path.join(GENERATED_DIR, '2024.json'))!) as { items: { '42': { reviewStatus: string } } };
+      const writtenContent = JSON.parse(
+        fs.written.get(path.join(GENERATED_DIR, '2024.json'))!,
+      ) as { items: { '42': { reviewStatus: string } } };
       expect(writtenContent.items['42']?.reviewStatus).toBe('pending');
     });
   });
@@ -295,7 +372,9 @@ describe('executeProposicaoResumoIaGenerate', () => {
   describe('with --limit filter', () => {
     it('generates for at most the given number of sources', async () => {
       // Arrange
-      const sources = [1, 2, 3, 4, 5].map((id) => source({ externalIdProposicao: id }));
+      const sources = [1, 2, 3, 4, 5].map((id) =>
+        source({ externalIdProposicao: id }),
+      );
       const aiClient = { generate: jest.fn().mockResolvedValue(okOutcome()) };
       const fs = makeFileSystem();
 
@@ -345,11 +424,16 @@ describe('executeProposicaoResumoIaGenerate', () => {
       const fs = makeFileSystem();
 
       // Act
-      await executeProposicaoResumoIaGenerate([], baseOptions([src], insufficientOutcome(), fs));
+      await executeProposicaoResumoIaGenerate(
+        [],
+        baseOptions([src], insufficientOutcome(), fs),
+      );
 
       // Assert
       const writtenPath = path.join(GENERATED_DIR, '2024.json');
-      const content = JSON.parse(fs.written.get(writtenPath)!) as { items: { '42': { generationStatus: string } } };
+      const content = JSON.parse(fs.written.get(writtenPath)!) as {
+        items: { '42': { generationStatus: string } };
+      };
       expect(content.items['42']?.generationStatus).toBe('insufficient_source');
     });
   });
@@ -361,11 +445,16 @@ describe('executeProposicaoResumoIaGenerate', () => {
       const fs = makeFileSystem();
 
       // Act
-      await executeProposicaoResumoIaGenerate([], baseOptions([src], errorOutcome(), fs));
+      await executeProposicaoResumoIaGenerate(
+        [],
+        baseOptions([src], errorOutcome(), fs),
+      );
 
       // Assert
       const writtenPath = path.join(GENERATED_DIR, '2024.json');
-      const content = JSON.parse(fs.written.get(writtenPath)!) as { items: { '42': { generationStatus: string } } };
+      const content = JSON.parse(fs.written.get(writtenPath)!) as {
+        items: { '42': { generationStatus: string } };
+      };
       expect(content.items['42']?.generationStatus).toBe('error');
     });
 
@@ -375,7 +464,10 @@ describe('executeProposicaoResumoIaGenerate', () => {
       const fs = makeFileSystem();
 
       // Act
-      const result = await executeProposicaoResumoIaGenerate([], baseOptions([src], errorOutcome(), fs));
+      const result = await executeProposicaoResumoIaGenerate(
+        [],
+        baseOptions([src], errorOutcome(), fs),
+      );
 
       // Assert
       expect(result.exitCode).toBe(0);
@@ -386,7 +478,9 @@ describe('executeProposicaoResumoIaGenerate', () => {
     it('returns ok:false with exit code 1', async () => {
       // Arrange
       const invalidJson = '{ "ano": 2024, "items": { "42": {} } }';
-      const fs = makeFileSystem(new Map([[path.join(GENERATED_DIR, '2024.json'), invalidJson]]));
+      const fs = makeFileSystem(
+        new Map([[path.join(GENERATED_DIR, '2024.json'), invalidJson]]),
+      );
 
       // Act
       const result = await executeProposicaoResumoIaGenerate(
@@ -408,7 +502,10 @@ describe('executeProposicaoResumoIaGenerate', () => {
       const logs: string[] = [];
 
       // Act
-      await executeProposicaoResumoIaGenerate([], baseOptions([src], okOutcome(), fs, logs));
+      await executeProposicaoResumoIaGenerate(
+        [],
+        baseOptions([src], okOutcome(), fs, logs),
+      );
 
       // Assert
       expect(logs.some((l) => l.includes('Gerados'))).toBe(true);

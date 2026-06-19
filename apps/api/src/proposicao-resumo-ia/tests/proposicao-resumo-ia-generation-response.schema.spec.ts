@@ -1,6 +1,8 @@
 import { proposicaoResumoIaGenerationResponseSchema } from '../proposicao-resumo-ia-generation-response.schema';
 
-function response(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+function response(
+  overrides: Record<string, unknown> = {},
+): Record<string, unknown> {
   return {
     status: 'generated',
     resumoCard: 'Resumo curto.',
@@ -16,7 +18,8 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
       const input = response();
 
       // Act
-      const result = proposicaoResumoIaGenerationResponseSchema.safeParse(input);
+      const result =
+        proposicaoResumoIaGenerationResponseSchema.safeParse(input);
 
       // Assert
       expect(result.success).toBe(true);
@@ -27,7 +30,8 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
       const input = response({ resumoCard: null });
 
       // Act
-      const result = proposicaoResumoIaGenerationResponseSchema.safeParse(input);
+      const result =
+        proposicaoResumoIaGenerationResponseSchema.safeParse(input);
 
       // Assert
       expect(result.success).toBe(false);
@@ -38,7 +42,8 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
       const input = response({ resumoDetalhe: null });
 
       // Act
-      const result = proposicaoResumoIaGenerationResponseSchema.safeParse(input);
+      const result =
+        proposicaoResumoIaGenerationResponseSchema.safeParse(input);
 
       // Assert
       expect(result.success).toBe(false);
@@ -49,7 +54,8 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
       const input = response({ resumoCard: 'x'.repeat(181) });
 
       // Act
-      const result = proposicaoResumoIaGenerationResponseSchema.safeParse(input);
+      const result =
+        proposicaoResumoIaGenerationResponseSchema.safeParse(input);
 
       // Assert
       expect(result.success).toBe(false);
@@ -60,7 +66,8 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
       const input = response({ resumoDetalhe: 'x'.repeat(901) });
 
       // Act
-      const result = proposicaoResumoIaGenerationResponseSchema.safeParse(input);
+      const result =
+        proposicaoResumoIaGenerationResponseSchema.safeParse(input);
 
       // Assert
       expect(result.success).toBe(false);
@@ -70,10 +77,15 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
   describe('when status is insufficient_source', () => {
     it('accepts null resumoCard and resumoDetalhe', () => {
       // Arrange
-      const input = { status: 'insufficient_source', resumoCard: null, resumoDetalhe: null };
+      const input = {
+        status: 'insufficient_source',
+        resumoCard: null,
+        resumoDetalhe: null,
+      };
 
       // Act
-      const result = proposicaoResumoIaGenerationResponseSchema.safeParse(input);
+      const result =
+        proposicaoResumoIaGenerationResponseSchema.safeParse(input);
 
       // Assert
       expect(result.success).toBe(true);
@@ -84,7 +96,8 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
       const input = { status: 'insufficient_source' };
 
       // Act
-      const result = proposicaoResumoIaGenerationResponseSchema.safeParse(input);
+      const result =
+        proposicaoResumoIaGenerationResponseSchema.safeParse(input);
 
       // Assert
       expect(result.success).toBe(true);
@@ -96,10 +109,15 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
 
     it('rejects non-null resumoCard', () => {
       // Arrange
-      const input = { status: 'insufficient_source', resumoCard: 'texto', resumoDetalhe: null };
+      const input = {
+        status: 'insufficient_source',
+        resumoCard: 'texto',
+        resumoDetalhe: null,
+      };
 
       // Act
-      const result = proposicaoResumoIaGenerationResponseSchema.safeParse(input);
+      const result =
+        proposicaoResumoIaGenerationResponseSchema.safeParse(input);
 
       // Assert
       expect(result.success).toBe(false);
@@ -107,10 +125,15 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
 
     it('rejects non-null resumoDetalhe', () => {
       // Arrange
-      const input = { status: 'insufficient_source', resumoCard: null, resumoDetalhe: 'texto' };
+      const input = {
+        status: 'insufficient_source',
+        resumoCard: null,
+        resumoDetalhe: 'texto',
+      };
 
       // Act
-      const result = proposicaoResumoIaGenerationResponseSchema.safeParse(input);
+      const result =
+        proposicaoResumoIaGenerationResponseSchema.safeParse(input);
 
       // Assert
       expect(result.success).toBe(false);
@@ -123,7 +146,8 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
       const input = response({ status: 'error' });
 
       // Act
-      const result = proposicaoResumoIaGenerationResponseSchema.safeParse(input);
+      const result =
+        proposicaoResumoIaGenerationResponseSchema.safeParse(input);
 
       // Assert
       expect(result.success).toBe(false);
@@ -134,7 +158,8 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
       const input = response({ status: 'unknown' });
 
       // Act
-      const result = proposicaoResumoIaGenerationResponseSchema.safeParse(input);
+      const result =
+        proposicaoResumoIaGenerationResponseSchema.safeParse(input);
 
       // Assert
       expect(result.success).toBe(false);
@@ -144,7 +169,8 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
   describe('when input is not an object', () => {
     it('rejects a plain string', () => {
       // Act
-      const result = proposicaoResumoIaGenerationResponseSchema.safeParse('texto livre');
+      const result =
+        proposicaoResumoIaGenerationResponseSchema.safeParse('texto livre');
 
       // Assert
       expect(result.success).toBe(false);

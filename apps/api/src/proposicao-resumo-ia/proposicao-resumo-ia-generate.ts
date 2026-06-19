@@ -2,11 +2,20 @@ import { readFile, writeFile, readdir, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
 import { ZodError } from 'zod';
-import { createDatabaseClient, type DatabaseClient } from '@/shared/database/client';
-import { proposicaoResumoIaJsonSchema, type ProposicaoResumoIaJson } from './proposicao-resumo-ia-json.schema';
+import {
+  createDatabaseClient,
+  type DatabaseClient,
+} from '@/shared/database/client';
+import {
+  proposicaoResumoIaJsonSchema,
+  type ProposicaoResumoIaJson,
+} from './proposicao-resumo-ia-json.schema';
 import { createProposicaoResumoIaRepository } from './proposicao-resumo-ia.repository';
 import type { ProposicaoResumoIaRepository } from './proposicao-resumo-ia.repository.types';
-import { createOpenrouterResumoIaClient, type ResumoIaGenerationClient } from './openrouter-resumo-ia-client';
+import {
+  createOpenrouterResumoIaClient,
+  type ResumoIaGenerationClient,
+} from './openrouter-resumo-ia-client';
 import {
   selectProposicaoResumoIaGenerationTargets,
   applyProposicaoResumoIaGeneration,
@@ -47,10 +56,9 @@ export async function executeProposicaoResumoIaGenerate(
     options.readFile ?? ((filePath: string) => readFile(filePath, 'utf8'));
   const saveFile =
     options.writeFile ??
-    ((filePath: string, content: string) => writeFile(filePath, content, 'utf8'));
-  const listDir =
-    options.readdir ??
-    ((dir: string) => readdir(dir).then((entries) => entries as string[]));
+    ((filePath: string, content: string) =>
+      writeFile(filePath, content, 'utf8'));
+  const listDir = options.readdir ?? ((dir: string) => readdir(dir));
   const createDir =
     options.mkdir ??
     ((dir: string) => mkdir(dir, { recursive: true }).then(() => undefined));
@@ -118,7 +126,11 @@ export async function executeProposicaoResumoIaGenerate(
       const content = await loadFile(filePath);
       const parsed = parseJsonFile(content);
       if (parsed === null) {
-        return { ok: false, exitCode: 1, message: `JSON anual inválido em ${filePath}.` };
+        return {
+          ok: false,
+          exitCode: 1,
+          message: `JSON anual inválido em ${filePath}.`,
+        };
       }
       inputFiles.push(parsed);
     }

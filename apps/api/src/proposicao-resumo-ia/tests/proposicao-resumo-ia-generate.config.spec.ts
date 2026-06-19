@@ -9,7 +9,12 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
       // Assert
       expect(result).toEqual({
         ok: true,
-        config: { year: undefined, limit: undefined, externalIdProposicao: undefined, regenerate: false },
+        config: {
+          year: undefined,
+          limit: undefined,
+          externalIdProposicao: undefined,
+          regenerate: false,
+        },
       });
     });
   });
@@ -77,15 +82,22 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
   describe('with --external-id-proposicao', () => {
     it('parses a valid positive integer', () => {
       // Act
-      const result = resolveProposicaoResumoIaGenerateConfig(['--external-id-proposicao=42']);
+      const result = resolveProposicaoResumoIaGenerateConfig([
+        '--external-id-proposicao=42',
+      ]);
 
       // Assert
-      expect(result).toMatchObject({ ok: true, config: { externalIdProposicao: 42 } });
+      expect(result).toMatchObject({
+        ok: true,
+        config: { externalIdProposicao: 42 },
+      });
     });
 
     it('returns error for non-numeric value', () => {
       // Act
-      const result = resolveProposicaoResumoIaGenerateConfig(['--external-id-proposicao=abc']);
+      const result = resolveProposicaoResumoIaGenerateConfig([
+        '--external-id-proposicao=abc',
+      ]);
 
       // Assert
       expect(result.ok).toBe(false);
@@ -115,7 +127,12 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
       // Assert
       expect(result).toEqual({
         ok: true,
-        config: { year: 2023, limit: 5, externalIdProposicao: 99, regenerate: true },
+        config: {
+          year: 2023,
+          limit: 5,
+          externalIdProposicao: 99,
+          regenerate: true,
+        },
       });
     });
   });

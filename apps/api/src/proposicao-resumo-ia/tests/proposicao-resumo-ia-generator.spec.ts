@@ -26,11 +26,15 @@ function source(
   };
 }
 
-function annualFile(overrides: Partial<ProposicaoResumoIaJson> = {}): ProposicaoResumoIaJson {
+function annualFile(
+  overrides: Partial<ProposicaoResumoIaJson> = {},
+): ProposicaoResumoIaJson {
   return { ano: 2024, items: {}, ...overrides };
 }
 
-function jsonItem(overrides: Partial<ProposicaoResumoIaJson['items'][string]> = {}): ProposicaoResumoIaJson['items'][string] {
+function jsonItem(
+  overrides: Partial<ProposicaoResumoIaJson['items'][string]> = {},
+): ProposicaoResumoIaJson['items'][string] {
   return {
     sourceHash: 'hash',
     generationStatus: 'generated',
@@ -45,19 +49,35 @@ function jsonItem(overrides: Partial<ProposicaoResumoIaJson['items'][string]> = 
   };
 }
 
-function okOutcome(resumoCard = 'Resumo curto.', resumoDetalhe = 'Resumo detalhado.'): ResumoIaGenerationOutcome {
-  return { ok: true, response: { status: 'generated', resumoCard, resumoDetalhe } };
+function okOutcome(
+  resumoCard = 'Resumo curto.',
+  resumoDetalhe = 'Resumo detalhado.',
+): ResumoIaGenerationOutcome {
+  return {
+    ok: true,
+    response: { status: 'generated', resumoCard, resumoDetalhe },
+  };
 }
 
 function insufficientOutcome(): ResumoIaGenerationOutcome {
-  return { ok: true, response: { status: 'insufficient_source', resumoCard: null, resumoDetalhe: null } };
+  return {
+    ok: true,
+    response: {
+      status: 'insufficient_source',
+      resumoCard: null,
+      resumoDetalhe: null,
+    },
+  };
 }
 
 function errorOutcome(): ResumoIaGenerationOutcome {
   return { ok: false, reason: 'network error' };
 }
 
-function result(src: ProposicaoResumoIaSource, outcome: ResumoIaGenerationOutcome): ProposicaoResumoIaGenerationResult {
+function result(
+  src: ProposicaoResumoIaSource,
+  outcome: ResumoIaGenerationOutcome,
+): ProposicaoResumoIaGenerationResult {
   return { source: src, outcome };
 }
 
@@ -73,7 +93,11 @@ describe('selectProposicaoResumoIaGenerationTargets', () => {
       const files = [annualFile({ ano: 2023 })];
 
       // Act
-      const targets = selectProposicaoResumoIaGenerationTargets({ sources: [src], files, regenerate: false });
+      const targets = selectProposicaoResumoIaGenerationTargets({
+        sources: [src],
+        files,
+        regenerate: false,
+      });
 
       // Assert
       expect(targets).toContain(src);
@@ -85,7 +109,11 @@ describe('selectProposicaoResumoIaGenerationTargets', () => {
       const files = [annualFile({ ano: 2024, items: {} })];
 
       // Act
-      const targets = selectProposicaoResumoIaGenerationTargets({ sources: [src], files, regenerate: false });
+      const targets = selectProposicaoResumoIaGenerationTargets({
+        sources: [src],
+        files,
+        regenerate: false,
+      });
 
       // Assert
       expect(targets).toContain(src);
@@ -94,10 +122,19 @@ describe('selectProposicaoResumoIaGenerationTargets', () => {
     it('includes source when existing item has generationStatus error', () => {
       // Arrange
       const src = source();
-      const files = [annualFile({ ano: 2024, items: { '42': jsonItem({ generationStatus: 'error' }) } })];
+      const files = [
+        annualFile({
+          ano: 2024,
+          items: { '42': jsonItem({ generationStatus: 'error' }) },
+        }),
+      ];
 
       // Act
-      const targets = selectProposicaoResumoIaGenerationTargets({ sources: [src], files, regenerate: false });
+      const targets = selectProposicaoResumoIaGenerationTargets({
+        sources: [src],
+        files,
+        regenerate: false,
+      });
 
       // Assert
       expect(targets).toContain(src);
@@ -108,10 +145,19 @@ describe('selectProposicaoResumoIaGenerationTargets', () => {
       (generationStatus) => {
         // Arrange
         const src = source();
-        const files = [annualFile({ ano: 2024, items: { '42': jsonItem({ generationStatus }) } })];
+        const files = [
+          annualFile({
+            ano: 2024,
+            items: { '42': jsonItem({ generationStatus }) },
+          }),
+        ];
 
         // Act
-        const targets = selectProposicaoResumoIaGenerationTargets({ sources: [src], files, regenerate: false });
+        const targets = selectProposicaoResumoIaGenerationTargets({
+          sources: [src],
+          files,
+          regenerate: false,
+        });
 
         // Assert
         expect(targets).not.toContain(src);
@@ -123,10 +169,21 @@ describe('selectProposicaoResumoIaGenerationTargets', () => {
       (reviewStatus) => {
         // Arrange
         const src = source();
-        const files = [annualFile({ ano: 2024, items: { '42': jsonItem({ generationStatus: 'generated', reviewStatus }) } })];
+        const files = [
+          annualFile({
+            ano: 2024,
+            items: {
+              '42': jsonItem({ generationStatus: 'generated', reviewStatus }),
+            },
+          }),
+        ];
 
         // Act
-        const targets = selectProposicaoResumoIaGenerationTargets({ sources: [src], files, regenerate: false });
+        const targets = selectProposicaoResumoIaGenerationTargets({
+          sources: [src],
+          files,
+          regenerate: false,
+        });
 
         // Assert
         expect(targets).not.toContain(src);
@@ -139,7 +196,11 @@ describe('selectProposicaoResumoIaGenerationTargets', () => {
       const files: ProposicaoResumoIaJson[] = [];
 
       // Act
-      const targets = selectProposicaoResumoIaGenerationTargets({ sources: [src], files, regenerate: false });
+      const targets = selectProposicaoResumoIaGenerationTargets({
+        sources: [src],
+        files,
+        regenerate: false,
+      });
 
       // Assert
       expect(targets).not.toContain(src);
@@ -150,10 +211,24 @@ describe('selectProposicaoResumoIaGenerationTargets', () => {
     it('includes all sources regardless of existing generationStatus', () => {
       // Arrange
       const src = source();
-      const files = [annualFile({ ano: 2024, items: { '42': jsonItem({ generationStatus: 'generated', reviewStatus: 'approved' }) } })];
+      const files = [
+        annualFile({
+          ano: 2024,
+          items: {
+            '42': jsonItem({
+              generationStatus: 'generated',
+              reviewStatus: 'approved',
+            }),
+          },
+        }),
+      ];
 
       // Act
-      const targets = selectProposicaoResumoIaGenerationTargets({ sources: [src], files, regenerate: true });
+      const targets = selectProposicaoResumoIaGenerationTargets({
+        sources: [src],
+        files,
+        regenerate: true,
+      });
 
       // Assert
       expect(targets).toContain(src);
@@ -164,7 +239,11 @@ describe('selectProposicaoResumoIaGenerationTargets', () => {
       const src = source({ ano: null });
 
       // Act
-      const targets = selectProposicaoResumoIaGenerationTargets({ sources: [src], files: [], regenerate: true });
+      const targets = selectProposicaoResumoIaGenerationTargets({
+        sources: [src],
+        files: [],
+        regenerate: true,
+      });
 
       // Assert
       expect(targets).not.toContain(src);

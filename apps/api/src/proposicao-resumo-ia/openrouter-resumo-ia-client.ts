@@ -10,10 +10,15 @@ export type ResumoIaGenerationOutcome =
   | { ok: false; reason: string };
 
 export interface ResumoIaGenerationClient {
-  generate(source: ProposicaoResumoIaSource): Promise<ResumoIaGenerationOutcome>;
+  generate(
+    source: ProposicaoResumoIaSource,
+  ): Promise<ResumoIaGenerationOutcome>;
 }
 
-type FetchFn = (url: string, init: RequestInit) => Promise<{ ok: boolean; status: number; json(): Promise<unknown> }>;
+type FetchFn = (
+  url: string,
+  init: RequestInit,
+) => Promise<{ ok: boolean; status: number; json(): Promise<unknown> }>;
 
 export type CreateOpenrouterResumoIaClientOptions = {
   apiKey: string;
@@ -26,7 +31,7 @@ const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 export function createOpenrouterResumoIaClient(
   options: CreateOpenrouterResumoIaClientOptions,
 ): ResumoIaGenerationClient {
-  const fetchImpl = (options.fetch ?? globalThis.fetch) as FetchFn;
+  const fetchImpl: FetchFn = options.fetch ?? globalThis.fetch;
 
   return {
     async generate(source): Promise<ResumoIaGenerationOutcome> {
@@ -35,7 +40,7 @@ export function createOpenrouterResumoIaClient(
         const response = await fetchImpl(OPENROUTER_URL, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${options.apiKey}`,
+            Authorization: `Bearer ${options.apiKey}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -59,14 +64,21 @@ export function createOpenrouterResumoIaClient(
         }
 
         const parsed = JSON.parse(content) as unknown;
-        const validated = proposicaoResumoIaGenerationResponseSchema.safeParse(parsed);
+        const validated =
+          proposicaoResumoIaGenerationResponseSchema.safeParse(parsed);
         if (!validated.success) {
-          return { ok: false, reason: `schema inválido: ${validated.error.message}` };
+          return {
+            ok: false,
+            reason: `schema inválido: ${validated.error.message}`,
+          };
         }
 
         return { ok: true, response: validated.data };
       } catch (error) {
-        return { ok: false, reason: error instanceof Error ? error.message : 'erro desconhecido' };
+        return {
+          ok: false,
+          reason: error instanceof Error ? error.message : 'erro desconhecido',
+        };
       }
     },
   };

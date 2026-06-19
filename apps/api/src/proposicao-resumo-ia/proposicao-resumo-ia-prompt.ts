@@ -2,8 +2,12 @@ import type { ProposicaoResumoIaSource } from '../proposicoes/rules/proposicao-r
 
 export const PROPOSICAO_RESUMO_IA_PROMPT_VERSION = 'v1';
 
-export function buildProposicaoResumoIaPrompt(source: ProposicaoResumoIaSource): string {
-  const tipo = [source.siglaTipo, source.numero, source.ano].filter(Boolean).join('/');
+export function buildProposicaoResumoIaPrompt(
+  source: ProposicaoResumoIaSource,
+): string {
+  const tipo = [source.siglaTipo, source.numero, source.ano]
+    .filter(Boolean)
+    .join('/');
   const descricao = source.descricaoTipo ?? '';
   const ementa = source.ementa ?? '';
   const ementaDetalhada = source.ementaDetalhada ?? '';

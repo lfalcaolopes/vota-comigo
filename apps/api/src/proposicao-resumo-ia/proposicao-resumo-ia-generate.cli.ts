@@ -8,11 +8,11 @@ async function main(): Promise<void> {
   const result = await executeProposicaoResumoIaGenerate(
     process.argv.slice(2),
     {
-    reporter: {
-      log(message) {
-        console.log(message);
+      reporter: {
+        log(message) {
+          console.log(message);
+        },
       },
-    },
     },
   );
 

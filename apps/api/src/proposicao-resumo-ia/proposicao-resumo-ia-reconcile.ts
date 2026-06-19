@@ -39,10 +39,9 @@ export async function executeProposicaoResumoIaReconcile(
     options.readFile ?? ((filePath: string) => readFile(filePath, 'utf8'));
   const saveFile =
     options.writeFile ??
-    ((filePath: string, content: string) => writeFile(filePath, content, 'utf8'));
-  const listDir =
-    options.readdir ??
-    ((dir: string) => readdir(dir).then((entries) => entries as string[]));
+    ((filePath: string, content: string) =>
+      writeFile(filePath, content, 'utf8'));
+  const listDir = options.readdir ?? ((dir: string) => readdir(dir));
 
   let databaseClient: DatabaseClient | null = null;
   let repository = options.repository;
@@ -84,7 +83,7 @@ export async function executeProposicaoResumoIaReconcile(
     for (let i = 0; i < inputFiles.length; i++) {
       if (outputFiles[i] !== inputFiles[i]) {
         await saveFile(
-          inputFilePaths[i]!,
+          inputFilePaths[i],
           JSON.stringify(outputFiles[i], null, 2),
         );
         filesWritten++;
