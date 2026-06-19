@@ -1,10 +1,14 @@
 import { readFile } from 'node:fs/promises';
 
+import { ZodError } from 'zod';
 import {
   createDatabaseClient,
   type DatabaseClient,
 } from '@/shared/database/client';
-import { importProposicaoResumoIaJson } from './proposicao-resumo-ia-importer';
+import {
+  type ProposicaoResumoIaImportReport,
+  importProposicaoResumoIaJson,
+} from './proposicao-resumo-ia-importer';
 import { createProposicaoResumoIaRepository } from './proposicao-resumo-ia.repository';
 import type { ProposicaoResumoIaRepository } from './proposicao-resumo-ia.repository.types';
 
@@ -25,9 +29,9 @@ export async function executeProposicaoResumoIaImport(
   options: ProposicaoResumoIaImportOptions = {},
 ): Promise<ProposicaoResumoIaImportExecutionResult> {
   const importArgs = args[0] === '--' ? args.slice(1) : args;
-  const filePath = importArgs[0];
+  const filePaths = importArgs;
 
-  if (filePath === undefined) {
+  if (filePaths.length === 0) {
     return {
       ok: false,
       exitCode: 1,
@@ -37,8 +41,6 @@ export async function executeProposicaoResumoIaImport(
 
   const loadFile =
     options.readFile ?? ((path: string) => readFile(path, 'utf8'));
-  const content = await loadFile(filePath);
-  const json = JSON.parse(content) as unknown;
   let databaseClient: DatabaseClient | null = null;
   let repository = options.repository;
 
@@ -48,20 +50,84 @@ export async function executeProposicaoResumoIaImport(
   }
 
   try {
-    const result = await importProposicaoResumoIaJson(json, { repository });
-    options.reporter?.log(`Resumos importados: ${result.imported}`);
-    if (result.missing.length > 0) {
+    let report = emptyReport();
+
+    for (const filePath of filePaths) {
+      const content = await loadFile(filePath);
+      const fileReport = await importFileContent(content, repository);
+      if (fileReport === null) {
+        return {
+          ok: false,
+          exitCode: 1,
+          message: `JSON anual inválido em ${filePath}.`,
+        };
+      }
+      report = mergeReports(report, fileReport);
+    }
+
+    options.reporter?.log(`Arquivos lidos: ${report.filesRead}`);
+    options.reporter?.log(`Itens válidos: ${report.validItems}`);
+    options.reporter?.log(`Resumos importados: ${report.imported}`);
+    options.reporter?.log(`Inseridos: ${report.inserted}`);
+    options.reporter?.log(`Atualizados: ${report.updated}`);
+    options.reporter?.log(`Ignorados: ${report.skipped}`);
+    if (report.missingExternalIdProposicao.length > 0) {
       options.reporter?.log(
-        `Proposições não encontradas: ${result.missing.join(', ')}`,
+        `Proposições não encontradas: ${report.missingExternalIdProposicao.join(', ')}`,
       );
     }
 
     return {
       ok: true,
-      exitCode: result.missing.length > 0 ? 1 : 0,
+      exitCode: report.missingExternalIdProposicao.length > 0 ? 1 : 0,
       message: 'Importação de resumos concluída.',
     };
   } finally {
     await databaseClient?.close();
   }
+}
+
+async function importFileContent(
+  content: string,
+  repository: ProposicaoResumoIaRepository,
+): Promise<ProposicaoResumoIaImportReport | null> {
+  try {
+    const json = JSON.parse(content) as unknown;
+    return await importProposicaoResumoIaJson(json, { repository });
+  } catch (error) {
+    if (error instanceof SyntaxError || error instanceof ZodError) {
+      return null;
+    }
+    throw error;
+  }
+}
+
+function emptyReport(): ProposicaoResumoIaImportReport {
+  return {
+    filesRead: 0,
+    validItems: 0,
+    imported: 0,
+    inserted: 0,
+    updated: 0,
+    skipped: 0,
+    missingExternalIdProposicao: [],
+  };
+}
+
+function mergeReports(
+  left: ProposicaoResumoIaImportReport,
+  right: ProposicaoResumoIaImportReport,
+): ProposicaoResumoIaImportReport {
+  return {
+    filesRead: left.filesRead + right.filesRead,
+    validItems: left.validItems + right.validItems,
+    imported: left.imported + right.imported,
+    inserted: left.inserted + right.inserted,
+    updated: left.updated + right.updated,
+    skipped: left.skipped + right.skipped,
+    missingExternalIdProposicao: [
+      ...left.missingExternalIdProposicao,
+      ...right.missingExternalIdProposicao,
+    ],
+  };
 }

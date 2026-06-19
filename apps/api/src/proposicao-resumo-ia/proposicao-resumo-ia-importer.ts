@@ -4,25 +4,30 @@ import type {
 } from './proposicao-resumo-ia.repository.types';
 import { proposicaoResumoIaJsonSchema } from './proposicao-resumo-ia-json.schema';
 
-export type ProposicaoResumoIaImportResult = {
+export type ProposicaoResumoIaImportReport = {
+  filesRead: number;
+  validItems: number;
   imported: number;
-  missing: number[];
+  inserted: number;
+  updated: number;
+  skipped: number;
+  missingExternalIdProposicao: number[];
 };
 
 export async function importProposicaoResumoIaJson(
   input: unknown,
   deps: { repository: ProposicaoResumoIaRepository },
-): Promise<ProposicaoResumoIaImportResult> {
+): Promise<ProposicaoResumoIaImportReport> {
   const json = proposicaoResumoIaJsonSchema.parse(input);
   const externalIds = Object.keys(json.items).map((key) => Number(key));
   const proposicaoIds = await deps.repository.resolveProposicaoIds(externalIds);
-  const missing: number[] = [];
+  const missingExternalIdProposicao: number[] = [];
   const rows: ProposicaoResumoIaRow[] = [];
 
   for (const externalId of externalIds) {
     const proposicaoId = proposicaoIds.get(externalId);
     if (proposicaoId === undefined) {
-      missing.push(externalId);
+      missingExternalIdProposicao.push(externalId);
       continue;
     }
 
@@ -41,9 +46,18 @@ export async function importProposicaoResumoIaJson(
     });
   }
 
-  if (rows.length > 0) {
-    await deps.repository.upsert(rows);
-  }
+  const upsertResult =
+    rows.length > 0
+      ? await deps.repository.upsert(rows)
+      : { inserted: 0, updated: 0 };
 
-  return { imported: rows.length, missing };
+  return {
+    filesRead: 1,
+    validItems: externalIds.length,
+    imported: rows.length,
+    inserted: upsertResult.inserted,
+    updated: upsertResult.updated,
+    skipped: missingExternalIdProposicao.length,
+    missingExternalIdProposicao,
+  };
 }

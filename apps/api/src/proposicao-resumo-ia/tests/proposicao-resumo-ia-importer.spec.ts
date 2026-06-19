@@ -1,8 +1,12 @@
 import { importProposicaoResumoIaJson } from '../proposicao-resumo-ia-importer';
-import type { ProposicaoResumoIaRepository } from '../proposicao-resumo-ia.repository.types';
+import type {
+  ProposicaoResumoIaRepository,
+  ProposicaoResumoIaUpsertResult,
+} from '../proposicao-resumo-ia.repository.types';
 
 function fakeRepository(
   resolved: ReadonlyMap<number, string>,
+  upsertResult?: ProposicaoResumoIaUpsertResult,
 ): ProposicaoResumoIaRepository & {
   upserted: Parameters<ProposicaoResumoIaRepository['upsert']>[0][];
 } {
@@ -19,16 +23,22 @@ function fakeRepository(
     },
     async upsert(rows) {
       upserted.push(rows);
-      return { inserted: rows.length, updated: 0 };
+      return upsertResult ?? { inserted: rows.length, updated: 0 };
     },
   };
 }
 
 describe('importProposicaoResumoIaJson', () => {
-  describe('when an annual JSON has an approved item', () => {
-    it('resolves the external id to proposicao.id and upserts the projection', async () => {
+  describe('when an annual JSON has approved items', () => {
+    it('resolves them and reports inserted and updated rows from the repository', async () => {
       // Arrange
-      const repository = fakeRepository(new Map([[42, 'proposicao-uuid']]));
+      const repository = fakeRepository(
+        new Map([
+          [42, 'proposicao-42'],
+          [43, 'proposicao-43'],
+        ]),
+        { inserted: 1, updated: 1 },
+      );
       const json = {
         ano: 2024,
         items: {
@@ -43,6 +53,13 @@ describe('importProposicaoResumoIaJson', () => {
             generatedAt: '2026-06-19T10:00:00Z',
             reviewedAt: '2026-06-19T11:00:00Z',
           },
+          '43': {
+            sourceHash: 'hash-revisado',
+            generationStatus: 'generated',
+            reviewStatus: 'approved',
+            resumoCard: 'Resumo curto revisado.',
+            resumoDetalhe: 'Resumo detalhado revisado.',
+          },
         },
       };
 
@@ -50,11 +67,19 @@ describe('importProposicaoResumoIaJson', () => {
       const result = await importProposicaoResumoIaJson(json, { repository });
 
       // Assert
-      expect(result).toEqual({ imported: 1, missing: [] });
+      expect(result).toEqual({
+        filesRead: 1,
+        validItems: 2,
+        imported: 2,
+        inserted: 1,
+        updated: 1,
+        skipped: 0,
+        missingExternalIdProposicao: [],
+      });
       expect(repository.upserted).toEqual([
         [
           {
-            proposicaoId: 'proposicao-uuid',
+            proposicaoId: 'proposicao-42',
             sourceHash: 'hash-atual',
             generationStatus: 'generated',
             reviewStatus: 'approved',
@@ -64,6 +89,18 @@ describe('importProposicaoResumoIaJson', () => {
             promptVersion: 'fixture-prompt',
             generatedAt: '2026-06-19T10:00:00Z',
             reviewedAt: '2026-06-19T11:00:00Z',
+          },
+          {
+            proposicaoId: 'proposicao-43',
+            sourceHash: 'hash-revisado',
+            generationStatus: 'generated',
+            reviewStatus: 'approved',
+            resumoCard: 'Resumo curto revisado.',
+            resumoDetalhe: 'Resumo detalhado revisado.',
+            model: null,
+            promptVersion: null,
+            generatedAt: null,
+            reviewedAt: null,
           },
         ],
       ]);
@@ -126,7 +163,15 @@ describe('importProposicaoResumoIaJson', () => {
       const result = await importProposicaoResumoIaJson(json, { repository });
 
       // Assert
-      expect(result).toEqual({ imported: 5, missing: [] });
+      expect(result).toEqual({
+        filesRead: 1,
+        validItems: 5,
+        imported: 5,
+        inserted: 5,
+        updated: 0,
+        skipped: 0,
+        missingExternalIdProposicao: [],
+      });
       expect(repository.upserted[0]?.map((row) => row.reviewStatus)).toEqual([
         'pending',
         'rejected',
@@ -174,7 +219,15 @@ describe('importProposicaoResumoIaJson', () => {
       const result = await importProposicaoResumoIaJson(json, { repository });
 
       // Assert
-      expect(result).toEqual({ imported: 1, missing: [99] });
+      expect(result).toEqual({
+        filesRead: 1,
+        validItems: 2,
+        imported: 1,
+        inserted: 1,
+        updated: 0,
+        skipped: 1,
+        missingExternalIdProposicao: [99],
+      });
       expect(repository.upserted).toHaveLength(1);
       expect(repository.upserted[0]?.map((row) => row.proposicaoId)).toEqual([
         'proposicao-uuid',
