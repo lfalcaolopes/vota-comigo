@@ -30,15 +30,40 @@ Usar os dados nativos de áreas temáticas da Câmara (arquivo `proposicoesTemas
 
 ### Resumo por IA
 
-Tradução do texto da proposição para linguagem acessível, rodada uma vez por proposição via worker assíncrono na ingestão. Frontend apenas lê o resultado pré-processado.
+Tradução do texto da proposição para linguagem acessível, rodada uma vez por proposição em comando separado da ingestão. Frontend apenas lê o resultado pré-processado.
 
-**Escopo inicial:** só o resumo. Classificação "Quem é afetado" fica em tier posterior, porque é mais arriscada e depende do resumo estar maduro.
+Decisão arquitetural: [ADR 018 — Resumos por IA de proposições são curados em JSON e projetados no banco](./adr/018-resumos-ia-proposicoes-json-projetados-banco.md).
+
+**Fonte inicial:** usar apenas dados oficiais já ingeridos que descrevem o conteúdo substantivo da proposição computável pelo matcher: identificação legislativa, tipo, ementa, ementa detalhada quando houver e keywords. Temas oficiais, status de tramitação e contexto da votação de referência ficam fora do prompt e do `sourceHash`, porque ajudam navegação, contexto processual e matcher, mas não definem o conteúdo a ser resumido. O PDF de `url_inteiro_teor` fica fora do fluxo inicial e pode entrar depois como fallback ou enriquecimento controlado, caso a qualidade dos resumos com dados ingeridos seja insuficiente.
+
+**Execução inicial:** a geração roda em comando separado da ingestão, por exemplo `pnpm --filter api generate:proposicao-resumos`, consultando as proposições computáveis e suas fontes já persistidas. O comando é incremental por padrão, mas aceita recortes operacionais como `--year`, `--limit` e `--external-id-proposicao` para gerar lotes pequenos, um ano específico ou uma proposição pontual. O pipeline de ingestão continua responsável apenas por dados oficiais estruturados, sem depender de fornecedor de IA, chave externa, custo por chamada ou revisão humana.
+
+**Primeiro corte implementável:** antes de integrar OpenRouter, implementar o schema dos JSONs, cálculo de `sourceHash`, tabela `proposicao_resumo_ia`, importador JSON para a projeção relacional e API lendo apenas resumos aprovados com hash atual. A geração real por IA entra depois, quando armazenamento, vínculo por `proposicao.id` e contrato público já estiverem validados.
+
+**Modelo e provedor:** usar OpenRouter como provedor inicial, mas deixar o modelo configurável por variável de ambiente, por exemplo `PROPOSICAO_RESUMO_MODEL`. O modelo específico não fica fixado no roadmap, porque preço, qualidade e disponibilidade mudam rápido; cada item gerado registra o `model` usado para preservar a proveniência.
+
+**Saída do modelo:** o prompt exige JSON estrito validado por schema, sem texto livre ao redor. Respostas válidas retornam `generationStatus` igual a `generated`, `resumoCard` e `resumoDetalhe`; quando a fonte não bastar, retornam `generationStatus` igual a `insufficient_source` e uma justificativa curta. Respostas fora do schema são tratadas como `error` pelo comando e não entram no frontend.
+
+**Limites de texto:** `resumoCard` tem até 180 caracteres, em uma frase. `resumoDetalhe` tem até 900 caracteres, em um ou dois parágrafos. Ambos usam português brasileiro, tom neutro e linguagem acessível, sem juízo de valor nem afirmações sobre importância, polêmica ou intenção política da proposição. O prompt pede apenas o resumo do conteúdo fornecido, sem solicitar apelidos populares, contexto externo ou conhecimento fora dos campos de fonte.
+
+**Política de regeneração:** o comando é incremental por padrão. Proposições sem resumo geram um item novo `pending`; itens com `sourceHash` igual são preservados; itens com `sourceHash` diferente são marcados como `stale` no próprio JSON, sem sobrescrever o texto aprovado; regeneração de itens existentes exige flag explícita, para evitar custo desnecessário e troca silenciosa de conteúdo já revisado. O importador para o banco apenas projeta o estado canônico do JSON.
+
+**Armazenamento inicial:** salvar os resumos fora do banco, em arquivos JSON agrupados por `proposicao.ano`, por exemplo `apps/api/data/generated/proposicao-resumos/{ano}.json`. Esse agrupamento usa o ano do identificador legislativo da proposição, não `dataApresentacao`, e evita tanto um arquivo único grande quanto um arquivo por proposição. Dentro de cada arquivo, `items` é um objeto indexado por `externalIdProposicao` representado como string JSON, permitindo lookup e upsert por proposição específica. Cada item guarda `sourceHash`, calculado com normalização estável sobre `externalIdProposicao`, `siglaTipo`, `numero`, `ano`, `descricaoTipo`, `ementa`, `ementaDetalhada` e `keywords`, para detectar mudança do texto-base após reingestões. O item separa `generationStatus` (`generated`, `insufficient_source` ou `error`) de `reviewStatus` (`pending`, `approved`, `rejected` ou `stale`), para distinguir falha ou insuficiência da IA de rejeição humana. A primeira versão guarda apenas o estado atual do resumo e metadados mínimos, sem histórico completo de versões; quando um item fica `stale`, o texto antigo é preservado no próprio item até nova revisão ou regeneração. A pasta gerada deve ficar fora do Git, como dado operacional reconstruível/preservável entre reingestões conforme política de deploy.
+
+**Projeção no banco:** um fluxo separado lê os JSONs, usa `externalIdProposicao` apenas para encontrar a proposição correta na tabela `proposicao`, e grava uma projeção na tabela `proposicao_resumo_ia` vinculada por `proposicao.id` (`proposicaoResumoIa` em TypeScript). A tabela de projeção não duplica `externalIdProposicao`, porque a entidade referenciada já é modelada como `proposicao`; o vínculo persistido é a FK interna `proposicao_id`, única por proposição. A importação projeta todos os estados do JSON (`pending`, `approved`, `rejected`, `stale`, `insufficient_source` e `error`) para preservar inspeção operacional, mas a API expõe apenas resumos `approved` com `sourceHash` atual. A API lê essa projeção relacional, não os JSONs diretamente; depois de uma reingestão completa, os JSONs revisados podem ser importados de novo para revincular os resumos às novas linhas internas.
+
+**Escopo inicial:** gerar um resumo de uma linha para o card e um resumo de um ou dois parágrafos para o detalhe da proposição. Classificação "Quem é afetado" fica em tier posterior, porque é mais arriscada e depende do resumo estar maduro.
+
+**Contrato de leitura:** a API expõe disponibilidade explícita, sem o frontend inferir por string vazia ou ausência de campo. No card, `resumoIaDisponivel` indica se há resumo aprovado e atual, e `resumoIaCard` traz o texto curto ou `null`. No detalhe, `resumoIaDisponivel` usa a mesma regra, `resumoIaCard` pode reutilizar o texto curto e `resumoIaDetalhe` traz o texto de um ou dois parágrafos ou `null`.
+
+**Revisão inicial:** sem backoffice ou UI administrativa. A revisão humana acontece editando o JSON gerado, alterando `reviewStatus` para `approved` ou `rejected` e preenchendo `reviewedAt`. Uma ferramenta de revisão só entra depois se o volume ou o número de revisores justificar.
 
 **Mitigação de risco de alucinação:**
 - Disclaimer visível de que o resumo é gerado por IA
 - Link sempre destacado para a fonte original
 - Prompt cuidadosamente desenhado para ser neutro e evitar interpretações
-- Processo de revisão dos resumos gerados antes de decidir pela exposição em produção
+- Processo de revisão obrigatório antes da exposição em produção: todo resumo gerado começa com `reviewStatus` igual a `pending` e só pode aparecer no frontend quando estiver `approved` e com `sourceHash` atual; resumos `pending`, `rejected` ou `stale` mantêm o fallback atual com `ementa` no card e sem resumo detalhado por IA
+- Resumo aprovado fica `stale` quando uma reingestão muda o `sourceHash`, preservando o texto antigo para comparação, mas removendo-o da exposição pública até nova revisão
 
 ### Compartilhamento otimizado para WhatsApp e Twitter
 

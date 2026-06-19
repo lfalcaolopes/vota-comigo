@@ -64,6 +64,8 @@ _Avoid_: Matéria.
 
 **Proposição computável pelo matcher**: Proposição com pelo menos uma votação nominal em plenário vinculada e uma votação de referência do matcher escolhida.
 
+**Resumo de proposição por IA**: Texto gerado por IA a partir de dados oficiais já ingeridos para explicar uma proposição computável pelo matcher em linguagem acessível, com versão curta para card e versão detalhada para a página da proposição.
+
 **Votação**: Sessão deliberativa em que deputados registram voto sobre uma ou mais proposições afetadas. Identificada por `idVotacao`.
 
 **Votação nominal**: Votação em que o voto individual de cada deputado é registrado.
