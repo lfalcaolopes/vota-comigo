@@ -35,16 +35,21 @@ function ranked(
     numero,
     ano,
     ementa: null,
+    descricaoTipo: null,
+    ementaDetalhada: null,
+    keywords: null,
     dataApresentacao,
     ultimoStatusSiglaOrgao: null,
     ultimoStatusDescricaoSituacao: null,
     ultimoStatusRegime: null,
     ultimoStatusDataHora: null,
+    resumoIa: null,
     votacoesPlenario: [],
   };
 
   return {
     proposicao,
+    resumoIa: null,
     volumeVotacoesPlenario,
     dataUltimaVotacao: null,
     referencia: {} as ClassifiedVotacao,

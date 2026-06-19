@@ -48,11 +48,15 @@ function groupByProposicao(
         numero: row.numero,
         ano: row.ano,
         ementa: row.ementa,
+        descricaoTipo: row.descricaoTipo,
+        ementaDetalhada: row.ementaDetalhada,
+        keywords: row.keywords,
         dataApresentacao: row.dataApresentacao,
         ultimoStatusSiglaOrgao: row.ultimoStatusSiglaOrgao,
         ultimoStatusDescricaoSituacao: row.ultimoStatusDescricaoSituacao,
         ultimoStatusRegime: row.ultimoStatusRegime,
         ultimoStatusDataHora: row.ultimoStatusDataHora,
+        resumoIa: row.resumoIa,
         votacoesPlenario: [toCandidate(row)],
       });
     } else {
@@ -77,6 +81,7 @@ export function toProposicoesComputaveis(
     return [
       {
         proposicao,
+        resumoIa: proposicao.resumoIa,
         volumeVotacoesPlenario: proposicao.votacoesPlenario.length,
         dataUltimaVotacao: maxDate(
           proposicao.votacoesPlenario.map((votacao) => votacao.data),

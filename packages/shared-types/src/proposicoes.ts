@@ -59,6 +59,8 @@ export const proposicaoCardSchema = z.object({
   numero: z.number().nullable(),
   ano: z.number().nullable(),
   ementa: z.string().nullable(),
+  resumoIaDisponivel: z.boolean(),
+  resumoIaCard: z.string().nullable(),
   dataApresentacao: z.string().nullable(),
   volumeVotacoesPlenario: z.number(),
   dataUltimaVotacao: z.string().nullable(),

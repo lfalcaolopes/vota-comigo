@@ -19,6 +19,8 @@ function proposicao(externalIdProposicao: number): ProposicaoCard {
     numero: externalIdProposicao,
     ano: 2024,
     ementa: `Ementa ${externalIdProposicao}`,
+    resumoIaDisponivel: false,
+    resumoIaCard: null,
     dataApresentacao: "2024-01-01",
     volumeVotacoesPlenario: 1,
     dataUltimaVotacao: "2024-06-01",

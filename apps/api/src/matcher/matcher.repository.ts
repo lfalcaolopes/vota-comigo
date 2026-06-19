@@ -4,7 +4,11 @@ import type {
   SiglaUf,
   VotoCategoria,
 } from '@vota-comigo/shared-types';
-import { votacaoReferenciaPattern } from '@vota-comigo/shared-types';
+import {
+  proposicaoResumoIaGenerationStatus,
+  proposicaoResumoIaReviewStatus,
+  votacaoReferenciaPattern,
+} from '@vota-comigo/shared-types';
 
 import {
   toProposicaoCard,
@@ -18,6 +22,7 @@ import {
   partido,
   proposicao,
   proposicaoComputavel,
+  proposicaoResumoIa,
   votacao,
   votacaoVotos,
 } from '@/shared/database/schema';
@@ -26,6 +31,7 @@ import type {
   DeputadoCompatibilidadeInput,
   VotacaoReferenciaVotos,
 } from './types/compatibilidade.types';
+import type { ProposicaoResumoIaProjection } from '@/proposicoes/types/proposicoes.types';
 
 export const MATCHER_REPOSITORY = Symbol('MATCHER_REPOSITORY');
 
@@ -58,6 +64,9 @@ async function loadRankedProposicoesComputaveis(
       numero: proposicao.numero,
       ano: proposicao.ano,
       ementa: proposicao.ementa,
+      descricaoTipo: proposicao.descricaoTipo,
+      ementaDetalhada: proposicao.ementaDetalhada,
+      keywords: proposicao.keywords,
       dataApresentacao: proposicao.dataApresentacao,
       ultimoStatusSiglaOrgao: proposicao.ultimoStatusSiglaOrgao,
       ultimoStatusDescricaoSituacao: proposicao.ultimoStatusDescricaoSituacao,
@@ -77,12 +86,21 @@ async function loadRankedProposicoesComputaveis(
       votosOutros: votacao.votosOutros,
       aprovacao: votacao.aprovacao,
       votacaoReferenciaPattern: proposicaoComputavel.votacaoReferenciaPattern,
+      resumoIaSourceHash: proposicaoResumoIa.sourceHash,
+      resumoIaGenerationStatus: proposicaoResumoIa.generationStatus,
+      resumoIaReviewStatus: proposicaoResumoIa.reviewStatus,
+      resumoIaCard: proposicaoResumoIa.resumoCard,
+      resumoIaDetalhe: proposicaoResumoIa.resumoDetalhe,
     })
     .from(proposicaoComputavel)
     .innerJoin(proposicao, eq(proposicaoComputavel.proposicaoId, proposicao.id))
     .innerJoin(
       votacao,
       eq(proposicaoComputavel.votacaoReferenciaId, votacao.id),
+    )
+    .leftJoin(
+      proposicaoResumoIa,
+      eq(proposicaoResumoIa.proposicaoId, proposicao.id),
     )
     .where(
       inArray(proposicao.externalIdProposicao, [...externalIdProposicoes]),
@@ -95,12 +113,16 @@ async function loadRankedProposicoesComputaveis(
       numero: row.numero,
       ano: row.ano,
       ementa: row.ementa,
+      descricaoTipo: row.descricaoTipo,
+      ementaDetalhada: row.ementaDetalhada,
+      keywords: row.keywords,
       dataApresentacao: row.dataApresentacao,
       ultimoStatusSiglaOrgao: row.ultimoStatusSiglaOrgao,
       ultimoStatusDescricaoSituacao: row.ultimoStatusDescricaoSituacao,
       ultimoStatusRegime: row.ultimoStatusRegime,
       ultimoStatusDataHora: row.ultimoStatusDataHora,
     },
+    resumoIa: toProposicaoResumoIaProjection(row),
     volumeVotacoesPlenario: row.volumeVotacoesPlenario,
     dataUltimaVotacao: row.dataUltimaVotacao,
     referencia: {
@@ -120,6 +142,34 @@ async function loadRankedProposicoesComputaveis(
       },
     },
   }));
+}
+
+function toProposicaoResumoIaProjection(row: {
+  resumoIaSourceHash: string | null;
+  resumoIaGenerationStatus: string | null;
+  resumoIaReviewStatus: string | null;
+  resumoIaCard: string | null;
+  resumoIaDetalhe: string | null;
+}): ProposicaoResumoIaProjection | null {
+  if (
+    row.resumoIaSourceHash === null ||
+    row.resumoIaGenerationStatus === null ||
+    row.resumoIaReviewStatus === null
+  ) {
+    return null;
+  }
+
+  return {
+    sourceHash: row.resumoIaSourceHash,
+    generationStatus: proposicaoResumoIaGenerationStatus.parse(
+      row.resumoIaGenerationStatus,
+    ),
+    reviewStatus: proposicaoResumoIaReviewStatus.parse(
+      row.resumoIaReviewStatus,
+    ),
+    resumoCard: row.resumoIaCard,
+    resumoDetalhe: row.resumoIaDetalhe,
+  };
 }
 
 function invertVotos(

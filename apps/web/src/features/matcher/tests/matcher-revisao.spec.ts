@@ -16,6 +16,8 @@ function makeCard(id: number): ProposicaoCard {
     numero: id,
     ano: 2024,
     ementa: `Ementa da proposicao ${id}`,
+    resumoIaDisponivel: false,
+    resumoIaCard: null,
     dataApresentacao: "2024-01-01",
     volumeVotacoesPlenario: 1,
     dataUltimaVotacao: null,

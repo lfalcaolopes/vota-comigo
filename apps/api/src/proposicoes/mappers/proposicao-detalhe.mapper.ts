@@ -11,7 +11,7 @@ import type {
   VotacaoDetalheRow,
 } from '../proposicoes.repository';
 import { fonteOficialProposicao } from './camara-portal-url';
-import { calculateProposicaoResumoIaSourceHash } from '../rules/proposicao-resumo-ia-source';
+import { toResumoIaContractFields } from '../rules/proposicao-resumo-ia-public';
 
 function toPlacar(row: VotacaoDetalheRow): PlacarVotacao {
   if (row.votacaoVotosExternalId !== null) {
@@ -51,31 +51,7 @@ function toResumoIa(
   ProposicaoDetalhe,
   'resumoIaDisponivel' | 'resumoIaCard' | 'resumoIaDetalhe'
 > {
-  const resumo = result.resumoIa;
-  const currentSourceHash = calculateProposicaoResumoIaSourceHash(
-    result.proposicao,
-  );
-
-  if (
-    resumo === null ||
-    resumo.generationStatus !== 'generated' ||
-    resumo.reviewStatus !== 'approved' ||
-    resumo.sourceHash !== currentSourceHash ||
-    resumo.resumoCard === null ||
-    resumo.resumoDetalhe === null
-  ) {
-    return {
-      resumoIaDisponivel: false,
-      resumoIaCard: null,
-      resumoIaDetalhe: null,
-    };
-  }
-
-  return {
-    resumoIaDisponivel: true,
-    resumoIaCard: resumo.resumoCard,
-    resumoIaDetalhe: resumo.resumoDetalhe,
-  };
+  return toResumoIaContractFields(result.proposicao, result.resumoIa);
 }
 
 export function toProposicaoDetalhe(

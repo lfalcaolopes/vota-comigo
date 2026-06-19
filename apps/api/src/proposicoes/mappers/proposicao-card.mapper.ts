@@ -9,15 +9,19 @@ import type {
   RankedProposicao,
   VotacaoReferenciaComputavel,
 } from '../types/proposicoes.types';
+import { toResumoIaContractFields } from '../rules/proposicao-resumo-ia-public';
 
 export function toProposicaoCard(ranked: RankedProposicao): ProposicaoCard {
   const { proposicao } = ranked;
+  const resumoIa = toResumoIaContractFields(proposicao, ranked.resumoIa);
   return {
     externalIdProposicao: proposicao.externalIdProposicao,
     siglaTipo: proposicao.siglaTipo,
     numero: proposicao.numero,
     ano: proposicao.ano,
     ementa: proposicao.ementa,
+    resumoIaDisponivel: resumoIa.resumoIaDisponivel,
+    resumoIaCard: resumoIa.resumoIaCard,
     dataApresentacao: proposicao.dataApresentacao,
     volumeVotacoesPlenario: ranked.volumeVotacoesPlenario,
     dataUltimaVotacao: ranked.dataUltimaVotacao,

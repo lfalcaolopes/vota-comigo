@@ -73,6 +73,79 @@ describe('importProposicaoResumoIaJson', () => {
     });
   });
 
+  describe('when an annual JSON has non-public states', () => {
+    it('projects them to the database for operational inspection', async () => {
+      // Arrange
+      const repository = fakeRepository(
+        new Map([
+          [42, 'proposicao-42'],
+          [43, 'proposicao-43'],
+          [44, 'proposicao-44'],
+          [45, 'proposicao-45'],
+          [46, 'proposicao-46'],
+        ]),
+      );
+      const json = {
+        ano: 2024,
+        items: {
+          '42': {
+            sourceHash: 'hash-pending',
+            generationStatus: 'generated',
+            reviewStatus: 'pending',
+            resumoCard: 'Resumo curto pendente.',
+            resumoDetalhe: 'Resumo detalhado pendente.',
+          },
+          '43': {
+            sourceHash: 'hash-rejected',
+            generationStatus: 'generated',
+            reviewStatus: 'rejected',
+            resumoCard: 'Resumo curto rejeitado.',
+            resumoDetalhe: 'Resumo detalhado rejeitado.',
+          },
+          '44': {
+            sourceHash: 'hash-stale',
+            generationStatus: 'generated',
+            reviewStatus: 'stale',
+            resumoCard: 'Resumo curto antigo.',
+            resumoDetalhe: 'Resumo detalhado antigo.',
+          },
+          '45': {
+            sourceHash: 'hash-error',
+            generationStatus: 'error',
+            reviewStatus: 'pending',
+          },
+          '46': {
+            sourceHash: 'hash-insufficient',
+            generationStatus: 'insufficient_source',
+            reviewStatus: 'pending',
+          },
+        },
+      };
+
+      // Act
+      const result = await importProposicaoResumoIaJson(json, { repository });
+
+      // Assert
+      expect(result).toEqual({ imported: 5, missing: [] });
+      expect(repository.upserted[0]?.map((row) => row.reviewStatus)).toEqual([
+        'pending',
+        'rejected',
+        'stale',
+        'pending',
+        'pending',
+      ]);
+      expect(
+        repository.upserted[0]?.map((row) => row.generationStatus),
+      ).toEqual([
+        'generated',
+        'generated',
+        'generated',
+        'error',
+        'insufficient_source',
+      ]);
+    });
+  });
+
   describe('when the current database has no matching proposicao', () => {
     it('reports the unresolved external id without upserting it', async () => {
       // Arrange

@@ -16,6 +16,8 @@ const response: ProposicoesFeedResponse = {
       numero: 1234,
       ano: 2023,
       ementa: "Dispõe sobre alguma coisa.",
+      resumoIaDisponivel: false,
+      resumoIaCard: null,
       dataApresentacao: "2023-05-10",
       volumeVotacoesPlenario: 9,
       dataUltimaVotacao: "2025-03-14",

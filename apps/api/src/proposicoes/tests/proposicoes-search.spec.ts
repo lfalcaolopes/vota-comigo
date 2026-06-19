@@ -20,6 +20,9 @@ function joinRow(
     numero: 100,
     ano: 2024,
     ementa: 'Dispõe sobre saúde pública',
+    descricaoTipo: 'Projeto de Lei',
+    ementaDetalhada: 'Detalha regras de saúde pública.',
+    keywords: 'Saúde pública.',
     dataApresentacao: '2024-04-15T10:00:00Z',
     ultimoStatusSiglaOrgao: 'PLEN',
     ultimoStatusDescricaoSituacao: 'Aprovada',
@@ -35,6 +38,7 @@ function joinRow(
     votosNao: 100,
     votosOutros: 5,
     aprovacao: 1,
+    resumoIa: null,
     ...overrides,
   };
 }

@@ -259,7 +259,40 @@ describe('ProposicoesService.detalhe', () => {
       );
     });
 
-    it('hides a resumo that is not approved', async () => {
+    it.each([
+      ['pending', 'generated'],
+      ['rejected', 'generated'],
+      ['stale', 'generated'],
+      ['approved', 'error'],
+      ['approved', 'insufficient_source'],
+    ] as const)(
+      'hides a resumo with reviewStatus %s and generationStatus %s',
+      async (reviewStatus, generationStatus) => {
+        // Arrange
+        const service = createService(
+          detailResult({
+            resumoIa: {
+              sourceHash:
+                'a337ee9d994807252cdea4e69358ce63850c814e4a7f453036c65861339602c7',
+              generationStatus,
+              reviewStatus,
+              resumoCard: 'Resumo curto nao publicavel.',
+              resumoDetalhe: 'Resumo detalhado nao publicavel.',
+            },
+          }),
+        );
+
+        // Act
+        const detail = await service.detalhe(1);
+
+        // Assert
+        expect(detail.resumoIaDisponivel).toBe(false);
+        expect(detail.resumoIaCard).toBeNull();
+        expect(detail.resumoIaDetalhe).toBeNull();
+      },
+    );
+
+    it('hides a resumo approved and current without public text', async () => {
       // Arrange
       const service = createService(
         detailResult({
@@ -267,9 +300,9 @@ describe('ProposicoesService.detalhe', () => {
             sourceHash:
               'a337ee9d994807252cdea4e69358ce63850c814e4a7f453036c65861339602c7',
             generationStatus: 'generated',
-            reviewStatus: 'pending',
-            resumoCard: 'Resumo curto pendente.',
-            resumoDetalhe: 'Resumo detalhado pendente.',
+            reviewStatus: 'approved',
+            resumoCard: null,
+            resumoDetalhe: 'Resumo detalhado aprovado.',
           },
         }),
       );

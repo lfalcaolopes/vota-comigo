@@ -40,6 +40,10 @@ function ProposicaoRowContent({ card }: { card: ProposicaoCard }) {
   const identificador = toIdentificadorLegislativo(card);
   const ultimaVotacao = formatShortDate(card.dataUltimaVotacao);
   const anoApresentacao = toAnoApresentacao(card);
+  const textoResumo =
+    card.resumoIaDisponivel && card.resumoIaCard
+      ? card.resumoIaCard
+      : card.ementa;
 
   return (
     <>
@@ -47,9 +51,9 @@ function ProposicaoRowContent({ card }: { card: ProposicaoCard }) {
         {identificador ?? "Sem identificador"}
       </p>
 
-      {card.ementa ? (
+      {textoResumo ? (
         <p className="line-clamp-2 text-base leading-snug text-pretty text-muted">
-          {card.ementa}
+          {textoResumo}
         </p>
       ) : null}
 

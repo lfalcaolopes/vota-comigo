@@ -14,6 +14,9 @@ function joinRow(
     numero: 100,
     ano: 2024,
     ementa: 'Dispõe sobre algo',
+    descricaoTipo: 'Projeto de Lei',
+    ementaDetalhada: 'Detalha o alcance da proposição.',
+    keywords: 'Saúde, regra pública.',
     dataApresentacao: '2024-04-15T10:00:00Z',
     ultimoStatusSiglaOrgao: 'PLEN',
     ultimoStatusDescricaoSituacao: 'Aprovada',
@@ -29,6 +32,7 @@ function joinRow(
     votosNao: 100,
     votosOutros: 5,
     aprovacao: 1,
+    resumoIa: null,
     ...overrides,
   };
 }
@@ -65,9 +69,63 @@ describe('ProposicoesService.feed', () => {
         numero: 100,
         ano: 2024,
         ementa: 'Dispõe sobre algo',
+        resumoIaDisponivel: false,
+        resumoIaCard: null,
         dataApresentacao: '2024-04-15T10:00:00Z',
         volumeVotacoesPlenario: 1,
         dataUltimaVotacao: '2024-05-01',
+      });
+    });
+
+    it('returns the approved current resumo on the card', async () => {
+      // Arrange
+      const service = createService([
+        joinRow({
+          resumoIa: {
+            sourceHash:
+              'a337ee9d994807252cdea4e69358ce63850c814e4a7f453036c65861339602c7',
+            generationStatus: 'generated',
+            reviewStatus: 'approved',
+            resumoCard: 'Resumo curto aprovado.',
+            resumoDetalhe: 'Resumo detalhado aprovado em linguagem acessivel.',
+          },
+        }),
+      ]);
+
+      // Act
+      const page = await service.feed(20, 0);
+
+      // Assert
+      expect(page.items[0]).toMatchObject({
+        ementa: 'Dispõe sobre algo',
+        resumoIaDisponivel: true,
+        resumoIaCard: 'Resumo curto aprovado.',
+      });
+    });
+
+    it('keeps the ementa fallback when the resumo is not public', async () => {
+      // Arrange
+      const service = createService([
+        joinRow({
+          resumoIa: {
+            sourceHash:
+              'a337ee9d994807252cdea4e69358ce63850c814e4a7f453036c65861339602c7',
+            generationStatus: 'generated',
+            reviewStatus: 'pending',
+            resumoCard: 'Resumo curto pendente.',
+            resumoDetalhe: 'Resumo detalhado pendente.',
+          },
+        }),
+      ]);
+
+      // Act
+      const page = await service.feed(20, 0);
+
+      // Assert
+      expect(page.items[0]).toMatchObject({
+        ementa: 'Dispõe sobre algo',
+        resumoIaDisponivel: false,
+        resumoIaCard: null,
       });
     });
   });

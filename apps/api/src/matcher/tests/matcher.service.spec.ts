@@ -94,6 +94,8 @@ function votacaoReferenciaVotos(
       numero: externalIdProposicao,
       ano: 2024,
       ementa: 'Proposição de teste',
+      resumoIaDisponivel: false,
+      resumoIaCard: null,
       dataApresentacao: '2023-12-01T10:00:00Z',
       volumeVotacoesPlenario: 1,
       dataUltimaVotacao: '2023-06-01',

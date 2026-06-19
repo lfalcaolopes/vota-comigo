@@ -33,6 +33,8 @@ function voto(
       numero: 1,
       ano: 2024,
       ementa: "Ementa teste",
+      resumoIaDisponivel: false,
+      resumoIaCard: null,
       dataApresentacao: "2024-01-01",
       volumeVotacoesPlenario: 1,
       dataUltimaVotacao: "2024-06-01",

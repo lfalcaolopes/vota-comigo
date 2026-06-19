@@ -36,6 +36,9 @@ function joinRow(
     numero: 100,
     ano: 2024,
     ementa: 'Dispõe sobre saúde pública',
+    descricaoTipo: 'Projeto de Lei',
+    ementaDetalhada: 'Detalha regras de saúde pública.',
+    keywords: 'Saúde pública.',
     dataApresentacao: '2024-04-15T10:00:00Z',
     ultimoStatusSiglaOrgao: 'PLEN',
     ultimoStatusDescricaoSituacao: 'Aprovada',
@@ -51,6 +54,7 @@ function joinRow(
     votosNao: 100,
     votosOutros: 5,
     aprovacao: 1,
+    resumoIa: null,
     ...overrides,
   };
 }
@@ -185,6 +189,45 @@ describe('GET /proposicoes/feed', () => {
       );
       expect(body.items[0]).not.toHaveProperty('id');
       expect(body.items[0].externalIdProposicao).toBe(1);
+    });
+
+    it('exposes only public resumo fields on the card', async () => {
+      // Arrange
+      const appWithResumo = await buildApp({
+        lista: [
+          joinRow({
+            resumoIa: {
+              sourceHash:
+                '856e87e0c11ce2427d1d79d41f6d827f20f1e062cdf42077053d72abc2cee760',
+              generationStatus: 'generated',
+              reviewStatus: 'approved',
+              resumoCard: 'Resumo curto aprovado.',
+              resumoDetalhe:
+                'Resumo detalhado aprovado em linguagem acessivel.',
+            },
+          }),
+        ],
+      });
+
+      // Act
+      const response = await request(getTestServer(appWithResumo)).get(
+        '/proposicoes/feed',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = proposicoesFeedResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.items[0]).toMatchObject({
+        resumoIaDisponivel: true,
+        resumoIaCard: 'Resumo curto aprovado.',
+      });
+      expect(body.items[0]).not.toHaveProperty('sourceHash');
+      expect(body.items[0]).not.toHaveProperty('generationStatus');
+      expect(body.items[0]).not.toHaveProperty('reviewStatus');
+
+      await appWithResumo.close();
     });
   });
 

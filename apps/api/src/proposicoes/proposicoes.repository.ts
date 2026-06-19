@@ -3,13 +3,12 @@ import {
   proposicaoResumoIaGenerationStatus,
   proposicaoResumoIaReviewStatus,
   votacaoReferenciaPattern,
-  type ProposicaoResumoIaGenerationStatus,
-  type ProposicaoResumoIaReviewStatus,
 } from '@vota-comigo/shared-types';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
 import type {
   ProposicaoTemaRow,
+  ProposicaoResumoIaProjection,
   RankedProposicao,
 } from './types/proposicoes.types';
 import {
@@ -31,6 +30,9 @@ export type ProposicaoVotacaoJoinRow = {
   numero: number | null;
   ano: number | null;
   ementa: string | null;
+  descricaoTipo: string | null;
+  ementaDetalhada: string | null;
+  keywords: string | null;
   dataApresentacao: string | null;
   ultimoStatusSiglaOrgao: string | null;
   ultimoStatusDescricaoSituacao: string | null;
@@ -46,6 +48,7 @@ export type ProposicaoVotacaoJoinRow = {
   votosNao: number | null;
   votosOutros: number | null;
   aprovacao: number | null;
+  resumoIa: ProposicaoResumoIaProjection | null;
 };
 
 export type ProposicaoDetalheHead = {
@@ -93,22 +96,42 @@ export type TemaRow = {
   tema: string | null;
 };
 
-export type ProposicaoResumoIaRow = {
-  sourceHash: string;
-  generationStatus: ProposicaoResumoIaGenerationStatus;
-  reviewStatus: ProposicaoResumoIaReviewStatus;
-  resumoCard: string | null;
-  resumoDetalhe: string | null;
-};
-
 export type ProposicaoDetalheResult = {
   proposicao: ProposicaoDetalheHead;
-  resumoIa: ProposicaoResumoIaRow | null;
+  resumoIa: ProposicaoResumoIaProjection | null;
   votacoes: readonly VotacaoDetalheRow[];
   temas: readonly TemaRow[];
 };
 
 export type { ProposicaoTemaRow };
+
+function toProposicaoResumoIaProjection(row: {
+  resumoIaSourceHash: string | null;
+  resumoIaGenerationStatus: string | null;
+  resumoIaReviewStatus: string | null;
+  resumoIaCard: string | null;
+  resumoIaDetalhe: string | null;
+}): ProposicaoResumoIaProjection | null {
+  if (
+    row.resumoIaSourceHash === null ||
+    row.resumoIaGenerationStatus === null ||
+    row.resumoIaReviewStatus === null
+  ) {
+    return null;
+  }
+
+  return {
+    sourceHash: row.resumoIaSourceHash,
+    generationStatus: proposicaoResumoIaGenerationStatus.parse(
+      row.resumoIaGenerationStatus,
+    ),
+    reviewStatus: proposicaoResumoIaReviewStatus.parse(
+      row.resumoIaReviewStatus,
+    ),
+    resumoCard: row.resumoIaCard,
+    resumoDetalhe: row.resumoIaDetalhe,
+  };
+}
 
 export type ProposicoesRepository = {
   loadProposicoesComputaveis(
@@ -147,6 +170,9 @@ export function createProposicoesRepository(
           numero: proposicao.numero,
           ano: proposicao.ano,
           ementa: proposicao.ementa,
+          descricaoTipo: proposicao.descricaoTipo,
+          ementaDetalhada: proposicao.ementaDetalhada,
+          keywords: proposicao.keywords,
           dataApresentacao: proposicao.dataApresentacao,
           ultimoStatusSiglaOrgao: proposicao.ultimoStatusSiglaOrgao,
           ultimoStatusDescricaoSituacao:
@@ -169,6 +195,11 @@ export function createProposicoesRepository(
           aprovacao: votacao.aprovacao,
           votacaoReferenciaPattern:
             proposicaoComputavel.votacaoReferenciaPattern,
+          resumoIaSourceHash: proposicaoResumoIa.sourceHash,
+          resumoIaGenerationStatus: proposicaoResumoIa.generationStatus,
+          resumoIaReviewStatus: proposicaoResumoIa.reviewStatus,
+          resumoIaCard: proposicaoResumoIa.resumoCard,
+          resumoIaDetalhe: proposicaoResumoIa.resumoDetalhe,
         })
         .from(proposicaoComputavel)
         .innerJoin(
@@ -178,6 +209,10 @@ export function createProposicoesRepository(
         .innerJoin(
           votacao,
           eq(proposicaoComputavel.votacaoReferenciaId, votacao.id),
+        )
+        .leftJoin(
+          proposicaoResumoIa,
+          eq(proposicaoResumoIa.proposicaoId, proposicao.id),
         );
 
       const rows =
@@ -192,12 +227,16 @@ export function createProposicoesRepository(
           numero: row.numero,
           ano: row.ano,
           ementa: row.ementa,
+          descricaoTipo: row.descricaoTipo,
+          ementaDetalhada: row.ementaDetalhada,
+          keywords: row.keywords,
           dataApresentacao: row.dataApresentacao,
           ultimoStatusSiglaOrgao: row.ultimoStatusSiglaOrgao,
           ultimoStatusDescricaoSituacao: row.ultimoStatusDescricaoSituacao,
           ultimoStatusRegime: row.ultimoStatusRegime,
           ultimoStatusDataHora: row.ultimoStatusDataHora,
         },
+        resumoIa: toProposicaoResumoIaProjection(row),
         volumeVotacoesPlenario: row.volumeVotacoesPlenario,
         dataUltimaVotacao: row.dataUltimaVotacao,
         referencia: {
@@ -270,21 +309,13 @@ export function createProposicoesRepository(
         resumoIaDetalhe,
         ...head
       } = row;
-      const resumoIa =
-        resumoIaSourceHash === null ||
-        resumoIaGenerationStatus === null ||
-        resumoIaReviewStatus === null
-          ? null
-          : {
-              sourceHash: resumoIaSourceHash,
-              generationStatus: proposicaoResumoIaGenerationStatus.parse(
-                resumoIaGenerationStatus,
-              ),
-              reviewStatus:
-                proposicaoResumoIaReviewStatus.parse(resumoIaReviewStatus),
-              resumoCard: resumoIaCard,
-              resumoDetalhe: resumoIaDetalhe,
-            };
+      const resumoIa = toProposicaoResumoIaProjection({
+        resumoIaSourceHash,
+        resumoIaGenerationStatus,
+        resumoIaReviewStatus,
+        resumoIaCard,
+        resumoIaDetalhe,
+      });
 
       const votacoes = await db
         .select({
