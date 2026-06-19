@@ -1,7 +1,11 @@
-import { inArray, sql } from 'drizzle-orm';
+import { eq, inArray, sql } from 'drizzle-orm';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
-import { proposicao, proposicaoResumoIa } from '@/shared/database/schema';
+import {
+  proposicao,
+  proposicaoComputavel,
+  proposicaoResumoIa,
+} from '@/shared/database/schema';
 import type {
   ProposicaoResumoIaRepository,
   ProposicaoResumoIaRow,
@@ -28,6 +32,26 @@ export function createProposicaoResumoIaRepository(
       return new Map(
         rows.map((row) => [row.externalIdProposicao, row.proposicaoId]),
       );
+    },
+
+    async loadProposicoesComputaveisSources() {
+      const rows = await db
+        .select({
+          externalIdProposicao: proposicao.externalIdProposicao,
+          siglaTipo: proposicao.siglaTipo,
+          numero: proposicao.numero,
+          ano: proposicao.ano,
+          descricaoTipo: proposicao.descricaoTipo,
+          ementa: proposicao.ementa,
+          ementaDetalhada: proposicao.ementaDetalhada,
+          keywords: proposicao.keywords,
+        })
+        .from(proposicaoComputavel)
+        .innerJoin(
+          proposicao,
+          eq(proposicaoComputavel.proposicaoId, proposicao.id),
+        );
+      return rows;
     },
 
     async upsert(rows): Promise<ProposicaoResumoIaUpsertResult> {

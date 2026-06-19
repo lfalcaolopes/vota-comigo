@@ -10,6 +10,7 @@
     "download:csvs": "ts-node -r tsconfig-paths/register src/ingestion/camara-csv-downloader/csv-downloader.cli.ts",
     "ingest": "ts-node -r tsconfig-paths/register src/ingestion/pipeline-runner/ingestion-pipeline-runner.cli.ts",
     "import:resumos-ia": "ts-node -r tsconfig-paths/register src/proposicao-resumo-ia/proposicao-resumo-ia-import.cli.ts",
+    "reconcile:resumos-ia": "ts-node -r tsconfig-paths/register src/proposicao-resumo-ia/proposicao-resumo-ia-reconcile.cli.ts",
     "db:generate": "drizzle-kit generate --config src/shared/database/drizzle.config.ts",
     "db:migrate": "drizzle-kit migrate --config src/shared/database/drizzle.config.ts",
     "format": "prettier --write \"src/**/*.ts\"",
