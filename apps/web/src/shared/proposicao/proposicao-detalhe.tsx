@@ -32,6 +32,8 @@ export function ProposicaoDetalhe({
         ) : null}
       </header>
 
+      <ResumoIa proposicao={proposicao} />
+
       {proposicao.ementaDetalhada ? (
         <section className="grid gap-2">
           <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
@@ -55,6 +57,23 @@ export function ProposicaoDetalhe({
         <Votacoes votacoes={proposicao.votacoes} />
       </section>
     </div>
+  );
+}
+
+function ResumoIa({ proposicao }: { proposicao: ProposicaoDetalheData }) {
+  if (!proposicao.resumoIaDisponivel || !proposicao.resumoIaDetalhe) {
+    return null;
+  }
+
+  return (
+    <section className="grid gap-2">
+      <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
+        Resumo por IA
+      </h2>
+      <p className="text-base leading-relaxed text-pretty text-muted">
+        {proposicao.resumoIaDetalhe}
+      </p>
+    </section>
   );
 }
 

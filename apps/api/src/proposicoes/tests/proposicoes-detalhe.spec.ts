@@ -18,7 +18,9 @@ function head(
     ano: 2024,
     ementa: 'Dispõe sobre algo',
     dataApresentacao: '2024-04-15T10:00:00Z',
+    descricaoTipo: 'Projeto de Lei',
     ementaDetalhada: 'Detalha o alcance da proposição.',
+    keywords: 'Saúde, regra pública.',
     urlInteiroTeor:
       'https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=1',
     ultimoStatusSiglaOrgao: 'PLEN',
@@ -62,6 +64,7 @@ function detailResult(
 ): ProposicaoDetalheResult {
   return {
     proposicao: head(),
+    resumoIa: null,
     votacoes: [votacaoRow()],
     temas: [],
     ...overrides,
@@ -111,6 +114,9 @@ describe('ProposicoesService.detalhe', () => {
       expect(detail.fonteOficial).toBe(
         'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=1',
       );
+      expect(detail.resumoIaDisponivel).toBe(false);
+      expect(detail.resumoIaCard).toBeNull();
+      expect(detail.resumoIaDetalhe).toBeNull();
     });
 
     it('keeps a null inteiro teor URL when the source has no PDF link', async () => {
@@ -223,6 +229,81 @@ describe('ProposicoesService.detalhe', () => {
 
       // Assert
       expect(detail.temas).toEqual([]);
+    });
+  });
+
+  describe('resumo de proposicao por IA', () => {
+    it('includes the approved and current resumo', async () => {
+      // Arrange
+      const service = createService(
+        detailResult({
+          resumoIa: {
+            sourceHash:
+              'a337ee9d994807252cdea4e69358ce63850c814e4a7f453036c65861339602c7',
+            generationStatus: 'generated',
+            reviewStatus: 'approved',
+            resumoCard: 'Resumo curto aprovado.',
+            resumoDetalhe: 'Resumo detalhado aprovado em linguagem acessivel.',
+          },
+        }),
+      );
+
+      // Act
+      const detail = await service.detalhe(1);
+
+      // Assert
+      expect(detail.resumoIaDisponivel).toBe(true);
+      expect(detail.resumoIaCard).toBe('Resumo curto aprovado.');
+      expect(detail.resumoIaDetalhe).toBe(
+        'Resumo detalhado aprovado em linguagem acessivel.',
+      );
+    });
+
+    it('hides a resumo that is not approved', async () => {
+      // Arrange
+      const service = createService(
+        detailResult({
+          resumoIa: {
+            sourceHash:
+              'a337ee9d994807252cdea4e69358ce63850c814e4a7f453036c65861339602c7',
+            generationStatus: 'generated',
+            reviewStatus: 'pending',
+            resumoCard: 'Resumo curto pendente.',
+            resumoDetalhe: 'Resumo detalhado pendente.',
+          },
+        }),
+      );
+
+      // Act
+      const detail = await service.detalhe(1);
+
+      // Assert
+      expect(detail.resumoIaDisponivel).toBe(false);
+      expect(detail.resumoIaCard).toBeNull();
+      expect(detail.resumoIaDetalhe).toBeNull();
+    });
+
+    it('hides a resumo whose source hash is stale', async () => {
+      // Arrange
+      const service = createService(
+        detailResult({
+          resumoIa: {
+            sourceHash: 'hash-antigo',
+            generationStatus: 'generated',
+            reviewStatus: 'approved',
+            resumoCard: 'Resumo curto antigo.',
+            resumoDetalhe: 'Resumo detalhado antigo.',
+          },
+        }),
+      );
+
+      // Act
+      const detail = await service.detalhe(1);
+
+      // Assert
+      expect(detail.resumoIaDisponivel).toBe(false);
+      expect(detail.resumoIaCard).toBeNull();
+      expect(detail.resumoIaDetalhe).toBeNull();
     });
   });
 

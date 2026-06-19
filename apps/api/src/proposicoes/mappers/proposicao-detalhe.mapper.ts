@@ -11,6 +11,7 @@ import type {
   VotacaoDetalheRow,
 } from '../proposicoes.repository';
 import { fonteOficialProposicao } from './camara-portal-url';
+import { calculateProposicaoResumoIaSourceHash } from '../rules/proposicao-resumo-ia-source';
 
 function toPlacar(row: VotacaoDetalheRow): PlacarVotacao {
   if (row.votacaoVotosExternalId !== null) {
@@ -44,10 +45,44 @@ function toVotacaoNominal(row: VotacaoDetalheRow): VotacaoNominal {
   };
 }
 
+function toResumoIa(
+  result: ProposicaoDetalheResult,
+): Pick<
+  ProposicaoDetalhe,
+  'resumoIaDisponivel' | 'resumoIaCard' | 'resumoIaDetalhe'
+> {
+  const resumo = result.resumoIa;
+  const currentSourceHash = calculateProposicaoResumoIaSourceHash(
+    result.proposicao,
+  );
+
+  if (
+    resumo === null ||
+    resumo.generationStatus !== 'generated' ||
+    resumo.reviewStatus !== 'approved' ||
+    resumo.sourceHash !== currentSourceHash ||
+    resumo.resumoCard === null ||
+    resumo.resumoDetalhe === null
+  ) {
+    return {
+      resumoIaDisponivel: false,
+      resumoIaCard: null,
+      resumoIaDetalhe: null,
+    };
+  }
+
+  return {
+    resumoIaDisponivel: true,
+    resumoIaCard: resumo.resumoCard,
+    resumoIaDetalhe: resumo.resumoDetalhe,
+  };
+}
+
 export function toProposicaoDetalhe(
   result: ProposicaoDetalheResult,
 ): ProposicaoDetalhe {
   const { proposicao } = result;
+  const resumoIa = toResumoIa(result);
   return {
     externalIdProposicao: proposicao.externalIdProposicao,
     siglaTipo: proposicao.siglaTipo,
@@ -57,6 +92,7 @@ export function toProposicaoDetalhe(
     dataApresentacao: proposicao.dataApresentacao,
     ementaDetalhada: proposicao.ementaDetalhada,
     urlInteiroTeor: proposicao.urlInteiroTeor,
+    ...resumoIa,
     status: {
       siglaOrgao: proposicao.ultimoStatusSiglaOrgao,
       situacao: proposicao.ultimoStatusDescricaoSituacao,

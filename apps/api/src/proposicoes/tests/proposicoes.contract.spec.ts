@@ -65,7 +65,9 @@ function detalheHead(
     ano: 2024,
     ementa: 'Dispõe sobre saúde pública',
     dataApresentacao: '2024-04-15T10:00:00Z',
+    descricaoTipo: 'Projeto de Lei',
     ementaDetalhada: 'Detalha regras de saúde pública.',
+    keywords: 'Saúde pública.',
     urlInteiroTeor:
       'https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=1',
     ultimoStatusSiglaOrgao: 'PLEN',
@@ -516,6 +518,7 @@ describe('GET /proposicoes/:externalIdProposicao', () => {
           1,
           {
             proposicao: detalheHead(),
+            resumoIa: null,
             votacoes: [votacaoDetalheRow()],
             temas: [],
           },
@@ -540,7 +543,12 @@ describe('GET /proposicoes/:externalIdProposicao', () => {
       expect(body.urlInteiroTeor).toBe(
         'https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=1',
       );
+      expect(body.resumoIaDisponivel).toBe(false);
+      expect(body.resumoIaCard).toBeNull();
+      expect(body.resumoIaDetalhe).toBeNull();
       expect(body).not.toHaveProperty('id');
+      expect(body).not.toHaveProperty('reviewStatus');
+      expect(body).not.toHaveProperty('sourceHash');
     });
   });
 

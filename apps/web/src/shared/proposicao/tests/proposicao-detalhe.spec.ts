@@ -18,6 +18,9 @@ function makeProposicao(
     ementaDetalhada: "Texto mais longo explicando a proposição.",
     urlInteiroTeor:
       "https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=42",
+    resumoIaDisponivel: false,
+    resumoIaCard: null,
+    resumoIaDetalhe: null,
     status: {
       siglaOrgao: "PLEN",
       situacao: "Pronta para Pauta",
@@ -97,6 +100,39 @@ describe("ProposicaoDetalhe", () => {
       // Assert
       expect(html).not.toContain("Ver PDF da proposição");
       expect(html).toContain("Ver fonte oficial na Câmara");
+    });
+  });
+
+  describe("resumo de proposicao por IA", () => {
+    it("shows the approved detailed resumo when available", () => {
+      // Arrange
+      const proposicao = makeProposicao({
+        resumoIaDisponivel: true,
+        resumoIaCard: "Resumo curto aprovado.",
+        resumoIaDetalhe: "Resumo detalhado aprovado em linguagem acessível.",
+      });
+
+      // Act
+      const html = render(proposicao);
+
+      // Assert
+      expect(html).toContain("Resumo por IA");
+      expect(html).toContain("Resumo detalhado aprovado em linguagem acessível.");
+    });
+
+    it("does not render an empty IA resumo section when unavailable", () => {
+      // Arrange
+      const proposicao = makeProposicao({
+        resumoIaDisponivel: false,
+        resumoIaCard: null,
+        resumoIaDetalhe: null,
+      });
+
+      // Act
+      const html = render(proposicao);
+
+      // Assert
+      expect(html).not.toContain("Resumo por IA");
     });
   });
 });

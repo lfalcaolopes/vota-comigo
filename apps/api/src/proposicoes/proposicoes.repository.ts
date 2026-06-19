@@ -1,5 +1,11 @@
 import { and, eq, exists, sql } from 'drizzle-orm';
-import { votacaoReferenciaPattern } from '@vota-comigo/shared-types';
+import {
+  proposicaoResumoIaGenerationStatus,
+  proposicaoResumoIaReviewStatus,
+  votacaoReferenciaPattern,
+  type ProposicaoResumoIaGenerationStatus,
+  type ProposicaoResumoIaReviewStatus,
+} from '@vota-comigo/shared-types';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
 import type {
@@ -9,6 +15,7 @@ import type {
 import {
   proposicao,
   proposicaoComputavel,
+  proposicaoResumoIa,
   proposicaoTema,
   tema,
   votacao,
@@ -48,7 +55,9 @@ export type ProposicaoDetalheHead = {
   ano: number | null;
   ementa: string | null;
   dataApresentacao: string | null;
+  descricaoTipo: string | null;
   ementaDetalhada: string | null;
+  keywords: string | null;
   urlInteiroTeor: string | null;
   ultimoStatusSiglaOrgao: string | null;
   ultimoStatusDescricaoSituacao: string | null;
@@ -84,8 +93,17 @@ export type TemaRow = {
   tema: string | null;
 };
 
+export type ProposicaoResumoIaRow = {
+  sourceHash: string;
+  generationStatus: ProposicaoResumoIaGenerationStatus;
+  reviewStatus: ProposicaoResumoIaReviewStatus;
+  resumoCard: string | null;
+  resumoDetalhe: string | null;
+};
+
 export type ProposicaoDetalheResult = {
   proposicao: ProposicaoDetalheHead;
+  resumoIa: ProposicaoResumoIaRow | null;
   votacoes: readonly VotacaoDetalheRow[];
   temas: readonly TemaRow[];
 };
@@ -212,7 +230,9 @@ export function createProposicoesRepository(
           ano: proposicao.ano,
           ementa: proposicao.ementa,
           dataApresentacao: proposicao.dataApresentacao,
+          descricaoTipo: proposicao.descricaoTipo,
           ementaDetalhada: proposicao.ementaDetalhada,
+          keywords: proposicao.keywords,
           urlInteiroTeor: proposicao.urlInteiroTeor,
           ultimoStatusSiglaOrgao: proposicao.ultimoStatusSiglaOrgao,
           ultimoStatusDescricaoSituacao:
@@ -220,19 +240,51 @@ export function createProposicoesRepository(
           ultimoStatusRegime: proposicao.ultimoStatusRegime,
           ultimoStatusDataHora: proposicao.ultimoStatusDataHora,
           votacaoReferenciaId: proposicaoComputavel.votacaoReferenciaId,
+          resumoIaSourceHash: proposicaoResumoIa.sourceHash,
+          resumoIaGenerationStatus: proposicaoResumoIa.generationStatus,
+          resumoIaReviewStatus: proposicaoResumoIa.reviewStatus,
+          resumoIaCard: proposicaoResumoIa.resumoCard,
+          resumoIaDetalhe: proposicaoResumoIa.resumoDetalhe,
         })
         .from(proposicao)
         .leftJoin(
           proposicaoComputavel,
           eq(proposicaoComputavel.proposicaoId, proposicao.id),
         )
+        .leftJoin(
+          proposicaoResumoIa,
+          eq(proposicaoResumoIa.proposicaoId, proposicao.id),
+        )
         .where(eq(proposicao.externalIdProposicao, externalIdProposicao))
         .limit(1);
 
-      const head = heads.at(0);
-      if (head === undefined) {
+      const row = heads.at(0);
+      if (row === undefined) {
         return null;
       }
+      const {
+        resumoIaSourceHash,
+        resumoIaGenerationStatus,
+        resumoIaReviewStatus,
+        resumoIaCard,
+        resumoIaDetalhe,
+        ...head
+      } = row;
+      const resumoIa =
+        resumoIaSourceHash === null ||
+        resumoIaGenerationStatus === null ||
+        resumoIaReviewStatus === null
+          ? null
+          : {
+              sourceHash: resumoIaSourceHash,
+              generationStatus: proposicaoResumoIaGenerationStatus.parse(
+                resumoIaGenerationStatus,
+              ),
+              reviewStatus:
+                proposicaoResumoIaReviewStatus.parse(resumoIaReviewStatus),
+              resumoCard: resumoIaCard,
+              resumoDetalhe: resumoIaDetalhe,
+            };
 
       const votacoes = await db
         .select({
@@ -277,7 +329,7 @@ export function createProposicoesRepository(
         .innerJoin(tema, eq(proposicaoTema.temaId, tema.id))
         .where(eq(proposicaoTema.externalIdProposicao, externalIdProposicao));
 
-      return { proposicao: head, votacoes, temas };
+      return { proposicao: head, resumoIa, votacoes, temas };
     },
 
     async loadProposicaoTemas() {

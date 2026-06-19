@@ -265,6 +265,9 @@ const detalheResponse: ProposicaoDetalhe = {
   ementaDetalhada: "Texto mais longo explicando a proposição.",
   urlInteiroTeor:
     "https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=42",
+  resumoIaDisponivel: false,
+  resumoIaCard: null,
+  resumoIaDetalhe: null,
   status: {
     siglaOrgao: "PLEN",
     situacao: "Pronta para Pauta",

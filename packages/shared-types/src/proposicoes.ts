@@ -22,6 +22,19 @@ export const resultadoVotacao = z.enum([
 
 export const feedOrdenacao = z.enum(['mais-votadas', 'mais-recentes']);
 
+export const proposicaoResumoIaGenerationStatus = z.enum([
+  'generated',
+  'insufficient_source',
+  'error',
+]);
+
+export const proposicaoResumoIaReviewStatus = z.enum([
+  'pending',
+  'approved',
+  'rejected',
+  'stale',
+]);
+
 export const votacaoReferenciaResumoSchema = z.object({
   externalIdVotacao: z.string(),
   data: z.string().nullable(),
@@ -92,6 +105,9 @@ export const proposicaoDetalheSchema = z.object({
   dataApresentacao: z.string().nullable(),
   ementaDetalhada: z.string().nullable(),
   urlInteiroTeor: z.string().nullable(),
+  resumoIaDisponivel: z.boolean(),
+  resumoIaCard: z.string().nullable(),
+  resumoIaDetalhe: z.string().nullable(),
   status: proposicaoStatusResumoSchema,
   fonteOficial: z.string(),
   temas: z.array(temaOficialSchema),
@@ -117,6 +133,12 @@ export const proposicoesFeedResponseSchema = z.object({
 export type VotacaoReferenciaPattern = z.infer<typeof votacaoReferenciaPattern>;
 export type Resultado = z.infer<typeof resultadoVotacao>;
 export type FeedOrdenacao = z.infer<typeof feedOrdenacao>;
+export type ProposicaoResumoIaGenerationStatus = z.infer<
+  typeof proposicaoResumoIaGenerationStatus
+>;
+export type ProposicaoResumoIaReviewStatus = z.infer<
+  typeof proposicaoResumoIaReviewStatus
+>;
 export type VotacaoReferenciaResumo = z.infer<
   typeof votacaoReferenciaResumoSchema
 >;
