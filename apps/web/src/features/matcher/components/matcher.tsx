@@ -29,6 +29,19 @@ const STEP_LABELS: Record<MatcherStep, string> = {
   comparativo: "Comparativo de deputados",
 };
 
+const STEP_DESCRIPTIONS: Record<MatcherStep, string> = {
+  local:
+    "Informe seu estado para priorizar deputados da sua UF nos resultados. A cidade é opcional e não entra no cálculo.",
+  selecao:
+    "Escolha de 3 a 30 proposições. Quanto mais temas você incluir, mais o resultado consegue diferenciar deputados com históricos de votação parecidos.",
+  posicoes:
+    'Diga se cada proposição deveria ou não ser aprovada. Respostas "Não sei" ficam fora do cálculo.',
+  resultado:
+    "A compatibilidade mostra em quantas votações comparáveis o deputado votou de acordo com suas posições.",
+  comparativo:
+    "Compare os deputados selecionados usando as mesmas proposições e posições que geraram o resultado.",
+};
+
 export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProps) {
   const matcher = useMatcherState(initialProposicoes);
   const { state } = matcher;
@@ -47,24 +60,29 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
 
   return (
     <section className="grid gap-8">
-      <header className="mx-auto grid w-full max-w-5xl gap-3">
+      <header className="mx-auto grid w-full max-w-6xl gap-3">
         <p className="text-sm font-[650] text-primary">Quem vota comigo</p>
         <h1 className="text-2xl leading-tight font-[720] tracking-[-0.02em] text-ink">
           {STEP_LABELS[state.step]}
         </h1>
+        <p className="max-w-[68ch] text-sm leading-normal text-muted">
+          {STEP_DESCRIPTIONS[state.step]}
+        </p>
         <StepIndicator current={state.step} onNavigate={matcher.goToStep} />
       </header>
 
       {state.step === "local" ? (
-        <div className="mx-auto w-full max-w-2xl">
-          <StepLocal
-            cidade={state.cidade}
-            onConfirm={(siglaUf, cidade) => {
-              matcher.setLocal(siglaUf, cidade);
-              matcher.goToStep("selecao");
-            }}
-            siglaUf={state.siglaUf}
-          />
+        <div className="mx-auto w-full max-w-6xl">
+          <div className="w-full max-w-2xl">
+            <StepLocal
+              cidade={state.cidade}
+              onConfirm={(siglaUf, cidade) => {
+                matcher.setLocal(siglaUf, cidade);
+                matcher.goToStep("selecao");
+              }}
+              siglaUf={state.siglaUf}
+            />
+          </div>
         </div>
       ) : null}
 
@@ -120,35 +138,37 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
       ) : null}
 
       {state.step === "resultado" ? (
-        <div className="mx-auto w-full max-w-2xl">
-          {matcher.isDetalheOpen ? (
-            <DeputadoDetalhe
-              detalhe={matcher.detalhe}
-              detalheDeputadoId={state.detalheDeputadoId}
-              onBack={matcher.closeDetalhe}
-              onRetry={matcher.openDetalhe}
-              status={matcher.detalheStatus}
-            />
-          ) : (
-            <StepResultado
-              apenasEmAtividade={matcher.apenasEmAtividade}
-              escopo={matcher.escopo}
-              hasMore={matcher.hasMore}
-              onApenasEmAtividadeChange={matcher.setApenasEmAtividade}
-              onBack={() => matcher.goToStep("posicoes")}
-              onEscopoChange={matcher.setEscopo}
-              onLoadMore={matcher.loadMore}
-              onCancelComparativoSelection={matcher.cancelComparativoSelection}
-              onOpenComparativo={matcher.openComparativo}
-              onOpenDetalhe={matcher.openDetalhe}
-              onRetry={matcher.execute}
-              onStartComparativoSelection={matcher.startComparativoSelection}
-              onToggleComparativoDeputado={matcher.toggleComparativoDeputado}
-              resultado={matcher.resultado}
-              state={state}
-              status={state.status}
-            />
-          )}
+        <div className="mx-auto w-full max-w-6xl">
+          <div className="w-full max-w-4xl">
+            {matcher.isDetalheOpen ? (
+              <DeputadoDetalhe
+                detalhe={matcher.detalhe}
+                detalheDeputadoId={state.detalheDeputadoId}
+                onBack={matcher.closeDetalhe}
+                onRetry={matcher.openDetalhe}
+                status={matcher.detalheStatus}
+              />
+            ) : (
+              <StepResultado
+                apenasEmAtividade={matcher.apenasEmAtividade}
+                escopo={matcher.escopo}
+                hasMore={matcher.hasMore}
+                onApenasEmAtividadeChange={matcher.setApenasEmAtividade}
+                onBack={() => matcher.goToStep("posicoes")}
+                onEscopoChange={matcher.setEscopo}
+                onLoadMore={matcher.loadMore}
+                onCancelComparativoSelection={matcher.cancelComparativoSelection}
+                onOpenComparativo={matcher.openComparativo}
+                onOpenDetalhe={matcher.openDetalhe}
+                onRetry={matcher.execute}
+                onStartComparativoSelection={matcher.startComparativoSelection}
+                onToggleComparativoDeputado={matcher.toggleComparativoDeputado}
+                resultado={matcher.resultado}
+                state={state}
+                status={state.status}
+              />
+            )}
+          </div>
         </div>
       ) : null}
 

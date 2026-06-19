@@ -4,15 +4,14 @@ export function OrdenacaoDisclosure() {
   return (
     <Disclosure summary="Como ordenamos os resultados">
       <p>
-        A ordem segue a confiabilidade estatística da compatibilidade: usamos o
-        limite inferior do intervalo de Wilson, que penaliza deputados com
-        poucas votações comparáveis, mesmo quando o percentual é alto.
+        A lista dá preferência a deputados com compatibilidade alta sustentada
+        por mais votações comparáveis. Um percentual alto baseado em poucos
+        votos pode aparecer abaixo de outro resultado com amostra maior.
       </p>
       <p>
-        Por isso, um percentual alto baseado em poucas votações comparáveis nem
-        sempre fica no topo. O número que você vê é a compatibilidade bruta; a
-        posição na lista também leva em conta quantas votações sustentam esse
-        percentual.
+        Tecnicamente, usamos o limite inferior do intervalo de Wilson para
+        ordenar os resultados. O número exibido continua sendo a compatibilidade
+        bruta.
       </p>
     </Disclosure>
   );

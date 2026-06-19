@@ -41,7 +41,7 @@ export function StepRevisao({
       <div>
         <h2 className="text-base font-[680] text-ink">Suas posições</h2>
         <p className="mt-1 text-sm text-muted">
-          Confira cada proposição antes de ver o resultado.
+          Confira as respostas que serão comparadas com os votos dos deputados.
         </p>
       </div>
 
@@ -99,8 +99,9 @@ export function StepRevisao({
 
       {!canRun && faltamRespostas === 0 && faltamComputaveis > 0 ? (
         <p className="rounded-md border border-border bg-surface-muted px-4 py-3 text-sm text-muted" role="status">
-          Para ver o resultado, responda Sim ou Não em pelo menos{" "}
-          {MIN_POSICOES_COMPUTAVEIS} proposições. Faltam{" "}
+          Respostas marcadas como Não sei ficam fora do cálculo. Para ver o resultado,
+          responda Sim ou Não em pelo menos {MIN_POSICOES_COMPUTAVEIS}{" "}
+          proposições. Faltam{" "}
           <strong className="font-[720] text-ink">{faltamComputaveis}</strong>.
         </p>
       ) : null}

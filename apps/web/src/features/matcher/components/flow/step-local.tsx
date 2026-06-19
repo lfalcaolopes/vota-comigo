@@ -27,11 +27,6 @@ export function StepLocal({ siglaUf, cidade, onConfirm }: StepLocalProps) {
         onConfirm(uf, cidadeValue);
       }}
     >
-      <p className="text-sm leading-normal text-muted">
-        Usamos seu estado para mostrar primeiro os deputados que te representam.
-        A cidade é opcional e não altera o cálculo.
-      </p>
-
       <label className="grid gap-2" htmlFor="matcher-uf">
         <span className="text-sm font-[650] leading-[1.3] text-ink">
           Estado (UF)
