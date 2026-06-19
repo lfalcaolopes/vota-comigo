@@ -6,6 +6,7 @@ import {
   formatShortDate,
   toAnoApresentacao,
   toIdentificadorLegislativo,
+  toTextoResumo,
 } from "./presentation";
 
 type ProposicaoRowProps = {
@@ -40,10 +41,7 @@ function ProposicaoRowContent({ card }: { card: ProposicaoCard }) {
   const identificador = toIdentificadorLegislativo(card);
   const ultimaVotacao = formatShortDate(card.dataUltimaVotacao);
   const anoApresentacao = toAnoApresentacao(card);
-  const textoResumo =
-    card.resumoIaDisponivel && card.resumoIaCard
-      ? card.resumoIaCard
-      : card.ementa;
+  const textoResumo = toTextoResumo(card);
 
   return (
     <>

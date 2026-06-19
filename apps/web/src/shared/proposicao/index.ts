@@ -19,6 +19,7 @@ export {
   maxIsoDate,
   toAnoApresentacao,
   toIdentificadorLegislativo,
+  toTextoResumo,
 } from "./presentation";
 export { useFeedState, type UseFeedState } from "./use-feed-state";
 export {

@@ -17,6 +17,7 @@ import {
   FeedSearch,
   FeedTemaControl,
   toIdentificadorLegislativo,
+  toTextoResumo,
 } from "@/shared/proposicao";
 import { Button, InlineMessage } from "@/shared/ui";
 
@@ -190,6 +191,7 @@ function SelecaoResumo({
       {selected.map((card) => {
         const identificador = toIdentificadorLegislativo(card);
         const label = identificador ?? "Sem identificador";
+        const textoResumo = toTextoResumo(card);
 
         return (
           <li
@@ -200,9 +202,9 @@ function SelecaoResumo({
               <p className="truncate font-mono text-sm font-[650] tracking-[-0.01em] text-ink">
                 {label}
               </p>
-              {card.ementa ? (
+              {textoResumo ? (
                 <p className="mt-0.5 line-clamp-2 text-sm leading-snug text-muted">
-                  {card.ementa}
+                  {textoResumo}
                 </p>
               ) : null}
             </div>

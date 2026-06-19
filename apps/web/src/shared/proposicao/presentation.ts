@@ -86,6 +86,14 @@ export function maxIsoDate(values: readonly (string | null)[]): string | null {
   }, null);
 }
 
+export function toTextoResumo(
+  card: Pick<ProposicaoCard, "resumoIaDisponivel" | "resumoIaCard" | "ementa">,
+): string | null {
+  return card.resumoIaDisponivel && card.resumoIaCard
+    ? card.resumoIaCard
+    : card.ementa;
+}
+
 export function toAnoApresentacao(
   card: Pick<ProposicaoCard, "dataApresentacao" | "ano">,
 ): number | null {

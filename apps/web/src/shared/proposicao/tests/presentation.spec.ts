@@ -8,6 +8,7 @@ import {
   maxIsoDate,
   toAnoApresentacao,
   toIdentificadorLegislativo,
+  toTextoResumo,
 } from "../presentation";
 
 function makeCard(overrides: Partial<ProposicaoCard> = {}): ProposicaoCard {
@@ -209,6 +210,50 @@ describe("toAnoApresentacao", () => {
       expect(
         toAnoApresentacao(makeCard({ dataApresentacao: "", ano: 2020 })),
       ).toBe(2020);
+    });
+  });
+});
+
+describe("toTextoResumo", () => {
+  describe("when the AI resumo is available", () => {
+    it("returns resumoIaCard", () => {
+      // Arrange
+      const card = makeCard({
+        resumoIaDisponivel: true,
+        resumoIaCard: "Resumo curto aprovado.",
+        ementa: "Ementa oficial.",
+      });
+
+      // Act / Assert
+      expect(toTextoResumo(card)).toBe("Resumo curto aprovado.");
+    });
+  });
+
+  describe("when the AI resumo is unavailable", () => {
+    it("falls back to ementa", () => {
+      // Arrange
+      const card = makeCard({
+        resumoIaDisponivel: false,
+        resumoIaCard: null,
+        ementa: "Ementa oficial.",
+      });
+
+      // Act / Assert
+      expect(toTextoResumo(card)).toBe("Ementa oficial.");
+    });
+  });
+
+  describe("when there is no resumo and no ementa", () => {
+    it("returns null", () => {
+      // Arrange
+      const card = makeCard({
+        resumoIaDisponivel: false,
+        resumoIaCard: null,
+        ementa: null,
+      });
+
+      // Act / Assert
+      expect(toTextoResumo(card)).toBeNull();
     });
   });
 });
