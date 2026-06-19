@@ -390,6 +390,8 @@ describe('executeProposicaoResumoIaGenerate', () => {
 
       // Assert
       expect(aiClient.generate).toHaveBeenCalledTimes(2);
+      expect(aiClient.generate).toHaveBeenNthCalledWith(1, sources[0]);
+      expect(aiClient.generate).toHaveBeenNthCalledWith(2, sources[1]);
     });
   });
 

@@ -1,4 +1,4 @@
-import { eq, inArray, sql } from 'drizzle-orm';
+import { asc, desc, eq, inArray, sql } from 'drizzle-orm';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
@@ -50,6 +50,13 @@ export function createProposicaoResumoIaRepository(
         .innerJoin(
           proposicao,
           eq(proposicaoComputavel.proposicaoId, proposicao.id),
+        )
+        .orderBy(
+          desc(proposicaoComputavel.volumeVotacoesPlenario),
+          sql`${proposicao.ano} desc nulls last`,
+          sql`${proposicao.numero} desc nulls last`,
+          asc(proposicao.siglaTipo),
+          asc(proposicao.externalIdProposicao),
         );
       return rows;
     },
