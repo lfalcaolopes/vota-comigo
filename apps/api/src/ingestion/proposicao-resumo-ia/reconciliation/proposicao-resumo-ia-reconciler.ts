@@ -1,8 +1,8 @@
 import {
   calculateProposicaoResumoIaSourceHash,
   type ProposicaoResumoIaSource,
-} from '../proposicoes/rules/proposicao-resumo-ia-source';
-import type { ProposicaoResumoIaJson } from './proposicao-resumo-ia-json.schema';
+} from '../../../proposicoes/rules/proposicao-resumo-ia-source';
+import type { ProposicaoResumoIaJson } from '../schemas/proposicao-resumo-ia-json.schema';
 
 export type ProposicaoResumoIaReconcileReport = {
   proposicoesComputaveis: number;

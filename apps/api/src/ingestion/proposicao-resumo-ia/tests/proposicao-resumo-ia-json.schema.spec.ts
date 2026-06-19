@@ -1,4 +1,4 @@
-import { proposicaoResumoIaJsonItemSchema } from '../proposicao-resumo-ia-json.schema';
+import { proposicaoResumoIaJsonItemSchema } from '../schemas/proposicao-resumo-ia-json.schema';
 
 function item(
   overrides: Record<string, unknown> = {},

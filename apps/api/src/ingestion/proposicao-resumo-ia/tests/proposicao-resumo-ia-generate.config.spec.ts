@@ -1,4 +1,4 @@
-import { resolveProposicaoResumoIaGenerateConfig } from '../proposicao-resumo-ia-generate.config';
+import { resolveProposicaoResumoIaGenerateConfig } from '../generation/proposicao-resumo-ia-generate.config';
 
 describe('resolveProposicaoResumoIaGenerateConfig', () => {
   describe('with no arguments', () => {

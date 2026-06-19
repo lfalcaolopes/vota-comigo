@@ -9,8 +9,8 @@ import {
   type ProposicaoResumoIaImportReport,
   importProposicaoResumoIaJson,
 } from './proposicao-resumo-ia-importer';
-import { createProposicaoResumoIaRepository } from './proposicao-resumo-ia.repository';
-import type { ProposicaoResumoIaRepository } from './proposicao-resumo-ia.repository.types';
+import { createProposicaoResumoIaRepository } from '../repository/proposicao-resumo-ia.repository';
+import type { ProposicaoResumoIaRepository } from '../repository/proposicao-resumo-ia.repository.types';
 
 export type ProposicaoResumoIaImportExecutionResult = {
   ok: boolean;

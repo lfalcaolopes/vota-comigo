@@ -1,10 +1,10 @@
-import { reconcileProposicaoResumoIa } from '../proposicao-resumo-ia-reconciler';
-import { importProposicaoResumoIaJson } from '../proposicao-resumo-ia-importer';
+import { reconcileProposicaoResumoIa } from '../reconciliation/proposicao-resumo-ia-reconciler';
+import { importProposicaoResumoIaJson } from '../import/proposicao-resumo-ia-importer';
 import type {
   ProposicaoResumoIaRepository,
   ProposicaoResumoIaUpsertResult,
-} from '../proposicao-resumo-ia.repository.types';
-import type { ProposicaoResumoIaSource } from '../../proposicoes/rules/proposicao-resumo-ia-source';
+} from '../repository/proposicao-resumo-ia.repository.types';
+import type { ProposicaoResumoIaSource } from '../../../proposicoes/rules/proposicao-resumo-ia-source';
 
 function source(
   overrides: Partial<ProposicaoResumoIaSource> = {},

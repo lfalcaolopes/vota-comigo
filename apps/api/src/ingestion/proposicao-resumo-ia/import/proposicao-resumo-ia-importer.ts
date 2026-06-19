@@ -1,8 +1,8 @@
 import type {
   ProposicaoResumoIaRepository,
   ProposicaoResumoIaRow,
-} from './proposicao-resumo-ia.repository.types';
-import { proposicaoResumoIaJsonSchema } from './proposicao-resumo-ia-json.schema';
+} from '../repository/proposicao-resumo-ia.repository.types';
+import { proposicaoResumoIaJsonSchema } from '../schemas/proposicao-resumo-ia-json.schema';
 
 export type ProposicaoResumoIaImportReport = {
   filesRead: number;

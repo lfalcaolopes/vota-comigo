@@ -1,10 +1,10 @@
 import path from 'node:path';
-import { executeProposicaoResumoIaReconcile } from '../proposicao-resumo-ia-reconcile';
+import { executeProposicaoResumoIaReconcile } from '../reconciliation/proposicao-resumo-ia-reconcile';
 import {
   calculateProposicaoResumoIaSourceHash,
   type ProposicaoResumoIaSource,
-} from '../../proposicoes/rules/proposicao-resumo-ia-source';
-import type { ProposicaoResumoIaRepository } from '../proposicao-resumo-ia.repository.types';
+} from '../../../proposicoes/rules/proposicao-resumo-ia-source';
+import type { ProposicaoResumoIaRepository } from '../repository/proposicao-resumo-ia.repository.types';
 
 function source(
   overrides: Partial<ProposicaoResumoIaSource> = {},

@@ -1,8 +1,8 @@
 import {
   createOpenrouterResumoIaClient,
   type CreateOpenrouterResumoIaClientOptions,
-} from '../openrouter-resumo-ia-client';
-import type { ProposicaoResumoIaSource } from '../../proposicoes/rules/proposicao-resumo-ia-source';
+} from '../generation/openrouter-resumo-ia-client';
+import type { ProposicaoResumoIaSource } from '../../../proposicoes/rules/proposicao-resumo-ia-source';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 type FetchFn = NonNullable<CreateOpenrouterResumoIaClientOptions['fetch']>;

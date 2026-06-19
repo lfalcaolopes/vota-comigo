@@ -1,4 +1,4 @@
-import type { ProposicaoResumoIaSource } from '../proposicoes/rules/proposicao-resumo-ia-source';
+import type { ProposicaoResumoIaSource } from '../../../proposicoes/rules/proposicao-resumo-ia-source';
 import {
   proposicaoResumoIaGenerationResponseSchema,
   type ProposicaoResumoIaGenerationResponse,

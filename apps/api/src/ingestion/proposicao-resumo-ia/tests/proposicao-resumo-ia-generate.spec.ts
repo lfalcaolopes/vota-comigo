@@ -1,11 +1,11 @@
 import path from 'node:path';
-import { executeProposicaoResumoIaGenerate } from '../proposicao-resumo-ia-generate';
-import type { ProposicaoResumoIaSource } from '../../proposicoes/rules/proposicao-resumo-ia-source';
-import type { ProposicaoResumoIaRepository } from '../proposicao-resumo-ia.repository.types';
+import { executeProposicaoResumoIaGenerate } from '../generation/proposicao-resumo-ia-generate';
+import type { ProposicaoResumoIaSource } from '../../../proposicoes/rules/proposicao-resumo-ia-source';
+import type { ProposicaoResumoIaRepository } from '../repository/proposicao-resumo-ia.repository.types';
 import type {
   ResumoIaGenerationClient,
   ResumoIaGenerationOutcome,
-} from '../openrouter-resumo-ia-client';
+} from '../generation/openrouter-resumo-ia-client';
 
 const GENERATED_DIR = 'data/generated/proposicao-resumos';
 

@@ -1,4 +1,4 @@
-import type { ProposicaoResumoIaSource } from '../proposicoes/rules/proposicao-resumo-ia-source';
+import type { ProposicaoResumoIaSource } from '../../../proposicoes/rules/proposicao-resumo-ia-source';
 
 export const PROPOSICAO_RESUMO_IA_PROMPT_VERSION = 'v1';
 

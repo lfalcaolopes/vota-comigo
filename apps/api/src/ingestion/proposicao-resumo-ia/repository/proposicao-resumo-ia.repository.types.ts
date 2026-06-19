@@ -2,7 +2,7 @@ import type {
   ProposicaoResumoIaGenerationStatus,
   ProposicaoResumoIaReviewStatus,
 } from '@vota-comigo/shared-types';
-import type { ProposicaoResumoIaSource } from '../proposicoes/rules/proposicao-resumo-ia-source';
+import type { ProposicaoResumoIaSource } from '../../../proposicoes/rules/proposicao-resumo-ia-source';
 
 export type ProposicaoResumoIaRow = {
   proposicaoId: string;

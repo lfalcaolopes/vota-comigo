@@ -10,10 +10,10 @@ import {
   reconcileProposicaoResumoIa,
   type ProposicaoResumoIaReconcileReport,
 } from './proposicao-resumo-ia-reconciler';
-import { proposicaoResumoIaJsonSchema } from './proposicao-resumo-ia-json.schema';
-import type { ProposicaoResumoIaJson } from './proposicao-resumo-ia-json.schema';
-import { createProposicaoResumoIaRepository } from './proposicao-resumo-ia.repository';
-import type { ProposicaoResumoIaRepository } from './proposicao-resumo-ia.repository.types';
+import { proposicaoResumoIaJsonSchema } from '../schemas/proposicao-resumo-ia-json.schema';
+import type { ProposicaoResumoIaJson } from '../schemas/proposicao-resumo-ia-json.schema';
+import { createProposicaoResumoIaRepository } from '../repository/proposicao-resumo-ia.repository';
+import type { ProposicaoResumoIaRepository } from '../repository/proposicao-resumo-ia.repository.types';
 
 const GENERATED_DIR = 'data/generated/proposicao-resumos';
 

@@ -9,9 +9,9 @@ import {
 import {
   proposicaoResumoIaJsonSchema,
   type ProposicaoResumoIaJson,
-} from './proposicao-resumo-ia-json.schema';
-import { createProposicaoResumoIaRepository } from './proposicao-resumo-ia.repository';
-import type { ProposicaoResumoIaRepository } from './proposicao-resumo-ia.repository.types';
+} from '../schemas/proposicao-resumo-ia-json.schema';
+import { createProposicaoResumoIaRepository } from '../repository/proposicao-resumo-ia.repository';
+import type { ProposicaoResumoIaRepository } from '../repository/proposicao-resumo-ia.repository.types';
 import {
   createOpenrouterResumoIaClient,
   type ResumoIaGenerationClient,

@@ -1,8 +1,8 @@
-import { executeProposicaoResumoIaImport } from '../proposicao-resumo-ia-import';
+import { executeProposicaoResumoIaImport } from '../import/proposicao-resumo-ia-import';
 import type {
   ProposicaoResumoIaRepository,
   ProposicaoResumoIaUpsertResult,
-} from '../proposicao-resumo-ia.repository.types';
+} from '../repository/proposicao-resumo-ia.repository.types';
 
 function item(
   overrides: Record<string, unknown> = {},

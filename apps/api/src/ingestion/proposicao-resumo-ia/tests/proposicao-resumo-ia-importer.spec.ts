@@ -1,8 +1,8 @@
-import { importProposicaoResumoIaJson } from '../proposicao-resumo-ia-importer';
+import { importProposicaoResumoIaJson } from '../import/proposicao-resumo-ia-importer';
 import type {
   ProposicaoResumoIaRepository,
   ProposicaoResumoIaUpsertResult,
-} from '../proposicao-resumo-ia.repository.types';
+} from '../repository/proposicao-resumo-ia.repository.types';
 
 function fakeRepository(
   resolved: ReadonlyMap<number, string>,

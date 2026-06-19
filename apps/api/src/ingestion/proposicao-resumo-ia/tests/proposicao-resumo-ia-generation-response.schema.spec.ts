@@ -1,4 +1,4 @@
-import { proposicaoResumoIaGenerationResponseSchema } from '../proposicao-resumo-ia-generation-response.schema';
+import { proposicaoResumoIaGenerationResponseSchema } from '../generation/proposicao-resumo-ia-generation-response.schema';
 
 function response(
   overrides: Record<string, unknown> = {},

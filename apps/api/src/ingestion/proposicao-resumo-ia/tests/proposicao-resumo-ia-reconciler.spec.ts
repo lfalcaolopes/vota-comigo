@@ -1,9 +1,9 @@
-import { reconcileProposicaoResumoIa } from '../proposicao-resumo-ia-reconciler';
+import { reconcileProposicaoResumoIa } from '../reconciliation/proposicao-resumo-ia-reconciler';
 import {
   calculateProposicaoResumoIaSourceHash,
   type ProposicaoResumoIaSource,
-} from '../../proposicoes/rules/proposicao-resumo-ia-source';
-import type { ProposicaoResumoIaJson } from '../proposicao-resumo-ia-json.schema';
+} from '../../../proposicoes/rules/proposicao-resumo-ia-source';
+import type { ProposicaoResumoIaJson } from '../schemas/proposicao-resumo-ia-json.schema';
 
 function source(
   overrides: Partial<ProposicaoResumoIaSource> = {},

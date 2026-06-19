@@ -2,13 +2,13 @@ import {
   selectProposicaoResumoIaGenerationTargets,
   applyProposicaoResumoIaGeneration,
   type ProposicaoResumoIaGenerationResult,
-} from '../proposicao-resumo-ia-generator';
+} from '../generation/proposicao-resumo-ia-generator';
 import {
   calculateProposicaoResumoIaSourceHash,
   type ProposicaoResumoIaSource,
-} from '../../proposicoes/rules/proposicao-resumo-ia-source';
-import type { ProposicaoResumoIaJson } from '../proposicao-resumo-ia-json.schema';
-import type { ResumoIaGenerationOutcome } from '../openrouter-resumo-ia-client';
+} from '../../../proposicoes/rules/proposicao-resumo-ia-source';
+import type { ProposicaoResumoIaJson } from '../schemas/proposicao-resumo-ia-json.schema';
+import type { ResumoIaGenerationOutcome } from '../generation/openrouter-resumo-ia-client';
 
 function source(
   overrides: Partial<ProposicaoResumoIaSource> = {},
