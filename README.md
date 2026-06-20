@@ -36,6 +36,7 @@ Contratos operacionais detalhados na tabela abaixo.
 | [docs/adr/](docs/adr/)                                        | Architecture Decision Records: decisões de domínio e arquitetura. |
 | [csv-downloader](docs/ingestion/camara-csv-downloader.md)     | Contrato operacional do downloader de CSVs da Câmara. |
 | [runner-ingestao](docs/ingestion/pipeline-runner-ingestao.md) | Contrato operacional do runner de ingestão. |
+| [resumos-ia](docs/ingestion/proposicao-resumo-ia.md)          | Contrato operacional dos resumos por IA de proposições. |
 
 ## Testes
 
