@@ -3,8 +3,8 @@ import { z } from 'zod';
 export const proposicaoResumoIaGenerationResponseSchema = z
   .object({
     status: z.enum(['generated', 'insufficient_source']),
-    resumoCard: z.string().nullable().default(null),
-    resumoDetalhe: z.string().nullable().default(null),
+    resumoCard: z.string().max(180).nullable().default(null),
+    resumoDetalhe: z.string().max(900).nullable().default(null),
   })
   .superRefine((data, ctx) => {
     if (data.status === 'generated') {

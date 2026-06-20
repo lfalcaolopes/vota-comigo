@@ -38,6 +38,7 @@ function ranked(
     descricaoTipo: null,
     ementaDetalhada: null,
     keywords: null,
+    urlInteiroTeor: null,
     dataApresentacao,
     ultimoStatusSiglaOrgao: null,
     ultimoStatusDescricaoSituacao: null,

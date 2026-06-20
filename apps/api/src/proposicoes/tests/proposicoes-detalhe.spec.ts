@@ -101,7 +101,9 @@ describe('ProposicoesService.detalhe', () => {
       expect(detail.ano).toBe(2024);
       expect(detail.ementa).toBe('Dispõe sobre algo');
       expect(detail.dataApresentacao).toBe('2024-04-15T10:00:00Z');
+      expect(detail.descricaoTipo).toBe('Projeto de Lei');
       expect(detail.ementaDetalhada).toBe('Detalha o alcance da proposição.');
+      expect(detail.keywords).toBe('Saúde, regra pública.');
       expect(detail.urlInteiroTeor).toBe(
         'https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=1',
       );
@@ -239,7 +241,7 @@ describe('ProposicoesService.detalhe', () => {
         detailResult({
           resumoIa: {
             sourceHash:
-              'a337ee9d994807252cdea4e69358ce63850c814e4a7f453036c65861339602c7',
+              '797653f92d3a0e18947adc38b96307d1d2dc760c62650e1a3e0ee22e8c511afc',
             generationStatus: 'generated',
             reviewStatus: 'approved',
             resumoCard: 'Resumo curto aprovado.',
@@ -273,7 +275,7 @@ describe('ProposicoesService.detalhe', () => {
           detailResult({
             resumoIa: {
               sourceHash:
-                'a337ee9d994807252cdea4e69358ce63850c814e4a7f453036c65861339602c7',
+                '797653f92d3a0e18947adc38b96307d1d2dc760c62650e1a3e0ee22e8c511afc',
               generationStatus,
               reviewStatus,
               resumoCard: 'Resumo curto nao publicavel.',
@@ -298,7 +300,7 @@ describe('ProposicoesService.detalhe', () => {
         detailResult({
           resumoIa: {
             sourceHash:
-              'a337ee9d994807252cdea4e69358ce63850c814e4a7f453036c65861339602c7',
+              '797653f92d3a0e18947adc38b96307d1d2dc760c62650e1a3e0ee22e8c511afc',
             generationStatus: 'generated',
             reviewStatus: 'approved',
             resumoCard: null,

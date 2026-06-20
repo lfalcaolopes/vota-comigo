@@ -39,6 +39,7 @@ function joinRow(
     descricaoTipo: 'Projeto de Lei',
     ementaDetalhada: 'Detalha regras de saúde pública.',
     keywords: 'Saúde pública.',
+    urlInteiroTeor: null,
     dataApresentacao: '2024-04-15T10:00:00Z',
     ultimoStatusSiglaOrgao: 'PLEN',
     ultimoStatusDescricaoSituacao: 'Aprovada',
@@ -198,7 +199,7 @@ describe('GET /proposicoes/feed', () => {
           joinRow({
             resumoIa: {
               sourceHash:
-                '856e87e0c11ce2427d1d79d41f6d827f20f1e062cdf42077053d72abc2cee760',
+                'a8abd61196dead116e3751016594b09275c8b25f0bcab72b880cec8084e27fa0',
               generationStatus: 'generated',
               reviewStatus: 'approved',
               resumoCard: 'Resumo curto aprovado.',
@@ -583,6 +584,8 @@ describe('GET /proposicoes/:externalIdProposicao', () => {
       expect(response.status).toBe(200);
       const body = proposicaoDetalheSchema.parse(response.body as unknown);
       expect(body.temas).toEqual([]);
+      expect(body.descricaoTipo).toBe('Projeto de Lei');
+      expect(body.keywords).toBe('Saúde pública.');
       expect(body.urlInteiroTeor).toBe(
         'https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=1',
       );

@@ -17,6 +17,7 @@ function joinRow(
     descricaoTipo: 'Projeto de Lei',
     ementaDetalhada: 'Detalha o alcance da proposição.',
     keywords: 'Saúde, regra pública.',
+    urlInteiroTeor: null,
     dataApresentacao: '2024-04-15T10:00:00Z',
     ultimoStatusSiglaOrgao: 'PLEN',
     ultimoStatusDescricaoSituacao: 'Aprovada',
@@ -83,7 +84,7 @@ describe('ProposicoesService.feed', () => {
         joinRow({
           resumoIa: {
             sourceHash:
-              'a337ee9d994807252cdea4e69358ce63850c814e4a7f453036c65861339602c7',
+              '2d858cf88d85da4dd90b74171d94850d0737dcb32c43129a0ac191ccc6515906',
             generationStatus: 'generated',
             reviewStatus: 'approved',
             resumoCard: 'Resumo curto aprovado.',
@@ -109,7 +110,7 @@ describe('ProposicoesService.feed', () => {
         joinRow({
           resumoIa: {
             sourceHash:
-              'a337ee9d994807252cdea4e69358ce63850c814e4a7f453036c65861339602c7',
+              '2d858cf88d85da4dd90b74171d94850d0737dcb32c43129a0ac191ccc6515906',
             generationStatus: 'generated',
             reviewStatus: 'pending',
             resumoCard: 'Resumo curto pendente.',

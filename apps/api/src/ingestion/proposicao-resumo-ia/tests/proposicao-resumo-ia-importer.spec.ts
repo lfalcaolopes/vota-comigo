@@ -25,6 +25,9 @@ function fakeRepository(
       upserted.push(rows);
       return upsertResult ?? { inserted: rows.length, updated: 0 };
     },
+    async loadProposicoesComputaveisSources() {
+      return [];
+    },
   };
 }
 

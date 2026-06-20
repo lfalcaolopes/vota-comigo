@@ -23,6 +23,7 @@ function joinRow(
     descricaoTipo: 'Projeto de Lei',
     ementaDetalhada: 'Detalha regras de saúde pública.',
     keywords: 'Saúde pública.',
+    urlInteiroTeor: null,
     dataApresentacao: '2024-04-15T10:00:00Z',
     ultimoStatusSiglaOrgao: 'PLEN',
     ultimoStatusDescricaoSituacao: 'Aprovada',

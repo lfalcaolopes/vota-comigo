@@ -33,6 +33,7 @@ export type ProposicaoVotacaoJoinRow = {
   descricaoTipo: string | null;
   ementaDetalhada: string | null;
   keywords: string | null;
+  urlInteiroTeor: string | null;
   dataApresentacao: string | null;
   ultimoStatusSiglaOrgao: string | null;
   ultimoStatusDescricaoSituacao: string | null;
@@ -173,6 +174,7 @@ export function createProposicoesRepository(
           descricaoTipo: proposicao.descricaoTipo,
           ementaDetalhada: proposicao.ementaDetalhada,
           keywords: proposicao.keywords,
+          urlInteiroTeor: proposicao.urlInteiroTeor,
           dataApresentacao: proposicao.dataApresentacao,
           ultimoStatusSiglaOrgao: proposicao.ultimoStatusSiglaOrgao,
           ultimoStatusDescricaoSituacao:
@@ -230,6 +232,7 @@ export function createProposicoesRepository(
           descricaoTipo: row.descricaoTipo,
           ementaDetalhada: row.ementaDetalhada,
           keywords: row.keywords,
+          urlInteiroTeor: row.urlInteiroTeor,
           dataApresentacao: row.dataApresentacao,
           ultimoStatusSiglaOrgao: row.ultimoStatusSiglaOrgao,
           ultimoStatusDescricaoSituacao: row.ultimoStatusDescricaoSituacao,

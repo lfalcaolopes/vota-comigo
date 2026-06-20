@@ -22,6 +22,7 @@ export type ProposicaoResumo = {
   descricaoTipo: string | null;
   ementaDetalhada: string | null;
   keywords: string | null;
+  urlInteiroTeor: string | null;
   dataApresentacao: string | null;
   ultimoStatusSiglaOrgao: string | null;
   ultimoStatusDescricaoSituacao: string | null;

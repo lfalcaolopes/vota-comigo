@@ -51,6 +51,7 @@ function groupByProposicao(
         descricaoTipo: row.descricaoTipo,
         ementaDetalhada: row.ementaDetalhada,
         keywords: row.keywords,
+        urlInteiroTeor: row.urlInteiroTeor,
         dataApresentacao: row.dataApresentacao,
         ultimoStatusSiglaOrgao: row.ultimoStatusSiglaOrgao,
         ultimoStatusDescricaoSituacao: row.ultimoStatusDescricaoSituacao,

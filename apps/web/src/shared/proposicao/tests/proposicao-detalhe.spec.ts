@@ -15,7 +15,9 @@ function makeProposicao(
     ano: 2023,
     ementa: "Dispõe sobre alguma coisa.",
     dataApresentacao: "2023-05-10",
+    descricaoTipo: "Projeto de Lei",
     ementaDetalhada: "Texto mais longo explicando a proposição.",
+    keywords: "Saúde pública.",
     urlInteiroTeor:
       "https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=42",
     resumoIaDisponivel: false,

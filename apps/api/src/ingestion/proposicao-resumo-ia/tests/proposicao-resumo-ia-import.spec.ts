@@ -43,6 +43,9 @@ function fakeRepository(
         }
       );
     },
+    async loadProposicoesComputaveisSources() {
+      return [];
+    },
   };
 }
 

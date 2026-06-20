@@ -49,7 +49,7 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
       expect(result.success).toBe(false);
     });
 
-    it('accepts long resumoCard', () => {
+    it('rejects resumoCard above the card limit', () => {
       // Arrange
       const input = response({ resumoCard: 'x'.repeat(181) });
 
@@ -58,10 +58,10 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
         proposicaoResumoIaGenerationResponseSchema.safeParse(input);
 
       // Assert
-      expect(result.success).toBe(true);
+      expect(result.success).toBe(false);
     });
 
-    it('accepts long resumoDetalhe', () => {
+    it('rejects resumoDetalhe above the detail limit', () => {
       // Arrange
       const input = response({ resumoDetalhe: 'x'.repeat(901) });
 
@@ -70,7 +70,7 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
         proposicaoResumoIaGenerationResponseSchema.safeParse(input);
 
       // Assert
-      expect(result.success).toBe(true);
+      expect(result.success).toBe(false);
     });
   });
 

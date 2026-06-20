@@ -66,7 +66,9 @@ export function toProposicaoDetalhe(
     ano: proposicao.ano,
     ementa: proposicao.ementa,
     dataApresentacao: proposicao.dataApresentacao,
+    descricaoTipo: proposicao.descricaoTipo,
     ementaDetalhada: proposicao.ementaDetalhada,
+    keywords: proposicao.keywords,
     urlInteiroTeor: proposicao.urlInteiroTeor,
     ...resumoIa,
     status: {
