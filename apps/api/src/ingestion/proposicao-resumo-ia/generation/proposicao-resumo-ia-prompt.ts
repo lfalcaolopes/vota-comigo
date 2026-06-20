@@ -1,6 +1,6 @@
 import type { ProposicaoResumoIaSource } from '../../../proposicoes/rules/proposicao-resumo-ia-source';
 
-export const PROPOSICAO_RESUMO_IA_PROMPT_VERSION = 'v1';
+export const PROPOSICAO_RESUMO_IA_PROMPT_VERSION = 'v2';
 
 export function buildProposicaoResumoIaPrompt(
   source: ProposicaoResumoIaSource,
@@ -12,6 +12,11 @@ export function buildProposicaoResumoIaPrompt(
   const ementa = source.ementa ?? '';
   const ementaDetalhada = source.ementaDetalhada ?? '';
   const keywords = source.keywords ?? '';
+  const hasInteiroTeor = source.urlInteiroTeor !== null;
+
+  const fonteInstrucao = hasInteiroTeor
+    ? '- O documento PDF anexado é o inteiro teor desta proposição; baseie o resumo PRINCIPALMENTE no texto do PDF, usando os campos abaixo apenas como contexto'
+    : '- NÃO use apelidos, contexto externo ou suposições além do texto fornecido';
 
   return `Você é um assistente especializado em legislação brasileira. Analise a proposição abaixo e responda EXCLUSIVAMENTE com um objeto JSON válido no formato especificado.
 
@@ -23,7 +28,7 @@ ${keywords ? `Palavras-chave: ${keywords}` : ''}
 
 INSTRUÇÕES:
 - Escreva em português do Brasil, tom neutro e objetivo
-- NÃO use apelidos, contexto externo ou suposições além do texto fornecido
+${fonteInstrucao}
 - Se as informações forem insuficientes para gerar um resumo útil, use status "insufficient_source"
 - "resumoCard" deve ter no máximo 180 caracteres (texto curto para listagem)
 - "resumoDetalhe" deve ter no máximo 900 caracteres (texto completo para página de detalhes)

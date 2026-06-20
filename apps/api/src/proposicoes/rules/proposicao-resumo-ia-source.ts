@@ -9,6 +9,7 @@ export type ProposicaoResumoIaSource = {
   ementa: string | null;
   ementaDetalhada: string | null;
   keywords: string | null;
+  urlInteiroTeor: string | null;
 };
 
 function normalizeText(value: string | null): string | null {
@@ -27,6 +28,7 @@ export function calculateProposicaoResumoIaSourceHash(
     ementa: normalizeText(source.ementa),
     ementaDetalhada: normalizeText(source.ementaDetalhada),
     keywords: normalizeText(source.keywords),
+    urlInteiroTeor: normalizeText(source.urlInteiroTeor),
   };
 
   return createHash('sha256')

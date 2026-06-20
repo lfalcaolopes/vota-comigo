@@ -45,6 +45,7 @@ export function createProposicaoResumoIaRepository(
           ementa: proposicao.ementa,
           ementaDetalhada: proposicao.ementaDetalhada,
           keywords: proposicao.keywords,
+          urlInteiroTeor: proposicao.urlInteiroTeor,
         })
         .from(proposicaoComputavel)
         .innerJoin(

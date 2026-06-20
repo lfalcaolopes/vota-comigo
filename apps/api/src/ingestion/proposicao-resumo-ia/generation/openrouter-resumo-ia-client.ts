@@ -27,6 +27,7 @@ export type CreateOpenrouterResumoIaClientOptions = {
 };
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const PDF_PARSER_ENGINE = 'native';
 
 export function createOpenrouterResumoIaClient(
   options: CreateOpenrouterResumoIaClientOptions,
@@ -36,18 +37,13 @@ export function createOpenrouterResumoIaClient(
   return {
     async generate(source): Promise<ResumoIaGenerationOutcome> {
       try {
-        const prompt = buildProposicaoResumoIaPrompt(source);
         const response = await fetchImpl(OPENROUTER_URL, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${options.apiKey}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            model: options.model,
-            messages: [{ role: 'user', content: prompt }],
-            response_format: { type: 'json_object' },
-          }),
+          body: JSON.stringify(buildRequestBody(source, options.model)),
         });
 
         if (!response.ok) {
@@ -81,6 +77,41 @@ export function createOpenrouterResumoIaClient(
         };
       }
     },
+  };
+}
+
+function buildRequestBody(
+  source: ProposicaoResumoIaSource,
+  model: string,
+): Record<string, unknown> {
+  const prompt = buildProposicaoResumoIaPrompt(source);
+  const base = {
+    model,
+    response_format: { type: 'json_object' },
+  };
+
+  if (source.urlInteiroTeor === null) {
+    return { ...base, messages: [{ role: 'user', content: prompt }] };
+  }
+
+  return {
+    ...base,
+    messages: [
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: prompt },
+          {
+            type: 'file',
+            file: {
+              filename: `inteiro-teor-${source.externalIdProposicao}.pdf`,
+              file_data: source.urlInteiroTeor,
+            },
+          },
+        ],
+      },
+    ],
+    plugins: [{ id: 'file-parser', pdf: { engine: PDF_PARSER_ENGINE } }],
   };
 }
 

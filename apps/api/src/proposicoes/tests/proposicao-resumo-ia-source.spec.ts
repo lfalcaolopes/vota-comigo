@@ -15,6 +15,8 @@ function source(
     ementa: 'Altera regra de transparência pública.',
     ementaDetalhada: 'Define critérios para publicar dados oficiais.',
     keywords: 'transparência, dados públicos',
+    urlInteiroTeor:
+      'https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=1',
     ...overrides,
   };
 }
@@ -55,6 +57,13 @@ describe('calculateProposicaoResumoIaSourceHash', () => {
         { ementaDetalhada: 'Amplia critérios para publicar dados oficiais.' },
       ],
       ['keywords', { keywords: 'dados abertos, transparência' }],
+      [
+        'urlInteiroTeor',
+        {
+          urlInteiroTeor:
+            'https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=2',
+        },
+      ],
     ] satisfies [string, Partial<ProposicaoResumoIaSource>][])(
       'changes the hash when %s changes',
       (_field, overrides) => {

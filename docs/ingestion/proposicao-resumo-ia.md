@@ -4,7 +4,7 @@ Contrato operacional do módulo `proposicao-resumo-ia`. Descreve como gerar, rev
 
 ## O que o módulo é
 
-O módulo `proposicao-resumo-ia` gera resumos curtos e detalhados para proposições computáveis pelo matcher, usando apenas campos oficiais já ingeridos no banco: identificação legislativa, tipo, ementa, ementa detalhada e keywords. A geração usa OpenRouter, grava o resultado em JSONs anuais fora do banco e deixa a exposição pública dependente de revisão humana.
+O módulo `proposicao-resumo-ia` gera resumos curtos e detalhados para proposições computáveis pelo matcher, usando campos oficiais já ingeridos no banco: identificação legislativa, tipo, ementa, ementa detalhada e keywords. Quando a proposição tem `url_inteiro_teor`, o PDF do inteiro teor é anexado à chamada pela própria URL e processado pelo parser nativo do modelo (OpenRouter `file-parser`, engine `native`), passando a ser a fonte principal do resumo. A geração usa OpenRouter, grava o resultado em JSONs anuais fora do banco e deixa a exposição pública dependente de revisão humana.
 
 O fluxo tem três comandos independentes:
 
@@ -18,7 +18,7 @@ Essa separação mantém a ingestão oficial estruturada livre de dependência d
 
 - Não roda dentro do pipeline-runner de ingestão.
 - Não grava nem altera arquivos em `apps/api/data/raw/`.
-- Não usa PDF do inteiro teor, tramitação, temas oficiais ou votação de referência como fonte do prompt inicial.
+- Não usa tramitação, temas oficiais ou votação de referência como fonte do prompt. O PDF do inteiro teor é usado quando disponível; proposições sem `url_inteiro_teor` caem no resumo apenas por ementa e demais campos textuais.
 - Não expõe resumo sem `generationStatus = generated`, `reviewStatus = approved`, hash atual e textos preenchidos.
 - Não resolve revisão humana automaticamente: todo item gerado nasce `pending`.
 - Não lê os JSONs diretamente em runtime da API pública; a aplicação lê a tabela `proposicao_resumo_ia`.
@@ -74,7 +74,7 @@ Formato:
       "resumoCard": "Texto curto para listagem.",
       "resumoDetalhe": "Texto completo para a página da proposição.",
       "model": "openrouter/modelo",
-      "promptVersion": "v1",
+      "promptVersion": "v2",
       "generatedAt": "2026-06-20T12:00:00.000Z",
       "reviewedAt": null
     }
@@ -132,9 +132,9 @@ Variáveis obrigatórias:
 | Variável | Uso |
 |----------|-----|
 | `OPENROUTER_API_KEY` | Token usado no header `Authorization` da chamada ao OpenRouter. |
-| `OPENROUTER_MODEL` | Modelo enviado no corpo da chamada. Também é gravado no JSON. |
+| `OPENROUTER_MODEL` | Modelo enviado no corpo da chamada. Também é gravado no JSON. Deve suportar entrada de arquivo (parser `native`) para que o inteiro teor seja processado. |
 
-O cliente chama `https://openrouter.ai/api/v1/chat/completions` com `response_format: { "type": "json_object" }`. A resposta esperada do modelo é um JSON com `status`, `resumoCard` e `resumoDetalhe`.
+O cliente chama `https://openrouter.ai/api/v1/chat/completions` com `response_format: { "type": "json_object" }`. Quando a proposição tem `url_inteiro_teor`, a mensagem inclui uma parte `file` com a URL do PDF e o corpo carrega `plugins: [{ "id": "file-parser", "pdf": { "engine": "native" } }]`; o custo de leitura do PDF é cobrado como tokens de entrada. Sem `url_inteiro_teor`, a mensagem é apenas texto. A resposta esperada do modelo é um JSON com `status`, `resumoCard` e `resumoDetalhe`.
 
 ### Flags
 
@@ -218,6 +218,7 @@ A reconciliação lê todas as proposições computáveis atuais do banco e todo
 - `ementa`
 - `ementaDetalhada`
 - `keywords`
+- `urlInteiroTeor`
 
 Quando o hash atual é igual ao hash do item, o item é preservado. Quando difere e o item ainda não está `stale`, o comando altera apenas `reviewStatus` para `stale`, mantendo textos, hash antigo e metadados de geração. Quando não há arquivo anual, não há item ou a proposição não tem ano, o `externalIdProposicao` entra na lista de pendentes.
 

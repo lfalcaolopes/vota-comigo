@@ -21,6 +21,7 @@ function source(
     ementa: 'Ementa base.',
     ementaDetalhada: null,
     keywords: null,
+    urlInteiroTeor: null,
     ...overrides,
   };
 }

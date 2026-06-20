@@ -7,7 +7,9 @@ import type { ProposicaoResumoIaSource } from '../../../proposicoes/rules/propos
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 type FetchFn = NonNullable<CreateOpenrouterResumoIaClientOptions['fetch']>;
 
-function source(): ProposicaoResumoIaSource {
+function source(
+  overrides: Partial<ProposicaoResumoIaSource> = {},
+): ProposicaoResumoIaSource {
   return {
     externalIdProposicao: 42,
     siglaTipo: 'PL',
@@ -17,6 +19,8 @@ function source(): ProposicaoResumoIaSource {
     ementa: 'Ementa.',
     ementaDetalhada: null,
     keywords: null,
+    urlInteiroTeor: null,
+    ...overrides,
   };
 }
 
@@ -143,6 +147,105 @@ describe('createOpenrouterResumoIaClient', () => {
       const body = JSON.parse(init.body as string) as Record<string, unknown>;
       expect(body['model']).toBe('gpt-4o');
       expect(body['response_format']).toEqual({ type: 'json_object' });
+    });
+
+    it('sends a plain text message when there is no inteiro teor', async () => {
+      // Arrange
+      const fetch = makeFetch({
+        ok: true,
+        body: openrouterBody({
+          status: 'generated',
+          resumoCard: 'R.',
+          resumoDetalhe: 'D.',
+        }),
+      });
+      const client = createOpenrouterResumoIaClient({
+        apiKey: 'key',
+        model: 'model-x',
+        fetch,
+      });
+
+      // Act
+      await client.generate(source({ urlInteiroTeor: null }));
+
+      // Assert
+      const init = fetch.mock.calls[0]?.[1];
+      if (init === undefined) throw new Error('fetch não chamado');
+      const body = JSON.parse(init.body as string) as Record<string, unknown>;
+      const messages = body['messages'] as Array<Record<string, unknown>>;
+      expect(typeof messages[0]?.['content']).toBe('string');
+      expect(body['plugins']).toBeUndefined();
+    });
+  });
+
+  describe('when the source has an inteiro teor URL', () => {
+    const teorUrl =
+      'https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=1299653';
+
+    it('attaches the PDF by URL and enables the native file parser', async () => {
+      // Arrange
+      const fetch = makeFetch({
+        ok: true,
+        body: openrouterBody({
+          status: 'generated',
+          resumoCard: 'R.',
+          resumoDetalhe: 'D.',
+        }),
+      });
+      const client = createOpenrouterResumoIaClient({
+        apiKey: 'key',
+        model: 'model-x',
+        fetch,
+      });
+
+      // Act
+      await client.generate(source({ urlInteiroTeor: teorUrl }));
+
+      // Assert
+      const init = fetch.mock.calls[0]?.[1];
+      if (init === undefined) throw new Error('fetch não chamado');
+      const body = JSON.parse(init.body as string) as Record<string, unknown>;
+      const messages = body['messages'] as Array<Record<string, unknown>>;
+      const content = messages[0]?.['content'] as Array<
+        Record<string, unknown>
+      >;
+      const filePart = content.find((part) => part['type'] === 'file');
+      const file = filePart?.['file'] as Record<string, unknown> | undefined;
+      expect(file?.['file_data']).toBe(teorUrl);
+      expect(body['plugins']).toEqual([
+        { id: 'file-parser', pdf: { engine: 'native' } },
+      ]);
+    });
+
+    it('keeps a text part alongside the attached PDF', async () => {
+      // Arrange
+      const fetch = makeFetch({
+        ok: true,
+        body: openrouterBody({
+          status: 'generated',
+          resumoCard: 'R.',
+          resumoDetalhe: 'D.',
+        }),
+      });
+      const client = createOpenrouterResumoIaClient({
+        apiKey: 'key',
+        model: 'model-x',
+        fetch,
+      });
+
+      // Act
+      await client.generate(source({ urlInteiroTeor: teorUrl }));
+
+      // Assert
+      const init = fetch.mock.calls[0]?.[1];
+      if (init === undefined) throw new Error('fetch não chamado');
+      const body = JSON.parse(init.body as string) as Record<string, unknown>;
+      const messages = body['messages'] as Array<Record<string, unknown>>;
+      const content = messages[0]?.['content'] as Array<
+        Record<string, unknown>
+      >;
+      const textPart = content.find((part) => part['type'] === 'text');
+      expect(typeof textPart?.['text']).toBe('string');
     });
   });
 

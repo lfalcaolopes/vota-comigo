@@ -18,6 +18,7 @@ function source(
     ementa: 'Ementa alterada pela câmara.',
     ementaDetalhada: null,
     keywords: null,
+    urlInteiroTeor: null,
     ...overrides,
   };
 }
