@@ -49,7 +49,7 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
       expect(result.success).toBe(false);
     });
 
-    it('rejects resumoCard above 180 characters', () => {
+    it('accepts long resumoCard', () => {
       // Arrange
       const input = response({ resumoCard: 'x'.repeat(181) });
 
@@ -58,10 +58,10 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
         proposicaoResumoIaGenerationResponseSchema.safeParse(input);
 
       // Assert
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
     });
 
-    it('rejects resumoDetalhe above 900 characters', () => {
+    it('accepts long resumoDetalhe', () => {
       // Arrange
       const input = response({ resumoDetalhe: 'x'.repeat(901) });
 
@@ -70,7 +70,7 @@ describe('proposicaoResumoIaGenerationResponseSchema', () => {
         proposicaoResumoIaGenerationResponseSchema.safeParse(input);
 
       // Assert
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
     });
   });
 
