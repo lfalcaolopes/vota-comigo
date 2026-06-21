@@ -273,9 +273,7 @@ describe("DeputadoPerfil", () => {
       const html = render(perfil);
 
       // Assert
-      expect(html).toContain(
-        'aria-label="Situação do mandato: Em atividade"',
-      );
+      expect(html).toContain('aria-label="Situação do mandato: Em atividade"');
     });
 
     it("gives the presenca percentual a self-contained accessible label", () => {

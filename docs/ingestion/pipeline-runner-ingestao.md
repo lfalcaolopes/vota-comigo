@@ -78,18 +78,18 @@ O prefixo `DATABASE_URL=... pnpm ...` aplica o override apenas àquele comando, 
 
 Os passos rodam em ordem de dependência (chaves estrangeiras entre tabelas). A ordem abaixo é a lista válida para `--only`.
 
-| # | Passo | Escopo | Fonte | Origem em disco / API |
-|---|-------|--------|-------|-----------------------|
-| 1 | `legislaturas` | único | CSV | `data/raw/legislaturas/legislaturas.csv` |
-| 2 | `deputados` | único | CSV | `data/raw/deputados/deputados.csv` |
-| 3 | `partidos` | anual | CSV | `data/raw/votacoesVotos/votacoesVotos-{ano}.csv` |
-| 4 | `votacoes` | anual | CSV | `data/raw/votacoes/votacoes-{ano}.csv` (+ companheiro `votacoesVotos-{ano}.csv`) |
-| 5 | `votacao_votos` | anual | CSV | `data/raw/votacoesVotos/votacoesVotos-{ano}.csv` |
-| 6 | `proposicoes` | único | derivado | `data/raw/proposicoes/proposicoes-{ano}.csv` (anos derivados, baixados sob demanda) |
-| 7 | `votacao_proposicao` | único | derivado | `data/raw/votacoesProposicoes/votacoesProposicoes-{ano}.csv` |
-| 8 | `tema` | único | derivado | `data/raw/proposicoesTemas/proposicoesTemas-{ano}.csv` (baixado sob demanda) |
-| 9 | `deputado_historico` | único | API | `GET /deputados/{id}/historico` (passo **manual**) |
-| 10 | `sanity` | único | banco | lê placares já gravados para conferência |
+| #   | Passo                | Escopo | Fonte    | Origem em disco / API                                                               |
+| --- | -------------------- | ------ | -------- | ----------------------------------------------------------------------------------- |
+| 1   | `legislaturas`       | único  | CSV      | `data/raw/legislaturas/legislaturas.csv`                                            |
+| 2   | `deputados`          | único  | CSV      | `data/raw/deputados/deputados.csv`                                                  |
+| 3   | `partidos`           | anual  | CSV      | `data/raw/votacoesVotos/votacoesVotos-{ano}.csv`                                    |
+| 4   | `votacoes`           | anual  | CSV      | `data/raw/votacoes/votacoes-{ano}.csv` (+ companheiro `votacoesVotos-{ano}.csv`)    |
+| 5   | `votacao_votos`      | anual  | CSV      | `data/raw/votacoesVotos/votacoesVotos-{ano}.csv`                                    |
+| 6   | `proposicoes`        | único  | derivado | `data/raw/proposicoes/proposicoes-{ano}.csv` (anos derivados, baixados sob demanda) |
+| 7   | `votacao_proposicao` | único  | derivado | `data/raw/votacoesProposicoes/votacoesProposicoes-{ano}.csv`                        |
+| 8   | `tema`               | único  | derivado | `data/raw/proposicoesTemas/proposicoesTemas-{ano}.csv` (baixado sob demanda)        |
+| 9   | `deputado_historico` | único  | API      | `GET /deputados/{id}/historico` (passo **manual**)                                  |
+| 10  | `sanity`             | único  | banco    | lê placares já gravados para conferência                                            |
 
 - **Escopo único** (`single`): processa um arquivo independentemente da janela `--from`/`--to` (ex.: legislaturas, deputados).
 - **Escopo anual** (`annual`): processa um arquivo por ano da janela.
@@ -267,7 +267,13 @@ O resumo por passo (lidos/inseridos/atualizados/ignorados/rejeitados + tempo) ap
 Uma rejeição por linha em **JSONL** (um `JSON.stringify` por linha). Schema de cada rejeição:
 
 ```json
-{"file":"votacoes-2024.csv","line":42,"type":"validacao_id_invalido","fields":{"id":"abc"},"message":"id de votação inválido: abc"}
+{
+  "file": "votacoes-2024.csv",
+  "line": 42,
+  "type": "validacao_id_invalido",
+  "fields": { "id": "abc" },
+  "message": "id de votação inválido: abc"
+}
 ```
 
 - `file` — arquivo de origem.
@@ -281,7 +287,12 @@ Uma rejeição por linha em **JSONL** (um `JSON.stringify` por linha). Schema de
 Arquivo **separado** do de erros, também em JSONL. Schema de cada lacuna externa:
 
 ```json
-{"file":"proposicoes-2023.csv","type":"fonte_ausente","reference":"data/raw/proposicoes/proposicoes-2023.csv","message":"Fonte ausente: ..."}
+{
+  "file": "proposicoes-2023.csv",
+  "type": "fonte_ausente",
+  "reference": "data/raw/proposicoes/proposicoes-2023.csv",
+  "message": "Fonte ausente: ..."
+}
 ```
 
 - `file` — arquivo ou passo de origem.
@@ -321,20 +332,25 @@ Ao consultar o banco, cruze sempre os totais persistidos com o arquivo de lacuna
 Procedimento para validar a ingestão completa sobre a janela inicial de dados reais. Requer `DATABASE_URL` configurada e os CSVs de 2020-2025 já baixados em `data/raw/` (os `proposicoes-{ano}.csv` e `proposicoesTemas-{ano}.csv` faltantes são baixados automaticamente pelos passos derivados).
 
 1. **Dry-run completo** — valida parsing, transformação e regras sem gravar:
+
    ```bash
    pnpm ingest -- --from=2020 --to=2025 --dry-run
    ```
+
    Confirme que não há rejeições inesperadas no resumo.
 
 2. **Execução real** — popula o banco:
+
    ```bash
    pnpm ingest -- --from=2020 --to=2025
    ```
 
 3. **Reexecução** da mesma janela — verifica idempotência:
+
    ```bash
    pnpm ingest -- --from=2020 --to=2025
    ```
+
    A segunda execução deve mostrar praticamente zero inserções e atualizações consistentes; a contagem de linhas no banco não deve crescer.
 
 4. **Sanity checks** — revise o passo `sanity` no resumo e, se houver divergências (`sanity_placar_divergente`), o arquivo de erros.

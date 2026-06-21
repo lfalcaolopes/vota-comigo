@@ -16,7 +16,10 @@ export {
   type DeputadoFeedState,
   type DeputadoFeedStatus,
 } from "./feed-state";
-export { useDeputadoFeedState, type UseDeputadoFeedState } from "./use-deputado-feed-state";
+export {
+  useDeputadoFeedState,
+  type UseDeputadoFeedState,
+} from "./use-deputado-feed-state";
 export { DeputadoPerfil } from "./deputado-perfil";
 export { DeputadoBreadcrumb } from "./deputado-breadcrumb";
 export { DeputadoAvatar } from "./deputado-avatar";

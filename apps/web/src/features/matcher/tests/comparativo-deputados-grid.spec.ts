@@ -116,14 +116,12 @@ describe("buildComparativoDeputadosGrid", () => {
       });
 
       // Assert
-      expect(grid.columns.map((column) => column.deputado.externalIdDeputado)).toEqual([
-        20,
-        10,
-      ]);
-      expect(grid.rows.map((row) => row.proposicao.externalIdProposicao)).toEqual([
-        3,
-        1,
-      ]);
+      expect(
+        grid.columns.map((column) => column.deputado.externalIdDeputado),
+      ).toEqual([20, 10]);
+      expect(
+        grid.rows.map((row) => row.proposicao.externalIdProposicao),
+      ).toEqual([3, 1]);
     });
   });
 

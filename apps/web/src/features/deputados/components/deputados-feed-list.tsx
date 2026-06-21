@@ -1,12 +1,7 @@
 import type { DeputadoCard } from "@vota-comigo/shared-types";
 
 import { DeputadoRow } from "@/shared/deputado";
-import {
-  Button,
-  EmptyState,
-  InlineMessage,
-  SkeletonRows,
-} from "@/shared/ui";
+import { Button, EmptyState, InlineMessage, SkeletonRows } from "@/shared/ui";
 
 import type {
   DeputadoFeedDisplay,

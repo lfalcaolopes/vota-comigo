@@ -55,7 +55,10 @@ function deputado(externalIdDeputado: number): MatcherDeputadoResumo {
   };
 }
 
-function resultado(escopo: EscopoMatcher, overrides: Partial<MatcherResultado> = {}): MatcherResultado {
+function resultado(
+  escopo: EscopoMatcher,
+  overrides: Partial<MatcherResultado> = {},
+): MatcherResultado {
   return {
     siglaUf: "SP",
     cidade: null,
@@ -130,9 +133,9 @@ describe("matcherReducer", () => {
       });
 
       // Assert
-      expect(
-        next.selected.some((c) => c.externalIdProposicao === 1),
-      ).toBe(false);
+      expect(next.selected.some((c) => c.externalIdProposicao === 1)).toBe(
+        false,
+      );
       expect(next.posicoes.has(1)).toBe(false);
     });
 
@@ -147,7 +150,9 @@ describe("matcherReducer", () => {
       });
 
       // Assert
-      expect(next.selected.some((c) => c.externalIdProposicao === 6)).toBe(true);
+      expect(next.selected.some((c) => c.externalIdProposicao === 6)).toBe(
+        true,
+      );
       expect(selectionCount(next)).toBe(1);
     });
 
@@ -335,7 +340,11 @@ describe("matcherReducer", () => {
     it("flips the active escopo without touching selected or posicoes", () => {
       // Arrange
       let state = initMatcherState(candidates);
-      state = matcherReducer(state, { type: "setLocal", siglaUf: "SP", cidade: "" });
+      state = matcherReducer(state, {
+        type: "setLocal",
+        siglaUf: "SP",
+        cidade: "",
+      });
       state = matcherReducer(state, {
         type: "setPosicao",
         externalIdProposicao: 1,
@@ -343,7 +352,10 @@ describe("matcherReducer", () => {
       });
 
       // Act
-      const next = matcherReducer(state, { type: "setEscopo", escopo: "nacional" });
+      const next = matcherReducer(state, {
+        type: "setEscopo",
+        escopo: "nacional",
+      });
 
       // Assert
       expect(next.escopo).toBe("nacional");
@@ -354,13 +366,30 @@ describe("matcherReducer", () => {
     it("returns the cached resultado for the new escopo when present", () => {
       // Arrange
       let state = initMatcherState(candidates);
-      const estadualResultado = resultado("estadual", { deputados: [deputado(1)], total: 1 });
-      const nacionalResultado = resultado("nacional", { deputados: [deputado(2)], total: 1 });
-      state = matcherReducer(state, { type: "runOk", escopo: "estadual", resultado: estadualResultado });
-      state = matcherReducer(state, { type: "runOk", escopo: "nacional", resultado: nacionalResultado });
+      const estadualResultado = resultado("estadual", {
+        deputados: [deputado(1)],
+        total: 1,
+      });
+      const nacionalResultado = resultado("nacional", {
+        deputados: [deputado(2)],
+        total: 1,
+      });
+      state = matcherReducer(state, {
+        type: "runOk",
+        escopo: "estadual",
+        resultado: estadualResultado,
+      });
+      state = matcherReducer(state, {
+        type: "runOk",
+        escopo: "nacional",
+        resultado: nacionalResultado,
+      });
 
       // Act
-      const next = matcherReducer(state, { type: "setEscopo", escopo: "estadual" });
+      const next = matcherReducer(state, {
+        type: "setEscopo",
+        escopo: "estadual",
+      });
 
       // Assert
       expect(next.escopo).toBe("estadual");
@@ -370,11 +399,21 @@ describe("matcherReducer", () => {
     it("returns null for the new escopo when not yet cached", () => {
       // Arrange
       let state = initMatcherState(candidates);
-      const estadualResultado = resultado("estadual", { deputados: [deputado(1)], total: 1 });
-      state = matcherReducer(state, { type: "runOk", escopo: "estadual", resultado: estadualResultado });
+      const estadualResultado = resultado("estadual", {
+        deputados: [deputado(1)],
+        total: 1,
+      });
+      state = matcherReducer(state, {
+        type: "runOk",
+        escopo: "estadual",
+        resultado: estadualResultado,
+      });
 
       // Act
-      const next = matcherReducer(state, { type: "setEscopo", escopo: "nacional" });
+      const next = matcherReducer(state, {
+        type: "setEscopo",
+        escopo: "nacional",
+      });
 
       // Assert
       expect(next.escopo).toBe("nacional");
@@ -385,52 +424,92 @@ describe("matcherReducer", () => {
   describe("loadMoreOk", () => {
     it("appends deputados to the active scope and preserves total", () => {
       // Arrange
-      const page1 = resultado("estadual", { deputados: [deputado(1), deputado(2)], total: 5 });
+      const page1 = resultado("estadual", {
+        deputados: [deputado(1), deputado(2)],
+        total: 5,
+      });
       const state = matcherReducer(initMatcherState(candidates), {
         type: "runOk",
         escopo: "estadual",
         resultado: page1,
       });
 
-      const page2 = resultado("estadual", { deputados: [deputado(3), deputado(4)], total: 5, offset: 2 });
+      const page2 = resultado("estadual", {
+        deputados: [deputado(3), deputado(4)],
+        total: 5,
+        offset: 2,
+      });
 
       // Act
-      const next = matcherReducer(state, { type: "loadMoreOk", escopo: "estadual", resultado: page2 });
+      const next = matcherReducer(state, {
+        type: "loadMoreOk",
+        escopo: "estadual",
+        resultado: page2,
+      });
 
       // Assert
       const active = activeResultado(next)!;
-      expect(active.deputados.map((d) => d.externalIdDeputado)).toEqual([1, 2, 3, 4]);
+      expect(active.deputados.map((d) => d.externalIdDeputado)).toEqual([
+        1, 2, 3, 4,
+      ]);
       expect(active.total).toBe(5);
     });
 
     it("leaves the other scope's cache untouched", () => {
       // Arrange
-      const estadualResultado = resultado("estadual", { deputados: [deputado(1)], total: 2 });
-      const nacionalResultado = resultado("nacional", { deputados: [deputado(10)], total: 2 });
+      const estadualResultado = resultado("estadual", {
+        deputados: [deputado(1)],
+        total: 2,
+      });
+      const nacionalResultado = resultado("nacional", {
+        deputados: [deputado(10)],
+        total: 2,
+      });
       let state = matcherReducer(initMatcherState(candidates), {
         type: "runOk",
         escopo: "estadual",
         resultado: estadualResultado,
       });
-      state = matcherReducer(state, { type: "runOk", escopo: "nacional", resultado: nacionalResultado });
+      state = matcherReducer(state, {
+        type: "runOk",
+        escopo: "nacional",
+        resultado: nacionalResultado,
+      });
       state = matcherReducer(state, { type: "setEscopo", escopo: "estadual" });
 
-      const morePage = resultado("estadual", { deputados: [deputado(2)], total: 2, offset: 1 });
+      const morePage = resultado("estadual", {
+        deputados: [deputado(2)],
+        total: 2,
+        offset: 1,
+      });
 
       // Act
-      const next = matcherReducer(state, { type: "loadMoreOk", escopo: "estadual", resultado: morePage });
+      const next = matcherReducer(state, {
+        type: "loadMoreOk",
+        escopo: "estadual",
+        resultado: morePage,
+      });
 
       // Assert
-      expect(next.resultados.nacional!.deputados.map((d) => d.externalIdDeputado)).toEqual([10]);
+      expect(
+        next.resultados.nacional!.deputados.map((d) => d.externalIdDeputado),
+      ).toEqual([10]);
     });
 
     it("is a no-op when the scope slot is null", () => {
       // Arrange
       const state = initMatcherState(candidates);
-      const page = resultado("estadual", { deputados: [deputado(1)], total: 1 });
+      const page = resultado("estadual", {
+        deputados: [deputado(1)],
+        total: 1,
+      });
 
       // Act
-      const next = matcherReducer(state, { type: "loadMoreOk", escopo: "estadual", resultado: page });
+      const next = matcherReducer(state, {
+        type: "loadMoreOk",
+        escopo: "estadual",
+        resultado: page,
+      });
 
       // Assert
       expect(next.resultados.estadual).toBeNull();
@@ -443,7 +522,10 @@ describe("matcherReducer", () => {
       const state = matcherReducer(initMatcherState(candidates), {
         type: "runOk",
         escopo: "estadual",
-        resultado: resultado("estadual", { deputados: [deputado(1), deputado(2)], total: 5 }),
+        resultado: resultado("estadual", {
+          deputados: [deputado(1), deputado(2)],
+          total: 5,
+        }),
       });
 
       // Act / Assert
@@ -455,7 +537,10 @@ describe("matcherReducer", () => {
       const state = matcherReducer(initMatcherState(candidates), {
         type: "runOk",
         escopo: "estadual",
-        resultado: resultado("estadual", { deputados: [deputado(1)], total: 1 }),
+        resultado: resultado("estadual", {
+          deputados: [deputado(1)],
+          total: 1,
+        }),
       });
 
       // Act / Assert
@@ -475,7 +560,9 @@ describe("matcherReducer", () => {
     describe("when loading and no resultado cached", () => {
       it("returns 'loading'", () => {
         // Arrange
-        const state = matcherReducer(initMatcherState(candidates), { type: "runStart" });
+        const state = matcherReducer(initMatcherState(candidates), {
+          type: "runStart",
+        });
 
         // Act / Assert
         expect(resultadoDisplay(state)).toBe("loading");
@@ -485,7 +572,9 @@ describe("matcherReducer", () => {
     describe("when error and no resultado cached", () => {
       it("returns 'error'", () => {
         // Arrange
-        const loading = matcherReducer(initMatcherState(candidates), { type: "runStart" });
+        const loading = matcherReducer(initMatcherState(candidates), {
+          type: "runStart",
+        });
         const state = matcherReducer(loading, { type: "runError" });
 
         // Act / Assert
@@ -510,13 +599,19 @@ describe("matcherReducer", () => {
     describe("when resultado is null for the active escopo", () => {
       it("returns 'empty'", () => {
         // Arrange
-        const estadualResultado = resultado("estadual", { deputados: [deputado(1)], total: 1 });
+        const estadualResultado = resultado("estadual", {
+          deputados: [deputado(1)],
+          total: 1,
+        });
         let state = matcherReducer(initMatcherState(candidates), {
           type: "runOk",
           escopo: "estadual",
           resultado: estadualResultado,
         });
-        state = matcherReducer(state, { type: "setEscopo", escopo: "nacional" });
+        state = matcherReducer(state, {
+          type: "setEscopo",
+          escopo: "nacional",
+        });
 
         // Act / Assert
         expect(resultadoDisplay(state)).toBe("empty");
@@ -529,7 +624,10 @@ describe("matcherReducer", () => {
         const state = matcherReducer(initMatcherState(candidates), {
           type: "runOk",
           escopo: "estadual",
-          resultado: resultado("estadual", { deputados: [deputado(1)], total: 1 }),
+          resultado: resultado("estadual", {
+            deputados: [deputado(1)],
+            total: 1,
+          }),
         });
 
         // Act / Assert
@@ -541,7 +639,10 @@ describe("matcherReducer", () => {
         let state = matcherReducer(initMatcherState(candidates), {
           type: "runOk",
           escopo: "estadual",
-          resultado: resultado("estadual", { deputados: [deputado(1)], total: 2 }),
+          resultado: resultado("estadual", {
+            deputados: [deputado(1)],
+            total: 2,
+          }),
         });
         state = matcherReducer(state, { type: "runStart" });
 
@@ -764,7 +865,10 @@ describe("matcherReducer", () => {
 
     it("enters selection mode without changing the active resultado", () => {
       // Arrange
-      const r = resultado("estadual", { deputados: [deputado(1), deputado(2)], total: 2 });
+      const r = resultado("estadual", {
+        deputados: [deputado(1), deputado(2)],
+        total: 2,
+      });
       const state = matcherReducer(initMatcherState(candidates), {
         type: "runOk",
         escopo: "estadual",
@@ -870,7 +974,9 @@ describe("matcherReducer", () => {
       });
 
       // Act
-      const next = matcherReducer(state, { type: "cancelComparativoSelection" });
+      const next = matcherReducer(state, {
+        type: "cancelComparativoSelection",
+      });
 
       // Assert
       expect(isComparativoSelectionMode(next)).toBe(false);
@@ -1046,8 +1152,14 @@ describe("matcherReducer", () => {
       expect(selectionCount(state)).toBe(4);
 
       // Act
-      const forward = matcherReducer(state, { type: "goToStep", step: "posicoes" });
-      const back = matcherReducer(forward, { type: "goToStep", step: "selecao" });
+      const forward = matcherReducer(state, {
+        type: "goToStep",
+        step: "posicoes",
+      });
+      const back = matcherReducer(forward, {
+        type: "goToStep",
+        step: "selecao",
+      });
 
       // Assert
       expect(selectionCount(back)).toBe(4);
@@ -1063,7 +1175,10 @@ describe("matcherReducer", () => {
       const state = initMatcherState(candidates);
 
       // Act
-      const next = matcherReducer(state, { type: "setApenasEmAtividade", value: true });
+      const next = matcherReducer(state, {
+        type: "setApenasEmAtividade",
+        value: true,
+      });
 
       // Assert
       expect(next.apenasEmAtividade).toBe(true);
@@ -1071,10 +1186,16 @@ describe("matcherReducer", () => {
 
     it("sets apenasEmAtividade to false", () => {
       // Arrange
-      const state = { ...initMatcherState(candidates), apenasEmAtividade: true };
+      const state = {
+        ...initMatcherState(candidates),
+        apenasEmAtividade: true,
+      };
 
       // Act
-      const next = matcherReducer(state, { type: "setApenasEmAtividade", value: false });
+      const next = matcherReducer(state, {
+        type: "setApenasEmAtividade",
+        value: false,
+      });
 
       // Assert
       expect(next.apenasEmAtividade).toBe(false);
@@ -1089,7 +1210,10 @@ describe("matcherReducer", () => {
       };
 
       // Act
-      const next = matcherReducer(state, { type: "setApenasEmAtividade", value: true });
+      const next = matcherReducer(state, {
+        type: "setApenasEmAtividade",
+        value: true,
+      });
 
       // Assert
       expect(next.resultados.estadual).toBeNull();
@@ -1098,10 +1222,16 @@ describe("matcherReducer", () => {
 
     it("does not affect other state fields", () => {
       // Arrange
-      const state = { ...initMatcherState(candidates), escopo: "nacional" as const };
+      const state = {
+        ...initMatcherState(candidates),
+        escopo: "nacional" as const,
+      };
 
       // Act
-      const next = matcherReducer(state, { type: "setApenasEmAtividade", value: true });
+      const next = matcherReducer(state, {
+        type: "setApenasEmAtividade",
+        value: true,
+      });
 
       // Assert
       expect(next.escopo).toBe("nacional");

@@ -8,13 +8,20 @@ type ResultadoVazioProps = {
   onEscopoChange: (escopo: EscopoMatcher) => void;
 };
 
-export function ResultadoVazio({ escopo, onBack, onEscopoChange }: ResultadoVazioProps) {
+export function ResultadoVazio({
+  escopo,
+  onBack,
+  onEscopoChange,
+}: ResultadoVazioProps) {
   if (escopo === "estadual") {
     return (
       <EmptyState
         action={
           <div className="flex flex-wrap gap-3">
-            <Button variant="primary" onClick={() => onEscopoChange("nacional")}>
+            <Button
+              variant="primary"
+              onClick={() => onEscopoChange("nacional")}
+            >
               Ver todos os deputados (Brasil)
             </Button>
             <Button onClick={onBack}>Voltar</Button>

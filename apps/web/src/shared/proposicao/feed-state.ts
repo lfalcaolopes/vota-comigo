@@ -34,7 +34,7 @@ const emptyPage: Page = { items: [], total: 0 };
 export function initFeedState(
   items: ProposicaoCard[],
   total: number,
-  ordenacao: FeedOrdenacao = 'mais-votadas',
+  ordenacao: FeedOrdenacao = "mais-votadas",
   tema: number | null = null,
   query = "",
 ): FeedState {

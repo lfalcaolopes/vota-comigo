@@ -27,7 +27,11 @@ export function DeputadoDetalhe({
   if (status === "loading") {
     return (
       <div className="grid gap-5">
-        <Button className="justify-self-start" onClick={onBack} variant="secondary">
+        <Button
+          className="justify-self-start"
+          onClick={onBack}
+          variant="secondary"
+        >
           Voltar ao resultado
         </Button>
         <SkeletonRows count={6} />
@@ -38,7 +42,11 @@ export function DeputadoDetalhe({
   if (status === "error") {
     return (
       <div className="grid gap-5">
-        <Button className="justify-self-start" onClick={onBack} variant="secondary">
+        <Button
+          className="justify-self-start"
+          onClick={onBack}
+          variant="secondary"
+        >
           Voltar ao resultado
         </Button>
         <ErrorState

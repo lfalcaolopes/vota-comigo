@@ -1,8 +1,17 @@
 "use client";
 
-import type { EscopoMatcher, MatcherResultado } from "@vota-comigo/shared-types";
+import type {
+  EscopoMatcher,
+  MatcherResultado,
+} from "@vota-comigo/shared-types";
 
-import { Button, ErrorState, SegmentedControl, SkeletonRows, Switch } from "@/shared/ui";
+import {
+  Button,
+  ErrorState,
+  SegmentedControl,
+  SkeletonRows,
+  Switch,
+} from "@/shared/ui";
 
 import type { MatcherState, MatcherStatus } from "../../lib/matcher-state";
 import {
@@ -102,7 +111,11 @@ export function StepResultado({
     return (
       <div className="grid gap-4">
         {escopoControl}
-        <ResultadoVazio escopo={escopo} onBack={onBack} onEscopoChange={onEscopoChange} />
+        <ResultadoVazio
+          escopo={escopo}
+          onBack={onBack}
+          onEscopoChange={onEscopoChange}
+        />
       </div>
     );
   }
@@ -181,7 +194,11 @@ export function StepResultado({
         </div>
       ) : hasMore ? (
         <div className="flex justify-center">
-          <Button disabled={status === "loading"} onClick={onLoadMore} variant="secondary">
+          <Button
+            disabled={status === "loading"}
+            onClick={onLoadMore}
+            variant="secondary"
+          >
             {status === "loading" ? "Carregando…" : "Carregar mais"}
           </Button>
         </div>

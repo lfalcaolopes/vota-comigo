@@ -32,17 +32,16 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 
 **Filtro de ingestão:** apenas registros cuja `id` aparece em `votacoesVotos-{ano}.csv` (proxy para votação nominal).
 
-
 ---
 
 ### votacoesVotos-{ano}.csv
 
-| Métrica | Valor |
-|---------|-------|
-| Registros brutos no CSV (2025) | 175.067 votos individuais |
-| Votações nominais identificadas (2025) | ~550 |
-| Projeção 10 anos | ~5.500 votações nominais |
-| Projeção 25 anos | ~13.750 votações nominais |
+| Métrica                                | Valor                     |
+| -------------------------------------- | ------------------------- |
+| Registros brutos no CSV (2025)         | 175.067 votos individuais |
+| Votações nominais identificadas (2025) | ~550                      |
+| Projeção 10 anos                       | ~5.500 votações nominais  |
+| Projeção 25 anos                       | ~13.750 votações nominais |
 
 **Justificativa:** os votos individuais alimentam o matcher, o perfil do deputado e o comparativo. Buscar esses dados na API em runtime colocaria o core do produto sob dependência operacional externa. O arquivo passa a ser consumido integralmente pela ingestão, e não apenas como proxy para identificar votação nominal.
 
@@ -56,11 +55,11 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 
 ### votacoesProposicoes-{ano}.csv
 
-| Métrica | Valor |
-|---------|-------|
+| Métrica                | Valor                                |
+| ---------------------- | ------------------------------------ |
 | Registros úteis (2025) | ~568 vínculos para votações nominais |
-| Projeção 10 anos | ~5.680 |
-| Projeção 25 anos | ~14.200 |
+| Projeção 10 anos       | ~5.680                               |
+| Projeção 25 anos       | ~14.200                              |
 
 **Justificativa:** lista as proposições afetadas por cada votação. É consumido para ligar votações nominais às proposições que elas afetam. A fórmula de relevância precisa do `codTipo` da proposição, e o feed/matcher precisam de título e ementa. Sem esse arquivo, a votação é um ID sem contexto.
 
@@ -72,12 +71,12 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 
 ### proposicoes-{ano}.csv
 
-| Métrica | Valor |
-|---------|-------|
-| Registros brutos (2025) | 107.556 |
+| Métrica                                                | Valor                       |
+| ------------------------------------------------------ | --------------------------- |
+| Registros brutos (2025)                                | 107.556                     |
 | Registros úteis (afetadas por votações nominais, 2025) | ~400–500 proposições únicas |
-| Projeção 10 anos (úteis) | ~4.000–5.000 |
-| Projeção 25 anos (úteis) | ~10.000–12.500 |
+| Projeção 10 anos (úteis)                               | ~4.000–5.000                |
+| Projeção 25 anos (úteis)                               | ~10.000–12.500              |
 
 **Justificativa:** dados da proposição (tipo, ementa, número, ano, tramitação) são necessários para exibir o feed de proposições votadas e o contexto do matcher. O `codTipo` é usado como input do fator "tipo de proposição" (peso 0.20) na fórmula de relevância — PEC pesa mais que requerimento — mas não é usado como filtro de ingestão.
 
@@ -91,12 +90,12 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 
 ### proposicoesTemas-{ano}.csv
 
-| Métrica | Valor |
-|---------|-------|
-| Registros brutos (2025) | 40.838 |
+| Métrica                                                 | Valor                     |
+| ------------------------------------------------------- | ------------------------- |
+| Registros brutos (2025)                                 | 40.838                    |
 | Registros úteis (apenas de proposições ingeridas, 2025) | A definir após cruzamento |
-| Projeção 10 anos (úteis) | A definir |
-| Projeção 25 anos (úteis) | A definir |
+| Projeção 10 anos (úteis)                                | A definir                 |
+| Projeção 25 anos (úteis)                                | A definir                 |
 
 **Justificativa:** classificação temática oficial da Câmara, usada como filtro no feed e no matcher (Tier 1 de melhorias). Ingerida desde o protótipo para validar cobertura e preparar o schema.
 
@@ -108,11 +107,11 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 
 ### deputados.csv
 
-| Métrica | Valor |
-|---------|-------|
-| Registros (arquivo único, acumulado) | 7.883 |
-| Projeção 10 anos | Mesmo arquivo — cresce ~500 por legislatura |
-| Projeção 25 anos | Mesmo arquivo |
+| Métrica                              | Valor                                       |
+| ------------------------------------ | ------------------------------------------- |
+| Registros (arquivo único, acumulado) | 7.883                                       |
+| Projeção 10 anos                     | Mesmo arquivo — cresce ~500 por legislatura |
+| Projeção 25 anos                     | Mesmo arquivo                               |
 
 **Justificativa:** entidade central do produto. Nome, URI, legislaturas de atuação. Tudo cruza com deputado — matcher, perfil, comparativo.
 
@@ -124,11 +123,11 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 
 ### legislaturas.csv
 
-| Métrica | Valor |
-|---------|-------|
-| Registros (arquivo único) | 57 |
-| Projeção 10 anos | Mesmo arquivo (+1 a cada 4 anos) |
-| Projeção 25 anos | Mesmo arquivo |
+| Métrica                   | Valor                            |
+| ------------------------- | -------------------------------- |
+| Registros (arquivo único) | 57                               |
+| Projeção 10 anos          | Mesmo arquivo (+1 a cada 4 anos) |
+| Projeção 25 anos          | Mesmo arquivo                    |
 
 **Justificativa:** necessário para determinar se deputado estava em exercício durante uma votação (tratamento de mandato no matcher). Datas de início e fim de cada legislatura. Volume irrelevante.
 
@@ -140,11 +139,11 @@ Consideração adicional: se o volume é muito pequeno (dezenas ou centenas de r
 
 ### orgaosDeputados-L{legislatura}.csv
 
-| Métrica | Valor |
-|---------|-------|
-| Registros (legislatura 57) | 12.789 |
-| Projeção 10 anos | ~25.000 (2-3 legislaturas) |
-| Projeção 25 anos | ~75.000 (6-7 legislaturas) |
+| Métrica                    | Valor                      |
+| -------------------------- | -------------------------- |
+| Registros (legislatura 57) | 12.789                     |
+| Projeção 10 anos           | ~25.000 (2-3 legislaturas) |
+| Projeção 25 anos           | ~75.000 (6-7 legislaturas) |
 
 **Justificativa:** liga deputado a comissões na legislatura. Necessário apenas quando a feature de "cargos em comissões atuais e históricos" entrar no perfil completo (Tier 2 do roadmap de melhorias). Fora do MVP, que cobre exclusivamente votações de plenário onde todos os 513 deputados podem votar — não há necessidade de saber pertencimento a comissão.
 
@@ -154,8 +153,8 @@ Quando a feature entrar, revisitar se ingestão é necessária ou se busca via A
 
 ### votacoesOrientacoes-{ano}.csv (API sob demanda)
 
-| Registros brutos (2025) | 4.947 |
-|---|---|
+| Registros brutos (2025)      | 4.947  |
+| ---------------------------- | ------ |
 | Registros de plenário (2025) | ~4.100 |
 
 **Justificativa:** orientação de bancada é exibida como contexto da votação no modal do feed e no detalhe da proposição. Sem cruzamento com engines centrais.
@@ -168,9 +167,9 @@ Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes
 
 ### votacoesObjetos-{ano}.csv (descartado)
 
-| Registros brutos (2025) | 102.037 |
-|---|---|
-| Registros de votações nominais (2025) | 28.206 |
+| Registros brutos (2025)               | 102.037 |
+| ------------------------------------- | ------- |
+| Registros de votações nominais (2025) | 28.206  |
 
 **Justificativa:** lista possíveis objetos de cada votação, acumulando proposições derivadas ao longo da tramitação. O nome do arquivo sugere uma chave mais forte do que o dado oferece. Não é baixado pela pipeline padrão, não é ingerido no banco e não é usado como fallback para vínculo votação-proposição.
 
@@ -179,7 +178,7 @@ Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes
 ### orgaos.csv
 
 | Registros (arquivo único) | 3.823 |
-|---|---|
+| ------------------------- | ----- |
 
 **Justificativa:** o uso principal era classificar votações entre plenário e comissão, mas essa lógica já pode ser aplicada a partir do `siglaOrgao` presente em `votacoes-{ano}.csv`: `PLEN` ou `CN` → plenário, qualquer outro valor → comissão. O nome completo do órgão, quando necessário para exibição, é buscado via API. Sob demanda.
 
@@ -188,7 +187,7 @@ Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes
 ### legislaturasMesas.csv
 
 | Registros (arquivo único) | 177 |
-|---|---|
+| ------------------------- | --- |
 
 **Justificativa:** Mesa Diretora da Câmara. Volume irrelevante, mas sem uso planejado no MVP nem nas engines centrais. Quando houver necessidade (ex.: exibir cargos de Mesa no perfil do deputado), ingerir nesse momento.
 
@@ -197,7 +196,7 @@ Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes
 ### eventos-{ano}.csv
 
 | Registros (2025) | ~3.200 |
-|---|---|
+| ---------------- | ------ |
 
 **Justificativa:** informações de sessões e audiências (tipo, pauta, local). Não alimenta engine central. A votação já traz `idEvento`, data e órgão — suficiente para o MVP. Se for necessário exibir contexto do evento (tipo de sessão, pauta), buscar via API por `idEvento`. Cache com TTL longo — eventos passados não mudam.
 
@@ -206,7 +205,7 @@ Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes
 ### eventosOrgaos-{ano}.csv
 
 | Registros (2025) | ~3.200 |
-|---|---|
+| ---------------- | ------ |
 
 **Justificativa:** liga evento ao órgão realizador. Redundante para votações, que já trazem `siglaOrgao` direto. Só útil se a tela partir do evento, não da votação. Sob demanda.
 
@@ -215,7 +214,7 @@ Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes
 ### eventosPresencaDeputados-{ano}.csv
 
 | Registros (2025) | ~110.000 |
-|---|---|
+| ---------------- | -------- |
 
 **Justificativa:** presença em eventos (sessões, audiências). Para o MVP, a presença relevante é em votações nominais, derivável de `votacoesVotos-{ano}.csv` (quem votou estava presente). Presença em sessões/audiências sem votação nominal é dado de perfil complementar, não de engine. Sob demanda.
 
@@ -224,7 +223,7 @@ Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes
 ### eventosRequerimentos-{ano}.csv
 
 | Registros (2025) | ~2.600 |
-|---|---|
+| ---------------- | ------ |
 
 **Justificativa:** liga evento ao requerimento que o originou. Contexto de exibição puro, sem cruzamento com engines. Sob demanda.
 
@@ -233,7 +232,7 @@ Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes
 ### proposicoesAutores-{ano}.csv
 
 | Registros (2025) | ~154.500 |
-|---|---|
+| ---------------- | -------- |
 
 **Justificativa:** relação proposição↔autor. Não alimenta engine central no MVP. O uso planejado — contagem de proposições por deputado, projetos apresentados/aprovados — está no Tier 2 (perfil completo). A API resolve com `GET /proposicoes?idAutor={id}`. Quando o Tier 2 chegar e rankings comparativos de produtividade forem implementados, reavaliar ingestão.
 
@@ -242,7 +241,7 @@ Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes
 ### deputadosOcupacoes.csv
 
 | Registros (arquivo único) | ~37.500 |
-|---|---|
+| ------------------------- | ------- |
 
 **Justificativa:** ocupações profissionais declaradas. Dado de perfil, sem uso no MVP. Sob demanda quando/se for exibido em versão futura.
 
@@ -251,7 +250,7 @@ Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes
 ### deputadosProfissoes.csv
 
 | Registros (arquivo único) | ~12.600 |
-|---|---|
+| ------------------------- | ------- |
 
 **Justificativa:** profissões declaradas. Mesmo caso de `deputadosOcupacoes`. Sob demanda.
 
@@ -260,7 +259,7 @@ Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes
 ### frentes.csv / frentesDeputados.csv
 
 | Registros | 1.440 frentes / 261.638 vínculos |
-|---|---|
+| --------- | -------------------------------- |
 
 **Justificativa:** frentes parlamentares. Explicitamente no Tier 2 (perfil completo). Sem cruzamento com engines centrais. Sob demanda.
 
@@ -269,7 +268,7 @@ Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes
 ### grupos.csv / gruposMembros.csv / gruposHistorico.csv
 
 | Registros | 118 grupos / 7.087 membros / 408 histórico |
-|---|---|
+| --------- | ------------------------------------------ |
 
 **Justificativa:** grupos interparlamentares. Sem uso planejado em nenhum tier atual. Lateral à missão do produto. Sob demanda se algum dia for relevante.
 
@@ -279,29 +278,29 @@ Em runtime, orientações são buscadas via API (`GET /votacoes/{id}/orientacoes
 
 ### Cenário: 10 anos de histórico (2016–2025)
 
-| Dado | Registros estimados |
-|------|---------------------|
-| Votações nominais consumidas | ~5.500 |
-| Votações com votos individuais consumidos | ~5.500 |
-| Vínculos votação↔proposição afetada | ~5.680 |
-| Proposições afetadas únicas | ~4.000–5.000 |
-| Temas de proposições | ~5.000–15.000 |
-| Deputados | ~7.900 (acumulado) |
-| Legislaturas | ~57 (acumulado) |
-| **Total estimado** | **~33.500–43.500** |
+| Dado                                      | Registros estimados |
+| ----------------------------------------- | ------------------- |
+| Votações nominais consumidas              | ~5.500              |
+| Votações com votos individuais consumidos | ~5.500              |
+| Vínculos votação↔proposição afetada       | ~5.680              |
+| Proposições afetadas únicas               | ~4.000–5.000        |
+| Temas de proposições                      | ~5.000–15.000       |
+| Deputados                                 | ~7.900 (acumulado)  |
+| Legislaturas                              | ~57 (acumulado)     |
+| **Total estimado**                        | **~33.500–43.500**  |
 
 ### Cenário: 25 anos de histórico (2001–2025)
 
-| Dado | Registros estimados |
-|------|---------------------|
-| Votações nominais consumidas | ~13.750 |
-| Votações com votos individuais consumidos | ~13.750 |
-| Vínculos votação↔proposição afetada | ~14.200 |
-| Proposições afetadas únicas | ~10.000–12.500 |
-| Temas de proposições | ~12.500–37.500 |
-| Deputados | ~7.900 (acumulado) |
-| Legislaturas | ~57 (acumulado) |
-| **Total estimado** | **~73.750–100.750** |
+| Dado                                      | Registros estimados |
+| ----------------------------------------- | ------------------- |
+| Votações nominais consumidas              | ~13.750             |
+| Votações com votos individuais consumidos | ~13.750             |
+| Vínculos votação↔proposição afetada       | ~14.200             |
+| Proposições afetadas únicas               | ~10.000–12.500      |
+| Temas de proposições                      | ~12.500–37.500      |
+| Deputados                                 | ~7.900 (acumulado)  |
+| Legislaturas                              | ~57 (acumulado)     |
+| **Total estimado**                        | **~73.750–100.750** |
 
 O consumo integral de `votacoesVotos` aumenta o volume de dados processado em relação ao desenho anterior, mas remove a dependência da API da Câmara para o core do produto. A forma exata de persistência desse arquivo está definida na ADR 0010, não neste inventário de fontes.
 

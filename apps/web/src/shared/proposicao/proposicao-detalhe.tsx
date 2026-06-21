@@ -120,11 +120,7 @@ function Metadados({
   );
 }
 
-function Estatisticas({
-  proposicao,
-}: {
-  proposicao: ProposicaoDetalheData;
-}) {
+function Estatisticas({ proposicao }: { proposicao: ProposicaoDetalheData }) {
   const dataUltimaVotacao = maxIsoDate(
     proposicao.votacoes.map((votacao) => votacao.data),
   );

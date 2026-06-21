@@ -256,7 +256,6 @@ describe("temasDisponiveis", () => {
   });
 });
 
-
 const detalheResponse: ProposicaoDetalhe = {
   externalIdProposicao: 42,
   siglaTipo: "PL",
@@ -278,7 +277,8 @@ const detalheResponse: ProposicaoDetalhe = {
     regime: "Prioridade",
     dataHora: "2025-03-14T15:00",
   },
-  fonteOficial: "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=42",
+  fonteOficial:
+    "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=42",
   temas: [{ externalCodTema: 37, tema: "Saúde" }],
   votacoes: [],
 };

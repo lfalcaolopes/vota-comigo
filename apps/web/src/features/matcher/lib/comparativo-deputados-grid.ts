@@ -56,7 +56,9 @@ export function buildComparativoDeputadosGrid({
 
   const orderedDetalhes = selectedDeputados
     .map((deputado) => detalhesByDeputado.get(deputado.externalIdDeputado))
-    .filter((detalhe): detalhe is MatcherDeputadoDetalhe => detalhe !== undefined);
+    .filter(
+      (detalhe): detalhe is MatcherDeputadoDetalhe => detalhe !== undefined,
+    );
 
   return {
     columns: selectedDeputados.map((deputado) => ({ deputado })),
@@ -83,8 +85,10 @@ function buildRow(
     .filter(
       (
         item,
-      ): item is { detalhe: MatcherDeputadoDetalhe; voto: MatcherVotoDetalhe } =>
-        item !== null,
+      ): item is {
+        detalhe: MatcherDeputadoDetalhe;
+        voto: MatcherVotoDetalhe;
+      } => item !== null,
     );
 
   const firstVoto = cellVotos[0]?.voto;

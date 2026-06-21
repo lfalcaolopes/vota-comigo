@@ -1,12 +1,7 @@
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
 
 import { ProposicaoRow } from "@/shared/proposicao";
-import {
-  Button,
-  EmptyState,
-  InlineMessage,
-  SkeletonRows,
-} from "@/shared/ui";
+import { Button, EmptyState, InlineMessage, SkeletonRows } from "@/shared/ui";
 
 import type { FeedDisplay, FeedStatus } from "@/shared/proposicao";
 
@@ -68,7 +63,11 @@ export function FeedList({
           title="Erro ao carregar"
           tone="danger"
         />
-        <Button className="justify-self-start" onClick={onLoadMore} variant="secondary">
+        <Button
+          className="justify-self-start"
+          onClick={onLoadMore}
+          variant="secondary"
+        >
           Tentar novamente
         </Button>
       </div>

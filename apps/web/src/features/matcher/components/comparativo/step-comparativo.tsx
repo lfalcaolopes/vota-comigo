@@ -169,11 +169,7 @@ function ComparativoDeputadoHeader({
   );
 }
 
-function ComparativoAtividadeStatus({
-  emAtividade,
-}: {
-  emAtividade: boolean;
-}) {
+function ComparativoAtividadeStatus({ emAtividade }: { emAtividade: boolean }) {
   return (
     <span
       aria-label={toAtividadeAriaLabel(emAtividade)}

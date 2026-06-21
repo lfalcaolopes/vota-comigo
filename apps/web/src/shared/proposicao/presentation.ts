@@ -123,11 +123,7 @@ function parseLocalIsoDate(iso: string | null): Date | null {
 }
 
 function wholeDaysBetween(date: Date, referenceDate: Date): number {
-  const dateUtc = Date.UTC(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-  );
+  const dateUtc = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
   const referenceUtc = Date.UTC(
     referenceDate.getFullYear(),
     referenceDate.getMonth(),

@@ -35,7 +35,10 @@ export const STEP_ORDER: MainMatcherStep[] = [
   "resultado",
 ];
 
-export function stepStatus(current: MatcherStep, step: MainMatcherStep): StepStatus {
+export function stepStatus(
+  current: MatcherStep,
+  step: MainMatcherStep,
+): StepStatus {
   const currentIndex =
     current === "comparativo" ? STEP_ORDER.length : STEP_ORDER.indexOf(current);
   const stepIndex = STEP_ORDER.indexOf(step);
@@ -70,7 +73,11 @@ export type MatcherState = {
 export type MatcherAction =
   | { type: "setLocal"; siglaUf: SiglaUf; cidade: string }
   | { type: "toggleProposicao"; proposicao: ProposicaoCard }
-  | { type: "setPosicao"; externalIdProposicao: number; posicao: PosicaoUsuarioMatcher }
+  | {
+      type: "setPosicao";
+      externalIdProposicao: number;
+      posicao: PosicaoUsuarioMatcher;
+    }
   | { type: "goToStep"; step: MatcherStep }
   | { type: "runStart" }
   | { type: "runOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
@@ -118,7 +125,10 @@ export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
   };
 }
 
-function isSelected(state: MatcherState, externalIdProposicao: number): boolean {
+function isSelected(
+  state: MatcherState,
+  externalIdProposicao: number,
+): boolean {
   return state.selected.some(
     (card) => card.externalIdProposicao === externalIdProposicao,
   );
@@ -255,7 +265,9 @@ export function matcherReducer(
       if (hasSelectedComparativoDeputado(state, id)) {
         return deselectComparativoDeputado(state, id);
       }
-      if (state.selectedComparativoDeputados.length >= MAX_COMPARATIVO_DEPUTADOS) {
+      if (
+        state.selectedComparativoDeputados.length >= MAX_COMPARATIVO_DEPUTADOS
+      ) {
         return state;
       }
       return {
@@ -323,7 +335,9 @@ export function canAdvanceSelecao(state: MatcherState): boolean {
 export function executionValidation(state: MatcherState): ExecucaoValidation {
   const selectedPosicoes = state.selected
     .map((card) => state.posicoes.get(card.externalIdProposicao))
-    .filter((posicao): posicao is PosicaoUsuarioMatcher => posicao !== undefined);
+    .filter(
+      (posicao): posicao is PosicaoUsuarioMatcher => posicao !== undefined,
+    );
 
   return validateExecucao({
     totalSelecionadas: state.selected.length,

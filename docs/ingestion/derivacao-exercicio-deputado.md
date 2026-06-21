@@ -52,15 +52,15 @@ Classificar cada par **Deputado** e **Votação nominal** nesta ordem. O registr
 
 ## Efeito no matcher
 
-| Classificação | Entra no denominador? | Efeito |
-|---|---|---|
-| **Lacuna de dados** | Não | Deputado excluído do ranking quando a lacuna impede determinar intervalos de exercício. |
-| **Fora de exercício** | Não | Votação desconsiderada para o deputado. |
-| **Artigo 17** | Não | Votação desconsiderada para o deputado. |
-| **Voto não informado** | Não | Votação desconsiderada por qualidade de dado. |
-| `sim` / `nao` | Sim | Comparado diretamente com a posição do usuário. |
-| `abstencao` / `obstrucao` | Sim | Conta como discordância, preservando o voto real para exibição. |
-| **Ausência sem motivo conhecido** | Sim | Conta como discordância. |
+| Classificação                     | Entra no denominador? | Efeito                                                                                  |
+| --------------------------------- | --------------------- | --------------------------------------------------------------------------------------- |
+| **Lacuna de dados**               | Não                   | Deputado excluído do ranking quando a lacuna impede determinar intervalos de exercício. |
+| **Fora de exercício**             | Não                   | Votação desconsiderada para o deputado.                                                 |
+| **Artigo 17**                     | Não                   | Votação desconsiderada para o deputado.                                                 |
+| **Voto não informado**            | Não                   | Votação desconsiderada por qualidade de dado.                                           |
+| `sim` / `nao`                     | Sim                   | Comparado diretamente com a posição do usuário.                                         |
+| `abstencao` / `obstrucao`         | Sim                   | Conta como discordância, preservando o voto real para exibição.                         |
+| **Ausência sem motivo conhecido** | Sim                   | Conta como discordância.                                                                |
 
 ## Partido vigente
 

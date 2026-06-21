@@ -10,7 +10,9 @@ type GetDeputadoDetalhe = (
   request: MatcherExecucaoRequest,
 ) => Promise<MatcherDeputadoDetalhe>;
 
-type GetDeputadoPerfil = (externalIdDeputado: number) => Promise<DeputadoPerfil>;
+type GetDeputadoPerfil = (
+  externalIdDeputado: number,
+) => Promise<DeputadoPerfil>;
 
 type LoadComparativoDeputadosDetalhesInput = {
   selectedDeputados: MatcherDeputadoResumo[];
@@ -18,9 +20,10 @@ type LoadComparativoDeputadosDetalhesInput = {
   getDeputadoDetalhe: GetDeputadoDetalhe;
 };
 
-type LoadComparativoDeputadosDataInput = LoadComparativoDeputadosDetalhesInput & {
-  getDeputadoPerfil: GetDeputadoPerfil;
-};
+type LoadComparativoDeputadosDataInput =
+  LoadComparativoDeputadosDetalhesInput & {
+    getDeputadoPerfil: GetDeputadoPerfil;
+  };
 
 export type ComparativoDeputadosData = {
   detalhes: MatcherDeputadoDetalhe[];

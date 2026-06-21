@@ -80,7 +80,9 @@ export function StepPosicoes({
 
   return (
     <div className="mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[minmax(0,1fr)_21rem] lg:items-start lg:gap-8">
-      <div className={`${view === "revisao" ? "hidden lg:grid" : "grid"} gap-6`}>
+      <div
+        className={`${view === "revisao" ? "hidden lg:grid" : "grid"} gap-6`}
+      >
         <div className="flex items-center justify-between gap-4">
           <Button onClick={goBack} variant="ghost">
             ← Voltar
@@ -117,19 +119,28 @@ export function StepPosicoes({
           />
 
           {faltamRespostas > 0 ? (
-            <p className="text-sm leading-normal text-muted lg:hidden" role="status">
+            <p
+              className="text-sm leading-normal text-muted lg:hidden"
+              role="status"
+            >
               Responda todas as proposições selecionadas para ver o resultado.
               Faltam{" "}
-              <strong className="font-[720] text-ink">{faltamRespostas}</strong>.
+              <strong className="font-[720] text-ink">{faltamRespostas}</strong>
+              .
             </p>
           ) : faltamComputaveis > 0 ? (
-            <p className="text-sm leading-normal text-muted lg:hidden" role="status">
+            <p
+              className="text-sm leading-normal text-muted lg:hidden"
+              role="status"
+            >
               Responda Sim ou Não em pelo menos {MIN_POSICOES_COMPUTAVEIS}{" "}
               proposições para ver o resultado. Faltam{" "}
-              <strong className="font-[720] text-ink">{faltamComputaveis}</strong>.
+              <strong className="font-[720] text-ink">
+                {faltamComputaveis}
+              </strong>
+              .
             </p>
           ) : null}
-
         </div>
       </div>
 

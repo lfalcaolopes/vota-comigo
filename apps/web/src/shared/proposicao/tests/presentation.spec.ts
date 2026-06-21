@@ -44,32 +44,30 @@ describe("toIdentificadorLegislativo", () => {
   describe("when fields are missing", () => {
     it("drops the ano but keeps sigla and numero", () => {
       // Act / Assert
-      expect(
-        toIdentificadorLegislativo(makeCard({ ano: null })),
-      ).toBe("PL 1234");
+      expect(toIdentificadorLegislativo(makeCard({ ano: null }))).toBe(
+        "PL 1234",
+      );
     });
 
     it("drops the numero but keeps sigla and ano", () => {
       // Act / Assert
-      expect(
-        toIdentificadorLegislativo(makeCard({ numero: null })),
-      ).toBe("PL 2023");
+      expect(toIdentificadorLegislativo(makeCard({ numero: null }))).toBe(
+        "PL 2023",
+      );
     });
 
     it("keeps only the sigla when numero and ano are missing", () => {
       // Act / Assert
       expect(
-        toIdentificadorLegislativo(
-          makeCard({ numero: null, ano: null }),
-        ),
+        toIdentificadorLegislativo(makeCard({ numero: null, ano: null })),
       ).toBe("PL");
     });
 
     it("keeps only the numero/ano when sigla is missing", () => {
       // Act / Assert
-      expect(
-        toIdentificadorLegislativo(makeCard({ siglaTipo: null })),
-      ).toBe("1234/2023");
+      expect(toIdentificadorLegislativo(makeCard({ siglaTipo: null }))).toBe(
+        "1234/2023",
+      );
     });
 
     it("returns null when every field is missing", () => {
@@ -120,7 +118,9 @@ describe("formatRelativeDate", () => {
   describe("when the date is less than a year before the reference date", () => {
     it("formats the distance in months", () => {
       // Act / Assert
-      expect(formatRelativeDate("2026-03-15", referenceDate)).toBe("há 3 meses");
+      expect(formatRelativeDate("2026-03-15", referenceDate)).toBe(
+        "há 3 meses",
+      );
     });
   });
 
@@ -164,9 +164,7 @@ describe("maxIsoDate", () => {
   describe("when dates and null values are mixed", () => {
     it("returns the latest date string", () => {
       // Act / Assert
-      expect(maxIsoDate([null, "2025-03-14", "2024-12-31"])).toBe(
-        "2025-03-14",
-      );
+      expect(maxIsoDate([null, "2025-03-14", "2024-12-31"])).toBe("2025-03-14");
     });
   });
 
@@ -183,7 +181,9 @@ describe("toAnoApresentacao", () => {
     it("derives the year from it", () => {
       // Act / Assert
       expect(
-        toAnoApresentacao(makeCard({ dataApresentacao: "2019-11-02", ano: 2023 })),
+        toAnoApresentacao(
+          makeCard({ dataApresentacao: "2019-11-02", ano: 2023 }),
+        ),
       ).toBe(2019);
     });
   });

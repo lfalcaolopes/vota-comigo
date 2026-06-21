@@ -10,12 +10,12 @@ describe("parseDeputadosFeedUrlState", () => {
   describe("when deputado feed params are present", () => {
     it("parses query, activity, and UF", () => {
       // Arrange / Act
-    const state = parseDeputadosFeedUrlState({
-      q: " maria ",
-      emAtividade: "true",
-      uf: "sp",
-      partido: " PTdoB ",
-    });
+      const state = parseDeputadosFeedUrlState({
+        q: " maria ",
+        emAtividade: "true",
+        uf: "sp",
+        partido: " PTdoB ",
+      });
 
       // Assert
       expect(state).toEqual({
@@ -76,8 +76,6 @@ describe("buildDeputadosFeedHref", () => {
     });
 
     // Assert
-    expect(href).toBe(
-      "/deputados?q=maria&emAtividade=true&uf=SP&partido=PT",
-    );
+    expect(href).toBe("/deputados?q=maria&emAtividade=true&uf=SP&partido=PT");
   });
 });

@@ -58,7 +58,10 @@ export function AppHeader() {
           </IconButton>
         </div>
 
-        <nav aria-label="Navegação principal" className="hidden min-w-0 md:block">
+        <nav
+          aria-label="Navegação principal"
+          className="hidden min-w-0 md:block"
+        >
           <ul className="flex min-w-0 gap-0.5 overflow-x-auto pb-1 md:justify-center md:gap-1 md:overflow-visible md:pb-0">
             {navItems.map((item) => (
               <li className="shrink-0" key={item.href}>

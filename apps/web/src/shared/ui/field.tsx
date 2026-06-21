@@ -67,7 +67,11 @@ export function SearchField({
   return (
     <div className="relative">
       {icon}
-      <TextField className={joinClassNames("pl-9", className)} type="search" {...props} />
+      <TextField
+        className={joinClassNames("pl-9", className)}
+        type="search"
+        {...props}
+      />
     </div>
   );
 }

@@ -66,9 +66,9 @@ export function useDeputadoFeedState(
   }) {
     const query = next.query ?? state.query;
     const emAtividade = next.emAtividade ?? state.emAtividade;
-    const uf = next.uf === null ? null : next.uf ?? state.uf;
+    const uf = next.uf === null ? null : (next.uf ?? state.uf);
     const partido =
-      next.partido === null ? null : next.partido ?? state.partido;
+      next.partido === null ? null : (next.partido ?? state.partido);
 
     const page = await fetchFeed(
       PAGE_SIZE,

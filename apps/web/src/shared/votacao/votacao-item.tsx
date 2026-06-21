@@ -65,9 +65,7 @@ export function VotacaoItem({ votacao }: { votacao: VotacaoNominal }) {
         <p className="text-sm text-muted text-pretty">{votacao.descricao}</p>
       ) : null}
       {comparadorLabel ? (
-        <p className="text-xs text-primary font-medium">
-          {comparadorLabel}
-        </p>
+        <p className="text-xs text-primary font-medium">{comparadorLabel}</p>
       ) : null}
     </div>
   );

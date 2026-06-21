@@ -2,7 +2,10 @@ import type { MatcherVotoDetalhe } from "@vota-comigo/shared-types";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { formatShortDate, toIdentificadorLegislativo } from "@/shared/proposicao";
+import {
+  formatShortDate,
+  toIdentificadorLegislativo,
+} from "@/shared/proposicao";
 import { Badge } from "@/shared/ui";
 
 import {
@@ -76,7 +79,11 @@ function MetaItem({
   return (
     <div className="flex min-w-0 items-baseline gap-2">
       <dt className="text-muted">{label}</dt>
-      <dd className={mono ? "font-mono font-medium text-muted" : "font-[650] text-ink"}>
+      <dd
+        className={
+          mono ? "font-mono font-medium text-muted" : "font-[650] text-ink"
+        }
+      >
         {children}
       </dd>
     </div>

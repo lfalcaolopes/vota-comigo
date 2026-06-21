@@ -48,15 +48,15 @@ Os arquivos são gravados em `apps/api/data/raw/` (a pasta fica no `.gitignore`;
 
 A URL segue o padrão `{baseUrl}/{dataset}/csv/{filename}`, com base `https://dadosabertos.camara.leg.br/arquivos`. O caminho local é `data/raw/{dataset}/{filename}`. A janela temporal aplica-se só aos arquivos anuais; os arquivos únicos são baixados sempre (quando não filtrados por `--dataset`).
 
-| Dataset | Tipo | Arquivo | Caminho local |
-|---------|------|---------|---------------|
-| `votacoes` | anual | `votacoes-{ano}.csv` | `data/raw/votacoes/` |
-| `votacoesVotos` | anual | `votacoesVotos-{ano}.csv` | `data/raw/votacoesVotos/` |
+| Dataset               | Tipo  | Arquivo                         | Caminho local                   |
+| --------------------- | ----- | ------------------------------- | ------------------------------- |
+| `votacoes`            | anual | `votacoes-{ano}.csv`            | `data/raw/votacoes/`            |
+| `votacoesVotos`       | anual | `votacoesVotos-{ano}.csv`       | `data/raw/votacoesVotos/`       |
 | `votacoesProposicoes` | anual | `votacoesProposicoes-{ano}.csv` | `data/raw/votacoesProposicoes/` |
-| `proposicoes` | anual | `proposicoes-{ano}.csv` | `data/raw/proposicoes/` |
-| `proposicoesTemas` | anual | `proposicoesTemas-{ano}.csv` | `data/raw/proposicoesTemas/` |
-| `deputados` | único | `deputados.csv` | `data/raw/deputados/` |
-| `legislaturas` | único | `legislaturas.csv` | `data/raw/legislaturas/` |
+| `proposicoes`         | anual | `proposicoes-{ano}.csv`         | `data/raw/proposicoes/`         |
+| `proposicoesTemas`    | anual | `proposicoesTemas-{ano}.csv`    | `data/raw/proposicoesTemas/`    |
+| `deputados`           | único | `deputados.csv`                 | `data/raw/deputados/`           |
+| `legislaturas`        | único | `legislaturas.csv`              | `data/raw/legislaturas/`        |
 
 Subpasta por dataset evita uma pasta plana com centenas de arquivos quando a janela cobre 25 anos. As informações mais atualizadas sobre os arquivos estão em <https://dadosabertos.camara.leg.br/swagger/api.html?tab=staticfile>.
 

@@ -27,6 +27,7 @@ Lista pública, sem necessidade de login, das proposições computáveis pelo ma
 No MVP-1, a rota inicial do produto (`/`) é o próprio feed público. Uma landing page institucional fica fora desse corte para que a primeira tela já entregue a lista de proposições.
 
 **Apresentação em lista:**
+
 - O título público da página é "Proposições"; "Mais votadas" aparece como rótulo do modo de ordenação padrão, não como título da experiência inteira
 - O metadata da página usa "Proposições | Quem Vota Comigo" e descreve a exploração por tema e ordenação, sem limitar a página a "mais votadas"
 - Informações enxutas da proposição: identificador legislativo curto como título (`{siglaTipo} {numero}/{ano}`), ementa como descrição, data de apresentação da proposição e tipo de proposição
@@ -68,6 +69,7 @@ No MVP-1, a rota inicial do produto (`/`) é o próprio feed público. Uma landi
 - Em mobile, o card do feed mantém as mesmas informações do desktop; apenas layout e densidade visual se adaptam ao espaço disponível.
 
 **Detalhe ao clicar:**
+
 - Cada proposição tem URL própria canônica (`/proposicoes/{externalIdProposicao}`) desde o MVP-1, para permitir link compartilhável e meta tags no MVP.
 - A primeira carga da página de detalhe é renderizada no servidor.
 - No MVP-1, o clique no card navega para a rota normal de detalhe; overlay ou modal preservando contexto de lista fica fora desse corte.
@@ -87,6 +89,7 @@ No MVP-1, a rota inicial do produto (`/`) é o próprio feed público. Uma landi
 - Contexto adicional quando disponível (regime de urgência, destaques, etc.)
 
 **Não entra no MVP:**
+
 - Resumo por IA
 - Classificação "quem é afetado"
 - Apelido popular como título ou campo exibido no card
@@ -99,6 +102,7 @@ No MVP-1, a rota inicial do produto (`/`) é o próprio feed público. Uma landi
 Ferramenta de compatibilidade entre usuário e deputados com base nos votos. Framing neutro intencionalmente: serve tanto para decidir voto (missão central) quanto para avaliar representação atual.
 
 **Fluxo:**
+
 1. Usuário clica para iniciar
 2. Informa estado (obrigatório) e cidade (opcional, preparando para cobertura municipal futura)
 3. Sistema apresenta as 5 proposições mais bem posicionadas no ranking público e computáveis pelo matcher, já pré-selecionadas. Usuário pode:
@@ -112,11 +116,13 @@ Ferramenta de compatibilidade entre usuário e deputados com base nos votos. Fra
 5. Resultado: lista ordenada por % de concordância
 
 **Validação de entrada:**
+
 - Mínimo de 3 posições computáveis do usuário (`deveria ser aprovada` ou `não deveria ser aprovada`)
 - Máximo de 30 proposições selecionadas para o matcher, incluindo respostas `não sei`
 - Proposições duplicadas ou não computáveis pelo matcher tornam a execução inválida
 
 **Tratamento de ausências e impedimentos:**
+
 - Deputado em exercício sem registro em `votacoesVotos`: conta como discordância no matcher.
 - Deputado fora de exercício na data da votação: não entra no denominador.
 - Registro `Artigo 17`: não entra no denominador, mesmo tratamento de fora de exercício.
@@ -128,6 +134,7 @@ Quando um deputado não estava em exercício durante a votação de referência 
 Isso cria o problema de amostra desigual (ver abaixo), que precisa ser tratado.
 
 **Ordenação e desempate:**
+
 - Ordenação primária: Score Wilson do matcher, calculado como limite inferior do intervalo de Wilson com `z = 1.96` sobre concordâncias e denominador do matcher
 - A compatibilidade bruta continua exibida ao usuário junto com a amostra comparável
 - Desempate 1: compatibilidade bruta
@@ -159,6 +166,7 @@ Ordenação secundária considera tamanho de amostra entre deputados empatados e
 **Votação de referência:** cada proposição computável pelo matcher usa uma única votação nominal em plenário, escolhida por mérito decisório conforme ADR 0014 e `docs/matcher/votacao-referencia.md`. Destaques, DTQs, requerimentos, recursos, dispensas, preferências, apreciações preliminares e votos de manutenção/supressão de trecho não são usados como votação decisiva de referência.
 
 **Ao clicar no candidato no resultado:**
+
 - % de participação nas votações de referência das proposições selecionadas
 - Indicação de em quais o deputado estava em exercício e em quais não
 - Indicação de ausências sem motivo conhecido
@@ -166,6 +174,7 @@ Ordenação secundária considera tamanho de amostra entre deputados empatados e
 - Detalhamento voto a voto: em quais o usuário concordou, em quais discordou
 
 **Opções de visualização:**
+
 - Default: deputados do estado informado pelo usuário
 - Toggle para expandir a visualização para todos os deputados, caso o usuário queira
 - A expansão para todos os deputados faz nova chamada com o mesmo cálculo e escopo nacional
@@ -194,6 +203,7 @@ O contrato expõe flags explícitas de disponibilidade para evitar inferência p
 A API pública do perfil usa `GET /deputados/{externalIdDeputado}` e retorna o contrato compartilhado do perfil. A rota não recebe filtros no MVP-3.
 
 **Entra no MVP:**
+
 - Dados básicos: identidade cadastral estável vinda de `deputado` e snapshot público atual vindo do último `deputado_historico`
 - Nome, partido atual, UF representada, foto e cargo público "Deputado federal"
   - O nome exibido usa `nomeEleitoral` do snapshot público quando disponível, com fallback para `deputado.nome` e `nomeCivil`
@@ -227,6 +237,7 @@ A API pública do perfil usa `GET /deputados/{externalIdDeputado}` e retorna o c
   - Eventos sem partido resolvido são ignorados; se nenhum evento tiver partido, o bloco informa que o histórico partidário está indisponível na base
 
 **Não entra no MVP:**
+
 - Lista de votos no perfil do deputado
 - Busca ou listagem própria de deputados
 - Website do deputado (`urlWebsite`)
@@ -296,6 +307,7 @@ O MVP-5 implementa apenas a entrada contextual pós-matcher. O comparativo geral
 **Racional:** investimento mínimo (poucas tags HTML por tipo de página) com retorno desproporcional. Link nu no WhatsApp tem taxa de clique muito inferior a link com preview decente.
 
 **Não entra no MVP:**
+
 - Geração dinâmica de imagens de card por conteúdo (por deputado, por resultado de matcher, etc.)
 - Exportação em formato de imagem com marca d'água
 - Compartilhamento em redes sociais específicas
@@ -305,21 +317,25 @@ O MVP-5 implementa apenas a entrada contextual pós-matcher. O comparativo geral
 Armazenamento de dados do matcher desde o dia 1, preparando base para feature "Termômetro de Representatividade" em melhorias futuras.
 
 **O que é armazenado por resposta do matcher:**
+
 - Estado do usuário
 - Lista de proposições selecionadas e a posição do usuário em cada uma ("deveria ser aprovada", "não deveria", "não sei")
 - Timestamp
 
 **O que NÃO é armazenado:**
+
 - IP do usuário
 - Fingerprint de navegador
 - Qualquer identificador persistente que permita reidentificação
 - Nome, email ou qualquer dado pessoal
 
 **Redução de duplicação:**
+
 - Cookie de sessão **não-persistente** (expira quando o navegador é fechado), usado apenas para evitar respostas duplicadas dentro da mesma sessão de uso
 - Duplicação entre sessões diferentes ou dispositivos diferentes é aceita — não é problema grave e qualquer solução mais forte (fingerprint, login obrigatório) introduziria risco LGPD ou atrito no uso
 
 **Conformidade LGPD:**
+
 - Política de privacidade explícita descrevendo o que é coletado e para quê
 - Dados anonimizados por design, sem vínculo possível a pessoa física
 - Agregação estatística como uso final — registros individuais servem apenas para computar agregados

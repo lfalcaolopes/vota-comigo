@@ -24,12 +24,12 @@ export function MetricasGlossario() {
       </summary>
       <dl className="mt-3 grid gap-3 leading-normal text-muted">
         <Definicao termo="Votações comparáveis">
-          Votações em que o deputado registrou um voto que pôde ser comparado à sua
-          posição. É a base do cálculo de compatibilidade.
+          Votações em que o deputado registrou um voto que pôde ser comparado à
+          sua posição. É a base do cálculo de compatibilidade.
         </Definicao>
         <Definicao termo="Compatibilidade">
-          Porcentagem das votações comparáveis em que o voto do deputado coincidiu
-          com a sua posição.
+          Porcentagem das votações comparáveis em que o voto do deputado
+          coincidiu com a sua posição.
         </Definicao>
         <Definicao termo="Cobertura de exercício">
           Votações, entre as que você selecionou, em que o deputado estava em
@@ -40,7 +40,13 @@ export function MetricasGlossario() {
   );
 }
 
-function Definicao({ termo, children }: { termo: string; children: ReactNode }) {
+function Definicao({
+  termo,
+  children,
+}: {
+  termo: string;
+  children: ReactNode;
+}) {
   return (
     <div className="grid gap-0.5">
       <dt className="font-[650] text-ink">{termo}</dt>

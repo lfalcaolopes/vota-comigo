@@ -56,7 +56,12 @@ export function deputadoFeedReducer(
 ): DeputadoFeedState {
   switch (action.type) {
     case "changeQuery":
-      return { ...state, query: action.query, feed: emptyPage, status: "loading" };
+      return {
+        ...state,
+        query: action.query,
+        feed: emptyPage,
+        status: "loading",
+      };
     case "clearSearch":
       return { ...state, query: "", feed: emptyPage, status: "loading" };
     case "toggleEmAtividade":

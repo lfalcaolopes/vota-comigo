@@ -142,7 +142,11 @@ export function StepSelecao({
           <SelecaoResumo selected={selected} onRemove={onToggle} />
 
           <div className="flex flex-wrap items-center gap-3">
-            <Button disabled={!canAdvance} onClick={onAdvance} variant="primary">
+            <Button
+              disabled={!canAdvance}
+              onClick={onAdvance}
+              variant="primary"
+            >
               Declarar posições
             </Button>
             <Button onClick={onBack} variant="secondary">

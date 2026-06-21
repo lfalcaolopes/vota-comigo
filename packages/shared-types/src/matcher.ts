@@ -1,48 +1,48 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 import {
   proposicaoCardSchema,
   votacaoReferenciaResumoSchema,
-} from './proposicoes';
-import { deputadoVotacaoClassification } from './exercicio';
+} from "./proposicoes";
+import { deputadoVotacaoClassification } from "./exercicio";
 
 export const siglaUfEnum = z.enum([
-  'AC',
-  'AL',
-  'AP',
-  'AM',
-  'BA',
-  'CE',
-  'DF',
-  'ES',
-  'GO',
-  'MA',
-  'MT',
-  'MS',
-  'MG',
-  'PA',
-  'PB',
-  'PR',
-  'PE',
-  'PI',
-  'RJ',
-  'RN',
-  'RS',
-  'RO',
-  'RR',
-  'SC',
-  'SP',
-  'SE',
-  'TO',
+  "AC",
+  "AL",
+  "AP",
+  "AM",
+  "BA",
+  "CE",
+  "DF",
+  "ES",
+  "GO",
+  "MA",
+  "MT",
+  "MS",
+  "MG",
+  "PA",
+  "PB",
+  "PR",
+  "PE",
+  "PI",
+  "RJ",
+  "RN",
+  "RS",
+  "RO",
+  "RR",
+  "SC",
+  "SP",
+  "SE",
+  "TO",
 ]);
 
 export const posicaoUsuarioMatcherEnum = z.enum([
-  'aprovar',
-  'rejeitar',
-  'nao_sei',
+  "aprovar",
+  "rejeitar",
+  "nao_sei",
 ]);
 
-export const POSICOES_COMPUTAVEIS = ['aprovar', 'rejeitar'] as const;
+export const POSICOES_COMPUTAVEIS = ["aprovar", "rejeitar"] as const;
 export const posicaoComputavelMatcherEnum = z.enum(POSICOES_COMPUTAVEIS);
 
 export const MAX_POSICOES = 30;
@@ -53,11 +53,11 @@ export const posicaoMatcherSchema = z.object({
   posicao: posicaoUsuarioMatcherEnum,
 });
 
-export const escopoMatcherEnum = z.enum(['estadual', 'nacional']);
+export const escopoMatcherEnum = z.enum(["estadual", "nacional"]);
 
 export const matcherExecucaoRequestSchema = z.object({
   siglaUf: siglaUfEnum,
-  escopo: escopoMatcherEnum.default('estadual'),
+  escopo: escopoMatcherEnum.default("estadual"),
   cidade: z.string().trim().min(1).max(120).optional(),
   posicoes: z
     .array(posicaoMatcherSchema)
@@ -68,8 +68,8 @@ export const matcherExecucaoRequestSchema = z.object({
       posicoes.forEach((posicao, index) => {
         if (seen.has(posicao.externalIdProposicao)) {
           ctx.addIssue({
-            code: 'custom',
-            path: [index, 'externalIdProposicao'],
+            code: "custom",
+            path: [index, "externalIdProposicao"],
             message: `proposicao duplicada: ${posicao.externalIdProposicao}`,
           });
         }
@@ -86,7 +86,7 @@ export const matcherExecucaoResumoSchema = z.object({
   totalPosicoesComputaveis: z.number().int().nonnegative(),
 });
 
-export const alertaMatcherEnum = z.enum(['amostra_pequena']);
+export const alertaMatcherEnum = z.enum(["amostra_pequena"]);
 
 export const matcherDeputadoResumoSchema = z.object({
   externalIdDeputado: z.number().int().positive(),
@@ -113,9 +113,9 @@ export const matcherResultadoSchema = matcherExecucaoResumoSchema.extend({
 });
 
 export const matcherEffectEnum = z.enum([
-  'concordancia',
-  'discordancia',
-  'fora_do_denominador',
+  "concordancia",
+  "discordancia",
+  "fora_do_denominador",
 ]);
 
 export const matcherDetalheMetricsSchema = z.object({

@@ -67,7 +67,8 @@ export function toPeriodoPartidarioLabel(
   const inicio = formatMesAno(periodo.dataInicio);
 
   if (periodo.atual) return `${inicio} – atual`;
-  if (periodo.dataFim !== null) return `${inicio} – ${formatMesAno(periodo.dataFim)}`;
+  if (periodo.dataFim !== null)
+    return `${inicio} – ${formatMesAno(periodo.dataFim)}`;
 
   return inicio;
 }
@@ -127,7 +128,10 @@ const PARTICLES = new Set(["de", "da", "do", "dos", "das", "e"]);
 export function getInitials(nome: string | null): string {
   if (!nome) return "?";
 
-  const words = nome.trim().split(/\s+/).filter((w) => w.length > 0);
+  const words = nome
+    .trim()
+    .split(/\s+/)
+    .filter((w) => w.length > 0);
   const meaningful = words.filter((w) => !PARTICLES.has(w.toLowerCase()));
 
   if (meaningful.length === 0) return "?";

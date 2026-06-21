@@ -45,7 +45,9 @@ export function DeputadoCard({
             aria-label={`Selecionar ${deputado.nome ?? "deputado"} para comparação`}
             checked={comparativoSelection.selected}
             disabled={comparativoSelection.disabled}
-            onChange={() => comparativoSelection.onToggle(deputado.externalIdDeputado)}
+            onChange={() =>
+              comparativoSelection.onToggle(deputado.externalIdDeputado)
+            }
           />
         ) : null}
         <DeputadoAvatar nome={deputado.nome} urlFoto={deputado.urlFoto} />

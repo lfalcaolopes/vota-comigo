@@ -118,15 +118,11 @@ describe("loadComparativoDeputadosData", () => {
       expect(getDeputadoPerfil).toHaveBeenNthCalledWith(1, 20);
       expect(getDeputadoPerfil).toHaveBeenNthCalledWith(2, 10);
       expect(getDeputadoPerfil).toHaveBeenNthCalledWith(3, 30);
-      expect(data.detalhes.map((item) => item.deputado.externalIdDeputado)).toEqual([
-        20,
-        10,
-        30,
-      ]);
+      expect(
+        data.detalhes.map((item) => item.deputado.externalIdDeputado),
+      ).toEqual([20, 10, 30]);
       expect(data.perfis.map((item) => item.externalIdDeputado)).toEqual([
-        20,
-        10,
-        30,
+        20, 10, 30,
       ]);
     });
   });

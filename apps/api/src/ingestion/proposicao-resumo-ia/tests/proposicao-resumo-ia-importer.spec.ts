@@ -239,7 +239,7 @@ describe('importProposicaoResumoIaJson', () => {
   });
 
   describe('when the annual JSON is invalid', () => {
-    it('rejects texto above the card limit', async () => {
+    it('rejects unknown generationStatus', async () => {
       // Arrange
       const repository = fakeRepository(new Map([[42, 'proposicao-uuid']]));
       const json = {
@@ -247,9 +247,9 @@ describe('importProposicaoResumoIaJson', () => {
         items: {
           '42': {
             sourceHash: 'hash-atual',
-            generationStatus: 'generated',
+            generationStatus: 'queued',
             reviewStatus: 'approved',
-            resumoCard: 'x'.repeat(181),
+            resumoCard: 'Resumo aprovado.',
             resumoDetalhe: 'Resumo detalhado aprovado.',
           },
         },

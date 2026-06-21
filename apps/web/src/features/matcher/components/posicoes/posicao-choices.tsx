@@ -42,7 +42,10 @@ export function PosicaoChoices({
 
   // Arrows move focus only; selecting commits the answer and advances the
   // step, so selection must not follow focus the way a default radiogroup does.
-  function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+  function handleKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) {
     if (event.key === "ArrowDown" || event.key === "ArrowRight") {
       event.preventDefault();
       focusAt(index + 1);
@@ -53,7 +56,11 @@ export function PosicaoChoices({
   }
 
   return (
-    <div aria-labelledby={labelledBy} className="grid grid-cols-2 gap-3" role="radiogroup">
+    <div
+      aria-labelledby={labelledBy}
+      className="grid grid-cols-2 gap-3"
+      role="radiogroup"
+    >
       {OPTIONS.map((option, index) => {
         const checked = option.posicao === value;
 

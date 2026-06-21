@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const deputadoSnapshotPublicoSchema = z.object({
   nomeEleitoral: z.string().nullable(),
@@ -43,21 +43,24 @@ export const deputadoPerfilSchema = z
     historicoPartidario: z.array(deputadoPeriodoPartidarioSchema),
   })
   .superRefine((perfil, ctx) => {
-    if (perfil.snapshotPublicoDisponivel === (perfil.snapshotPublico === null)) {
+    if (
+      perfil.snapshotPublicoDisponivel ===
+      (perfil.snapshotPublico === null)
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ['snapshotPublico'],
+        path: ["snapshotPublico"],
         message:
-          'snapshotPublicoDisponivel deve coincidir com a presença de snapshotPublico',
+          "snapshotPublicoDisponivel deve coincidir com a presença de snapshotPublico",
       });
     }
 
     if (perfil.resumoPresencaDisponivel === (perfil.resumoPresenca === null)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ['resumoPresenca'],
+        path: ["resumoPresenca"],
         message:
-          'resumoPresencaDisponivel deve coincidir com a presença de resumoPresenca',
+          "resumoPresencaDisponivel deve coincidir com a presença de resumoPresenca",
       });
     }
 
@@ -67,9 +70,9 @@ export const deputadoPerfilSchema = z
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ['historicoPartidario'],
+        path: ["historicoPartidario"],
         message:
-          'historicoPartidarioDisponivel deve coincidir com a presença de períodos partidários',
+          "historicoPartidarioDisponivel deve coincidir com a presença de períodos partidários",
       });
     }
 
@@ -81,9 +84,9 @@ export const deputadoPerfilSchema = z
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ['historicoParlamentarDisponivel'],
+        path: ["historicoParlamentarDisponivel"],
         message:
-          'sem histórico parlamentar, snapshot, presença e histórico partidário devem estar indisponíveis',
+          "sem histórico parlamentar, snapshot, presença e histórico partidário devem estar indisponíveis",
       });
     }
   });
@@ -121,13 +124,23 @@ export const partidosDisponiveisResponseSchema = z.object({
   items: z.array(partidoDisponivelSchema),
 });
 
-export type DeputadoSnapshotPublico = z.infer<typeof deputadoSnapshotPublicoSchema>;
-export type DeputadoResumoPresenca = z.infer<typeof deputadoResumoPresencaSchema>;
-export type DeputadoPeriodoPartidario = z.infer<typeof deputadoPeriodoPartidarioSchema>;
+export type DeputadoSnapshotPublico = z.infer<
+  typeof deputadoSnapshotPublicoSchema
+>;
+export type DeputadoResumoPresenca = z.infer<
+  typeof deputadoResumoPresencaSchema
+>;
+export type DeputadoPeriodoPartidario = z.infer<
+  typeof deputadoPeriodoPartidarioSchema
+>;
 export type DeputadoPerfil = z.infer<typeof deputadoPerfilSchema>;
 export type DeputadoCard = z.infer<typeof deputadoCardSchema>;
 export type DeputadosFeedResponse = z.infer<typeof deputadoFeedResponseSchema>;
 export type UfDisponivel = z.infer<typeof ufDisponivelSchema>;
-export type UfsDisponiveisResponse = z.infer<typeof ufsDisponiveisResponseSchema>;
+export type UfsDisponiveisResponse = z.infer<
+  typeof ufsDisponiveisResponseSchema
+>;
 export type PartidoDisponivel = z.infer<typeof partidoDisponivelSchema>;
-export type PartidosDisponiveisResponse = z.infer<typeof partidosDisponiveisResponseSchema>;
+export type PartidosDisponiveisResponse = z.infer<
+  typeof partidosDisponiveisResponseSchema
+>;

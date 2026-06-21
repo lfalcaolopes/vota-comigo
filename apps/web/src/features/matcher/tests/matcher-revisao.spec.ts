@@ -4,10 +4,7 @@ import type {
 } from "@vota-comigo/shared-types";
 import { describe, expect, it } from "vitest";
 
-import {
-  buildRevisaoItems,
-  posicaoLabel,
-} from "../lib/matcher-revisao";
+import { buildRevisaoItems, posicaoLabel } from "../lib/matcher-revisao";
 
 function makeCard(id: number): ProposicaoCard {
   return {
@@ -119,7 +116,9 @@ describe("buildRevisaoItems", () => {
       const items = buildRevisaoItems(cards, posicoes);
 
       // Assert
-      expect(items.map((i) => i.card.externalIdProposicao)).toEqual([10, 20, 30]);
+      expect(items.map((i) => i.card.externalIdProposicao)).toEqual([
+        10, 20, 30,
+      ]);
       expect(items[0].posicao).toBe("aprovar");
       expect(items[1].posicao).toBe("rejeitar");
       expect(items[2].posicao).toBeNull();

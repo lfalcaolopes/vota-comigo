@@ -11,7 +11,10 @@ type FeedOrdenacaoControlProps = {
   onChange: (value: FeedOrdenacao) => void;
 };
 
-export function FeedOrdenacaoControl({ value, onChange }: FeedOrdenacaoControlProps) {
+export function FeedOrdenacaoControl({
+  value,
+  onChange,
+}: FeedOrdenacaoControlProps) {
   return (
     <SegmentedControl
       activeId={value}

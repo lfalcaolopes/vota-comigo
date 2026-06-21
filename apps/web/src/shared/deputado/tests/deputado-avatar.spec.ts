@@ -4,7 +4,11 @@ import { describe, expect, it } from "vitest";
 
 import { DeputadoAvatar } from "../deputado-avatar";
 
-function render(props: { nome: string | null; urlFoto: string | null; size?: "sm" | "lg" }): string {
+function render(props: {
+  nome: string | null;
+  urlFoto: string | null;
+  size?: "sm" | "lg";
+}): string {
   return renderToStaticMarkup(createElement(DeputadoAvatar, props));
 }
 
@@ -85,7 +89,11 @@ describe("DeputadoAvatar", () => {
   describe("when size is lg", () => {
     it("scales down on small viewports and up on larger ones", () => {
       // Arrange / Act
-      const html = render({ nome: "Maria da Silva", urlFoto: null, size: "lg" });
+      const html = render({
+        nome: "Maria da Silva",
+        urlFoto: null,
+        size: "lg",
+      });
 
       // Assert
       expect(html).toContain("size-14");

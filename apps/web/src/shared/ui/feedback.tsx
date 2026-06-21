@@ -131,11 +131,7 @@ export function ErrorState({
 }) {
   return (
     <div className="grid gap-4">
-      <InlineMessage
-        body={body}
-        title={title}
-        tone="danger"
-      />
+      <InlineMessage body={body} title={title} tone="danger" />
       <Button
         className="justify-self-start"
         onClick={onRetry}

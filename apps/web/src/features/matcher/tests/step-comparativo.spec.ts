@@ -153,11 +153,10 @@ function render(props: {
       deputados: props.deputados ?? [deputado(20), deputado(10)],
       detalhes: props.detalhes ?? [],
       perfis: props.perfis ?? [perfil(20), perfil(10)],
-      posicoes:
-        props.posicoes ?? [
-          { externalIdProposicao: 1, posicao: "aprovar" },
-          { externalIdProposicao: 2, posicao: "rejeitar" },
-        ],
+      posicoes: props.posicoes ?? [
+        { externalIdProposicao: 1, posicao: "aprovar" },
+        { externalIdProposicao: 2, posicao: "rejeitar" },
+      ],
       status: props.status ?? "idle",
       onBack: vi.fn(),
       onRetry: vi.fn(),

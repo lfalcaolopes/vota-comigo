@@ -202,7 +202,13 @@ describe("feedReducer", () => {
 
     it("preserves query and ordenacao", () => {
       // Arrange
-      const state = initFeedState(firstPage, 50, "mais-recentes", null, "saúde");
+      const state = initFeedState(
+        firstPage,
+        50,
+        "mais-recentes",
+        null,
+        "saúde",
+      );
 
       // Act
       const next = feedReducer(state, { type: "changeTema", tema: 37 });
@@ -447,7 +453,10 @@ describe("feedDisplay", () => {
     it("shows error", () => {
       // Arrange
       const state = feedReducer(
-        feedReducer(initFeedState([], 0), { type: "changeQuery", query: "xyz" }),
+        feedReducer(initFeedState([], 0), {
+          type: "changeQuery",
+          query: "xyz",
+        }),
         { type: "loadError" },
       );
 

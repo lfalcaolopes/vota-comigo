@@ -1,4 +1,7 @@
-import type { AlertaMatcher, MatcherDeputadoResumo } from "@vota-comigo/shared-types";
+import type {
+  AlertaMatcher,
+  MatcherDeputadoResumo,
+} from "@vota-comigo/shared-types";
 
 export {
   getInitials,

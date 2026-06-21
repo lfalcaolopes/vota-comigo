@@ -1,38 +1,38 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const votacaoReferenciaPattern = z.enum([
-  'pec_segundo_turno',
-  'medida_provisoria',
-  'projeto_de_lei',
-  'projeto_decreto_legislativo',
-  'projeto_resolucao',
-  'substitutivo_ou_subemenda_substitutiva',
-  'pec_generica',
-  'emendas_senado_federal',
-  'pec_primeiro_turno',
-  'recall_turno_cascata',
-  'redacao_final',
+  "pec_segundo_turno",
+  "medida_provisoria",
+  "projeto_de_lei",
+  "projeto_decreto_legislativo",
+  "projeto_resolucao",
+  "substitutivo_ou_subemenda_substitutiva",
+  "pec_generica",
+  "emendas_senado_federal",
+  "pec_primeiro_turno",
+  "recall_turno_cascata",
+  "redacao_final",
 ]);
 
 export const resultadoVotacao = z.enum([
-  'aprovada',
-  'rejeitada',
-  'indisponivel',
+  "aprovada",
+  "rejeitada",
+  "indisponivel",
 ]);
 
-export const feedOrdenacao = z.enum(['mais-votadas', 'mais-recentes']);
+export const feedOrdenacao = z.enum(["mais-votadas", "mais-recentes"]);
 
 export const proposicaoResumoIaGenerationStatus = z.enum([
-  'generated',
-  'insufficient_source',
-  'error',
+  "generated",
+  "insufficient_source",
+  "error",
 ]);
 
 export const proposicaoResumoIaReviewStatus = z.enum([
-  'pending',
-  'approved',
-  'rejected',
-  'stale',
+  "pending",
+  "approved",
+  "rejected",
+  "stale",
 ]);
 
 export const votacaoReferenciaResumoSchema = z.object({
@@ -66,7 +66,7 @@ export const proposicaoCardSchema = z.object({
   dataUltimaVotacao: z.string().nullable(),
 });
 
-export const placarVotacaoSchema = z.discriminatedUnion('placarCompleto', [
+export const placarVotacaoSchema = z.discriminatedUnion("placarCompleto", [
   z.object({
     placarCompleto: z.literal(true),
     votosSim: z.number(),
@@ -155,5 +155,9 @@ export type VotacaoNominal = z.infer<typeof votacaoNominalSchema>;
 export type TemaOficial = z.infer<typeof temaOficialSchema>;
 export type ProposicaoDetalhe = z.infer<typeof proposicaoDetalheSchema>;
 export type TemaDisponivel = z.infer<typeof temaDisponivelSchema>;
-export type TemasDisponiveisResponse = z.infer<typeof temasDisponiveisResponseSchema>;
-export type ProposicoesFeedResponse = z.infer<typeof proposicoesFeedResponseSchema>;
+export type TemasDisponiveisResponse = z.infer<
+  typeof temasDisponiveisResponseSchema
+>;
+export type ProposicoesFeedResponse = z.infer<
+  typeof proposicoesFeedResponseSchema
+>;

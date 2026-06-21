@@ -18,9 +18,9 @@ export default function SobrePage() {
             Compare suas posições com votos reais da Câmara.
           </h1>
           <p className="text-base leading-normal text-muted">
-            O Quem Vota Comigo ajuda cidadãos a entender como deputados
-            federais votaram em proposições nominais e como esse histórico se
-            aproxima das posições declaradas por você.
+            O Quem Vota Comigo ajuda cidadãos a entender como deputados federais
+            votaram em proposições nominais e como esse histórico se aproxima
+            das posições declaradas por você.
           </p>
         </header>
 
@@ -28,9 +28,9 @@ export default function SobrePage() {
           <div className="grid gap-3 leading-normal text-muted">
             <p>
               A comparação usa votações nominais da Câmara dos Deputados,
-              proposições computáveis pelo matcher e dados públicos de
-              deputados federais. O resultado mostra compatibilidade, amostra e
-              presença para evitar que um percentual apareça sem contexto.
+              proposições computáveis pelo matcher e dados públicos de deputados
+              federais. O resultado mostra compatibilidade, amostra e presença
+              para evitar que um percentual apareça sem contexto.
             </p>
             <p>
               O produto não recomenda voto nem classifica parlamentares como
@@ -55,7 +55,11 @@ export default function SobrePage() {
           </div>
         </Panel>
 
-        <ButtonLink className="justify-self-start" href="/matcher" variant="primary">
+        <ButtonLink
+          className="justify-self-start"
+          href="/matcher"
+          variant="primary"
+        >
           Fazer comparação
         </ButtonLink>
       </div>

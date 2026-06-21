@@ -1,12 +1,12 @@
 ## Naming and documentation conventions
 
-Naming follows `docs/adr/007-convencoes-naming-documentacao.md` — consult it before creating any identifier or documentation file. ADR 007 is the authority; nothing you see elsewhere overrides it. Operational docs, ADR prose, SQL queries (e.g. `docs/matcher/votacao-referencia.md`), and source field aliases are references for *behavior*, not naming — a column alias or a term in prose never justifies an identifier. Re-derive from the rule each time instead of copying existing usage as precedent. When in doubt, a word is generic (English) unless it's a domain term you can point to in `CONTEXT.md`.
+Naming follows `docs/adr/007-convencoes-naming-documentacao.md` — consult it before creating any identifier or documentation file. ADR 007 is the authority; nothing you see elsewhere overrides it. Operational docs, ADR prose, SQL queries (e.g. `docs/matcher/votacao-referencia.md`), and source field aliases are references for _behavior_, not naming — a column alias or a term in prose never justifies an identifier. Re-derive from the rule each time instead of copying existing usage as precedent. When in doubt, a word is generic (English) unless it's a domain term you can point to in `CONTEXT.md`.
 
-Source fields from `dadosabertos.camara.leg.br` (API and CSVs, both Portuguese) are a separate case: when *referencing* a field, preserve its original spelling as-is (`siglaOrgao`, `codTipo`, `idDeputado`, `idProposicao`, `idUltimaLegislatura`) — never translate or "normalize". Naming an identifier of your own still follows ADR 007.
+Source fields from `dadosabertos.camara.leg.br` (API and CSVs, both Portuguese) are a separate case: when _referencing_ a field, preserve its original spelling as-is (`siglaOrgao`, `codTipo`, `idDeputado`, `idProposicao`, `idUltimaLegislatura`) — never translate or "normalize". Naming an identifier of your own still follows ADR 007.
 
 ## Code comments
 
-Default to no comments — one exists only to explain a non-obvious *why* (a surprising decision, a constraint, a workaround), in one line; no docstrings that restate a type or signature. AAA section markers in tests are the exception and stay.
+Default to no comments — one exists only to explain a non-obvious _why_ (a surprising decision, a constraint, a workaround), in one line; no docstrings that restate a type or signature. AAA section markers in tests are the exception and stay.
 
 ## Shared types and contracts
 

@@ -119,7 +119,9 @@ describe("ProposicaoDetalhe", () => {
 
       // Assert
       expect(html).toContain("Resumo por IA");
-      expect(html).toContain("Resumo detalhado aprovado em linguagem acessível.");
+      expect(html).toContain(
+        "Resumo detalhado aprovado em linguagem acessível.",
+      );
     });
 
     it("does not render an empty IA resumo section when unavailable", () => {

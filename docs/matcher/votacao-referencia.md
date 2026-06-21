@@ -81,14 +81,14 @@ coalesce(
 
 A votação candidata recebe `prioridade_votacao_referencia` conforme a primeira regra que casar:
 
-| Prioridade | Padrão |
-| ---: | --- |
-| 6 | PEC em segundo turno |
-| 5 | Mérito principal por `descricao`: medida provisória, projeto de lei, projeto de decreto legislativo, projeto de resolução, substitutivo, subemenda substitutiva ou PEC genérica |
-| 4 | Emendas do Senado Federal |
-| 3 | PEC em primeiro turno |
-| 2 | Recall por turno da regra em cascata, desde que a descrição não seja fragmentária nem redação final |
-| 1 | Redação final |
+| Prioridade | Padrão                                                                                                                                                                          |
+| ---------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|          6 | PEC em segundo turno                                                                                                                                                            |
+|          5 | Mérito principal por `descricao`: medida provisória, projeto de lei, projeto de decreto legislativo, projeto de resolução, substitutivo, subemenda substitutiva ou PEC genérica |
+|          4 | Emendas do Senado Federal                                                                                                                                                       |
+|          3 | PEC em primeiro turno                                                                                                                                                           |
+|          2 | Recall por turno da regra em cascata, desde que a descrição não seja fragmentária nem redação final                                                                             |
+|          1 | Redação final                                                                                                                                                                   |
 
 Votação sem prioridade é descartada como candidata. Proposição sem nenhuma candidata fica sem votação de referência e não é computável pelo matcher.
 
@@ -357,29 +357,29 @@ Na reanálise `uniao-v2`, com a base local usada em junho de 2026:
 
 Distribuição por prioridade e padrão:
 
-| Prioridade | Padrão | Referências |
-| ---: | --- | ---: |
-| 6 | `pec_segundo_turno` | 39 |
-| 5 | `substitutivo_ou_subemenda_substitutiva` | 189 |
-| 5 | `projeto_de_lei` | 61 |
-| 5 | `medida_provisoria` | 42 |
-| 5 | `projeto_decreto_legislativo` | 19 |
-| 5 | `pec_generica` | 2 |
-| 5 | `projeto_resolucao` | 1 |
-| 4 | `emendas_senado_federal` | 8 |
-| 2 | `recall_turno_cascata` | 14 |
+| Prioridade | Padrão                                   | Referências |
+| ---------: | ---------------------------------------- | ----------: |
+|          6 | `pec_segundo_turno`                      |          39 |
+|          5 | `substitutivo_ou_subemenda_substitutiva` |         189 |
+|          5 | `projeto_de_lei`                         |          61 |
+|          5 | `medida_provisoria`                      |          42 |
+|          5 | `projeto_decreto_legislativo`            |          19 |
+|          5 | `pec_generica`                           |           2 |
+|          5 | `projeto_resolucao`                      |           1 |
+|          4 | `emendas_senado_federal`                 |           8 |
+|          2 | `recall_turno_cascata`                   |          14 |
 
 Validação positiva que deve continuar com referência:
 
-| Proposição | Votação escolhida | Padrão | Placar |
-| --- | --- | --- | --- |
-| MPV 1300/2025 | `2515300-38` | `medida_provisoria` | 423 x 36 |
-| MPV 1301/2025 | `2519886-34` | `medida_provisoria` | 403 x 6 |
-| PL 1707/2024 | `2432423-88` | `substitutivo_ou_subemenda_substitutiva` | 278 x 110 |
-| PL 7906/2014 | `622019-73` | `projeto_de_lei` | 204 x 128 |
-| PL 327/2021 | `2269745-144` | `emendas_senado_federal` | 448 x 14 |
-| PL 3626/2023 | `2374400-110` | `emendas_senado_federal` | 292 x 114 |
-| PL 914/2024 | `2422697-129` | `emendas_senado_federal` | 380 x 26 |
+| Proposição    | Votação escolhida | Padrão                                   | Placar    |
+| ------------- | ----------------- | ---------------------------------------- | --------- |
+| MPV 1300/2025 | `2515300-38`      | `medida_provisoria`                      | 423 x 36  |
+| MPV 1301/2025 | `2519886-34`      | `medida_provisoria`                      | 403 x 6   |
+| PL 1707/2024  | `2432423-88`      | `substitutivo_ou_subemenda_substitutiva` | 278 x 110 |
+| PL 7906/2014  | `622019-73`       | `projeto_de_lei`                         | 204 x 128 |
+| PL 327/2021   | `2269745-144`     | `emendas_senado_federal`                 | 448 x 14  |
+| PL 3626/2023  | `2374400-110`     | `emendas_senado_federal`                 | 292 x 114 |
+| PL 914/2024   | `2422697-129`     | `emendas_senado_federal`                 | 380 x 26  |
 
 Validação negativa que deve continuar sem referência:
 

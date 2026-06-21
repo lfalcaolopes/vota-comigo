@@ -1,0 +1,17 @@
+node_modules
+dist
+.next
+.turbo
+
+.agents
+.claude
+.codex
+.personal-docs
+
+apps/api/coverage
+apps/api/data
+apps/api/src/shared/database/migrations/meta
+apps/web/src/app/api/resumos-ia
+apps/web/src/app/resumos-ia
+csv
+pnpm-lock.yaml

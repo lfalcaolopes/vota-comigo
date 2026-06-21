@@ -90,7 +90,10 @@ export function StepRevisao({
       </ul>
 
       {!canRun && faltamRespostas > 0 ? (
-        <p className="rounded-md border border-border bg-surface-muted px-4 py-3 text-sm text-muted" role="status">
+        <p
+          className="rounded-md border border-border bg-surface-muted px-4 py-3 text-sm text-muted"
+          role="status"
+        >
           Para ver o resultado, responda Sim, Não ou Não sei em todas as
           proposições selecionadas. Faltam{" "}
           <strong className="font-[720] text-ink">{faltamRespostas}</strong>.
@@ -98,10 +101,13 @@ export function StepRevisao({
       ) : null}
 
       {!canRun && faltamRespostas === 0 && faltamComputaveis > 0 ? (
-        <p className="rounded-md border border-border bg-surface-muted px-4 py-3 text-sm text-muted" role="status">
-          Respostas marcadas como Não sei ficam fora do cálculo. Para ver o resultado,
-          responda Sim ou Não em pelo menos {MIN_POSICOES_COMPUTAVEIS}{" "}
-          proposições. Faltam{" "}
+        <p
+          className="rounded-md border border-border bg-surface-muted px-4 py-3 text-sm text-muted"
+          role="status"
+        >
+          Respostas marcadas como Não sei ficam fora do cálculo. Para ver o
+          resultado, responda Sim ou Não em pelo menos{" "}
+          {MIN_POSICOES_COMPUTAVEIS} proposições. Faltam{" "}
           <strong className="font-[720] text-ink">{faltamComputaveis}</strong>.
         </p>
       ) : null}

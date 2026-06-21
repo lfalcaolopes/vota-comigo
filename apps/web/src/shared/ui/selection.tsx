@@ -121,7 +121,11 @@ export function SegmentedControl({
   onSelect,
 }: SegmentedControlProps) {
   return (
-    <div aria-label={label} className={joinClassNames(tabBar, className)} role="group">
+    <div
+      aria-label={label}
+      className={joinClassNames(tabBar, className)}
+      role="group"
+    >
       {items.map((item) => (
         <button
           aria-pressed={item.id === activeId}
@@ -148,7 +152,10 @@ type ChoiceProps = InputHTMLAttributes<HTMLInputElement> & {
 
 const choice = "inline-flex items-center gap-2 text-sm font-semibold text-ink";
 
-type CheckboxControlProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {
+type CheckboxControlProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "type"
+> & {
   controlClassName?: string;
 };
 
@@ -163,7 +170,10 @@ export function CheckboxControl({
   return (
     <span className={joinClassNames("inline-flex size-5 shrink-0", className)}>
       <input className="peer sr-only" type="checkbox" {...props} />
-      <span aria-hidden="true" className={joinClassNames(checkboxControl, controlClassName)}>
+      <span
+        aria-hidden="true"
+        className={joinClassNames(checkboxControl, controlClassName)}
+      >
         <svg
           className="size-3.5 opacity-0 transition-opacity duration-[180ms] ease-standard"
           fill="none"

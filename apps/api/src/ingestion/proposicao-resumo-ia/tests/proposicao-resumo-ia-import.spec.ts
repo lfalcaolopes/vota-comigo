@@ -139,7 +139,7 @@ describe('executeProposicaoResumoIaImport', () => {
             return JSON.stringify({
               ano: 2024,
               items: {
-                '42': item({ resumoCard: 'x'.repeat(181) }),
+                '42': item({ generationStatus: 'queued' }),
               },
             });
           },

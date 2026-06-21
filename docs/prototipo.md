@@ -109,15 +109,15 @@ O endpoint retorna uma lista de eventos ordenados cronologicamente, cada um com 
 
 ### Valores de `situacao` mapeados
 
-| Valor | Significado | Efeito no intervalo |
-| --- | --- | --- |
-| `"Exercício"` | Deputado em atividade, pode votar | Abre intervalo |
-| `"Suplência"` | Suplente afastado (titular retornou) | Fecha intervalo |
-| `"Licença"` | Titular licenciado (ministro, saúde, interesse particular) | Fecha intervalo |
-| `"Fim de Mandato"` | Término da legislatura | Fecha intervalo |
-| `"Vacância"` | Fim de legislatura (dados legados, legislaturas antigas) | Fecha intervalo |
-| `"Convocado"` | Etapa processual, aguardando posse | Ignorar |
-| `null` | Registro-âncora pré-posse | Ignorar |
+| Valor              | Significado                                                | Efeito no intervalo |
+| ------------------ | ---------------------------------------------------------- | ------------------- |
+| `"Exercício"`      | Deputado em atividade, pode votar                          | Abre intervalo      |
+| `"Suplência"`      | Suplente afastado (titular retornou)                       | Fecha intervalo     |
+| `"Licença"`        | Titular licenciado (ministro, saúde, interesse particular) | Fecha intervalo     |
+| `"Fim de Mandato"` | Término da legislatura                                     | Fecha intervalo     |
+| `"Vacância"`       | Fim de legislatura (dados legados, legislaturas antigas)   | Fecha intervalo     |
+| `"Convocado"`      | Etapa processual, aguardando posse                         | Ignorar             |
+| `null`             | Registro-âncora pré-posse                                  | Ignorar             |
 
 ### Informações encontradas durante análise
 
@@ -143,7 +143,7 @@ Três perfis foram analisados para cobrir os padrões principais:
 
 - **Mudanças de partido** geram registros com `situacao = "Exercício"` e `descricaoStatus = "Alteração de partido"`, com `siglaPartido` já atualizado. Permite saber a qual partido o deputado pertencia no momento de cada votação.
 - **Motivo do afastamento** é extraível da `descricaoStatus` nas saídas: "Ministro de Estado", "Afastamento de Suplente (automático)", "Licença para tratar de interesse particular", "LTS" (licença saúde). Útil para explicar períodos fora de exercício no perfil do deputado; não distingue justificativa de ausência em votações individuais.
- 
+
 ---
 
 ## Fontes de dados

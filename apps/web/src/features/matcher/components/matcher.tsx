@@ -42,7 +42,11 @@ const STEP_DESCRIPTIONS: Record<MatcherStep, string> = {
     "Compare os deputados selecionados usando as mesmas proposições e posições que geraram o resultado.",
 };
 
-export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProps) {
+export function Matcher({
+  initialProposicoes,
+  initialTotal,
+  temas,
+}: MatcherProps) {
   const matcher = useMatcherState(initialProposicoes);
   const { state } = matcher;
   const comparativoPosicoes =
@@ -157,7 +161,9 @@ export function Matcher({ initialProposicoes, initialTotal, temas }: MatcherProp
                 onBack={() => matcher.goToStep("posicoes")}
                 onEscopoChange={matcher.setEscopo}
                 onLoadMore={matcher.loadMore}
-                onCancelComparativoSelection={matcher.cancelComparativoSelection}
+                onCancelComparativoSelection={
+                  matcher.cancelComparativoSelection
+                }
                 onOpenComparativo={matcher.openComparativo}
                 onOpenDetalhe={matcher.openDetalhe}
                 onRetry={matcher.execute}

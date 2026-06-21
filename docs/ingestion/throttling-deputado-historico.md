@@ -133,12 +133,12 @@ Itens ainda **desconhecidos**:
 
 Mantidos:
 
-| Mecanismo | Arquivo | Efeito |
-|-----------|---------|--------|
-| Upsert em lotes (`UPSERT_CHUNK_SIZE = 1000`) | `deputado-historico.repository.ts` | Corrige o stack overflow; não relacionado ao throttling |
+| Mecanismo                                                | Arquivo                                                               | Efeito                                                                                                                                  |
+| -------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Upsert em lotes (`UPSERT_CHUNK_SIZE = 1000`)             | `deputado-historico.repository.ts`                                    | Corrige o stack overflow; não relacionado ao throttling                                                                                 |
 | Diagnóstico de falha (`kind` + cabeçalhos de rate-limit) | `shared/camara-api-transport.ts`, `shared/camara-historico-client.ts` | Distingue timeout do cliente (`kind: 'timeout'`) de `503` real do servidor; loga `Retry-After`/`X-RateLimit-Remaining` quando existirem |
-| Timeout configurável, default 50s | `shared/camara-api-transport.ts` | Evita lacunas por abortar respostas lentas-porém-válidas |
-| Linha de debug do write em lote | `deputado-historico.step.ts` | Loga `gravando N eventos no banco em lotes` antes do upsert |
+| Timeout configurável, default 50s                        | `shared/camara-api-transport.ts`                                      | Evita lacunas por abortar respostas lentas-porém-válidas                                                                                |
+| Linha de debug do write em lote                          | `deputado-historico.step.ts`                                          | Loga `gravando N eventos no banco em lotes` antes do upsert                                                                             |
 
 Revertidos em 2026-06-01 (não ajudaram, e a estratégia de checkpoint os torna
 desnecessários — ver doc relacionado):
@@ -181,12 +181,12 @@ Limitações para um checkpoint de verdade:
 
 ## Estratégias de mitigação consideradas
 
-| Estratégia | Estado |
-|-----------|--------|
+| Estratégia                                                                                                                                                             | Estado                                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | Checkpoint robusto: persistência incremental (gravar por deputado/lote durante a busca) + modo `--resume` que pula deputados que já têm linhas em `deputado_historico` | **Proposto, não implementado** — torna o cancelamento seguro e evita rebuscar trabalho feito |
-| Burst-and-sleep: cooldown longo (ex.: 5 min) para o balde recarregar, depois nova rajada | **Não testado** — é o experimento decisivo pendente |
-| Taxa sustentada baixa: concorrência 1 + pacing explícito (ex.: ~1 req/s) para nunca disparar o limite | **Não testado de forma conclusiva** (concorrência 3 ainda bateu no limite) |
-| Tornar timeout/cooldown/concorrência configuráveis por CLI | **Proposto, não implementado** — permite experimentar sem recompilar |
+| Burst-and-sleep: cooldown longo (ex.: 5 min) para o balde recarregar, depois nova rajada                                                                               | **Não testado** — é o experimento decisivo pendente                                          |
+| Taxa sustentada baixa: concorrência 1 + pacing explícito (ex.: ~1 req/s) para nunca disparar o limite                                                                  | **Não testado de forma conclusiva** (concorrência 3 ainda bateu no limite)                   |
+| Tornar timeout/cooldown/concorrência configuráveis por CLI                                                                                                             | **Proposto, não implementado** — permite experimentar sem recompilar                         |
 
 ## Próximo passo decisivo
 

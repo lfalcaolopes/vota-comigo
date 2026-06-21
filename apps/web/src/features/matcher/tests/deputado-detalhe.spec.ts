@@ -56,7 +56,10 @@ function resumo(): MatcherDeputadoResumo {
   };
 }
 
-function perfil(externalIdDeputado: number, nomePublico: string): DeputadoPerfil {
+function perfil(
+  externalIdDeputado: number,
+  nomePublico: string,
+): DeputadoPerfil {
   return {
     externalIdDeputado,
     nomePublico,
@@ -290,7 +293,9 @@ describe("StepComparativo", () => {
       );
 
       // Assert
-      expect(html.indexOf("Deputada B")).toBeLessThan(html.indexOf("Deputado A"));
+      expect(html.indexOf("Deputada B")).toBeLessThan(
+        html.indexOf("Deputado A"),
+      );
       expect(html).toContain("Voltar ao resultado");
     });
   });

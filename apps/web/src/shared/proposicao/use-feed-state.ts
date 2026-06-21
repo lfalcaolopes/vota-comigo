@@ -39,7 +39,7 @@ export type UseFeedState = {
 export function useFeedState(
   initialItems: ProposicaoCard[],
   initialTotal: number,
-  initialOrdenacao: FeedOrdenacao = 'mais-votadas',
+  initialOrdenacao: FeedOrdenacao = "mais-votadas",
   initialTema: number | null = null,
   initialQuery = "",
 ): UseFeedState {

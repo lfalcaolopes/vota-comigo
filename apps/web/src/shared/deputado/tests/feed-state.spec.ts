@@ -128,9 +128,12 @@ describe("deputadoFeedReducer", () => {
   describe("when loadMoreSuccess is dispatched", () => {
     it("appends the new page", () => {
       // Arrange
-      const loading = deputadoFeedReducer(initDeputadoFeedState(firstPage, 50), {
-        type: "loadMoreStart",
-      });
+      const loading = deputadoFeedReducer(
+        initDeputadoFeedState(firstPage, 50),
+        {
+          type: "loadMoreStart",
+        },
+      );
 
       // Act
       const next = deputadoFeedReducer(loading, {

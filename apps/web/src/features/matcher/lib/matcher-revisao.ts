@@ -1,6 +1,4 @@
-import {
-  POSICOES_COMPUTAVEIS,
-} from "@vota-comigo/shared-types";
+import { POSICOES_COMPUTAVEIS } from "@vota-comigo/shared-types";
 import type {
   PosicaoUsuarioMatcher,
   ProposicaoCard,

@@ -33,7 +33,10 @@ export default function MetodologiaPage() {
                 fonte e mostra links para consulta quando há detalhe público
                 disponível.
               </p>
-              <SourceLink href="https://dadosabertos.camara.leg.br/" target="_blank">
+              <SourceLink
+                href="https://dadosabertos.camara.leg.br/"
+                target="_blank"
+              >
                 Dados Abertos da Câmara dos Deputados
               </SourceLink>
             </div>
