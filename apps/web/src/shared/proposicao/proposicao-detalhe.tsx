@@ -65,16 +65,33 @@ function ResumoIa({ proposicao }: { proposicao: ProposicaoDetalheData }) {
     return null;
   }
 
+  const bullets = parseResumoBullets(proposicao.resumoIaDetalhe);
+
   return (
     <section className="grid gap-2">
       <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
         Resumo por IA
       </h2>
-      <p className="text-base leading-relaxed text-pretty text-muted">
-        {proposicao.resumoIaDetalhe}
-      </p>
+      {bullets.length > 1 ? (
+        <ul className="grid list-disc gap-1 pl-5 text-base leading-relaxed text-pretty text-muted">
+          {bullets.map((bullet, index) => (
+            <li key={index}>{bullet}</li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-base leading-relaxed text-pretty text-muted">
+          {proposicao.resumoIaDetalhe}
+        </p>
+      )}
     </section>
   );
+}
+
+function parseResumoBullets(detalhe: string): string[] {
+  return detalhe
+    .split("\n")
+    .map((line) => line.trim().replace(/^-\s+/, ""))
+    .filter((line) => line.length > 0);
 }
 
 function Metadados({
