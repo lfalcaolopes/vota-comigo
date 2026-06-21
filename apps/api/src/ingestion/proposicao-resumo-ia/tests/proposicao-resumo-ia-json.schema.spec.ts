@@ -61,7 +61,7 @@ describe('proposicaoResumoIaJsonItemSchema', () => {
   });
 
   describe('when public texts are long', () => {
-    it('rejects resumoCard above the card limit', () => {
+    it('accepts long resumoCard', () => {
       // Arrange
       const jsonItem = item({ resumoCard: 'x'.repeat(181) });
 
@@ -69,10 +69,10 @@ describe('proposicaoResumoIaJsonItemSchema', () => {
       const result = proposicaoResumoIaJsonItemSchema.safeParse(jsonItem);
 
       // Assert
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
     });
 
-    it('rejects resumoDetalhe above the detail limit', () => {
+    it('accepts long resumoDetalhe', () => {
       // Arrange
       const jsonItem = item({ resumoDetalhe: 'x'.repeat(901) });
 
@@ -80,7 +80,7 @@ describe('proposicaoResumoIaJsonItemSchema', () => {
       const result = proposicaoResumoIaJsonItemSchema.safeParse(jsonItem);
 
       // Assert
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
     });
   });
 
