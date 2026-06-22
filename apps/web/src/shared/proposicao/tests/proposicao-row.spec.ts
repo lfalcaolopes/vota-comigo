@@ -44,6 +44,20 @@ describe("ProposicaoRow", () => {
       expect(html).not.toContain("Ementa oficial da Câmara.");
     });
 
+    it("tags the resumo with a visible IA badge", () => {
+      // Arrange
+      const proposicao = card({
+        resumoIaDisponivel: true,
+        resumoIaCard: "Resumo curto aprovado.",
+      });
+
+      // Act
+      const html = render(proposicao);
+
+      // Assert
+      expect(html).toContain("Resumo por IA");
+    });
+
     it("keeps the ementa fallback when the resumo is unavailable", () => {
       // Arrange
       const proposicao = card({
@@ -57,6 +71,20 @@ describe("ProposicaoRow", () => {
       // Assert
       expect(html).toContain("Ementa oficial da Câmara.");
       expect(html).not.toContain("Resumo curto aprovado.");
+    });
+
+    it("does not tag the official ementa fallback with the IA badge", () => {
+      // Arrange
+      const proposicao = card({
+        resumoIaDisponivel: false,
+        resumoIaCard: null,
+      });
+
+      // Act
+      const html = render(proposicao);
+
+      // Assert
+      expect(html).not.toContain("Resumo por IA");
     });
   });
 });

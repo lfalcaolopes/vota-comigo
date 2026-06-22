@@ -5,6 +5,7 @@ import {
   formatDateWithRelativeTime,
   formatRelativeDate,
   formatShortDate,
+  isResumoIaCard,
   maxIsoDate,
   toAnoApresentacao,
   toIdentificadorLegislativo,
@@ -254,6 +255,47 @@ describe("toTextoResumo", () => {
 
       // Act / Assert
       expect(toTextoResumo(card)).toBeNull();
+    });
+  });
+});
+
+describe("isResumoIaCard", () => {
+  describe("when the AI resumo is available", () => {
+    it("is true", () => {
+      // Arrange
+      const card = makeCard({
+        resumoIaDisponivel: true,
+        resumoIaCard: "Resumo curto aprovado.",
+      });
+
+      // Act / Assert
+      expect(isResumoIaCard(card)).toBe(true);
+    });
+  });
+
+  describe("when the flag is set but the card text is missing", () => {
+    it("is false", () => {
+      // Arrange
+      const card = makeCard({
+        resumoIaDisponivel: true,
+        resumoIaCard: null,
+      });
+
+      // Act / Assert
+      expect(isResumoIaCard(card)).toBe(false);
+    });
+  });
+
+  describe("when the AI resumo is unavailable", () => {
+    it("is false", () => {
+      // Arrange
+      const card = makeCard({
+        resumoIaDisponivel: false,
+        resumoIaCard: "Resumo curto aprovado.",
+      });
+
+      // Act / Assert
+      expect(isResumoIaCard(card)).toBe(false);
     });
   });
 });

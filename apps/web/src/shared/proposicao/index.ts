@@ -16,6 +16,7 @@ export {
   formatDateWithRelativeTime,
   formatRelativeDate,
   formatShortDate,
+  isResumoIaCard,
   maxIsoDate,
   toAnoApresentacao,
   toIdentificadorLegislativo,

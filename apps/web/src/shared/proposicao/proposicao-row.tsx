@@ -2,8 +2,10 @@ import type { ProposicaoCard } from "@vota-comigo/shared-types";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { Badge, SparklesIcon } from "../ui";
 import {
   formatShortDate,
+  isResumoIaCard,
   toAnoApresentacao,
   toIdentificadorLegislativo,
   toTextoResumo,
@@ -42,12 +44,25 @@ function ProposicaoRowContent({ card }: { card: ProposicaoCard }) {
   const ultimaVotacao = formatShortDate(card.dataUltimaVotacao);
   const anoApresentacao = toAnoApresentacao(card);
   const textoResumo = toTextoResumo(card);
+  const resumoIa = isResumoIaCard(card);
 
   return (
     <>
-      <p className="font-mono text-sm font-[650] tracking-[-0.01em] text-ink">
-        {identificador ?? "Sem identificador"}
-      </p>
+      <div className="flex items-center justify-between gap-3">
+        <p className="font-mono text-sm font-[650] tracking-[-0.01em] text-ink">
+          {identificador ?? "Sem identificador"}
+        </p>
+
+        {resumoIa ? (
+          <Badge className="shrink-0" tone="neutral">
+            <SparklesIcon
+              aria-hidden="true"
+              className="size-3.5 shrink-0 text-primary"
+            />
+            Resumo por IA
+          </Badge>
+        ) : null}
+      </div>
 
       {textoResumo ? (
         <p className="line-clamp-2 text-base leading-snug text-pretty text-muted">

@@ -86,12 +86,16 @@ export function maxIsoDate(values: readonly (string | null)[]): string | null {
   }, null);
 }
 
+export function isResumoIaCard(
+  card: Pick<ProposicaoCard, "resumoIaDisponivel" | "resumoIaCard">,
+): boolean {
+  return Boolean(card.resumoIaDisponivel && card.resumoIaCard);
+}
+
 export function toTextoResumo(
   card: Pick<ProposicaoCard, "resumoIaDisponivel" | "resumoIaCard" | "ementa">,
 ): string | null {
-  return card.resumoIaDisponivel && card.resumoIaCard
-    ? card.resumoIaCard
-    : card.ementa;
+  return isResumoIaCard(card) ? card.resumoIaCard : card.ementa;
 }
 
 export function toAnoApresentacao(

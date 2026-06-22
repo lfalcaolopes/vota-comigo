@@ -4,6 +4,7 @@ import type {
   TemaOficial,
 } from "@vota-comigo/shared-types";
 
+import { SparklesIcon } from "../ui";
 import { Votacoes } from "../votacao/votacoes";
 import {
   formatDateWithRelativeTime,
@@ -76,7 +77,7 @@ function ResumoIa({ proposicao }: { proposicao: ProposicaoDetalheData }) {
   return (
     <section className="grid gap-3 rounded-lg border border-border bg-surface p-5">
       <h2 className="flex items-center gap-2 text-xs font-medium tracking-wide text-subtle uppercase">
-        <SparklesIcon />
+        <SparklesIcon aria-hidden="true" />
         Resumo por IA
       </h2>
       {bullets.length > 1 ? (
@@ -120,30 +121,6 @@ function EmentaOficial({
         {ementa}
       </p>
     </section>
-  );
-}
-
-function SparklesIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="size-4 shrink-0 text-primary"
-      fill="none"
-      viewBox="0 0 20 20"
-    >
-      <path
-        d="M8.5 2.5c.6 3.4 2.6 5.4 6 6-3.4.6-5.4 2.6-6 6-.6-3.4-2.6-5.4-6-6 3.4-.6 5.4-2.6 6-6Z"
-        stroke="currentColor"
-        strokeLinejoin="round"
-        strokeWidth="1.6"
-      />
-      <path
-        d="M15.5 11.5c.25 1.4 1.1 2.25 2.5 2.5-1.4.25-2.25 1.1-2.5 2.5-.25-1.4-1.1-2.25-2.5-2.5 1.4-.25 2.25-1.1 2.5-2.5Z"
-        stroke="currentColor"
-        strokeLinejoin="round"
-        strokeWidth="1.6"
-      />
-    </svg>
   );
 }
 
