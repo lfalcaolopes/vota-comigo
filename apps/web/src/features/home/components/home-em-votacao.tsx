@@ -1,10 +1,20 @@
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
 import Link from "next/link";
+import { Suspense } from "react";
 
-import { ProposicaoRow } from "@/shared/proposicao";
-import { Badge, SparklesIcon } from "@/shared/ui";
+import { ProposicaoRow, feed } from "@/shared/proposicao";
+import { Badge, SkeletonRows, SparklesIcon } from "@/shared/ui";
 
-export function HomeEmVotacao({ proposicoes }: { proposicoes: ProposicaoCard[] }) {
+async function loadDestaques(): Promise<ProposicaoCard[]> {
+  try {
+    const { items } = await feed(3, 0);
+    return items;
+  } catch {
+    return [];
+  }
+}
+
+export function HomeEmVotacao() {
   return (
     <section aria-labelledby="home-em-votacao" className="border-b border-border">
       <div className="mx-auto grid w-full min-w-0 max-w-5xl gap-6 px-4 py-12 md:py-16">
@@ -43,29 +53,49 @@ export function HomeEmVotacao({ proposicoes }: { proposicoes: ProposicaoCard[] }
           </span>
         </p>
 
-        {proposicoes.length > 0 ? (
-          <div className="grid min-w-0 border-t border-border">
-            {proposicoes.map((card) => (
-              <ProposicaoRow
-                card={card}
-                href={`/proposicoes/${card.externalIdProposicao}`}
-                key={card.externalIdProposicao}
-              />
-            ))}
-          </div>
-        ) : (
-          <p className="border-t border-border pt-6 text-base leading-normal text-muted">
-            Nenhuma proposição computável para exibir agora.{" "}
-            <Link
-              className="font-[650] text-primary underline-offset-2 hover:underline"
-              href="/proposicoes"
-            >
-              Abrir a lista completa
-            </Link>
-            .
-          </p>
-        )}
+        <Suspense fallback={<DestaquesSkeleton />}>
+          <DestaquesRows />
+        </Suspense>
       </div>
     </section>
+  );
+}
+
+async function DestaquesRows() {
+  const proposicoes = await loadDestaques();
+
+  if (proposicoes.length === 0) {
+    return (
+      <p className="border-t border-border pt-6 text-base leading-normal text-muted">
+        Nenhuma proposição computável para exibir agora.{" "}
+        <Link
+          className="font-[650] text-primary underline-offset-2 hover:underline"
+          href="/proposicoes"
+        >
+          Abrir a lista completa
+        </Link>
+        .
+      </p>
+    );
+  }
+
+  return (
+    <div className="grid min-w-0 border-t border-border">
+      {proposicoes.map((card) => (
+        <ProposicaoRow
+          card={card}
+          href={`/proposicoes/${card.externalIdProposicao}`}
+          key={card.externalIdProposicao}
+        />
+      ))}
+    </div>
+  );
+}
+
+function DestaquesSkeleton() {
+  return (
+    <div className="grid min-w-0 border-t border-border pt-1">
+      <SkeletonRows count={3} />
+    </div>
   );
 }

@@ -17,12 +17,9 @@ export function HomeCta() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex flex-col sm:flex-row">
           <ButtonLink className="sm:w-auto" href="/matcher" variant="primary">
             Fazer comparação
-          </ButtonLink>
-          <ButtonLink className="sm:w-auto" href="/metodologia" variant="ghost">
-            Entenda o método
           </ButtonLink>
         </div>
       </div>

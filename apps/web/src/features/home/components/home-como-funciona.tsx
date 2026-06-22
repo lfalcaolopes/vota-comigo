@@ -9,7 +9,7 @@ const passos: Passo[] = [
     numero: "01",
     titulo: "Declare suas posições",
     descricao:
-      "Você responde se concorda ou discorda das proposições mais votadas, resumidas em linguagem comum.",
+      "Você responde se concorda ou discorda de proposições já votadas na Câmara, resumidas em linguagem comum.",
   },
   {
     numero: "02",
@@ -27,7 +27,10 @@ const passos: Passo[] = [
 
 export function HomeComoFunciona() {
   return (
-    <section aria-labelledby="home-como-funciona" className="border-b border-border">
+    <section
+      aria-labelledby="home-como-funciona"
+      className="border-b border-border bg-surface-muted"
+    >
       <div className="mx-auto grid w-full min-w-0 max-w-5xl gap-8 px-4 py-12 md:py-16">
         <div className="grid max-w-[60ch] gap-3">
           <h2

@@ -35,8 +35,8 @@ const groups: FooterGroup[] = [
 export function AppFooter() {
   return (
     <footer className="border-t border-border bg-surface-muted text-ink">
-      <div className="mx-auto grid w-full min-w-0 max-w-295 gap-10 px-4 py-12 md:py-14">
-        <div className="grid gap-10 md:grid-cols-[1fr_auto] md:gap-16">
+      <div className="mx-auto grid w-full min-w-0 max-w-295 gap-10 px-4 py-12 md:grid-cols-[1fr_auto] md:gap-16 md:py-14">
+        <div className="flex flex-col justify-between" >
           <div className="grid max-w-[40ch] content-start gap-3">
             <Link
               aria-label="Ir para o início"
@@ -49,32 +49,9 @@ export function AppFooter() {
               </span>
             </Link>
             <p className="text-sm leading-normal text-muted">
-              Transparência baseada em votos reais da Câmara dos Deputados.
+              Projeto independente, sem vínculo com a Câmara dos Deputados.
             </p>
           </div>
-
-          <div className="grid grid-cols-2 gap-8 sm:gap-16">
-            {groups.map((group) => (
-              <nav aria-label={group.title} key={group.title}>
-                <p className="text-xs font-[680] text-subtle">{group.title}</p>
-                <ul className="mt-3 grid gap-2.5">
-                  {group.links.map((link) => (
-                    <li key={link.href}>
-                      <Link
-                        className="text-sm font-[600] text-muted underline-offset-2 transition-colors duration-[180ms] ease-standard hover:text-ink hover:underline"
-                        href={link.href}
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-3 border-t border-border pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
           <SourceLink
             href="https://dadosabertos.camara.leg.br/"
             rel="noreferrer"
@@ -82,9 +59,26 @@ export function AppFooter() {
           >
             Dados Abertos da Câmara dos Deputados
           </SourceLink>
-          <p className="max-w-[44ch] leading-normal text-subtle">
-            Projeto independente, sem vínculo com a Câmara dos Deputados.
-          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-8 sm:gap-16">
+          {groups.map((group) => (
+            <nav aria-label={group.title} key={group.title}>
+              <p className="text-xs font-[680] text-subtle">{group.title}</p>
+              <ul className="mt-3 grid gap-2.5">
+                {group.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      className="text-sm font-[600] text-muted underline-offset-2 transition-colors duration-[180ms] ease-standard hover:text-ink hover:underline"
+                      href={link.href}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
         </div>
       </div>
     </footer>
