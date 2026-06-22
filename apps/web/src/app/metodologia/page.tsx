@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { ButtonLink, Panel, SourceLink } from "@/shared/ui";
+import { Panel, SourceLink } from "@/shared/ui";
 
 export const metadata: Metadata = {
   title: "Metodologia | Quem Vota Comigo",
@@ -15,26 +15,27 @@ export default function MetodologiaPage() {
         <header className="grid max-w-[68ch] gap-4">
           <p className="text-sm font-[650] text-primary">Metodologia</p>
           <h1 className="text-3xl leading-tight font-[720] tracking-[-0.02em] text-balance text-ink">
-            Compatibilidade precisa vir acompanhada de método.
+            A compatibilidade vem do voto real do deputado.
           </h1>
           <p className="text-base leading-normal text-muted">
-            O matcher compara posições declaradas com votos nominais de
-            deputados federais. A leitura correta depende de amostra, presença e
-            casos excluídos do denominador.
+            O matcher compara a sua opinião sobre cada proposição com o voto que
+            o deputado registrou no plenário. Ler bem o resultado depende de
+            saber o que entra na conta e o que fica de fora.
           </p>
         </header>
 
         <div className="grid gap-4">
-          <Panel title="Fonte dos dados">
+          <Panel title="De onde vêm os dados">
             <div className="grid gap-3 leading-normal text-muted">
               <p>
-                A base vem dos Dados Abertos da Câmara dos Deputados. O produto
-                preserva identificadores oficiais quando referencia campos da
-                fonte e mostra links para consulta quando há detalhe público
-                disponível.
+                Tudo vem dos Dados Abertos da Câmara dos Deputados. Cada
+                proposição e cada votação mantém o número oficial da Câmara,
+                então você pode conferir qualquer item na fonte, com link para a
+                consulta pública sempre que ela tem o detalhe disponível.
               </p>
               <SourceLink
                 href="https://dadosabertos.camara.leg.br/"
+                rel="noopener noreferrer"
                 target="_blank"
               >
                 Dados Abertos da Câmara dos Deputados
@@ -42,40 +43,78 @@ export default function MetodologiaPage() {
             </div>
           </Panel>
 
-          <Panel title="Como a comparação é lida">
+          <Panel title="O que entra na base">
             <div className="grid gap-3 leading-normal text-muted">
               <p>
-                Para cada proposição selecionada, sua posição é comparada com o
-                voto registrado do deputado quando a votação é computável. A
-                compatibilidade considera apenas os casos em que há posição do
-                usuário e voto comparável.
+                Consideramos apenas a Câmara dos Deputados e apenas votações
+                nominais de plenário, aquelas em que o voto de cada deputado fica
+                registrado. Votações de comissão ficam de fora, porque lá só os
+                membros votam e a comparação ficaria distorcida; votações por
+                aclamação também, porque não registram voto individual.
               </p>
               <p>
-                Ausências, obstruções, votações sem correspondência e deputados
-                sem histórico suficiente reduzem a amostra. Por isso, o
-                resultado precisa ser lido junto do total de itens comparados.
+                O voto individual dos deputados está disponível a partir de 2001,
+                início da legislatura 51. Quem não tem comportamento de voto
+                documentado nesse período não entra na base.
               </p>
             </div>
           </Panel>
 
-          <Panel title="Neutralidade">
+          <Panel title="Como a compatibilidade é calculada">
             <div className="grid gap-3 leading-normal text-muted">
               <p>
-                O produto não usa partido como atalho para compatibilidade e não
-                promove candidato. O objetivo é tornar o comportamento em
-                votação mais verificável, com linguagem comum e fonte pública.
+                Para cada proposição, você responde se ela deveria ser aprovada:
+                Sim, Não ou Não sei. A resposta Sim concorda com o voto sim do
+                deputado, e a resposta Não concorda com o voto não, não importa
+                se a proposição foi aprovada ou rejeitada no fim. Não sei é
+                desconsiderado.
+                Uma comparação usa de 3 a 30 proposições, com pelo menos 3
+                respostas válidas.
+              </p>
+              <p>
+                Abstenção e obstrução (quando o deputado participa da votação,
+                mas não vota sim nem não) contam como discordância, e o voto
+                real continua aparecendo na tela. A ausência de quem estava em
+                exercício também conta como discordância: a fonte não distingue
+                falta justificada de injustificada, e premiar a ausência
+                contradiz a ideia de cobrar o comportamento real. Também ficam
+                de fora da conta as votações de quem não estava em exercício na
+                data, por licença, suplência inativa ou fim de mandato, e os
+                registros de impedimento regimental que a Câmara marca como
+                Artigo 17.
+              </p>
+            </div>
+          </Panel>
+
+          <Panel title="Qual votação representa cada proposição">
+            <div className="grid gap-3 leading-normal text-muted">
+              <p>
+                Uma proposição costuma passar por várias votações. O matcher
+                escolhe a que decide o mérito (o texto-base, o substitutivo ou
+                a medida provisória) e ignora requerimentos, destaques,
+                preliminares e redação final, que não representam sozinhos a
+                decisão de fundo.
+              </p>
+            </div>
+          </Panel>
+
+          <Panel title="Como ler o resultado">
+            <div className="grid gap-3 leading-normal text-muted">
+              <p>
+                O percentual deve ser lido junto da amostra comparável: quantas
+                das suas respostas puderam de fato ser comparadas com aquele
+                deputado. Uma compatibilidade alta sobre poucas votações diz
+                menos do que uma compatibilidade parecida sobre muitas.
+              </p>
+              <p>
+                Por isso a ordem do ranking não usa só o percentual bruto. Ela
+                usa o limite inferior do intervalo de Wilson, que evita que um
+                100% obtido em pouquíssimas votações apareça acima de um
+                resultado com amostra maior e mais confiável.
               </p>
             </div>
           </Panel>
         </div>
-
-        <ButtonLink
-          className="justify-self-start"
-          href="/proposicoes"
-          variant="secondary"
-        >
-          Ver proposições
-        </ButtonLink>
       </div>
     </main>
   );
