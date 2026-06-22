@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import { AppHeader } from "@/shared/navigation";
+import { AppFooter, AppHeader } from "@/shared/navigation";
 
 import "./globals.css";
 
@@ -37,6 +37,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <AppHeader />
         {children}
+        <AppFooter />
       </body>
     </html>
   );

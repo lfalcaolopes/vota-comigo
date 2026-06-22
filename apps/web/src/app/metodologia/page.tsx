@@ -69,7 +69,11 @@ export default function MetodologiaPage() {
           </Panel>
         </div>
 
-        <ButtonLink className="justify-self-start" href="/" variant="secondary">
+        <ButtonLink
+          className="justify-self-start"
+          href="/proposicoes"
+          variant="secondary"
+        >
           Ver proposições
         </ButtonLink>
       </div>
