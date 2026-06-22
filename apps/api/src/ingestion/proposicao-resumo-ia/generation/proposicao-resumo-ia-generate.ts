@@ -139,6 +139,7 @@ export async function executeProposicaoResumoIaGenerate(
       sources: filteredSources,
       files: inputFiles,
       regenerate: config.regenerate,
+      onlyStale: config.onlyStale,
     });
     const skipped = filteredSources.length - targets.length;
 

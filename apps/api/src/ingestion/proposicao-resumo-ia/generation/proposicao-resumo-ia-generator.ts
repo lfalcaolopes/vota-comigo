@@ -20,8 +20,9 @@ export function selectProposicaoResumoIaGenerationTargets(input: {
   sources: readonly ProposicaoResumoIaSource[];
   files: readonly ProposicaoResumoIaJson[];
   regenerate: boolean;
+  onlyStale?: boolean;
 }): readonly ProposicaoResumoIaSource[] {
-  const { sources, files, regenerate } = input;
+  const { sources, files, regenerate, onlyStale = false } = input;
 
   if (regenerate) {
     return sources.filter((src) => src.ano !== null);
@@ -41,6 +42,9 @@ export function selectProposicaoResumoIaGenerationTargets(input: {
     if (src.ano === null) return false;
     const key = `${src.ano}:${String(src.externalIdProposicao)}`;
     const existing = existingItems.get(key);
+    if (onlyStale) {
+      return existing?.reviewStatus === 'stale';
+    }
     if (existing === undefined) return true;
     return existing.generationStatus === 'error';
   });

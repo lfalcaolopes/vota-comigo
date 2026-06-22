@@ -14,6 +14,7 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
           limit: undefined,
           externalIdProposicao: undefined,
           regenerate: false,
+          onlyStale: false,
         },
       });
     });
@@ -114,6 +115,50 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
     });
   });
 
+  describe('with --only-stale', () => {
+    it('sets onlyStale to true', () => {
+      // Act
+      const result = resolveProposicaoResumoIaGenerateConfig(['--only-stale']);
+
+      // Assert
+      expect(result).toMatchObject({ ok: true, config: { onlyStale: true } });
+    });
+
+    it('defaults onlyStale to false when absent', () => {
+      // Act
+      const result = resolveProposicaoResumoIaGenerateConfig(['--year=2023']);
+
+      // Assert
+      expect(result).toMatchObject({ ok: true, config: { onlyStale: false } });
+    });
+
+    it('combines with other filters', () => {
+      // Act
+      const result = resolveProposicaoResumoIaGenerateConfig([
+        '--year=2023',
+        '--external-id-proposicao=42',
+        '--only-stale',
+      ]);
+
+      // Assert
+      expect(result).toMatchObject({
+        ok: true,
+        config: { year: 2023, externalIdProposicao: 42, onlyStale: true },
+      });
+    });
+
+    it('returns error when combined with --regenerate', () => {
+      // Act
+      const result = resolveProposicaoResumoIaGenerateConfig([
+        '--only-stale',
+        '--regenerate',
+      ]);
+
+      // Assert
+      expect(result.ok).toBe(false);
+    });
+  });
+
   describe('with combined flags', () => {
     it('parses all flags together', () => {
       // Act
@@ -132,6 +177,7 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
           limit: 5,
           externalIdProposicao: 99,
           regenerate: true,
+          onlyStale: false,
         },
       });
     });

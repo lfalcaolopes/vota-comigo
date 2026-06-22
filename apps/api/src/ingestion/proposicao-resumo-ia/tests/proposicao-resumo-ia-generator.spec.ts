@@ -208,6 +208,93 @@ describe('selectProposicaoResumoIaGenerationTargets', () => {
     });
   });
 
+  describe('only-stale mode (onlyStale: true)', () => {
+    it('includes source when existing item has reviewStatus stale', () => {
+      // Arrange
+      const src = source();
+      const files = [
+        annualFile({
+          ano: 2024,
+          items: {
+            '42': jsonItem({
+              generationStatus: 'generated',
+              reviewStatus: 'stale',
+            }),
+          },
+        }),
+      ];
+
+      // Act
+      const targets = selectProposicaoResumoIaGenerationTargets({
+        sources: [src],
+        files,
+        regenerate: false,
+        onlyStale: true,
+      });
+
+      // Assert
+      expect(targets).toContain(src);
+    });
+
+    it.each(['approved', 'rejected', 'pending'] as const)(
+      'skips source when existing item has non-stale reviewStatus %s',
+      (reviewStatus) => {
+        // Arrange
+        const src = source();
+        const files = [
+          annualFile({
+            ano: 2024,
+            items: { '42': jsonItem({ reviewStatus }) },
+          }),
+        ];
+
+        // Act
+        const targets = selectProposicaoResumoIaGenerationTargets({
+          sources: [src],
+          files,
+          regenerate: false,
+          onlyStale: true,
+        });
+
+        // Assert
+        expect(targets).not.toContain(src);
+      },
+    );
+
+    it('skips source when no item exists in its year file', () => {
+      // Arrange
+      const src = source();
+      const files = [annualFile({ ano: 2024, items: {} })];
+
+      // Act
+      const targets = selectProposicaoResumoIaGenerationTargets({
+        sources: [src],
+        files,
+        regenerate: false,
+        onlyStale: true,
+      });
+
+      // Assert
+      expect(targets).not.toContain(src);
+    });
+
+    it('skips source with null ano', () => {
+      // Arrange
+      const src = source({ ano: null });
+
+      // Act
+      const targets = selectProposicaoResumoIaGenerationTargets({
+        sources: [src],
+        files: [],
+        regenerate: false,
+        onlyStale: true,
+      });
+
+      // Assert
+      expect(targets).not.toContain(src);
+    });
+  });
+
   describe('regenerate mode (regenerate: true)', () => {
     it('includes all sources regardless of existing generationStatus', () => {
       // Arrange

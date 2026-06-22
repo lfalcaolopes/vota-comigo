@@ -3,6 +3,7 @@ export type ProposicaoResumoIaGenerateConfig = {
   limit?: number;
   externalIdProposicao?: number;
   regenerate: boolean;
+  onlyStale: boolean;
 };
 
 export type ProposicaoResumoIaGenerateConfigResolution =
@@ -13,6 +14,14 @@ export function resolveProposicaoResumoIaGenerateConfig(
   args: readonly string[],
 ): ProposicaoResumoIaGenerateConfigResolution {
   const regenerate = args.includes('--regenerate');
+  const onlyStale = args.includes('--only-stale');
+
+  if (regenerate && onlyStale) {
+    return {
+      ok: false,
+      message: '--only-stale e --regenerate não podem ser usados juntos.',
+    };
+  }
 
   const year = parseYear(getStringArg(args, '--year'));
   if (!year.ok) return year;
@@ -33,6 +42,7 @@ export function resolveProposicaoResumoIaGenerateConfig(
       limit: limit.value,
       externalIdProposicao: externalIdProposicao.value,
       regenerate,
+      onlyStale,
     },
   };
 }

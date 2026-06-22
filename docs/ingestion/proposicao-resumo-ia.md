@@ -142,10 +142,13 @@ O cliente chama `https://openrouter.ai/api/v1/chat/completions` com `response_fo
 | `--limit=n`                  | Processa apenas os primeiros `n` alvos após ordenação e filtros.        |
 | `--external-id-proposicao=n` | Processa apenas uma proposição específica.                              |
 | `--regenerate`               | Regera todos os alvos filtrados com ano, inclusive itens já existentes. |
+| `--only-stale`               | Regera apenas itens cujo `reviewStatus` atual é `stale`.                |
 
 Sem `--regenerate`, a geração cria itens ausentes e tenta novamente apenas itens com `generationStatus = error`. Itens existentes com `generationStatus` diferente de `error` são preservados, independentemente de `reviewStatus`.
 
 `--regenerate` sobrescreve o item no JSON e volta `reviewStatus` para `pending`, inclusive para resumos já aprovados. Use apenas quando a intenção for descartar a revisão anterior daquele recorte.
+
+`--only-stale` restringe os alvos aos itens já marcados como `stale` pela reconciliação e os regera, sobrescrevendo o texto e voltando `reviewStatus` para `pending`. Itens ausentes, `error` ou em qualquer outro `reviewStatus` são ignorados. Combina com `--year`, `--limit` e `--external-id-proposicao`, mas não pode ser usado junto de `--regenerate`.
 
 ### Saídas
 
@@ -178,6 +181,20 @@ pnpm --filter api import:resumos-ia -- \
   data/generated/proposicao-resumos/2024.json \
   data/generated/proposicao-resumos/2025.json
 ```
+
+Para importar todos os anos de uma vez sem listar arquivo por arquivo, deixe o shell expandir um glob. O script resolve cada caminho a partir de `apps/api`, mas o glob é expandido pelo shell a partir da raiz do repositório, então passe um caminho absoluto para que os dois lados coincidam:
+
+```bash
+pnpm --filter api import:resumos-ia -- "$(pwd)"/apps/api/data/generated/proposicao-resumos/*.json
+```
+
+Como alternativa, rode de dentro de `apps/api`, onde o caminho relativo funciona porque o cwd do shell e o do processo coincidem:
+
+```bash
+cd apps/api && pnpm --filter api import:resumos-ia -- data/generated/proposicao-resumos/*.json
+```
+
+Um `externalIdProposicao` ausente no banco continua abortando o conjunto inteiro com exit code `1`, listando as proposições não encontradas.
 
 O importador valida o schema do JSON, resolve cada `externalIdProposicao` para a linha atual de `proposicao` e faz upsert em `proposicao_resumo_ia` por `proposicao_id`. O upsert atualiza `imported_at` para `now()`.
 
@@ -287,6 +304,19 @@ OPENROUTER_API_KEY=... OPENROUTER_MODEL=... \
 
 Depois revise o item e importe o arquivo anual correspondente.
 
+### Regerar todos os itens stale
+
+Depois que a reconciliação marca itens como `stale`, regere todos de uma vez com `--only-stale`, sem precisar saber quais anos foram afetados:
+
+```bash
+OPENROUTER_API_KEY=... OPENROUTER_MODEL=... \
+  pnpm --filter api generate:resumos-ia -- --only-stale
+
+# revisar e aprovar os itens regerados
+
+pnpm --filter api import:resumos-ia -- "$(pwd)"/apps/api/data/generated/proposicao-resumos/*.json
+```
+
 ### Após reingestão completa
 
 ```bash
@@ -294,10 +324,10 @@ pnpm --filter api reconcile:resumos-ia
 
 # revisar pendentes e stale quando necessário
 
-pnpm --filter api import:resumos-ia -- data/generated/proposicao-resumos/2025.json
+pnpm --filter api import:resumos-ia -- "$(pwd)"/apps/api/data/generated/proposicao-resumos/*.json
 ```
 
-Se a reconciliação marcar itens como `stale`, eles deixam de aparecer publicamente após a importação. Para publicá-los novamente, regenere os itens afetados, revise o novo texto, aprove e importe de novo.
+Se a reconciliação marcar itens como `stale`, eles deixam de aparecer publicamente após a importação. Para republicá-los, use o fluxo [Regerar todos os itens stale](#regerar-todos-os-itens-stale): regere com `--only-stale`, revise os novos textos, aprove e importe de novo.
 
 ---
 
