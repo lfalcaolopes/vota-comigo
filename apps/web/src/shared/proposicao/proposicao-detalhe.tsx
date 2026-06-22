@@ -18,44 +18,50 @@ export function ProposicaoDetalhe({
   proposicao: ProposicaoDetalheData;
 }) {
   const identificador = toIdentificadorLegislativo(proposicao);
+  const temResumoIa = Boolean(
+    proposicao.resumoIaDisponivel && proposicao.resumoIaDetalhe,
+  );
 
   return (
-    <div className="grid gap-8">
-      <header className="grid gap-3">
-        <p className="font-mono text-sm font-[650] tracking-[-0.01em] text-subtle">
-          {identificador ?? "Sem identificador"}
-        </p>
-        {proposicao.ementa ? (
-          <h1 className="text-xl leading-snug text-pretty text-ink md:text-2xl">
-            {proposicao.ementa}
+    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start lg:gap-12">
+      <div className="grid min-w-0 gap-8">
+        <header>
+          <h1 className="font-mono text-base font-[650] tracking-[-0.01em] text-ink md:text-lg">
+            {identificador ?? "Sem identificador"}
           </h1>
+        </header>
+
+        {temResumoIa ? <ResumoIa proposicao={proposicao} /> : null}
+
+        {proposicao.ementa ? (
+          <EmentaOficial ementa={proposicao.ementa} prominent={!temResumoIa} />
         ) : null}
-      </header>
 
-      <ResumoIa proposicao={proposicao} />
+        {proposicao.ementaDetalhada ? (
+          <section className="grid gap-2">
+            <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
+              Ementa detalhada
+            </h2>
+            <p className="text-base leading-relaxed text-pretty text-muted">
+              {proposicao.ementaDetalhada}
+            </p>
+          </section>
+        ) : null}
 
-      {proposicao.ementaDetalhada ? (
-        <section className="grid gap-2">
-          <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
-            Ementa detalhada
-          </h2>
-          <p className="text-base leading-relaxed text-pretty text-muted">
-            {proposicao.ementaDetalhada}
-          </p>
+        <section className="grid gap-6 border-t border-border pt-6">
+          <Votacoes votacoes={proposicao.votacoes} />
         </section>
-      ) : null}
+      </div>
 
-      <Metadados
-        proposicao={proposicao}
-        status={proposicao.status}
-        temas={proposicao.temas}
-        fonteOficial={proposicao.fonteOficial}
-        urlInteiroTeor={proposicao.urlInteiroTeor}
-      />
-
-      <section className="grid gap-6 border-t border-border pt-6">
-        <Votacoes votacoes={proposicao.votacoes} />
-      </section>
+      <aside className="grid gap-6 border-t border-border pt-6 lg:border-t-0 lg:border-l lg:border-border lg:pt-0 lg:pl-8">
+        <Metadados
+          proposicao={proposicao}
+          status={proposicao.status}
+          temas={proposicao.temas}
+          fonteOficial={proposicao.fonteOficial}
+          urlInteiroTeor={proposicao.urlInteiroTeor}
+        />
+      </aside>
     </div>
   );
 }
@@ -68,22 +74,76 @@ function ResumoIa({ proposicao }: { proposicao: ProposicaoDetalheData }) {
   const bullets = parseResumoBullets(proposicao.resumoIaDetalhe);
 
   return (
-    <section className="grid gap-2">
-      <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
+    <section className="grid gap-3 rounded-lg border border-border bg-surface p-5">
+      <h2 className="flex items-center gap-2 text-xs font-medium tracking-wide text-subtle uppercase">
+        <SparklesIcon />
         Resumo por IA
       </h2>
       {bullets.length > 1 ? (
-        <ul className="grid list-disc gap-1 pl-5 text-base leading-relaxed text-pretty text-muted">
+        <ul className="grid list-disc gap-2 pl-5 text-lg leading-normal text-pretty text-ink">
           {bullets.map((bullet, index) => (
             <li key={index}>{bullet}</li>
           ))}
         </ul>
       ) : (
-        <p className="text-base leading-relaxed text-pretty text-muted">
+        <p className="text-lg leading-normal text-pretty text-ink">
           {proposicao.resumoIaDetalhe}
         </p>
       )}
+      <p className="border-t border-border pt-3 text-xs leading-normal text-muted">
+        Gerado por IA a partir do texto oficial. Pode conter imprecisões;
+        consulte a fonte oficial.
+      </p>
     </section>
+  );
+}
+
+function EmentaOficial({
+  ementa,
+  prominent = false,
+}: {
+  ementa: string;
+  prominent?: boolean;
+}) {
+  return (
+    <section className="grid gap-2">
+      <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
+        Ementa oficial
+      </h2>
+      <p
+        className={
+          prominent
+            ? "text-base leading-relaxed font-medium text-pretty text-ink"
+            : "text-base leading-relaxed text-pretty text-muted"
+        }
+      >
+        {ementa}
+      </p>
+    </section>
+  );
+}
+
+function SparklesIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-4 shrink-0 text-primary"
+      fill="none"
+      viewBox="0 0 20 20"
+    >
+      <path
+        d="M8.5 2.5c.6 3.4 2.6 5.4 6 6-3.4.6-5.4 2.6-6 6-.6-3.4-2.6-5.4-6-6 3.4-.6 5.4-2.6 6-6Z"
+        stroke="currentColor"
+        strokeLinejoin="round"
+        strokeWidth="1.6"
+      />
+      <path
+        d="M15.5 11.5c.25 1.4 1.1 2.25 2.5 2.5-1.4.25-2.25 1.1-2.5 2.5-.25-1.4-1.1-2.25-2.5-2.5 1.4-.25 2.25-1.1 2.5-2.5Z"
+        stroke="currentColor"
+        strokeLinejoin="round"
+        strokeWidth="1.6"
+      />
+    </svg>
   );
 }
 
@@ -108,15 +168,15 @@ function Metadados({
   urlInteiroTeor: string | null;
 }) {
   return (
-    <section className="grid gap-6 border-t border-border pt-6">
-      <Estatisticas proposicao={proposicao} />
+    <>
       <TramitacaoAtual status={status} />
+      <Estatisticas proposicao={proposicao} />
       <TemasOficiais temas={temas} />
       <LinksOficiais
         fonteOficial={fonteOficial}
         urlInteiroTeor={urlInteiroTeor}
       />
-    </section>
+    </>
   );
 }
 
@@ -131,10 +191,7 @@ function Estatisticas({ proposicao }: { proposicao: ProposicaoDetalheData }) {
       <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
         Estatísticas
       </h2>
-      <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
-        <StatusItem label="Total de votações nominais" mono>
-          {proposicao.votacoes.length}
-        </StatusItem>
+      <dl className="grid gap-y-3">
         <StatusItem label="Última votação" mono>
           {ultimaVotacao}
         </StatusItem>
@@ -151,7 +208,7 @@ function TramitacaoAtual({ status }: { status: ProposicaoStatusResumo }) {
       <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
         Tramitação atual
       </h2>
-      <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+      <dl className="grid gap-y-3">
         <StatusItem label="Situação">{status.situacao}</StatusItem>
         <StatusItem label="Data" mono>
           {data}

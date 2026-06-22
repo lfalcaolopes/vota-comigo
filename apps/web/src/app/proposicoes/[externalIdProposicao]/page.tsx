@@ -65,7 +65,7 @@ export default async function ProposicaoDetalhePage({
 
   return (
     <main className="min-h-screen w-full min-w-0 overflow-x-hidden bg-bg text-ink">
-      <div className="mx-auto grid w-full min-w-0 max-w-200 gap-8 px-4 pt-8 pb-16 md:pt-12">
+      <div className="mx-auto grid w-full min-w-0 max-w-280 gap-8 px-4 pt-8 pb-16 md:pt-12">
         <ProposicaoBreadcrumb feedHref={feedHref} proposicao={proposicao} />
         <ProposicaoDetalhe proposicao={proposicao} />
       </div>
