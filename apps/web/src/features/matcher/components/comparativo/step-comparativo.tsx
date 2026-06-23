@@ -20,6 +20,7 @@ import {
 } from "@/shared/deputado/presentation";
 import { toIdentificadorLegislativo } from "@/shared/proposicao";
 import {
+  ArrowLeftIcon,
   Badge,
   Button,
   ErrorState,
@@ -65,7 +66,8 @@ export function StepComparativo({
   return (
     <div className="grid gap-5">
       <div>
-        <Button onClick={onBack} variant="secondary">
+        <Button onClick={onBack} variant="ghost">
+          <ArrowLeftIcon aria-hidden />
           Voltar ao resultado
         </Button>
       </div>

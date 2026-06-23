@@ -1,3 +1,4 @@
+export { ArrowLeftIcon } from "./arrow-left-icon";
 export { Button, ButtonLink, IconButton } from "./button";
 export { SparklesIcon } from "./sparkles-icon";
 export { SearchField, TextField } from "./field";
