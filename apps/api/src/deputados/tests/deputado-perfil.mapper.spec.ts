@@ -36,6 +36,14 @@ function source(
     urlRedeSocial: 'https://twitter.com/maria',
     externalIdLegislaturaInicial: 55,
     externalIdLegislaturaFinal: 57,
+    legislaturaInicialPeriodo: {
+      dataInicio: '2015-02-01',
+      dataFim: '2019-01-31',
+    },
+    legislaturaFinalPeriodo: {
+      dataInicio: '2023-02-01',
+      dataFim: '2027-01-31',
+    },
     eventos: [evento()],
     ...overrides,
   };
@@ -185,6 +193,14 @@ describe('toDeputadoPerfil', () => {
       expect(perfil.ufNascimento).toBe('SP');
       expect(perfil.externalIdLegislaturaInicial).toBe(55);
       expect(perfil.externalIdLegislaturaFinal).toBe(57);
+      expect(perfil.legislaturaInicialPeriodo).toEqual({
+        dataInicio: '2015-02-01',
+        dataFim: '2019-01-31',
+      });
+      expect(perfil.legislaturaFinalPeriodo).toEqual({
+        dataInicio: '2023-02-01',
+        dataFim: '2027-01-31',
+      });
     });
   });
 

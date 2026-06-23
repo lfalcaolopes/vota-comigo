@@ -15,6 +15,7 @@ import {
 
 import type {
   DeputadoHistoricoEventoSource,
+  DeputadoLegislaturaPeriodoSource,
   DeputadoPerfilSource,
   VotacaoPlenarioRow,
 } from './types/deputados.types';
@@ -41,6 +42,17 @@ function invertVotos(
     }
   }
   return votosByDeputado;
+}
+
+function toLegislaturaPeriodoSource(
+  dataInicio: string | null,
+  dataFim: string | null,
+): DeputadoLegislaturaPeriodoSource | null {
+  if (dataInicio === null || dataFim === null) {
+    return null;
+  }
+
+  return { dataInicio, dataFim };
 }
 
 export function createDeputadosRepository(
@@ -121,6 +133,8 @@ export function createDeputadosRepository(
         urlRedeSocial: row.urlRedeSocial,
         externalIdLegislaturaInicial: null,
         externalIdLegislaturaFinal: null,
+        legislaturaInicialPeriodo: null,
+        legislaturaFinalPeriodo: null,
         eventos: eventosByDeputadoId.get(row.id) ?? [],
       }));
     },
@@ -142,6 +156,10 @@ export function createDeputadosRepository(
           externalIdLegislaturaInicial:
             legislaturaInicial.externalIdLegislatura,
           externalIdLegislaturaFinal: legislaturaFinal.externalIdLegislatura,
+          legislaturaInicialDataInicio: legislaturaInicial.dataInicio,
+          legislaturaInicialDataFim: legislaturaInicial.dataFim,
+          legislaturaFinalDataInicio: legislaturaFinal.dataInicio,
+          legislaturaFinalDataFim: legislaturaFinal.dataFim,
         })
         .from(deputado)
         .leftJoin(
@@ -170,6 +188,14 @@ export function createDeputadosRepository(
         urlRedeSocial: row.urlRedeSocial,
         externalIdLegislaturaInicial: row.externalIdLegislaturaInicial ?? null,
         externalIdLegislaturaFinal: row.externalIdLegislaturaFinal ?? null,
+        legislaturaInicialPeriodo: toLegislaturaPeriodoSource(
+          row.legislaturaInicialDataInicio,
+          row.legislaturaInicialDataFim,
+        ),
+        legislaturaFinalPeriodo: toLegislaturaPeriodoSource(
+          row.legislaturaFinalDataInicio,
+          row.legislaturaFinalDataFim,
+        ),
         eventos: await loadEventosByDeputadoId(row.id),
       };
     },

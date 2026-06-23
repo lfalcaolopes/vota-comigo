@@ -151,8 +151,8 @@ function Metadados({ perfil }: { perfil: DeputadoPerfilData }) {
     perfil.municipioNascimento !== null || perfil.ufNascimento !== null;
 
   const temLegislatura =
-    perfil.externalIdLegislaturaInicial !== null ||
-    perfil.externalIdLegislaturaFinal !== null;
+    perfil.legislaturaInicialPeriodo !== null ||
+    perfil.legislaturaFinalPeriodo !== null;
 
   const temDadosPublicos =
     temNaturalidade || perfil.dataNascimento !== null || temLegislatura;
@@ -176,15 +176,15 @@ function Metadados({ perfil }: { perfil: DeputadoPerfilData }) {
               </RailField>
             ) : null}
 
-            {perfil.externalIdLegislaturaInicial !== null ? (
+            {perfil.legislaturaInicialPeriodo !== null ? (
               <RailField term="Legislatura inicial">
-                {toLegislaturaPeriodoLabel(perfil.externalIdLegislaturaInicial)}
+                {toLegislaturaPeriodoLabel(perfil.legislaturaInicialPeriodo)}
               </RailField>
             ) : null}
 
-            {perfil.externalIdLegislaturaFinal !== null ? (
+            {perfil.legislaturaFinalPeriodo !== null ? (
               <RailField term="Legislatura final">
-                {toLegislaturaPeriodoLabel(perfil.externalIdLegislaturaFinal)}
+                {toLegislaturaPeriodoLabel(perfil.legislaturaFinalPeriodo)}
               </RailField>
             ) : null}
           </dl>

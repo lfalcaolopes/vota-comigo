@@ -21,6 +21,11 @@ export const deputadoPeriodoPartidarioSchema = z.object({
   atual: z.boolean(),
 });
 
+export const deputadoLegislaturaPeriodoSchema = z.object({
+  dataInicio: z.string(),
+  dataFim: z.string(),
+});
+
 export const deputadoPerfilSchema = z
   .object({
     externalIdDeputado: z.number(),
@@ -37,6 +42,8 @@ export const deputadoPerfilSchema = z
     ufNascimento: z.string().nullable(),
     externalIdLegislaturaInicial: z.number().nullable(),
     externalIdLegislaturaFinal: z.number().nullable(),
+    legislaturaInicialPeriodo: deputadoLegislaturaPeriodoSchema.nullable(),
+    legislaturaFinalPeriodo: deputadoLegislaturaPeriodoSchema.nullable(),
     resumoPresencaDisponivel: z.boolean(),
     resumoPresenca: deputadoResumoPresencaSchema.nullable(),
     historicoPartidarioDisponivel: z.boolean(),
@@ -132,6 +139,9 @@ export type DeputadoResumoPresenca = z.infer<
 >;
 export type DeputadoPeriodoPartidario = z.infer<
   typeof deputadoPeriodoPartidarioSchema
+>;
+export type DeputadoLegislaturaPeriodo = z.infer<
+  typeof deputadoLegislaturaPeriodoSchema
 >;
 export type DeputadoPerfil = z.infer<typeof deputadoPerfilSchema>;
 export type DeputadoCard = z.infer<typeof deputadoCardSchema>;

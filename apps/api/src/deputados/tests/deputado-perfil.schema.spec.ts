@@ -24,6 +24,14 @@ function perfil(overrides: Partial<DeputadoPerfil> = {}): DeputadoPerfil {
     ufNascimento: 'SP',
     externalIdLegislaturaInicial: 55,
     externalIdLegislaturaFinal: 57,
+    legislaturaInicialPeriodo: {
+      dataInicio: '2015-02-01',
+      dataFim: '2019-01-31',
+    },
+    legislaturaFinalPeriodo: {
+      dataInicio: '2023-02-01',
+      dataFim: '2027-01-31',
+    },
     resumoPresencaDisponivel: true,
     resumoPresenca: {
       percentualPresenca: 80,

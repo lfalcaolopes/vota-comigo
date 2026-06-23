@@ -120,6 +120,11 @@ function perfil(
     ufNascimento: "SP",
     externalIdLegislaturaInicial: 56,
     externalIdLegislaturaFinal: null,
+    legislaturaInicialPeriodo: {
+      dataInicio: "2019-02-01",
+      dataFim: "2023-01-31",
+    },
+    legislaturaFinalPeriodo: null,
     resumoPresencaDisponivel: true,
     resumoPresenca: {
       percentualPresenca: 82.4,

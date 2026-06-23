@@ -72,6 +72,8 @@ function perfil(externalIdDeputado: number): DeputadoPerfil {
     ufNascimento: null,
     externalIdLegislaturaInicial: null,
     externalIdLegislaturaFinal: null,
+    legislaturaInicialPeriodo: null,
+    legislaturaFinalPeriodo: null,
     resumoPresencaDisponivel: false,
     resumoPresenca: null,
     historicoPartidarioDisponivel: false,

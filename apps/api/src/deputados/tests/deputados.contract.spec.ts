@@ -37,6 +37,14 @@ function source(
     urlRedeSocial: 'https://twitter.com/maria',
     externalIdLegislaturaInicial: 55,
     externalIdLegislaturaFinal: 57,
+    legislaturaInicialPeriodo: {
+      dataInicio: '2015-02-01',
+      dataFim: '2019-01-31',
+    },
+    legislaturaFinalPeriodo: {
+      dataInicio: '2023-02-01',
+      dataFim: '2027-01-31',
+    },
     eventos: [
       {
         dataHora: '2023-01-01T00:00:00+00:00',
@@ -668,6 +676,14 @@ describe('GET /deputados/:externalIdDeputado', () => {
       expect(body.ufNascimento).toBe('SP');
       expect(body.externalIdLegislaturaInicial).toBe(55);
       expect(body.externalIdLegislaturaFinal).toBe(57);
+      expect(body.legislaturaInicialPeriodo).toEqual({
+        dataInicio: '2015-02-01',
+        dataFim: '2019-01-31',
+      });
+      expect(body.legislaturaFinalPeriodo).toEqual({
+        dataInicio: '2023-02-01',
+        dataFim: '2027-01-31',
+      });
     });
 
     it('does not expose an internal UUID id', async () => {

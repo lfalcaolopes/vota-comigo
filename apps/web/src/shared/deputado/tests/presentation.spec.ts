@@ -35,6 +35,8 @@ function makePerfil(overrides: Partial<DeputadoPerfil> = {}): DeputadoPerfil {
     ufNascimento: null,
     externalIdLegislaturaInicial: null,
     externalIdLegislaturaFinal: null,
+    legislaturaInicialPeriodo: null,
+    legislaturaFinalPeriodo: null,
     resumoPresencaDisponivel: false,
     resumoPresenca: null,
     historicoPartidarioDisponivel: false,
@@ -61,11 +63,31 @@ describe("formatData", () => {
 });
 
 describe("toLegislaturaPeriodoLabel", () => {
-  describe("when given a legislatura id", () => {
-    it("maps it to the four-year span of that legislatura", () => {
+  describe("when given an ingested legislatura period", () => {
+    it("formats the year span from the ingested dates", () => {
       // Arrange + Act + Assert
-      expect(toLegislaturaPeriodoLabel(54)).toBe("2011 – 2015");
-      expect(toLegislaturaPeriodoLabel(57)).toBe("2023 – 2027");
+      expect(
+        toLegislaturaPeriodoLabel({
+          dataInicio: "2011-02-01",
+          dataFim: "2015-01-31",
+        }),
+      ).toBe("2011 – 2015");
+      expect(
+        toLegislaturaPeriodoLabel({
+          dataInicio: "2023-02-01",
+          dataFim: "2027-01-31",
+        }),
+      ).toBe("2023 – 2027");
+    });
+
+    it("supports historical periods that do not follow the numeric id formula", () => {
+      // Arrange + Act + Assert
+      expect(
+        toLegislaturaPeriodoLabel({
+          dataInicio: "1946-09-23",
+          dataFim: "1951-03-09",
+        }),
+      ).toBe("1946 – 1951");
     });
   });
 });

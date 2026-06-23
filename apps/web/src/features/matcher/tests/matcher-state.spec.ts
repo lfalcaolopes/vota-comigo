@@ -843,6 +843,8 @@ describe("matcherReducer", () => {
         ufNascimento: null,
         externalIdLegislaturaInicial: null,
         externalIdLegislaturaFinal: null,
+        legislaturaInicialPeriodo: null,
+        legislaturaFinalPeriodo: null,
         resumoPresencaDisponivel: false,
         resumoPresenca: null,
         historicoPartidarioDisponivel: false,

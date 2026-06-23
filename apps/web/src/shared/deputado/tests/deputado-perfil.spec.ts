@@ -28,6 +28,14 @@ function makePerfil(
     ufNascimento: "SP",
     externalIdLegislaturaInicial: 55,
     externalIdLegislaturaFinal: 57,
+    legislaturaInicialPeriodo: {
+      dataInicio: "2015-02-01",
+      dataFim: "2019-01-31",
+    },
+    legislaturaFinalPeriodo: {
+      dataInicio: "2023-02-01",
+      dataFim: "2027-01-31",
+    },
     resumoPresencaDisponivel: true,
     resumoPresenca: {
       percentualPresenca: 80,
@@ -295,8 +303,14 @@ describe("DeputadoPerfil", () => {
     it("shows legislatura metadata as the actual years, not the raw number", () => {
       // Arrange
       const perfil = makePerfil({
-        externalIdLegislaturaInicial: 55,
-        externalIdLegislaturaFinal: 57,
+        legislaturaInicialPeriodo: {
+          dataInicio: "2015-02-01",
+          dataFim: "2019-01-31",
+        },
+        legislaturaFinalPeriodo: {
+          dataInicio: "2023-02-01",
+          dataFim: "2027-01-31",
+        },
       });
 
       // Act
@@ -307,11 +321,31 @@ describe("DeputadoPerfil", () => {
       expect(html).toContain("2023 – 2027");
     });
 
+    it("shows historical legislatura metadata from ingested dates", () => {
+      // Arrange
+      const perfil = makePerfil({
+        legislaturaInicialPeriodo: {
+          dataInicio: "1946-09-23",
+          dataFim: "1951-03-09",
+        },
+        legislaturaFinalPeriodo: null,
+      });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("1946 – 1951");
+      expect(html).not.toContain("1947 – 1951");
+    });
+
     it("omits legislatura metadata when not available", () => {
       // Arrange
       const perfil = makePerfil({
         externalIdLegislaturaInicial: null,
         externalIdLegislaturaFinal: null,
+        legislaturaInicialPeriodo: null,
+        legislaturaFinalPeriodo: null,
       });
 
       // Act

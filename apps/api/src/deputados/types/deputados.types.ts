@@ -10,6 +10,11 @@ export type DeputadoHistoricoEventoSource = {
   urlFoto: string | null;
 };
 
+export type DeputadoLegislaturaPeriodoSource = {
+  dataInicio: string;
+  dataFim: string;
+};
+
 export type DeputadoPerfilSource = {
   id: string;
   externalIdDeputado: number;
@@ -21,6 +26,8 @@ export type DeputadoPerfilSource = {
   urlRedeSocial: string | null;
   externalIdLegislaturaInicial: number | null;
   externalIdLegislaturaFinal: number | null;
+  legislaturaInicialPeriodo: DeputadoLegislaturaPeriodoSource | null;
+  legislaturaFinalPeriodo: DeputadoLegislaturaPeriodoSource | null;
   eventos: readonly DeputadoHistoricoEventoSource[];
 };
 

@@ -62,6 +62,8 @@ export function toDeputadoPerfil(
     ufNascimento: source.ufNascimento,
     externalIdLegislaturaInicial: source.externalIdLegislaturaInicial,
     externalIdLegislaturaFinal: source.externalIdLegislaturaFinal,
+    legislaturaInicialPeriodo: source.legislaturaInicialPeriodo,
+    legislaturaFinalPeriodo: source.legislaturaFinalPeriodo,
     resumoPresencaDisponivel,
     resumoPresenca,
     historicoPartidarioDisponivel,

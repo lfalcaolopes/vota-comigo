@@ -1,4 +1,5 @@
 import type {
+  DeputadoLegislaturaPeriodo,
   DeputadoPerfil,
   DeputadoPeriodoPartidario,
 } from "@vota-comigo/shared-types";
@@ -89,9 +90,14 @@ export function formatData(iso: string): string {
   );
 }
 
-export function toLegislaturaPeriodoLabel(externalIdLegislatura: number): string {
-  const inicio = 4 * externalIdLegislatura + 1795;
-  return `${inicio} – ${inicio + 4}`;
+function toYearLabel(iso: string): string {
+  return /^(\d{4})/.exec(iso)?.[1] ?? iso;
+}
+
+export function toLegislaturaPeriodoLabel(
+  periodo: DeputadoLegislaturaPeriodo,
+): string {
+  return `${toYearLabel(periodo.dataInicio)} – ${toYearLabel(periodo.dataFim)}`;
 }
 
 export function nomePublicoLabel(perfil: DeputadoPerfil): string {
