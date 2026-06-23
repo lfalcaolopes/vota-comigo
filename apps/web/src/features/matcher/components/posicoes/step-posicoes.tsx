@@ -4,12 +4,21 @@ import { MIN_POSICOES_COMPUTAVEIS } from "@vota-comigo/shared-types";
 import type {
   PosicaoUsuarioMatcher,
   ProposicaoCard,
+  ProposicaoDetalhe,
 } from "@vota-comigo/shared-types";
 import { useState } from "react";
 
-import { ProposicaoRow } from "@/shared/proposicao";
-import { Button, SourceLink } from "@/shared/ui";
+import {
+  EmentaDetalhada,
+  EmentaOficial,
+  LinksOficiais,
+  ResumoIa,
+  TemasOficiais,
+  toIdentificadorLegislativo,
+} from "@/shared/proposicao";
+import { Button, ErrorState, SkeletonRows } from "@/shared/ui";
 
+import { useProposicaoDetalhe } from "../../hooks/use-proposicao-detalhe";
 import { PosicaoChoices } from "./posicao-choices";
 import { StepRevisao } from "./step-revisao";
 
@@ -92,56 +101,16 @@ export function StepPosicoes({
           </p>
         </div>
 
-        <div className="grid gap-3">
-          <ProposicaoRow card={card} />
-
-          <SourceLink
-            href={`/proposicoes/${card.externalIdProposicao}`}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Ver proposição
-          </SourceLink>
-        </div>
-
-        <div className="grid gap-4">
-          <p className="text-base font-[680] text-ink" id={QUESTION_ID}>
-            Na sua opinião, deveria ser aprovada?
-          </p>
-
-          <PosicaoChoices
-            labelledBy={QUESTION_ID}
-            onSelect={(posicao) => {
-              onSetPosicao(card.externalIdProposicao, posicao);
-              goNext();
-            }}
-            value={current}
-          />
-
-          {faltamRespostas > 0 ? (
-            <p
-              className="text-sm leading-normal text-muted lg:hidden"
-              role="status"
-            >
-              Responda todas as proposições selecionadas para ver o resultado.
-              Faltam{" "}
-              <strong className="font-[720] text-ink">{faltamRespostas}</strong>
-              .
-            </p>
-          ) : faltamComputaveis > 0 ? (
-            <p
-              className="text-sm leading-normal text-muted lg:hidden"
-              role="status"
-            >
-              Responda Sim ou Não em pelo menos {MIN_POSICOES_COMPUTAVEIS}{" "}
-              proposições para ver o resultado. Faltam{" "}
-              <strong className="font-[720] text-ink">
-                {faltamComputaveis}
-              </strong>
-              .
-            </p>
-          ) : null}
-        </div>
+        <ProposicaoPosicao
+          card={card}
+          current={current}
+          faltamComputaveis={faltamComputaveis}
+          faltamRespostas={faltamRespostas}
+          onSelect={(posicao) => {
+            onSetPosicao(card.externalIdProposicao, posicao);
+            goNext();
+          }}
+        />
       </div>
 
       <div
@@ -164,6 +133,125 @@ export function StepPosicoes({
           posicoes={posicoes}
           selected={selected}
         />
+      </div>
+    </div>
+  );
+}
+
+type ProposicaoPosicaoProps = {
+  card: ProposicaoCard;
+  current: PosicaoUsuarioMatcher | undefined;
+  faltamRespostas: number;
+  faltamComputaveis: number;
+  onSelect: (posicao: PosicaoUsuarioMatcher) => void;
+};
+
+function ProposicaoPosicao({
+  card,
+  current,
+  faltamRespostas,
+  faltamComputaveis,
+  onSelect,
+}: ProposicaoPosicaoProps) {
+  const { detalhe, status, retry } = useProposicaoDetalhe(
+    card.externalIdProposicao,
+  );
+
+  if (status === "loading") {
+    return <SkeletonRows count={6} />;
+  }
+
+  if (status === "error" || !detalhe) {
+    return <ErrorState onRetry={retry} />;
+  }
+
+  return (
+    <PosicaoConteudo
+      current={current}
+      detalhe={detalhe}
+      faltamComputaveis={faltamComputaveis}
+      faltamRespostas={faltamRespostas}
+      onSelect={onSelect}
+    />
+  );
+}
+
+type PosicaoConteudoProps = {
+  detalhe: ProposicaoDetalhe;
+  current: PosicaoUsuarioMatcher | undefined;
+  faltamRespostas: number;
+  faltamComputaveis: number;
+  onSelect: (posicao: PosicaoUsuarioMatcher) => void;
+};
+
+export function PosicaoConteudo({
+  detalhe,
+  current,
+  faltamRespostas,
+  faltamComputaveis,
+  onSelect,
+}: PosicaoConteudoProps) {
+  const identificador = toIdentificadorLegislativo(detalhe);
+  const temResumoIa = Boolean(
+    detalhe.resumoIaDisponivel && detalhe.resumoIaDetalhe,
+  );
+
+  return (
+    <div className="grid gap-6">
+      <div className="grid min-w-0 gap-6">
+        <h2 className="font-mono text-base font-[650] tracking-[-0.01em] text-ink md:text-lg">
+          {identificador ?? "Sem identificador"}
+        </h2>
+
+        <TemasOficiais temas={detalhe.temas} />
+
+        <LinksOficiais
+          fonteOficial={detalhe.fonteOficial}
+          camaraPollResultsUrl={detalhe.camaraPollResultsUrl}
+          urlInteiroTeor={detalhe.urlInteiroTeor}
+        />
+
+        {temResumoIa ? <ResumoIa proposicao={detalhe} /> : null}
+
+        {detalhe.ementa ? (
+          <EmentaOficial ementa={detalhe.ementa} prominent={!temResumoIa} />
+        ) : null}
+
+        {detalhe.ementaDetalhada ? (
+          <EmentaDetalhada ementaDetalhada={detalhe.ementaDetalhada} />
+        ) : null}
+      </div>
+
+      <div className="grid gap-4 border-t border-border pt-6">
+        <p className="text-base font-[680] text-ink" id={QUESTION_ID}>
+          Na sua opinião, deveria ser aprovada?
+        </p>
+
+        <PosicaoChoices
+          labelledBy={QUESTION_ID}
+          onSelect={onSelect}
+          value={current}
+        />
+
+        {faltamRespostas > 0 ? (
+          <p
+            className="text-sm leading-normal text-muted lg:hidden"
+            role="status"
+          >
+            Responda todas as proposições selecionadas para ver o resultado.
+            Faltam{" "}
+            <strong className="font-[720] text-ink">{faltamRespostas}</strong>.
+          </p>
+        ) : faltamComputaveis > 0 ? (
+          <p
+            className="text-sm leading-normal text-muted lg:hidden"
+            role="status"
+          >
+            Responda Sim ou Não em pelo menos {MIN_POSICOES_COMPUTAVEIS}{" "}
+            proposições para ver o resultado. Faltam{" "}
+            <strong className="font-[720] text-ink">{faltamComputaveis}</strong>.
+          </p>
+        ) : null}
       </div>
     </div>
   );

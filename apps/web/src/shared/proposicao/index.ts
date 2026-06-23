@@ -13,6 +13,13 @@ export { ProposicaoRow } from "./proposicao-row";
 export { ProposicaoBreadcrumb } from "./proposicao-breadcrumb";
 export { ProposicaoDetalhe } from "./proposicao-detalhe";
 export {
+  EmentaDetalhada,
+  EmentaOficial,
+  LinksOficiais,
+  ResumoIa,
+  TemasOficiais,
+} from "./proposicao-conteudo";
+export {
   formatDateWithRelativeTime,
   formatRelativeDate,
   formatShortDate,
