@@ -6,7 +6,7 @@ import type {
   ProposicaoCard,
   ProposicaoDetalhe,
 } from "@vota-comigo/shared-types";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   EmentaDetalhada,
@@ -52,6 +52,20 @@ export function StepPosicoes({
 }: StepPosicoesProps) {
   const [view, setView] = useState<View>("card");
   const [index, setIndex] = useState(0);
+  const cardPaneRef = useRef<HTMLDivElement>(null);
+  const revisaoPaneRef = useRef<HTMLDivElement>(null);
+
+  // Selecting a posição auto-advances, unmounting the chosen control. Without
+  // this, focus falls to <body>: a keyboard/screen-reader user is dropped to the
+  // top of the document, unannounced, on every answer. Move focus to the start
+  // of whatever the advance revealed, and reset scroll so it matches what sighted
+  // users see. preventScroll keeps focus from fighting the scrollTo.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const target =
+      view === "revisao" ? revisaoPaneRef.current : cardPaneRef.current;
+    target?.focus({ preventScroll: true });
+  }, [index, view]);
 
   if (selected.length === 0) {
     return (
@@ -90,7 +104,11 @@ export function StepPosicoes({
   return (
     <div className="mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[minmax(0,1fr)_21rem] lg:items-start lg:gap-8">
       <div
-        className={`${view === "revisao" ? "hidden lg:grid" : "grid"} gap-6`}
+        aria-label={`Proposição ${index + 1} de ${selected.length}`}
+        className={`${view === "revisao" ? "hidden lg:grid" : "grid"} gap-6 focus-visible:outline-none`}
+        ref={cardPaneRef}
+        role="group"
+        tabIndex={-1}
       >
         <div className="flex items-center justify-between gap-4">
           <Button onClick={goBack} variant="ghost">
@@ -114,7 +132,11 @@ export function StepPosicoes({
       </div>
 
       <div
-        className={`${view === "card" ? "hidden lg:block" : "block"} min-w-0 lg:sticky lg:top-24 lg:self-start lg:rounded-lg lg:border lg:border-border lg:bg-surface lg:p-5`}
+        aria-label="Revisão das suas posições"
+        className={`${view === "card" ? "hidden lg:block" : "block"} min-w-0 focus-visible:outline-none lg:sticky lg:top-24 lg:self-start lg:rounded-lg lg:border lg:border-border lg:bg-surface lg:p-5`}
+        ref={revisaoPaneRef}
+        role="group"
+        tabIndex={-1}
       >
         <StepRevisao
           canRun={canRun}
@@ -222,7 +244,7 @@ export function PosicaoConteudo({
         ) : null}
       </div>
 
-      <div className="grid gap-4 border-t border-border pt-6">
+      <div className="sticky bottom-0 z-10 grid gap-4 border-t border-border bg-bg pt-5 pb-4 shadow-bar">
         <p className="text-base font-[680] text-ink" id={QUESTION_ID}>
           Na sua opinião, deveria ser aprovada?
         </p>

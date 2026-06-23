@@ -83,6 +83,22 @@ describe("StepPosicoes", () => {
     });
   });
 
+  describe("focus targets for keyboard and screen-reader users", () => {
+    it("exposes the card and review panes as labelled, focusable groups", () => {
+      // Arrange
+      const selected = [card({ externalIdProposicao: 1 }), card({ externalIdProposicao: 2 })];
+
+      // Act
+      const html = renderStep(selected);
+
+      // Assert
+      expect(html).toContain('role="group"');
+      expect(html).toContain('aria-label="Proposição 1 de 2"');
+      expect(html).toContain('aria-label="Revisão das suas posições"');
+      expect(html).toContain('tabindex="-1"');
+    });
+  });
+
   describe("while the proposition detail is loading", () => {
     it("shows a skeleton and hides the answer options", () => {
       // Act
