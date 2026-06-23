@@ -4,7 +4,7 @@ import type { FeedDisplay, FeedStatus } from "@/shared/proposicao";
 import { ProposicaoRow } from "@/shared/proposicao";
 import {
   Button,
-  Checkbox,
+  CheckboxControl,
   EmptyState,
   InlineMessage,
   SkeletonRows,
@@ -88,21 +88,23 @@ export function SelecaoList({
           const isSelected = selectedIds.has(card.externalIdProposicao);
           const disabled = !isSelected && atLimit;
           return (
-            <li
-              className="flex items-start gap-3 py-1"
-              key={card.externalIdProposicao}
-            >
-              <Checkbox
-                checked={isSelected}
-                className="mt-6"
-                disabled={disabled}
-                hideLabel
-                label={`Selecionar proposição ${card.externalIdProposicao}`}
-                onChange={() => onToggle(card)}
-              />
-              <div className="min-w-0 flex-1">
-                <ProposicaoRow card={card} />
-              </div>
+            <li key={card.externalIdProposicao}>
+              <label
+                className={`flex items-start gap-3 py-1 ${
+                  disabled ? "cursor-not-allowed" : "cursor-pointer"
+                }`}
+              >
+                <CheckboxControl
+                  aria-label={`Selecionar proposição ${card.externalIdProposicao}`}
+                  checked={isSelected}
+                  className="mt-6"
+                  disabled={disabled}
+                  onChange={() => onToggle(card)}
+                />
+                <div className="min-w-0 flex-1">
+                  <ProposicaoRow card={card} />
+                </div>
+              </label>
             </li>
           );
         })}
