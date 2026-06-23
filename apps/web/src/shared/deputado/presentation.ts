@@ -73,6 +73,27 @@ export function toPeriodoPartidarioLabel(
   return inicio;
 }
 
+const dataFormatter = new Intl.DateTimeFormat("pt-BR", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+});
+
+export function formatData(iso: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+  if (!match) return iso;
+
+  const [, year, month, day] = match;
+  return dataFormatter.format(
+    new Date(Number(year), Number(month) - 1, Number(day)),
+  );
+}
+
+export function toLegislaturaPeriodoLabel(externalIdLegislatura: number): string {
+  const inicio = 4 * externalIdLegislatura + 1795;
+  return `${inicio} – ${inicio + 4}`;
+}
+
 export function nomePublicoLabel(perfil: DeputadoPerfil): string {
   return perfil.nomePublico ?? CARGO_DEPUTADO;
 }
@@ -112,15 +133,34 @@ export function toPresencaAriaLabel(
   return `Presença: ${formatPercentual(percentual)} — ${toPresencaAmostrasLabel(presencas, total)}`;
 }
 
-export function toRedeSocialLinkLabel(url: string): string {
+const REDE_SOCIAL_NOME_BY_HOST: Record<string, string> = {
+  "instagram.com": "Instagram",
+  "facebook.com": "Facebook",
+  "fb.com": "Facebook",
+  "twitter.com": "Twitter/X",
+  "x.com": "Twitter/X",
+  "youtube.com": "YouTube",
+  "youtu.be": "YouTube",
+  "tiktok.com": "TikTok",
+  "linkedin.com": "LinkedIn",
+  "threads.net": "Threads",
+  "flickr.com": "Flickr",
+  "t.me": "Telegram",
+};
+
+export function toRedeSocialNome(url: string): string {
   let host = url;
   try {
-    host = new URL(url).host;
+    host = new URL(url).host.replace(/^www\./, "");
   } catch {
-    host = url;
+    return url;
   }
 
-  return `Abrir ${host} em nova aba`;
+  return REDE_SOCIAL_NOME_BY_HOST[host] ?? host;
+}
+
+export function toRedeSocialLinkLabel(url: string): string {
+  return `Abrir ${toRedeSocialNome(url)} em nova aba`;
 }
 
 const PARTICLES = new Set(["de", "da", "do", "dos", "das", "e"]);

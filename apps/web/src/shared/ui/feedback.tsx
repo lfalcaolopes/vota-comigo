@@ -191,13 +191,18 @@ export function SkeletonRows({ count = 3 }: SkeletonRowsProps) {
   );
 }
 
-function SkeletonLine({ className }: { className?: string }) {
+export function Skeleton({ className }: { className?: string }) {
   return (
     <span
+      aria-hidden="true"
       className={joinClassNames(
-        "h-3 animate-skeleton rounded-full bg-[length:200%_100%] bg-[linear-gradient(90deg,var(--color-surface-muted),var(--color-border),var(--color-surface-muted))]",
+        "block animate-skeleton bg-[length:200%_100%] bg-[linear-gradient(90deg,var(--color-surface-muted),var(--color-border),var(--color-surface-muted))]",
         className,
       )}
     />
   );
+}
+
+function SkeletonLine({ className }: { className?: string }) {
+  return <Skeleton className={joinClassNames("h-3 rounded-full", className)} />;
 }

@@ -197,6 +197,20 @@ describe("DeputadoPerfil", () => {
       expect(html).toContain("https://instagram.com/maria");
     });
 
+    it("shows the platform name instead of the raw url or handle", () => {
+      // Arrange
+      const perfil = makePerfil({
+        redesSociais: ["https://www.instagram.com/maria"],
+      });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Instagram");
+      expect(html).not.toContain("@maria");
+    });
+
     it("omits the redes sociais section when the list is empty", () => {
       // Arrange
       const perfil = makePerfil({ redesSociais: [] });
@@ -210,19 +224,59 @@ describe("DeputadoPerfil", () => {
   });
 
   describe("metadados publicos", () => {
-    it("shows birth metadata when available", () => {
+    it("shows naturalidade and birth date as separate fields", () => {
       // Arrange
-      const perfil = makePerfil();
+      const perfil = makePerfil({
+        municipioNascimento: "São Paulo",
+        ufNascimento: "SP",
+        dataNascimento: "1980-05-10",
+      });
 
       // Act
       const html = render(perfil);
 
       // Assert
-      expect(html).toContain("São Paulo");
-      expect(html).toContain("1980-05-10");
+      expect(html).toContain("Naturalidade");
+      expect(html).toContain("São Paulo · SP");
+      expect(html).toContain("Nascimento");
+      expect(html).toContain("10/05/1980");
     });
 
-    it("omits birth metadata when not available", () => {
+    it("hides the birth date field when dataNascimento is null but keeps naturalidade", () => {
+      // Arrange
+      const perfil = makePerfil({
+        municipioNascimento: "São Paulo",
+        ufNascimento: "SP",
+        dataNascimento: null,
+      });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Naturalidade");
+      expect(html).not.toContain("Nascimento");
+      expect(html).not.toContain("10/05/1980");
+    });
+
+    it("hides naturalidade when municipio and uf are null but keeps the birth date", () => {
+      // Arrange
+      const perfil = makePerfil({
+        municipioNascimento: null,
+        ufNascimento: null,
+        dataNascimento: "1980-05-10",
+      });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).not.toContain("Naturalidade");
+      expect(html).toContain("Nascimento");
+      expect(html).toContain("10/05/1980");
+    });
+
+    it("omits both birth fields when all nascimento data is null", () => {
       // Arrange
       const perfil = makePerfil({
         dataNascimento: null,
@@ -234,19 +288,23 @@ describe("DeputadoPerfil", () => {
       const html = render(perfil);
 
       // Assert
+      expect(html).not.toContain("Naturalidade");
       expect(html).not.toContain("Nascimento");
     });
 
-    it("shows legislatura metadata when available", () => {
+    it("shows legislatura metadata as the actual years, not the raw number", () => {
       // Arrange
-      const perfil = makePerfil();
+      const perfil = makePerfil({
+        externalIdLegislaturaInicial: 55,
+        externalIdLegislaturaFinal: 57,
+      });
 
       // Act
       const html = render(perfil);
 
       // Assert
-      expect(html).toContain("55");
-      expect(html).toContain("57");
+      expect(html).toContain("2015 – 2019");
+      expect(html).toContain("2023 – 2027");
     });
 
     it("omits legislatura metadata when not available", () => {
@@ -297,7 +355,7 @@ describe("DeputadoPerfil", () => {
       );
     });
 
-    it("describes each rede social link with its host and that it opens a new tab", () => {
+    it("describes each rede social link with its platform and that it opens a new tab", () => {
       // Arrange
       const perfil = makePerfil({
         redesSociais: ["https://twitter.com/maria"],
@@ -307,7 +365,7 @@ describe("DeputadoPerfil", () => {
       const html = render(perfil);
 
       // Assert
-      expect(html).toContain('aria-label="Abrir twitter.com em nova aba"');
+      expect(html).toContain('aria-label="Abrir Twitter/X em nova aba"');
     });
   });
 

@@ -7,8 +7,10 @@ import {
   CARGO_DEPUTADO,
   HISTORICO_PARTIDARIO_INDISPONIVEL,
   RECORTE_BASE_PRESENCA,
+  formatData,
   formatPercentual,
   nomePublicoLabel,
+  toLegislaturaPeriodoLabel,
   toAtividadeAriaLabel,
   toAtividadeLabel,
   toAtividadeTone,
@@ -16,9 +18,20 @@ import {
   toPresencaAmostrasLabel,
   toPresencaAriaLabel,
   toRedeSocialLinkLabel,
+  toRedeSocialNome,
 } from "./presentation";
 
 export function DeputadoPerfil({ perfil }: { perfil: DeputadoPerfilData }) {
+  return (
+    <div className="grid gap-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-x-0">
+      <Identidade perfil={perfil} />
+      <Evidencia perfil={perfil} />
+      <Metadados perfil={perfil} />
+    </div>
+  );
+}
+
+function Identidade({ perfil }: { perfil: DeputadoPerfilData }) {
   const nome = nomePublicoLabel(perfil);
   const mostrarNomeCivil =
     perfil.nomeCivil !== null && perfil.nomeCivil !== perfil.nomePublico;
@@ -27,119 +40,40 @@ export function DeputadoPerfil({ perfil }: { perfil: DeputadoPerfilData }) {
   const siglaPartido = perfil.snapshotPublico?.siglaPartido ?? null;
   const siglaUf = perfil.snapshotPublico?.siglaUf ?? null;
 
-  const atividadeLabel = toAtividadeLabel(perfil.emAtividade);
-  const atividadeTone = toAtividadeTone(perfil.emAtividade);
-
-  const temNascimento =
-    perfil.dataNascimento !== null ||
-    perfil.municipioNascimento !== null ||
-    perfil.ufNascimento !== null;
-
-  const temLegislatura =
-    perfil.externalIdLegislaturaInicial !== null ||
-    perfil.externalIdLegislaturaFinal !== null;
-
   return (
-    <div className="grid gap-8">
-      <header className="grid gap-3">
-        <div className="flex items-center gap-3">
-          <DeputadoAvatar nome={nome} urlFoto={urlFoto} size="lg" />
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge tone="neutral">{CARGO_DEPUTADO}</Badge>
-              <Badge
-                aria-label={toAtividadeAriaLabel(perfil.emAtividade)}
-                tone={atividadeTone}
-              >
-                {atividadeLabel}
-              </Badge>
-            </div>
-            <h1 className="mt-1 text-xl leading-snug text-pretty text-ink md:text-2xl">
-              {nome}
-            </h1>
-            {perfil.snapshotPublicoDisponivel ? (
-              <p className="text-sm text-muted">
-                {siglaPartido ?? "—"} · {siglaUf ?? "—"}
-              </p>
-            ) : null}
-          </div>
+    <header className="grid gap-4 lg:col-start-1 lg:row-start-1 lg:pr-8">
+      <DeputadoAvatar nome={nome} urlFoto={urlFoto} size="xl" />
+      <div className="grid min-w-0 gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge tone="neutral">{CARGO_DEPUTADO}</Badge>
+          <Badge
+            aria-label={toAtividadeAriaLabel(perfil.emAtividade)}
+            tone={toAtividadeTone(perfil.emAtividade)}
+          >
+            {toAtividadeLabel(perfil.emAtividade)}
+          </Badge>
         </div>
-
+        <h1 className="text-xl leading-snug text-pretty text-ink">{nome}</h1>
+        {perfil.snapshotPublicoDisponivel ? (
+          <p className="text-sm text-muted">
+            {siglaPartido ?? "—"} · {siglaUf ?? "—"}
+          </p>
+        ) : null}
         {mostrarNomeCivil ? (
           <p className="text-sm text-muted">
             Nome civil: <span className="text-ink">{perfil.nomeCivil}</span>
           </p>
         ) : null}
-      </header>
+      </div>
+    </header>
+  );
+}
 
-      {perfil.redesSociais.length > 0 ? (
-        <section className="grid gap-3 border-t border-border pt-6">
-          <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
-            Redes sociais
-          </h2>
-          <ul className="grid gap-1">
-            {perfil.redesSociais.map((url) => (
-              <li key={url}>
-                <SourceLink
-                  aria-label={toRedeSocialLinkLabel(url)}
-                  href={url}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  {url}
-                </SourceLink>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-
-      {temNascimento || temLegislatura ? (
-        <section className="grid gap-3 border-t border-border pt-6">
-          <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
-            Dados públicos
-          </h2>
-          <dl className="grid gap-2">
-            {temNascimento ? (
-              <div className="grid grid-cols-[max-content_1fr] gap-x-3 gap-y-0">
-                <dt className="text-sm text-muted">Nascimento</dt>
-                <dd className="text-sm text-ink">
-                  {[
-                    perfil.municipioNascimento,
-                    perfil.ufNascimento,
-                    perfil.dataNascimento,
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </dd>
-              </div>
-            ) : null}
-
-            {perfil.externalIdLegislaturaInicial !== null ? (
-              <div className="grid grid-cols-[max-content_1fr] gap-x-3 gap-y-0">
-                <dt className="text-sm text-muted">Legislatura inicial</dt>
-                <dd className="text-sm text-ink">
-                  {perfil.externalIdLegislaturaInicial}
-                </dd>
-              </div>
-            ) : null}
-
-            {perfil.externalIdLegislaturaFinal !== null ? (
-              <div className="grid grid-cols-[max-content_1fr] gap-x-3 gap-y-0">
-                <dt className="text-sm text-muted">Legislatura final</dt>
-                <dd className="text-sm text-ink">
-                  {perfil.externalIdLegislaturaFinal}
-                </dd>
-              </div>
-            ) : null}
-          </dl>
-        </section>
-      ) : null}
-
-      <section className="grid gap-3 border-t border-border pt-6">
-        <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
-          Presença
-        </h2>
+function Evidencia({ perfil }: { perfil: DeputadoPerfilData }) {
+  return (
+    <div className="grid content-start gap-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:border-l lg:border-border lg:pl-8">
+      <section className="grid gap-3">
+        <h2 className="text-sm font-medium text-muted">Presença</h2>
         {perfil.resumoPresencaDisponivel && perfil.resumoPresenca !== null ? (
           <div className="grid gap-1">
             <p
@@ -148,11 +82,11 @@ export function DeputadoPerfil({ perfil }: { perfil: DeputadoPerfilData }) {
                 perfil.resumoPresenca.presencas,
                 perfil.resumoPresenca.totalVotacoesEmExercicio,
               )}
-              className="text-2xl font-[680] leading-tight tabular-nums text-ink md:text-3xl"
+              className="text-4xl leading-none font-[680] tabular-nums text-ink md:text-5xl"
             >
               {formatPercentual(perfil.resumoPresenca.percentualPresenca)}
             </p>
-            <p className="text-sm text-muted">
+            <p className="mt-2 text-sm text-muted">
               {toPresencaAmostrasLabel(
                 perfil.resumoPresenca.presencas,
                 perfil.resumoPresenca.totalVotacoesEmExercicio,
@@ -167,7 +101,7 @@ export function DeputadoPerfil({ perfil }: { perfil: DeputadoPerfilData }) {
                 sem motivo conhecido
               </p>
             ) : null}
-            <p className="mt-1 text-xs text-subtle">{RECORTE_BASE_PRESENCA}</p>
+            <p className="mt-2 text-xs text-muted">{RECORTE_BASE_PRESENCA}</p>
           </div>
         ) : (
           <InlineMessage
@@ -178,9 +112,7 @@ export function DeputadoPerfil({ perfil }: { perfil: DeputadoPerfilData }) {
       </section>
 
       <section className="grid gap-3 border-t border-border pt-6">
-        <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
-          Histórico partidário
-        </h2>
+        <h2 className="text-sm font-medium text-muted">Histórico partidário</h2>
         {perfil.historicoPartidarioDisponivel ? (
           <ul className="grid gap-2">
             {perfil.historicoPartidario.map((periodo) => (
@@ -204,21 +136,117 @@ export function DeputadoPerfil({ perfil }: { perfil: DeputadoPerfilData }) {
         )}
       </section>
 
-      <section className="grid gap-3 border-t border-border pt-6">
-        <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
-          Fonte oficial
-        </h2>
-        <SourceLink href={perfil.fonteOficial} rel="noreferrer" target="_blank">
-          Ver fonte oficial na Câmara
-        </SourceLink>
-      </section>
-
       {perfil.historicoParlamentarDisponivel ? null : (
         <InlineMessage
           title="Sem histórico parlamentar"
           body="Este deputado está cadastrado, mas ainda não há histórico parlamentar na base para exibir snapshot atual, presença e histórico partidário."
         />
       )}
+    </div>
+  );
+}
+
+function Metadados({ perfil }: { perfil: DeputadoPerfilData }) {
+  const temNaturalidade =
+    perfil.municipioNascimento !== null || perfil.ufNascimento !== null;
+
+  const temLegislatura =
+    perfil.externalIdLegislaturaInicial !== null ||
+    perfil.externalIdLegislaturaFinal !== null;
+
+  const temDadosPublicos =
+    temNaturalidade || perfil.dataNascimento !== null || temLegislatura;
+
+  return (
+    <aside className="grid gap-6 lg:col-start-1 lg:row-start-2 lg:pr-8">
+      {temDadosPublicos ? (
+        <RailSection title="Dados públicos">
+          <dl className="grid gap-2">
+            {temNaturalidade ? (
+              <RailField term="Naturalidade">
+                {[perfil.municipioNascimento, perfil.ufNascimento]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </RailField>
+            ) : null}
+
+            {perfil.dataNascimento !== null ? (
+              <RailField term="Nascimento">
+                {formatData(perfil.dataNascimento)}
+              </RailField>
+            ) : null}
+
+            {perfil.externalIdLegislaturaInicial !== null ? (
+              <RailField term="Legislatura inicial">
+                {toLegislaturaPeriodoLabel(perfil.externalIdLegislaturaInicial)}
+              </RailField>
+            ) : null}
+
+            {perfil.externalIdLegislaturaFinal !== null ? (
+              <RailField term="Legislatura final">
+                {toLegislaturaPeriodoLabel(perfil.externalIdLegislaturaFinal)}
+              </RailField>
+            ) : null}
+          </dl>
+        </RailSection>
+      ) : null}
+
+      {perfil.redesSociais.length > 0 ? (
+        <RailSection title="Redes sociais">
+          <ul className="grid gap-1">
+            {perfil.redesSociais.map((url) => (
+              <li key={url} className="min-w-0">
+                <SourceLink
+                  aria-label={toRedeSocialLinkLabel(url)}
+                  href={url}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  {toRedeSocialNome(url)}
+                </SourceLink>
+              </li>
+            ))}
+          </ul>
+        </RailSection>
+      ) : null}
+
+      <RailSection title="Fonte oficial">
+        <SourceLink href={perfil.fonteOficial} rel="noreferrer" target="_blank">
+          Ver fonte oficial na Câmara
+        </SourceLink>
+      </RailSection>
+    </aside>
+  );
+}
+
+function RailSection({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="grid gap-3 border-t border-border pt-6">
+      <h2 className="text-xs font-medium tracking-wide text-muted uppercase">
+        {title}
+      </h2>
+      {children}
+    </section>
+  );
+}
+
+function RailField({
+  term,
+  children,
+}: {
+  term: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="grid grid-cols-[max-content_1fr] gap-x-3 gap-y-0">
+      <dt className="text-sm text-muted">{term}</dt>
+      <dd className="text-sm text-ink">{children}</dd>
     </div>
   );
 }

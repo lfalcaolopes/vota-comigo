@@ -18,6 +18,7 @@ export {
   ErrorState,
   InlineMessage,
   Panel,
+  Skeleton,
   SkeletonRows,
   SourceLink,
 } from "./feedback";

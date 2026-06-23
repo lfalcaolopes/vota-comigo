@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import { CARGO_DEPUTADO, getInitials } from "./presentation";
 
-type DeputadoAvatarSize = "sm" | "lg";
+type DeputadoAvatarSize = "sm" | "lg" | "xl";
 
 type DeputadoAvatarProps = {
   nome: string | null;
@@ -13,6 +13,7 @@ type DeputadoAvatarProps = {
 const SIZE_CONFIG = {
   sm: { px: 40, className: "size-10" },
   lg: { px: 64, className: "size-14 md:size-16" },
+  xl: { px: 96, className: "size-20 md:size-24" },
 } as const satisfies Record<
   DeputadoAvatarSize,
   { px: number; className: string }

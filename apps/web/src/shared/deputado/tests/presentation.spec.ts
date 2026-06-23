@@ -2,11 +2,13 @@ import type { DeputadoPerfil } from "@vota-comigo/shared-types";
 import { describe, expect, it } from "vitest";
 
 import {
+  formatData,
   formatPercentual,
   getInitials,
   nomePublicoLabel,
   toAtividadeLabel,
   toAtividadeTone,
+  toLegislaturaPeriodoLabel,
   toPeriodoPartidarioLabel,
   toPresencaAmostrasLabel,
   toEstadoLabel,
@@ -40,6 +42,33 @@ function makePerfil(overrides: Partial<DeputadoPerfil> = {}): DeputadoPerfil {
     ...overrides,
   };
 }
+
+describe("formatData", () => {
+  describe("when given an ISO date", () => {
+    it("formats it as a pt-BR day/month/year date", () => {
+      // Arrange + Act + Assert
+      expect(formatData("1969-02-13")).toBe("13/02/1969");
+      expect(formatData("1980-05-10")).toBe("10/05/1980");
+    });
+  });
+
+  describe("when given a value that is not an ISO date", () => {
+    it("returns it unchanged", () => {
+      // Arrange + Act + Assert
+      expect(formatData("desconhecida")).toBe("desconhecida");
+    });
+  });
+});
+
+describe("toLegislaturaPeriodoLabel", () => {
+  describe("when given a legislatura id", () => {
+    it("maps it to the four-year span of that legislatura", () => {
+      // Arrange + Act + Assert
+      expect(toLegislaturaPeriodoLabel(54)).toBe("2011 – 2015");
+      expect(toLegislaturaPeriodoLabel(57)).toBe("2023 – 2027");
+    });
+  });
+});
 
 describe("nomePublicoLabel", () => {
   describe("when the perfil has a public name", () => {
