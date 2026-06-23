@@ -9,7 +9,9 @@ import {
   deputadoHistorico,
   legislatura,
   partido,
+  proposicaoComputavel,
   votacao,
+  votacaoProposicao,
   votacaoVotos,
 } from '@/shared/database/schema';
 
@@ -17,7 +19,7 @@ import type {
   DeputadoHistoricoEventoSource,
   DeputadoLegislaturaPeriodoSource,
   DeputadoPerfilSource,
-  VotacaoPlenarioRow,
+  VotacaoProposicaoComputavelRow,
 } from './types/deputados.types';
 
 export const DEPUTADOS_REPOSITORY = Symbol('DEPUTADOS_REPOSITORY');
@@ -27,9 +29,9 @@ export interface DeputadosRepository {
   loadDeputadoPerfil(
     externalIdDeputado: number,
   ): Promise<DeputadoPerfilSource | null>;
-  loadVotacoesPlenarioForDeputado(
+  loadVotacoesProposicoesComputaveisForDeputado(
     deputadoId: string,
-  ): Promise<VotacaoPlenarioRow[]>;
+  ): Promise<VotacaoProposicaoComputavelRow[]>;
 }
 
 function invertVotos(
@@ -200,18 +202,32 @@ export function createDeputadosRepository(
       };
     },
 
-    async loadVotacoesPlenarioForDeputado(deputadoId) {
+    async loadVotacoesProposicoesComputaveisForDeputado(deputadoId) {
       const rows = await db
         .select({
+          votacaoId: votacao.id,
           dataHoraRegistro: votacao.dataHoraRegistro,
           data: votacao.data,
           votosJson: votacaoVotos.votosJson,
         })
-        .from(votacao)
+        .from(proposicaoComputavel)
+        .innerJoin(
+          votacaoProposicao,
+          eq(votacaoProposicao.proposicaoId, proposicaoComputavel.proposicaoId),
+        )
+        .innerJoin(votacao, eq(votacaoProposicao.votacaoId, votacao.id))
         .innerJoin(votacaoVotos, eq(votacaoVotos.votacaoId, votacao.id))
         .where(eq(votacao.escopoVotacao, 'plenario'));
 
-      return rows.map((row) => {
+      const byVotacaoId = new Map<
+        (typeof rows)[number]['votacaoId'],
+        (typeof rows)[number]
+      >();
+      for (const row of rows) {
+        byVotacaoId.set(row.votacaoId, row);
+      }
+
+      return [...byVotacaoId.values()].map((row) => {
         const votos = invertVotos(
           row.votosJson as Record<VotoCategoria, string[]>,
         );

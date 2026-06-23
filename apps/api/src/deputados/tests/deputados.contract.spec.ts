@@ -62,7 +62,11 @@ function source(
 
 type VotacoesById = ReadonlyMap<
   string,
-  Awaited<ReturnType<DeputadosRepository['loadVotacoesPlenarioForDeputado']>>
+  Awaited<
+    ReturnType<
+      DeputadosRepository['loadVotacoesProposicoesComputaveisForDeputado']
+    >
+  >
 >;
 
 function fakeRepository(
@@ -73,7 +77,7 @@ function fakeRepository(
     loadDeputadosFeed: async () => [...byExternalId.values()],
     loadDeputadoPerfil: async (externalIdDeputado) =>
       byExternalId.get(externalIdDeputado) ?? null,
-    loadVotacoesPlenarioForDeputado: async (deputadoId) =>
+    loadVotacoesProposicoesComputaveisForDeputado: async (deputadoId) =>
       votacoesById.get(deputadoId) ?? [],
   };
 }

@@ -113,8 +113,10 @@ export class DeputadosService {
     if (source === null) {
       throw new NotFoundException('deputado nao encontrado');
     }
-    const votacoesPlenario =
-      await this.repository.loadVotacoesPlenarioForDeputado(source.id);
-    return toDeputadoPerfil(source, votacoesPlenario);
+    const votacoesProposicoesComputaveis =
+      await this.repository.loadVotacoesProposicoesComputaveisForDeputado(
+        source.id,
+      );
+    return toDeputadoPerfil(source, votacoesProposicoesComputaveis);
   }
 }

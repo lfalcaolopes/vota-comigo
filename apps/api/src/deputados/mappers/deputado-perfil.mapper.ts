@@ -11,13 +11,13 @@ import { deriveResumoPresenca } from '../rules/resumo-presenca';
 import { deriveSnapshotPublico } from '../rules/snapshot-publico';
 import type {
   DeputadoPerfilSource,
-  VotacaoPlenarioRow,
+  VotacaoProposicaoComputavelRow,
 } from '../types/deputados.types';
 import { fonteOficialDeputado } from './camara-portal-url';
 
 export function toDeputadoPerfil(
   source: DeputadoPerfilSource,
-  votacoesPlenario: readonly VotacaoPlenarioRow[],
+  votacoesProposicoesComputaveis: readonly VotacaoProposicaoComputavelRow[],
 ): DeputadoPerfil {
   const snapshot = deriveSnapshotPublico(source.eventos);
 
@@ -38,7 +38,7 @@ export function toDeputadoPerfil(
 
   const { resumoPresencaDisponivel, resumoPresenca } = deriveResumoPresenca({
     eventos: eventosExercicio,
-    votacoes: votacoesPlenario.map((v) => ({
+    votacoes: votacoesProposicoesComputaveis.map((v) => ({
       votacao: { dataHoraRegistro: v.dataHoraRegistro, data: v.data },
       voto: v.voto,
     })),

@@ -223,7 +223,7 @@ A API pública do perfil usa `GET /deputados/{externalIdDeputado}` e retorna o c
   - Voto não informado conta como presença por ter registro individual, mas não recebe contagem separada no MVP-3
   - Ausência sem motivo conhecido: deputado em exercício sem registro individual naquela votação
   - Fora de exercício não entra no denominador
-  - Recorte temporal: toda a base ingerida disponível, com texto público deixando claro que a métrica cobre as votações nominais de plenário presentes na base
+  - Recorte: votações nominais de plenário vinculadas a proposições computáveis pelo matcher
   - Exibição mínima: percentual de presença, presenças sobre total de votações em exercício, total de ausências sem motivo conhecido e texto do recorte
   - Quando o total de votações em exercício for zero, o bloco informa que a presença está indisponível, sem exibir `0%`
   - O MVP-3 não cria ranking global de presença nem labels comparativos como "mais presente" ou "mais faltoso"

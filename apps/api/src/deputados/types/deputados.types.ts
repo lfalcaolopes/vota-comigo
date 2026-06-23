@@ -31,7 +31,7 @@ export type DeputadoPerfilSource = {
   eventos: readonly DeputadoHistoricoEventoSource[];
 };
 
-export type VotacaoPlenarioRow = {
+export type VotacaoProposicaoComputavelRow = {
   dataHoraRegistro: string | null;
   data: string | null;
   voto: VotoCategoria | null;

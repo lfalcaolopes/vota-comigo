@@ -4,7 +4,7 @@ import { toDeputadoPerfil } from '../mappers/deputado-perfil.mapper';
 import type {
   DeputadoHistoricoEventoSource,
   DeputadoPerfilSource,
-  VotacaoPlenarioRow,
+  VotacaoProposicaoComputavelRow,
 } from '../types/deputados.types';
 
 function evento(
@@ -49,9 +49,9 @@ function source(
   };
 }
 
-function votacaoPlenario(
-  overrides: Partial<VotacaoPlenarioRow> = {},
-): VotacaoPlenarioRow {
+function votacaoProposicaoComputavel(
+  overrides: Partial<VotacaoProposicaoComputavelRow> = {},
+): VotacaoProposicaoComputavelRow {
   return {
     dataHoraRegistro: '2023-06-01T10:00:00+00:00',
     data: '2023-06-01',
@@ -278,9 +278,9 @@ describe('toDeputadoPerfil', () => {
           ],
         });
         const votacoes = [
-          votacaoPlenario({ voto: 'sim' }),
-          votacaoPlenario({ voto: 'nao' }),
-          votacaoPlenario({ voto: null }),
+          votacaoProposicaoComputavel({ voto: 'sim' }),
+          votacaoProposicaoComputavel({ voto: 'nao' }),
+          votacaoProposicaoComputavel({ voto: null }),
         ];
 
         // Act
@@ -315,7 +315,7 @@ describe('toDeputadoPerfil', () => {
       it('sets resumoPresencaDisponivel false regardless of votacoes', () => {
         // Arrange
         const row = source({ eventos: [] });
-        const votacoes = [votacaoPlenario({ voto: null })];
+        const votacoes = [votacaoProposicaoComputavel({ voto: null })];
 
         // Act
         const perfil = toDeputadoPerfil(row, votacoes);

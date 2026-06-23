@@ -9,7 +9,7 @@ import type { BadgeTone } from "@/shared/ui";
 export const CARGO_DEPUTADO = "Deputado federal";
 
 export const RECORTE_BASE_PRESENCA =
-  "votações nominais de plenário presentes na base";
+  "votações nominais de plenário das proposições computáveis";
 
 export const HISTORICO_PARTIDARIO_INDISPONIVEL =
   "Não há histórico partidário na base para este deputado.";

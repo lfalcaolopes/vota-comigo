@@ -336,7 +336,9 @@ describe("StepComparativo", () => {
       expect(html).toContain("82%");
       expect(html).toContain("103 de 125 votações em exercício");
       expect(html).toContain("22 ausências sem motivo conhecido");
-      expect(html).toContain("votações nominais de plenário presentes na base");
+      expect(html).toContain(
+        "votações nominais de plenário das proposições computáveis",
+      );
       expect(html).toContain("Presença indisponível");
       expect(html).not.toContain("Nome Civil 20");
       expect(html).not.toContain("rede-social");

@@ -266,7 +266,7 @@ _Avoid_: Histórico bruto do deputado.
 - O **Perfil do deputado** exibe um **Resumo de presença do deputado**, não uma lista de votos.
 - No **Resumo de presença do deputado**, o denominador inclui apenas **Votações nominais** de **Plenário** em que o **Deputado** estava **Em exercício**.
 - No **Resumo de presença do deputado**, qualquer registro individual na **Votação nominal** conta como presença; **Ausência sem motivo conhecido** conta como ausência; fora de exercício não entra no denominador.
-- O **Resumo de presença do deputado** usa toda a base ingerida disponível e não cria comparação ou ranking global de presença no MVP.
+- O **Resumo de presença do deputado** usa as **Votações nominais** de **Plenário** vinculadas a **Proposições computáveis pelo matcher** e não cria comparação ou ranking global de presença no MVP.
 - O **Perfil do deputado** exibe o **Histórico partidário do deputado** como períodos por partido, não como eventos brutos do histórico parlamentar.
 - O **Histórico partidário do deputado** ignora eventos sem partido resolvido; quando não há nenhum evento com partido, o perfil trata o histórico partidário como indisponível.
 - Um **Perfil do deputado** existe quando o **Deputado** está cadastrado; ausência de histórico parlamentar é **Lacuna de dados**, não ausência do perfil.
