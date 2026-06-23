@@ -279,6 +279,7 @@ const detalheResponse: ProposicaoDetalhe = {
   },
   fonteOficial:
     "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=42",
+  camaraPollResultsUrl: "https://www.camara.leg.br/enquetes/42/resultados",
   temas: [{ externalCodTema: 37, tema: "Saúde" }],
   votacoes: [],
 };
@@ -306,6 +307,9 @@ describe("detalhe", () => {
       );
       expect(result.urlInteiroTeor).toBe(
         "https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=42",
+      );
+      expect(result.camaraPollResultsUrl).toBe(
+        "https://www.camara.leg.br/enquetes/42/resultados",
       );
       expect(result.temas[0].tema).toBe("Saúde");
     });

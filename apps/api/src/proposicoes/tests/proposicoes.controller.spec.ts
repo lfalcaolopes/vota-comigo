@@ -142,6 +142,7 @@ describe('ProposicoesController.detalhe', () => {
     status: { siglaOrgao: null, situacao: null, regime: null, dataHora: null },
     fonteOficial:
       'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=1',
+    camaraPollResultsUrl: 'https://www.camara.leg.br/enquetes/1/resultados',
     temas: [],
     votacoes: [],
   } as unknown as ProposicaoDetalhe;

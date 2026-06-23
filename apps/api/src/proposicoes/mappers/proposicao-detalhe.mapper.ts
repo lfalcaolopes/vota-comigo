@@ -10,7 +10,10 @@ import type {
   ProposicaoDetalheResult,
   VotacaoDetalheRow,
 } from '../proposicoes.repository';
-import { fonteOficialProposicao } from './camara-portal-url';
+import {
+  camaraPollResultsUrl,
+  fonteOficialProposicao,
+} from './camara-portal-url';
 import { toResumoIaContractFields } from '../rules/proposicao-resumo-ia-public';
 
 function toPlacar(row: VotacaoDetalheRow): PlacarVotacao {
@@ -78,6 +81,9 @@ export function toProposicaoDetalhe(
       dataHora: proposicao.ultimoStatusDataHora,
     },
     fonteOficial: fonteOficialProposicao(proposicao.externalIdProposicao),
+    camaraPollResultsUrl: camaraPollResultsUrl(
+      proposicao.externalIdProposicao,
+    ),
     temas: result.temas.map((tema) => ({
       externalCodTema: tema.externalCodTema,
       tema: tema.tema,

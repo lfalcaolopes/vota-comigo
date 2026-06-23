@@ -31,6 +31,7 @@ function makeProposicao(
     },
     fonteOficial:
       "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=42",
+    camaraPollResultsUrl: "https://www.camara.leg.br/enquetes/42/resultados",
     temas: [{ externalCodTema: 37, tema: "Saúde" }],
     votacoes: [
       {
@@ -82,6 +83,10 @@ describe("ProposicaoDetalhe", () => {
       expect(html).toContain("Última votação");
       expect(html).toContain("14 mar 2025");
       expect(html).toContain("Ver PDF da proposição");
+      expect(html).toContain("Ver resultados da enquete");
+      expect(html).toContain(
+        "https://www.camara.leg.br/enquetes/42/resultados",
+      );
       expect(html).toContain("Ver fonte oficial na Câmara");
       expect(html).toContain("Situação");
       expect(html).toContain("Pronta para Pauta");

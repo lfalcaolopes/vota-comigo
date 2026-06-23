@@ -151,6 +151,7 @@ function Metadados({
       <TemasOficiais temas={temas} />
       <LinksOficiais
         fonteOficial={fonteOficial}
+        camaraPollResultsUrl={proposicao.camaraPollResultsUrl}
         urlInteiroTeor={urlInteiroTeor}
       />
     </>
@@ -250,17 +251,22 @@ function TemasOficiais({ temas }: { temas: TemaOficial[] }) {
 
 function LinksOficiais({
   fonteOficial,
+  camaraPollResultsUrl,
   urlInteiroTeor,
 }: {
   fonteOficial: string;
+  camaraPollResultsUrl: string;
   urlInteiroTeor: string | null;
 }) {
   return (
     <div className="flex flex-wrap gap-x-4 gap-y-2">
+      <LinkOficial href={camaraPollResultsUrl}>
+        Ver enquete pública
+      </LinkOficial>
+      <LinkOficial href={fonteOficial}>Ver fonte oficial na Câmara</LinkOficial>
       {urlInteiroTeor ? (
         <LinkOficial href={urlInteiroTeor}>Ver PDF da proposição</LinkOficial>
       ) : null}
-      <LinkOficial href={fonteOficial}>Ver fonte oficial na Câmara</LinkOficial>
     </div>
   );
 }

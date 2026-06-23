@@ -589,6 +589,9 @@ describe('GET /proposicoes/:externalIdProposicao', () => {
       expect(body.urlInteiroTeor).toBe(
         'https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=1',
       );
+      expect(body.camaraPollResultsUrl).toBe(
+        'https://www.camara.leg.br/enquetes/1/resultados',
+      );
       expect(body.resumoIaDisponivel).toBe(false);
       expect(body.resumoIaCard).toBeNull();
       expect(body.resumoIaDetalhe).toBeNull();

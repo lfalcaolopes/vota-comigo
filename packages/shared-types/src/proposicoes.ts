@@ -114,6 +114,7 @@ export const proposicaoDetalheSchema = z.object({
   resumoIaDetalhe: z.string().nullable(),
   status: proposicaoStatusResumoSchema,
   fonteOficial: z.string(),
+  camaraPollResultsUrl: z.string(),
   temas: z.array(temaOficialSchema),
   votacoes: z.array(votacaoNominalSchema),
 });

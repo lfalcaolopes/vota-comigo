@@ -116,6 +116,9 @@ describe('ProposicoesService.detalhe', () => {
       expect(detail.fonteOficial).toBe(
         'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=1',
       );
+      expect(detail.camaraPollResultsUrl).toBe(
+        'https://www.camara.leg.br/enquetes/1/resultados',
+      );
       expect(detail.resumoIaDisponivel).toBe(false);
       expect(detail.resumoIaCard).toBeNull();
       expect(detail.resumoIaDetalhe).toBeNull();
