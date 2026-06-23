@@ -81,9 +81,7 @@ export function toProposicaoDetalhe(
       dataHora: proposicao.ultimoStatusDataHora,
     },
     fonteOficial: fonteOficialProposicao(proposicao.externalIdProposicao),
-    camaraPollResultsUrl: camaraPollResultsUrl(
-      proposicao.externalIdProposicao,
-    ),
+    camaraPollResultsUrl: camaraPollResultsUrl(proposicao.externalIdProposicao),
     temas: result.temas.map((tema) => ({
       externalCodTema: tema.externalCodTema,
       tema: tema.tema,
