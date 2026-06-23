@@ -10,13 +10,9 @@ import type { ReactNode } from "react";
 
 import { DeputadoAvatar } from "@/shared/deputado";
 import {
-  RECORTE_BASE_PRESENCA,
-  formatPercentual,
   nomePublicoLabel,
   toAtividadeAriaLabel,
   toAtividadeLabel,
-  toPresencaAmostrasLabel,
-  toPresencaAriaLabel,
 } from "@/shared/deputado/presentation";
 import { toIdentificadorLegislativo } from "@/shared/proposicao";
 import {
@@ -24,7 +20,6 @@ import {
   Badge,
   Button,
   ErrorState,
-  InlineMessage,
   SkeletonRows,
 } from "@/shared/ui";
 
@@ -107,19 +102,6 @@ export function StepComparativo({
                 <ComparativoRow
                   key={row.proposicao.externalIdProposicao}
                   row={row}
-                />
-              ))}
-
-              <div className={labelColumnClassName}>
-                <p className="text-sm font-[650] text-ink">Presença</p>
-                <p className="mt-1 text-xs leading-normal text-muted">
-                  Mesmo recorte do Perfil do deputado.
-                </p>
-              </div>
-              {grid.columns.map(({ deputado }) => (
-                <ComparativoPresencaCell
-                  key={`presenca-${deputado.externalIdDeputado}`}
-                  perfil={perfisByDeputado.get(deputado.externalIdDeputado)}
                 />
               ))}
             </div>
@@ -259,58 +241,6 @@ function ComparativoCellFact({
     <div className="grid min-w-0 gap-0.5">
       <dt className="text-xs text-muted">{label}</dt>
       <dd className="break-words font-[650] text-ink">{children}</dd>
-    </div>
-  );
-}
-
-function ComparativoPresencaCell({
-  perfil,
-}: {
-  perfil: DeputadoPerfil | undefined;
-}) {
-  const resumo = perfil?.resumoPresenca ?? null;
-
-  if (!perfil?.resumoPresencaDisponivel || resumo === null) {
-    return (
-      <div className="border-b border-border p-3">
-        <InlineMessage
-          body="Não há votações nominais de plenário em exercício na base para este deputado."
-          title="Presença indisponível"
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div className="border-b border-border p-3">
-      <div className="grid gap-1">
-        <p
-          aria-label={toPresencaAriaLabel(
-            resumo.percentualPresenca,
-            resumo.presencas,
-            resumo.totalVotacoesEmExercicio,
-          )}
-          className="text-lg font-[680] leading-tight tabular-nums text-ink"
-        >
-          {formatPercentual(resumo.percentualPresenca)}
-        </p>
-        <p className="text-sm leading-normal text-muted">
-          {toPresencaAmostrasLabel(
-            resumo.presencas,
-            resumo.totalVotacoesEmExercicio,
-          )}
-        </p>
-        {resumo.ausenciasSemMotivoConhecido > 0 ? (
-          <p className="text-sm leading-normal text-muted">
-            {resumo.ausenciasSemMotivoConhecido} ausência
-            {resumo.ausenciasSemMotivoConhecido > 1 ? "s" : ""} sem motivo
-            conhecido
-          </p>
-        ) : null}
-        <p className="mt-1 text-xs leading-normal text-subtle">
-          {RECORTE_BASE_PRESENCA}
-        </p>
-      </div>
     </div>
   );
 }

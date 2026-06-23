@@ -179,16 +179,18 @@ export function Matcher({
       ) : null}
 
       {state.step === "comparativo" ? (
-        <div className="mx-auto w-full max-w-5xl">
-          <StepComparativo
-            deputados={state.selectedComparativoDeputados}
-            detalhes={state.comparativoDetalhes}
-            onBack={matcher.backFromComparativo}
-            onRetry={matcher.openComparativo}
-            perfis={state.comparativoPerfis}
-            posicoes={comparativoPosicoes}
-            status={state.comparativoStatus}
-          />
+        <div className="mx-auto w-full max-w-6xl">
+          <div className="w-full max-w-4xl">
+            <StepComparativo
+              deputados={state.selectedComparativoDeputados}
+              detalhes={state.comparativoDetalhes}
+              onBack={matcher.backFromComparativo}
+              onRetry={matcher.openComparativo}
+              perfis={state.comparativoPerfis}
+              posicoes={comparativoPosicoes}
+              status={state.comparativoStatus}
+            />
+          </div>
         </div>
       ) : null}
     </section>
