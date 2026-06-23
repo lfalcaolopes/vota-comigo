@@ -17,11 +17,6 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
-    href: "/sobre",
-    label: "Sobre",
-    matches: (pathname) => pathname === "/sobre",
-  },
-  {
     href: "/metodologia",
     label: "Metodologia",
     matches: (pathname) => pathname === "/metodologia",

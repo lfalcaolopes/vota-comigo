@@ -25,10 +25,7 @@ const groups: FooterGroup[] = [
   },
   {
     title: "Entender",
-    links: [
-      { href: "/sobre", label: "Sobre" },
-      { href: "/metodologia", label: "Metodologia" },
-    ],
+    links: [{ href: "/metodologia", label: "Metodologia" }],
   },
 ];
 

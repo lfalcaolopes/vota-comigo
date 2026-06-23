@@ -17,8 +17,8 @@ export function HomeTransparencia() {
             Método e limites, à vista
           </h2>
           <p className="text-base leading-normal text-muted">
-            Mostramos a fonte e o que fica de fora antes de qualquer percentual.
-            A leitura honesta vale mais que um número redondo.
+            Antes de qualquer percentual, mostramos de onde vêm os dados, por
+            que o método é neutro e o que fica de fora da conta.
           </p>
         </div>
 
@@ -26,8 +26,8 @@ export function HomeTransparencia() {
           <div className="grid content-start gap-2">
             <h3 className="text-base font-[680] text-ink">Fonte oficial</h3>
             <p className="text-base leading-normal text-pretty text-muted">
-              Os dados vêm dos Dados Abertos da Câmara dos Deputados, com
-              identificadores e datas preservados.
+              Os dados vêm dos Dados Abertos da Câmara dos Deputados, com número
+              oficial e data de cada votação.
             </p>
             <SourceLink
               href="https://dadosabertos.camara.leg.br/"
@@ -41,8 +41,8 @@ export function HomeTransparencia() {
           <div className="grid content-start gap-2">
             <h3 className="text-base font-[680] text-ink">Neutralidade</h3>
             <p className="text-base leading-normal text-pretty text-muted">
-              O produto não recomenda voto nem usa partido como atalho. Ele
-              organiza evidências para você decidir.
+              O produto não recomenda voto nem julga por partido. Ele compara
+              votos reais e organiza as evidências para você decidir.
             </p>
             <Link
               className="text-sm font-[650] text-primary underline-offset-2 hover:underline"
@@ -55,14 +55,14 @@ export function HomeTransparencia() {
           <div className="grid content-start gap-2">
             <h3 className="text-base font-[680] text-ink">Limites</h3>
             <p className="text-base leading-normal text-pretty text-muted">
-              Candidatos sem histórico na Câmara e cargos fora dela podem ficar
-              de fora. Amostras pequenas pedem cautela.
+              O resultado mostra o voto registrado, não tudo sobre um deputado.
+              Leia como começo, não como conclusão.
             </p>
             <Link
               className="text-sm font-[650] text-primary underline-offset-2 hover:underline"
-              href="/sobre"
+              href="/metodologia"
             >
-              Entenda o alcance
+              Entender os limites
             </Link>
           </div>
         </div>
