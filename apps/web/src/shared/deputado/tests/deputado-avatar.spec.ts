@@ -5,9 +5,10 @@ import { describe, expect, it } from "vitest";
 import { DeputadoAvatar } from "../deputado-avatar";
 
 function render(props: {
+  loading?: "eager" | "lazy";
   nome: string | null;
   urlFoto: string | null;
-  size?: "sm" | "lg";
+  size?: "sm" | "lg" | "xl";
 }): string {
   return renderToStaticMarkup(createElement(DeputadoAvatar, props));
 }
@@ -46,6 +47,18 @@ describe("DeputadoAvatar", () => {
 
       // Assert
       expect(html).toContain('alt="Foto do deputado"');
+    });
+
+    it("uses eager loading when requested", () => {
+      // Arrange / Act
+      const html = render({
+        loading: "eager",
+        nome: "Maria da Silva",
+        urlFoto: "https://example.com/foto.jpg",
+      });
+
+      // Assert
+      expect(html).toContain('loading="eager"');
     });
   });
 

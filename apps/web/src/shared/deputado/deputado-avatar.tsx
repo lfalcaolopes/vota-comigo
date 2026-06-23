@@ -7,6 +7,7 @@ type DeputadoAvatarSize = "sm" | "lg" | "xl";
 type DeputadoAvatarProps = {
   nome: string | null;
   urlFoto: string | null;
+  loading?: "eager" | "lazy";
   size?: DeputadoAvatarSize;
 };
 
@@ -20,6 +21,7 @@ const SIZE_CONFIG = {
 >;
 
 export function DeputadoAvatar({
+  loading,
   nome,
   urlFoto,
   size = "sm",
@@ -33,6 +35,7 @@ export function DeputadoAvatar({
         alt={nome ? `Foto de ${nome}` : "Foto do deputado"}
         className={`${className} rounded-full border border-border object-cover`}
         height={px}
+        loading={loading}
         src={urlFoto}
         width={px}
       />
