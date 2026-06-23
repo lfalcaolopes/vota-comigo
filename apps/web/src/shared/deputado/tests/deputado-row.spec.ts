@@ -37,6 +37,7 @@ describe("DeputadoRow", () => {
       expect(html).toContain("PT");
       expect(html).toContain("SP");
       expect(html).toContain("Em atividade");
+      expect(html).not.toContain("Nome civil");
     });
   });
 
