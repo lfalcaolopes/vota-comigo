@@ -49,6 +49,7 @@ export function AppHeader() {
             className="md:hidden"
             label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
             onClick={() => setIsMenuOpen((current) => !current)}
+            variant="ghost"
           >
             <MenuIcon open={isMenuOpen} />
           </IconButton>
@@ -116,7 +117,7 @@ function Brand() {
   return (
     <Link
       aria-label="Ir para o início"
-      className="inline-flex min-h-11 max-w-full min-w-0 items-center gap-3 rounded-md text-ink no-underline"
+      className="inline-flex min-h-11 max-w-full min-w-0 items-center gap-3 justify-self-start rounded-md text-ink no-underline"
       href="/"
     >
       <BrandMark />
@@ -184,9 +185,9 @@ function MenuIcon({ open }: { open: boolean }) {
     <svg
       aria-hidden="true"
       fill="none"
-      height="24"
-      viewBox="0 0 20 20"
-      width="24"
+      height="28"
+      viewBox="4 4 12 12"
+      width="28"
     >
       {open ? (
         <path
