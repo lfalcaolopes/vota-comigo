@@ -187,6 +187,10 @@ export function DeputadosFeedView({
     await clearFilters();
   }
 
+  const filterPanelClassName = "order-last sm:order-none";
+  const filterTriggerClassName =
+    "w-full [&>button]:w-full [&>button]:justify-center [&>span]:w-full sm:w-auto sm:[&>button]:w-auto sm:[&>span]:w-auto";
+
   return (
     <div className="grid min-w-0 gap-7">
       <div className="grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto_auto] lg:items-start">
@@ -236,27 +240,45 @@ export function DeputadosFeedView({
           ) : null}
         </div>
 
-        <Switch
-          checked={emAtividade}
-          className="h-11 rounded-md border border-border bg-white px-4 py-2.5"
-          disabled={status === "loading"}
-          label="Em atividade"
-          onChange={handleEmAtividade}
-        />
+        <div className="grid min-w-0 gap-2 sm:contents">
+          <p className="text-sm font-[650] text-muted sm:hidden">Filtros</p>
+          <div className="grid min-w-0 grid-cols-2 gap-2 sm:contents">
+            <Switch
+              checked={emAtividade}
+              className="h-11 min-w-0 justify-start rounded-md border border-border bg-white px-3 py-2.5 sm:px-4"
+              disabled={status === "loading"}
+              label="Em atividade"
+              onChange={handleEmAtividade}
+            />
 
-        <DeputadoUfControl
-          activeUf={uf}
-          onClear={handleClearUf}
-          onSelect={handleUf}
-          ufs={ufs}
-        />
+            <DeputadoUfControl
+              activeUf={uf}
+              onClear={handleClearUf}
+              onSelect={handleUf}
+              panelClassName={filterPanelClassName}
+              triggerClassName={filterTriggerClassName}
+              ufs={ufs}
+            />
 
-        <DeputadoPartidoControl
-          activePartido={partido}
-          onClear={handleClearPartido}
-          onSelect={handlePartido}
-          partidos={partidos}
-        />
+            <DeputadoPartidoControl
+              activePartido={partido}
+              onClear={handleClearPartido}
+              onSelect={handlePartido}
+              panelClassName={filterPanelClassName}
+              triggerClassName={filterTriggerClassName}
+              partidos={partidos}
+            />
+
+            <Button
+              className="h-11 min-w-0 sm:hidden"
+              disabled={status === "loading"}
+              onClick={handleClearFilters}
+              variant="secondary"
+            >
+              Limpar
+            </Button>
+          </div>
+        </div>
       </div>
 
       <DeputadosFeedList

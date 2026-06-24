@@ -95,6 +95,15 @@ export function StepSelecao({
     void onSubmitSearch(term);
   }
 
+  async function handleClearFilters() {
+    setDraft("");
+    await onClearFilters();
+  }
+
+  const filterPanelClassName = "order-last sm:order-none";
+  const filterTriggerClassName =
+    "w-full [&>button]:w-full [&>button]:justify-center [&>span]:w-full sm:w-auto sm:[&>button]:w-auto sm:[&>span]:w-auto";
+
   return (
     <div className="grid gap-5">
       <div className="grid min-w-0 gap-4 sm:grid-cols-[auto_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-start">
@@ -109,16 +118,37 @@ export function StepSelecao({
           value={draft}
         />
 
-        <FeedOrdenacaoControl value={ordenacao} onChange={onChangeOrdenacao} />
+        <div className="grid min-w-0 gap-2 sm:contents">
+          <p className="text-sm font-[650] text-muted sm:hidden">Filtros</p>
+          <div className="grid min-w-0 grid-cols-2 gap-2 sm:contents">
+            <FeedOrdenacaoControl
+              className="col-span-full w-full sm:col-span-auto sm:w-auto"
+              itemClassName="flex-1 sm:flex-none"
+              value={ordenacao}
+              onChange={onChangeOrdenacao}
+            />
 
-        {temas.length > 0 && (
-          <FeedTemaControl
-            activeTema={tema}
-            onSelect={onChangeTema}
-            spanToolbar
-            temas={temas}
-          />
-        )}
+            {temas.length > 0 && (
+              <FeedTemaControl
+                activeTema={tema}
+                onSelect={onChangeTema}
+                panelClassName={filterPanelClassName}
+                spanToolbar
+                temas={temas}
+                triggerClassName={filterTriggerClassName}
+              />
+            )}
+
+            <Button
+              className="h-11 min-w-0 sm:hidden"
+              disabled={status === "loading"}
+              onClick={handleClearFilters}
+              variant="secondary"
+            >
+              Limpar
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_21rem] lg:items-start lg:gap-8">

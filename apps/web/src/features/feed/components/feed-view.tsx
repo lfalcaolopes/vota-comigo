@@ -16,6 +16,7 @@ import {
   FeedTemaControl,
   useFeedState,
 } from "@/shared/proposicao";
+import { Button } from "@/shared/ui";
 
 import { FeedList } from "./feed-list";
 
@@ -115,11 +116,16 @@ export function FeedView({
   }
 
   async function handleClearFilters() {
+    setDraft("");
     router.replace(
       buildFeedHref(pathname, { ordenacao, query: null, tema: null }),
     );
     await clearFilters();
   }
+
+  const filterPanelClassName = "order-last sm:order-none";
+  const filterTriggerClassName =
+    "w-full [&>button]:w-full [&>button]:justify-center [&>span]:w-full sm:w-auto sm:[&>button]:w-auto sm:[&>span]:w-auto";
 
   return (
     <div className="grid min-w-0 gap-7">
@@ -135,17 +141,38 @@ export function FeedView({
           value={draft}
         />
 
-        <FeedOrdenacaoControl value={ordenacao} onChange={handleOrdenacao} />
+        <div className="grid min-w-0 gap-2 sm:contents">
+          <p className="text-sm font-[650] text-muted sm:hidden">Filtros</p>
+          <div className="grid min-w-0 grid-cols-2 gap-2 sm:contents">
+            <FeedOrdenacaoControl
+              className="col-span-full w-full sm:col-span-auto sm:w-auto"
+              itemClassName="flex-1 sm:flex-none"
+              value={ordenacao}
+              onChange={handleOrdenacao}
+            />
 
-        {temas.length > 0 && (
-          <FeedTemaControl
-            activeTema={tema}
-            onClear={handleClearTema}
-            onSelect={handleTema}
-            spanToolbar
-            temas={temas}
-          />
-        )}
+            {temas.length > 0 && (
+              <FeedTemaControl
+                activeTema={tema}
+                onClear={handleClearTema}
+                onSelect={handleTema}
+                panelClassName={filterPanelClassName}
+                spanToolbar
+                temas={temas}
+                triggerClassName={filterTriggerClassName}
+              />
+            )}
+
+            <Button
+              className="h-11 min-w-0 sm:hidden"
+              disabled={status === "loading"}
+              onClick={handleClearFilters}
+              variant="secondary"
+            >
+              Limpar
+            </Button>
+          </div>
+        </div>
       </div>
 
       <FeedList

@@ -12,6 +12,8 @@ type DeputadoPartidoControlProps = {
   onSelect: (partido: string) => void;
   onClear?: () => void;
   className?: string;
+  panelClassName?: string;
+  triggerClassName?: string;
 };
 
 export function DeputadoPartidoControl({
@@ -20,6 +22,8 @@ export function DeputadoPartidoControl({
   onSelect,
   onClear,
   className,
+  panelClassName,
+  triggerClassName,
 }: DeputadoPartidoControlProps) {
   const listId = useId();
   const [isOpen, setIsOpen] = useState(false);
@@ -28,13 +32,18 @@ export function DeputadoPartidoControl({
 
   return (
     <div className={joinClassNames("contents", className)}>
-      <div className="flex min-w-0 flex-wrap items-center gap-2">
+      <div
+        className={joinClassNames(
+          "flex min-w-0 flex-wrap items-center gap-2",
+          triggerClassName,
+        )}
+      >
         {activePartido ? (
           <span className="inline-flex h-11 max-w-full items-stretch overflow-hidden rounded-full border border-primary bg-primary-soft text-sm font-[650] leading-[1.2] text-ink transition-[background-color,border-color] duration-[180ms] ease-standard hover:border-primary-hover">
             <button
               aria-controls={listId}
               aria-expanded={isOpen}
-              className="inline-flex min-w-0 items-center gap-2 px-3 py-2 text-left"
+              className="inline-flex min-w-0 flex-1 items-center justify-center gap-2 px-3 py-2 text-center"
               onClick={() => setIsOpen((current) => !current)}
               type="button"
             >
@@ -73,7 +82,10 @@ export function DeputadoPartidoControl({
       {isOpen ? (
         <div
           aria-label="Filtrar por partido"
-          className="col-span-full flex flex-wrap gap-2 rounded-md border border-border bg-surface px-3 py-3"
+          className={joinClassNames(
+            "col-span-full flex flex-wrap gap-2 rounded-md border border-border bg-surface px-3 py-3",
+            panelClassName,
+          )}
           id={listId}
           role="group"
         >
