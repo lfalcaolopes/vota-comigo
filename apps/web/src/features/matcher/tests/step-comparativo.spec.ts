@@ -250,7 +250,7 @@ describe("StepComparativo", () => {
       expect(html).toContain("Abstenção");
       expect(html).toContain("Fora de exercício");
       expect(html).toContain("Fora do cálculo");
-      expect(html).not.toContain("Sua posição");
+      expect(html).toContain("Sua posição");
       expect(html).not.toContain("A favor da aprovação");
       expect(html).not.toContain("Contra a aprovação");
       expect(html).not.toContain("Votação");
@@ -303,7 +303,7 @@ describe("StepComparativo", () => {
       expect(html).not.toContain("block truncate");
     });
 
-    it("guides small viewport users to scroll horizontally to reach every deputado", () => {
+    it("renders mobile proposicao sections without the horizontal scroll prompt", () => {
       // Arrange / Act
       const html = render({
         status: "idle",
@@ -312,11 +312,13 @@ describe("StepComparativo", () => {
       });
 
       // Assert
-      expect(html).toContain('role="status"');
-      expect(html).toContain("Role na horizontal para ver todos os deputados.");
+      expect(html).toContain("lg:hidden");
+      expect(html).toContain("Sua posição");
+      expect(html).not.toContain("Role na horizontal para ver todos os deputados.");
+      expect(html).not.toContain('role="status"');
     });
 
-    it("shows resumo de presença from perfil without rendering profile details outside the comparativo scope", () => {
+    it("does not render profile details outside the comparativo scope", () => {
       // Arrange / Act
       const html = render({
         status: "idle",
@@ -332,14 +334,14 @@ describe("StepComparativo", () => {
       });
 
       // Assert
-      expect(html).toContain("Presença");
-      expect(html).toContain("82%");
-      expect(html).toContain("103 de 125 votações em exercício");
-      expect(html).toContain("22 ausências sem motivo conhecido");
-      expect(html).toContain(
+      expect(html).not.toContain("Presença");
+      expect(html).not.toContain("82%");
+      expect(html).not.toContain("103 de 125 votações em exercício");
+      expect(html).not.toContain("22 ausências sem motivo conhecido");
+      expect(html).not.toContain(
         "votações nominais de plenário das proposições computáveis",
       );
-      expect(html).toContain("Presença indisponível");
+      expect(html).not.toContain("Presença indisponível");
       expect(html).not.toContain("Nome Civil 20");
       expect(html).not.toContain("rede-social");
       expect(html).not.toContain("Nascimento");

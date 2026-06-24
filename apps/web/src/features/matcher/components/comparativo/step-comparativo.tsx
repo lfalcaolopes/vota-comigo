@@ -56,6 +56,15 @@ export function StepComparativo({
   const perfisByDeputado = new Map(
     perfis.map((perfil) => [perfil.externalIdDeputado, perfil]),
   );
+  const deputadosById = new Map(
+    grid.columns.map(({ deputado }) => [
+      deputado.externalIdDeputado,
+      toComparativoDeputadoDisplay(
+        deputado,
+        perfisByDeputado.get(deputado.externalIdDeputado),
+      ),
+    ]),
+  );
   const gridTemplateColumns = `minmax(12rem,1.1fr) repeat(${grid.columns.length}, minmax(13rem,1fr))`;
 
   return (
@@ -77,13 +86,10 @@ export function StepComparativo({
 
       {status === "idle" ? (
         <>
-          <p
-            className="text-sm leading-normal text-muted lg:hidden"
-            role="status"
-          >
-            Role na horizontal para ver todos os deputados.
-          </p>
-          <div className="overflow-x-auto pb-2">
+          <div className="lg:hidden">
+            <ComparativoMobile rows={grid.rows} deputadosById={deputadosById} />
+          </div>
+          <div className="hidden overflow-x-auto pb-2 lg:block">
             <div className="grid" style={{ gridTemplateColumns }}>
               <div
                 className={`${labelColumnClassName} text-sm font-[650] text-muted`}
@@ -92,9 +98,8 @@ export function StepComparativo({
               </div>
               {grid.columns.map(({ deputado }) => (
                 <ComparativoDeputadoHeader
-                  deputado={deputado}
                   key={deputado.externalIdDeputado}
-                  perfil={perfisByDeputado.get(deputado.externalIdDeputado)}
+                  deputado={deputadosById.get(deputado.externalIdDeputado)}
                 />
               ))}
 
@@ -112,40 +117,56 @@ export function StepComparativo({
   );
 }
 
-type ComparativoDeputadoHeaderProps = {
+type ComparativoDeputadoDisplay = {
   deputado: MatcherDeputadoResumo;
-  perfil: DeputadoPerfil | undefined;
+  emAtividade: boolean;
+  nome: string | null;
+  siglaPartido: string;
+  siglaUf: string;
+  urlFoto: string | null;
 };
 
-function ComparativoDeputadoHeader({
-  deputado,
-  perfil,
-}: ComparativoDeputadoHeaderProps) {
-  const nome = perfil ? nomePublicoLabel(perfil) : deputado.nome;
+function toComparativoDeputadoDisplay(
+  deputado: MatcherDeputadoResumo,
+  perfil: DeputadoPerfil | undefined,
+): ComparativoDeputadoDisplay {
   const snapshot = perfil?.snapshotPublico ?? null;
-  const siglaPartido = snapshot?.siglaPartido ?? deputado.partido ?? "—";
-  const siglaUf = snapshot?.siglaUf ?? deputado.siglaUf ?? "—";
-  const urlFoto = snapshot?.urlFoto ?? deputado.urlFoto;
-  const emAtividade = perfil?.emAtividade ?? deputado.emAtividade;
+
+  return {
+    deputado,
+    emAtividade: perfil?.emAtividade ?? deputado.emAtividade,
+    nome: perfil ? nomePublicoLabel(perfil) : deputado.nome,
+    siglaPartido: snapshot?.siglaPartido ?? deputado.partido ?? "—",
+    siglaUf: snapshot?.siglaUf ?? deputado.siglaUf ?? "—",
+    urlFoto: snapshot?.urlFoto ?? deputado.urlFoto,
+  };
+}
+
+type ComparativoDeputadoHeaderProps = {
+  deputado: ComparativoDeputadoDisplay | undefined;
+};
+
+function ComparativoDeputadoHeader({ deputado }: ComparativoDeputadoHeaderProps) {
+  if (!deputado) return null;
 
   return (
     <div className="border-b border-border p-3">
       <div className="grid gap-3">
         <div className="flex items-start gap-3">
-          <DeputadoAvatar nome={nome} urlFoto={urlFoto} />
+          <DeputadoAvatar nome={deputado.nome} urlFoto={deputado.urlFoto} />
           <div className="min-w-0">
             <Link
               className="block line-clamp-2 break-words text-sm font-[650] text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
-              href={`/deputados/${deputado.externalIdDeputado}`}
+              href={`/deputados/${deputado.deputado.externalIdDeputado}`}
               rel="noopener noreferrer"
               target="_blank"
             >
-              {nome ?? "Sem nome"}
+              {deputado.nome ?? "Sem nome"}
             </Link>
             <p className="mt-1 text-xs text-muted">
-              {siglaPartido} · {siglaUf}
+              {deputado.siglaPartido} · {deputado.siglaUf}
             </p>
-            <ComparativoAtividadeStatus emAtividade={emAtividade} />
+            <ComparativoAtividadeStatus emAtividade={deputado.emAtividade} />
           </div>
         </div>
       </div>
@@ -221,6 +242,127 @@ function ComparativoRow({ row }: ComparativoRowProps) {
         </div>
       ))}
     </>
+  );
+}
+
+type ComparativoMobileProps = {
+  deputadosById: Map<number, ComparativoDeputadoDisplay>;
+  rows: ReturnType<typeof buildComparativoDeputadosGrid>["rows"];
+};
+
+function ComparativoMobile({ deputadosById, rows }: ComparativoMobileProps) {
+  return (
+    <div className="grid gap-5">
+      {rows.map((row) => (
+        <ComparativoMobileProposicao
+          deputadosById={deputadosById}
+          key={row.proposicao.externalIdProposicao}
+          row={row}
+        />
+      ))}
+    </div>
+  );
+}
+
+type ComparativoMobileProposicaoProps = {
+  deputadosById: Map<number, ComparativoDeputadoDisplay>;
+  row: ReturnType<typeof buildComparativoDeputadosGrid>["rows"][number];
+};
+
+function ComparativoMobileProposicao({
+  deputadosById,
+  row,
+}: ComparativoMobileProposicaoProps) {
+  const identificador =
+    toIdentificadorLegislativo(row.proposicao) ??
+    `Proposição ${row.proposicao.externalIdProposicao}`;
+
+  return (
+    <section className="grid gap-3 border-t border-border pt-5 first:border-t-0 first:pt-0">
+      <header className="grid gap-2">
+        <Link
+          className="block break-words text-base font-[680] leading-snug text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+          href={`/proposicoes/${row.proposicao.externalIdProposicao}`}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {identificador}
+        </Link>
+        {row.proposicao.ementa ? (
+          <p className="line-clamp-3 text-sm leading-normal text-muted">
+            {row.proposicao.ementa}
+          </p>
+        ) : null}
+        <dl className="grid rounded-md border border-border bg-surface px-3 py-2 text-sm leading-normal">
+          <ComparativoCellFact label="Sua posição">
+            {toPosicaoUsuarioValueLabel(row.posicaoUsuario)}
+          </ComparativoCellFact>
+        </dl>
+      </header>
+
+      <ul className="grid gap-2">
+        {row.cells.map((cell) => (
+          <ComparativoMobileDeputadoVoto
+            cell={cell}
+            deputado={deputadosById.get(cell.externalIdDeputado)}
+            key={`${row.proposicao.externalIdProposicao}-${cell.externalIdDeputado}`}
+            posicaoUsuario={row.posicaoUsuario}
+          />
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+type ComparativoMobileDeputadoVotoProps = {
+  cell: ReturnType<
+    typeof buildComparativoDeputadosGrid
+  >["rows"][number]["cells"][number];
+  deputado: ComparativoDeputadoDisplay | undefined;
+  posicaoUsuario: PosicaoUsuarioMatcher;
+};
+
+function ComparativoMobileDeputadoVoto({
+  cell,
+  deputado,
+  posicaoUsuario,
+}: ComparativoMobileDeputadoVotoProps) {
+  if (!deputado) return null;
+
+  return (
+    <li className="rounded-lg border border-border bg-bg p-3">
+      <div className="flex min-w-0 items-start gap-3">
+        <DeputadoAvatar nome={deputado.nome} urlFoto={deputado.urlFoto} />
+        <div className="min-w-0 flex-1">
+          <Link
+            className="block line-clamp-2 break-words text-sm font-[650] leading-snug text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+            href={`/deputados/${deputado.deputado.externalIdDeputado}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {deputado.nome ?? "Sem nome"}
+          </Link>
+          <p className="mt-1 text-xs text-muted">
+            {deputado.siglaPartido} · {deputado.siglaUf}
+          </p>
+        </div>
+        <Badge
+          className="max-w-[8rem] shrink-0 justify-center text-center"
+          tone={cell.matcherEffectVerdict.tone}
+        >
+          {cell.matcherEffectVerdict.label}
+        </Badge>
+      </div>
+
+      <dl className="mt-3 grid grid-cols-2 gap-3 border-t border-border pt-3 text-sm leading-normal">
+        <ComparativoCellFact label="Você">
+          {toPosicaoUsuarioValueLabel(posicaoUsuario)}
+        </ComparativoCellFact>
+        <ComparativoCellFact label="Deputado">
+          {cell.situacaoLabel}
+        </ComparativoCellFact>
+      </dl>
+    </li>
   );
 }
 
