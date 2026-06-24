@@ -14,7 +14,7 @@ import {
   toAtividadeAriaLabel,
   toAtividadeLabel,
 } from "@/shared/deputado/presentation";
-import { toIdentificadorLegislativo } from "@/shared/proposicao";
+import { toIdentificadorLegislativo, toTextoResumo } from "@/shared/proposicao";
 import {
   ArrowLeftIcon,
   Badge,
@@ -199,6 +199,7 @@ function ComparativoRow({ row }: ComparativoRowProps) {
   const identificador =
     toIdentificadorLegislativo(row.proposicao) ??
     `Proposição ${row.proposicao.externalIdProposicao}`;
+  const textoResumo = toTextoResumo(row.proposicao);
 
   return (
     <>
@@ -211,9 +212,9 @@ function ComparativoRow({ row }: ComparativoRowProps) {
         >
           {identificador}
         </Link>
-        {row.proposicao.ementa ? (
+        {textoResumo ? (
           <p className="mt-1 line-clamp-2 text-sm leading-normal text-muted">
-            {row.proposicao.ementa}
+            {textoResumo}
           </p>
         ) : null}
       </div>
@@ -276,6 +277,7 @@ function ComparativoMobileProposicao({
   const identificador =
     toIdentificadorLegislativo(row.proposicao) ??
     `Proposição ${row.proposicao.externalIdProposicao}`;
+  const textoResumo = toTextoResumo(row.proposicao);
 
   return (
     <section className="grid gap-3 border-t border-border pt-5 first:border-t-0 first:pt-0">
@@ -288,9 +290,9 @@ function ComparativoMobileProposicao({
         >
           {identificador}
         </Link>
-        {row.proposicao.ementa ? (
+        {textoResumo ? (
           <p className="line-clamp-3 text-sm leading-normal text-muted">
-            {row.proposicao.ementa}
+            {textoResumo}
           </p>
         ) : null}
         <dl className="grid rounded-md border border-border bg-surface px-3 py-2 text-sm leading-normal">

@@ -12,7 +12,10 @@ import { describe, expect, it, vi } from "vitest";
 
 import { StepComparativo } from "../components/comparativo/step-comparativo";
 
-function proposicao(externalIdProposicao: number): ProposicaoCard {
+function proposicao(
+  externalIdProposicao: number,
+  overrides: Partial<ProposicaoCard> = {},
+): ProposicaoCard {
   return {
     externalIdProposicao,
     siglaTipo: "PL",
@@ -24,6 +27,7 @@ function proposicao(externalIdProposicao: number): ProposicaoCard {
     dataApresentacao: "2024-01-01",
     volumeVotacoesPlenario: 1,
     dataUltimaVotacao: "2024-06-01",
+    ...overrides,
   };
 }
 
@@ -351,6 +355,29 @@ describe("StepComparativo", () => {
       expect(html).not.toContain("Score Wilson");
       expect(html).not.toContain("Amostra comparável");
       expect(html).not.toContain("0%");
+    });
+
+    it("shows the resumo IA as the proposicao description when available", () => {
+      // Arrange / Act
+      const html = render({
+        status: "idle",
+        deputados: [deputado(20)],
+        posicoes: [{ externalIdProposicao: 1, posicao: "aprovar" }],
+        detalhes: [
+          detalhe(20, [
+            voto(1, {
+              proposicao: proposicao(1, {
+                resumoIaDisponivel: true,
+                resumoIaCard: "Resumo IA 1",
+              }),
+            }),
+          ]),
+        ],
+      });
+
+      // Assert
+      expect(html).toContain("Resumo IA 1");
+      expect(html).not.toContain("Ementa 1");
     });
   });
 });
