@@ -22,6 +22,11 @@ export function ResumoIa({
         <SparklesIcon aria-hidden="true" />
         Resumo por IA
       </h2>
+      {proposicao.resumoIaCard ? (
+        <p className="text-lg leading-normal text-pretty text-ink">
+          {proposicao.resumoIaCard}
+        </p>
+      ) : null}
       {bullets.length > 1 ? (
         <ul className="grid list-disc gap-2 pl-5 text-lg leading-normal text-pretty text-ink">
           {bullets.map((bullet, index) => (
@@ -122,9 +127,7 @@ export function LinksOficiais({
 }) {
   return (
     <div className="flex flex-wrap gap-x-4 gap-y-2">
-      <LinkOficial href={camaraPollResultsUrl}>
-        Ver enquete pública
-      </LinkOficial>
+      <LinkOficial href={camaraPollResultsUrl}>Ver enquete pública</LinkOficial>
       <LinkOficial href={fonteOficial}>Ver fonte oficial na Câmara</LinkOficial>
       {urlInteiroTeor ? (
         <LinkOficial href={urlInteiroTeor}>Ver PDF da proposição</LinkOficial>

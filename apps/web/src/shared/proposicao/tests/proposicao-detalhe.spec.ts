@@ -83,7 +83,7 @@ describe("ProposicaoDetalhe", () => {
       expect(html).toContain("Última votação");
       expect(html).toContain("14 mar 2025");
       expect(html).toContain("Ver PDF da proposição");
-      expect(html).toContain("Ver resultados da enquete");
+      expect(html).toContain("Ver enquete pública");
       expect(html).toContain(
         "https://www.camara.leg.br/enquetes/42/resultados",
       );
@@ -122,8 +122,12 @@ describe("ProposicaoDetalhe", () => {
 
       // Assert
       expect(html).toContain("Resumo por IA");
+      expect(html).toContain("Resumo curto aprovado.");
       expect(html).toContain(
         "Resumo detalhado aprovado em linguagem acessível.",
+      );
+      expect(html.indexOf("Resumo curto aprovado.")).toBeLessThan(
+        html.indexOf("Resumo detalhado aprovado em linguagem acessível."),
       );
     });
 
