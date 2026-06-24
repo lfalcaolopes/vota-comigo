@@ -123,15 +123,15 @@ export function FeedView({
     await clearFilters();
   }
 
-  const filterPanelClassName = "order-last sm:order-none";
+  const filterPanelClassName = "order-last sm:basis-full sm:shrink-0";
   const filterTriggerClassName =
     "w-full [&>button]:w-full [&>button]:justify-center [&>span]:w-full sm:w-auto sm:[&>button]:w-auto sm:[&>span]:w-auto";
 
   return (
     <div className="grid min-w-0 gap-7">
-      <div className="grid min-w-0 gap-4 sm:grid-cols-[auto_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-start">
+      <div className="grid min-w-0 gap-4 sm:flex sm:flex-wrap sm:items-start sm:gap-2">
         <FeedSearch
-          className="w-full sm:col-span-2 lg:col-span-1"
+          className="w-full sm:min-w-0 sm:flex-1"
           disabled={status === "loading"}
           isSearching={query !== ""}
           onChange={setDraft}
@@ -145,7 +145,7 @@ export function FeedView({
           <p className="text-sm font-[650] text-muted sm:hidden">Filtros</p>
           <div className="grid min-w-0 grid-cols-2 gap-2 sm:contents">
             <FeedOrdenacaoControl
-              className="col-span-full w-full sm:col-span-auto sm:w-auto"
+              className="col-span-full w-full sm:w-auto sm:shrink-0"
               itemClassName="flex-1 sm:flex-none"
               value={ordenacao}
               onChange={handleOrdenacao}
