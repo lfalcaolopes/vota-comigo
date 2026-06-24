@@ -4,7 +4,7 @@ import Link from "next/link";
 import { toIdentificadorLegislativo } from "./presentation";
 
 export function ProposicaoBreadcrumb({
-  feedHref = "/",
+  feedHref = "/proposicoes",
   proposicao,
 }: {
   feedHref?: string;

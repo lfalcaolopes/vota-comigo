@@ -51,7 +51,10 @@ export default async function ProposicaoDetalhePage({
   searchParams,
 }: PageProps) {
   const { externalIdProposicao } = await params;
-  const feedHref = buildFeedHref("/", parseFeedUrlState(await searchParams));
+  const feedHref = buildFeedHref(
+    "/proposicoes",
+    parseFeedUrlState(await searchParams),
+  );
 
   let proposicao;
   try {

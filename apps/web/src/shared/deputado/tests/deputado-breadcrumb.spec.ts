@@ -39,7 +39,7 @@ function render(perfil: DeputadoPerfilData): string {
 
 describe("DeputadoBreadcrumb", () => {
   describe("when the perfil has a public name", () => {
-    it("links Início to the home and shows the public name", () => {
+    it("links Deputados to the listing and shows the public name", () => {
       // Arrange
       const perfil = makePerfil();
 
@@ -47,8 +47,8 @@ describe("DeputadoBreadcrumb", () => {
       const html = render(perfil);
 
       // Assert
-      expect(html).toContain("Início");
-      expect(html).toContain('href="/"');
+      expect(html).toContain("Deputados");
+      expect(html).toContain('href="/deputados"');
       expect(html).toContain("Maria da Silva");
     });
   });

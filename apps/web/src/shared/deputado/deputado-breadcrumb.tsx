@@ -10,10 +10,10 @@ export function DeputadoBreadcrumb({ perfil }: { perfil: DeputadoPerfilData }) {
       className="flex flex-wrap items-center gap-2 text-sm text-subtle"
     >
       <Link
-        href="/"
+        href="/deputados"
         className="text-muted underline-offset-2 hover:text-ink hover:underline"
       >
-        Início
+        Deputados
       </Link>
       <span aria-hidden="true">›</span>
       <span className="min-w-0 [overflow-wrap:anywhere] text-muted">
