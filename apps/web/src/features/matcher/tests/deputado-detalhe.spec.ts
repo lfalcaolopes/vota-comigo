@@ -218,7 +218,14 @@ describe("StepResultado", () => {
       );
 
       // Assert
+      expect(html).toContain("Filtros");
       expect(html).toContain("Comparar deputados");
+      expect(html.indexOf("Comparar deputados")).toBeLessThan(
+        html.indexOf("Filtros"),
+      );
+      expect(html.indexOf("Filtros")).toBeLessThan(
+        html.indexOf("Apenas em atividade"),
+      );
       expect(html).not.toContain("Selecionar Maria da Silva para comparação");
     });
   });

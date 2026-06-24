@@ -71,19 +71,59 @@ export function StepResultado({
   const isSelectingComparativo = isComparativoSelectionMode(state);
   const canCompare = canOpenComparativo(state);
   const hasDeputadoLimit = hasComparativoDeputadoLimit(state);
-  const escopoControl = (
-    <div className="flex flex-wrap items-center gap-4">
-      <SegmentedControl
-        activeId={escopo}
-        items={ESCOPO_ITEMS}
-        label="Escopo dos resultados"
-        onSelect={(id) => onEscopoChange(id as EscopoMatcher)}
-      />
-      <Switch
-        checked={apenasEmAtividade}
-        label="Apenas em atividade"
-        onChange={(e) => onApenasEmAtividadeChange(e.target.checked)}
-      />
+  const compareAction = isSelectingComparativo ? (
+    <div className="grid grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
+      <Button
+        className="h-11 min-w-0 sm:h-auto"
+        onClick={onCancelComparativoSelection}
+        variant="ghost"
+      >
+        Cancelar
+      </Button>
+      <Button
+        className="h-11 min-w-0 sm:h-auto"
+        disabled={!canCompare}
+        onClick={onOpenComparativo}
+        variant="primary"
+      >
+        Comparar
+      </Button>
+    </div>
+  ) : (
+    <Button
+      className="h-11 w-full min-w-0 !border-border-strong sm:h-auto sm:w-auto sm:shrink-0 sm:px-5"
+      onClick={onStartComparativoSelection}
+      variant="secondary"
+    >
+      Comparar deputados
+    </Button>
+  );
+  const renderFilterControls = () => (
+    <div className="grid min-w-0 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
+      <p className="text-sm font-[650] text-muted sm:hidden">Filtros</p>
+      <div className="grid min-w-0 grid-cols-2 gap-2 sm:contents">
+        <SegmentedControl
+          activeId={escopo}
+          className="order-1 col-span-full w-full sm:w-auto"
+          itemClassName="flex-1 sm:flex-none"
+          items={ESCOPO_ITEMS}
+          label="Escopo dos resultados"
+          onSelect={(id) => onEscopoChange(id as EscopoMatcher)}
+        />
+        <Switch
+          checked={apenasEmAtividade}
+          className="order-3 col-span-full h-11 min-w-0 justify-start rounded-md border border-border bg-white px-3 py-2.5 sm:order-2 sm:h-auto sm:border-0 sm:bg-transparent sm:px-0 sm:py-0"
+          label="Apenas em atividade"
+          onChange={(e) => onApenasEmAtividadeChange(e.target.checked)}
+        />
+      </div>
+    </div>
+  );
+  const escopoControl = renderFilterControls();
+  const resultadoControls = (
+    <div className="grid min-w-0 gap-3 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
+      <div className="order-1 sm:order-2 sm:ml-auto">{compareAction}</div>
+      <div className="order-2 sm:order-1">{renderFilterControls()}</div>
     </div>
   );
 
@@ -122,31 +162,7 @@ export function StepResultado({
 
   return (
     <div className="grid gap-5">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        {escopoControl}
-        {isSelectingComparativo ? (
-          <div className="flex flex-wrap gap-2">
-            <Button onClick={onCancelComparativoSelection} variant="ghost">
-              Cancelar
-            </Button>
-            <Button
-              disabled={!canCompare}
-              onClick={onOpenComparativo}
-              variant="primary"
-            >
-              Comparar
-            </Button>
-          </div>
-        ) : (
-          <Button
-            className="shrink-0 !border-border-strong px-5"
-            onClick={onStartComparativoSelection}
-            variant="secondary"
-          >
-            Comparar deputados
-          </Button>
-        )}
-      </div>
+      {resultadoControls}
       {isSelectingComparativo ? (
         <div className="text-sm text-muted">
           {hasDeputadoLimit ? (
