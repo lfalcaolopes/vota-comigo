@@ -18,6 +18,8 @@ import { Button, SearchField, Switch } from "@/shared/ui";
 
 import { DeputadosFeedList } from "./deputados-feed-list";
 
+type OpenFilter = "uf" | "partido" | null;
+
 type DeputadosFeedViewProps = {
   initialItems: DeputadoCard[];
   initialTotal: number;
@@ -70,6 +72,7 @@ export function DeputadosFeedView({
   );
 
   const [draft, setDraft] = useState(initialQuery ?? "");
+  const [openFilter, setOpenFilter] = useState<OpenFilter>(null);
   const activeQuery = query || null;
 
   async function handleClear() {
@@ -187,7 +190,7 @@ export function DeputadosFeedView({
     await clearFilters();
   }
 
-  const filterPanelClassName = "order-last sm:order-none";
+  const filterPanelClassName = "order-last";
   const filterTriggerClassName =
     "w-full [&>button]:w-full [&>button]:justify-center [&>span]:w-full sm:w-auto sm:[&>button]:w-auto sm:[&>span]:w-auto";
 
@@ -254,7 +257,9 @@ export function DeputadosFeedView({
             <DeputadoUfControl
               activeUf={uf}
               onClear={handleClearUf}
+              onOpenChange={(open) => setOpenFilter(open ? "uf" : null)}
               onSelect={handleUf}
+              open={openFilter === "uf"}
               panelClassName={filterPanelClassName}
               triggerClassName={filterTriggerClassName}
               ufs={ufs}
@@ -263,7 +268,9 @@ export function DeputadosFeedView({
             <DeputadoPartidoControl
               activePartido={partido}
               onClear={handleClearPartido}
+              onOpenChange={(open) => setOpenFilter(open ? "partido" : null)}
               onSelect={handlePartido}
+              open={openFilter === "partido"}
               panelClassName={filterPanelClassName}
               triggerClassName={filterTriggerClassName}
               partidos={partidos}

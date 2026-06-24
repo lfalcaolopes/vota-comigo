@@ -4,11 +4,12 @@ import { describe, expect, it } from "vitest";
 
 import { DeputadoPartidoControl } from "../deputado-partido-control";
 
-function render(activePartido: string | null): string {
+function render(activePartido: string | null, open = false): string {
   return renderToStaticMarkup(
     createElement(DeputadoPartidoControl, {
       activePartido,
       onSelect: () => {},
+      open,
       partidos: [{ siglaPartido: "PSOL" }, { siglaPartido: "PT" }],
     }),
   );
@@ -33,6 +34,18 @@ describe("DeputadoPartidoControl", () => {
       // Assert
       expect(html).toContain(">PT<");
       expect(html).toContain("Limpar filtro de partido PT");
+    });
+  });
+
+  describe("when controlled open", () => {
+    it("renders the partido options", () => {
+      // Act
+      const html = render(null, true);
+
+      // Assert
+      expect(html).toContain("Filtrar por partido");
+      expect(html).toContain(">PSOL<");
+      expect(html).toContain(">PT<");
     });
   });
 });

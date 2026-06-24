@@ -14,6 +14,8 @@ type DeputadoUfControlProps = {
   onSelect: (uf: string) => void;
   onClear?: () => void;
   className?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   panelClassName?: string;
   triggerClassName?: string;
 };
@@ -24,12 +26,22 @@ export function DeputadoUfControl({
   onSelect,
   onClear,
   className,
+  open,
+  onOpenChange,
   panelClassName,
   triggerClassName,
 }: DeputadoUfControlProps) {
   const listId = useId();
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isOpen = open ?? internalOpen;
   const activeEstadoLabel = activeUf ? toEstadoLabel(activeUf) : null;
+
+  function setIsOpen(next: boolean) {
+    if (open === undefined) {
+      setInternalOpen(next);
+    }
+    onOpenChange?.(next);
+  }
 
   if (ufs.length === 0) return null;
 
@@ -47,7 +59,7 @@ export function DeputadoUfControl({
               aria-controls={listId}
               aria-expanded={isOpen}
               className="inline-flex min-w-0 flex-1 items-center justify-center gap-2 px-3 py-2 text-center"
-              onClick={() => setIsOpen((current) => !current)}
+              onClick={() => setIsOpen(!isOpen)}
               type="button"
             >
               <span className="min-w-0 truncate">{activeEstadoLabel}</span>
@@ -73,7 +85,7 @@ export function DeputadoUfControl({
             aria-controls={listId}
             aria-expanded={isOpen}
             className="inline-flex h-11 items-center gap-2 rounded-md border border-border bg-white px-4 py-2.5 text-sm font-[650] leading-[1.2] text-ink transition-[background-color,border-color] duration-[180ms] ease-standard hover:border-border-strong hover:bg-surface-muted"
-            onClick={() => setIsOpen((current) => !current)}
+            onClick={() => setIsOpen(!isOpen)}
             type="button"
           >
             Estado
