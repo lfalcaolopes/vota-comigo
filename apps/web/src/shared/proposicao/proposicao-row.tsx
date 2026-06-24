@@ -76,7 +76,7 @@ function ProposicaoRowContent({ card }: { card: ProposicaoCard }) {
         </MetaItem>
 
         {ultimaVotacao ? (
-          <MetaItem label="Última votação" mono>
+          <MetaItem className="hidden sm:flex" label="Última votação" mono>
             {ultimaVotacao}
           </MetaItem>
         ) : null}
@@ -95,13 +95,17 @@ function MetaItem({
   children,
   label,
   mono = false,
+  className,
 }: {
   children: ReactNode;
   label: string;
   mono?: boolean;
+  className?: string;
 }) {
   return (
-    <div className="flex min-w-0 items-baseline gap-2">
+    <div
+      className={`flex min-w-0 items-baseline gap-2${className ? ` ${className}` : ""}`}
+    >
       <dt className="text-xs text-subtle">{label}</dt>
       <dd
         className={
