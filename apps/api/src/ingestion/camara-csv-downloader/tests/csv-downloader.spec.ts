@@ -429,6 +429,7 @@ describe('csv downloader entrypoint', () => {
           failed: 1,
           failures: [
             {
+              dataset: 'legislaturas',
               filename: 'legislaturas.csv',
               reason: '404 Not Found',
             },
@@ -442,6 +443,8 @@ describe('csv downloader entrypoint', () => {
           'Resumo: 5 baixados, 1 pulados, 1 erros.',
           'Falhas:',
           '  - legislaturas.csv: 404 Not Found',
+          'Para baixar apenas os que faltam, execute:',
+          '  pnpm download:csvs -- --dataset=legislaturas',
         ]),
       );
     });

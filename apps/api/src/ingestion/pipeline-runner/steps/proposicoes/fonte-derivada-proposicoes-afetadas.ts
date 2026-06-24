@@ -18,7 +18,7 @@ export type FonteDerivadaProposicoesAfetadasOptions = {
   limit?: number;
   canDownload: boolean;
   strict: boolean;
-  reporter?: Pick<IngestionReporter, 'log'>;
+  reporter?: Pick<IngestionReporter, 'log' | 'status' | 'error'>;
   readDataset(dataset: string, year: number): CsvRowSource | undefined;
 };
 
@@ -44,10 +44,11 @@ type EnsureDatasetFilesInput = {
   dataset: string;
   neededYears: readonly number[];
   canDownload: boolean;
-  reporter?: Pick<IngestionReporter, 'log'>;
+  reporter?: Pick<IngestionReporter, 'log' | 'status' | 'error'>;
   readDataset(dataset: string, year: number): CsvRowSource | undefined;
   downloader: DatasetDownloader;
   logMessage: string;
+  progressLabel: string;
   resumeCommand: string;
   missingFileGap(year: number): ExternalGap;
 };
@@ -78,6 +79,7 @@ export function createFonteDerivadaProposicoesAfetadas(
           readDataset: (dataset, year) => options.readDataset(dataset, year),
           downloader: deps.proposicoesDownloader,
           logMessage: `[proposicoes] baixando proposicoes-{ano}.csv ausentes`,
+          progressLabel: '[proposicoes]',
           resumeCommand:
             'npm run ingest -- --only=proposicoes,votacao_proposicao',
           missingFileGap: missingProposicoesFileGap,
@@ -135,6 +137,7 @@ export function createFonteDerivadaProposicoesAfetadas(
         readDataset: (dataset, year) => options.readDataset(dataset, year),
         downloader: deps.temasDownloader,
         logMessage: `[tema] baixando ${TEMAS_DATASET}-{ano}.csv ausentes`,
+        progressLabel: '[tema]',
         resumeCommand: 'npm run ingest -- --only=tema',
         missingFileGap: missingTemaFileGap,
       });
@@ -154,7 +157,10 @@ async function ensureDatasetFiles(
   if (missingYears.length > 0 && input.canDownload) {
     input.reporter?.log(`${input.logMessage}: ${missingYears.join(', ')}`);
 
-    const outcome = await input.downloader.download(missingYears);
+    const outcome = await input.downloader.download(missingYears, {
+      reporter: input.reporter,
+      label: input.progressLabel,
+    });
 
     if (!outcome.ok) {
       const failedYears = outcome.failures.map((failure) => failure.year);

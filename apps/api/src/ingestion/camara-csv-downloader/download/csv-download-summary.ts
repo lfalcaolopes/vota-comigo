@@ -3,6 +3,7 @@ import type {
   CsvDownloadSummary,
   CsvPlanItemDownloadResult,
 } from '../types/csv-downloader.types';
+import { formatResumeCommand } from './resume-command';
 
 export function summarizeCsvDownloads(
   results: readonly CsvPlanItemDownloadResult[],
@@ -29,6 +30,7 @@ export function summarizeCsvDownloads(
         failures: [
           ...summary.failures,
           {
+            dataset: result.item.dataset,
             filename: result.item.filename,
             reason: failureReason(result),
           },
@@ -78,6 +80,13 @@ export function reportCsvDownloadSummary(
 
   for (const failure of summary.failures) {
     reporter.log(`  - ${failure.filename}: ${failure.reason}`);
+  }
+
+  const resumeCommand = formatResumeCommand(summary.failures);
+
+  if (resumeCommand !== undefined) {
+    reporter.log('Para baixar apenas os que faltam, execute:');
+    reporter.log(`  ${resumeCommand}`);
   }
 }
 

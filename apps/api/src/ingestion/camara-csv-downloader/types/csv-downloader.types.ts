@@ -70,6 +70,7 @@ export type CsvDownloadSummary = {
 };
 
 export type CsvDownloadFailureSummary = {
+  dataset: string;
   filename: string;
   reason: string;
 };

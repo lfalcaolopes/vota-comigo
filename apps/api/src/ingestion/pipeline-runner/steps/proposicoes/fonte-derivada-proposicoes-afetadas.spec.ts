@@ -1,6 +1,9 @@
 import type { CsvRecord, CsvRow } from '../../sources/csv-reader';
 import type { CsvRowSource } from '../../types/ingestion-pipeline-runner.types';
-import type { DatasetDownloader } from '../../shared/dataset-downloader';
+import type {
+  DatasetDownloader,
+  DatasetDownloadOptions,
+} from '../../shared/dataset-downloader';
 import { StrictModeError } from '../../errors/strict-mode-error';
 import { createFonteDerivadaProposicoesAfetadas } from './fonte-derivada-proposicoes-afetadas';
 
@@ -54,12 +57,18 @@ function readDatasetFrom(datasets: Datasets) {
 
 function createFakeDownloader(
   behavior: (years: readonly number[]) => void = () => {},
-): DatasetDownloader & { readonly calls: number[][] } {
+): DatasetDownloader & {
+  readonly calls: number[][];
+  readonly optionsCalls: (DatasetDownloadOptions | undefined)[];
+} {
   const calls: number[][] = [];
+  const optionsCalls: (DatasetDownloadOptions | undefined)[] = [];
   return {
     calls,
-    async download(years) {
+    optionsCalls,
+    async download(years, options) {
       calls.push([...years]);
+      optionsCalls.push(options);
       behavior(years);
       return { ok: true };
     },
@@ -177,6 +186,35 @@ describe('fonte derivada de proposicoes afetadas', () => {
       // Assert
       expect(downloader.calls).toEqual([[2007]]);
       expect(prepared.externalGaps).toEqual([]);
+    });
+
+    it('forwards the reporter and proposicoes label to the downloader', async () => {
+      // Arrange
+      const datasets: Datasets = {
+        votacoesVotos: { 2024: [voto('2024-1')] },
+        votacoes: { 2024: [votacao('2024-1')] },
+        votacoesProposicoes: { 2024: [link('2024-1', '111', '2007')] },
+        proposicoes: {},
+      };
+      const reporter = createReporter();
+      const downloader = createFakeDownloader(() => {
+        datasets.proposicoes[2007] = [proposicaoRecord('111', '2007')];
+      });
+      const fonte = createFonte(downloader);
+
+      // Act
+      await fonte.prepareProposicoes({
+        years: [2024],
+        canDownload: true,
+        strict: false,
+        reporter,
+        readDataset: readDatasetFrom(datasets),
+      });
+
+      // Assert
+      expect(downloader.optionsCalls).toEqual([
+        { reporter, label: '[proposicoes]' },
+      ]);
     });
 
     it('aborts with a resume instruction when a required download fails', async () => {
