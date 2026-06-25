@@ -2,7 +2,6 @@
   "extends": "@vota-comigo/tsconfig/nestjs.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "../..",
     "paths": {
       "@/*": ["./src/*"],
       "@vota-comigo/shared-types": ["../../packages/shared-types/src"]
