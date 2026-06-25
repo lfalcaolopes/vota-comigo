@@ -64,6 +64,17 @@ describe('normalizeVotacaoVotoRecord', () => {
       });
     });
 
+    it('strips trailing asterisk markers from the observed sigla', () => {
+      // Arrange
+      const record = { ...baseRecord, deputado_siglaPartido: 'PP***' };
+
+      // Act
+      const { partido } = normalizeVotacaoVotoRecord(record);
+
+      // Assert
+      expect(partido).toMatchObject({ status: 'observed', sigla: 'PP' });
+    });
+
     it('reports the partido as absent when uriPartido is empty', () => {
       // Arrange
       const record = { ...baseRecord, deputado_uriPartido: '' };

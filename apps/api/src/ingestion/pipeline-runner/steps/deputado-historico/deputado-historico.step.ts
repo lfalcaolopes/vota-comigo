@@ -8,6 +8,7 @@ import type {
 } from '../../types/ingestion-pipeline-runner.types';
 import { mapWithConcurrency } from '../../shared/bounded-concurrency';
 import { extractExternalIdFromUri } from '../../shared/camara-uri';
+import { normalizeSiglaPartido } from '../../shared/sigla-partido';
 import { StrictModeError } from '../../errors/strict-mode-error';
 import type { LegislaturaLookup } from '../deputados/deputados.repository.types';
 import type {
@@ -352,7 +353,7 @@ async function resolvePartidoIds(
 
     missing.set(externalIdPartido, {
       externalIdPartido,
-      sigla: evento.siglaPartido,
+      sigla: normalizeSiglaPartido(evento.siglaPartido),
       uri: evento.uriPartido,
     });
   }

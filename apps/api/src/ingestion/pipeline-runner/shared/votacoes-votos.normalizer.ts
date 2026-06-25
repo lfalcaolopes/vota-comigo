@@ -1,6 +1,7 @@
 import type { VotoCategoria } from '@vota-comigo/shared-types';
 import type { CsvRecord } from '../sources/csv-reader';
 import { extractExternalIdFromUri } from './camara-uri';
+import { normalizeSiglaPartido } from './sigla-partido';
 
 export type { VotoCategoria };
 
@@ -107,7 +108,7 @@ function observePartido(record: CsvRecord): PartidoObservation {
   return {
     status: 'observed',
     externalIdPartido,
-    sigla: emptyToNull(record.deputado_siglaPartido),
+    sigla: normalizeSiglaPartido(record.deputado_siglaPartido),
     uri,
   };
 }

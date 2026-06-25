@@ -346,6 +346,48 @@ describe('deputado_historico step', () => {
     });
   });
 
+  describe('when a backfilled partido sigla carries trailing markers', () => {
+    it('strips the asterisks before upserting the partido', async () => {
+      // Arrange
+      const partido = partidoBackend(new Map());
+      const { step } = stepWith({
+        deputadoSource: sourceOf([{ id: 'dep-1', externalIdDeputado: 220593 }]),
+        historicoClient: clientOf(
+          new Map([
+            [
+              220593,
+              {
+                ok: true,
+                eventos: [
+                  historicoEvento({
+                    siglaPartido: 'PP***',
+                    uriPartido:
+                      'https://dadosabertos.camara.leg.br/api/v2/partidos/36',
+                  }),
+                ],
+              },
+            ],
+          ]),
+        ),
+        legislaturaLookup: legislaturaLookupOf(new Map([[57, 'leg-57']])),
+        partidoLookup: partido.lookup,
+        partidoRepository: partido.repository,
+      });
+
+      // Act
+      await step.run(context());
+
+      // Assert
+      expect(partido.repository.upserted).toEqual([
+        {
+          externalIdPartido: 36,
+          sigla: 'PP',
+          uri: 'https://dadosabertos.camara.leg.br/api/v2/partidos/36',
+        },
+      ]);
+    });
+  });
+
   describe('when the run is interrupted partway through', () => {
     it('keeps the events of deputados already processed in earlier chunks', async () => {
       // Arrange
