@@ -146,7 +146,9 @@ type ComparativoDeputadoHeaderProps = {
   deputado: ComparativoDeputadoDisplay | undefined;
 };
 
-function ComparativoDeputadoHeader({ deputado }: ComparativoDeputadoHeaderProps) {
+function ComparativoDeputadoHeader({
+  deputado,
+}: ComparativoDeputadoHeaderProps) {
   if (!deputado) return null;
 
   return (

@@ -67,9 +67,7 @@ export function DeputadoDetalhe({
         <div className="flex min-w-0 items-center gap-3">
           <DeputadoAvatar nome={deputado.nome} urlFoto={deputado.urlFoto} />
           <div className="min-w-0">
-            <p className="font-[680] text-ink">
-              {deputado.nome ?? "Sem nome"}
-            </p>
+            <p className="font-[680] text-ink">{deputado.nome ?? "Sem nome"}</p>
             <p className="text-sm text-muted">
               {deputado.partido ?? "—"} · {deputado.siglaUf}
             </p>

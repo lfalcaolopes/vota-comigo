@@ -47,7 +47,10 @@ export function HomeComoFunciona() {
 
         <ol className="grid gap-x-8 gap-y-8 md:grid-cols-3">
           {passos.map((passo) => (
-            <li className="grid gap-2 border-t border-border-strong pt-4" key={passo.numero}>
+            <li
+              className="grid gap-2 border-t border-border-strong pt-4"
+              key={passo.numero}
+            >
               <span className="font-mono text-lg font-[680] tracking-[-0.01em] text-primary">
                 {passo.numero}
               </span>

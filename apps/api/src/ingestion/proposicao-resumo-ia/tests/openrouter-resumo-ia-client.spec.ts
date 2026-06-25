@@ -29,11 +29,12 @@ function makeFetch(response: {
   status?: number;
   body?: unknown;
 }): jest.MockedFunction<FetchFn> {
-  return jest.fn(async () => ({
+  const fetchMock: FetchFn = async () => ({
     ok: response.ok,
     status: response.status ?? (response.ok ? 200 : 500),
-    json: jest.fn(async () => response.body ?? {}),
-  }));
+    json: async () => response.body ?? {},
+  });
+  return jest.fn(fetchMock);
 }
 
 function openrouterBody(content: unknown): unknown {

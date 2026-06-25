@@ -46,7 +46,8 @@ export function AppFooter() {
               </span>
             </Link>
             <p className="text-sm leading-normal text-muted">
-              Projeto independente, sem vínculo partidário ou com a Câmara dos Deputados
+              Projeto independente, sem vínculo partidário ou com a Câmara dos
+              Deputados
             </p>
           </div>
 

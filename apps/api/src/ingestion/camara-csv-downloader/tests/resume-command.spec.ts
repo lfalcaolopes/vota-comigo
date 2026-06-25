@@ -72,10 +72,7 @@ describe('formatResumeCommand', () => {
   });
 });
 
-function failure(
-  dataset: string,
-  filename: string,
-): CsvDownloadFailureSummary {
+function failure(dataset: string, filename: string): CsvDownloadFailureSummary {
   return {
     dataset,
     filename,

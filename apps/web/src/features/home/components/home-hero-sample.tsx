@@ -31,7 +31,9 @@ export function HomeHeroSample() {
       className="grid gap-4 rounded-lg border border-border bg-surface p-5"
     >
       <figcaption className="flex items-center justify-between gap-3">
-        <span className="text-sm font-[650] text-ink">Como o resultado aparece</span>
+        <span className="text-sm font-[650] text-ink">
+          Como o resultado aparece
+        </span>
         <Badge tone="neutral">Exemplo</Badge>
       </figcaption>
 

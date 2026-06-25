@@ -271,7 +271,8 @@ export function PosicaoConteudo({
           >
             Responda Sim ou Não em pelo menos {MIN_POSICOES_COMPUTAVEIS}{" "}
             proposições para ver o resultado. Faltam{" "}
-            <strong className="font-[720] text-ink">{faltamComputaveis}</strong>.
+            <strong className="font-[720] text-ink">{faltamComputaveis}</strong>
+            .
           </p>
         ) : null}
       </div>

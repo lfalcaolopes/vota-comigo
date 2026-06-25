@@ -16,7 +16,10 @@ async function loadDestaques(): Promise<ProposicaoCard[]> {
 
 export function HomeEmVotacao() {
   return (
-    <section aria-labelledby="home-em-votacao" className="border-b border-border">
+    <section
+      aria-labelledby="home-em-votacao"
+      className="border-b border-border"
+    >
       <div className="mx-auto grid w-full min-w-0 max-w-5xl gap-6 px-4 py-12 md:py-16">
         <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
           <div className="grid max-w-[60ch] gap-3">

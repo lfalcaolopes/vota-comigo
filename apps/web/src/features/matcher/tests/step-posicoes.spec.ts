@@ -27,7 +27,9 @@ function card(overrides: Partial<ProposicaoCard> = {}): ProposicaoCard {
   };
 }
 
-function detalhe(overrides: Partial<ProposicaoDetalhe> = {}): ProposicaoDetalhe {
+function detalhe(
+  overrides: Partial<ProposicaoDetalhe> = {},
+): ProposicaoDetalhe {
   return {
     externalIdProposicao: 1,
     siglaTipo: "PL",
@@ -86,7 +88,10 @@ describe("StepPosicoes", () => {
   describe("focus targets for keyboard and screen-reader users", () => {
     it("exposes the card and review panes as labelled, focusable groups", () => {
       // Arrange
-      const selected = [card({ externalIdProposicao: 1 }), card({ externalIdProposicao: 2 })];
+      const selected = [
+        card({ externalIdProposicao: 1 }),
+        card({ externalIdProposicao: 2 }),
+      ];
 
       // Act
       const html = renderStep(selected);

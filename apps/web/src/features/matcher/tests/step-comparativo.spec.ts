@@ -318,7 +318,9 @@ describe("StepComparativo", () => {
       // Assert
       expect(html).toContain("lg:hidden");
       expect(html).toContain("Sua posição");
-      expect(html).not.toContain("Role na horizontal para ver todos os deputados.");
+      expect(html).not.toContain(
+        "Role na horizontal para ver todos os deputados.",
+      );
       expect(html).not.toContain('role="status"');
     });
 

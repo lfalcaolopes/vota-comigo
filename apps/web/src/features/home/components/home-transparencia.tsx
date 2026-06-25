@@ -24,7 +24,9 @@ export function HomeTransparencia() {
 
         <div className="grid gap-x-8 gap-y-8 md:grid-cols-3">
           <div className="grid content-start gap-2 border-t border-border-strong pt-4">
-            <h3 className="text-lg leading-snug font-[680] text-ink">Fonte oficial</h3>
+            <h3 className="text-lg leading-snug font-[680] text-ink">
+              Fonte oficial
+            </h3>
             <p className="text-base leading-normal text-pretty text-muted">
               Os dados vêm dos Dados Abertos da Câmara dos Deputados, com número
               oficial e data de cada votação.
@@ -39,7 +41,9 @@ export function HomeTransparencia() {
           </div>
 
           <div className="grid content-start gap-2 border-t border-border-strong pt-4">
-            <h3 className="text-lg leading-snug font-[680] text-ink">Neutralidade</h3>
+            <h3 className="text-lg leading-snug font-[680] text-ink">
+              Neutralidade
+            </h3>
             <p className="text-base leading-normal text-pretty text-muted">
               O produto não recomenda voto nem julga por partido. Ele compara
               votos reais e organiza as evidências para você decidir.
@@ -53,7 +57,9 @@ export function HomeTransparencia() {
           </div>
 
           <div className="grid content-start gap-2 border-t border-border-strong pt-4">
-            <h3 className="text-lg leading-snug font-[680] text-ink">Limites</h3>
+            <h3 className="text-lg leading-snug font-[680] text-ink">
+              Limites
+            </h3>
             <p className="text-base leading-normal text-pretty text-muted">
               O resultado mostra o voto registrado, não tudo sobre um deputado.
               Leia como começo, não como conclusão.

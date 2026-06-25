@@ -42,12 +42,7 @@ function Identidade({ perfil }: { perfil: DeputadoPerfilData }) {
 
   return (
     <header className="grid gap-4 lg:col-start-1 lg:row-start-1 lg:pr-8">
-      <DeputadoAvatar
-        loading="eager"
-        nome={nome}
-        urlFoto={urlFoto}
-        size="xl"
-      />
+      <DeputadoAvatar loading="eager" nome={nome} urlFoto={urlFoto} size="xl" />
       <div className="grid min-w-0 gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone="neutral">{CARGO_DEPUTADO}</Badge>
