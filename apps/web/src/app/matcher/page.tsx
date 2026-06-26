@@ -6,7 +6,7 @@ import { feed, temasDisponiveis } from "@/shared/proposicao";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Quem vota comigo | Quem Vota Comigo",
+  title: "Fazer comparação",
   description:
     "Declare sua posição sobre as proposições mais votadas e descubra quais deputados federais votaram de forma compatível com você.",
 };

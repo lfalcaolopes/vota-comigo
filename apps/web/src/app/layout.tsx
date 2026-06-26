@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { AppFooter, AppHeader } from "@/shared/navigation";
+import { SITE_DESCRIPTION, SITE_NAME, siteUrl } from "@/shared/lib/site";
 
 import "./globals.css";
 
@@ -16,11 +17,32 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Quem Vota Comigo",
-  description:
-    "Transparência política baseada em votos reais da Câmara dos Deputados.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
   icons: {
     icon: "/icon.svg",
+  },
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    siteName: SITE_NAME,
+    url: "/",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 

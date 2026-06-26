@@ -12,7 +12,7 @@ import {
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Deputados | Quem Vota Comigo",
+  title: "Deputados",
   description:
     "Diretório de deputados federais no Quem Vota Comigo, com busca por nome e filtros por atividade, UF e partido.",
 };

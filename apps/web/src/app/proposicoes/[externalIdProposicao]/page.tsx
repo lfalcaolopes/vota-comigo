@@ -32,7 +32,7 @@ export async function generateMetadata({
       notFound();
     }
     // Transient failure: render a safe title and let the page body surface the error boundary.
-    return { title: "Proposição | Quem Vota Comigo" };
+    return { title: "Proposição" };
   }
 
   const identificador = toIdentificadorLegislativo(proposicao) ?? "Proposição";
@@ -40,8 +40,8 @@ export async function generateMetadata({
 
   return {
     title: inicioEmenta
-      ? `${identificador} — ${inicioEmenta} | Quem Vota Comigo`
-      : `${identificador} | Quem Vota Comigo`,
+      ? `${identificador} — ${inicioEmenta}`
+      : identificador,
     description: proposicao.ementa ?? undefined,
   };
 }

@@ -11,7 +11,9 @@ import {
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Quem Vota Comigo | Veja quais deputados votam como você",
+  title: {
+    absolute: "Quem Vota Comigo | Veja quais deputados votam como você",
+  },
   description:
     "Compare suas posições com os votos reais de deputados federais na Câmara dos Deputados, com fonte oficial e método aberto.",
 };

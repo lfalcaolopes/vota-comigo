@@ -23,13 +23,13 @@ export async function generateMetadata({
   try {
     const deputado = await perfil(Number(externalIdDeputado));
     return {
-      title: `${nomePublicoLabel(deputado)} | Quem Vota Comigo`,
+      title: nomePublicoLabel(deputado),
     };
   } catch (error) {
     if (error instanceof NotFoundError) {
       notFound();
     }
-    return { title: "Deputado | Quem Vota Comigo" };
+    return { title: "Deputado" };
   }
 }
 

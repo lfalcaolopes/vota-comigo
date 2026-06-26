@@ -11,7 +11,7 @@ import {
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Proposições | Quem Vota Comigo",
+  title: "Proposições",
   description:
     "Proposições computáveis pelo matcher na Câmara dos Deputados, a partir dos dados abertos oficiais.",
 };

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Panel, SourceLink } from "@/shared/ui";
 
 export const metadata: Metadata = {
-  title: "Metodologia | Quem Vota Comigo",
+  title: "Metodologia",
   description:
     "Como o Quem Vota Comigo calcula compatibilidade a partir de votações nominais e dados abertos oficiais.",
 };
