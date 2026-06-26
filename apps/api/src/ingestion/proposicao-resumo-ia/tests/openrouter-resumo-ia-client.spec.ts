@@ -413,7 +413,9 @@ describe('createOpenrouterResumoIaClient', () => {
       const fetch = makeFetch({
         ok: true,
         body: {
-          choices: [{ message: { content: null }, finish_reason: 'content_filter' }],
+          choices: [
+            { message: { content: null }, finish_reason: 'content_filter' },
+          ],
         },
       });
       const client = createOpenrouterResumoIaClient({

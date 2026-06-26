@@ -207,7 +207,9 @@ function extractOpenrouterError(body: unknown): string | null {
   const message = errorRecord['message'];
   const code = errorRecord['code'];
   const text = typeof message === 'string' ? message : 'erro sem mensagem';
-  return code !== undefined ? `${text} (code=${String(code)})` : text;
+  const codeText =
+    typeof code === 'string' || typeof code === 'number' ? String(code) : null;
+  return codeText !== null ? `${text} (code=${codeText})` : text;
 }
 
 function extractDiagnostics(body: unknown): ResumoIaGenerationDiagnostics {
