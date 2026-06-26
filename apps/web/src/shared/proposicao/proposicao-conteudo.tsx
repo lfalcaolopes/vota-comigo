@@ -39,8 +39,8 @@ export function ResumoIa({
         </p>
       )}
       <p className="border-t border-border pt-3 text-xs leading-normal text-muted">
-        Gerado por IA a partir do texto oficial. Pode conter imprecisões;
-        consulte a fonte oficial.
+        Gerado por IA a partir do texto completo da proposição. Pode conter
+        imprecisões; consulte a fonte oficial.
       </p>
     </section>
   );
@@ -130,7 +130,7 @@ export function LinksOficiais({
       <LinkOficial href={camaraPollResultsUrl}>Ver enquete pública</LinkOficial>
       <LinkOficial href={fonteOficial}>Ver fonte oficial na Câmara</LinkOficial>
       {urlInteiroTeor ? (
-        <LinkOficial href={urlInteiroTeor}>Ver PDF da proposição</LinkOficial>
+        <LinkOficial href={urlInteiroTeor}>Ver texto completo</LinkOficial>
       ) : null}
     </div>
   );

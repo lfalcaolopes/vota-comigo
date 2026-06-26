@@ -15,7 +15,7 @@ function item(
 
 describe('proposicaoResumoIaJsonItemSchema', () => {
   describe('when status values are known', () => {
-    it.each(['generated', 'insufficient_source', 'error'])(
+    it.each(['generated', 'insufficient_source', 'error', 'source_too_large'])(
       'accepts generationStatus %s',
       (generationStatus) => {
         // Arrange

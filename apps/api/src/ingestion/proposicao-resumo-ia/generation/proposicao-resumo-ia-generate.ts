@@ -145,12 +145,32 @@ export async function executeProposicaoResumoIaGenerate(
 
     const generatedAt = new Date().toISOString();
     const results: ProposicaoResumoIaGenerationResult[] = [];
-    for (const target of targets) {
+    for (const [index, target] of targets.entries()) {
+      const position = `[${index + 1}/${targets.length}]`;
+      const hasPdf = target.urlInteiroTeor !== null ? 'sim' : 'não';
+      const label = `proposição ${target.externalIdProposicao} (ano ${target.ano ?? '—'}, PDF: ${hasPdf})`;
+      options.reporter?.log(`${position} ${label} → gerando...`);
+
+      const startedAt = Date.now();
       const outcome = await aiClient.generate(target);
-      if (!outcome.ok) {
+      const elapsed = `${((Date.now() - startedAt) / 1000).toFixed(1)}s`;
+
+      if (outcome.ok) {
         options.reporter?.log(
-          `Erro em ${target.externalIdProposicao}: ${outcome.reason}`,
+          `${position} ${label} → ${outcome.response.status} (${elapsed})`,
         );
+      } else {
+        const terminalNote =
+          outcome.failureKind === 'source_too_large'
+            ? ' [descartado, não será reprocessado]'
+            : '';
+        options.reporter?.log(
+          `${position} ${label} → erro: ${outcome.reason}${terminalNote} (${elapsed})`,
+        );
+        const contentTail = outcome.diagnostics?.contentTail;
+        if (contentTail !== undefined) {
+          options.reporter?.log(`  conteúdo truncado (final): ${contentTail}`);
+        }
       }
       results.push({ source: target, outcome });
     }
@@ -222,12 +242,14 @@ function logReport(
     generated: number;
     insufficientSource: number;
     error: number;
+    sourceTooLarge: number;
     skipped: number;
     filesWritten: number;
   },
 ): void {
   reporter?.log(`Gerados: ${report.generated}`);
   reporter?.log(`Fonte insuficiente: ${report.insufficientSource}`);
+  reporter?.log(`Fonte grande demais: ${report.sourceTooLarge}`);
   reporter?.log(`Erros: ${report.error}`);
   reporter?.log(`Ignorados (já gerados): ${report.skipped}`);
   reporter?.log(`Arquivos escritos: ${report.filesWritten}`);

@@ -26,6 +26,7 @@ export const proposicaoResumoIaGenerationStatus = z.enum([
   "generated",
   "insufficient_source",
   "error",
+  "source_too_large",
 ]);
 
 export const proposicaoResumoIaReviewStatus = z.enum([

@@ -375,4 +375,166 @@ describe('createOpenrouterResumoIaClient', () => {
       expect(outcome.ok).toBe(false);
     });
   });
+
+  describe('when the response carries diagnostic signal', () => {
+    it('reports finish_reason and completion_tokens on truncated JSON', async () => {
+      // Arrange
+      const fetch = makeFetch({
+        ok: true,
+        body: {
+          choices: [
+            { message: { content: '{"status":"gen' }, finish_reason: 'length' },
+          ],
+          usage: { prompt_tokens: 12000, completion_tokens: 4096 },
+        },
+      });
+      const client = createOpenrouterResumoIaClient({
+        apiKey: 'key',
+        model: 'model-x',
+        fetch,
+      });
+
+      // Act
+      const outcome = await client.generate(source());
+
+      // Assert
+      expect(outcome.ok).toBe(false);
+      if (!outcome.ok) {
+        expect(outcome.reason).toContain('finish_reason=length');
+        expect(outcome.reason).toContain('completion_tokens=4096');
+        expect(outcome.diagnostics?.finishReason).toBe('length');
+        expect(outcome.diagnostics?.completionTokens).toBe(4096);
+        expect(outcome.diagnostics?.contentTail).toBe('{"status":"gen');
+      }
+    });
+
+    it('reports finish_reason when content is missing', async () => {
+      // Arrange
+      const fetch = makeFetch({
+        ok: true,
+        body: {
+          choices: [{ message: { content: null }, finish_reason: 'content_filter' }],
+        },
+      });
+      const client = createOpenrouterResumoIaClient({
+        apiKey: 'key',
+        model: 'model-x',
+        fetch,
+      });
+
+      // Act
+      const outcome = await client.generate(source());
+
+      // Assert
+      expect(outcome.ok).toBe(false);
+      if (!outcome.ok) {
+        expect(outcome.reason).toContain('content ausente');
+        expect(outcome.reason).toContain('finish_reason=content_filter');
+        expect(outcome.diagnostics?.finishReason).toBe('content_filter');
+      }
+    });
+
+    it('surfaces an OpenRouter error returned inside a 200 body', async () => {
+      // Arrange
+      const fetch = makeFetch({
+        ok: true,
+        body: {
+          error: { message: 'PDF parser failed', code: 422 },
+        },
+      });
+      const client = createOpenrouterResumoIaClient({
+        apiKey: 'key',
+        model: 'model-x',
+        fetch,
+      });
+
+      // Act
+      const outcome = await client.generate(source());
+
+      // Assert
+      expect(outcome.ok).toBe(false);
+      if (!outcome.ok) {
+        expect(outcome.reason).toContain('PDF parser failed');
+        expect(outcome.reason).toContain('code=422');
+        expect(outcome.diagnostics?.openrouterError).toContain(
+          'PDF parser failed',
+        );
+      }
+    });
+
+    it('flags failureKind source_too_large when the input exceeds the context window', async () => {
+      // Arrange
+      const fetch = makeFetch({
+        ok: true,
+        body: {
+          error: {
+            message:
+              'Your input exceeds the context window of this model. Please adjust your input and try again.',
+            code: 502,
+          },
+        },
+      });
+      const client = createOpenrouterResumoIaClient({
+        apiKey: 'key',
+        model: 'model-x',
+        fetch,
+      });
+
+      // Act
+      const outcome = await client.generate(source());
+
+      // Assert
+      expect(outcome.ok).toBe(false);
+      if (!outcome.ok) {
+        expect(outcome.failureKind).toBe('source_too_large');
+      }
+    });
+
+    it('does not flag a transient 502 provider error as source_too_large', async () => {
+      // Arrange
+      const fetch = makeFetch({
+        ok: true,
+        body: { error: { message: 'Provider returned error', code: 502 } },
+      });
+      const client = createOpenrouterResumoIaClient({
+        apiKey: 'key',
+        model: 'model-x',
+        fetch,
+      });
+
+      // Act
+      const outcome = await client.generate(source());
+
+      // Assert
+      expect(outcome.ok).toBe(false);
+      if (!outcome.ok) {
+        expect(outcome.failureKind).toBeUndefined();
+      }
+    });
+
+    it('includes the error body message on non-2xx status', async () => {
+      // Arrange
+      const fetch = makeFetch({
+        ok: false,
+        status: 429,
+        body: { error: { message: 'Rate limited' } },
+      });
+      const client = createOpenrouterResumoIaClient({
+        apiKey: 'key',
+        model: 'model-x',
+        fetch,
+      });
+
+      // Act
+      const outcome = await client.generate(source());
+
+      // Assert
+      expect(outcome.ok).toBe(false);
+      if (!outcome.ok) {
+        expect(outcome.reason).toContain('HTTP 429');
+        expect(outcome.reason).toContain('Rate limited');
+        expect(outcome.diagnostics?.httpStatus).toBe(429);
+      }
+    });
+  });
 });

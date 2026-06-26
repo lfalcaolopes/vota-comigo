@@ -75,6 +75,14 @@ function errorOutcome(): ResumoIaGenerationOutcome {
   return { ok: false, reason: 'network error' };
 }
 
+function sourceTooLargeOutcome(): ResumoIaGenerationOutcome {
+  return {
+    ok: false,
+    reason: 'erro OpenRouter: Your input exceeds the context window',
+    failureKind: 'source_too_large',
+  };
+}
+
 function result(
   src: ProposicaoResumoIaSource,
   outcome: ResumoIaGenerationOutcome,
@@ -141,7 +149,7 @@ describe('selectProposicaoResumoIaGenerationTargets', () => {
       expect(targets).toContain(src);
     });
 
-    it.each(['generated', 'insufficient_source'] as const)(
+    it.each(['generated', 'insufficient_source', 'source_too_large'] as const)(
       'skips source when existing item has generationStatus %s',
       (generationStatus) => {
         // Arrange
@@ -496,6 +504,29 @@ describe('applyProposicaoResumoIaGeneration', () => {
       expect(item?.resumoCard).toBeNull();
       expect(item?.resumoDetalhe).toBeNull();
       expect(report.error).toBe(1);
+    });
+
+    it('maps a source_too_large failure to a terminal source_too_large generationStatus', () => {
+      // Arrange
+      const src = source();
+      const results = [result(src, sourceTooLargeOutcome())];
+
+      // Act
+      const { files, report } = applyProposicaoResumoIaGeneration({
+        files: [annualFile()],
+        results,
+        model: MODEL,
+        promptVersion: PROMPT_VERSION,
+        generatedAt: GENERATED_AT,
+      });
+
+      // Assert
+      const item = files[0]?.items['42'];
+      expect(item?.generationStatus).toBe('source_too_large');
+      expect(item?.resumoCard).toBeNull();
+      expect(item?.resumoDetalhe).toBeNull();
+      expect(report.sourceTooLarge).toBe(1);
+      expect(report.error).toBe(0);
     });
 
     it('fills model, promptVersion, generatedAt and sourceHash even for error outcomes', () => {

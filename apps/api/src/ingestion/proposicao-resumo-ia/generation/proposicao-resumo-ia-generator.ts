@@ -14,6 +14,7 @@ export type ProposicaoResumoIaApplyReport = {
   generated: number;
   insufficientSource: number;
   error: number;
+  sourceTooLarge: number;
 };
 
 export function selectProposicaoResumoIaGenerationTargets(input: {
@@ -77,6 +78,7 @@ export function applyProposicaoResumoIaGeneration(input: {
     generated: 0,
     insufficientSource: 0,
     error: 0,
+    sourceTooLarge: 0,
   };
 
   for (const { source, outcome } of results) {
@@ -113,6 +115,8 @@ export function applyProposicaoResumoIaGeneration(input: {
       outcome.response.status === 'insufficient_source'
     ) {
       report.insufficientSource++;
+    } else if (!outcome.ok && outcome.failureKind === 'source_too_large') {
+      report.sourceTooLarge++;
     } else {
       report.error++;
     }
@@ -157,6 +161,20 @@ function buildItem(input: {
     return {
       sourceHash,
       generationStatus: 'insufficient_source',
+      reviewStatus: 'pending',
+      resumoCard: null,
+      resumoDetalhe: null,
+      model,
+      promptVersion,
+      generatedAt,
+      reviewedAt: null,
+    };
+  }
+
+  if (!outcome.ok && outcome.failureKind === 'source_too_large') {
+    return {
+      sourceHash,
+      generationStatus: 'source_too_large',
       reviewStatus: 'pending',
       resumoCard: null,
       resumoDetalhe: null,

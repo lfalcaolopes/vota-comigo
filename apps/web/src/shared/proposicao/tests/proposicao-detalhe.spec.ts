@@ -82,7 +82,7 @@ describe("ProposicaoDetalhe", () => {
       expect(html).toContain("Estatísticas");
       expect(html).toContain("Última votação");
       expect(html).toContain("14 mar 2025");
-      expect(html).toContain("Ver PDF da proposição");
+      expect(html).toContain("Ver texto completo");
       expect(html).toContain("Ver enquete pública");
       expect(html).toContain(
         "https://www.camara.leg.br/enquetes/42/resultados",
@@ -103,7 +103,7 @@ describe("ProposicaoDetalhe", () => {
       const html = render(proposicao);
 
       // Assert
-      expect(html).not.toContain("Ver PDF da proposição");
+      expect(html).not.toContain("Ver texto completo");
       expect(html).toContain("Ver fonte oficial na Câmara");
     });
   });
@@ -143,7 +143,9 @@ describe("ProposicaoDetalhe", () => {
       const html = render(proposicao);
 
       // Assert
-      expect(html).toContain("Gerado por IA a partir do texto oficial");
+      expect(html).toContain(
+        "Gerado por IA a partir do texto completo da proposição",
+      );
     });
 
     it("does not render an empty IA resumo section when unavailable", () => {
