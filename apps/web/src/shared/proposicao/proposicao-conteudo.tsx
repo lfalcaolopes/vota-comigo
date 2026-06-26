@@ -140,7 +140,12 @@ function parseResumoBullets(detalhe: string): string[] {
   return detalhe
     .split("\n")
     .map((line) => line.trim().replace(/^-\s+/, ""))
-    .filter((line) => line.length > 0);
+    .filter((line) => line.length > 0)
+    .map(capitalizeFirst);
+}
+
+function capitalizeFirst(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 function LinkOficial({
