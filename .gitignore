@@ -19,3 +19,5 @@ csv
 apps/api/data
 # Deploy env-vars (segredos)
 gcloud-env.yaml
+.vercel
+.env*
