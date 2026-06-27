@@ -18,9 +18,6 @@ function parseOrigins(raw: string | undefined): string[] {
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  const simulatedError = 2;
-  const simulatedError = 2;
-
   app.use(helmet());
   app.set('trust proxy', 1);
 
