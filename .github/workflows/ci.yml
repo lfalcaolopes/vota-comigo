@@ -28,3 +28,35 @@ jobs:
       - run: pnpm build
       - run: pnpm --filter api test
       - run: pnpm --filter web test
+
+  deploy-api:
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.DEPLOY_SA }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - run: |
+          gcloud run deploy api \
+            --source . \
+            --project ${{ vars.GCP_PROJECT }} \
+            --region ${{ vars.GCP_REGION }} \
+            --service-account ${{ vars.RUNTIME_SA }} \
+            --allow-unauthenticated \
+            --min-instances=0 \
+            --port=8080 \
+            --set-secrets DATABASE_URL=app-db-url:latest \
+            --set-env-vars "^##^NODE_ENV=production##WEB_ORIGIN=${{ vars.WEB_ORIGIN }}" \
+            --quiet
