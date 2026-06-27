@@ -1,0 +1,23 @@
+# What NOT to upload to Cloud Build with `gcloud run deploy --source`.
+# When this file exists, gcloud ignores .gitignore, so it must be self-contained.
+
+.git
+**/node_modules
+**/dist
+**/.next
+**/.turbo
+**/coverage
+**/*.tsbuildinfo
+
+# Large read-only Câmara CSVs (1.4 GB) — never needed for the build
+apps/api/data
+
+# Secrets — env files and the deploy env-vars file
+**/.env
+**/.env.*
+!**/.env.example
+gcloud-env.yaml
+
+# Test artifacts
+**/playwright-report
+**/test-results

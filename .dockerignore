@@ -1,0 +1,20 @@
+# Dependencies and build outputs (rebuilt inside the image)
+**/node_modules
+**/dist
+**/.next
+**/.turbo
+**/coverage
+**/*.tsbuildinfo
+
+# Downloaded Câmara CSVs (large, read-only, never needed in the image)
+apps/api/data
+
+# Secrets — never ship env files into the build context
+**/.env
+**/.env.*
+!**/.env.example
+
+# VCS and test artifacts
+.git
+**/playwright-report
+**/test-results

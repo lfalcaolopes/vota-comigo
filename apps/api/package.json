@@ -5,6 +5,9 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "nest build",
     "download:csvs": "ts-node -r tsconfig-paths/register src/ingestion/camara-csv-downloader/csv-downloader.cli.ts",

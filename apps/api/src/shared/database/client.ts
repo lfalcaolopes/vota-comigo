@@ -19,7 +19,9 @@ export function createDatabaseClient(
     );
   }
 
-  const sql = postgres(url);
+  // Neon's pooled endpoint runs PgBouncer in transaction mode, which rejects the
+  // session-level prepared statements postgres-js issues by default.
+  const sql = postgres(url, { prepare: false });
   const db = drizzle(sql, { schema });
 
   return {
