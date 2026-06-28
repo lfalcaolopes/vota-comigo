@@ -28,8 +28,8 @@ export function HomeTransparencia() {
               Fonte oficial
             </h3>
             <p className="text-base leading-normal text-pretty text-muted">
-              Os dados vêm dos Dados Abertos da Câmara dos Deputados, com número
-              oficial e data de cada votação.
+              Os dados vêm dos Dados Abertos da Câmara dos Deputados e cobrem as
+              votações de 2015 até junho de 2026.
             </p>
             <SourceLink
               href="https://dadosabertos.camara.leg.br/"
