@@ -34,6 +34,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/throttler": "^6.5.0",
+    "@sentry/nestjs": "^10.62.0",
     "@vota-comigo/shared-types": "workspace:^",
     "csv-parse": "^6.2.1",
     "dotenv": "^17.4.2",
