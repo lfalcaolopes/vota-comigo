@@ -1,4 +1,4 @@
-import { eq, inArray } from 'drizzle-orm';
+import { eq, inArray, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
 import type { VotoCategoria } from '@vota-comigo/shared-types';
@@ -32,18 +32,6 @@ export interface DeputadosRepository {
   loadVotacoesProposicoesComputaveisForDeputado(
     deputadoId: string,
   ): Promise<VotacaoProposicaoComputavelRow[]>;
-}
-
-function invertVotos(
-  votosJson: Record<VotoCategoria, readonly string[]>,
-): ReadonlyMap<string, VotoCategoria> {
-  const votosByDeputado = new Map<string, VotoCategoria>();
-  for (const categoria of Object.keys(votosJson) as VotoCategoria[]) {
-    for (const deputadoId of votosJson[categoria]) {
-      votosByDeputado.set(deputadoId, categoria);
-    }
-  }
-  return votosByDeputado;
 }
 
 function toLegislaturaPeriodoSource(
@@ -204,11 +192,15 @@ export function createDeputadosRepository(
 
     async loadVotacoesProposicoesComputaveisForDeputado(deputadoId) {
       const rows = await db
-        .select({
-          votacaoId: votacao.id,
+        .selectDistinctOn([votacao.id], {
           dataHoraRegistro: votacao.dataHoraRegistro,
           data: votacao.data,
-          votosJson: votacaoVotos.votosJson,
+          voto: sql<VotoCategoria | null>`(
+            select e.key
+            from jsonb_each(${votacaoVotos.votosJson}) as e
+            where e.value @> to_jsonb(${deputadoId}::text)
+            limit 1
+          )`,
         })
         .from(proposicaoComputavel)
         .innerJoin(
@@ -217,26 +209,14 @@ export function createDeputadosRepository(
         )
         .innerJoin(votacao, eq(votacaoProposicao.votacaoId, votacao.id))
         .innerJoin(votacaoVotos, eq(votacaoVotos.votacaoId, votacao.id))
-        .where(eq(votacao.escopoVotacao, 'plenario'));
+        .where(eq(votacao.escopoVotacao, 'plenario'))
+        .orderBy(votacao.id);
 
-      const byVotacaoId = new Map<
-        (typeof rows)[number]['votacaoId'],
-        (typeof rows)[number]
-      >();
-      for (const row of rows) {
-        byVotacaoId.set(row.votacaoId, row);
-      }
-
-      return [...byVotacaoId.values()].map((row) => {
-        const votos = invertVotos(
-          row.votosJson as Record<VotoCategoria, string[]>,
-        );
-        return {
-          dataHoraRegistro: row.dataHoraRegistro,
-          data: row.data,
-          voto: votos.get(deputadoId) ?? null,
-        };
-      });
+      return rows.map((row) => ({
+        dataHoraRegistro: row.dataHoraRegistro,
+        data: row.data,
+        voto: row.voto,
+      }));
     },
   };
 }
