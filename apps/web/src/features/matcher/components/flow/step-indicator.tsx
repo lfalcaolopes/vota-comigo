@@ -21,7 +21,7 @@ type StepIndicatorProps = {
 
 export function StepIndicator({ current, onNavigate }: StepIndicatorProps) {
   return (
-    <ol className="flex flex-wrap justify-start gap-2 text-xs font-[650] text-muted">
+    <ol className="flex flex-wrap justify-start gap-2 text-xs font-[650] tabular-nums text-muted">
       {STEP_ORDER.map((step, position) => {
         const status = stepStatus(current, step);
 
@@ -33,7 +33,7 @@ export function StepIndicator({ current, onNavigate }: StepIndicatorProps) {
                 onClick={() => onNavigate(step)}
                 type="button"
               >
-                {position + 1}. {STEP_LABELS[step]}
+                <StepLabel label={STEP_LABELS[step]} position={position} />
               </button>
             </li>
           );
@@ -46,7 +46,7 @@ export function StepIndicator({ current, onNavigate }: StepIndicatorProps) {
               className="rounded-full border border-primary bg-primary-soft px-2.5 py-1 text-ink"
               key={step}
             >
-              {position + 1}. {STEP_LABELS[step]}
+              <StepLabel label={STEP_LABELS[step]} position={position} />
             </li>
           );
         }
@@ -56,10 +56,24 @@ export function StepIndicator({ current, onNavigate }: StepIndicatorProps) {
             className="rounded-full border border-border px-2.5 py-1 opacity-50"
             key={step}
           >
-            {position + 1}. {STEP_LABELS[step]}
+            <StepLabel label={STEP_LABELS[step]} position={position} />
           </li>
         );
       })}
     </ol>
+  );
+}
+
+// Mobile shows the step number only; the label stays in the a11y tree (sr-only)
+// and becomes visible from sm up, where the header has room for full labels.
+function StepLabel({ label, position }: { label: string; position: number }) {
+  return (
+    <>
+      <span aria-hidden="true">{position + 1}</span>
+      <span className="sr-only sm:not-sr-only">
+        <span aria-hidden="true">{". "}</span>
+        {label}
+      </span>
+    </>
   );
 }

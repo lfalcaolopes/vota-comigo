@@ -1,6 +1,5 @@
 "use client";
 
-import { MIN_POSICOES_COMPUTAVEIS } from "@vota-comigo/shared-types";
 import type {
   PosicaoUsuarioMatcher,
   ProposicaoCard,
@@ -225,6 +224,12 @@ export function PosicaoConteudo({
           {identificador ?? "Sem identificador"}
         </h2>
 
+        {temResumoIa ? (
+          <ResumoIa proposicao={detalhe} />
+        ) : detalhe.ementa ? (
+          <EmentaOficial ementa={detalhe.ementa} prominent />
+        ) : null}
+
         <TemasOficiais temas={detalhe.temas} />
 
         <LinksOficiais
@@ -233,10 +238,8 @@ export function PosicaoConteudo({
           urlInteiroTeor={detalhe.urlInteiroTeor}
         />
 
-        {temResumoIa ? <ResumoIa proposicao={detalhe} /> : null}
-
-        {detalhe.ementa ? (
-          <EmentaOficial ementa={detalhe.ementa} prominent={!temResumoIa} />
+        {temResumoIa && detalhe.ementa ? (
+          <EmentaOficial ementa={detalhe.ementa} />
         ) : null}
 
         {detalhe.ementaDetalhada ? (
@@ -256,23 +259,16 @@ export function PosicaoConteudo({
         />
 
         {faltamRespostas > 0 ? (
-          <p
-            className="text-sm leading-normal text-muted lg:hidden"
-            role="status"
-          >
-            Responda todas as proposições selecionadas para ver o resultado.
+          <p className="text-xs leading-snug text-muted lg:hidden" role="status">
             Faltam{" "}
-            <strong className="font-[720] text-ink">{faltamRespostas}</strong>.
+            <strong className="font-[720] text-ink">{faltamRespostas}</strong>{" "}
+            respostas para ver o resultado.
           </p>
         ) : faltamComputaveis > 0 ? (
-          <p
-            className="text-sm leading-normal text-muted lg:hidden"
-            role="status"
-          >
-            Responda Sim ou Não em pelo menos {MIN_POSICOES_COMPUTAVEIS}{" "}
-            proposições para ver o resultado. Faltam{" "}
-            <strong className="font-[720] text-ink">{faltamComputaveis}</strong>
-            .
+          <p className="text-xs leading-snug text-muted lg:hidden" role="status">
+            Faltam{" "}
+            <strong className="font-[720] text-ink">{faltamComputaveis}</strong>{" "}
+            respostas Sim ou Não para ver o resultado.
           </p>
         ) : null}
       </div>
