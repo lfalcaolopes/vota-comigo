@@ -65,7 +65,11 @@ function ProposicaoRowContent({ card }: { card: ProposicaoCard }) {
       </div>
 
       {textoResumo ? (
-        <p className="line-clamp-2 text-base leading-snug text-pretty text-muted">
+        <p
+          className={`text-base leading-snug text-pretty text-muted ${
+            resumoIa ? "sm:line-clamp-2" : "line-clamp-4 sm:line-clamp-2"
+          }`}
+        >
           {textoResumo}
         </p>
       ) : null}
