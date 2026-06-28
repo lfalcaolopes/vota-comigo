@@ -16,12 +16,12 @@ import {
   FeedOrdenacaoControl,
   FeedSearch,
   FeedTemaControl,
-  toIdentificadorLegislativo,
-  toTextoResumo,
 } from "@/shared/proposicao";
 import { Button, InlineMessage } from "@/shared/ui";
 
+import { SelecaoBottomBar } from "./selecao-bottom-bar";
 import { SelecaoList } from "./selecao-list";
+import { SelecaoResumo } from "./selecao-resumo";
 
 type StepSelecaoProps = {
   items: ProposicaoCard[];
@@ -105,7 +105,7 @@ export function StepSelecao({
     "w-full [&>button]:w-full [&>button]:justify-center [&>span]:w-full sm:w-auto sm:[&>button]:w-auto sm:[&>span]:w-auto";
 
   return (
-    <div className="grid gap-5">
+    <div className="grid gap-5 pb-44 lg:pb-0">
       <div className="grid min-w-0 gap-4 sm:flex sm:flex-wrap sm:items-start sm:gap-2">
         <FeedSearch
           className="w-full sm:min-w-0 sm:flex-1"
@@ -152,7 +152,7 @@ export function StepSelecao({
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_21rem] lg:items-start lg:gap-8">
-        <aside className="grid min-w-0 gap-5 rounded-lg border border-border bg-surface p-5 lg:sticky lg:top-24 lg:col-start-2 lg:row-start-1">
+        <aside className="hidden min-w-0 gap-5 rounded-lg border border-border bg-surface p-5 lg:sticky lg:top-24 lg:col-start-2 lg:row-start-1 lg:grid">
           <div className="grid gap-1">
             <h2 className="text-base font-[680] text-ink">Sua seleção</h2>
             <p className="text-sm leading-normal text-muted" role="status">
@@ -200,59 +200,16 @@ export function StepSelecao({
           />
         </div>
       </div>
+
+      <SelecaoBottomBar
+        atLimit={atLimit}
+        canAdvance={canAdvance}
+        onAdvance={onAdvance}
+        onBack={onBack}
+        onToggle={onToggle}
+        selected={selected}
+        totalSelecionadas={totalSelecionadas}
+      />
     </div>
-  );
-}
-
-function SelecaoResumo({
-  selected,
-  onRemove,
-}: {
-  selected: ProposicaoCard[];
-  onRemove: (proposicao: ProposicaoCard) => void;
-}) {
-  if (selected.length === 0) {
-    return (
-      <p className="rounded-md border border-border bg-white px-4 py-3 text-sm leading-normal text-muted">
-        As proposições escolhidas aparecem aqui para revisão antes de declarar
-        suas posições.
-      </p>
-    );
-  }
-
-  return (
-    <ul className="-mr-1 grid max-h-96 overflow-x-hidden overflow-y-auto pr-1 lg:max-h-[min(55vh,32rem)] lg:divide-y lg:divide-border">
-      {selected.map((card) => {
-        const identificador = toIdentificadorLegislativo(card);
-        const label = identificador ?? "Sem identificador";
-        const textoResumo = toTextoResumo(card);
-
-        return (
-          <li
-            className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 border-b border-border py-3 last:border-b-0 lg:border-b-0"
-            key={card.externalIdProposicao}
-          >
-            <div className="min-w-0">
-              <p className="truncate font-mono text-sm font-[650] tracking-[-0.01em] text-ink">
-                {label}
-              </p>
-              {textoResumo ? (
-                <p className="mt-0.5 line-clamp-2 text-sm leading-snug text-muted">
-                  {textoResumo}
-                </p>
-              ) : null}
-            </div>
-            <button
-              aria-label={`Remover ${label} da seleção`}
-              className="shrink-0 text-sm font-[650] text-muted underline decoration-border underline-offset-2 transition-colors duration-[140ms] ease-standard hover:text-ink hover:decoration-current"
-              onClick={() => onRemove(card)}
-              type="button"
-            >
-              Remover
-            </button>
-          </li>
-        );
-      })}
-    </ul>
   );
 }
