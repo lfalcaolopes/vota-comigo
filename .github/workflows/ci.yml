@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 
 on:
   pull_request:
@@ -29,9 +29,37 @@ jobs:
       - run: pnpm --filter api test
       - run: pnpm --filter web test
 
-  deploy-api:
+  changes:
     needs: validate
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.filter.outputs.api }}
+      web: ${{ steps.filter.outputs.web }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            shared: &shared
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+              - 'package.json'
+              - 'turbo.json'
+              - 'packages/shared-types/**'
+            api:
+              - *shared
+              - 'apps/api/**'
+              - 'Dockerfile'
+              - '.gcloudignore'
+            web:
+              - *shared
+              - 'apps/web/**'
+
+  deploy-api:
+    needs: [validate, changes]
+    if: needs.changes.outputs.api == 'true'
     runs-on: ubuntu-latest
 
     permissions:
@@ -62,8 +90,8 @@ jobs:
             --quiet
 
   deploy-web:
-    needs: validate
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: [validate, changes]
+    if: needs.changes.outputs.web == 'true'
     runs-on: ubuntu-latest
 
     env:
