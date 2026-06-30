@@ -31,41 +31,39 @@ Usar os dados nativos de áreas temáticas da Câmara (arquivo `proposicoesTemas
 
 ### Resumo por IA
 
-Tradução do texto da proposição para linguagem acessível, rodada uma vez por proposição em comando separado da ingestão. Frontend apenas lê o resultado pré-processado.
+Tradução do texto da proposição para linguagem acessível, rodada uma vez por proposição em comando separado da ingestão. O frontend apenas lê o resultado pré-processado.
 
-Decisão arquitetural: [ADR 018 — Resumos por IA de proposições são curados em JSON e projetados no banco](./adr/018-resumos-ia-proposicoes-json-projetados-banco.md) e [ADR 019 — Resumos por IA usam o PDF do inteiro teor pela URL, processado pelo parser nativo do OpenRouter](./adr/019-resumos-ia-inteiro-teor-parser-nativo-openrouter.md).
+Decisão arquitetural completa em [ADR 018 — Resumos por IA de proposições são curados em JSON e projetados no banco](./adr/018-resumos-ia-proposicoes-json-projetados-banco.md) e [ADR 019 — Resumos por IA usam o PDF do inteiro teor pela URL, processado pelo parser nativo do OpenRouter](./adr/019-resumos-ia-inteiro-teor-parser-nativo-openrouter.md). Os detalhes de schema, armazenamento, projeção no banco e contrato de leitura vivem nessas ADRs e em `@vota-comigo/shared-types`.
 
-**Fonte inicial:** usar apenas dados oficiais já ingeridos que descrevem o conteúdo substantivo da proposição computável pelo matcher: identificação legislativa, tipo, ementa, ementa detalhada quando houver e keywords. Temas oficiais, status de tramitação e contexto da votação de referência ficam fora do prompt e do `sourceHash`, porque ajudam navegação, contexto processual e matcher, mas não definem o conteúdo a ser resumido. O PDF de `url_inteiro_teor` passou a ser a fonte principal quando disponível, anexado pela URL e processado pelo parser nativo do OpenRouter, conforme a ADR 019; sem `url_inteiro_teor`, o resumo cai apenas nos campos textuais ingeridos.
+**Escopo do produto:** um resumo de uma frase para o card e um resumo de um ou dois parágrafos para o detalhe da proposição. Classificação "Quem é afetado" fica em tier posterior, porque é mais arriscada e depende de o resumo estar maduro.
 
-**Execução inicial:** a geração roda em comando separado da ingestão, por exemplo `pnpm --filter api generate:proposicao-resumos`, consultando as proposições computáveis e suas fontes já persistidas. O comando é incremental por padrão, mas aceita recortes operacionais como `--year`, `--limit` e `--external-id-proposicao` para gerar lotes pequenos, um ano específico ou uma proposição pontual. O pipeline de ingestão continua responsável apenas por dados oficiais estruturados, sem depender de fornecedor de IA, chave externa, custo por chamada ou revisão humana.
+**Fonte:** apenas dados oficiais já ingeridos que descrevem o conteúdo substantivo da proposição: identificação legislativa, tipo, ementa, ementa detalhada quando houver e keywords. O PDF do inteiro teor é a fonte principal quando disponível, conforme a ADR 019; sem ele, o resumo cai apenas nos campos textuais ingeridos. Temas, status de tramitação e contexto da votação de referência ficam fora do resumo, porque ajudam navegação e matcher, mas não definem o conteúdo a ser resumido.
 
-**Primeiro corte implementável:** antes de integrar OpenRouter, implementar o schema dos JSONs, cálculo de `sourceHash`, tabela `proposicao_resumo_ia`, importador JSON para a projeção relacional e API lendo apenas resumos aprovados com hash atual. A geração real por IA entra depois, quando armazenamento, vínculo por `proposicao.id` e contrato público já estiverem validados.
+**Tom:** português brasileiro, neutro e acessível, sem juízo de valor nem afirmações sobre importância, polêmica ou intenção política. O prompt pede apenas o resumo do conteúdo fornecido, sem apelidos populares nem contexto externo.
 
-**Modelo e provedor:** usar OpenRouter como provedor inicial, mas deixar o modelo configurável por variável de ambiente, por exemplo `PROPOSICAO_RESUMO_MODEL`. O modelo específico não fica fixado no roadmap, porque preço, qualidade e disponibilidade mudam rápido; cada item gerado registra o `model` usado para preservar a proveniência.
+**Execução:** a geração roda em comando separado da ingestão (`pnpm --filter api generate:proposicao-resumos`), incremental por padrão, com recortes operacionais para gerar lotes pequenos, um ano específico ou uma proposição pontual. O pipeline de ingestão continua responsável apenas por dados oficiais estruturados, sem depender de fornecedor de IA.
 
-**Saída do modelo:** o prompt exige JSON estrito validado por schema, sem texto livre ao redor. Respostas válidas retornam `generationStatus` igual a `generated`, `resumoCard` e `resumoDetalhe`; quando a fonte não bastar, retornam `generationStatus` igual a `insufficient_source` e uma justificativa curta. Respostas fora do schema são tratadas como `error` pelo comando e não entram no frontend.
-
-**Critérios de texto:** `resumoCard` deve ser uma frase e `resumoDetalhe` deve ser um texto curto de apoio, sem limite rígido de caracteres validado pelo schema. Ambos usam português brasileiro, tom neutro e linguagem acessível, sem juízo de valor nem afirmações sobre importância, polêmica ou intenção política da proposição. O prompt pede apenas o resumo do conteúdo fornecido, sem solicitar apelidos populares, contexto externo ou conhecimento fora dos campos de fonte.
-
-**Política de regeneração:** o comando é incremental por padrão. Proposições sem resumo geram um item novo `pending`; itens com `sourceHash` igual são preservados; itens com `sourceHash` diferente são marcados como `stale` no próprio JSON, sem sobrescrever o texto aprovado; regeneração de itens existentes exige flag explícita, para evitar custo desnecessário e troca silenciosa de conteúdo já revisado. O importador para o banco apenas projeta o estado canônico do JSON.
-
-**Armazenamento inicial:** salvar os resumos fora do banco, em arquivos JSON agrupados por `proposicao.ano`, por exemplo `apps/api/data/generated/proposicao-resumos/{ano}.json`. Esse agrupamento usa o ano do identificador legislativo da proposição, não `dataApresentacao`, e evita tanto um arquivo único grande quanto um arquivo por proposição. Dentro de cada arquivo, `items` é um objeto indexado por `externalIdProposicao` representado como string JSON, permitindo lookup e upsert por proposição específica. Cada item guarda `sourceHash`, calculado com normalização estável sobre `externalIdProposicao`, `siglaTipo`, `numero`, `ano`, `descricaoTipo`, `ementa`, `ementaDetalhada` e `keywords`, para detectar mudança do texto-base após reingestões. O item separa `generationStatus` (`generated`, `insufficient_source` ou `error`) de `reviewStatus` (`pending`, `approved`, `rejected` ou `stale`), para distinguir falha ou insuficiência da IA de rejeição humana. A primeira versão guarda apenas o estado atual do resumo e metadados mínimos, sem histórico completo de versões; quando um item fica `stale`, o texto antigo é preservado no próprio item até nova revisão ou regeneração. A pasta gerada deve ficar fora do Git, como dado operacional reconstruível/preservável entre reingestões conforme política de deploy.
-
-**Projeção no banco:** um fluxo separado lê os JSONs, usa `externalIdProposicao` apenas para encontrar a proposição correta na tabela `proposicao`, e grava uma projeção na tabela `proposicao_resumo_ia` vinculada por `proposicao.id` (`proposicaoResumoIa` em TypeScript). A tabela de projeção não duplica `externalIdProposicao`, porque a entidade referenciada já é modelada como `proposicao`; o vínculo persistido é a FK interna `proposicao_id`, única por proposição. A importação projeta todos os estados do JSON (`pending`, `approved`, `rejected`, `stale`, `insufficient_source` e `error`) para preservar inspeção operacional, mas a API expõe apenas resumos `approved` com `sourceHash` atual. A API lê essa projeção relacional, não os JSONs diretamente; depois de uma reingestão completa, os JSONs revisados podem ser importados de novo para revincular os resumos às novas linhas internas.
-
-**Escopo inicial:** gerar um resumo de uma linha para o card e um resumo de um ou dois parágrafos para o detalhe da proposição. Classificação "Quem é afetado" fica em tier posterior, porque é mais arriscada e depende do resumo estar maduro.
-
-**Contrato de leitura:** a API expõe disponibilidade explícita, sem o frontend inferir por string vazia ou ausência de campo. No card, `resumoIaDisponivel` indica se há resumo aprovado e atual, e `resumoIaCard` traz o texto curto ou `null`. No detalhe, `resumoIaDisponivel` usa a mesma regra, `resumoIaCard` pode reutilizar o texto curto e `resumoIaDetalhe` traz o texto de um ou dois parágrafos ou `null`.
-
-**Revisão inicial:** sem backoffice ou UI administrativa. A revisão humana acontece editando o JSON gerado, alterando `reviewStatus` para `approved` ou `rejected` e preenchendo `reviewedAt`. Uma ferramenta de revisão só entra depois se o volume ou o número de revisores justificar.
+**Revisão e frescor:** a revisão humana é obrigatória antes da exposição — nenhum resumo aparece no frontend sem aprovação. Um resumo aprovado sai da exposição pública quando uma reingestão muda o texto-base, preservando o texto antigo para comparação até nova revisão; nesse intervalo o card mantém o fallback com a ementa.
 
 **Mitigação de risco de alucinação:**
 
 - Disclaimer visível de que o resumo é gerado por IA
 - Link sempre destacado para a fonte original
-- Prompt cuidadosamente desenhado para ser neutro e evitar interpretações
-- Processo de revisão obrigatório antes da exposição em produção: todo resumo gerado começa com `reviewStatus` igual a `pending` e só pode aparecer no frontend quando estiver `approved` e com `sourceHash` atual; resumos `pending`, `rejected` ou `stale` mantêm o fallback atual com `ementa` no card e sem resumo detalhado por IA
-- Resumo aprovado fica `stale` quando uma reingestão muda o `sourceHash`, preservando o texto antigo para comparação, mas removendo-o da exposição pública até nova revisão
+- Prompt desenhado para ser neutro e evitar interpretações
+- Revisão humana obrigatória antes da exposição em produção
+
+### Compartilhamento básico
+
+Tornar cada página pública compartilhável com preview decente, com investimento mínimo (poucas tags HTML por tipo de página). Foi tirado do MVP por não ter sido implementado; é a base sobre a qual o compartilhamento otimizado evolui.
+
+- Link compartilhável para cada página pública (perfil de deputado, resultado de matcher, proposição específica)
+- Meta tags OpenGraph básicas no `<head>` de cada tipo de página: `og:title`, `og:description`, `og:image`, `og:url`
+- Tags `twitter:card` para previews no Twitter/X
+- Imagem genérica do produto serve como `og:image`; geração dinâmica de cards por conteúdo é a evolução natural (ver abaixo)
+
+**Foco de canais:** WhatsApp e Twitter/X. São os canais onde acontece a maior parte do consumo e compartilhamento político no Brasil. Stories (Instagram, Facebook) ficam fora intencionalmente — têm dinâmica e formato diferentes (9:16, vertical) e ROI duvidoso para este tipo de conteúdo.
+
+**Racional:** link nu no WhatsApp tem taxa de clique muito inferior a link com preview decente.
 
 ### Compartilhamento otimizado para WhatsApp e Twitter
 
@@ -122,6 +120,13 @@ Cada item é um sub-projeto próprio de ingestão e apresentação.
 ### Busca e listagem de deputados
 
 Criar uma experiência pública para encontrar deputados por nome, partido e UF, apontando para o **Perfil do deputado**. Fora do MVP-3 para evitar abrir uma experiência de descoberta própria antes de validar os acessos vindos do matcher e antes da integração com candidatos novos.
+
+### Perfil do Partido — versão mínima
+
+- Lista de parlamentares do partido
+- Orientação de voto nas proposições mais bem posicionadas no ranking público quando disponível via API/cache
+
+Reutiliza deputados, partidos, proposições e votações já ingeridos. As orientações são contexto sob demanda e não bloqueiam as engines centrais quando a API da Câmara estiver indisponível.
 
 ### Indicador de alinhamento com orientação no detalhe do voto
 
@@ -192,21 +197,11 @@ Integração com TSE / DivulgaCandContas para exibir informações de candidatos
 
 **Escopo intencionalmente limitado:** candidatos novos **não entram no matcher** neste tier. Não têm histórico de votos para comparar. Aparecem como perfis consultáveis, não como resultados de compatibilidade.
 
-### Mensagem inteligente no matcher quando não há bom match
-
-Quando o matcher não encontra deputado em atividade com compatibilidade alta para o usuário, encorajar pesquisa por candidatos novos que não estão na base de votos.
-
-Converte frustração ("meu representante não me representa") em ação cívica ("considere estes candidatos novos").
-
 ### Comportamento quando usuário pesquisa candidato fora da base
 
 **Comportamento permanente desde o MVP:** se o usuário pesquisa por nome que não está no sistema, exibir mensagem explicando que são mapeados apenas deputados que já estiveram em atividade na Câmara.
 
 **Evolução com este tier:** quando a integração TSE estiver ativa, a mesma pesquisa retorna a página do candidato novo, se ele existir no TSE.
-
-### "Descubra seu candidato" como fluxo plenamente funcional
-
-Rebranding do produto para deixar explícita a missão. O matcher passa a oferecer, junto aos resultados de deputados em atividade, referências aos candidatos novos relevantes ao estado do usuário (ainda sem cálculo de compatibilidade para estes).
 
 ---
 
@@ -249,11 +244,39 @@ Versão expandida do ranking de proposições importantes, com linguagem editori
 
 Demanda atenção de produto e comunicação, não só engenharia. Faz sentido quando o produto já tem tração.
 
+### Coleta anonimizada de respostas do matcher
+
+Armazenamento das respostas do matcher para alimentar o **Termômetro de representatividade**. Precisa estar no ar e acumulando volume antes de a feature de exibição agregada fazer sentido.
+
+**O que é armazenado por resposta do matcher:**
+
+- Estado do usuário
+- Lista de proposições selecionadas e a posição do usuário em cada uma ("deveria ser aprovada", "não deveria", "não sei")
+- Timestamp
+
+**O que NÃO é armazenado:**
+
+- IP do usuário
+- Fingerprint de navegador
+- Qualquer identificador persistente que permita reidentificação
+- Nome, email ou qualquer dado pessoal
+
+**Redução de duplicação:**
+
+- Cookie de sessão **não-persistente** (expira quando o navegador é fechado), usado apenas para evitar respostas duplicadas dentro da mesma sessão de uso
+- Duplicação entre sessões diferentes ou dispositivos diferentes é aceita — não é problema grave e qualquer solução mais forte (fingerprint, login obrigatório) introduziria risco LGPD ou atrito no uso
+
+**Conformidade LGPD:**
+
+- Política de privacidade explícita descrevendo o que é coletado e para quê
+- Dados anonimizados por design, sem vínculo possível a pessoa física
+- Agregação estatística como uso final — registros individuais servem apenas para computar agregados
+
 ### Termômetro de representatividade
 
 Feature de dados agregados anonimizados: "X% dos usuários do seu estado discordam de como seus deputados votaram na PEC Y." Matching inverso agregado.
 
-**Pré-requisito cumprido no MVP:** a coleta de dados anonimizados (apenas estado + votos do matcher) começa desde o dia zero do MVP, mesmo sem a feature estar exposta. Quando esta feature for implementada, já haverá volume de dados para alimentá-la.
+**Pré-requisito:** a **Coleta anonimizada de respostas do matcher** (acima) precisa estar no ar e ter acumulado volume suficiente antes desta feature ser exposta.
 
 ### Classificação "Quem é afetado" via IA
 
@@ -267,9 +290,6 @@ Classificação automática de quais perfis de cidadão são mais impactados por
 - Revisão manual dos casos-limite antes de exposição em produção
 - Tabela IBGE em cache para classificações por porte municipal
 
-### Listar votações não nominais na tela de informação de uma proposição
-
-Caso uma proposição não tenha votações nominais, é possível listar as votações não nominais com dados retornados pela api, já que esses dados não serão ingeridos
 
 ---
 

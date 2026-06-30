@@ -68,35 +68,6 @@ O ranking público do MVP usa volume de votações nominais em plenário vincula
 
 - Incorporar cobertura midiática como critério do ranking. Essa ideia foi avaliada e movida para melhorias pós-MVP (ver seção final). O motivo é disciplina de escopo: a regra atual por volume é auditável e suficiente para o MVP; sinais externos só devem entrar se houver evidência empírica de que fazem falta.
 
-## Decisões metodológicas registradas
-
-- **Neutralidade por transparência, não por omissão.** Decisões editoriais inerentes à construção do ranking e das tabelas de apoio devem ser documentadas e revisáveis. Open methodology é o mecanismo que viabiliza a promessa de neutralidade.
-- **Sinais endógenos antes de externos.** Tudo que vem dos dados da Câmara é auditável, gratuito e não depende de terceiros. Fontes externas só entram quando o sinal endógeno se provar insuficiente.
-- **Ranking auditável.** A posição no ranking público indica volume de votações nominais em plenário nos dados ingeridos, não maior saliência pública, impacto social, polarização ou mérito político.
-- **Escopo limitado a quem vota.** Cargos executivos (presidente, governadores, prefeitos) ficam fora do produto — não votam, não há o que comparar.
-
-### Escopo de votações
-
-Apenas votações nominais com voto individual computado (sim/não/abstenção registrados por deputado) entram no Protótipo. Votações por aclamação ficam fora porque não alimentam a polarização nem a lógica do matcher (que compara a posição do usuário com o voto do deputado). A informação de que uma proposição foi aprovada por aclamação pode ser exibida no perfil da proposição a partir dos endpoints de tramitação, sem necessidade de ingerir os registros dessas votações.
-
-### Escopo de votações: plenário vs. comissão
-
-Votações nominais acontecem em dois contextos: no Plenário da Câmara (todos os 513 deputados podem votar) e em comissões temáticas, especiais ou de inquérito (apenas os 30-60 deputados membros daquela comissão votam).
-
-As duas categorias são ingeridas, mas tratadas de forma distinta. Cada votação recebe uma flag `escopo_votacao` derivada do `siglaOrgao`:
-
-- `escopo_votacao = plenario` quando `siglaOrgao` é `PLEN` (Plenário da Câmara) ou `CN` (Congresso Nacional em sessão conjunta com o Senado).
-- `escopo_votacao = comissao` para qualquer outro `siglaOrgao` — comissões permanentes (CCJC, CFT, CSAUDE, CE, CCOM, etc.), comissões especiais (geralmente nomeadas pelo número da proposição que analisam, ex.: `PL233823`, `PEC01825`), comissões externas (`CEX...`), grupos de trabalho (`GT...`), subcomissões (`SUB...`) e Mesa Diretora (`MESA`).
-
-A regra é: tudo que não é `PLEN` ou `CN` é comissão. Não há lista enumerada de siglas de comissão a manter — sua composição muda a cada legislatura, comissões especiais são criadas e extintas durante o ano, e comissões externas surgem reativamente (ex.: tragédia em Brumadinho gerou `CEXMABRU`). Manter uma lista positiva de comissões seria fonte permanente de drift; manter a lista positiva mínima de plenário (`PLEN`, `CN`) é estável e auditável.
-
-A flag é usada assim:
-
-- **Ranking público e matcher:** filtram por `escopo_votacao = plenario`. Votações em comissão ficam fora dessas duas engines centrais. Motivo: deputados que não pertencem à comissão nunca aparecem nas votações dela — não por ausência, por não pertencer. Comparar deputados desiguais introduz viés sistemático.
-- **Perfil do deputado e da proposição:** podem exibir votações em comissão como contexto consultável, segregadas das de plenário.
-
-Esta decisão pode ser revisitada em melhorias pós-MVP se houver demanda por accountability mais granular sobre o trabalho dos deputados em comissões, com modelagem que trate a desigualdade de pertencimento.
-
 ## Investigação concluída: histórico de exercício dos deputados
 
 Análise exploratória realizada sobre o endpoint `/deputados/{id}/historico` da API da Câmara. Documenta a estrutura dos dados e as regras de transformação em intervalos de exercício para uso no matcher e no perfil do deputado.

@@ -29,52 +29,40 @@ No MVP-1, a rota inicial do produto (`/`) é o próprio feed público. Uma landi
 **Apresentação em lista:**
 
 - O título público da página é "Proposições"; "Mais votadas" aparece como rótulo do modo de ordenação padrão, não como título da experiência inteira
-- O metadata da página usa "Proposições | Quem Vota Comigo" e descreve a exploração por tema e ordenação, sem limitar a página a "mais votadas"
-- Informações enxutas da proposição: identificador legislativo curto como título (`{siglaTipo} {numero}/{ano}`), ementa como descrição, data de apresentação da proposição e tipo de proposição
-- O card exibe apenas dois agregados de votações no MVP-1: volume total de votações nominais em plenário e data da última votação
+- O metadata da página descreve a exploração por tema e ordenação, sem limitar a página a "mais votadas"
+- Informações enxutas da proposição: identificador legislativo curto como título (`{siglaTipo} {numero}/{ano}`), ementa como descrição, data de apresentação e tipo de proposição
+- O card exibe apenas dois agregados de votações: volume total de votações nominais em plenário e data da última votação
 - O card não exibe informações de uma votação específica, nem mesmo da votação de referência do matcher
 - O card não exibe o último status da proposição
 - O card não exibe resultado; no domínio atual existe **Resultado da votação**, mas não existe resultado único da proposição
 - O card não exibe temas; temas ficam como filtro no feed e como informação no detalhe da proposição
-- Ordenada por volume de votações nominais em plenário por padrão; o rótulo público do controle é "Mais votadas"
-- Pode ser ordenada por proposições mais recentes, usando a data de apresentação da proposição; o rótulo público do controle é "Mais recentes"
-- Os valores públicos de ordenação são `mais-votadas` e `mais-recentes`, definidos uma única vez no contrato compartilhado.
+- Ordenada por volume de votações nominais em plenário por padrão (rótulo "Mais votadas") ou por data de apresentação (rótulo "Mais recentes"); os valores públicos de ordenação vivem no contrato compartilhado
 - Pode ser filtrada por um único tema oficial disponível no feed
-- Ausência de tema selecionado representa o feed sem filtro de tema; a UI não precisa exibir uma opção "Todos os temas" dentro da lista de temas.
-- A lista de temas do filtro vem de `/proposicoes/feed/temas`, consulta própria sobre todos os **Temas disponíveis no feed**, não da página atual do feed.
-- A consulta de temas não tem busca textual e não depende dos filtros ativos; ela sempre retorna todos os **Temas disponíveis no feed**.
-- A lista pública de temas exibe apenas temas com texto oficial, ordenados alfabeticamente pelo texto e com `externalCodTema` como desempate.
-- A lista pública de temas não exibe contagem de proposições por tema no MVP.
-- Na API do feed, ordenação inválida e tema não numérico retornam `400`; tema numérico sem resultados retorna lista vazia.
+- Ausência de tema selecionado representa o feed sem filtro; a UI não precisa de uma opção "Todos os temas" na lista de temas
+- A lista de temas é uma consulta própria sobre todos os **Temas disponíveis no feed**, independente da página atual e dos filtros ativos, sem busca textual
+- A lista pública de temas exibe apenas temas com texto oficial, ordenados alfabeticamente, e não exibe contagem de proposições por tema no MVP
 - Cada proposição exibida precisa ter uma votação de referência do matcher
 - A lista retorna apenas o resumo necessário para o card; detalhes completos são carregados quando o usuário abre a proposição
-- O contrato público das rotas de proposições precisa expor a data de apresentação da proposição nos cards e no detalhe.
-- O contrato público do feed usa a semântica `/proposicoes/feed`; a rota antiga `/proposicoes/mais-votadas` não precisa ser mantida.
-- A busca do feed busca por identificador legislativo (`siglaTipo`, `numero`, `ano`) e `ementa`, podendo ser combinada com filtro de tema e ordenação.
-- Busca, filtro de tema e ordenação aparecem como controles principais do feed; em mobile podem ser compactados sem esconder sua disponibilidade.
-- Quando busca ou tema estiverem ativos, a UI oferece ação para limpar filtros, voltando para sem busca e sem tema, preservando a ordenação ativa.
-- O frontend do MVP-1 consome as rotas reais de proposições desde o início; mocks locais ficam restritos a testes de componente quando necessários.
-- A primeira carga do feed em `/` é renderizada no servidor; busca e "carregar mais" são interações client-side sobre as rotas existentes.
-- Busca, filtro de tema e ordenação ficam refletidos na URL para permitir compartilhamento, refresh e primeira renderização já filtrada.
-- Os parâmetros públicos são `q` para busca textual, `tema` para `externalCodTema` e `ordenacao` para `mais-votadas` ou `mais-recentes`.
-- As páginas públicas do MVP-1 têm `title` e `description` básicos; OpenGraph e Twitter cards completos ficam para o MVP-6.
-- Quando a busca está vazia, a tela exibe o feed padrão de **Proposições mais votadas em plenário** sem parâmetro textual de busca.
-- A paginação do feed usa ação "carregar mais" sobre o `limit`/`offset` das rotas existentes, sem paginação numerada no MVP-1.
-- Alterar busca, filtro de tema ou ordenação reinicia a paginação do feed no primeiro lote do novo recorte.
-- O feed carrega 20 itens inicialmente e mais 20 a cada ação de "carregar mais", acompanhando o padrão das rotas existentes.
-- Quando o feed padrão não tiver itens, a tela informa que ainda não há proposições computáveis para exibir.
-- Quando uma busca não tiver resultados, a tela informa que nenhuma proposição foi encontrada para a busca e os filtros utilizados, oferecendo ação para limpar busca e tema, preservando a ordenação ativa.
-- Na rota pública `/`, parâmetros inválidos de busca, tema ou ordenação não exibem erro técnico ao usuário; a tela volta ao recorte padrão ou normalizado.
-- Erros de carregamento no feed e no detalhe usam mensagem genérica com ação "Tentar novamente"; detalhes técnicos não aparecem na UI pública.
-- Em mobile, o card do feed mantém as mesmas informações do desktop; apenas layout e densidade visual se adaptam ao espaço disponível.
+- A busca do feed cobre identificador legislativo e ementa, podendo ser combinada com filtro de tema e ordenação
+- Busca, filtro de tema e ordenação aparecem como controles principais do feed; em mobile podem ser compactados sem esconder sua disponibilidade
+- Quando busca ou tema estiverem ativos, a UI oferece ação para limpar filtros, voltando para sem busca e sem tema, preservando a ordenação ativa
+- Busca, filtro de tema e ordenação ficam refletidos na URL para permitir compartilhamento, refresh e primeira renderização já filtrada (parâmetros no contrato compartilhado)
+- As páginas públicas do MVP-1 têm título e descrição básicos; OpenGraph e Twitter cards completos ficam para a melhoria de compartilhamento pós-MVP
+- Quando a busca está vazia, a tela exibe o feed padrão de **Proposições mais votadas em plenário**
+- A paginação do feed usa ação "carregar mais", sem paginação numerada no MVP-1
+- Alterar busca, filtro de tema ou ordenação reinicia a paginação no primeiro lote do novo recorte
+- Quando o feed padrão não tiver itens, a tela informa que ainda não há proposições computáveis para exibir
+- Quando uma busca não tiver resultados, a tela informa que nenhuma proposição foi encontrada para a busca e os filtros utilizados, oferecendo ação para limpar busca e tema, preservando a ordenação ativa
+- Na rota pública `/`, parâmetros inválidos de busca, tema ou ordenação não exibem erro técnico ao usuário; a tela volta ao recorte padrão ou normalizado
+- Erros de carregamento no feed e no detalhe usam mensagem genérica com ação "Tentar novamente"; detalhes técnicos não aparecem na UI pública
+- Em mobile, o card do feed mantém as mesmas informações do desktop; apenas layout e densidade visual se adaptam ao espaço disponível
 
 **Detalhe ao clicar:**
 
-- Cada proposição tem URL própria canônica (`/proposicoes/{externalIdProposicao}`) desde o MVP-1, para permitir link compartilhável e meta tags no MVP.
-- A primeira carga da página de detalhe é renderizada no servidor.
-- No MVP-1, o clique no card navega para a rota normal de detalhe; overlay ou modal preservando contexto de lista fica fora desse corte.
-- Quando a API retornar 404 para uma proposição, a rota de detalhe usa a página de não encontrado; falhas transitórias de carregamento usam erro genérico com tentativa de recarregar.
-- A página de detalhe exibe breadcrumb no topo no formato "Proposições > {siglaTipo} {numero}/{ano}", com "Proposições" apontando para o feed público em `/`.
+- Cada proposição tem URL própria canônica (`/proposicoes/{externalIdProposicao}`) desde o MVP-1, para permitir link compartilhável e meta tags no MVP
+- No MVP-1, o clique no card navega para a rota normal de detalhe; overlay ou modal preservando contexto de lista fica fora desse corte
+- Quando a proposição não existe, a rota de detalhe usa a página de não encontrado; falhas transitórias de carregamento usam erro genérico com tentativa de recarregar
+- A página de detalhe exibe breadcrumb no topo no formato "Proposições > {siglaTipo} {numero}/{ano}", com "Proposições" apontando para o feed público em `/`
 - Detalhes completos da proposição
 - Ementa detalhada quando disponível, como complemento à ementa principal e não como substituta
 - Último status da proposição exibido no detalhe como situação ou tramitação atual
@@ -84,7 +72,7 @@ No MVP-1, a rota inicial do produto (`/`) é o próprio feed público. Uma landi
 - A lista de votações no detalhe é exibida da mais recente para a mais antiga; a votação de referência permanece na posição cronológica normal e não é promovida para o topo
 - Orientações de bancada quando disponíveis via API/cache, em corte posterior do MVP-1
 - Cada card de votação exibe data, descrição, resultado da votação, placar e marcador visual quando for a votação de referência do matcher
-- Quando o contrato indicar `placarCompleto: true`, o card exibe as categorias completas; quando indicar `placarCompleto: false`, exibe `Sim`, `Não` e `Outros` com rótulo discreto de placar resumido, sem tentar decompor `Outros` no front
+- O placar aparece completo quando há categorias detalhadas; quando resumido, exibe `Sim`, `Não` e `Outros` com rótulo discreto, sem decompor `Outros` na interface
 - O detalhe exibe link para a fonte oficial da proposição; o MVP-1 não exige link oficial por votação, porque o contrato atual não expõe essa URL
 - Contexto adicional quando disponível (regime de urgência, destaques, etc.)
 
@@ -135,14 +123,14 @@ Isso cria o problema de amostra desigual (ver abaixo), que precisa ser tratado.
 
 **Ordenação e desempate:**
 
-- Ordenação primária: Score Wilson do matcher, calculado como limite inferior do intervalo de Wilson com `z = 1.96` sobre concordâncias e denominador do matcher
+- Ordenação primária: Score Wilson do matcher — o limite inferior do intervalo de Wilson sobre concordâncias e denominador do matcher, que reduz o efeito de amostras pequenas
 - A compatibilidade bruta continua exibida ao usuário junto com a amostra comparável
 - Desempate 1: compatibilidade bruta
 - Desempate 2: maior % de presença nas votações de referência das proposições selecionadas
 - Desempate 3: candidato em atividade tem prioridade
 - Desempate 4: nome do deputado em ordem alfabética, apenas para estabilidade
 - Desempate 5: identificador externo do deputado, apenas para estabilidade
-- Resultados retornados com paginação; `limit` padrão 20 e máximo 100
+- Resultados retornados com paginação
 
 **Casos de desempate e amostra que exigem decisão documentada antes de codar:**
 
@@ -186,7 +174,7 @@ Ordenação secundária considera tamanho de amostra entre deputados empatados e
 
 ### MVP-3. Perfil do Deputado — versão essencial
 
-Cada deputado tem URL própria canônica (`/deputados/{externalIdDeputado}`) desde o MVP-3, usando o identificador público da Câmara. A primeira carga da página de perfil é renderizada no servidor.
+Cada deputado tem URL própria canônica (`/deputados/{externalIdDeputado}`) desde o MVP-3, usando o identificador público da Câmara.
 
 A página exibe breadcrumb no formato "Início > {nome público do deputado}", com "Início" apontando para o feed público em `/`.
 
@@ -196,11 +184,9 @@ O MVP-3 não inclui busca ou listagem própria de deputados; o perfil é acessad
 
 Os cards e detalhes de resultado do matcher passam a oferecer link para `/deputados/{externalIdDeputado}`. O detalhe do matcher continua sendo a visão contextual da execução; o perfil do deputado é página pública independente.
 
-O contrato público do perfil do deputado é definido em `@vota-comigo/shared-types`, em schemas próprios de deputados, e consumido pela API e pelo frontend sem redeclaração paralela.
+O perfil expõe disponibilidade explícita de cada bloco — snapshot público, resumo de presença e histórico partidário — para que a UI não precise inferir lacuna pela ausência de dado.
 
-O contrato expõe flags explícitas de disponibilidade para evitar inferência por `null` ou lista vazia: disponibilidade do snapshot público, disponibilidade do resumo de presença e disponibilidade do histórico partidário.
-
-A API pública do perfil usa `GET /deputados/{externalIdDeputado}` e retorna o contrato compartilhado do perfil. A rota não recebe filtros no MVP-3.
+A API pública do perfil usa `GET /deputados/{externalIdDeputado}` e não recebe filtros no MVP-3.
 
 **Entra no MVP:**
 
@@ -249,18 +235,11 @@ A API pública do perfil usa `GET /deputados/{externalIdDeputado}` e retorna o c
 - Emendas parlamentares
 - Labels ("mais presente", "mais faltoso") que dependem de rankings globais
 
-### MVP-4. Perfil do Partido — versão mínima
-
-- Lista de parlamentares do partido
-- Orientação de voto nas proposições mais bem posicionadas no ranking público quando disponível via API/cache
-
-Incluído no MVP por reutilizar deputados, partidos, proposições e votações já ingeridos. As orientações são contexto sob demanda e não bloqueiam as engines centrais quando a API da Câmara estiver indisponível.
-
-### MVP-5. Comparativo de Deputados
+### MVP-4. Comparativo de Deputados
 
 Tela de comparação lado a lado entre deputados selecionados a partir do resultado do matcher (inspiração: comparativo de especificações de celular).
 
-O MVP-5 implementa apenas a entrada contextual pós-matcher. O comparativo geral, com busca independente de deputados, fica fora deste corte.
+O MVP-4 implementa apenas a entrada contextual pós-matcher. O comparativo geral, com busca independente de deputados, fica fora deste corte.
 
 - Na tela de resultado do matcher, o usuário seleciona 2-3 deputados dos resultados.
 - No modo normal dos resultados, os cards não exibem seleção e continuam abrindo o detalhe como hoje.
@@ -278,71 +257,24 @@ O MVP-5 implementa apenas a entrada contextual pós-matcher. O comparativo geral
 - Em telas pequenas, o comparativo mantém deputados como colunas com rolagem horizontal, preservando o modelo de grid lado a lado.
 - Cada coluna de deputado tem cabeçalho com informações básicas do deputado: foto, nome público, partido atual, status **Em atividade** e entrada para o **Perfil do deputado**.
 - A entrada para o **Perfil do deputado** abre em nova aba, preservando o comparativo efêmero.
-- No MVP-5, o comparativo não precisa ter URL própria compartilhável nem sobreviver a refresh; ele pode depender do estado atual da execução do matcher no cliente.
+- No MVP-4, o comparativo não precisa ter URL própria compartilhável nem sobreviver a refresh; ele pode depender do estado atual da execução do matcher no cliente.
 - Cada célula deputado × proposição exibe o voto real do deputado na votação de referência e um indicador de concordância com a posição do usuário, usando a mesma semântica de concordância/discordância/fora do denominador do matcher.
 - Cada linha de proposição exibe também a posição computável do usuário usada na comparação.
 - A linha de proposição pode exibir metadados enxutos da votação de referência; as células não repetem data ou descrição da votação.
 - Quando uma célula estiver fora do denominador, ela preserva o motivo específico já classificado pelo matcher, em vez de mostrar apenas um rótulo genérico.
-- No MVP-5, a posição do usuário usada pelo comparativo vem da execução atual do matcher; não há persistência de execução nem de respostas do usuário.
+- No MVP-4, a posição do usuário usada pelo comparativo vem da execução atual do matcher; não há persistência de execução nem de respostas do usuário.
 - O comparativo inclui apenas proposições com posição computável do usuário (`aprovar` ou `rejeitar`); respostas `não sei` são excluídas como no matcher.
 - As linhas de proposições seguem a ordem da execução atual do matcher.
 - O comparativo deve reaproveitar a semântica do matcher sempre que possível, mantendo o menor número de regras próprias.
-- A implementação do MVP-5 pode montar o comparativo chamando o detalhe do matcher para cada deputado selecionado, sem criar endpoint agregado próprio de comparativo.
+- A implementação do MVP-4 pode montar o comparativo chamando o detalhe do matcher para cada deputado selecionado, sem criar endpoint agregado próprio de comparativo.
 - O **Resumo de presença do deputado** no comparativo pode vir da mesma rota pública do perfil (`GET /deputados/{externalIdDeputado}`), enquanto votos e indicadores de concordância vêm do detalhe do matcher.
 - Se qualquer chamada necessária para montar o comparativo falhar, a tela exibe erro global com ação "Tentar novamente", sem renderizar comparação parcial.
-- Por depender da execução efêmera do matcher no MVP-5, a UI do comparativo pode ser implementada dentro de `features/matcher`; uma feature independente `comparativo` fica para quando houver entrada geral ou rota própria.
+- Por depender da execução efêmera do matcher no MVP-4, a UI do comparativo pode ser implementada dentro de `features/matcher`; uma feature independente `comparativo` fica para quando houver entrada geral ou rota própria.
 - Abaixo das linhas de votos, o comparativo exibe apenas o **Resumo de presença do deputado** como informação consolidada adicional por deputado, usando o mesmo recorte do perfil. As demais informações do perfil ficam fora do comparativo.
 - Quando o **Resumo de presença do deputado** estiver indisponível, o comparativo segue o perfil: mostra estado indisponível e não exibe `0%`.
 - O comparativo não exibe métricas do matcher como compatibilidade bruta, score Wilson ou amostra comparável; essas métricas permanecem nos resultados e no detalhe do matcher.
 
-### MVP-6. Compartilhamento básico
-
-- Link compartilhável para cada página pública (perfil de deputado, resultado de matcher, proposição específica)
-- Meta tags OpenGraph básicas no `<head>` de cada tipo de página: `og:title`, `og:description`, `og:image`, `og:url`
-- Tags `twitter:card` para previews no Twitter/X
-- Imagem genérica do produto serve como `og:image` no MVP — geração dinâmica de cards por conteúdo fica para melhoria
-
-**Foco de canais:** WhatsApp e Twitter/X. São os canais onde acontece a maior parte do consumo e compartilhamento político no Brasil. Stories (Instagram, Facebook) ficam fora intencionalmente — têm dinâmica e formato diferentes (9:16, vertical) e ROI duvidoso para este tipo de conteúdo.
-
-**Racional:** investimento mínimo (poucas tags HTML por tipo de página) com retorno desproporcional. Link nu no WhatsApp tem taxa de clique muito inferior a link com preview decente.
-
-**Não entra no MVP:**
-
-- Geração dinâmica de imagens de card por conteúdo (por deputado, por resultado de matcher, etc.)
-- Exportação em formato de imagem com marca d'água
-- Compartilhamento em redes sociais específicas
-
-### MVP-7. Coleta anonimizada de respostas do matcher
-
-Armazenamento de dados do matcher desde o dia 1, preparando base para feature "Termômetro de Representatividade" em melhorias futuras.
-
-**O que é armazenado por resposta do matcher:**
-
-- Estado do usuário
-- Lista de proposições selecionadas e a posição do usuário em cada uma ("deveria ser aprovada", "não deveria", "não sei")
-- Timestamp
-
-**O que NÃO é armazenado:**
-
-- IP do usuário
-- Fingerprint de navegador
-- Qualquer identificador persistente que permita reidentificação
-- Nome, email ou qualquer dado pessoal
-
-**Redução de duplicação:**
-
-- Cookie de sessão **não-persistente** (expira quando o navegador é fechado), usado apenas para evitar respostas duplicadas dentro da mesma sessão de uso
-- Duplicação entre sessões diferentes ou dispositivos diferentes é aceita — não é problema grave e qualquer solução mais forte (fingerprint, login obrigatório) introduziria risco LGPD ou atrito no uso
-
-**Conformidade LGPD:**
-
-- Política de privacidade explícita descrevendo o que é coletado e para quê
-- Dados anonimizados por design, sem vínculo possível a pessoa física
-- Agregação estatística como uso final — registros individuais servem apenas para computar agregados
-
-**Pré-requisito para a feature futura "Termômetro":** quando a feature de exibição agregada for implementada (em melhorias), já haverá volume histórico de dados para alimentá-la.
-
-### MVP-8. Otimização mobile
+### MVP-5. Otimização mobile
 
 Estratégia: desenvolvimento desktop-first durante a construção do MVP, mas mobile **precisa estar refinado antes do lançamento**.
 
@@ -360,6 +292,4 @@ O MVP está pronto para ir ao ar quando:
 2. Mobile está refinado, não apenas funcional
 3. A regra de ranking público por volume de votações em plenário continua produzindo uma lista defensável com os dados mais recentes
 4. Os casos de amostra desigual e desempate do matcher estão decididos e documentados
-5. Páginas públicas têm meta tags OpenGraph e twitter:card funcionando (teste em WhatsApp e Twitter)
-6. Coleta anonimizada de respostas do matcher funciona com política de privacidade publicada
-7. Comportamentos de borda do matcher implementados: mensagem para pesquisa de deputado fora da base, sugestão de candidatos novos quando matcher não encontra bom match
+5. Comportamentos de borda do matcher implementados: mensagem para pesquisa de deputado fora da base, sugestão de candidatos novos quando matcher não encontra bom match
