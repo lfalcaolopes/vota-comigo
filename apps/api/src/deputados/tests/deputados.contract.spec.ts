@@ -14,6 +14,7 @@ import {
   type DeputadosRepository,
 } from '../deputados.repository';
 import { DeputadosService } from '../deputados.service';
+import { deriveSnapshotPublico } from '../rules/snapshot-publico';
 import type { DeputadoPerfilSource } from '../types/deputados.types';
 
 type TestServer = Parameters<typeof request>[0];
@@ -75,6 +76,18 @@ function fakeRepository(
 ): DeputadosRepository {
   return {
     loadDeputadosFeed: async () => [...byExternalId.values()],
+    loadUfsDisponiveis: async () =>
+      [...byExternalId.values()].flatMap((source) => {
+        const siglaUf = deriveSnapshotPublico(source.eventos)?.siglaUf;
+        return siglaUf === undefined || siglaUf === null ? [] : [siglaUf];
+      }),
+    loadPartidosDisponiveis: async () =>
+      [...byExternalId.values()].flatMap((source) => {
+        const siglaPartido = deriveSnapshotPublico(source.eventos)?.siglaPartido;
+        return siglaPartido === undefined || siglaPartido === null
+          ? []
+          : [siglaPartido];
+      }),
     loadDeputadoPerfil: async (externalIdDeputado) =>
       byExternalId.get(externalIdDeputado) ?? null,
     loadVotacoesProposicoesComputaveisForDeputado: async (deputadoId) =>

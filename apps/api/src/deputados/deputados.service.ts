@@ -81,28 +81,14 @@ export class DeputadosService {
   }
 
   async ufsDisponiveis(): Promise<UfsDisponiveisResponse> {
-    const rows = await this.repository.loadDeputadosFeed();
-    const siglas = new Set(
-      rows
-        .map(toDeputadoCard)
-        .map((card) => card.siglaUf)
-        .filter((siglaUf): siglaUf is string => siglaUf !== null),
-    );
+    const siglas = new Set(await this.repository.loadUfsDisponiveis());
     return {
       items: [...siglas].sort().map((siglaUf) => ({ siglaUf })),
     };
   }
 
   async partidosDisponiveis(): Promise<PartidosDisponiveisResponse> {
-    const rows = await this.repository.loadDeputadosFeed();
-    const siglas = new Set(
-      rows
-        .map(toDeputadoCard)
-        .map((card) => card.siglaPartido)
-        .filter(
-          (siglaPartido): siglaPartido is string => siglaPartido !== null,
-        ),
-    );
+    const siglas = new Set(await this.repository.loadPartidosDisponiveis());
     return {
       items: [...siglas].sort().map((siglaPartido) => ({ siglaPartido })),
     };

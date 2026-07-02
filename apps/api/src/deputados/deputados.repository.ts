@@ -1,4 +1,4 @@
-import { eq, inArray, sql } from 'drizzle-orm';
+import { desc, eq, inArray, isNotNull, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
 import type { VotoCategoria } from '@vota-comigo/shared-types';
@@ -26,6 +26,8 @@ export const DEPUTADOS_REPOSITORY = Symbol('DEPUTADOS_REPOSITORY');
 
 export interface DeputadosRepository {
   loadDeputadosFeed(): Promise<readonly DeputadoPerfilSource[]>;
+  loadUfsDisponiveis(): Promise<readonly string[]>;
+  loadPartidosDisponiveis(): Promise<readonly string[]>;
   loadDeputadoPerfil(
     externalIdDeputado: number,
   ): Promise<DeputadoPerfilSource | null>;
@@ -127,6 +129,42 @@ export function createDeputadosRepository(
         legislaturaFinalPeriodo: null,
         eventos: eventosByDeputadoId.get(row.id) ?? [],
       }));
+    },
+
+    async loadUfsDisponiveis() {
+      const maisRecente = db
+        .selectDistinctOn([deputadoHistorico.deputadoId], {
+          siglaUf: deputadoHistorico.siglaUf,
+        })
+        .from(deputadoHistorico)
+        .orderBy(deputadoHistorico.deputadoId, desc(deputadoHistorico.dataHora))
+        .as('mais_recente');
+
+      const rows = await db
+        .selectDistinct({ siglaUf: maisRecente.siglaUf })
+        .from(maisRecente)
+        .where(isNotNull(maisRecente.siglaUf));
+
+      return rows.flatMap((row) => (row.siglaUf === null ? [] : [row.siglaUf]));
+    },
+
+    async loadPartidosDisponiveis() {
+      const maisRecente = db
+        .selectDistinctOn([deputadoHistorico.deputadoId], {
+          deputadoId: deputadoHistorico.deputadoId,
+          partidoId: deputadoHistorico.partidoId,
+        })
+        .from(deputadoHistorico)
+        .orderBy(deputadoHistorico.deputadoId, desc(deputadoHistorico.dataHora))
+        .as('mais_recente');
+
+      const rows = await db
+        .selectDistinct({ sigla: partido.sigla })
+        .from(maisRecente)
+        .innerJoin(partido, eq(maisRecente.partidoId, partido.id))
+        .where(isNotNull(partido.sigla));
+
+      return rows.flatMap((row) => (row.sigla === null ? [] : [row.sigla]));
     },
 
     async loadDeputadoPerfil(externalIdDeputado) {
