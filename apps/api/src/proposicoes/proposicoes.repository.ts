@@ -138,6 +138,7 @@ export type ProposicoesRepository = {
   loadProposicoesComputaveis(
     tema?: number,
   ): Promise<readonly RankedProposicao[]>;
+  loadComputableExternalIds(): Promise<readonly number[]>;
   loadProposicaoDetalhe(
     externalIdProposicao: number,
   ): Promise<ProposicaoDetalheResult | null>;
@@ -261,6 +262,18 @@ export function createProposicoesRepository(
           },
         },
       }));
+    },
+
+    async loadComputableExternalIds() {
+      const rows = await db
+        .select({ externalIdProposicao: proposicao.externalIdProposicao })
+        .from(proposicaoComputavel)
+        .innerJoin(
+          proposicao,
+          eq(proposicaoComputavel.proposicaoId, proposicao.id),
+        );
+
+      return rows.map((row) => row.externalIdProposicao);
     },
 
     async loadProposicaoDetalhe(externalIdProposicao) {

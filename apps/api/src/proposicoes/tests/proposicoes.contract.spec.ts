@@ -132,6 +132,10 @@ function fakeRepository(data: FakeData): ProposicoesRepository {
         matchingIds.has(row.proposicao.externalIdProposicao),
       );
     },
+    loadComputableExternalIds: async () =>
+      toProposicoesComputaveis(data.lista ?? []).map(
+        (r) => r.proposicao.externalIdProposicao,
+      ),
     loadProposicaoDetalhe: async (externalIdProposicao) =>
       data.detalhe?.get(externalIdProposicao) ?? null,
     loadProposicaoTemas: async () => data.temas ?? [],

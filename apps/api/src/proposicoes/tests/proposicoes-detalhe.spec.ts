@@ -76,6 +76,7 @@ function fakeRepository(
 ): ProposicoesRepository {
   return {
     loadProposicoesComputaveis: async () => [],
+    loadComputableExternalIds: async () => [],
     loadProposicaoDetalhe: async () => result,
     loadProposicaoTemas: async () => [],
   };
