@@ -7,7 +7,7 @@ import { interpretResultado } from '@/matcher/rules/votacao-referencia';
 
 import type {
   ProposicaoFeedItem,
-  VotacaoReferenciaComputavel,
+  VotacaoReferenciaResumoSource,
 } from '../types/proposicoes.types';
 import { toResumoIaCardFields } from '../rules/proposicao-resumo-ia-public';
 
@@ -29,7 +29,7 @@ export function toProposicaoCard(item: ProposicaoFeedItem): ProposicaoCard {
 }
 
 export function toVotacaoReferenciaResumo(
-  referencia: VotacaoReferenciaComputavel,
+  referencia: VotacaoReferenciaResumoSource,
 ): VotacaoReferenciaResumo {
   return {
     externalIdVotacao: referencia.externalIdVotacao,

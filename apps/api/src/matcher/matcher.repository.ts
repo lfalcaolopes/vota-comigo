@@ -2,6 +2,7 @@ import { desc, eq, inArray } from 'drizzle-orm';
 import type {
   EscopoMatcher,
   SiglaUf,
+  VotacaoReferenciaPattern,
   VotoCategoria,
 } from '@vota-comigo/shared-types';
 import {
@@ -14,7 +15,10 @@ import {
   toProposicaoCard,
   toVotacaoReferenciaResumo,
 } from '@/proposicoes/mappers/proposicao-card.mapper';
-import type { RankedProposicao } from '@/proposicoes/types/proposicoes.types';
+import type {
+  ProposicaoCardResumo,
+  ProposicaoResumoIaCardProjection,
+} from '@/proposicoes/types/proposicoes.types';
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
   deputado,
@@ -31,7 +35,24 @@ import type {
   DeputadoCompatibilidadeInput,
   VotacaoReferenciaVotos,
 } from './types/compatibilidade.types';
-import type { ProposicaoResumoIaProjection } from '@/proposicoes/types/proposicoes.types';
+
+type RankedReferencia = {
+  proposicao: ProposicaoCardResumo;
+  resumoIa: ProposicaoResumoIaCardProjection | null;
+  volumeVotacoesPlenario: number;
+  dataUltimaVotacao: string | null;
+  referencia: {
+    externalIdVotacao: string;
+    data: string | null;
+    dataHoraRegistro: string | null;
+    descricao: string | null;
+    votosSim: number | null;
+    votosNao: number | null;
+    votosOutros: number | null;
+    aprovacao: number | null;
+    classification: { pattern: VotacaoReferenciaPattern };
+  };
+};
 
 export const MATCHER_REPOSITORY = Symbol('MATCHER_REPOSITORY');
 
@@ -56,7 +77,7 @@ export type MatcherRepository = {
 async function loadRankedProposicoesComputaveis(
   db: DrizzleDatabase,
   externalIdProposicoes: readonly number[],
-): Promise<readonly RankedProposicao[]> {
+): Promise<readonly RankedReferencia[]> {
   const rows = await db
     .select({
       externalIdProposicao: proposicao.externalIdProposicao,
@@ -64,34 +85,21 @@ async function loadRankedProposicoesComputaveis(
       numero: proposicao.numero,
       ano: proposicao.ano,
       ementa: proposicao.ementa,
-      descricaoTipo: proposicao.descricaoTipo,
-      ementaDetalhada: proposicao.ementaDetalhada,
-      keywords: proposicao.keywords,
-      urlInteiroTeor: proposicao.urlInteiroTeor,
       dataApresentacao: proposicao.dataApresentacao,
-      ultimoStatusSiglaOrgao: proposicao.ultimoStatusSiglaOrgao,
-      ultimoStatusDescricaoSituacao: proposicao.ultimoStatusDescricaoSituacao,
-      ultimoStatusRegime: proposicao.ultimoStatusRegime,
-      ultimoStatusDataHora: proposicao.ultimoStatusDataHora,
       volumeVotacoesPlenario: proposicaoComputavel.volumeVotacoesPlenario,
       dataUltimaVotacao: proposicaoComputavel.dataUltimaVotacao,
+      votacaoReferenciaPattern: proposicaoComputavel.votacaoReferenciaPattern,
       externalIdVotacao: votacao.externalIdVotacao,
       data: votacao.data,
       dataHoraRegistro: votacao.dataHoraRegistro,
       descricao: votacao.descricao,
-      ultimaAberturaVotacaoDescricao: votacao.ultimaAberturaVotacaoDescricao,
-      ultimaApresentacaoProposicaoDescricao:
-        votacao.ultimaApresentacaoProposicaoDescricao,
       votosSim: votacao.votosSim,
       votosNao: votacao.votosNao,
       votosOutros: votacao.votosOutros,
       aprovacao: votacao.aprovacao,
-      votacaoReferenciaPattern: proposicaoComputavel.votacaoReferenciaPattern,
-      resumoIaSourceHash: proposicaoResumoIa.sourceHash,
       resumoIaGenerationStatus: proposicaoResumoIa.generationStatus,
       resumoIaReviewStatus: proposicaoResumoIa.reviewStatus,
       resumoIaCard: proposicaoResumoIa.resumoCard,
-      resumoIaDetalhe: proposicaoResumoIa.resumoDetalhe,
     })
     .from(proposicaoComputavel)
     .innerJoin(proposicao, eq(proposicaoComputavel.proposicaoId, proposicao.id))
@@ -114,17 +122,20 @@ async function loadRankedProposicoesComputaveis(
       numero: row.numero,
       ano: row.ano,
       ementa: row.ementa,
-      descricaoTipo: row.descricaoTipo,
-      ementaDetalhada: row.ementaDetalhada,
-      keywords: row.keywords,
-      urlInteiroTeor: row.urlInteiroTeor,
       dataApresentacao: row.dataApresentacao,
-      ultimoStatusSiglaOrgao: row.ultimoStatusSiglaOrgao,
-      ultimoStatusDescricaoSituacao: row.ultimoStatusDescricaoSituacao,
-      ultimoStatusRegime: row.ultimoStatusRegime,
-      ultimoStatusDataHora: row.ultimoStatusDataHora,
     },
-    resumoIa: toProposicaoResumoIaProjection(row),
+    resumoIa:
+      row.resumoIaGenerationStatus === null || row.resumoIaReviewStatus === null
+        ? null
+        : {
+            generationStatus: proposicaoResumoIaGenerationStatus.parse(
+              row.resumoIaGenerationStatus,
+            ),
+            reviewStatus: proposicaoResumoIaReviewStatus.parse(
+              row.resumoIaReviewStatus,
+            ),
+            resumoCard: row.resumoIaCard,
+          },
     volumeVotacoesPlenario: row.volumeVotacoesPlenario,
     dataUltimaVotacao: row.dataUltimaVotacao,
     referencia: {
@@ -132,9 +143,6 @@ async function loadRankedProposicoesComputaveis(
       data: row.data,
       dataHoraRegistro: row.dataHoraRegistro,
       descricao: row.descricao,
-      ultimaAberturaVotacaoDescricao: row.ultimaAberturaVotacaoDescricao,
-      ultimaApresentacaoProposicaoDescricao:
-        row.ultimaApresentacaoProposicaoDescricao,
       votosSim: row.votosSim,
       votosNao: row.votosNao,
       votosOutros: row.votosOutros,
@@ -144,34 +152,6 @@ async function loadRankedProposicoesComputaveis(
       },
     },
   }));
-}
-
-function toProposicaoResumoIaProjection(row: {
-  resumoIaSourceHash: string | null;
-  resumoIaGenerationStatus: string | null;
-  resumoIaReviewStatus: string | null;
-  resumoIaCard: string | null;
-  resumoIaDetalhe: string | null;
-}): ProposicaoResumoIaProjection | null {
-  if (
-    row.resumoIaSourceHash === null ||
-    row.resumoIaGenerationStatus === null ||
-    row.resumoIaReviewStatus === null
-  ) {
-    return null;
-  }
-
-  return {
-    sourceHash: row.resumoIaSourceHash,
-    generationStatus: proposicaoResumoIaGenerationStatus.parse(
-      row.resumoIaGenerationStatus,
-    ),
-    reviewStatus: proposicaoResumoIaReviewStatus.parse(
-      row.resumoIaReviewStatus,
-    ),
-    resumoCard: row.resumoIaCard,
-    resumoDetalhe: row.resumoIaDetalhe,
-  };
 }
 
 function invertVotos(

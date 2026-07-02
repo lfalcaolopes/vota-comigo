@@ -41,6 +41,18 @@ export type VotacaoReferenciaComputavel = VotacaoCandidate & {
   };
 };
 
+export type VotacaoReferenciaResumoSource = Pick<
+  VotacaoReferenciaComputavel,
+  | 'externalIdVotacao'
+  | 'data'
+  | 'descricao'
+  | 'votosSim'
+  | 'votosNao'
+  | 'votosOutros'
+  | 'aprovacao'
+  | 'classification'
+>;
+
 export type RankedProposicao = {
   proposicao: ProposicaoResumo;
   resumoIa: ProposicaoResumoIaProjection | null;
