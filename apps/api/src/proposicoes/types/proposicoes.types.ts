@@ -49,6 +49,29 @@ export type RankedProposicao = {
   referencia: VotacaoReferenciaComputavel;
 };
 
+export type ProposicaoResumoIaCardProjection = {
+  generationStatus: ProposicaoResumoIaGenerationStatus;
+  reviewStatus: ProposicaoResumoIaReviewStatus;
+  resumoCard: string | null;
+};
+
+export type ProposicaoCardResumo = Pick<
+  ProposicaoResumo,
+  | 'externalIdProposicao'
+  | 'siglaTipo'
+  | 'numero'
+  | 'ano'
+  | 'ementa'
+  | 'dataApresentacao'
+>;
+
+export type ProposicaoFeedItem = {
+  proposicao: ProposicaoCardResumo;
+  resumoIa: ProposicaoResumoIaCardProjection | null;
+  volumeVotacoesPlenario: number;
+  dataUltimaVotacao: string | null;
+};
+
 export type ProposicaoTemaRow = {
   externalIdProposicao: number;
   externalCodTema: number;

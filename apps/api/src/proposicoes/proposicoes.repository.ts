@@ -2,14 +2,13 @@ import { and, eq, exists, sql } from 'drizzle-orm';
 import {
   proposicaoResumoIaGenerationStatus,
   proposicaoResumoIaReviewStatus,
-  votacaoReferenciaPattern,
 } from '@vota-comigo/shared-types';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
 import type {
   ProposicaoTemaRow,
   ProposicaoResumoIaProjection,
-  RankedProposicao,
+  ProposicaoFeedItem,
 } from './types/proposicoes.types';
 import {
   proposicao,
@@ -137,7 +136,7 @@ function toProposicaoResumoIaProjection(row: {
 export type ProposicoesRepository = {
   loadProposicoesComputaveis(
     tema?: number,
-  ): Promise<readonly RankedProposicao[]>;
+  ): Promise<readonly ProposicaoFeedItem[]>;
   loadComputableExternalIds(): Promise<readonly number[]>;
   loadProposicaoDetalhe(
     externalIdProposicao: number,
@@ -172,46 +171,17 @@ export function createProposicoesRepository(
           numero: proposicao.numero,
           ano: proposicao.ano,
           ementa: proposicao.ementa,
-          descricaoTipo: proposicao.descricaoTipo,
-          ementaDetalhada: proposicao.ementaDetalhada,
-          keywords: proposicao.keywords,
-          urlInteiroTeor: proposicao.urlInteiroTeor,
           dataApresentacao: proposicao.dataApresentacao,
-          ultimoStatusSiglaOrgao: proposicao.ultimoStatusSiglaOrgao,
-          ultimoStatusDescricaoSituacao:
-            proposicao.ultimoStatusDescricaoSituacao,
-          ultimoStatusRegime: proposicao.ultimoStatusRegime,
-          ultimoStatusDataHora: proposicao.ultimoStatusDataHora,
           volumeVotacoesPlenario: proposicaoComputavel.volumeVotacoesPlenario,
           dataUltimaVotacao: proposicaoComputavel.dataUltimaVotacao,
-          externalIdVotacao: votacao.externalIdVotacao,
-          data: votacao.data,
-          dataHoraRegistro: votacao.dataHoraRegistro,
-          descricao: votacao.descricao,
-          ultimaAberturaVotacaoDescricao:
-            votacao.ultimaAberturaVotacaoDescricao,
-          ultimaApresentacaoProposicaoDescricao:
-            votacao.ultimaApresentacaoProposicaoDescricao,
-          votosSim: votacao.votosSim,
-          votosNao: votacao.votosNao,
-          votosOutros: votacao.votosOutros,
-          aprovacao: votacao.aprovacao,
-          votacaoReferenciaPattern:
-            proposicaoComputavel.votacaoReferenciaPattern,
-          resumoIaSourceHash: proposicaoResumoIa.sourceHash,
           resumoIaGenerationStatus: proposicaoResumoIa.generationStatus,
           resumoIaReviewStatus: proposicaoResumoIa.reviewStatus,
           resumoIaCard: proposicaoResumoIa.resumoCard,
-          resumoIaDetalhe: proposicaoResumoIa.resumoDetalhe,
         })
         .from(proposicaoComputavel)
         .innerJoin(
           proposicao,
           eq(proposicaoComputavel.proposicaoId, proposicao.id),
-        )
-        .innerJoin(
-          votacao,
-          eq(proposicaoComputavel.votacaoReferenciaId, votacao.id),
         )
         .leftJoin(
           proposicaoResumoIa,
@@ -230,37 +200,23 @@ export function createProposicoesRepository(
           numero: row.numero,
           ano: row.ano,
           ementa: row.ementa,
-          descricaoTipo: row.descricaoTipo,
-          ementaDetalhada: row.ementaDetalhada,
-          keywords: row.keywords,
-          urlInteiroTeor: row.urlInteiroTeor,
           dataApresentacao: row.dataApresentacao,
-          ultimoStatusSiglaOrgao: row.ultimoStatusSiglaOrgao,
-          ultimoStatusDescricaoSituacao: row.ultimoStatusDescricaoSituacao,
-          ultimoStatusRegime: row.ultimoStatusRegime,
-          ultimoStatusDataHora: row.ultimoStatusDataHora,
         },
-        resumoIa: toProposicaoResumoIaProjection(row),
+        resumoIa:
+          row.resumoIaGenerationStatus === null ||
+          row.resumoIaReviewStatus === null
+            ? null
+            : {
+                generationStatus: proposicaoResumoIaGenerationStatus.parse(
+                  row.resumoIaGenerationStatus,
+                ),
+                reviewStatus: proposicaoResumoIaReviewStatus.parse(
+                  row.resumoIaReviewStatus,
+                ),
+                resumoCard: row.resumoIaCard,
+              },
         volumeVotacoesPlenario: row.volumeVotacoesPlenario,
         dataUltimaVotacao: row.dataUltimaVotacao,
-        referencia: {
-          externalIdVotacao: row.externalIdVotacao,
-          data: row.data,
-          dataHoraRegistro: row.dataHoraRegistro,
-          descricao: row.descricao,
-          ultimaAberturaVotacaoDescricao: row.ultimaAberturaVotacaoDescricao,
-          ultimaApresentacaoProposicaoDescricao:
-            row.ultimaApresentacaoProposicaoDescricao,
-          votosSim: row.votosSim,
-          votosNao: row.votosNao,
-          votosOutros: row.votosOutros,
-          aprovacao: row.aprovacao,
-          classification: {
-            pattern: votacaoReferenciaPattern.parse(
-              row.votacaoReferenciaPattern,
-            ),
-          },
-        },
       }));
     },
 
