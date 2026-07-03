@@ -11,6 +11,7 @@ import {
   votacaoReferenciaPattern,
 } from '@vota-comigo/shared-types';
 
+import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
 import {
   toProposicaoCard,
   toVotacaoReferenciaResumo,
@@ -22,6 +23,7 @@ import type {
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
   deputado,
+  deputadoExercicioIntervalo,
   deputadoHistorico,
   partido,
   proposicao,
@@ -154,6 +156,36 @@ async function loadRankedProposicoesComputaveis(
   }));
 }
 
+async function loadIntervalosByDeputado(
+  db: DrizzleDatabase,
+  deputadoIds: readonly string[],
+): Promise<ReadonlyMap<string, IntervaloExercicio[]>> {
+  const rows = await db
+    .select({
+      deputadoId: deputadoExercicioIntervalo.deputadoId,
+      openedAt: deputadoExercicioIntervalo.openedAt,
+      closedAt: deputadoExercicioIntervalo.closedAt,
+    })
+    .from(deputadoExercicioIntervalo)
+    .where(inArray(deputadoExercicioIntervalo.deputadoId, [...deputadoIds]))
+    .orderBy(deputadoExercicioIntervalo.openedAt);
+
+  const intervalosByDeputado = new Map<string, IntervaloExercicio[]>();
+  for (const row of rows) {
+    const intervalo: IntervaloExercicio = {
+      openedAt: row.openedAt,
+      closedAt: row.closedAt,
+    };
+    const existing = intervalosByDeputado.get(row.deputadoId);
+    if (existing === undefined) {
+      intervalosByDeputado.set(row.deputadoId, [intervalo]);
+    } else {
+      existing.push(intervalo);
+    }
+  }
+  return intervalosByDeputado;
+}
+
 function invertVotos(
   votosJson: Record<VotoCategoria, readonly string[]>,
 ): ReadonlyMap<string, VotoCategoria> {
@@ -252,12 +284,16 @@ export function createMatcherRepository(
       const base = db
         .select({
           deputadoId: maisRecente.deputadoId,
+          externalIdDeputado: deputado.externalIdDeputado,
+          nome: deputado.nome,
+          nomeCivil: deputado.nomeCivil,
           siglaUf: maisRecente.siglaUf,
           urlFoto: maisRecente.urlFoto,
           nomeEleitoral: maisRecente.nomeEleitoral,
           partido: partido.sigla,
         })
         .from(maisRecente)
+        .innerJoin(deputado, eq(maisRecente.deputadoId, deputado.id))
         .leftJoin(partido, eq(maisRecente.partidoId, partido.id));
 
       const estado =
@@ -270,76 +306,22 @@ export function createMatcherRepository(
         return [];
       }
 
-      const historico = await db
-        .select({
-          deputadoId: deputadoHistorico.deputadoId,
-          externalIdDeputado: deputado.externalIdDeputado,
-          nome: deputado.nome,
-          nomeCivil: deputado.nomeCivil,
-          dataHora: deputadoHistorico.dataHora,
-          situacao: deputadoHistorico.situacao,
-          descricaoStatus: deputadoHistorico.descricaoStatus,
-          partido: partido.sigla,
-        })
-        .from(deputadoHistorico)
-        .innerJoin(deputado, eq(deputadoHistorico.deputadoId, deputado.id))
-        .leftJoin(partido, eq(deputadoHistorico.partidoId, partido.id))
-        .where(inArray(deputadoHistorico.deputadoId, deputadoIds));
+      const intervalosByDeputado = await loadIntervalosByDeputado(
+        db,
+        deputadoIds,
+      );
 
-      const historicoByDeputado = new Map<
-        string,
-        {
-          externalIdDeputado: number;
-          nome: string | null;
-          nomeCivil: string | null;
-          eventos: {
-            dataHora: string;
-            situacao: string | null;
-            descricaoStatus: string;
-            partido: string | null;
-          }[];
-        }
-      >();
-
-      for (const row of historico) {
-        const existing = historicoByDeputado.get(row.deputadoId);
-        const evento = {
-          dataHora: row.dataHora,
-          situacao: row.situacao,
-          descricaoStatus: row.descricaoStatus,
-          partido: row.partido,
-        };
-        if (existing === undefined) {
-          historicoByDeputado.set(row.deputadoId, {
-            externalIdDeputado: row.externalIdDeputado,
-            nome: row.nome,
-            nomeCivil: row.nomeCivil,
-            eventos: [evento],
-          });
-        } else {
-          existing.eventos.push(evento);
-        }
-      }
-
-      return estado.flatMap((row) => {
-        const found = historicoByDeputado.get(row.deputadoId);
-        if (found === undefined) {
-          return [];
-        }
-        return [
-          {
-            deputadoId: row.deputadoId,
-            externalIdDeputado: found.externalIdDeputado,
-            nome: found.nome,
-            nomeEleitoral: row.nomeEleitoral,
-            nomeCivil: found.nomeCivil,
-            partido: row.partido,
-            siglaUf: row.siglaUf as SiglaUf,
-            urlFoto: row.urlFoto,
-            eventos: found.eventos,
-          },
-        ];
-      });
+      return estado.map((row) => ({
+        deputadoId: row.deputadoId,
+        externalIdDeputado: row.externalIdDeputado,
+        nome: row.nome,
+        nomeEleitoral: row.nomeEleitoral,
+        nomeCivil: row.nomeCivil,
+        partido: row.partido,
+        siglaUf: row.siglaUf as SiglaUf,
+        urlFoto: row.urlFoto,
+        intervalos: intervalosByDeputado.get(row.deputadoId) ?? [],
+      }));
     },
 
     async loadDeputadoByExternalIdWithHistorico(
@@ -375,16 +357,9 @@ export function createMatcherRepository(
         return null;
       }
 
-      const historico = await db
-        .select({
-          dataHora: deputadoHistorico.dataHora,
-          situacao: deputadoHistorico.situacao,
-          descricaoStatus: deputadoHistorico.descricaoStatus,
-          partido: partido.sigla,
-        })
-        .from(deputadoHistorico)
-        .leftJoin(partido, eq(deputadoHistorico.partidoId, partido.id))
-        .where(eq(deputadoHistorico.deputadoId, maisRecente.deputadoId));
+      const intervalosByDeputado = await loadIntervalosByDeputado(db, [
+        maisRecente.deputadoId,
+      ]);
 
       return {
         deputadoId: maisRecente.deputadoId,
@@ -395,7 +370,7 @@ export function createMatcherRepository(
         partido: maisRecente.partido,
         siglaUf: maisRecente.siglaUf as SiglaUf,
         urlFoto: maisRecente.urlFoto,
-        eventos: historico,
+        intervalos: intervalosByDeputado.get(maisRecente.deputadoId) ?? [],
       };
     },
   };

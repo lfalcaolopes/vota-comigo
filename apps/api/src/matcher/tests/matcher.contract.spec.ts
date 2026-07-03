@@ -44,14 +44,7 @@ function deputadoInput(
     partido: 'PT',
     siglaUf: 'PE',
     urlFoto: null,
-    eventos: [
-      {
-        dataHora: '2023-02-01T12:00:00Z',
-        situacao: 'Exercício',
-        descricaoStatus: 'Entrada - Posse de Eleito Titular',
-        partido: 'PT',
-      },
-    ],
+    intervalos: [{ openedAt: '2023-02-01T12:00:00Z', closedAt: null }],
     ...overrides,
   };
 }

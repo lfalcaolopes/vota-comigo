@@ -1,6 +1,6 @@
 import type { ProposicaoCard, VotoCategoria } from '@vota-comigo/shared-types';
 
-import type { EventoExercicio } from '@/exercicio/types/exercicio.types';
+import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
 
 import { computeCompatibilidadeDetalhe } from '../rules/compatibilidade-detalhe';
 import type {
@@ -8,11 +8,9 @@ import type {
   PosicaoComputavel,
 } from '../types/compatibilidade.types';
 
-const posse: EventoExercicio = {
-  dataHora: '2023-02-01T12:00:00Z',
-  situacao: 'Exercício',
-  descricaoStatus: 'Entrada - Posse de Eleito Titular',
-  partido: 'PT',
+const emExercicio: IntervaloExercicio = {
+  openedAt: '2023-02-01T12:00:00Z',
+  closedAt: null,
 };
 
 function proposicao(externalIdProposicao: number): ProposicaoCard {
@@ -70,7 +68,7 @@ function deputado(
     partido: 'PT',
     siglaUf: 'PE',
     urlFoto: null,
-    eventos: [posse],
+    intervalos: [emExercicio],
     ...overrides,
   };
 }

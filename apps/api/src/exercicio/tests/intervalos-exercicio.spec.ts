@@ -1,9 +1,14 @@
 import {
   deriveIntervalosExercicio,
   getPartidoVigente,
+  isEmAtividadeFromIntervalos,
   isEmExercicio,
+  isEmExercicioFromIntervalos,
 } from '../rules/intervalos-exercicio';
-import type { EventoExercicio } from '../types/exercicio.types';
+import type {
+  EventoExercicio,
+  IntervaloExercicio,
+} from '../types/exercicio.types';
 
 function evento(overrides: Partial<EventoExercicio> = {}): EventoExercicio {
   return {
@@ -281,6 +286,120 @@ describe('isEmExercicio', () => {
 
       // Assert
       expect(emExercicio).toBe(false);
+    });
+  });
+});
+
+describe('isEmExercicioFromIntervalos', () => {
+  describe('when the instant falls inside an open-ended interval', () => {
+    it('returns true', () => {
+      // Arrange
+      const intervalos: IntervaloExercicio[] = [
+        { openedAt: '2023-02-01T12:00:00Z', closedAt: null },
+      ];
+
+      // Act
+      const emExercicio = isEmExercicioFromIntervalos(
+        intervalos,
+        '2023-06-01T12:00:00Z',
+      );
+
+      // Assert
+      expect(emExercicio).toBe(true);
+    });
+  });
+
+  describe('when the instant falls after a closed interval', () => {
+    it('returns false', () => {
+      // Arrange
+      const intervalos: IntervaloExercicio[] = [
+        {
+          openedAt: '2019-02-01T12:00:00Z',
+          closedAt: '2023-01-31T23:59:00Z',
+        },
+      ];
+
+      // Act
+      const durante = isEmExercicioFromIntervalos(
+        intervalos,
+        '2021-06-01T12:00:00Z',
+      );
+      const depois = isEmExercicioFromIntervalos(
+        intervalos,
+        '2023-06-01T12:00:00Z',
+      );
+
+      // Assert
+      expect(durante).toBe(true);
+      expect(depois).toBe(false);
+    });
+  });
+
+  describe('when there are no intervals', () => {
+    it('returns false', () => {
+      // Arrange
+      const intervalos: IntervaloExercicio[] = [];
+
+      // Act
+      const emExercicio = isEmExercicioFromIntervalos(
+        intervalos,
+        '2023-06-01T12:00:00Z',
+      );
+
+      // Assert
+      expect(emExercicio).toBe(false);
+    });
+  });
+});
+
+describe('isEmAtividadeFromIntervalos', () => {
+  describe('when there is an open-ended interval', () => {
+    it('returns true', () => {
+      // Arrange
+      const intervalos: IntervaloExercicio[] = [
+        {
+          openedAt: '2019-02-01T12:00:00Z',
+          closedAt: '2023-01-31T23:59:00Z',
+        },
+        { openedAt: '2023-02-01T12:00:00Z', closedAt: null },
+      ];
+
+      // Act
+      const emAtividade = isEmAtividadeFromIntervalos(intervalos);
+
+      // Assert
+      expect(emAtividade).toBe(true);
+    });
+  });
+
+  describe('when every interval is closed', () => {
+    it('returns false', () => {
+      // Arrange
+      const intervalos: IntervaloExercicio[] = [
+        {
+          openedAt: '2019-02-01T12:00:00Z',
+          closedAt: '2023-01-31T23:59:00Z',
+        },
+      ];
+
+      // Act
+      const emAtividade = isEmAtividadeFromIntervalos(intervalos);
+
+      // Assert
+      expect(emAtividade).toBe(false);
+    });
+  });
+
+  describe('when there are no intervals', () => {
+    it('returns false', () => {
+      // Arrange
+      const intervalos: IntervaloExercicio[] = [];
+
+      // Act
+      const emAtividade = isEmAtividadeFromIntervalos(intervalos);
+
+      // Assert
+      expect(emAtividade).toBe(false);
     });
   });
 });

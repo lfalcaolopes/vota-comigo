@@ -5,7 +5,7 @@ import type {
 } from '@vota-comigo/shared-types';
 
 import { classifyDeputadoVotacao } from '@/exercicio/rules/deputado-votacao';
-import { isEmAtividade } from '@/exercicio/rules/intervalos-exercicio';
+import { isEmAtividadeFromIntervalos } from '@/exercicio/rules/intervalos-exercicio';
 
 import type {
   DeputadoCompatibilidadeInput,
@@ -48,7 +48,7 @@ export function computeCompatibilidadeDetalhe(
   const votos = input.posicoes.map((posicao) => {
     const voto = posicao.votosByDeputado.get(input.deputado.deputadoId) ?? null;
     const situacaoDeputadoVotacao = classifyDeputadoVotacao({
-      eventos: input.deputado.eventos,
+      intervalos: input.deputado.intervalos,
       votacao: posicao.votacaoReferencia,
       voto,
     });
@@ -92,7 +92,7 @@ export function computeCompatibilidadeDetalhe(
     partido: input.deputado.partido,
     siglaUf: input.deputado.siglaUf,
     urlFoto: input.deputado.urlFoto,
-    emAtividade: isEmAtividade(input.deputado.eventos),
+    emAtividade: isEmAtividadeFromIntervalos(input.deputado.intervalos),
     metrics: {
       totalConcordancias,
       totalDiscordancias,

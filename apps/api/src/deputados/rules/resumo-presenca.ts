@@ -5,6 +5,7 @@ import type {
 } from '@vota-comigo/shared-types';
 
 import { classifyDeputadoVotacao } from '@/exercicio/rules/deputado-votacao';
+import { deriveIntervalosExercicio } from '@/exercicio/rules/intervalos-exercicio';
 import type {
   EventoExercicio,
   VotacaoRef,
@@ -65,9 +66,11 @@ export function deriveResumoPresenca(
   let foraDeExercicio = 0;
   let lacunaDeDados = 0;
 
+  const intervalos = deriveIntervalosExercicio(input.eventos);
+
   for (const { votacao, voto } of input.votacoes) {
     const classification = classifyDeputadoVotacao({
-      eventos: input.eventos,
+      intervalos,
       votacao,
       voto,
     });
