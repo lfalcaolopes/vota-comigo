@@ -7,17 +7,17 @@ import { nomePublicoDeputado } from '@/shared/deputado/nome-publico';
 
 import { deriveHistoricoPartidario } from '../rules/historico-partidario';
 import { parseRedesSociais } from '../rules/redes-sociais';
-import { deriveResumoPresenca } from '../rules/resumo-presenca';
+import { toResumoPresenca } from '../rules/resumo-presenca';
 import { deriveSnapshotPublico } from '../rules/snapshot-publico';
 import type {
   DeputadoPerfilSource,
-  VotacaoProposicaoComputavelRow,
+  DeputadoResumoPresencaRow,
 } from '../types/deputados.types';
 import { fonteOficialDeputado } from './camara-portal-url';
 
 export function toDeputadoPerfil(
   source: DeputadoPerfilSource,
-  votacoesProposicoesComputaveis: readonly VotacaoProposicaoComputavelRow[],
+  resumoPresencaRow: DeputadoResumoPresencaRow | null,
 ): DeputadoPerfil {
   const snapshot = deriveSnapshotPublico(source.eventos);
 
@@ -36,13 +36,9 @@ export function toDeputadoPerfil(
     }),
   );
 
-  const { resumoPresencaDisponivel, resumoPresenca } = deriveResumoPresenca({
-    eventos: eventosExercicio,
-    votacoes: votacoesProposicoesComputaveis.map((v) => ({
-      votacao: { dataHoraRegistro: v.dataHoraRegistro, data: v.data },
-      voto: v.voto,
-    })),
-  });
+  const resumoPresenca =
+    resumoPresencaRow === null ? null : toResumoPresenca(resumoPresencaRow);
+  const resumoPresencaDisponivel = resumoPresenca !== null;
 
   const { historicoPartidarioDisponivel, historicoPartidario } =
     deriveHistoricoPartidario({ eventos: source.eventos, snapshot });

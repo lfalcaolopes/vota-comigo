@@ -2,6 +2,7 @@ export * from './legislatura';
 export * from './partido';
 export * from './deputado';
 export * from './deputado-historico';
+export * from './deputado-presenca';
 export * from './votacao';
 export * from './votacao-votos';
 export * from './proposicao';

@@ -99,10 +99,7 @@ export class DeputadosService {
     if (source === null) {
       throw new NotFoundException('deputado nao encontrado');
     }
-    const votacoesProposicoesComputaveis =
-      await this.repository.loadVotacoesProposicoesComputaveisForDeputado(
-        source.id,
-      );
-    return toDeputadoPerfil(source, votacoesProposicoesComputaveis);
+    const resumoPresenca = await this.repository.loadResumoPresenca(source.id);
+    return toDeputadoPerfil(source, resumoPresenca);
   }
 }

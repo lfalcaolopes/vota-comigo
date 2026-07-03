@@ -34,6 +34,8 @@ import {
 import { createVotacaoProposicaoStep } from '../steps/votacao-proposicao/votacao-proposicao.step';
 import { createProposicaoComputavelRepository } from '../steps/proposicao-computavel/proposicao-computavel.repository';
 import { createProposicaoComputavelStep } from '../steps/proposicao-computavel/proposicao-computavel.step';
+import { createDeputadoPresencaRepository } from '../steps/deputado-presenca/deputado-presenca.repository';
+import { createDeputadoPresencaStep } from '../steps/deputado-presenca/deputado-presenca.step';
 import { createTemaRepository } from '../steps/tema/tema.repository';
 import { createTemaLookup } from '../steps/tema/tema.lookups';
 import { createTemaStep } from '../steps/tema/tema.step';
@@ -50,6 +52,7 @@ import {
   dryRunPartidoRepository,
   dryRunProposicaoDownloader,
   dryRunProposicaoComputavelRepository,
+  dryRunDeputadoPresencaRepository,
   dryRunProposicaoLookup,
   dryRunProposicaoRepository,
   dryRunSanityRepository,
@@ -108,6 +111,7 @@ export function createIngestionSteps(
           temaLookup: dryRunTemaLookup,
         }),
         createDeputadoHistoricoStep(dryRunHistoricoDeps),
+        createDeputadoPresencaStep(dryRunDeputadoPresencaRepository),
         createSanityStep(dryRunSanityRepository),
       ],
       close: () => Promise.resolve(),
@@ -163,6 +167,7 @@ export function createIngestionSteps(
       partidoRepository: createPartidoRepository(db),
       historicoRepository: createDeputadoHistoricoRepository(db),
     }),
+    createDeputadoPresencaStep(createDeputadoPresencaRepository(db)),
     createSanityStep(createSanityRepository(db)),
   ];
 

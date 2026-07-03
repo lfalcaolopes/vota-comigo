@@ -8,6 +8,7 @@ import type { LegislaturaRepository } from '../steps/legislaturas/legislaturas.r
 import type { PartidoRepository } from '../steps/partidos/partidos.repository.types';
 import type { ProposicaoRepository } from '../steps/proposicoes/proposicoes.repository.types';
 import type { ProposicaoComputavelRepository } from '../steps/proposicao-computavel/proposicao-computavel.repository.types';
+import type { DeputadoPresencaRepository } from '../steps/deputado-presenca/deputado-presenca.repository.types';
 import type { SanityRepository } from '../steps/sanity/sanity.repository.types';
 import type {
   TemaLookup,
@@ -89,6 +90,12 @@ export const dryRunLegislaturaLookup: LegislaturaLookup = {
       'Lookup de legislatura acionado em dry-run. Nenhuma resolução de FK deveria ocorrer.',
     );
   },
+};
+
+export const dryRunDeputadoPresencaRepository: DeputadoPresencaRepository = {
+  loadDeputadosComHistorico: () => Promise.resolve([]),
+  loadComputableVotacoes: () => Promise.resolve([]),
+  fullReplace: dryRunWriteGuard,
 };
 
 export const dryRunSanityRepository: SanityRepository = {

@@ -1,5 +1,3 @@
-import type { VotoCategoria } from '@vota-comigo/shared-types';
-
 export type DeputadoHistoricoEventoSource = {
   dataHora: string;
   situacao: string | null;
@@ -31,8 +29,7 @@ export type DeputadoPerfilSource = {
   eventos: readonly DeputadoHistoricoEventoSource[];
 };
 
-export type VotacaoProposicaoComputavelRow = {
-  dataHoraRegistro: string | null;
-  data: string | null;
-  voto: VotoCategoria | null;
+export type DeputadoResumoPresencaRow = {
+  presencas: number;
+  ausenciasSemMotivoConhecido: number;
 };

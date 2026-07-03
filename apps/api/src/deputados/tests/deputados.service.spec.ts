@@ -11,7 +11,7 @@ function fakeRepository(
     loadUfsDisponiveis: async () => [],
     loadPartidosDisponiveis: async () => [],
     loadDeputadoPerfil: async () => null,
-    loadVotacoesProposicoesComputaveisForDeputado: async () => [],
+    loadResumoPresenca: async () => null,
     ...overrides,
   };
 }

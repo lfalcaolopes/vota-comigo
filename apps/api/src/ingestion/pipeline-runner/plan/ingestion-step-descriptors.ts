@@ -15,5 +15,6 @@ export const ingestionStepDescriptors: readonly IngestionStepDescriptor[] = [
   { name: 'proposicao_computavel', scope: 'single', source: 'derived' },
   { name: 'tema', scope: 'single', source: 'derived' },
   { name: 'deputado_historico', scope: 'single', source: 'api', manual: true },
+  { name: 'deputado_presenca', scope: 'single', source: 'derived' },
   { name: 'sanity', scope: 'single', source: 'db' },
 ];
