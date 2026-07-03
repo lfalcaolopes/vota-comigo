@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
 
@@ -10,6 +10,7 @@ import { MatcherModule } from './matcher/matcher.module';
 import { ProposicoesModule } from './proposicoes/proposicoes.module';
 import { validateEnv } from './shared/config/env.validation';
 import { DatabaseModule } from './shared/database/database.module';
+import { CacheControlInterceptor } from './shared/http/cache-control.interceptor';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { DatabaseModule } from './shared/database/database.module';
   providers: [
     { provide: APP_FILTER, useClass: SentryGlobalFilter },
     { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_INTERCEPTOR, useClass: CacheControlInterceptor },
   ],
 })
 export class AppModule {}
