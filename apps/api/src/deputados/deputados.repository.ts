@@ -1,4 +1,4 @@
-import { desc, eq, inArray, isNotNull } from 'drizzle-orm';
+import { and, desc, eq, gt, inArray, isNotNull } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
@@ -103,7 +103,14 @@ export function createDeputadosRepository(
           ufNascimento: deputado.ufNascimento,
           urlRedeSocial: deputado.urlRedeSocial,
         })
-        .from(deputado);
+        .from(deputado)
+        .innerJoin(
+          deputadoPresenca,
+          and(
+            eq(deputadoPresenca.deputadoId, deputado.id),
+            gt(deputadoPresenca.presencas, 0),
+          ),
+        );
 
       const eventosByDeputadoId = await loadEventosByDeputadoIds(
         rows.map((row) => row.id),
@@ -132,6 +139,13 @@ export function createDeputadosRepository(
           siglaUf: deputadoHistorico.siglaUf,
         })
         .from(deputadoHistorico)
+        .innerJoin(
+          deputadoPresenca,
+          and(
+            eq(deputadoPresenca.deputadoId, deputadoHistorico.deputadoId),
+            gt(deputadoPresenca.presencas, 0),
+          ),
+        )
         .orderBy(deputadoHistorico.deputadoId, desc(deputadoHistorico.dataHora))
         .as('mais_recente');
 
@@ -150,6 +164,13 @@ export function createDeputadosRepository(
           partidoId: deputadoHistorico.partidoId,
         })
         .from(deputadoHistorico)
+        .innerJoin(
+          deputadoPresenca,
+          and(
+            eq(deputadoPresenca.deputadoId, deputadoHistorico.deputadoId),
+            gt(deputadoPresenca.presencas, 0),
+          ),
+        )
         .orderBy(deputadoHistorico.deputadoId, desc(deputadoHistorico.dataHora))
         .as('mais_recente');
 
