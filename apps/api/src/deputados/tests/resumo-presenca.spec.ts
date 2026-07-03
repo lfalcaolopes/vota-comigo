@@ -255,7 +255,10 @@ describe('deriveResumoPresenca', () => {
             },
           }),
           // lacuna: no timestamp and no voto
-          votacao({ voto: null, votacao: { dataHoraRegistro: null, data: null } }),
+          votacao({
+            voto: null,
+            votacao: { dataHoraRegistro: null, data: null },
+          }),
         ],
       };
 

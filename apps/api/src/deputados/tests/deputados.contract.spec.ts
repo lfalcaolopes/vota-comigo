@@ -79,7 +79,9 @@ function fakeRepository(
       }),
     loadPartidosDisponiveis: async () =>
       [...byExternalId.values()].flatMap((source) => {
-        const siglaPartido = deriveSnapshotPublico(source.eventos)?.siglaPartido;
+        const siglaPartido = deriveSnapshotPublico(
+          source.eventos,
+        )?.siglaPartido;
         return siglaPartido === undefined || siglaPartido === null
           ? []
           : [siglaPartido];
