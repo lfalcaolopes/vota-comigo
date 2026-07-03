@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import type { DrizzleDatabase } from '@/shared/database/client';
 import { DATABASE } from '@/shared/database/database.module';
 
+import { createCachedMatcherRepository } from './cached-matcher.repository';
 import { MatcherController } from './matcher.controller';
 import {
   MATCHER_REPOSITORY,
@@ -17,7 +18,8 @@ import { MatcherService } from './matcher.service';
     {
       provide: MATCHER_REPOSITORY,
       inject: [DATABASE],
-      useFactory: (db: DrizzleDatabase) => createMatcherRepository(db),
+      useFactory: (db: DrizzleDatabase) =>
+        createCachedMatcherRepository(createMatcherRepository(db)),
     },
   ],
 })
