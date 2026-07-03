@@ -47,14 +47,13 @@ export class ProposicoesService {
   }
 
   async temasDisponiveis(): Promise<TemasDisponiveisResponse> {
-    const [rows, temaRows] = await Promise.all([
-      this.repository.loadProposicoesComputaveis(),
+    const [computableIds, temaRows] = await Promise.all([
+      this.repository.loadComputableExternalIds(),
       this.repository.loadProposicaoTemas(),
     ]);
-    const computableIds = new Set(
-      rows.map((r) => r.proposicao.externalIdProposicao),
-    );
-    return { items: [...toTemasDisponiveis(temaRows, computableIds)] };
+    return {
+      items: [...toTemasDisponiveis(temaRows, new Set(computableIds))],
+    };
   }
 
   async detalhe(externalIdProposicao: number): Promise<ProposicaoDetalhe> {

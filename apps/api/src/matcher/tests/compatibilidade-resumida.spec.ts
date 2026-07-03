@@ -1,6 +1,6 @@
 import type { VotoCategoria } from '@vota-comigo/shared-types';
 
-import type { EventoExercicio } from '@/exercicio/types/exercicio.types';
+import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
 
 import { computeCompatibilidadeResumida } from '../rules/compatibilidade-resumida';
 import type { ComputeCompatibilidadeResumidaInput } from '../rules/compatibilidade-resumida';
@@ -27,18 +27,9 @@ function compute(
   });
 }
 
-const posse: EventoExercicio = {
-  dataHora: '2023-02-01T12:00:00Z',
-  situacao: 'Exercício',
-  descricaoStatus: 'Entrada - Posse de Eleito Titular',
-  partido: 'PT',
-};
-
-const eventoNeutro: EventoExercicio = {
-  dataHora: '2023-02-01T12:00:00Z',
-  situacao: 'Exercício',
-  descricaoStatus: 'Alteração de gabinete',
-  partido: 'PT',
+const emExercicio: IntervaloExercicio = {
+  openedAt: '2023-02-01T12:00:00Z',
+  closedAt: null,
 };
 
 const instanteDentro = {
@@ -99,7 +90,7 @@ function deputado(
     partido: 'PT',
     siglaUf: 'PE',
     urlFoto: 'https://foto/dep-1.jpg',
-    eventos: [posse],
+    intervalos: [emExercicio],
     ...overrides,
   };
 }
@@ -191,7 +182,7 @@ describe('computeCompatibilidadeResumida', () => {
       // Arrange: in office, no vote record -> ausencia_sem_motivo_conhecido
       const result = compute({
         posicoes: [posicao({ posicao: 'aprovar', votosByDeputado: new Map() })],
-        deputados: [deputado({ eventos: [posse] })],
+        deputados: [deputado({ intervalos: [emExercicio] })],
       });
 
       // Assert
@@ -256,7 +247,7 @@ describe('computeCompatibilidadeResumida', () => {
             votosByDeputado: new Map(),
           }),
         ],
-        deputados: [deputado({ eventos: [posse] })],
+        deputados: [deputado({ intervalos: [emExercicio] })],
       });
 
       // Assert
@@ -271,17 +262,17 @@ describe('computeCompatibilidadeResumida', () => {
       const semHistorico = deputado({
         deputadoId: 'dep-gap',
         externalIdDeputado: 1,
-        eventos: [eventoNeutro],
+        intervalos: [],
       });
       const semAmostra = deputado({
         deputadoId: 'dep-zero',
         externalIdDeputado: 2,
-        eventos: [posse],
+        intervalos: [emExercicio],
       });
       const comAmostra = deputado({
         deputadoId: 'dep-ok',
         externalIdDeputado: 3,
-        eventos: [posse],
+        intervalos: [emExercicio],
       });
 
       // Act
@@ -457,11 +448,9 @@ describe('computeCompatibilidadeResumida', () => {
   describe('when reporting whether the deputado is still active', () => {
     it('is true when the latest interval is open and false when it is closed', () => {
       // Arrange
-      const saida: EventoExercicio = {
-        dataHora: '2023-09-01T12:00:00Z',
-        situacao: 'Fim de Mandato',
-        descricaoStatus: 'Saída - Fim de Mandato',
-        partido: 'PT',
+      const encerrado: IntervaloExercicio = {
+        openedAt: '2023-02-01T12:00:00Z',
+        closedAt: '2023-09-01T12:00:00Z',
       };
 
       // Act
@@ -469,13 +458,13 @@ describe('computeCompatibilidadeResumida', () => {
         posicoes: [
           posicao({ posicao: 'aprovar', votosByDeputado: votos('sim') }),
         ],
-        deputados: [deputado({ eventos: [posse] })],
+        deputados: [deputado({ intervalos: [emExercicio] })],
       });
       const inativo = compute({
         posicoes: [
           posicao({ posicao: 'aprovar', votosByDeputado: votos('sim') }),
         ],
-        deputados: [deputado({ eventos: [posse, saida] })],
+        deputados: [deputado({ intervalos: [encerrado] })],
       });
 
       // Assert
@@ -517,7 +506,7 @@ describe('computeCompatibilidadeResumida', () => {
             votosByDeputado: new Map(),
           }),
         ],
-        deputados: [deputado({ eventos: [posse] })],
+        deputados: [deputado({ intervalos: [emExercicio] })],
       });
 
       // Assert

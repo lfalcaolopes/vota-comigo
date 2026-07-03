@@ -14,7 +14,11 @@ import {
   type DeputadosRepository,
 } from '../deputados.repository';
 import { DeputadosService } from '../deputados.service';
-import type { DeputadoPerfilSource } from '../types/deputados.types';
+import { deriveSnapshotPublico } from '../rules/snapshot-publico';
+import type {
+  DeputadoPerfilSource,
+  DeputadoResumoPresencaRow,
+} from '../types/deputados.types';
 
 type TestServer = Parameters<typeof request>[0];
 
@@ -60,31 +64,38 @@ function source(
   };
 }
 
-type VotacoesById = ReadonlyMap<
-  string,
-  Awaited<
-    ReturnType<
-      DeputadosRepository['loadVotacoesProposicoesComputaveisForDeputado']
-    >
-  >
->;
+type ResumoById = ReadonlyMap<string, DeputadoResumoPresencaRow>;
 
 function fakeRepository(
   byExternalId: ReadonlyMap<number, DeputadoPerfilSource>,
-  votacoesById: VotacoesById = new Map(),
+  resumoById: ResumoById = new Map(),
 ): DeputadosRepository {
   return {
     loadDeputadosFeed: async () => [...byExternalId.values()],
+    loadUfsDisponiveis: async () =>
+      [...byExternalId.values()].flatMap((source) => {
+        const siglaUf = deriveSnapshotPublico(source.eventos)?.siglaUf;
+        return siglaUf === undefined || siglaUf === null ? [] : [siglaUf];
+      }),
+    loadPartidosDisponiveis: async () =>
+      [...byExternalId.values()].flatMap((source) => {
+        const siglaPartido = deriveSnapshotPublico(
+          source.eventos,
+        )?.siglaPartido;
+        return siglaPartido === undefined || siglaPartido === null
+          ? []
+          : [siglaPartido];
+      }),
     loadDeputadoPerfil: async (externalIdDeputado) =>
       byExternalId.get(externalIdDeputado) ?? null,
-    loadVotacoesProposicoesComputaveisForDeputado: async (deputadoId) =>
-      votacoesById.get(deputadoId) ?? [],
+    loadResumoPresenca: async (deputadoId) =>
+      resumoById.get(deputadoId) ?? null,
   };
 }
 
 async function buildApp(
   byExternalId: ReadonlyMap<number, DeputadoPerfilSource>,
-  votacoesById?: VotacoesById,
+  resumoById?: ResumoById,
 ): Promise<INestApplication> {
   const moduleRef = await Test.createTestingModule({
     controllers: [DeputadosController],
@@ -92,7 +103,7 @@ async function buildApp(
       DeputadosService,
       {
         provide: DEPUTADOS_REPOSITORY,
-        useValue: fakeRepository(byExternalId, votacoesById),
+        useValue: fakeRepository(byExternalId, resumoById),
       },
     ],
   }).compile();
@@ -592,13 +603,7 @@ describe('GET /deputados/:externalIdDeputado', () => {
       new Map([
         [
           'aaaaaaaa-0000-0000-0000-000000000300',
-          [
-            {
-              dataHoraRegistro: '2023-06-01T12:00:00+00:00',
-              data: '2023-06-01',
-              voto: 'sim',
-            },
-          ],
+          { presencas: 1, ausenciasSemMotivoConhecido: 0 },
         ],
       ]),
     );

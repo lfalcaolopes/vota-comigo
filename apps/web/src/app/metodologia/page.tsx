@@ -53,9 +53,10 @@ export default function MetodologiaPage() {
                 por aclamação também, porque não registram voto individual.
               </p>
               <p>
-                O voto individual dos deputados está disponível a partir de
-                2001, início da legislatura 51. Quem não tem comportamento de
-                voto documentado nesse período não entra na base.
+                A base cobre as votações nominais realizadas de 2015 até junho
+                de 2026. O recorte é pela data da votação, não pela idade da
+                proposição: uma proposição mais antiga aparece se foi votada
+                nesse período.
               </p>
             </div>
           </Panel>

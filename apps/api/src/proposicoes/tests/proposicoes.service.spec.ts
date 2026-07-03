@@ -43,6 +43,10 @@ function fakeRepository(
 ): ProposicoesRepository {
   return {
     loadProposicoesComputaveis: async () => toProposicoesComputaveis(rows),
+    loadComputableExternalIds: async () =>
+      toProposicoesComputaveis(rows).map(
+        (r) => r.proposicao.externalIdProposicao,
+      ),
     loadProposicaoDetalhe: async () => null,
     loadProposicaoTemas: async () => [],
   };
@@ -327,6 +331,31 @@ describe('ProposicoesService.feed', () => {
   });
 });
 
+describe('ProposicoesService.temasDisponiveis', () => {
+  describe('when deriving which temas are available', () => {
+    it('uses the lean computable-id source, not the full computaveis payload', async () => {
+      // Arrange
+      const service = new ProposicoesService({
+        loadProposicoesComputaveis: async () => {
+          throw new Error('should not load the full computaveis payload');
+        },
+        loadComputableExternalIds: async () => [1],
+        loadProposicaoDetalhe: async () => null,
+        loadProposicaoTemas: async () => [
+          { externalIdProposicao: 1, externalCodTema: 30, tema: 'Saúde' },
+          { externalIdProposicao: 2, externalCodTema: 10, tema: 'Educação' },
+        ],
+      });
+
+      // Act
+      const result = await service.temasDisponiveis();
+
+      // Assert
+      expect(result.items.map((t) => t.externalCodTema)).toEqual([30]);
+    });
+  });
+});
+
 describe('ProposicoesService.feed with text query', () => {
   describe('when a query matches by ementa', () => {
     it('returns only the matching computavel card', async () => {
@@ -445,6 +474,10 @@ describe('ProposicoesService.feed with text query', () => {
       const service = new ProposicoesService({
         loadProposicoesComputaveis: async () =>
           toProposicoesComputaveis([matched]),
+        loadComputableExternalIds: async () =>
+          toProposicoesComputaveis([matched]).map(
+            (r) => r.proposicao.externalIdProposicao,
+          ),
         loadProposicaoDetalhe: async () => null,
         loadProposicaoTemas: async () => [],
       });

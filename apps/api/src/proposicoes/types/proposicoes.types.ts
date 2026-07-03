@@ -41,12 +41,47 @@ export type VotacaoReferenciaComputavel = VotacaoCandidate & {
   };
 };
 
+export type VotacaoReferenciaResumoSource = Pick<
+  VotacaoReferenciaComputavel,
+  | 'externalIdVotacao'
+  | 'data'
+  | 'descricao'
+  | 'votosSim'
+  | 'votosNao'
+  | 'votosOutros'
+  | 'aprovacao'
+  | 'classification'
+>;
+
 export type RankedProposicao = {
   proposicao: ProposicaoResumo;
   resumoIa: ProposicaoResumoIaProjection | null;
   volumeVotacoesPlenario: number;
   dataUltimaVotacao: string | null;
   referencia: VotacaoReferenciaComputavel;
+};
+
+export type ProposicaoResumoIaCardProjection = {
+  generationStatus: ProposicaoResumoIaGenerationStatus;
+  reviewStatus: ProposicaoResumoIaReviewStatus;
+  resumoCard: string | null;
+};
+
+export type ProposicaoCardResumo = Pick<
+  ProposicaoResumo,
+  | 'externalIdProposicao'
+  | 'siglaTipo'
+  | 'numero'
+  | 'ano'
+  | 'ementa'
+  | 'dataApresentacao'
+>;
+
+export type ProposicaoFeedItem = {
+  proposicao: ProposicaoCardResumo;
+  resumoIa: ProposicaoResumoIaCardProjection | null;
+  volumeVotacoesPlenario: number;
+  dataUltimaVotacao: string | null;
 };
 
 export type ProposicaoTemaRow = {

@@ -8,6 +8,8 @@ import type { LegislaturaRepository } from '../steps/legislaturas/legislaturas.r
 import type { PartidoRepository } from '../steps/partidos/partidos.repository.types';
 import type { ProposicaoRepository } from '../steps/proposicoes/proposicoes.repository.types';
 import type { ProposicaoComputavelRepository } from '../steps/proposicao-computavel/proposicao-computavel.repository.types';
+import type { DeputadoPresencaRepository } from '../steps/deputado-presenca/deputado-presenca.repository.types';
+import type { DeputadoExercicioIntervaloRepository } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.repository.types';
 import type { SanityRepository } from '../steps/sanity/sanity.repository.types';
 import type {
   TemaLookup,
@@ -90,6 +92,18 @@ export const dryRunLegislaturaLookup: LegislaturaLookup = {
     );
   },
 };
+
+export const dryRunDeputadoPresencaRepository: DeputadoPresencaRepository = {
+  loadDeputadosComHistorico: () => Promise.resolve([]),
+  loadComputableVotacoes: () => Promise.resolve([]),
+  fullReplace: dryRunWriteGuard,
+};
+
+export const dryRunDeputadoExercicioIntervaloRepository: DeputadoExercicioIntervaloRepository =
+  {
+    loadDeputadosComHistorico: () => Promise.resolve([]),
+    fullReplace: dryRunWriteGuard,
+  };
 
 export const dryRunSanityRepository: SanityRepository = {
   loadPlacares: dryRunReadGuard,

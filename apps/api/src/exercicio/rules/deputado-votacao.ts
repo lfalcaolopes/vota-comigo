@@ -2,11 +2,14 @@ import type {
   DeputadoVotacaoClassification,
   VotoCategoria,
 } from '@vota-comigo/shared-types';
-import type { EventoExercicio, VotacaoRef } from '../types/exercicio.types';
-import { isEmExercicio, resolveVotacaoTimestamp } from './intervalos-exercicio';
+import type { IntervaloExercicio, VotacaoRef } from '../types/exercicio.types';
+import {
+  isEmExercicioFromIntervalos,
+  resolveVotacaoTimestamp,
+} from './intervalos-exercicio';
 
 export type ClassifyDeputadoVotacaoInput = {
-  eventos: readonly EventoExercicio[];
+  intervalos: readonly IntervaloExercicio[];
   votacao: VotacaoRef;
   voto: VotoCategoria | null;
 };
@@ -36,11 +39,11 @@ export function classifyDeputadoVotacao(
   // sem registro de voto, o histórico decide a condição de exercício
   const instante = resolveVotacaoTimestamp(input.votacao);
 
-  if (input.eventos.length === 0 || instante === null) {
+  if (input.intervalos.length === 0 || instante === null) {
     return 'lacuna_de_dados';
   }
 
-  if (!isEmExercicio(input.eventos, instante)) {
+  if (!isEmExercicioFromIntervalos(input.intervalos, instante)) {
     return 'fora_de_exercicio';
   }
 

@@ -54,7 +54,7 @@ function toResumoIa(
   ProposicaoDetalhe,
   'resumoIaDisponivel' | 'resumoIaCard' | 'resumoIaDetalhe'
 > {
-  return toResumoIaContractFields(result.proposicao, result.resumoIa);
+  return toResumoIaContractFields(result.resumoIa);
 }
 
 export function toProposicaoDetalhe(

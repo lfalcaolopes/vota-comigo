@@ -2,6 +2,7 @@ import { desc, eq, inArray } from 'drizzle-orm';
 import type {
   EscopoMatcher,
   SiglaUf,
+  VotacaoReferenciaPattern,
   VotoCategoria,
 } from '@vota-comigo/shared-types';
 import {
@@ -10,14 +11,19 @@ import {
   votacaoReferenciaPattern,
 } from '@vota-comigo/shared-types';
 
+import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
 import {
   toProposicaoCard,
   toVotacaoReferenciaResumo,
 } from '@/proposicoes/mappers/proposicao-card.mapper';
-import type { RankedProposicao } from '@/proposicoes/types/proposicoes.types';
+import type {
+  ProposicaoCardResumo,
+  ProposicaoResumoIaCardProjection,
+} from '@/proposicoes/types/proposicoes.types';
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
   deputado,
+  deputadoExercicioIntervalo,
   deputadoHistorico,
   partido,
   proposicao,
@@ -31,7 +37,24 @@ import type {
   DeputadoCompatibilidadeInput,
   VotacaoReferenciaVotos,
 } from './types/compatibilidade.types';
-import type { ProposicaoResumoIaProjection } from '@/proposicoes/types/proposicoes.types';
+
+type RankedReferencia = {
+  proposicao: ProposicaoCardResumo;
+  resumoIa: ProposicaoResumoIaCardProjection | null;
+  volumeVotacoesPlenario: number;
+  dataUltimaVotacao: string | null;
+  referencia: {
+    externalIdVotacao: string;
+    data: string | null;
+    dataHoraRegistro: string | null;
+    descricao: string | null;
+    votosSim: number | null;
+    votosNao: number | null;
+    votosOutros: number | null;
+    aprovacao: number | null;
+    classification: { pattern: VotacaoReferenciaPattern };
+  };
+};
 
 export const MATCHER_REPOSITORY = Symbol('MATCHER_REPOSITORY');
 
@@ -56,7 +79,7 @@ export type MatcherRepository = {
 async function loadRankedProposicoesComputaveis(
   db: DrizzleDatabase,
   externalIdProposicoes: readonly number[],
-): Promise<readonly RankedProposicao[]> {
+): Promise<readonly RankedReferencia[]> {
   const rows = await db
     .select({
       externalIdProposicao: proposicao.externalIdProposicao,
@@ -64,34 +87,21 @@ async function loadRankedProposicoesComputaveis(
       numero: proposicao.numero,
       ano: proposicao.ano,
       ementa: proposicao.ementa,
-      descricaoTipo: proposicao.descricaoTipo,
-      ementaDetalhada: proposicao.ementaDetalhada,
-      keywords: proposicao.keywords,
-      urlInteiroTeor: proposicao.urlInteiroTeor,
       dataApresentacao: proposicao.dataApresentacao,
-      ultimoStatusSiglaOrgao: proposicao.ultimoStatusSiglaOrgao,
-      ultimoStatusDescricaoSituacao: proposicao.ultimoStatusDescricaoSituacao,
-      ultimoStatusRegime: proposicao.ultimoStatusRegime,
-      ultimoStatusDataHora: proposicao.ultimoStatusDataHora,
       volumeVotacoesPlenario: proposicaoComputavel.volumeVotacoesPlenario,
       dataUltimaVotacao: proposicaoComputavel.dataUltimaVotacao,
+      votacaoReferenciaPattern: proposicaoComputavel.votacaoReferenciaPattern,
       externalIdVotacao: votacao.externalIdVotacao,
       data: votacao.data,
       dataHoraRegistro: votacao.dataHoraRegistro,
       descricao: votacao.descricao,
-      ultimaAberturaVotacaoDescricao: votacao.ultimaAberturaVotacaoDescricao,
-      ultimaApresentacaoProposicaoDescricao:
-        votacao.ultimaApresentacaoProposicaoDescricao,
       votosSim: votacao.votosSim,
       votosNao: votacao.votosNao,
       votosOutros: votacao.votosOutros,
       aprovacao: votacao.aprovacao,
-      votacaoReferenciaPattern: proposicaoComputavel.votacaoReferenciaPattern,
-      resumoIaSourceHash: proposicaoResumoIa.sourceHash,
       resumoIaGenerationStatus: proposicaoResumoIa.generationStatus,
       resumoIaReviewStatus: proposicaoResumoIa.reviewStatus,
       resumoIaCard: proposicaoResumoIa.resumoCard,
-      resumoIaDetalhe: proposicaoResumoIa.resumoDetalhe,
     })
     .from(proposicaoComputavel)
     .innerJoin(proposicao, eq(proposicaoComputavel.proposicaoId, proposicao.id))
@@ -114,17 +124,20 @@ async function loadRankedProposicoesComputaveis(
       numero: row.numero,
       ano: row.ano,
       ementa: row.ementa,
-      descricaoTipo: row.descricaoTipo,
-      ementaDetalhada: row.ementaDetalhada,
-      keywords: row.keywords,
-      urlInteiroTeor: row.urlInteiroTeor,
       dataApresentacao: row.dataApresentacao,
-      ultimoStatusSiglaOrgao: row.ultimoStatusSiglaOrgao,
-      ultimoStatusDescricaoSituacao: row.ultimoStatusDescricaoSituacao,
-      ultimoStatusRegime: row.ultimoStatusRegime,
-      ultimoStatusDataHora: row.ultimoStatusDataHora,
     },
-    resumoIa: toProposicaoResumoIaProjection(row),
+    resumoIa:
+      row.resumoIaGenerationStatus === null || row.resumoIaReviewStatus === null
+        ? null
+        : {
+            generationStatus: proposicaoResumoIaGenerationStatus.parse(
+              row.resumoIaGenerationStatus,
+            ),
+            reviewStatus: proposicaoResumoIaReviewStatus.parse(
+              row.resumoIaReviewStatus,
+            ),
+            resumoCard: row.resumoIaCard,
+          },
     volumeVotacoesPlenario: row.volumeVotacoesPlenario,
     dataUltimaVotacao: row.dataUltimaVotacao,
     referencia: {
@@ -132,9 +145,6 @@ async function loadRankedProposicoesComputaveis(
       data: row.data,
       dataHoraRegistro: row.dataHoraRegistro,
       descricao: row.descricao,
-      ultimaAberturaVotacaoDescricao: row.ultimaAberturaVotacaoDescricao,
-      ultimaApresentacaoProposicaoDescricao:
-        row.ultimaApresentacaoProposicaoDescricao,
       votosSim: row.votosSim,
       votosNao: row.votosNao,
       votosOutros: row.votosOutros,
@@ -146,32 +156,34 @@ async function loadRankedProposicoesComputaveis(
   }));
 }
 
-function toProposicaoResumoIaProjection(row: {
-  resumoIaSourceHash: string | null;
-  resumoIaGenerationStatus: string | null;
-  resumoIaReviewStatus: string | null;
-  resumoIaCard: string | null;
-  resumoIaDetalhe: string | null;
-}): ProposicaoResumoIaProjection | null {
-  if (
-    row.resumoIaSourceHash === null ||
-    row.resumoIaGenerationStatus === null ||
-    row.resumoIaReviewStatus === null
-  ) {
-    return null;
-  }
+async function loadIntervalosByDeputado(
+  db: DrizzleDatabase,
+  deputadoIds: readonly string[],
+): Promise<ReadonlyMap<string, IntervaloExercicio[]>> {
+  const rows = await db
+    .select({
+      deputadoId: deputadoExercicioIntervalo.deputadoId,
+      openedAt: deputadoExercicioIntervalo.openedAt,
+      closedAt: deputadoExercicioIntervalo.closedAt,
+    })
+    .from(deputadoExercicioIntervalo)
+    .where(inArray(deputadoExercicioIntervalo.deputadoId, [...deputadoIds]))
+    .orderBy(deputadoExercicioIntervalo.openedAt);
 
-  return {
-    sourceHash: row.resumoIaSourceHash,
-    generationStatus: proposicaoResumoIaGenerationStatus.parse(
-      row.resumoIaGenerationStatus,
-    ),
-    reviewStatus: proposicaoResumoIaReviewStatus.parse(
-      row.resumoIaReviewStatus,
-    ),
-    resumoCard: row.resumoIaCard,
-    resumoDetalhe: row.resumoIaDetalhe,
-  };
+  const intervalosByDeputado = new Map<string, IntervaloExercicio[]>();
+  for (const row of rows) {
+    const intervalo: IntervaloExercicio = {
+      openedAt: row.openedAt,
+      closedAt: row.closedAt,
+    };
+    const existing = intervalosByDeputado.get(row.deputadoId);
+    if (existing === undefined) {
+      intervalosByDeputado.set(row.deputadoId, [intervalo]);
+    } else {
+      existing.push(intervalo);
+    }
+  }
+  return intervalosByDeputado;
 }
 
 function invertVotos(
@@ -272,12 +284,16 @@ export function createMatcherRepository(
       const base = db
         .select({
           deputadoId: maisRecente.deputadoId,
+          externalIdDeputado: deputado.externalIdDeputado,
+          nome: deputado.nome,
+          nomeCivil: deputado.nomeCivil,
           siglaUf: maisRecente.siglaUf,
           urlFoto: maisRecente.urlFoto,
           nomeEleitoral: maisRecente.nomeEleitoral,
           partido: partido.sigla,
         })
         .from(maisRecente)
+        .innerJoin(deputado, eq(maisRecente.deputadoId, deputado.id))
         .leftJoin(partido, eq(maisRecente.partidoId, partido.id));
 
       const estado =
@@ -290,76 +306,22 @@ export function createMatcherRepository(
         return [];
       }
 
-      const historico = await db
-        .select({
-          deputadoId: deputadoHistorico.deputadoId,
-          externalIdDeputado: deputado.externalIdDeputado,
-          nome: deputado.nome,
-          nomeCivil: deputado.nomeCivil,
-          dataHora: deputadoHistorico.dataHora,
-          situacao: deputadoHistorico.situacao,
-          descricaoStatus: deputadoHistorico.descricaoStatus,
-          partido: partido.sigla,
-        })
-        .from(deputadoHistorico)
-        .innerJoin(deputado, eq(deputadoHistorico.deputadoId, deputado.id))
-        .leftJoin(partido, eq(deputadoHistorico.partidoId, partido.id))
-        .where(inArray(deputadoHistorico.deputadoId, deputadoIds));
+      const intervalosByDeputado = await loadIntervalosByDeputado(
+        db,
+        deputadoIds,
+      );
 
-      const historicoByDeputado = new Map<
-        string,
-        {
-          externalIdDeputado: number;
-          nome: string | null;
-          nomeCivil: string | null;
-          eventos: {
-            dataHora: string;
-            situacao: string | null;
-            descricaoStatus: string;
-            partido: string | null;
-          }[];
-        }
-      >();
-
-      for (const row of historico) {
-        const existing = historicoByDeputado.get(row.deputadoId);
-        const evento = {
-          dataHora: row.dataHora,
-          situacao: row.situacao,
-          descricaoStatus: row.descricaoStatus,
-          partido: row.partido,
-        };
-        if (existing === undefined) {
-          historicoByDeputado.set(row.deputadoId, {
-            externalIdDeputado: row.externalIdDeputado,
-            nome: row.nome,
-            nomeCivil: row.nomeCivil,
-            eventos: [evento],
-          });
-        } else {
-          existing.eventos.push(evento);
-        }
-      }
-
-      return estado.flatMap((row) => {
-        const found = historicoByDeputado.get(row.deputadoId);
-        if (found === undefined) {
-          return [];
-        }
-        return [
-          {
-            deputadoId: row.deputadoId,
-            externalIdDeputado: found.externalIdDeputado,
-            nome: found.nome,
-            nomeEleitoral: row.nomeEleitoral,
-            nomeCivil: found.nomeCivil,
-            partido: row.partido,
-            siglaUf: row.siglaUf as SiglaUf,
-            urlFoto: row.urlFoto,
-            eventos: found.eventos,
-          },
-        ];
-      });
+      return estado.map((row) => ({
+        deputadoId: row.deputadoId,
+        externalIdDeputado: row.externalIdDeputado,
+        nome: row.nome,
+        nomeEleitoral: row.nomeEleitoral,
+        nomeCivil: row.nomeCivil,
+        partido: row.partido,
+        siglaUf: row.siglaUf as SiglaUf,
+        urlFoto: row.urlFoto,
+        intervalos: intervalosByDeputado.get(row.deputadoId) ?? [],
+      }));
     },
 
     async loadDeputadoByExternalIdWithHistorico(
@@ -395,16 +357,9 @@ export function createMatcherRepository(
         return null;
       }
 
-      const historico = await db
-        .select({
-          dataHora: deputadoHistorico.dataHora,
-          situacao: deputadoHistorico.situacao,
-          descricaoStatus: deputadoHistorico.descricaoStatus,
-          partido: partido.sigla,
-        })
-        .from(deputadoHistorico)
-        .leftJoin(partido, eq(deputadoHistorico.partidoId, partido.id))
-        .where(eq(deputadoHistorico.deputadoId, maisRecente.deputadoId));
+      const intervalosByDeputado = await loadIntervalosByDeputado(db, [
+        maisRecente.deputadoId,
+      ]);
 
       return {
         deputadoId: maisRecente.deputadoId,
@@ -415,7 +370,7 @@ export function createMatcherRepository(
         partido: maisRecente.partido,
         siglaUf: maisRecente.siglaUf as SiglaUf,
         urlFoto: maisRecente.urlFoto,
-        eventos: historico,
+        intervalos: intervalosByDeputado.get(maisRecente.deputadoId) ?? [],
       };
     },
   };

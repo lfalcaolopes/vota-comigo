@@ -63,10 +63,10 @@ export function Matcher({
   const feed = useFeedState(initialProposicoes, initialTotal);
 
   return (
-    <section className="grid gap-8">
-      <header className="mx-auto grid w-full max-w-6xl gap-3">
+    <section className="grid gap-6 lg:gap-8">
+      <header className="mx-auto grid w-full max-w-6xl gap-2 lg:gap-3">
         <p className="text-sm font-[650] text-primary">Quem vota comigo</p>
-        <h1 className="text-2xl leading-tight font-[720] tracking-[-0.02em] text-ink">
+        <h1 className="text-xl leading-tight font-[720] tracking-[-0.02em] text-ink sm:text-2xl">
           {STEP_LABELS[state.step]}
         </h1>
         <p className="max-w-[68ch] text-sm leading-normal text-muted">

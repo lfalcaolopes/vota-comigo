@@ -1,10 +1,7 @@
 import type { AlertaMatcher } from '@vota-comigo/shared-types';
 
 import { classifyDeputadoVotacao } from '@/exercicio/rules/deputado-votacao';
-import {
-  deriveIntervalosExercicio,
-  isEmAtividade,
-} from '@/exercicio/rules/intervalos-exercicio';
+import { isEmAtividadeFromIntervalos } from '@/exercicio/rules/intervalos-exercicio';
 
 import type {
   CompatibilidadeResumidaResult,
@@ -37,7 +34,7 @@ function avaliarDeputado(
   for (const posicao of posicoes) {
     const voto = posicao.votosByDeputado.get(deputado.deputadoId) ?? null;
     const classificacao = classifyDeputadoVotacao({
-      eventos: deputado.eventos,
+      intervalos: deputado.intervalos,
       votacao: posicao.votacaoReferencia,
       voto,
     });
@@ -80,7 +77,7 @@ function avaliarDeputado(
       wilsonLowerBound(concordancias, amostraComparavel) * 100,
     ),
     alertas,
-    emAtividade: isEmAtividade(deputado.eventos),
+    emAtividade: isEmAtividadeFromIntervalos(deputado.intervalos),
     coberturaExercicio,
   };
 }
@@ -93,7 +90,7 @@ export function computeCompatibilidadeResumida(
 
   for (const deputado of input.deputados) {
     // histórico vazio é lacuna de dados, distinta de amostra zero
-    if (deriveIntervalosExercicio(deputado.eventos).length === 0) {
+    if (deputado.intervalos.length === 0) {
       deputadosHistoricoIncompleto += 1;
       continue;
     }

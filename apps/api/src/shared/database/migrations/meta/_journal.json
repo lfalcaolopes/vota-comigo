@@ -64,6 +64,20 @@
       "when": 1781879950864,
       "tag": "0008_flawless_snowbird",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1783037188625,
+      "tag": "0009_cool_loa",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1783089717592,
+      "tag": "0010_cheerful_wendell_vaughn",
+      "breakpoints": true
     }
   ]
 }

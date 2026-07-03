@@ -2,6 +2,7 @@ import type {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
   ReactNode,
+  Ref,
 } from "react";
 import { joinClassNames } from "./utils";
 
@@ -59,6 +60,7 @@ type IconButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   label: string;
   children: ReactNode;
   variant?: ButtonVariant;
+  ref?: Ref<HTMLButtonElement>;
 };
 
 export function IconButton({

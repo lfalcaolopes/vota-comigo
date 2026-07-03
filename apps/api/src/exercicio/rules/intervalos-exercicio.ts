@@ -36,21 +36,35 @@ export function deriveIntervalosExercicio(
   return intervalos;
 }
 
-export function isEmExercicio(
-  eventos: readonly EventoExercicio[],
+export function isEmExercicioFromIntervalos(
+  intervalos: readonly IntervaloExercicio[],
   instante: string,
 ): boolean {
-  return deriveIntervalosExercicio(eventos).some(
+  return intervalos.some(
     (intervalo) =>
       intervalo.openedAt <= instante &&
       (intervalo.closedAt === null || instante < intervalo.closedAt),
   );
 }
 
-export function isEmAtividade(eventos: readonly EventoExercicio[]): boolean {
-  return deriveIntervalosExercicio(eventos).some(
-    (intervalo) => intervalo.closedAt === null,
+export function isEmAtividadeFromIntervalos(
+  intervalos: readonly IntervaloExercicio[],
+): boolean {
+  return intervalos.some((intervalo) => intervalo.closedAt === null);
+}
+
+export function isEmExercicio(
+  eventos: readonly EventoExercicio[],
+  instante: string,
+): boolean {
+  return isEmExercicioFromIntervalos(
+    deriveIntervalosExercicio(eventos),
+    instante,
   );
+}
+
+export function isEmAtividade(eventos: readonly EventoExercicio[]): boolean {
+  return isEmAtividadeFromIntervalos(deriveIntervalosExercicio(eventos));
 }
 
 export function getPartidoVigente(

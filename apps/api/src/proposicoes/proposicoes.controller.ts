@@ -17,6 +17,8 @@ import {
 
 import { ProposicoesService } from './proposicoes.service';
 import { normalizePagination } from './rules/pagination';
+import { CACHE_LISTING, CACHE_REFERENCE } from '../shared/http/cache-control';
+import { CacheControl } from '../shared/http/cache-control.decorator';
 import { ZodValidationPipe } from '../shared/validation/zod-validation.pipe';
 
 function parseTema(raw: string | undefined): number | undefined {
@@ -33,11 +35,13 @@ export class ProposicoesController {
   constructor(private readonly service: ProposicoesService) {}
 
   @Get('feed/temas')
+  @CacheControl(CACHE_REFERENCE)
   async feedTemas(): Promise<TemasDisponiveisResponse> {
     return this.service.temasDisponiveis();
   }
 
   @Get('feed')
+  @CacheControl(CACHE_LISTING)
   async feed(
     @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
     @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
@@ -62,6 +66,7 @@ export class ProposicoesController {
   }
 
   @Get(':externalIdProposicao')
+  @CacheControl(CACHE_LISTING)
   async detalhe(
     @Param('externalIdProposicao', ParseIntPipe) externalIdProposicao: number,
   ): Promise<ProposicaoDetalhe> {

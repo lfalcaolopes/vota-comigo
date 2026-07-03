@@ -6,14 +6,14 @@ import type {
 import { interpretResultado } from '@/matcher/rules/votacao-referencia';
 
 import type {
-  RankedProposicao,
-  VotacaoReferenciaComputavel,
+  ProposicaoFeedItem,
+  VotacaoReferenciaResumoSource,
 } from '../types/proposicoes.types';
-import { toResumoIaContractFields } from '../rules/proposicao-resumo-ia-public';
+import { toResumoIaCardFields } from '../rules/proposicao-resumo-ia-public';
 
-export function toProposicaoCard(ranked: RankedProposicao): ProposicaoCard {
-  const { proposicao } = ranked;
-  const resumoIa = toResumoIaContractFields(proposicao, ranked.resumoIa);
+export function toProposicaoCard(item: ProposicaoFeedItem): ProposicaoCard {
+  const { proposicao } = item;
+  const resumoIa = toResumoIaCardFields(item.resumoIa);
   return {
     externalIdProposicao: proposicao.externalIdProposicao,
     siglaTipo: proposicao.siglaTipo,
@@ -23,13 +23,13 @@ export function toProposicaoCard(ranked: RankedProposicao): ProposicaoCard {
     resumoIaDisponivel: resumoIa.resumoIaDisponivel,
     resumoIaCard: resumoIa.resumoIaCard,
     dataApresentacao: proposicao.dataApresentacao,
-    volumeVotacoesPlenario: ranked.volumeVotacoesPlenario,
-    dataUltimaVotacao: ranked.dataUltimaVotacao,
+    volumeVotacoesPlenario: item.volumeVotacoesPlenario,
+    dataUltimaVotacao: item.dataUltimaVotacao,
   };
 }
 
 export function toVotacaoReferenciaResumo(
-  referencia: VotacaoReferenciaComputavel,
+  referencia: VotacaoReferenciaResumoSource,
 ): VotacaoReferenciaResumo {
   return {
     externalIdVotacao: referencia.externalIdVotacao,

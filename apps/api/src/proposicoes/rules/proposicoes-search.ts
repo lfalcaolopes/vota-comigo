@@ -1,13 +1,13 @@
 import { compareRanking } from './proposicoes-ranking';
 import type {
-  ProposicaoResumo,
-  RankedProposicao,
+  ProposicaoCardResumo,
+  ProposicaoFeedItem,
 } from '../types/proposicoes.types';
 
 export function filterProposicoesByQuery(
-  computaveis: readonly RankedProposicao[],
+  computaveis: readonly ProposicaoFeedItem[],
   q: string,
-): readonly RankedProposicao[] {
+): readonly ProposicaoFeedItem[] {
   const tokens = tokenizeQuery(q);
   if (tokens.length === 0) return computaveis;
 
@@ -41,12 +41,12 @@ export type SearchableProposicao = {
 };
 
 export type ProposicaoSearchMatch = {
-  ranked: RankedProposicao;
+  ranked: ProposicaoFeedItem;
   refMatches: number;
 };
 
 export function toSearchableProposicao(
-  proposicao: ProposicaoResumo,
+  proposicao: ProposicaoCardResumo,
 ): SearchableProposicao {
   return {
     ementa: normalizeText(proposicao.ementa ?? ''),

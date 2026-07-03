@@ -127,7 +127,7 @@ describe("StepPosicoes", () => {
 
 describe("PosicaoConteudo", () => {
   describe("when the detail is ready", () => {
-    it("places themes and official links above resumo, ementa and detailed ementa", () => {
+    it("leads with the resumo, then themes, links, ementa and detailed ementa", () => {
       // Act
       const html = renderToStaticMarkup(
         createElement(PosicaoConteudo, {
@@ -140,18 +140,18 @@ describe("PosicaoConteudo", () => {
       );
 
       // Assert
+      const resumoIndex = html.indexOf("Resumo detalhado por IA.");
       const temasIndex = html.indexOf("Saude");
       const linksIndex = html.indexOf("Ver fonte oficial na Câmara");
-      const resumoIndex = html.indexOf("Resumo detalhado por IA.");
       const ementaIndex = html.indexOf("Dispoe sobre alguma coisa.");
       const ementaDetalhadaIndex = html.indexOf(
         "Texto mais longo explicando a proposicao.",
       );
 
-      expect(temasIndex).toBeGreaterThanOrEqual(0);
+      expect(resumoIndex).toBeGreaterThanOrEqual(0);
+      expect(temasIndex).toBeGreaterThan(resumoIndex);
       expect(linksIndex).toBeGreaterThan(temasIndex);
-      expect(resumoIndex).toBeGreaterThan(linksIndex);
-      expect(ementaIndex).toBeGreaterThan(resumoIndex);
+      expect(ementaIndex).toBeGreaterThan(linksIndex);
       expect(ementaDetalhadaIndex).toBeGreaterThan(ementaIndex);
     });
 

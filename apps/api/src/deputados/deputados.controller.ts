@@ -15,6 +15,8 @@ import type {
 } from '@vota-comigo/shared-types';
 
 import { DeputadosService } from './deputados.service';
+import { CACHE_LISTING, CACHE_REFERENCE } from '../shared/http/cache-control';
+import { CacheControl } from '../shared/http/cache-control.decorator';
 
 const LIMIT_DEFAULT = 20;
 const LIMIT_MAX = 100;
@@ -77,16 +79,19 @@ export class DeputadosController {
   constructor(private readonly service: DeputadosService) {}
 
   @Get('feed/ufs')
+  @CacheControl(CACHE_REFERENCE)
   async feedUfs(): Promise<UfsDisponiveisResponse> {
     return this.service.ufsDisponiveis();
   }
 
   @Get('feed/partidos')
+  @CacheControl(CACHE_REFERENCE)
   async feedPartidos(): Promise<PartidosDisponiveisResponse> {
     return this.service.partidosDisponiveis();
   }
 
   @Get('feed')
+  @CacheControl(CACHE_LISTING)
   async feed(
     @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
     @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
@@ -111,6 +116,7 @@ export class DeputadosController {
   }
 
   @Get(':externalIdDeputado')
+  @CacheControl(CACHE_LISTING)
   async perfil(
     @Param('externalIdDeputado', ParseIntPipe) externalIdDeputado: number,
   ): Promise<DeputadoPerfil> {

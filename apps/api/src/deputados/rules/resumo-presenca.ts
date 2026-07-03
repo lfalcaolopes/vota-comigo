@@ -5,6 +5,7 @@ import type {
 } from '@vota-comigo/shared-types';
 
 import { classifyDeputadoVotacao } from '@/exercicio/rules/deputado-votacao';
+import { deriveIntervalosExercicio } from '@/exercicio/rules/intervalos-exercicio';
 import type {
   EventoExercicio,
   VotacaoRef,
@@ -32,17 +33,44 @@ export type DeriveResumoPresencaInput = {
 export type ResumoPresencaResult = {
   resumoPresencaDisponivel: boolean;
   resumoPresenca: DeputadoResumoPresenca | null;
+  foraDeExercicio: number;
+  lacunaDeDados: number;
 };
+
+export type ResumoPresencaCounts = {
+  presencas: number;
+  ausenciasSemMotivoConhecido: number;
+};
+
+// Deriva o contrato público a partir dos contadores persistidos. Pressupõe
+// total > 0, garantido porque só gravamos presença quando disponível.
+export function toResumoPresenca(
+  counts: ResumoPresencaCounts,
+): DeputadoResumoPresenca {
+  const totalVotacoesEmExercicio =
+    counts.presencas + counts.ausenciasSemMotivoConhecido;
+
+  return {
+    percentualPresenca: (counts.presencas / totalVotacoesEmExercicio) * 100,
+    presencas: counts.presencas,
+    totalVotacoesEmExercicio,
+    ausenciasSemMotivoConhecido: counts.ausenciasSemMotivoConhecido,
+  };
+}
 
 export function deriveResumoPresenca(
   input: DeriveResumoPresencaInput,
 ): ResumoPresencaResult {
   let presencas = 0;
   let ausenciasSemMotivoConhecido = 0;
+  let foraDeExercicio = 0;
+  let lacunaDeDados = 0;
+
+  const intervalos = deriveIntervalosExercicio(input.eventos);
 
   for (const { votacao, voto } of input.votacoes) {
     const classification = classifyDeputadoVotacao({
-      eventos: input.eventos,
+      intervalos,
       votacao,
       voto,
     });
@@ -51,13 +79,22 @@ export function deriveResumoPresenca(
       presencas++;
     } else if (classification === 'ausencia_sem_motivo_conhecido') {
       ausenciasSemMotivoConhecido++;
+    } else if (classification === 'fora_de_exercicio') {
+      foraDeExercicio++;
+    } else if (classification === 'lacuna_de_dados') {
+      lacunaDeDados++;
     }
   }
 
   const totalVotacoesEmExercicio = presencas + ausenciasSemMotivoConhecido;
 
   if (totalVotacoesEmExercicio === 0) {
-    return { resumoPresencaDisponivel: false, resumoPresenca: null };
+    return {
+      resumoPresencaDisponivel: false,
+      resumoPresenca: null,
+      foraDeExercicio,
+      lacunaDeDados,
+    };
   }
 
   const percentualPresenca = (presencas / totalVotacoesEmExercicio) * 100;
@@ -70,5 +107,7 @@ export function deriveResumoPresenca(
       totalVotacoesEmExercicio,
       ausenciasSemMotivoConhecido,
     },
+    foraDeExercicio,
+    lacunaDeDados,
   };
 }

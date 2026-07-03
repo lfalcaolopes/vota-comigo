@@ -23,18 +23,18 @@ export function ResumoIa({
         Resumo por IA
       </h2>
       {proposicao.resumoIaCard ? (
-        <p className="text-lg leading-normal text-pretty text-ink">
+        <p className="text-base leading-normal text-pretty text-ink sm:text-lg">
           {proposicao.resumoIaCard}
         </p>
       ) : null}
       {bullets.length > 1 ? (
-        <ul className="grid list-disc gap-2 pl-5 text-lg leading-normal text-pretty text-ink">
+        <ul className="grid list-disc gap-2 pl-5 text-base leading-normal text-pretty text-ink sm:text-lg">
           {bullets.map((bullet, index) => (
             <li key={index}>{bullet}</li>
           ))}
         </ul>
       ) : (
-        <p className="text-lg leading-normal text-pretty text-ink">
+        <p className="text-base leading-normal text-pretty text-ink sm:text-lg">
           {proposicao.resumoIaDetalhe}
         </p>
       )}

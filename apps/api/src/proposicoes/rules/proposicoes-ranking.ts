@@ -1,8 +1,8 @@
 import type { FeedOrdenacao } from '@vota-comigo/shared-types';
 
-import type { RankedProposicao } from '../types/proposicoes.types';
+import type { ProposicaoFeedItem } from '../types/proposicoes.types';
 
-function compareTieBreak(a: RankedProposicao, b: RankedProposicao): number {
+function compareTieBreak(a: ProposicaoFeedItem, b: ProposicaoFeedItem): number {
   const anoA = a.proposicao.ano ?? Number.NEGATIVE_INFINITY;
   const anoB = b.proposicao.ano ?? Number.NEGATIVE_INFINITY;
   if (anoA !== anoB) return anoB - anoA;
@@ -19,8 +19,8 @@ function compareTieBreak(a: RankedProposicao, b: RankedProposicao): number {
 }
 
 export function compareRanking(
-  a: RankedProposicao,
-  b: RankedProposicao,
+  a: ProposicaoFeedItem,
+  b: ProposicaoFeedItem,
 ): number {
   if (a.volumeVotacoesPlenario !== b.volumeVotacoesPlenario) {
     return b.volumeVotacoesPlenario - a.volumeVotacoesPlenario;
@@ -29,8 +29,8 @@ export function compareRanking(
 }
 
 export function compareDataApresentacao(
-  a: RankedProposicao,
-  b: RankedProposicao,
+  a: ProposicaoFeedItem,
+  b: ProposicaoFeedItem,
 ): number {
   const dateA = a.proposicao.dataApresentacao;
   const dateB = b.proposicao.dataApresentacao;
@@ -45,7 +45,7 @@ export function compareDataApresentacao(
 
 export function selectComparator(
   ordenacao: FeedOrdenacao,
-): (a: RankedProposicao, b: RankedProposicao) => number {
+): (a: ProposicaoFeedItem, b: ProposicaoFeedItem) => number {
   if (ordenacao === 'mais-recentes') return compareDataApresentacao;
   return compareRanking;
 }

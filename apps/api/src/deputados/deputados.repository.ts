@@ -1,37 +1,34 @@
-import { eq, inArray, sql } from 'drizzle-orm';
+import { and, desc, eq, gt, inArray, isNotNull } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
-
-import type { VotoCategoria } from '@vota-comigo/shared-types';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
   deputado,
   deputadoHistorico,
+  deputadoPresenca,
   legislatura,
   partido,
-  proposicaoComputavel,
-  votacao,
-  votacaoProposicao,
-  votacaoVotos,
 } from '@/shared/database/schema';
 
 import type {
   DeputadoHistoricoEventoSource,
   DeputadoLegislaturaPeriodoSource,
   DeputadoPerfilSource,
-  VotacaoProposicaoComputavelRow,
+  DeputadoResumoPresencaRow,
 } from './types/deputados.types';
 
 export const DEPUTADOS_REPOSITORY = Symbol('DEPUTADOS_REPOSITORY');
 
 export interface DeputadosRepository {
   loadDeputadosFeed(): Promise<readonly DeputadoPerfilSource[]>;
+  loadUfsDisponiveis(): Promise<readonly string[]>;
+  loadPartidosDisponiveis(): Promise<readonly string[]>;
   loadDeputadoPerfil(
     externalIdDeputado: number,
   ): Promise<DeputadoPerfilSource | null>;
-  loadVotacoesProposicoesComputaveisForDeputado(
+  loadResumoPresenca(
     deputadoId: string,
-  ): Promise<VotacaoProposicaoComputavelRow[]>;
+  ): Promise<DeputadoResumoPresencaRow | null>;
 }
 
 function toLegislaturaPeriodoSource(
@@ -106,7 +103,14 @@ export function createDeputadosRepository(
           ufNascimento: deputado.ufNascimento,
           urlRedeSocial: deputado.urlRedeSocial,
         })
-        .from(deputado);
+        .from(deputado)
+        .innerJoin(
+          deputadoPresenca,
+          and(
+            eq(deputadoPresenca.deputadoId, deputado.id),
+            gt(deputadoPresenca.presencas, 0),
+          ),
+        );
 
       const eventosByDeputadoId = await loadEventosByDeputadoIds(
         rows.map((row) => row.id),
@@ -127,6 +131,56 @@ export function createDeputadosRepository(
         legislaturaFinalPeriodo: null,
         eventos: eventosByDeputadoId.get(row.id) ?? [],
       }));
+    },
+
+    async loadUfsDisponiveis() {
+      const maisRecente = db
+        .selectDistinctOn([deputadoHistorico.deputadoId], {
+          siglaUf: deputadoHistorico.siglaUf,
+        })
+        .from(deputadoHistorico)
+        .innerJoin(
+          deputadoPresenca,
+          and(
+            eq(deputadoPresenca.deputadoId, deputadoHistorico.deputadoId),
+            gt(deputadoPresenca.presencas, 0),
+          ),
+        )
+        .orderBy(deputadoHistorico.deputadoId, desc(deputadoHistorico.dataHora))
+        .as('mais_recente');
+
+      const rows = await db
+        .selectDistinct({ siglaUf: maisRecente.siglaUf })
+        .from(maisRecente)
+        .where(isNotNull(maisRecente.siglaUf));
+
+      return rows.flatMap((row) => (row.siglaUf === null ? [] : [row.siglaUf]));
+    },
+
+    async loadPartidosDisponiveis() {
+      const maisRecente = db
+        .selectDistinctOn([deputadoHistorico.deputadoId], {
+          deputadoId: deputadoHistorico.deputadoId,
+          partidoId: deputadoHistorico.partidoId,
+        })
+        .from(deputadoHistorico)
+        .innerJoin(
+          deputadoPresenca,
+          and(
+            eq(deputadoPresenca.deputadoId, deputadoHistorico.deputadoId),
+            gt(deputadoPresenca.presencas, 0),
+          ),
+        )
+        .orderBy(deputadoHistorico.deputadoId, desc(deputadoHistorico.dataHora))
+        .as('mais_recente');
+
+      const rows = await db
+        .selectDistinct({ sigla: partido.sigla })
+        .from(maisRecente)
+        .innerJoin(partido, eq(maisRecente.partidoId, partido.id))
+        .where(isNotNull(partido.sigla));
+
+      return rows.flatMap((row) => (row.sigla === null ? [] : [row.sigla]));
     },
 
     async loadDeputadoPerfil(externalIdDeputado) {
@@ -190,33 +244,18 @@ export function createDeputadosRepository(
       };
     },
 
-    async loadVotacoesProposicoesComputaveisForDeputado(deputadoId) {
-      const rows = await db
-        .selectDistinctOn([votacao.id], {
-          dataHoraRegistro: votacao.dataHoraRegistro,
-          data: votacao.data,
-          voto: sql<VotoCategoria | null>`(
-            select e.key
-            from jsonb_each(${votacaoVotos.votosJson}) as e
-            where e.value @> to_jsonb(${deputadoId}::text)
-            limit 1
-          )`,
+    async loadResumoPresenca(deputadoId) {
+      const [row] = await db
+        .select({
+          presencas: deputadoPresenca.presencas,
+          ausenciasSemMotivoConhecido:
+            deputadoPresenca.ausenciasSemMotivoConhecido,
         })
-        .from(proposicaoComputavel)
-        .innerJoin(
-          votacaoProposicao,
-          eq(votacaoProposicao.proposicaoId, proposicaoComputavel.proposicaoId),
-        )
-        .innerJoin(votacao, eq(votacaoProposicao.votacaoId, votacao.id))
-        .innerJoin(votacaoVotos, eq(votacaoVotos.votacaoId, votacao.id))
-        .where(eq(votacao.escopoVotacao, 'plenario'))
-        .orderBy(votacao.id);
+        .from(deputadoPresenca)
+        .where(eq(deputadoPresenca.deputadoId, deputadoId))
+        .limit(1);
 
-      return rows.map((row) => ({
-        dataHoraRegistro: row.dataHoraRegistro,
-        data: row.data,
-        voto: row.voto,
-      }));
+      return row ?? null;
     },
   };
 }

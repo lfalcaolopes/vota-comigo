@@ -6,6 +6,8 @@ import type {
   SiglaUf,
 } from '@vota-comigo/shared-types';
 
+import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
+
 import type { MatcherRepository } from '../matcher.repository';
 import { MatcherService } from '../matcher.service';
 import type {
@@ -75,11 +77,9 @@ function fakeRepository(options: FakeRepoOptions): FakeRepo {
   };
 }
 
-const posse = {
-  dataHora: '2023-02-01T12:00:00Z',
-  situacao: 'Exercício',
-  descricaoStatus: 'Entrada - Posse de Eleito Titular',
-  partido: 'PT',
+const emExercicio: IntervaloExercicio = {
+  openedAt: '2023-02-01T12:00:00Z',
+  closedAt: null,
 };
 
 function votacaoReferenciaVotos(
@@ -137,7 +137,7 @@ describe('MatcherService.execute', () => {
           partido: 'PT',
           siglaUf: 'PE',
           urlFoto: 'https://foto/dep-1.jpg',
-          eventos: [posse],
+          intervalos: [emExercicio],
         },
       ];
       const service = new MatcherService(
@@ -235,7 +235,7 @@ describe('MatcherService.execute', () => {
         partido: 'PT',
         siglaUf: 'PE',
         urlFoto: null,
-        eventos: [posse],
+        intervalos: [emExercicio],
       },
       {
         deputadoId: 'dep-sp',
@@ -246,7 +246,7 @@ describe('MatcherService.execute', () => {
         partido: 'PT',
         siglaUf: 'SP',
         urlFoto: null,
-        eventos: [posse],
+        intervalos: [emExercicio],
       },
     ];
 
@@ -383,7 +383,7 @@ describe('MatcherService.execute', () => {
       ),
     ];
 
-    // dep-ativo tem eventos de posse; dep-inativo tem apenas evento de saída
+    // dep-ativo tem intervalo aberto; dep-inativo tem apenas intervalo encerrado
     const deputadoAtivo: DeputadoCompatibilidadeInput = {
       deputadoId: 'dep-ativo',
       externalIdDeputado: 1,
@@ -393,7 +393,7 @@ describe('MatcherService.execute', () => {
       partido: 'PT',
       siglaUf: 'PE',
       urlFoto: null,
-      eventos: [posse],
+      intervalos: [emExercicio],
     };
     const deputadoInativo: DeputadoCompatibilidadeInput = {
       deputadoId: 'dep-inativo',
@@ -404,14 +404,8 @@ describe('MatcherService.execute', () => {
       partido: 'PT',
       siglaUf: 'PE',
       urlFoto: null,
-      eventos: [
-        posse,
-        {
-          dataHora: '2024-01-01T12:00:00Z',
-          situacao: 'Afastado',
-          descricaoStatus: 'Saída - Fim do Mandato',
-          partido: 'PT',
-        },
+      intervalos: [
+        { openedAt: '2023-02-01T12:00:00Z', closedAt: '2024-01-01T12:00:00Z' },
       ],
     };
 
@@ -554,7 +548,7 @@ describe('MatcherService.execute', () => {
         partido: 'PT',
         siglaUf: 'PE',
         urlFoto: null,
-        eventos: [posse],
+        intervalos: [emExercicio],
       };
     }
 
@@ -707,7 +701,7 @@ describe('MatcherService and the public name of the deputado', () => {
     partido: 'PT',
     siglaUf: 'PE',
     urlFoto: 'https://foto/recente.jpg',
-    eventos: [posse],
+    intervalos: [emExercicio],
   };
 
   function repository(): MatcherRepository {

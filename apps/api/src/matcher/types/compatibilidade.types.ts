@@ -10,7 +10,7 @@ import type {
 } from '@vota-comigo/shared-types';
 
 import type {
-  EventoExercicio,
+  IntervaloExercicio,
   VotacaoRef,
 } from '@/exercicio/types/exercicio.types';
 
@@ -34,7 +34,7 @@ export type DeputadoCompatibilidadeInput = {
   partido: string | null;
   siglaUf: SiglaUf;
   urlFoto: string | null;
-  eventos: readonly EventoExercicio[];
+  intervalos: readonly IntervaloExercicio[];
 };
 
 export type DeputadoResumoComputado = {

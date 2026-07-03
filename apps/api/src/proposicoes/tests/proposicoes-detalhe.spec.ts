@@ -76,6 +76,7 @@ function fakeRepository(
 ): ProposicoesRepository {
   return {
     loadProposicoesComputaveis: async () => [],
+    loadComputableExternalIds: async () => [],
     loadProposicaoDetalhe: async () => result,
     loadProposicaoTemas: async () => [],
   };
@@ -321,7 +322,7 @@ describe('ProposicoesService.detalhe', () => {
       expect(detail.resumoIaDetalhe).toBeNull();
     });
 
-    it('hides a resumo whose source hash is stale', async () => {
+    it('shows an approved resumo regardless of the stored source hash (staleness is handled at reconciliation via reviewStatus)', async () => {
       // Arrange
       const service = createService(
         detailResult({
@@ -339,9 +340,9 @@ describe('ProposicoesService.detalhe', () => {
       const detail = await service.detalhe(1);
 
       // Assert
-      expect(detail.resumoIaDisponivel).toBe(false);
-      expect(detail.resumoIaCard).toBeNull();
-      expect(detail.resumoIaDetalhe).toBeNull();
+      expect(detail.resumoIaDisponivel).toBe(true);
+      expect(detail.resumoIaCard).toBe('Resumo curto antigo.');
+      expect(detail.resumoIaDetalhe).toBe('Resumo detalhado antigo.');
     });
   });
 
