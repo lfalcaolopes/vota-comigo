@@ -111,13 +111,13 @@ export function AppHeader() {
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-border bg-white text-ink">
-        <div className="mx-auto grid w-full max-w-295 gap-3 px-4 py-1.5 md:grid-cols-[auto_1fr_auto] md:items-center md:gap-6 md:py-2">
+        <div className="mx-auto grid w-full max-w-295 gap-3 px-4 py-1 md:grid-cols-[auto_1fr_auto] md:items-center md:gap-6 md:py-2">
           <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 md:block">
             <Brand />
             <IconButton
               aria-controls={menuId}
               aria-expanded={isMenuOpen}
-              className="md:hidden"
+              className="md:hidden border-0 px-2.5!"
               label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
               onClick={() => setIsMenuOpen((current) => !current)}
               ref={menuButtonRef}
@@ -154,7 +154,9 @@ export function AppHeader() {
           <div
             className={joinClassNames(
               "absolute inset-x-0 top-full origin-top border-b border-border bg-white shadow-popover transition-[opacity,transform] duration-200 ease-standard md:hidden",
-              isVisible ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0",
+              isVisible
+                ? "translate-y-0 opacity-100"
+                : "-translate-y-2 opacity-0",
             )}
             id={menuId}
             ref={panelRef}
@@ -276,23 +278,23 @@ function MenuIcon({ open }: { open: boolean }) {
     <svg
       aria-hidden="true"
       fill="none"
-      height="28"
+      height="20"
       viewBox="4 4 12 12"
-      width="28"
+      width="20"
     >
       {open ? (
         <path
           d="m5.5 5.5 9 9m0-9-9 9"
           stroke="currentColor"
           strokeLinecap="round"
-          strokeWidth="2.1"
+          strokeWidth="1.3"
         />
       ) : (
         <path
           d="M4 6.25h12M4 10h12M4 13.75h12"
           stroke="currentColor"
           strokeLinecap="round"
-          strokeWidth="2.1"
+          strokeWidth="1.3"
         />
       )}
     </svg>
