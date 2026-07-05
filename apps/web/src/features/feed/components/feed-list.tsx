@@ -35,7 +35,7 @@ export function FeedList({
   if (display === "empty-default") {
     return (
       <EmptyState
-        body="Ainda não há proposições computáveis para exibir."
+        body="Ainda não há proposições para mostrar."
         title="Nada para exibir ainda"
       />
     );

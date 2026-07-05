@@ -16,7 +16,7 @@ export function HomeHero() {
             <p className="max-w-[58ch] text-lg leading-normal text-pretty text-muted">
               O Quem Vota Comigo compara as suas posições com os votos reais de
               deputados federais nas votações da Câmara. Sem recomendação de
-              voto, com fonte oficial e método aberto.
+              voto e com método aberto.
             </p>
           </div>
 

@@ -21,7 +21,7 @@ const passos: Passo[] = [
     numero: "03",
     titulo: "Veja a compatibilidade com contexto",
     descricao:
-      "O resultado mostra o percentual junto da amostra, da presença e dos casos que ficaram de fora.",
+      "Além do percentual, você vê em quantas votações a conta se baseia, a presença do deputado e o que ficou de fora da conta.",
   },
 ];
 
@@ -40,8 +40,7 @@ export function HomeComoFunciona() {
             Como funciona
           </h2>
           <p className="text-base leading-normal text-muted">
-            Três passos. A comparação considera apenas votações computáveis e
-            mantém amostra, presença e exclusões à vista.
+            Três passos, da sua opinião ao voto real de cada deputado federal.
           </p>
         </div>
 

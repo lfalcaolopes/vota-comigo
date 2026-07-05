@@ -106,7 +106,7 @@ function Evidencia({ perfil }: { perfil: DeputadoPerfilData }) {
         ) : (
           <InlineMessage
             title="Presença indisponível"
-            body="Não há votações nominais de plenário em exercício na base para este deputado."
+            body="Ainda não há votações de plenário com voto registrado para este deputado."
           />
         )}
       </section>

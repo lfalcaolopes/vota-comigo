@@ -470,7 +470,9 @@ describe("DeputadoPerfil", () => {
         expect(html).toContain("75 de 100 votações em exercício");
         expect(html).toContain("25");
         expect(html).toContain("sem motivo conhecido");
-        expect(html).toContain("votações nominais de plenário");
+        expect(html).toContain(
+          "votações de plenário em que o voto de cada deputado fica registrado",
+        );
       });
 
       it("shows the correct percentage without the unavailable message", () => {

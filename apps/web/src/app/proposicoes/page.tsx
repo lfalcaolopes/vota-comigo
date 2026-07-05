@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Proposições",
   description:
-    "Proposições computáveis pelo matcher na Câmara dos Deputados, a partir dos dados abertos oficiais.",
+    "Proposições que a Câmara dos Deputados já votou, a partir dos dados abertos oficiais.",
 };
 
 export default async function ProposicoesPage({
