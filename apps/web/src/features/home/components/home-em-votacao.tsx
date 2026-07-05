@@ -27,11 +27,10 @@ export function HomeEmVotacao() {
               className="text-2xl leading-tight font-[700] tracking-[-0.01em] text-balance text-ink"
               id="home-em-votacao"
             >
-              O que está em votação
+              Proposições recentes
             </h2>
             <p className="text-base leading-normal text-muted">
-              Proposições recentes que o matcher consegue computar, direto dos
-              dados oficiais.
+              O que a Câmara já votou, direto dos dados oficiais.
             </p>
           </div>
           <Link
@@ -70,7 +69,7 @@ async function DestaquesRows() {
   if (proposicoes.length === 0) {
     return (
       <p className="border-t border-border pt-6 text-base leading-normal text-muted">
-        Nenhuma proposição computável para exibir agora.{" "}
+        Nenhuma proposição para mostrar agora.{" "}
         <Link
           className="font-[650] text-primary underline-offset-2 hover:underline"
           href="/proposicoes"

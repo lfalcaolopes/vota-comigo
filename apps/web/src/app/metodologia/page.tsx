@@ -18,8 +18,8 @@ export default function MetodologiaPage() {
             A compatibilidade vem do voto real do deputado.
           </h1>
           <p className="text-base leading-normal text-muted">
-            O matcher compara a sua opinião sobre cada proposição com o voto que
-            o deputado registrou no plenário. Ler bem o resultado depende de
+            A aplicação compara a sua opinião sobre cada proposição com o voto
+            que o deputado registrou no plenário. Ler bem o resultado depende de
             saber o que entra na conta e o que fica de fora.
           </p>
         </header>
@@ -89,7 +89,7 @@ export default function MetodologiaPage() {
           <Panel title="Qual votação representa cada proposição">
             <div className="grid gap-3 leading-normal text-muted">
               <p>
-                Uma proposição costuma passar por várias votações. O matcher
+                Uma proposição costuma passar por várias votações. A aplicação
                 escolhe a que decide o mérito (o texto-base, o substitutivo ou a
                 medida provisória) e ignora requerimentos, destaques,
                 preliminares e redação final, que não representam sozinhos a
