@@ -45,6 +45,8 @@ export type CreateOpenrouterResumoIaClientOptions = {
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const PDF_PARSER_ENGINE = 'native';
+// Azure serves gpt-5-mini unreliably for these requests; keep OpenRouter off it.
+const IGNORED_PROVIDERS = ['azure'];
 
 export function createOpenrouterResumoIaClient(
   options: CreateOpenrouterResumoIaClientOptions,
@@ -146,6 +148,7 @@ function buildRequestBody(
   const base = {
     model,
     response_format: { type: 'json_object' },
+    provider: { ignore: IGNORED_PROVIDERS },
   };
 
   if (source.urlInteiroTeor === null) {

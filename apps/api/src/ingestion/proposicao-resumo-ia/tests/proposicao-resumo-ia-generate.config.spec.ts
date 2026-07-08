@@ -12,7 +12,7 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
         config: {
           year: undefined,
           limit: undefined,
-          externalIdProposicao: undefined,
+          externalIdsProposicao: undefined,
           regenerate: false,
           onlyStale: false,
         },
@@ -81,7 +81,7 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
   });
 
   describe('with --external-id-proposicao', () => {
-    it('parses a valid positive integer', () => {
+    it('parses a single id into a one-element list', () => {
       // Act
       const result = resolveProposicaoResumoIaGenerateConfig([
         '--external-id-proposicao=42',
@@ -90,7 +90,33 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
       // Assert
       expect(result).toMatchObject({
         ok: true,
-        config: { externalIdProposicao: 42 },
+        config: { externalIdsProposicao: [42] },
+      });
+    });
+
+    it('parses multiple comma-separated ids', () => {
+      // Act
+      const result = resolveProposicaoResumoIaGenerateConfig([
+        '--external-id-proposicao=42,99,7',
+      ]);
+
+      // Assert
+      expect(result).toMatchObject({
+        ok: true,
+        config: { externalIdsProposicao: [42, 99, 7] },
+      });
+    });
+
+    it('trims whitespace around comma-separated ids', () => {
+      // Act
+      const result = resolveProposicaoResumoIaGenerateConfig([
+        '--external-id-proposicao=42, 99 , 7',
+      ]);
+
+      // Assert
+      expect(result).toMatchObject({
+        ok: true,
+        config: { externalIdsProposicao: [42, 99, 7] },
       });
     });
 
@@ -98,6 +124,26 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
       // Act
       const result = resolveProposicaoResumoIaGenerateConfig([
         '--external-id-proposicao=abc',
+      ]);
+
+      // Assert
+      expect(result.ok).toBe(false);
+    });
+
+    it('returns error when any id in the list is invalid', () => {
+      // Act
+      const result = resolveProposicaoResumoIaGenerateConfig([
+        '--external-id-proposicao=42,abc,7',
+      ]);
+
+      // Assert
+      expect(result.ok).toBe(false);
+    });
+
+    it('returns error for a trailing comma', () => {
+      // Act
+      const result = resolveProposicaoResumoIaGenerateConfig([
+        '--external-id-proposicao=42,',
       ]);
 
       // Assert
@@ -143,7 +189,7 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
       // Assert
       expect(result).toMatchObject({
         ok: true,
-        config: { year: 2023, externalIdProposicao: 42, onlyStale: true },
+        config: { year: 2023, externalIdsProposicao: [42], onlyStale: true },
       });
     });
 
@@ -175,7 +221,7 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
         config: {
           year: 2023,
           limit: 5,
-          externalIdProposicao: 99,
+          externalIdsProposicao: [99],
           regenerate: true,
           onlyStale: false,
         },
