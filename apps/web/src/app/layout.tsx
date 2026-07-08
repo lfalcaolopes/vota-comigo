@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 import { AppFooter, AppHeader } from "@/shared/navigation";
 import { SITE_DESCRIPTION, SITE_NAME, siteUrl } from "@/shared/lib/site";
@@ -60,6 +61,7 @@ export default function RootLayout({
         <AppHeader />
         {children}
         <AppFooter />
+        <Analytics />
       </body>
     </html>
   );
