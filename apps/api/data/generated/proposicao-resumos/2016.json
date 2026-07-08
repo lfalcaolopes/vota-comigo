@@ -1,0 +1,104 @@
+{
+  "ano": 2016,
+  "items": {
+    "2080237": {
+      "sourceHash": "80921dc72633977de7cf5c17449f3f61a3cf217fd887308a14df4c20921e94d9",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza alongamento e redução temporária de prestações da dívida dos Estados e do Distrito Federal, condicionada a medidas de ajuste fiscal e a novas regras de responsabilidade financeira.",
+      "resumoDetalhe": "- Autoriza alongar o prazo de pagamento e, em certos casos, reduzir temporariamente as prestações das dívidas refinanciadas pelos Estados e pelo Distrito Federal mediante aditivo contratual e desistência de litígios.\n- Exige que os Estados e o Distrito Federal aprovem leis que adotem medidas de ajuste fiscal após assinarem os aditivos, como vedar aumento de remunerações, limitar contratações e o crescimento de despesas correntes, reduzir despesas com cargos de livre provimento e criar normas de finanças públicas, incluindo regime de previdência complementar e aumento das contribuições para cobrir déficits.\n- Permite à União receber bens, direitos e participações acionárias dos entes como contrapartida provisória para amortizar dívidas e autoriza repactuação de financiamentos públicos com dispensa de algumas verificações legais, com regras de valoração e alienação desses ativos.\n- Fortalece regras de responsabilidade fiscal ao prever limite interanual do gasto público no Plano Plurianual, mecanismos automáticos por estágios para ajustar despesas quando houver extrapolação, maior transparência e registro das despesas com pessoal, e cria instrumentos de garantia para apoio a exportações e seguro a investimentos no exterior, além de instrumento para ajudar o Banco Central na gestão da liquidez.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-26T00:47:47.683Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2080373": {
+      "sourceHash": "54a7ed049e3d81a6fbc9ce0772a9d3955d4974e13da668124295ed4d76b28a4a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza pessoas que trabalharam nos ex-Territórios e nos Estados do Amapá e de Roraima a optar por integrar um quadro federal em extinção.",
+      "resumoDetalhe": "- Permite que pessoas que prestaram serviço aos ex-Territórios ou aos Estados do Amapá e de Roraima, incluindo servidores federais e municipais e policiais, optem por integrar um quadro em extinção da administração federal.\n- Define que o enquadramento será no cargo original ou em cargo equivalente, admite vários documentos como prova do vínculo (contrato, recibos, pagamentos registrados) e exige a manutenção de vínculo por um período mínimo.\n- Determina que essas pessoas prestem serviços aos Estados ou Municípios na condição de cedidas, sem custo para quem as recebe, até serem aproveitadas pela administração federal, e garante o recebimento de todas as gratificações e demais parcelas do cargo, vedando sua redução por causa da cessão.\n- Exige que a União regulamente o direito de opção em prazo fixo, convalida direitos já exercidos, reconhece vínculo de servidores do ex-Território do Amapá conforme portaria convalidante (salvo quando houver decisão final do Tribunal de Contas da União que exclua o servidor) e estende as regras a aposentados e pensionistas com compensação entre regimes previdenciários.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2088351": {
+      "sourceHash": "490372eaf5dfda74e7b982a2f8adcc5489f59e74835fa9fbfff918dd8668f5fd",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um Novo Regime Fiscal que limita, anualmente, o crescimento das despesas primárias da União por Poder e órgãos autônomos, com correção pela inflação (IPCA, índice oficial de preços).",
+      "resumoDetalhe": "- Institui o Novo Regime Fiscal na esfera federal, estabelecendo um limite anual para a despesa primária total de cada Poder e de órgãos federais com autonomia, com prazo de vigência determinado e previsão de inclusão desses limites na Lei de Diretrizes Orçamentárias (LDO) e no orçamento.\n- Fixa que o limite de cada ano será calculado a partir do limite do ano anterior corrigido pela inflação medida pelo IPCA (Índice Nacional de Preços ao Consumidor Amplo), usando estimativa na elaboração da LDO e ajustando o valor quando a inflação do ano anterior for conhecida.\n- Define que a verificação do cumprimento do limite considera as despesas que afetam o resultado primário no regime de caixa, incluindo restos a pagar (despesas de anos anteriores pagas depois), e prevê medidas gerenciais para evitar represamento de gastos.\n- Impõe vedações automáticas ao Poder ou órgão que ultrapassar o limite, como proibição de aumento ou reajuste de remuneração, criação de cargos ou mudanças que aumentem despesa, novas contratações e realização de concursos; e, no caso do Executivo, veda a ampliação de subsídios, subvenções e incentivos fiscais, além de declarar que essas vedações não geram obrigação de pagamento futuro nem direitos sobre o erário.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-25T22:22:05.880Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2092382": {
+      "sourceHash": "5acd4f94baab3633df1737161759d78496a6a5736a06d3819df7295932ee6775",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite que emissoras retransmitam o programa oficial de informações dos Poderes em horário noturno flexível durante os Jogos Olímpicos e Paralímpicos no Rio.",
+      "resumoDetalhe": "- Permite que emissoras cumpram a obrigação diária de retransmitir o programa oficial de informações dos Poderes dentro de um horário noturno fixo, entre as dezenove e as vinte e duas horas.\n- Limita essa flexibilização ao período em que os Jogos Olímpicos e Paralímpicos forem realizados no Rio.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2112490": {
+      "sourceHash": "99fb70a695ac0dcd9b73568c6b49ea04b62e2bdd176c13e45636f8ebf04cbed6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria política federal para implantar e financiar escolas de ensino médio em tempo integral e define o novo currículo do ensino médio.",
+      "resumoDetalhe": "- Cria uma política federal de fomento que repassa recursos para implantar e manter escolas de ensino médio em tempo integral por tempo limitado; os repasses são feitos pelo FNDE sem necessidade de convênio e dependem de critérios de elegibilidade e de projeto pedagógico.\n- Define o currículo do ensino médio como composto pela Base Nacional Comum Curricular e por itinerários formativos em áreas como linguagens, matemática, ciências da natureza, ciências humanas e formação técnica e profissional; torna obrigatório o ensino de língua portuguesa e de matemática ao longo do ensino médio e prevê oferta de língua inglesa; fixa um limite da carga horária destinada à Base dentro da carga total do ensino médio.\n- Estabelece prazos para implementação das mudanças e para que os cursos de formação de professores usem a Base como referência; prevê acompanhamento e controle dos recursos e da execução pelo Ministério da Educação, pelo FNDE, por órgãos de controle e por conselhos locais, com regras para distribuição e prestação de contas; revoga uma lei anterior.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T19:32:44.100Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2118401": {
+      "sourceHash": "fefd421a8ec348928e66f4053060400e84a5b0537a51fdb340c2a05d6d01d11b",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Veda coligações nas eleições proporcionais e regula autonomia, fidelidade, federações e critérios para partidos terem funcionamento parlamentar.",
+      "resumoDetalhe": "- Veda coligações nas eleições proporcionais e garante que cada partido organize sua estrutura interna, regras de escolha de dirigentes e normas de disciplina e fidelidade partidária.\n- Define requisitos para que um partido tenha funcionamento parlamentar, o que dá direito a estrutura nas casas legislativas, participação na distribuição do fundo partidário e acesso gratuito ao rádio e à televisão, e exige o registro dos estatutos no Tribunal Superior Eleitoral.\n- Estabelece normas de fidelidade partidária prevendo perda do mandato para quem se desfiliar do partido pelo qual foi eleito, salvo em casos específicos de mudança substancial do programa partidário ou grave discriminação; permite que eleito por partido sem funcionamento se filie a partido com funcionamento sem perder o mandato, mas essa filiação não conta para dividir recursos e tempo de propaganda.\n- Cria a federação de partidos, que atua com identidade política única e computa os votos dos partidos que a compõem para fins de funcionamento parlamentar; regula formação, vigência, reprodução nas casas legislativas, distribuição interna dos recursos e do tempo de propaganda, possibilidade de saída e efeitos dessa saída, e autoriza lei ordinária para disciplinar outros detalhes.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2121839": {
+      "sourceHash": "a5f54454cfefc283b25b0a7fab295ef02d46f1f3834c77e076deb8d8715c6a0e",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Altera limites de unidades de conservação no Pará e cria a Área de Proteção Ambiental do Jamanxim, definindo gestão, desapropriação e regras de regularização fundiária e ambiental.",
+      "resumoDetalhe": "- Altera os limites do Parque Nacional do Rio Novo e da Floresta Nacional do Jamanxim e cria a Área de Proteção Ambiental do Jamanxim, descrevendo novos polígonos e perímetros com base em cartas topográficas.\n- Determina que a Área de Proteção Ambiental do Jamanxim será uma unidade de conservação de uso sustentável e que sua administração, controle e implementação caberão ao Instituto Chico Mendes de Conservação da Biodiversidade.\n- Autoriza o Instituto Chico Mendes a declarar imóveis rurais dentro dos limites descritos como de utilidade pública para fins de desapropriação e a promover e executar essas desapropriações, podendo invocar caráter de urgência para obter a posse das áreas.\n- Exige regras de regularização fundiária e ambiental: permite regularização de ocupações nas áreas da proteção conforme lei específica, prevê a realocação de ocupantes listados para terras da União ou do Incra conforme disponibilidade e critérios, obriga proprietários que tenham aberto área sem autorização e os que não mantêm Reserva Legal e Áreas de Preservação Permanente a cessar exploração e promover recuperação ambiental por meio do Programa de Regularização Ambiental, e condiciona a manutenção dos títulos de domínio à inexistência de desmatamento ilegal.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2121849": {
+      "sourceHash": "029dce3b3dbc312bf95a58eef849590f522c1e8e4fdacb580f60e2630ee1a62f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Altera os limites do Parque Nacional do Jamanxim e da Área de Proteção Ambiental do Tapajós no Pará, reservando áreas para uma ferrovia e uma rodovia e autorizando desapropriações.",
+      "resumoDetalhe": "- altera os limites do Parque Nacional do Jamanxim e da Área de Proteção Ambiental do Tapajós, definindo polígonos que são excluídos ou acrescidos às unidades\n- destina certas áreas aos leitos e às faixas de domínio de uma ferrovia e de uma rodovia, e determina que as partes não efetivamente usadas após a instalação da ferrovia retornem ao parque por ato do governo federal\n- exige que o empreendedor obtenha os licenciamentos ambientais e cumpra obrigações junto ao Sisnama (Sistema Nacional do Meio Ambiente, que reúne órgãos de licenciamento) e a outros órgãos federais para implantar e operar a ferrovia\n- declara de utilidade pública os imóveis rurais privados na área acrescida ao parque para desapropriação pelo Instituto Chico Mendes e autoriza o instituto a promover as desapropriações com caráter de urgência",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:12:46.007Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2122076": {
+      "sourceHash": "79ca79cba81a4fac63c802726097e367ce6c93a037a9831594980f1429cf2d92",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui eleição de representante dos trabalhadores nas empresas e atualiza regras sobre trabalho temporário, jornada parcial, acordos coletivos e multas por falta de registro.",
+      "resumoDetalhe": "- Cria a eleição de representante dos trabalhadores no local de trabalho em empresas de maior porte, com mandato por prazo fixo, possibilidade de reeleição, proteção contra demissão arbitrária desde a candidatura até período após o mandato, voto secreto e ampla divulgação; atribui ao representante participação em negociações e atuação na conciliação de conflitos internos.\n- Determina que convenções e acordos coletivos tenham força de lei sobre temas como parcelamento de férias, regras de jornada e banco de horas, trabalho remoto, participação nos lucros e registro de jornada; veda que acordos alterem normas de segurança e saúde e exige que qualquer flexibilização de salário ou jornada explicite a compensação ao trabalhador.\n- Define regras para o trabalho em regime de tempo parcial, fixando limites de jornada, previsão de horas suplementares com acréscimo no pagamento, possibilidade de compensação em período próximo e direito de converter parte das férias em abono.\n- Atualiza a lei do trabalho temporário, definindo as situações que justificam a contratação temporária, exigindo contrato escrito com registro na carteira, fixando limite de duração e uma prorrogação possível, vedando contratação imediata pelo tomador ao fim do contrato; impõe obrigações de comprovação de regularidade às empresas de trabalho temporário e prevê aumento da multa por falta de registro, com redução prevista para microempresas e reajuste anual das multas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    }
+  }
+}

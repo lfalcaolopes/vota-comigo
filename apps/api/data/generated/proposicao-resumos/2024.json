@@ -1,0 +1,170 @@
+{
+  "ano": 2024,
+  "items": {
+    "1548579": {
+      "sourceHash": "22a318650d024ef4d3c7395dc579acdb0c7761efea9045788406ea0caeaecd94",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reduz tributos federais sobre produtos que comprovem redução da intensidade de carbono.",
+      "resumoDetalhe": "- cria redução de alíquotas do IPI, PIS/Pasep e Cofins sobre a receita de venda de produtos que comprovem redução da intensidade de carbono, com faixas de desconto maiores conforme a redução e aplicadas por períodos progressivamente mais longos\n- define que a intensidade de carbono será medida em quilos de CO2 por quilo de produto a partir de inventários de emissões diretas, feitos segundo critérios do Programa Brasileiro GHG Protocol da FGV e publicados em um registro público mantido pela mesma instituição, com verificação por empresas acreditadas pelo Inmetro em parceria com o Programa; o benefício vale só para a unidade de negócio inventariada, não para o grupo empresarial\n- exige que as reduções sejam alcançadas dentro de prazos fixados após o ano base (reduções menores em prazo mais curto e reduções maiores em prazo mais longo) e condiciona a concessão aos limites das regras de responsabilidade fiscal, ao planejamento e à disponibilidade no orçamento",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2421211": {
+      "sourceHash": "1813fedca36f1e64f9a14d39a1483d1e17aa0413ab37171647543d551a2dcda9",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria funções comissionadas de nível FC-seis no quadro de pessoal do Supremo Tribunal Federal.",
+      "resumoDetalhe": "- Cria funções comissionadas de nível FC-seis (categoria que dá acréscimo na remuneração ao servidor que a ocupa) para compor o quadro de pessoal do Supremo Tribunal Federal.\n- Destina as novas funções aos gabinetes dos ministros e prevê que as funções de nível mais baixo hoje nesses gabinetes sejam redistribuídas para outras unidades do Tribunal, especialmente para atividades de prestação jurisdicional.\n- Estabelece que as despesas serão cobertas pelas dotações orçamentárias do STF, que a implementação depende de autorização no anexo da lei orçamentária e que a medida observará as regras fiscais previstas na Constituição e na Lei de Responsabilidade Fiscal (regras que controlam os gastos públicos).",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2422697": {
+      "sourceHash": "145a3e5ea34d37e55a4efea5c59ce58f6edcbda29456fedfcb92b38713b54eb4",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria o Programa Mover para exigir padrões ambientais e de segurança em veículos e incentivar pesquisa e produção tecnológica na indústria automotiva.",
+      "resumoDetalhe": "- Institui o Programa Mover para apoiar o desenvolvimento tecnológico da indústria de mobilidade, promover a descarbonização, aumentar a competitividade e acompanhar resultados por meio de grupos e observatório.\n- Estabelece requisitos obrigatórios para vender ou importar veículos novos no País, incluindo padrões de eficiência energética em diferentes etapas do ciclo, reciclabilidade, rotulagem ampliada e desempenho estrutural com tecnologias assistivas, e exige registro desses compromissos junto ao Ministério responsável.\n- Prevê penalidades para fabricantes e importadores que não cumprirem os requisitos, com aplicação de multas compensatórias que deverão ser convertidas em investimentos em projetos de pesquisa e desenvolvimento no País; trata de regras específicas para importação por pessoa física.\n- Define um regime de incentivos para pesquisa, desenvolvimento e produção tecnológica que habilita empresas que invistam e produzam no País a receber créditos financeiros, reconhecidos como crédito da CSLL (contribuição social sobre o lucro líquido), condicionados à habilitação, comprovação anual e auditoria, e cria o FNDIT (Fundo Nacional de Desenvolvimento Industrial e Tecnológico) para captar e destinar recursos a projetos prioritários.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T17:19:37.817Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2430143": {
+      "sourceHash": "0d897fbdc6b91077aec0a4b38c8d88a331fe59290c786124dd3346b4e722a86d",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria o novo sistema de tributos sobre o consumo (IBS e CBS) e um Imposto Seletivo para bens nocivos, definindo como serão cobrados, quem paga e como será a transição.",
+      "resumoDetalhe": "- Cria os tributos IBS e CBS para tributar o consumo em todo o País e define princípio de neutralidade e mecanismo de crédito para evitar cobrança em cascata\n- Institui o Imposto Seletivo sobre bens prejudiciais à saúde ou ao meio ambiente, com regras específicas de cobrança segundo o tipo de produto\n- Organiza a operação prática dos tributos: documento fiscal eletrônico unificado, cadastro único, regras de local e fato gerador, tratamento das importações e exportações e responsabilidade de plataformas digitais\n- Estabelece regimes especiais e transição gradual, incluindo regras para combustíveis, serviços financeiros, saúde, incentivos setoriais, zonas especiais, compras governamentais e devolução personalizada de parte do tributo a famílias de baixa renda, além de alíquotas zero para itens da cesta básica",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:12:46.007Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2432423": {
+      "sourceHash": "e0aae9a20b5d72c8fb0d0087f94536a2afdce91a8e7d7f3ab6312022a73c6131",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Inclui cooperativas solares entre as entidades que podem receber garantia direta de risco do Fundo de Garantia de Operações (FGO) para financiar projetos de energia renovável.",
+      "resumoDetalhe": "- Inclui cooperativas solares entre as entidades elegíveis para receber garantia direta de risco do FGO, instrumento que garante operações de crédito.\n- Determina que o FGO reserve recursos mínimos para essas garantias e que elas sejam oferecidas a projetos de investimento que utilizem bens e serviços com percentual mínimo de conteúdo nacional, com ampla divulgação e articulação com programas federais de política industrial e transição energética.\n- Define cooperativas solares como cooperativas que atuam em projetos de micro e minigeração distribuída de energia por fontes renováveis, para consumo próprio ou para locação, inclusive em forma isolada.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2433327": {
+      "sourceHash": "94d31976d28df6de47fa07a0b50e1584222248893b1858b92e929e2f86689145",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza a União a postergar dívidas de entes federativos atingidos por calamidade climática e zerar os juros, vinculando os valores a um plano de investimentos.",
+      "resumoDetalhe": "- Autoriza a União a postergar, parcial ou integralmente, o pagamento das parcelas devidas pelos entes federativos com a União e a reduzir a taxa de juros dessas dívidas a zero enquanto durar o reconhecimento de calamidade pública por eventos climáticos extremos.\n- Exige que os valores não pagos sejam integralmente aplicados em um plano de investimentos para enfrentar e mitigar os danos da calamidade, por meio de fundo público específico, com envio de projeto ao Ministério da Fazenda e prestação pública de contas sob supervisão dos órgãos de controle.\n- Veda ao ente afetado criar ou aumentar despesas correntes ou ampliar renúncias de receitas que não sejam relacionadas ao enfrentamento da calamidade, salvo justificativa ao Ministério da Fazenda; condiciona a formalização do acordo à desistência de ações judiciais sobre as dívidas e prevê rescisão se houver litígio posterior.\n- Dispensa requisitos legais para contratação de operações de crédito e assinatura de termos aditivos relacionados a essa postergação e altera dispositivos da Lei de Responsabilidade Fiscal e da lei do Regime de Recuperação Fiscal para excluir essas despesas dos limites e metas fiscais e permitir financiamento de ações emergenciais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T17:00:28.042Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2438459": {
+      "sourceHash": "f13c37f9036134a9c63961f06624943e1cc025270403a2ebd4c178321526af1a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria o Comitê Gestor do IBS para administrar o novo Imposto sobre Bens e Serviços, regular o processo administrativo tributário, organizar a distribuição da arrecadação e regular o ITCMD.",
+      "resumoDetalhe": "- Cria o Comitê Gestor do Imposto sobre Bens e Serviços (CG-IBS) como órgão público independente para gerir o imposto, uniformizar regras, arrecadar e distribuir a receita e decidir o contencioso administrativo.\n- Define a estrutura e a governança do CG-IBS, com órgãos internos, regras de sigilo fiscal, prevenção de conflito de interesses, contratação de pessoal e possibilidade de cooperação com administrações e procuradorias dos entes federativos.\n- Estabelece o processo administrativo tributário do IBS com tramitação eletrônica, garantias de defesa e contraditório, prazos, diligências, espécies de recursos e julgamentos integrados entre os entes, realizados virtualmente.\n- Regula a forma de dividir a arrecadação do IBS entre Estados, Distrito Federal e Municípios, incluindo retenções e ajustes para uma fase de transição, tratamento de saldos credores do ICMS e de estoques; e disciplina o ITCMD (imposto sobre transmissão causa mortis e doação, ou seja, imposto sobre herança e doação), definindo fato gerador, base de cálculo, imunidades e responsáveis.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-26T01:58:05.096Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2448974": {
+      "sourceHash": "d88a7e91bb1518f42d50a73d20c627caa34eccb96257f1c268d8733410032942",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza prorrogar por até 48 meses o pagamento de financiamentos rurais em municípios com estado de calamidade ou situação de emergência por seca, estiagem extrema ou excesso hídrico (declaração oficial do governo).",
+      "resumoDetalhe": "- Autoriza a prorrogação das parcelas vencidas e vincendas de operações de crédito rural quando o município, o Distrito Federal, o Estado ou o governo federal declarar estado de calamidade ou situação de emergência por seca, estiagem extrema ou excesso hídrico.\n- Suspende a exigibilidade do pagamento de financiamentos e empréstimos contratados em diversas linhas de crédito rural, abrangendo programas e bancos públicos relacionados ao setor.\n- Determina que regulamento definirá as normas, critérios, condições e procedimentos para a formalização da prorrogação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T16:46:42.082Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2453934": {
+      "sourceHash": "b4ce7f885279c11e8e48a47ef33b85693a747f8d6b5384f9c81c15a168b49197",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria uma campanha nacional para incentivar o uso responsável de tecnologias digitais e exige advertências em sites, propagandas e embalagens, com sanções para o descumprimento.",
+      "resumoDetalhe": "- Cria uma campanha nacional anual para incentivar o uso ponderado e responsável de tecnologias digitais, com ações de conscientização em escolas, serviços de saúde, meios de comunicação e órgãos de proteção à criança e ao adolescente.\n- Exige que sites e aplicativos de jogos e redes sociais, assim como anúncios e embalagens de equipamentos digitais, exibam advertência sobre os riscos do uso excessivo para crianças e adolescentes, usando frases definidas pelo Ministério da Saúde.\n- Estabelece sanções para quem não cumprir as regras, incluindo advertência, suspensão temporária de produtos ou de propaganda, apreensão de equipamentos, obrigação de veicular esclarecimentos, multa baseada no faturamento e proibição de exercício das atividades.\n- Destina as multas ao Fundo de Defesa de Direitos Difusos para financiar políticas e projetos de proteção de crianças e adolescentes no ambiente digital e prevê que o Poder Executivo regulamente a lei.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T20:08:24.596Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2454704": {
+      "sourceHash": "4d4740f50da8c4465a99fe7c2557942a250645fde8a0fa35e46a911aea96e954",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Conjunto de medidas que cria um regime de transição para contribuições e Cofins-Importação, permite atualizar valores de imóveis, abre um programa de regularização de ativos e organiza negociação de dívidas e regras para depósitos.",
+      "resumoDetalhe": "- cria um regime de transição gradual para empresas poderem optar por contribuir sobre a receita em substituição às contribuições previdenciárias e prevê um acréscimo temporário na Cofins-Importação, condicionando a opção à manutenção de um nível mínimo do quadro de empregados\n- permite que pessoas físicas e jurídicas atualizem os valores dos imóveis para o valor de mercado e paguem um imposto definitivo sobre a diferença, e estabelece regra proporcional para calcular o ganho de capital se o bem for vendido antes do prazo previsto\n- institui um programa de regularização voluntária de ativos no Brasil e no exterior, que exige declaração detalhada e pagamento de imposto e multa, com prazo limitado para adesão e regras sobre prova e repatriação via instituição financeira\n- cria centrais e procedimentos para negociar dívidas não tributárias da administração federal, centraliza depósitos judiciais e extrajudiciais na Caixa e na Conta Única, e prevê medidas para evitar fraudes em benefícios, além de exigir informação eletrônica sobre benefícios fiscais e prever penalidades por omissão",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2456731": {
+      "sourceHash": "484f2a432c6790c6beaee7cd077dbd3c2911c3ce68808f5e496bf220f32878dd",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza o uso de tripulação estrangeira em emergências e facilita a recontratação de brigadistas para reforçar o combate a incêndios florestais.",
+      "resumoDetalhe": "- Dispensa a exigência de acordo bilateral ou reciprocidade para a utilização de tripulação estrangeira em serviços aéreos quando houver situação de emergência, estado de calamidade pública ou emergência ambiental, permitindo operar aeronaves por operadores brasileiros ou estrangeiros.\n- Reduz o prazo de impedimento para recontratação de pessoal temporário empregado no combate a incêndios florestais, agilizando a volta de brigadistas já capacitados para atuação emergencial.\n- Autoriza e facilita a contratação e operação de aeronaves especializadas de maior porte e a mobilização mais rápida de pessoal e meios aéreos para aumentar a capacidade de resposta do Poder Público a incêndios e outras emergências ambientais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2461207": {
+      "sourceHash": "9c4c8b432b21b39a3f1dc1ee541abfab49cbc6f5d128b914190e9185cc52a611",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza a criação de uma subsidiária da NAV Brasil para explorar atividades e tecnologias aeroespaciais.",
+      "resumoDetalhe": "- Autoriza a NAV Brasil a criar uma subsidiária para explorar economicamente infraestrutura e serviços de navegação aeroespacial, desenvolver projetos e equipamentos aeroespaciais e prestar apoio ao controle do espaço aéreo.\n- Define competências para produzir conhecimento técnico‑científico e prestar consultoria comercial; promover e gerir pesquisa, desenvolvimento, certificação, produção, comercialização, transferência e suporte logístico de tecnologias aeroespaciais; e atuar no registro e proteção da propriedade intelectual gerada, ou seja, cuidar de patentes e direitos sobre invenções.\n- Autoriza regras de implantação e governança da subsidiária: contratação temporária de pessoal técnico e administrativo para a fase inicial, conforme critérios do conselho e regras de contratação temporária; cessão de servidores e colocação de militares à disposição, com reembolso dos custos; autorização para adesão a entidade fechada de previdência complementar já existente; possibilidade de contratação da subsidiária com recursos do Fundo Aeronáutico para projetos do Comando da Aeronáutica; e autorização para que a União assuma diretamente o controle da subsidiária por meio da transferência integral das ações da NAV Brasil, sem custo para a União, com valor contábil correspondente ao balanço.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T17:19:37.817Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2466104": {
+      "sourceHash": "efda02c157746e42d2680a0015dbc697edf95e0d259a9d90bdd19ac0f45ac0c6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Regula como são propostas e executadas as emendas parlamentares à lei orçamentária anual.",
+      "resumoDetalhe": "- Regula a apresentação e execução das emendas ao orçamento, determinando quem pode propor emendas por bancada estadual, por comissões e individualmente, e exigindo identificação clara do objeto das propostas.\n- Define o que são projetos e ações estruturantes e limita as emendas de bancada estadual a esses projetos, além de exigir que os órgãos executores publiquem critérios de prioridade para sua execução.\n- Exige transparência e controle nas transferências especiais e nas emendas impositivas individuais, como registro no Transferegov.br, indicação de conta bancária específica, comunicação ao Legislativo e ao Tribunal de Contas, e possibilidade de revisão por órgãos de fiscalização.\n- Estabelece hipóteses técnicas que impedem a execução das emendas, obriga órgãos executores a identificar e tentar regularizar esses impedimentos, e prevê limites e regras para contingenciamento ou bloqueio de dotações para atender normas fiscais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2471177": {
+      "sourceHash": "546c1ff4f1055498a94869b5202faf32ba92df0f46c20bb5ff4ebf8fb5c75747",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Define como serão ratificados registros de terras públicas na faixa de fronteira e quais documentos e passos são necessários.",
+      "resumoDetalhe": "- Regula a ratificação de registros de imóveis rurais originados de títulos estaduais em faixa de fronteira inscritos em cartório até a data limite prevista na lei, excluindo imóveis cujo domínio esteja sendo questionado por órgão federal ou que sejam alvo de ações de reforma agrária dentro do prazo legal.\n- Estabelece os documentos e comprovações exigidos para pedir a ratificação, como certidões judiciais e administrativas, georreferenciamento (mapa com coordenadas) certificado pelo Incra, Certificado de Cadastro de Imóvel Rural (CCIR) — documento cadastral do imóvel — atualizado, inscrição no Cadastro Ambiental Rural (CAR) e comprovação de que o interessado não consta de cadastro de empregadores que submeteram trabalhadores a condição análoga à de escravo; prevê, quando não for possível obter certidões, apresentação de declaração escrita assinada sujeita a sanções em caso de falsidade.\n- Determina que o serviço registral verifique os critérios de época e localização e analise os documentos para averbar a ratificação; obriga comunicação ao Incra para atualização cadastral em caso de deferimento; condiciona propriedades de grande dimensão à prévia aprovação do Congresso Nacional e prevê que, quando a ratificação não for possível, o imóvel poderá ser registrado em nome da União ou alienado por licitação quando não houver interesse público.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T19:36:40.723Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2473389": {
+      "sourceHash": "26ee772121594e08e17497db2c5714e590e53f33c7c18cc95c64206f6ac15b52",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprimora regras fiscais: limita aumento de despesas por novos benefícios, cria gatilhos que vedam incentivos e limitam gastos, libera temporariamente saldos de alguns fundos e permite bloqueio de emendas parlamentares.",
+      "resumoDetalhe": "- Limita o crescimento anual de despesas quando o governo cria ou prorroga benefícios da seguridade social, submetendo esses aumentos às regras que corrigem o limite de gastos. \n- Estabelece gatilhos fiscais que, em caso de piora das contas ou de queda nas despesas discricionárias, vedam a concessão ou ampliação de incentivos tributários e restringem a programação de aumento real das despesas de pessoal; também autoriza o Executivo a limitar o uso de créditos para compensação de débitos tributários e prevê exceção em caso de calamidade reconhecida. \n- Autoriza o uso temporário, com livre aplicação, do superávit financeiro de alguns fundos federais relacionados a defesa de direitos, antidrogas, marinha mercante, aviação civil, trânsito e fundos militares. \n- Autoriza o contingenciamento e o bloqueio de dotações identificadas como emendas parlamentares na mesma proporção aplicada às demais despesas discricionárias, limitando esse bloqueio a uma parte das dotações e destinando-o exclusivamente para atender aos limites fiscais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    }
+  }
+}

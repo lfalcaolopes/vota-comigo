@@ -1,0 +1,148 @@
+{
+  "ano": 2022,
+  "items": {
+    "2313781": {
+      "sourceHash": "1ddf4b946963c67dea474d82bde20568ee9f10ba4284aa6639d3414514796160",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria programa nacional para oferecer atividades públicas voluntárias com qualificação e bolsa, executado pelos municípios.",
+      "resumoDetalhe": "- Cria o Programa Nacional de Prestação de Serviço Civil Voluntário vinculado ao Ministério do Trabalho e Previdência, permitindo que municípios ofereçam vagas em atividades de interesse público sem vínculo empregatício e com caráter temporário; define como público alvo jovens e pessoas mais velhas sem emprego de longo prazo, com prioridade a quem recebe programas de transferência de renda ou está inscrito no CadÚnico.\n- Garante oferta de cursos de formação inicial e de qualificação profissional por serviços nacionais de aprendizagem e por parceiros, em modalidades presencial, semipresencial ou remota, com planejamento voltado para as atividades econômicas locais para aumentar empregabilidade e empreendedorismo.\n- Estabelece pagamento de bolsa de natureza indenizatória definida pelo município com base no salário mínimo por hora, prevê vale transporte ou transporte gratuito sem desconto na bolsa, permite pagamento por poupança social digital com regras de proteção ao beneficiário, veda atividades insalubres, perigosas ou que substituam servidores, e institui o Prêmio Portas Abertas para reconhecer municípios; os municípios devem prestar informações ao Ministério.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T19:46:33.443Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2317563": {
+      "sourceHash": "09e89b3d2c43782979ee8029f7d6f040bc6080ec195f04b328974dbd49090a48",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um Código de Defesa do Contribuinte que garante direitos e impõe limites à atuação da Fazenda Pública em fiscalizações e cobranças.",
+      "resumoDetalhe": "- Cria um código de defesa do contribuinte que garante direitos no atendimento e nos processos da Fazenda Pública, como acesso e cópia de informações, presunção de boa-fé, correção imediata de dados, direito à defesa e assistência por advogado, e vedação de pagamento imediato para exercer a defesa.\n- Define limites e vedações à atuação da Fazenda Pública na fiscalização e cobrança, exigindo ordem ou notificação para fiscalizações salvo urgência, identificação dos agentes e meios para checar autenticidade, proibição de induzir confissão, vedação à retenção indevida de bens e à presença de força policial sem autorização judicial, e exigência de publicação prévia para uso de técnicas presuntivas, de modo que o contribuinte possa impugná-las.\n- Estabelece regras sobre responsabilidade tributária e cobrança: restringe a solidariedade por mera ligação societária, trata a responsabilidade de terceiros como subsidiária, condiciona a desconsideração da personalidade jurídica a decisão judicial, determina que execução fiscal só pode visar quem consta na certidão de dívida, prevê novação com parcelamento e possibilidade de compensação de restituições, e autoriza a arbitragem para solução de litígios tributários com sentença vinculante.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2318022": {
+      "sourceHash": "a76ce22a5e7cab0f47728e952292658411099d70bfe1f546275583cfc21bd97e",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite assinaturas eletrônicas para a Cédula de Produto Rural e amplia o alcance e regras do Fundo Garantidor Solidário.",
+      "resumoDetalhe": "- Permite emissão eletrônica da Cédula de Produto Rural e admite assinaturas eletrônicas simples, avançada ou qualificada — simples é mais básica; avançada e qualificada oferecem mais segurança; exige níveis mais seguros para o registro e a averbação de garantias reais.\n- Autoriza o Fundo Garantidor Solidário a garantir qualquer operação financeira vinculada à atividade empresarial rural, inclusive operações realizadas no mercado de capitais e títulos usados no financiamento rural.\n- Organiza a composição e a governança do Fundo: participantes integralizam recursos em cota primária (responsabilidade dos devedores) e cota secundária (responsabilidade do garantidor, se houver); exige que o estatuto trate da constituição, administração, remuneração do administrador, uso e atualização dos recursos, representação e gestão de ativos; permite que o estatuto preveja outras regras necessárias.\n- Determina a revogação de dispositivos anteriores relacionados à conectividade rural e à participação obrigatória do credor, simplificando regras e dando mais flexibilidade na constituição do Fundo.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T16:46:42.082Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2318277": {
+      "sourceHash": "9a87ed2f30433bc47682d6463b3fb7e032df8fb293c290c136b82c34e312fa27",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Amplia a possibilidade de desconto automático em benefícios para fazer empréstimos por consignado e determina devolução de valores descontados após a morte.",
+      "resumoDetalhe": "- amplia a margem de desconto sobre benefícios previdenciários e assistenciais para permitir que uma parte maior do benefício seja retida para pagar empréstimos, financiamentos, cartões e operações de crédito, com regras para a instituição financeira reter os valores\n- autoriza que beneficiários do BPC e de programas federais de transferência de renda usem crédito consignado (empréstimo com desconto direto no benefício) para contratar empréstimos e financiamentos, estabelecendo que a responsabilidade pelo pagamento é do beneficiário e que a União não responde por essas dívidas\n- determina a restituição aos cofres públicos dos valores que foram creditados indevidamente em favor de pessoa falecida ou descontados após o óbito por causa de empréstimo ou cartão consignado, excluindo os valores recebidos pela família relativos ao Auxílio Brasil",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2318736": {
+      "sourceHash": "08f21e61332d5917ee5cf1d54f0126b038d0f86aad8384a0ddfe8f00e1eaea80",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Regula o pagamento do auxílio-alimentação e introduz regras sobre teletrabalho.",
+      "resumoDetalhe": "- Define que o auxílio-alimentação deve ser usado apenas para pagar refeições em restaurantes ou para comprar gêneros alimentícios em estabelecimentos comerciais; proíbe que empregadores que contratam empresas emissoras aceitem descontos, taxas negativas ou prazos de repasse que descaracterizem o caráter pré-pago do benefício, e prevê um prazo de transição para contratos vigentes.\n- Estabelece aplicação de multa e outras sanções para execução inadequada, desvio ou desvirtuamento das finalidades do auxílio e dos programas de alimentação, com critérios de gradação a serem fixados pelo ministério; prevê agravamento em caso de reincidência ou obstrução à fiscalização, bem como cancelamento de registro e perda do incentivo fiscal para empresas que cometam irregularidades.\n- Regula o teletrabalho: define-o como prestação de serviços fora das dependências do empregador com uso de tecnologia; permite regimes híbridos e contratação por jornada ou por produção, considerando que o trabalho por produção não seguirá as regras de controle de jornada; estabelece que a presença habitual para tarefas específicas não descaracteriza o teletrabalho; autoriza teletrabalho para estagiários e aprendizes; aplica-se a legislação e os acordos do local de lotação do empregado mesmo se ele residir em outro lugar ou no exterior salvo acordo em contrário; prevê que o uso de equipamentos fora da jornada não é automaticamente tempo à disposição salvo ajuste entre as partes; e determina prioridade de vagas em teletrabalho para pessoas com deficiência e para empregados com filhos pequenos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2318737": {
+      "sourceHash": "95bc42e196a66589fd1366ab4e60adc5a11331c5cfa7a10737b3b8c9a5ccb39e",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza o Executivo a adotar medidas trabalhistas temporárias e cria um programa emergencial para manter emprego e renda durante estado de calamidade.",
+      "resumoDetalhe": "- Autoriza a adoção, durante estado de calamidade reconhecido, de medidas trabalhistas alternativas, como teletrabalho, antecipação de férias, férias coletivas, aproveitamento de feriados, banco de horas e diferimento do recolhimento do FGTS (conta vinculada ao trabalhador), por prazo fixado pelo Ministério do Trabalho e Previdência.\n- Institui o Programa Emergencial de Manutenção do Emprego e da Renda, que permite reduzir jornadas e salários ou suspender temporariamente contratos mediante acordo, com pagamento de um Benefício Emergencial (BEm) custeado pela União e calculado com base na parcela do seguro-desemprego (benefício pago a trabalhadores demitidos), ajustado conforme o acordo firmado.\n- Estabelece regras de implementação e proteção: negociações coletivas ou acordos individuais nas hipóteses previstas, garantia provisória de emprego durante o acordo e por período equivalente depois, possibilidade de ajuda compensatória paga pelo empregador, obrigações de comunicação e operacionalização pelo Ministério e por bancos públicos com mecanismos de pagamento em contas correntes, poupança ou conta digital automática, vedação a descontos sobre o benefício e regras para fiscalização e penalidades.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2319129": {
+      "sourceHash": "1fb6da1407f41133181722b071576857d7ebab3ab6c390edcc612413f1b65222",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui o Programa Renovar para retirar de circulação veículos em fim de vida e estimular a renovação da frota.",
+      "resumoDetalhe": "- cria o Programa Renovar para promover o desmonte ou a destruição como sucata de veículos e implementos em fim de vida, com objetivo de renovar a frota, aumentar a produtividade da logística, incentivar inovação e reduzir emissões e riscos à segurança.\n- organiza a operação por meio de iniciativas com adesão voluntária de proprietários, financiadores, parceiros e agentes financeiros, e registra todas as operações na Plataforma Renovar, operada pela ABDI, que poderá cobrar pelo serviço e captar recursos; empresas de desmontagem podem comercializar a sucata e destinar parte do valor às iniciativas.\n- institui medidas administrativas e de financiamento: perdoa certos débitos não tributários junto a órgãos federais sob condições definidas, autoriza que recursos de concessionárias do setor de petróleo sejam aplicados no desmonte e considerados para obrigações de PD&I (pesquisa, desenvolvimento e inovação), e direciona receitas para ações de renovação de frota e desempenho ambiental; também permite certificação voluntária de veículos e que o Contran (Conselho Nacional de Trânsito) simplifique procedimentos para baixa de registro.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T20:06:20.826Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2320266": {
+      "sourceHash": "db10722ad8d811202501c239457a16c23f5e3736631103caf10b3ab3e22dc80f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Organiza o fluxo de análise e julgamento de benefícios do INSS, permitindo concessão por análise documental e atribuindo à Perícia Médica Federal o julgamento de recursos sobre avaliação médica.",
+      "resumoDetalhe": "- Passa a exigir que beneficiários por incapacidade e pensionistas inválidos se submetam a exame médico da Previdência, a processo de reabilitação e a tratamento gratuito, sob pena de suspensão do benefício, e prevê prazo limitado para recorrer da avaliação.\n- Permite que o Ministro do Trabalho e Previdência dispensa a exigência de parecer conclusivo da Perícia Médica Federal em pedidos de auxílio por incapacidade temporária, autorizando a concessão por análise documental realizada pelo INSS.\n- Organiza o julgamento de recursos sobre avaliação médico-pericial, atribuindo à Subsecretaria de Perícia Médica Federal a competência para julgar recursos de pareceres conclusivos com peritos médicos federais atuando como julgadores, prevê que recursos apresentados antes da regulamentação sejam julgados pelo Conselho de Recursos da Previdência Social, e amplia o Programa Especial e o Programa de Revisão para incluir análise de processos com indícios de irregularidade, acompanhamento de processos judiciais e realização de perícias presenciais em unidades com grande demanda, além de renomear parcelas pagas por tarefas extraordinárias para TERF e PERF.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2320799": {
+      "sourceHash": "78c85e921ef7de7244f1069ebeaacfa06d60a0cf924f70adb4c26f337b9209eb",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Fixa alíquotas temporárias da contribuição social sobre o lucro para bancos e para empresas de seguros e de capitalização.",
+      "resumoDetalhe": "- Altera a lei que institui a contribuição social sobre o lucro das pessoas jurídicas, ou seja, o imposto cobrado sobre o lucro das empresas.\n- Fixa alíquotas temporárias dessa contribuição para bancos e para empresas de seguros privados, de capitalização e para outras instituições previstas em lei complementar.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2329218": {
+      "sourceHash": "ec2cf639f21a4a07d06053159fb3299b85b8926f5016ac7e72504212ca53a4c0",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Garante tratamento tributário favorecido aos biocombustíveis para que paguem menos tributos que os combustíveis fósseis e tenham vantagem competitiva.",
+      "resumoDetalhe": "- Cria um regime fiscal favorecido para biocombustíveis destinados ao consumo final, por meio de lei complementar, para garantir tributação inferior à dos combustíveis fósseis e assegurar vantagem competitiva, inclusive em relação a certas contribuições sociais e a um imposto federal.\n- Determina que, enquanto a lei complementar não entrar em vigor, a vantagem competitiva será assegurada mantendo a diferença entre as alíquotas aplicadas aos combustíveis fósseis e aos biocombustíveis que os substituem no patamar vigente numa data de referência.\n- Determina que, se a vantagem não for definida por alíquotas, ela será garantida mantendo a diferença da carga tributária efetiva entre os combustíveis.\n- Estabelece salvaguardas de transição: impede que a futura lei complementar fixe vantagem menor que a referida, determina ajuste automático das alíquotas dos biocombustíveis sempre que as alíquotas dos combustíveis fósseis forem alteradas por norma ou decisão com efeito geral, exige que a lei complementar fixe critérios para manter a vantagem caso mude o sistema de recolhimento do tributo do combustível fóssil e dispensa a observância de certo dispositivo constitucional sobre repartição de receitas na aplicação deste artigo.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-26T00:39:02.618Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2330227": {
+      "sourceHash": "42e99f37dd328a51af930c0ee85dad30fc3f387e6e4735c86256394d16e9da61",
+      "generationStatus": "error",
+      "reviewStatus": "pending",
+      "resumoCard": null,
+      "resumoDetalhe": null,
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T17:00:28.042Z",
+      "reviewedAt": null
+    },
+    "2334043": {
+      "sourceHash": "7ef21b276dfd5a29758afa4b49f755275d633008cc9e460d9a5f9f22a75232bf",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Dá à INB a responsabilidade e as regras para pesquisar, extrair, tratar e comercializar minérios e materiais nucleares, além de regular parcerias e fiscalização.",
+      "resumoDetalhe": "- Define a INB como empresa pública responsável por executar o monopólio da União sobre atividades nucleares e estabelece suas funções, como pesquisar, lavrar, tratar, converter, enriquecer, produzir e comercializar materiais nucleares, e construir e operar instalações necessárias.\n- Autoriza que a INB firme parcerias com empresas privadas para a pesquisa e a lavra, detalha formas de remuneração e descreve as fontes de receita da empresa, incluindo recursos orçamentários, vendas e contratos.\n- Estabelece procedimentos para quando forem encontrados elementos nucleares: a INB fará estudos de viabilidade; se o elemento nuclear tiver maior valor econômico, a exploração será feita por associação com o titular ou por transferência do direito minerário para a INB com indenização; se tiver menor valor, o titular mantém a concessão e deverá entregar ou destinar adequadamente o elemento ou os rejeitos conforme regras ambientais.\n- Organiza a regulação e a fiscalização do setor, atribuindo à agência de mineração a normatização e autorização da pesquisa e da lavra (exceto questões de segurança nuclear) e à autoridade de segurança nuclear a regulação e inspeção da segurança e proteção radiológica, e prevê autorização ministerial para exportações pela INB e definição de recursos estratégicos pelo Ministro de Minas e Energia.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:12:46.007Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2336484": {
+      "sourceHash": "68bfd6f9e5c58a6ee15df4c24c7e7d1d5279c72d015485f415001fe3c158192f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Adia o prazo para protocolar pedido de acesso à distribuidora sem que novas regras tarifárias menos vantajosas atinjam micro e minigeração distribuída.",
+      "resumoDetalhe": "- Estende o prazo em que pedidos de acesso à distribuidora podem ser protocolados sem que novas regras tarifárias menos vantajosas sejam aplicadas às unidades de microgeração e minigeração distribuída.\n- Estabelece um calendário de transição para aplicar gradualmente novas regras tarifárias, por etapas anuais até alcançar a regra definitiva prevista na lei.\n- Revoga uma disposição de transição da lei anterior.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:12:46.007Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    }
+  }
+}

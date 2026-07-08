@@ -1,0 +1,38 @@
+{
+  "ano": 2004,
+  "items": {
+    "259094": {
+      "sourceHash": "cc03f65861a34d69a01d8e49327e5edc4bfd76002ef60fb56d4287ec8f2850fc",
+      "generationStatus": "source_too_large",
+      "reviewStatus": "pending",
+      "resumoCard": null,
+      "resumoDetalhe": null,
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": null
+    },
+    "264726": {
+      "sourceHash": "346acc47f776b32392acdbfc20b672bb8a032eab1c740b33f8fec67ef4a725da",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Define aumento de pena para quem dispara arma de fogo em lugar habitado ou em via pública, agrava a pena se a arma for de uso proibido ou restrito e torna o crime sem fiança.",
+      "resumoDetalhe": "- Define como crime disparar arma de fogo em lugar habitado, em suas adjacências, em via pública ou em direção a ela, quando não há intenção de praticar outro crime, e estabelece prisão e multa como pena.\n- Prevê pena maior quando o disparo for feito com arma de uso proibido ou restrito (armas que a lei veta para civis ou que exigem autorização especial), também com multa.\n- Torna o crime inafiançável, ou seja, não permite fiança para o suspeito.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T17:45:21.754Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "267841": {
+      "sourceHash": "a530996611f935840b70f99182a8340e1490789d40b8a6cc54f994e825ddbe87",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Regula contratos de prestação de serviços entre empresas, definindo requisitos para as prestadoras e responsabilidades trabalhistas da contratante e da prestadora.",
+      "resumoDetalhe": "- Define empresa prestadora de serviços a terceiros e exige inscrição no CNPJ, registro na Junta Comercial e capital social compatível com o número de empregados.\n- Proíbe vínculo empregatício entre a contratante e os trabalhadores das prestadoras, limita o uso dos trabalhadores às atividades previstas no contrato e permite contratações sucessivas por diferentes prestadoras para a mesma contratante.\n- Determina que a contratante garanta segurança e saúde no trabalho, exija ou forneça o treinamento necessário, possa estender benefícios aos trabalhadores e exija, no contrato, a especificação do serviço, o prazo quando houver e a apresentação periódica de comprovantes do cumprimento das obrigações trabalhistas.\n- Estabelece responsabilidade da contratante pelas obrigações trabalhistas do período de prestação, com direito de cobrar da prestadora o que pagou mais uma indenização equivalente; prevê solidariedade da prestadora que subcontratar outra empresa; regula o recolhimento de contribuições previdenciárias e da contribuição sindical para o sindicato da categoria; exclui atividade doméstica e empresas de vigilância/transportes de valores; prevê multa administrativa por trabalhador prejudicado, anistia para penalidades incompatíveis e prazo para adequação dos contratos e início da vigência.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "ano": 2012,
+  "items": {
+    "534328": {
+      "sourceHash": "86389432c5ac3559e7a52603a0c96b1a3c0a727767a23073d432fd280cc68818",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza a oferta domiciliar (homeschooling: ensino em casa) da educação básica, sob responsabilidade dos pais, com supervisão e avaliação pelos sistemas de ensino.",
+      "resumoDetalhe": "- Autoriza os sistemas de ensino (órgãos públicos responsáveis pela educação) a admitir a educação básica domiciliar, com a responsabilidade do ensino atribuída aos pais ou tutores.\n- Exige a articulação, a supervisão e a avaliação periódica da aprendizagem pelos órgãos desses sistemas.\n- Estabelece que a oferta domiciliar deve obedecer às diretrizes gerais definidas pela União e às normas locais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T19:32:44.100Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "542102": {
+      "sourceHash": "69c088fea7b9ef94a1c49431e8356673c7acc51a17c7355935ff7112b9238dc0",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria o Sistema Único de Segurança Pública (SUSP) e organiza a gestão, a cooperação e a formação dos órgãos de segurança.",
+      "resumoDetalhe": "- Institui o Sistema Único de Segurança Pública (SUSP), reunindo os órgãos responsáveis pela segurança e a Força Nacional para atuar de forma cooperativa e integrada.\n- Determina que o Ministério da Justiça gerencie o SUSP, coordene a Força Nacional e implemente redes e sistemas de informação para compartilhamento de dados entre órgãos, além de apoiar aparelhamento e inteligência.\n- Institui o Sistema Integrado de Educação e Valorização Profissional (SIEVAP) para padronizar currículos, oferecer formação presencial e a distância e promover programas de qualidade de vida para profissionais de segurança.\n- Estabelece a ideia de segurança cidadã como objetivo das políticas públicas e prevê conselhos, gabinetes de gestão integrada e a participação da comunidade na prevenção, na prevenção situacional e na reintegração social.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T17:45:21.754Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "545304": {
+      "sourceHash": "e3ef9dc850de8551b007469fd5fba7844748286930361c132a9d8fa9485dcd14",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui uma política nacional e um selo para incentivar produção e consumo sustentáveis, oferecendo incentivos a quem obtiver o selo e prevendo punições para seu uso indevido.",
+      "resumoDetalhe": "- Institui a Política Nacional de Estímulo à Produção e ao Consumo Sustentáveis, definindo conceitos, princípios e diretrizes e integrando essa política a outras políticas ambientais e às Agendas 21 locais.\n- Cria o Selo de Produção e Consumo Sustentáveis e determina os critérios de avaliação, como redução de resíduos, menor poluição, uso de energia renovável e possibilidade de retorno e reaproveitamento dos produtos, além de regras para credenciar entidades que concedam o selo e para fiscalização e cancelamento. \n- Estabelece incentivos fiscais e benefícios para empresas que obtenham e mantenham o selo, com medidas específicas para quem atua na reciclagem e para estímulo à inovação e uso de tecnologias limpas, condicionando os benefícios ao cumprimento das regras. \n- Prevê sanções para falsificação, adulteração ou uso indevido do selo, bem como penalidades para quem conceder o selo em desacordo com a lei, e determina que a União estimule Estados e municípios a adotarem políticas locais de produção e consumo sustentáveis.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    }
+  }
+}

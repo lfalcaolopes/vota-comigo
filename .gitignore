@@ -16,7 +16,8 @@ dist
 .personal-docs
 csv
 
-apps/api/data
+apps/api/data/logs
+apps/api/data/raw
 # Deploy env-vars (segredos)
 gcloud-env.yaml
 .vercel

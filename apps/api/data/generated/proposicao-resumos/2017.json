@@ -1,0 +1,137 @@
+{
+  "ano": 2017,
+  "items": {
+    "2124451": {
+      "sourceHash": "db218ea1a5fb45a9757ee8a05db7ba806a8b1040424b3113e9a3968a99aaeca7",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um Regime de Recuperação Fiscal para estados e Distrito Federal que troca ajuda federal por um plano de ajuste e limites ao gasto.",
+      "resumoDetalhe": "- institui um Regime de Recuperação Fiscal que só pode ser acessado se o estado aprovar uma lei com um Plano de Recuperação que reconheça o desequilíbrio das contas e detalhe medidas e prazos para ajustar receitas e despesas\n- exige que o estado comprove sua situação fiscal e encaminhe o Plano ao Ministério da Fazenda, que avaliará e emitirá parecer; a entrada no Regime depende da homologação pelo Presidente da República e da posse de um Conselho de Supervisão\n- cria um Conselho de Supervisão composto por três membros para monitorar a execução do Plano, emitir relatórios e recomendações, requisitar informações e propor ações quando houver risco ou desvio\n- impõe vedações durante o Regime, como proibição de aumentos de remuneração e de criação de despesas contínuas, restrição a concursos e contratações, limitação de convênios e transferência de repasses mensais (duodécimos, isto é, repasses mensais aos Poderes), e autoriza medidas federais como redução temporária dos pagamentos da dívida com a União e operações de crédito específicas garantidas pela União",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-25T22:43:30.565Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2125189": {
+      "sourceHash": "cecac51fb89c454f27dee1391348abcd23c99da30dae169b732e6db45651c449",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Estabelece regras para pesquisas clínicas com pessoas e cria um sistema nacional de ética para avaliar e fiscalizar essas pesquisas.",
+      "resumoDetalhe": "- institui princípios e regras para a realização de pesquisas clínicas com seres humanos, exigindo análise ética prévia, garantia de consentimento livre e esclarecido e proteção da dignidade, segurança e privacidade dos participantes\n- institui o Sistema Nacional de Ética em Pesquisa Clínica com Seres Humanos e organiza comitês de ética (CEPs), definindo suas atribuições, composição, credenciamento, avaliação de protocolos e atuação como instância de fiscalização e recurso\n- define responsabilidades do patrocinador e do investigador, incluindo controles de qualidade, monitoramento, obrigação de registrar e tornar públicos dados da pesquisa, notificar reações adversas e garantir indenização e assistência a participantes em caso de dano\n- regula o uso, armazenamento e possível transferência de material biológico e de dados obtidos na pesquisa, estabelece regras para continuidade do tratamento pós-pesquisa quando necessário e exige transparência sobre resultados e alterações no estudo",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T17:19:37.817Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2127803": {
+      "sourceHash": "fa94d814031033a3435999598a1a7092105139e501a98a15affb5b1cd21dac61",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria previsão de multa administrativa, com limite máximo, para infrações na inspeção de produtos de origem animal.",
+      "resumoDetalhe": "- Altera a lei que regula a inspeção sanitária e industrial dos produtos de origem animal.\n- Institui multa administrativa com limite máximo definido na norma para casos não cobertos por outra penalidade.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2132524": {
+      "sourceHash": "0f72359c8b5cf63e3123e9f4dc4fc8449158a9e01883c6dc652150d43fe9dfe4",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui a Taxa de Longo Prazo (TLP) para remunerar recursos de fundos públicos aplicados em financiamentos por bancos oficiais.",
+      "resumoDetalhe": "- institui a Taxa de Longo Prazo (TLP) como referência de remuneração para os recursos do Fundo de Participação PIS-Pasep, do Fundo de Amparo ao Trabalhador e do Fundo da Marinha Mercante aplicados por instituições financeiras oficiais, sendo a TLP composta pela variação do IPCA (índice de inflação medido pelo IBGE) e por uma taxa de juros prefixada\n- define que a taxa prefixada será apurada mensalmente a partir da curva de juros das Notas do Tesouro e terá um fator de ajuste que converirá para um valor de referência ao longo de um período gradual; o texto também relaciona a TLP com a Taxa de Juros de Longo Prazo (TJLP), explicando sua interação\n- determina obrigações ao BNDES e às instituições financeiras oficiais quanto ao recolhimento, prestação de contas e separação dos saldos por modalidade de remuneração, e prevê limites e periodicidade para os repasses aos fundos\n- proíbe, a partir da data prevista na medida, a contratação de operações com referência à TJLP, salvo exceções descritas para certas operações já iniciadas, operações de hedge, projetos de infraestrutura e modalidades específicas do BNDES, e autoriza repactuação de contratos entre União e BNDES para adequar remunerações",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2147241": {
+      "sourceHash": "e933d5cd6203ce3f9778f15759e337816ef7b745e0f3aa77d58291700609f4ed",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reconhece o laço como manifestação cultural nacional e institui regras para modalidades equestres e proteção ao bem-estar animal.",
+      "resumoDetalhe": "- Reconhece o laço, o rodeio e a vaquejada, e suas expressões artísticas e esportivas, como manifestações culturais nacionais e bens imateriais do patrimônio cultural brasileiro.\n- Define várias modalidades esportivas equestres tradicionais, mencionando atividades e provas relacionadas ao adestramento, salto, rédeas, polo e provas de laço, entre outras.\n- Exige que associações ou entidades reconhecidas pelo Ministério da Agricultura elaborem e aprovem regulamentos específicos para o rodeio, a vaquejada, o laço e demais modalidades, com normas e sanções.\n- Determina regras de proteção ao bem-estar animal, com dispositivos gerais e medidas específicas para a vaquejada, como garantia de água, alimentação e local de descanso, prevenção de ferimentos por meio de instalações e assistência veterinária, uso de protetor de cauda em bovinos e disponibilidade de areia lavada em quantidade e profundidade adequadas na área de pontuação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T19:36:40.723Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2148437": {
+      "sourceHash": "a807b0bc4a37f72877b75a4d50752916d9623304f679ab04310710f14fadeea0",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um regime tributário especial para atividades de exploração, desenvolvimento e produção de petróleo e gás, com deduções fiscais e suspensão de tributos na importação.",
+      "resumoDetalhe": "- Autoriza a dedução, para fins de imposto de renda e CSLL, das despesas aplicadas nas atividades de exploração e produção de petróleo e gás, prevê exaustão e exaustão acelerada de ativos formados por gastos de desenvolvimento, e disciplina a depreciação de máquinas e equipamentos usados nessas atividades.\n- Limita a redução do imposto de renda retido na fonte sobre pagamentos relacionados a afretamento ou aluguel de embarcações quando esses contratos forem executados com empresas vinculadas, estabelecendo diferentes percentuais conforme o tipo da embarcação, regras de conversão de moeda, e tratamento para casos de repactuação, variação cambial e destinatários em jurisdições com tributação favorecida.\n- Institui regime especial de importação com suspensão do pagamento de tributos federais para bens destinados às atividades de exploração, desenvolvimento e produção de petróleo e gás, condiciona a aplicação a relação de bens específica, e prevê que a suspensão se converta posteriormente em isenção ou em alíquota zero, com obrigação de recolher tributos se o bem não for usado conforme previsto.\n- Autoriza suspensão de tributos na importação ou na aquisição interna de matérias‑primas, produtos intermediários e embalagens quando destinados ao processo produtivo de bens para as atividades de petróleo e gás, prevê conversão da suspensão em isenção ou alíquota zero quando o produto final for corretamente destinado, estabelece medidas de controle, penalidades e possibilidade de prorrogação de prazo em casos excepcionais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:12:46.007Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2157806": {
+      "sourceHash": "95b703a27f61e0fd817277fc2e813e00986c1dfed67ae8f084a23ab557efde49",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Regula serviços de vídeo por demanda no Brasil, exigindo credenciamento pela Ancine e fixando regras sobre catálogo, contribuição, acessibilidade e sanções.",
+      "resumoDetalhe": "- Define e regula a provisão de conteúdo audiovisual por demanda, exige credenciamento pela Ancine para operar, impõe obrigação de prestar informações à agência e autoriza a Ancine a mediar conflitos e fiscalizar práticas anti‑concorrenciais.\n- Estabelece regras para o catálogo das plataformas, exigindo uma cota progressiva de obras de produtoras brasileiras com parte dessa cota reservada a produtoras brasileiras independentes, e exclui microempresas e empresas optantes pelo Simples Nacional (regime tributário para micro e pequenas empresas) de algumas obrigações.\n- Determina a cobrança de contribuição calculada sobre a receita bruta das provedoras com alíquotas progressivas, permite descontar parcela da contribuição para compra de direitos ou investimento em produções independentes brasileiras e destina parte dos recursos arrecadados a produtoras de determinadas regiões do país, segundo critérios da Ancine.\n- Exige que provedores exibam a classificação indicativa dos conteúdos e ofereçam meio eletrônico de bloqueio por faixa etária, obriga a oferta de legendas, audiodescrição e LIBRAS conforme regulamento, e prevê sanções pela Ancine em caso de descumprimento, como advertência, multa, suspensão temporária ou cancelamento do credenciamento, aplicadas segundo critérios de proporcionalidade.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:12:46.007Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2160860": {
+      "sourceHash": "9732789fb84ccbfaa1ed8ce06722e8cb3af6281ba002a4a45144b520ab1857d5",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza e regula os cadastros positivos de crédito (listas com histórico de pagamentos de pessoas e empresas) e define regras e responsabilidades dos gestores (empresas que administram esses bancos de dados).",
+      "resumoDetalhe": "- Autoriza a criação e o funcionamento de cadastros positivos de crédito, ou seja, bancos de dados com informações sobre pagamentos e adimplência de pessoas e empresas, e define quem pode ser gestor desses bancos.\n- Determina que gestores comuniquem por escrito a pessoa incluída sobre a abertura do cadastro, ofereçam ao cadastrado acesso gratuito ao seu histórico e à sua pontuação de crédito, e corrijam ou cancelem informações quando houver erro mediante solicitação.\n- Permite o compartilhamento de informações entre gestores, equipara a responsabilidade de quem recebe e de quem registrou a informação, e obriga o originador a manter atualizados os dados nos demais bancos de dados com os quais compartilhou.\n- Regula o fornecimento de dados de instituições autorizadas pelo Banco Central do Brasil (o órgão que fiscaliza os bancos), exige registro de gestores para receber essas informações, prevê cancelamento de registro por infração e mantém poderes aos órgãos de defesa do consumidor para exigir exclusão de informações incorretas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-25T22:43:30.565Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2164234": {
+      "sourceHash": "8a8cb386688a235fc7fa394b5e54d457150510397b2889790a03d36de2a87e0e",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza que compensações ambientais sejam reunidas em um fundo gerido por banco público escolhido pelo Instituto Chico Mendes e prevê contratações temporárias nos órgãos ambientais.",
+      "resumoDetalhe": "- Autoriza o Instituto Chico Mendes a escolher, sem licitação, uma instituição financeira pública para criar e administrar um fundo privado com recursos de compensação ambiental destinados às unidades de conservação da União, delegando a essa instituição a gestão e a execução desses recursos e a possibilidade de desapropriar imóveis privados indicados pelo Instituto.\n- Atualiza os valores de compensação ambiental pelo índice IPCA-E — um índice de inflação oficial — a contar da data em que o órgão licenciador fixar a compensação.\n- Autoriza o Ibama e o Instituto Chico Mendes a contratar pessoal por tempo determinado para atender situações como prevenção e combate a incêndios florestais, controle de fontes poluidoras imprevistas, apoio a conservação, manejo e pesquisa de espécies ameaçadas, apoio a projetos e à gestão e demarcação de unidades de conservação, e ações ligadas ao uso sustentável e à pesquisa de espécies nativas de interesse econômico.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-26T02:30:38.288Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2165194": {
+      "sourceHash": "53d28134979eb591a1be1a001a02da06277aa26d3e65ba7256ea64ab343dd346",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria repasse anual da União ao Fundo de Participação dos Municípios, com implantação gradual e entrega na primeira parte de setembro.",
+      "resumoDetalhe": "- Estabelece que uma parcela da arrecadação do imposto sobre a renda e do imposto sobre produtos industrializados será destinada ao Fundo de Participação dos Municípios, entregue na primeira parte de setembro de cada ano.\n- Determina implantação gradual dessa parcela ao longo dos primeiros anos em que a emenda produzir efeitos financeiros, com aumentos programados até alcançar o valor final previsto.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2166600": {
+      "sourceHash": "e43b9d308aa324d77f8ccb8fe7c67666c8440d13dc1066fc9f65e80b16fde7be",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um padrão nacional para declaração eletrônica e pagamento do ISS sobre certos serviços, usando um sistema único desenvolvido pelos contribuintes e regulado por um comitê gestor.",
+      "resumoDetalhe": "- Estabelece que o ISS sobre certos serviços listados na lei do ISS será declarado por meio de um sistema eletrônico único padronizado, desenvolvido pelos contribuintes e regido por padrões definidos por um Comitê Gestor (CGOA).\n- Exige que o contribuinte apure e informe mensalmente as informações pelo sistema e que o pagamento do imposto seja feito por transferência bancária via Sistema de Pagamentos Brasileiro (SPB) para a conta indicada pelo Município ou pelo Distrito Federal.\n- Determina que os Municípios e o Distrito Federal forneçam no sistema suas alíquotas por período, a legislação local aplicável e os dados bancários para recebimento, sendo responsáveis pela veracidade desses dados e sem poder punir o contribuinte por falhas ou omissões suas.\n- Institui o Comitê Gestor das Obrigações Acessórias do ISSQN (CGOA) e um Grupo Técnico para definir leiautes, acesso e regras do sistema, fixar prazos para alteração das normas e proíbe que Municípios e o Distrito Federal imponham a contribuintes não estabelecidos em seu território outras obrigações acessórias, como inscrição municipal ou alvará.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2167507": {
+      "sourceHash": "37902b86dd8fc0b69b2f92de50114100f9a8c03223d2cc3cedac88aaefb4c51b",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Define como a empresa pública que administra o pré-sal comercializa e fiscaliza a venda do petróleo e do gás da União, sem executar a produção.",
+      "resumoDetalhe": "- Define o papel da PPSA (empresa pública que administra o pré-sal): a PPSA não executa exploração, desenvolvimento ou produção e atua para vender e fiscalizar a venda do petróleo, do gás natural e de outros hidrocarbonetos em nome da União, contratando agentes comercializadores e preferindo leilões.\n- Estabelece regras sobre receitas e despesas da comercialização, determinando que a receita considerada será apurada depois da dedução de tributos e dos gastos diretamente ligados à venda, e que esses gastos e a remuneração do agente devem constar em contrato ou edital; exclui desses custos as despesas e tributos da própria PPSA.\n- Regula a remuneração e limites de preço, prevendo que a remuneração do agente será calculada conforme contrato e diretrizes do CNPE (Conselho Nacional de Política Energética, órgão que define a política do setor) e que a comercialização pela PPSA deve seguir a política do CNPE e o preço de referência fixado pela ANP (Agência Nacional do Petróleo); só permite vender abaixo desse preço se não houver interessados, e então com preços compatíveis com o mercado, além de autorizar o CNPE a fixar diretrizes para fiscalização.\n- Determina que o CNPE edite a nova política de comercialização e dispõe que, enquanto essa política não estiver em vigor, as vendas diretas feitas pela PPSA serão regidas por ato do Ministro de Minas e Energia; prevê também remuneração à PPSA pela gestão dos contratos, incluindo parcela do bônus de assinatura.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    }
+  }
+}

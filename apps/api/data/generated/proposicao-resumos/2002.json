@@ -1,0 +1,16 @@
+{
+  "ano": 2002,
+  "items": {
+    "46249": {
+      "sourceHash": "80356a269f146ee5796566be2f53dd6067704be82adb951d5290b5ed71d8d243",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite registro temporário para agrotóxicos equivalentes e agiliza sua produção e venda enquanto se avalia a equivalência.",
+      "resumoDetalhe": "- Define termos ligados a produtos agrícolas (como aditivo, adjuvante, ingrediente ativo, produto formulado e produto técnico) e cria a categoria de produto equivalente, explicando que é um produto com composição e efeito semelhantes a outro já registrado.\n- Cria um registro especial temporário para produto equivalente que permite, enquanto vigora, a produção, a importação, a exportação, a comercialização e o uso do produto, com possibilidade de renovação e cancelamento imediato caso se conclua que não há equivalência.\n- Estabelece que a avaliação da equivalência seguirá critérios técnicos internacionais (citando a FAO) e exige documentação que comprove a semelhança, ficando a análise e a decisão a cargo dos órgãos competentes das áreas de agricultura, saúde e meio ambiente.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    }
+  }
+}

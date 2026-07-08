@@ -1,0 +1,16 @@
+{
+  "ano": 2010,
+  "items": {
+    "484645": {
+      "sourceHash": "57414afe9768900d9b5881f221ca7d3b8b012fe7903a81829c614161cbb4a783",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza produção, comercialização e uso de radioisótopos para pesquisa e para uso médico, e comercialização para usos agrícolas e industriais, sob regime de permissão.",
+      "resumoDetalhe": "- Autoriza a comercialização e a utilização de radioisótopos (átomos usados em exames e tratamentos que emitem radiação) para pesquisa e para usos agrícolas e industriais, sob regime de permissão (ou seja, mediante autorização do poder público).\n- Autoriza a produção, a comercialização e a utilização de radioisótopos para pesquisa e para uso médicos, sob regime de permissão (ou seja, mediante autorização do poder público).",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-26T14:21:35.261Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    }
+  }
+}

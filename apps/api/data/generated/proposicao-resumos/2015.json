@@ -1,0 +1,60 @@
+{
+  "ano": 2015,
+  "items": {
+    "944494": {
+      "sourceHash": "ea3efd4c7a6f94cf0a36cb2db68343ae82ec3175a0dbeb409e295b47e749d6bd",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aumenta as alíquotas do PIS/PASEP-Importação e da COFINS-Importação e define regras sobre cálculo de créditos.",
+      "resumoDetalhe": "- Eleva as alíquotas das contribuições sobre importação: PIS/PASEP-Importação (contribuição sobre bens trazidos do exterior) e COFINS-Importação (outra contribuição sobre importação).\n- Determina que o valor pago a título do adicional da COFINS-Importação não gera direito a desconto como crédito tributário.\n- Determina como apurar os créditos: aplicar as alíquotas sobre a base de cálculo acrescida do IPI (imposto sobre produtos industrializados) quando o IPI integrar o custo de aquisição.\n- Autoriza o uso de valores de constrição judicial depositados na conta única do Tesouro para pagar uma antecipação prevista em lei, determina que a Procuradoria-Geral da Fazenda Nacional e a Receita Federal editem normas para aplicar isso, e estabelece prazos diferentes para a entrada em vigor de partes da medida; revoga dispositivos de leis anteriores relacionados a tributos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "946734": {
+      "sourceHash": "490e0bcb4ceea8e89ee4bae1315dc4b5098908b5fbaaa90832959fe21c95c1dc",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza desvincular 20% da arrecadação federal até 31 de dezembro de 2019, liberando parte dos recursos do vínculo a órgãos, fundos ou despesas.",
+      "resumoDetalhe": "- Cria a desvinculação de parte da arrecadação da União até data determinada, liberando esse dinheiro do vínculo a órgãos, fundos ou despesas.\n- Mantém que essa desvinculação não reduzirá a base de cálculo das transferências para Estados, Distrito Federal e Municípios nem das destinações para a manutenção e desenvolvimento do ensino.\n- Exclui da desvinculação a arrecadação da contribuição social do salário‑educação, contribuição que financia programas de educação.\n- Aplica redução escalonada da incidência da desvinculação sobre contribuições sociais destinadas ao financiamento da saúde, até eliminar a desvinculação para esses recursos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "1150196": {
+      "sourceHash": "354511848458bdf27bcea6b6da3118de285d715aab2821c2ce89d26447debb1a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Define como serão calculados e divulgados os reajustes do salário mínimo entre 2016 e 2019.",
+      "resumoDetalhe": "- Estabelece que os reajustes para preservar o poder de compra do salário mínimo serão calculados com base na variação do INPC (Índice Nacional de Preços ao Consumidor, calculado pelo IBGE) acumulada no período imediatamente anterior ao reajuste; quando faltar o índice de algum mês, o governo estimará esse mês e usará a estimativa, compensando diferenças no reajuste seguinte, sem retroagir.\n- Aplica um aumento real anual baseado na taxa de crescimento real do PIB (Produto Interno Bruto, que mede o tamanho da economia) apurada pelo IBGE para o ano de referência, conforme divulgação feita antes do início do ano de aplicação.\n- Determina que o Poder Executivo fixe por decreto os novos valores do salário mínimo e divulgue a cada ano o valor mensal, o valor diário e o valor por hora resultantes dos ajustes.\n- Exige que o Poder Executivo envie ao Congresso projeto de lei definindo a política de valorização do salário mínimo para o período seguinte.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:12:46.007Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "1672065": {
+      "sourceHash": "7acfc2448fb557a9732313021b6f3a8355e23a6a4f49792ccebbec5b671ca8b0",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza a repactuação do risco hidrológico de usinas hidrelétricas e estabelece regras de pagamento, ressarcimento e bonificação nas outorgas de concessão.",
+      "resumoDetalhe": "- Permite repactuar o risco hidrológico das usinas que participam do Mecanismo de Realocação de Energia, com anuência da Aneel, mediante contrapartida dos geradores; exige pagamento de um prêmio de risco e cessão de direitos ligados à energia secundária e ao deslocamento de geração, e prevê ressarcimento aos geradores por meio de postergação de pagamento com desconto ou extensão do prazo das outorgas por prazo limitado, excluindo perdas de rede, consumo interno e indisponibilidade; exige que geradores com ações judiciais sobre o risco desistam das ações para poderem usar a repactuação. \n- Organiza a repactuação da parcela do risco vinculada à energia não contratada e da energia de reserva por meio de aporte na Conta de Energia de Reserva (Coner); prevê contratação voluntária de reserva de capacidade definida pelo Ministério de Minas e Energia baseada em estudo da EPE, com custos que não serão rateados entre os usuários finais dessa energia, e ressarcimento desses custos também por extensão de prazo das outorgas por prazo limitado. \n- Institui a chamada bonificação pela outorga nas licitações de concessões de geração, transmissão e distribuição; prevê que a parcela da garantia física não destinada ao Ambiente de Contratação Regulada fique à livre disposição do vencedor da licitação; determina que, na parcela destinada ao ACR, os riscos hidrológicos serão assumidos pelas distribuidoras com direito de repasse à tarifa; e atribui ao Ministério de Minas e Energia, ao CNPE e à Aneel a definição dos parâmetros técnicos, dos valores de bonificação, dos preços de referência e da taxa de desconto necessários à aplicação das regras.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "1715687": {
+      "sourceHash": "e72528e6393d6852408461147e05199f0ba206416c43d00b3eb15b423e48fa52",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui um programa para declarar e regularizar voluntariamente bens e dinheiro mantidos no exterior, mediante declaração, pagamento de imposto e multa, com garantia de sigilo e extinção de certas punibilidades.",
+      "resumoDetalhe": "- Cria um Regime Especial de Regularização para que pessoas físicas e jurídicas declarem recursos, bens ou direitos remetidos, mantidos no exterior ou repatriados, desde que de origem lícita, exigindo declaração detalhada e documentos que provem a titularidade.\n- Exige o pagamento de um imposto sobre o montante regularizado e de uma multa de regularização; trata esse pagamento como definitivo para os tributos relativos aos fatos informados e autoriza a Receita Federal a corrigir valores declarados manifestamente incorretos.\n- Extingue a punibilidade de determinados crimes relacionados à sonegação e à evasão de divisas (enviar dinheiro para fora sem autorização) e de crimes conexos, como falsidade e lavagem de dinheiro (esconder origem de recursos), desde que o interessado cumpra os requisitos do regime; impõe sigilo sobre as declarações e penaliza a divulgação indevida.\n- Destina a arrecadação da multa a fundos para desenvolvimento regional e para compensação de alíquotas do ICMS, condicionando o uso desses recursos a regras e acordos a serem definidos; prevê regulamentação pela Receita Federal e adesão por prazo limitado.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:12:46.007Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    }
+  }
+}
