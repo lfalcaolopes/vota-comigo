@@ -63,7 +63,7 @@ export function HomeHeroSample() {
       </ul>
 
       <p className="text-xs leading-normal text-muted">
-        Todo percentual aparece com a amostra de votações considerada.
+        Todo percentual aparece com a amostra de votações considerada
       </p>
     </figure>
   );
