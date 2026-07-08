@@ -1,0 +1,27 @@
+{
+  "ano": 2011,
+  "items": {
+    "508965": {
+      "sourceHash": "b7c03f77dc0bda8cab9f9df5dee5e09658979db7fa3d3b7db7f2ad2875c5adb5",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Extingue os terrenos de marinha e define a quem passarão a pertencer esses imóveis.",
+      "resumoDetalhe": "- Extingue o instituto do terreno de marinha e seus acrescidos e determina que os imóveis atingidos tenham sua propriedade redistribuída.\n- Atribui propriedades segundo uso e ocupação: mantém na União áreas com prédios ou serviços federais e de interesse militar ou público, transfere para Estados e Municípios áreas usadas por eles ou não enquadradas nas demais hipóteses, e preserva a posse de donatários em áreas doadas.\n- Concede propriedade plena a foreiros (quem tem aforamento), cessionários (quem recebeu cessão) e ocupantes que estejam quites com suas obrigações, exige regulamentação do Poder Executivo.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "531331": {
+      "sourceHash": "72c50099755e386086e938cf99771d39b70a039fdea082173a5b50ac15429228",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Proíbe eleições em datas próximas a feriados nacionais e manda transferir a votação para o domingo seguinte.",
+      "resumoDetalhe": "- Proíbe realizar a eleição, em primeiro ou segundo turno (quando há mais de uma etapa de votação), se houver feriado nacional na quinta ou sexta antes, ou na segunda ou terça depois, e determina que a votação ocorra no domingo seguinte.\n- Adia a data do segundo turno pelo mesmo intervalo quando o dia da eleição no primeiro turno for adiado.\n- Aplica essas regras às eleições de governador e vice-governador, e às de prefeito e vice-prefeito.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-26T00:39:02.618Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    }
+  }
+}

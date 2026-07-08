@@ -1,7 +1,7 @@
 export type ProposicaoResumoIaGenerateConfig = {
   year?: number;
   limit?: number;
-  externalIdProposicao?: number;
+  externalIdsProposicao?: readonly number[];
   regenerate: boolean;
   onlyStale: boolean;
 };
@@ -29,18 +29,18 @@ export function resolveProposicaoResumoIaGenerateConfig(
   const limit = parsePositiveInt(getStringArg(args, '--limit'), '--limit');
   if (!limit.ok) return limit;
 
-  const externalIdProposicao = parsePositiveInt(
+  const externalIdsProposicao = parsePositiveIntList(
     getStringArg(args, '--external-id-proposicao'),
     '--external-id-proposicao',
   );
-  if (!externalIdProposicao.ok) return externalIdProposicao;
+  if (!externalIdsProposicao.ok) return externalIdsProposicao;
 
   return {
     ok: true,
     config: {
       year: year.value,
       limit: limit.value,
-      externalIdProposicao: externalIdProposicao.value,
+      externalIdsProposicao: externalIdsProposicao.value,
       regenerate,
       onlyStale,
     },
@@ -76,4 +76,26 @@ function parsePositiveInt(
     return { ok: false, message: `${flag} deve receber um inteiro positivo.` };
   }
   return { ok: true, value: Number(value) };
+}
+
+function parsePositiveIntList(
+  value: string | undefined,
+  flag: string,
+):
+  | { ok: true; value: readonly number[] | undefined }
+  | { ok: false; message: string } {
+  if (value === undefined) return { ok: true, value: undefined };
+
+  const parts = value.split(',').map((part) => part.trim());
+  const parsed: number[] = [];
+  for (const part of parts) {
+    if (!/^\d+$/.test(part) || Number(part) < 1) {
+      return {
+        ok: false,
+        message: `${flag} deve receber um ou mais inteiros positivos separados por vírgula.`,
+      };
+    }
+    parsed.push(Number(part));
+  }
+  return { ok: true, value: parsed };
 }

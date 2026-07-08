@@ -150,6 +150,32 @@ describe('createOpenrouterResumoIaClient', () => {
       expect(body['response_format']).toEqual({ type: 'json_object' });
     });
 
+    it('excludes the Azure provider from routing', async () => {
+      // Arrange
+      const fetch = makeFetch({
+        ok: true,
+        body: openrouterBody({
+          status: 'generated',
+          resumoCard: 'R.',
+          resumoDetalhe: 'D.',
+        }),
+      });
+      const client = createOpenrouterResumoIaClient({
+        apiKey: 'key',
+        model: 'gpt-4o',
+        fetch,
+      });
+
+      // Act
+      await client.generate(source());
+
+      // Assert
+      const init = fetch.mock.calls[0]?.[1];
+      if (init === undefined) throw new Error('fetch não chamado');
+      const body = JSON.parse(init.body as string) as Record<string, unknown>;
+      expect(body['provider']).toEqual({ ignore: ['azure'] });
+    });
+
     it('sends a plain text message when there is no inteiro teor', async () => {
       // Arrange
       const fetch = makeFetch({

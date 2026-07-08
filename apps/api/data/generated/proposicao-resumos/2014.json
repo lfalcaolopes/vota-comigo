@@ -1,0 +1,38 @@
+{
+  "ano": 2014,
+  "items": {
+    "622019": {
+      "sourceHash": "b1f7ff58eb4e0911ad2a73d3897f389c443b8be54a9a43833b6d2c1c2dc94822",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria cargos de juiz do trabalho substituto para o Tribunal Regional do Trabalho de Minas Gerais.",
+      "resumoDetalhe": "- cria cargos de juiz do trabalho substituto no Tribunal Regional do Trabalho de Minas Gerais, com sede em Belo Horizonte\n- destina esses cargos para compor as varas do trabalho criadas no tribunal e para buscar paridade entre juízes titulares e substitutos\n- determina que os recursos para os cargos venham das dotações orçamentárias do tribunal no Orçamento Geral da União e que a implementação observe as regras fiscais da Constituição e da Lei de Responsabilidade Fiscal, que tratam de limites e condições para gastos públicos",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "865929": {
+      "sourceHash": "013ab0fba9daf9dceb29a86e2af5f3958712c6964b37fcd19cd0d03d8562579a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Regula benefícios previdenciários, com novas regras sobre pensão por morte, auxílio-doença, perícias médicas e troca de dados entre regimes.",
+      "resumoDetalhe": "- Define regras sobre pensão por morte, indicando quem tem direito, situações que anulam o direito (como condenação por crime que resultou na morte), condições temporais de casamento ou união com exceções em caso de acidente ou incapacidade, a forma de cálculo como uma parcela da aposentadoria do segurado acrescida de cotas individuais por dependente até um limite que não ultrapassa a aposentadoria integral, e a duração do benefício baseada na expectativa de sobrevida segundo tabela do IBGE.\n- Estabelece regras sobre auxílio-doença e perícia médica, determinando que a empresa pague o salário no período inicial de afastamento, que o INSS assuma o pagamento após esse período, que o auxílio não possa exceder a média simples dos salários-de-contribuição disponíveis, que o INSS possa realizar perícias por convênio com empresas e órgãos públicos, e que não haja direito ao auxílio quando o segurado já se filiou portando a doença, salvo em caso de piora.\n- Prevê normas para pensões de servidores públicos e para compensação entre regimes, fixando quem conta como dependente, como a pensão é repartida quando há vários beneficiários, que a duração da pensão será calculada pela expectativa de sobrevida segundo tabela do IBGE, regras sobre perda da qualidade de beneficiário e limites à acumulação de pensões, e exige que regimes forneçam dados sobre benefícios para fins de compensação financeira entre regimes.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T19:46:33.443Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "865930": {
+      "sourceHash": "58032eb53ff4c4bff1e10b9121748e1dd1085670fb839a30f31f85a974fdec6d",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Estabelece regras sobre seguro-desemprego, abono salarial e pagamento do benefício ao pescador artesanal.",
+      "resumoDetalhe": "- Estabelece requisitos de tempo de trabalho nos períodos anteriores para ter direito ao seguro-desemprego e relaciona a duração do pagamento ao tempo de serviço nos meses que antecederam a dispensa; prevê que o Codefat (conselho responsável pelo fundo de amparo) define a duração em solicitações posteriores e pode ampliar temporariamente o pagamento para grupos específicos segundo critérios e limites de gasto.\n- Define regras para o abono salarial, determinando pagamento no valor do salário-mínimo e cálculo proporcional ao tempo trabalhado no ano-base; estabelece que bancos públicos e instituições financeiras autorizadas efetuam o pagamento por depósito, saque ou folha de pagamento e devem guardar comprovantes.\n- Estende o seguro-desemprego ao pescador profissional artesanal que exerce atividade exclusiva e ininterrupta durante o período de defeso, prevendo habilitação pelo INSS (Instituto Nacional do Seguro Social) mediante apresentação de registro profissional, comprovantes de comercialização e outros documentos, e proibindo acumulação com outros benefícios, além de tornar o benefício pessoal e intransferível.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-26T14:21:35.261Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    }
+  }
+}

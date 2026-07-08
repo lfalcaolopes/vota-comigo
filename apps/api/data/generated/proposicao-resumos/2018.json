@@ -1,0 +1,49 @@
+{
+  "ano": 2018,
+  "items": {
+    "2177451": {
+      "sourceHash": "98ae27337e4977200e2fb67bbd7ea334e1ffad7cf0332a3553a8a857fd65ccc7",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Estabelece que a Conta de Desenvolvimento Energético financie reembolsos de combustível e alinha prazos e pagamentos entre contratos de gás e contratos de energia.",
+      "resumoDetalhe": "- Prever que a Conta de Desenvolvimento Energético (CDE) forneça recursos para reembolsar despesas com combustíveis e para cobrir custos de transporte de gás vinculados a contratos antigos, observando disponibilidade orçamentária.\n- Permitir a prorrogação de contratos de fornecimento nos sistemas isolados enquanto não entrar em operação o novo fornecedor, e autorizar a antecipação da entrega de energia por termelétricas que compartilhem a mesma infraestrutura de gás, alinhando os prazos dos contratos de energia aos prazos dos contratos de gás reembolsáveis pela Conta de Consumo de Combustíveis (CCC).\n- Determinar que, quando um novo concessionário assumir a distribuição, a Agência Nacional de Energia Elétrica (Aneel) reconheça, para fins de reembolso pela CCC, o custo total de geração incluindo despesas com combustíveis e gás natural até a revisão tarifária ordinária inicial, para dar tempo ao novo concessionário recuperar a concessão.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2184973": {
+      "sourceHash": "cf59b0f00fabdd5d863db21476e98454d8251f2254ee0bbe21f8cd45bcf38365",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Prepara o registro de marcas para o Tratado de Madri, igualando regras entre nacionais e estrangeiros e simplificando procedimentos administrativos.",
+      "resumoDetalhe": "- Assegura que pedidos feitos no exterior por acordo internacional sejam tratados com as mesmas regras dos pedidos feitos no Brasil, incluindo quem pode pedir, a comprovação de atividade, a descrição dos produtos e a indicação de classes, e exige publicação em língua portuguesa com tradução simples.\n- Estabelece obrigações e prazos administrativos para manter e renovar registros: exige declaração de uso ou justificativa com indicação de produtos e serviços, prevê exigência do INPI sob pena de arquivamento ou caducidade, condiciona prorrogação à apresentação de provas de uso e obriga titular estrangeiro a apresentar procuração válida no Brasil.\n- Permite a cotitularidade de marcas, prevê tratamento igualitário para depósitos multi-classe e revoga a regra que obrigava a cessão de marca a abranger todos os registros iguais ou semelhantes do cedente.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2188301": {
+      "sourceHash": "5c372bcd511377cc3b9c47447f1a0474434093abd30ba77d3438793267639659",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Transfere para o Distrito Federal a Junta Comercial e as atividades de registro público de empresas no Distrito Federal.",
+      "resumoDetalhe": "- Transfere para o Distrito Federal a Junta Comercial, os atos de registro de empresas no Distrito Federal e os livros e documentos relacionados, determinando que o Distrito Federal assuma os contratos e convênios necessários ao funcionamento.\n- Autoriza a cessão de servidores e empregados que estiverem em exercício na Junta para o Distrito Federal, garantindo a manutenção dos direitos funcionais e da avaliação do órgão de origem, com cessão inicialmente sem custo para o Distrito Federal e depois com ônus.\n- Transfere cargos em comissão e funções de confiança para a Secretaria de Gestão do ministério responsável, com exoneração automática dos ocupantes; e autoriza a doação de bens móveis usados pela Junta para o Distrito Federal.\n- Altera a organização do registro público para reforçar um Departamento Nacional como órgão central, atribuindo-lhe supervisão técnica, coordenação e responsabilidade por sistemas de informação e pela Central Nacional de Registros; estabelece que as juntas são administradas pelo governo local e tecnicamente subordinadas ao Departamento, e disciplina regras sobre nomeação de dirigentes, procuradorias, publicação de atos e tabela de preços dos serviços.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T19:36:40.723Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2190237": {
+      "sourceHash": "f73d5b6863c158f81fb5950991da900c0e1380439dd9ae532dcdf9332b9820b6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exige inscrição no CAR (Cadastro Ambiental Rural) para aderir ao Programa de Regularização Ambiental e estabelece prazo com possibilidade de prorrogação pelo presidente.",
+      "resumoDetalhe": "- Exige a inscrição do imóvel rural no CAR (Cadastro Ambiental Rural), que é o registro das propriedades com informações ambientais, como condição obrigatória para adesão ao PRA (Programa de Regularização Ambiental), que organiza a regularização de áreas no imóvel.\n- Fixa um prazo para que o proprietário solicite adesão ao PRA, permitindo que o presidente da República prorrogue esse prazo por período adicional.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-25T22:22:05.880Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    }
+  }
+}

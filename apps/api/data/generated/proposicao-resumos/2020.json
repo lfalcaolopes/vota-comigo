@@ -1,0 +1,313 @@
+{
+  "ano": 2020,
+  "items": {
+    "593065": {
+      "sourceHash": "f9ec8857a3d11c5f51c58bad71750a8e8b1e6adfa998e11a68863682917d2b0d",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Define nova forma de precificar o gás, cria um operador nacional do transporte, institui mercado secundário e anula tributos federais sobre o gás.",
+      "resumoDetalhe": "- Estabelece uma metodologia pública e única para fixar preços, reajustes e revisões do gás natural, com audiência pública e participação de agentes, consumidores e do governo, e atribui à ANP (agência que regula petróleo, gás e biocombustíveis) a regulação e fiscalização enquanto não houver competição efetiva.\n- Institui um Mercado Secundário de Gás Natural para permitir que gás já contratado e temporariamente não usado seja oferecido a outros consumidores, com previsão de interrupção quando o titular original precisar, e prevê regulamentação do Poder Executivo sobre esse mercado.\n- Anula as alíquotas do PIS/PASEP e da COFINS incidentes sobre a importação e a venda interna do gás natural, líquido ou gasoso, visando reduzir custos na cadeia produtiva.\n- Cria o Operador do Sistema Nacional de Transporte de Gás Natural (ONGÁS), uma entidade privada sem fins lucrativos para coordenar e controlar a movimentação, planejamento e manutenção dos gasodutos e unidades de estocagem; prevê regras para desverticalização do transporte, veda que empresas de transporte exerçam atividade de carregamento vinculada a controladoras e submete gasodutos e terminais ao acesso de terceiros, com regulamentação sobre estrutura e incentivos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:21:48.028Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2236340": {
+      "sourceHash": "85525bdf1c49ff5f5fbf8e0e31dfbec4b2218356cdb8ab55980d5d2b7bed5019",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Regula o uso da inteligência artificial no Brasil, definindo princípios, direitos e deveres para agentes públicos e privados.",
+      "resumoDetalhe": "- Estabelece princípios e objetivos para o uso da inteligência artificial, apontando metas como desenvolvimento tecnológico, respeito aos direitos humanos, não discriminação, transparência, segurança e prestação de contas.\n- Define direitos para pessoas afetadas por sistemas de IA, garantindo saber quem é a instituição responsável e ter acesso a informações claras sobre critérios, procedimentos e o uso de dados sensíveis.\n- Impõe deveres a quem desenvolve e opera sistemas de IA, exigindo divulgação do responsável, avaliação prévia de objetivos e riscos, cumprimento da Lei Geral de Proteção de Dados (LGPD) — que protege dados pessoais — e proteção contínua contra ameaças cibernéticas.\n- Determina diretrizes para o poder público e para o setor privado, como incentivar pesquisa e investimento, promover interoperabilidade e padrões abertos, capacitar trabalhadores e criar mecanismos de governança com participação da sociedade.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T20:08:24.596Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2237876": {
+      "sourceHash": "8c5f7f3401728c3529eef727aa1e9b8cebf1c711ca933b91cad8086b7f1e668f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza estados a usar valores fixos por volume para calcular o ICMS por substituição tributária sobre gasolina, etanol hidratado e diesel",
+      "resumoDetalhe": "- Define que a base de cálculo do ICMS por substituição tributária para óleo diesel, etanol hidratado e gasolina será um valor fixo por unidade de volume, estabelecido por lei estadual\n- Permite que, nas demais operações, a base de cálculo seja o preço ao consumidor final praticado no mercado, apurado conforme regras previstas\n- Estabelece que o valor fixo por volume não pode ser maior do que o preço médio ao consumidor apurado no ano anterior pelo órgão federal competente\n- Garante o direito de restituição ao contribuinte que pagou o imposto por antecipação (quem pagou por substituição tributária) quando o fato presumido não ocorrer ou quando o valor real for menor que o presumido",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-26T02:56:11.740Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2238434": {
+      "sourceHash": "0b559f895fe439cfcf4e9f8c3a99ed4814527201e962dc34081ac5c0453a9f99",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Define um cronograma para aumentar a mistura obrigatória de biodiesel no diesel e prioriza matérias‑primas nacionais.",
+      "resumoDetalhe": "- Estabelece um cronograma de aumento gradual da mistura obrigatória de biodiesel no óleo diesel vendido ao consumidor em todo o país e impõe mistura mínima maior no diesel usado no transporte coletivo das cidades maiores.\n- Autoriza misturas mais altas e condiciona percentuais maiores à realização de testes por fabricantes de veículos e máquinas; permite que o CNPE (Conselho Nacional de Política Energética, órgão que define diretrizes energéticas) reduza temporariamente a mistura por motivo de interesse público.\n- Determina preferência por matérias‑primas nacionais para fabricar o biodiesel, com prioridade à agricultura familiar, e estabelece definições legais para biodiesel, bioquerosene de aviação e diesel verde.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T19:36:40.723Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2241662": {
+      "sourceHash": "da4c0844f1f46fa9374840e9f06ef5ab5b84d37b592623b011d9a872f6fbb431",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza medidas temporárias para flexibilizar o trabalho durante a calamidade por coronavírus (Covid-19), como teletrabalho, férias antecipadas, banco de horas e diferimento do FGTS.",
+      "resumoDetalhe": "- Autoriza acordos individuais e permite ao empregador mudar o regime presencial para teletrabalho ou trabalho remoto e determinar o retorno, com comunicação por escrito ou eletrônica e regras sobre fornecimento de equipamentos e reembolso.\n- Permite antecipar e conceder férias individuais ou coletivas, aproveitar feriados para liberar trabalhadores ou compensar horas e flexibiliza prazos de aviso, pagamento e a conversão de parte das férias em pagamento.\n- Autoriza regime especial de banco de horas e interrupção temporária de atividades para compensação de jornada, e prevê a suspensão do contrato para participação em curso de qualificação com possibilidade de ajuda compensatória paga pelo empregador.\n- Suspende temporariamente algumas exigências de exames e treinamentos de saúde e segurança, prevê regras para retomada desses procedimentos, autoriza o diferimento do recolhimento do FGTS (conta do trabalhador) com parcelamento e antecipa o pagamento do abono anual em parcelas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-26T00:18:40.840Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2242583": {
+      "sourceHash": "b1cdb638c4d5d5088249f6489debb19acd2469eb03a095915d11e159a9600bda",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um regime extraordinário para lidar com calamidade pública por pandemia, com um Comitê de Gestão da Crise e poderes especiais para contratação, uso de recursos e atuação do Banco Central.",
+      "resumoDetalhe": "- Cria um Comitê de Gestão da Crise que orienta e aprova as ações do regime emergencial, fiscaliza contratos e atos, e reúne autoridades federais e representantes de estados, municípios e do Congresso, com membros indicados e funções específicas.\n- Autoriza um regime extraordinário de contratações e a abertura de créditos para enfrentar a calamidade, usando processo simplificado, garantindo competição e igualdade de condições, e permitindo o uso de recursos vinculados, superávit e recursos de operações de crédito, exceto recursos destinados ao pagamento da dívida.\n- Autoriza o Banco Central a comprar e vender títulos e direitos privados em mercados secundários para enfrentar a calamidade, e a receber depósitos voluntários de instituições financeiras por prazo limitado, com as operações informadas ao Congresso e condicionadas à autorização do Tesouro e a aporte de capital do Tesouro.\n- Determina fiscalização e transparência: o Tribunal de Contas fiscaliza atos do Comitê em procedimento simplificado; todas as atas, decisões e documentos do Comitê e dos subcomitês devem ser amplamente divulgados; e o Congresso pode sustar decisões do Comitê ou do Banco Central em caso de ofensa ao interesse público ou extrapolação de limites.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:12:46.007Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2242888": {
+      "sourceHash": "2eff7c71660981d8f45fbb5f7673951b273f5a746db6942821b988524364ba79",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Medida provisória que estabelece regras temporárias para proteger trabalhadores portuários durante a pandemia e autoriza uso gratuito de pátios militares por companhias aéreas.",
+      "resumoDetalhe": "- Impede o órgão gestor de mão de obra de escalar trabalhadores portuários avulsos que apresentem sintomas compatíveis com covid-19, tenham diagnóstico ou convivam com pessoa infectada, sejam gestantes ou lactantes, tenham idade avançada ou condições médicas graves, e exige envio de lista atualizada com comprovações.\n- Garante pagamento de indenização compensatória mensal aos avulsos impedidos de trabalhar, determina que operadores ou tomadores de serviço custeiem o pagamento, e estabelece regras para cálculo, arrecadação, repasse e para ajustar contratos e tarifas portuárias em função desse custo.\n- Permite que operadores contratem trabalhadores com vínculo por tempo determinado quando não houver avulsos disponíveis e torna obrigatória a escalação eletrônica remota dos avulsos, vedando a escalação presencial.\n- Autoriza, durante o estado de calamidade, a cessão gratuita e precária de células de pátio sob administração militar para companhias aéreas nacionais, sujeitando as empresas cedentes às condições de uso definidas pelo Comando da Aeronáutica e à responsabilidade por conservação, custos operacionais e eventuais danos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-26T02:11:46.859Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2243079": {
+      "sourceHash": "a1ddfa4155da188f282aa0f9bd961cb241fd5a25c3bbeb105aa3a24a93db59bb",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria a Loteria da Saúde, uma nova loteria cujas arrecadações vão para o Sistema Único de Saúde e, enquanto durar o estado de calamidade por Covid-19 (doença causada pelo novo coronavírus), podem ser destinadas exclusivamente ao enfrentamento da pandemia.",
+      "resumoDetalhe": "- Institui a Loteria da Saúde como modalidade de loteria de prognósticos numéricos, destinando sua arrecadação ao Sistema Único de Saúde e, durante o estado de calamidade pública, exclusivamente às ações de prevenção, contenção, combate e mitigação da pandemia por Covid-19 (doença causada pelo novo coronavírus).\n- Autoriza e regula o concurso por ato do Ministro da Economia, determinando regras sobre a realização dos sorteios, a fixação de prêmios, o recolhimento do imposto sobre premiações, o valor das apostas e os percentuais e limites das despesas de operação.\n- Determina que a execução do concurso será feita pela Caixa Econômica Federal e que a receita será gerida pelo Ministério da Saúde por meio do Fundo Nacional de Saúde.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2249891": {
+      "sourceHash": "1bf8619aed346616d9b5a8c45ce58a0df80c8053d92c54fee394ca883731a978",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um programa e um plano para monitorar e condicionar empréstimos e garantias da União ao cumprimento de metas fiscais por Estados, Distrito Federal e Municípios.",
+      "resumoDetalhe": "- institui o Programa de Acompanhamento e Transparência Fiscal e exige que Estados, Distrito Federal e Municípios que aderirem permitam acesso à Controladoria-Geral da União (CGU) e ao Tribunal de Contas da União (TCU) às suas informações contábeis e fiscais e contraiam novas dívidas apenas conforme o Programa\n- cria o Plano de Promoção do Equilíbrio Fiscal como instrumento temporário para firmar metas e compromissos entre a União e o ente subnacional, condicionando a liberação de recursos e a concessão de garantia federal ao cumprimento dessas metas\n- altera o Regime de Recuperação Fiscal, determinando que os planos incluam medidas como venda de participações ou ativos, adoção de regras previdenciárias, redução de incentivos fiscais, revisão de regimes de servidores, centralização financeira, leilões para pagamento de dívidas e a limitação do crescimento das despesas primárias pela variação do IPCA (índice de inflação oficial), além de criar um Conselho de Supervisão com poderes de fiscalização e aplicação de sanções\n- autoriza a União e a Secretaria do Tesouro Nacional a repactuar e refinanciar dívidas, incorporar saldos devedores resultantes de decisões judiciais, dispensar exigências documentais e estabelecer metodologias, e obriga entes com excesso de gasto com pessoal a reduzir esse excesso gradualmente até se enquadrar, sob risco de restrições",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2249925": {
+      "sourceHash": "0699ade0808abcd3f85b9209bd90e8a467a3df579628fb1416d7dafab7732324",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza e regulamenta a telemedicina em todo o país, definindo o que é e como pode ser praticada.",
+      "resumoDetalhe": "- Autoriza e define a telemedicina em todo o país, entendida como a transmissão segura de dados e informações médicas por texto, som, imagens ou outros meios para prevenção, diagnóstico, tratamento, prescrição e acompanhamento de pacientes.\n- Define tipos de atendimento por telemedicina, incluindo consultas remotas entre médico e paciente, troca de opiniões entre médicos, emissão de laudos a distância, procedimentos cirúrgicos remotos mediadas por robótica, triagem e monitoramento a distância, e orientações para declarações de saúde e contratação de planos de assistência.\n- Estabelece responsabilidades e regras de qualidade: garante que o médico pode optar por usar ou recusar a telemedicina; atribui às sociedades médicas a responsabilidade pelos padrões de cada especialidade; determina que os Conselhos Regionais de Medicina fiscalizem qualidade, relação médico-paciente, sigilo e proteção de dados; exige obediência ao Marco Civil da Internet (regras para uso da internet) e à Lei Geral de Proteção de Dados (regras de proteção de dados pessoais); prevê regulamentação de procedimentos mínimos pelo Conselho Federal de Medicina e recomenda capacitação para profissionais; prevê que a lei entre em vigor após prazo previsto no texto.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2249946": {
+      "sourceHash": "0c89c7e245dbb75bbac27f8b74dd125549ece27592d9361159725386cf3df748",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um regime extraordinário para o governo federal agir nas finanças, contratos e compras enquanto durar um estado de calamidade por pandemia.",
+      "resumoDetalhe": "- Institui um regime extraordinário durante estado de calamidade nacional por pandemia, permitindo à União adotar medidas urgentes quando o regime normal for incompatível.\n- Autoriza contratações simplificadas de pessoal temporário e de obras, serviços e compras, buscando competição quando possível, e exige critérios objetivos publicados para distribuir equipamentos e insumos de saúde a estados e municípios.\n- Dispensa certas limitações legais para atos e proposições com propósito exclusivo de enfrentar a calamidade, desde que não criem despesa permanente; exige identificação orçamentária e prestação de contas separada das despesas relacionadas e a publicação de relatórios periódicos sobre operações de crédito.\n- Autoriza o Banco Central a comprar e vender títulos do Tesouro e determinados ativos do mercado secundário para enfrentar a crise, com preferência por títulos de empresas menores, exigência de transparência nas operações e regras que limitem pagamento de dividendos e aumentos de remuneração; condiciona benefícios federais a empresas ao compromisso de manutenção de empregos e permite ao Congresso suspender atos do Executivo em caso de irregularidade; a emenda entra em vigor na publicação e é revogada automaticamente ao fim do estado de calamidade.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-26T02:11:46.859Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2251392": {
+      "sourceHash": "6d7bf742fc5b177d0179c82a3f38a29b03a5d1475e1c6be57f813b6e74b5499b",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um programa para enfrentar a Covid-19 com suspensão e reestruturação de dívidas e repasses da União a estados, Distrito Federal e municípios para ações de saúde e para mitigar impactos financeiros.",
+      "resumoDetalhe": "- Institui um Programa Federativo de enfrentamento à Covid-19 que reúne medidas como suspensão de pagamentos de dívidas, reestruturação de operações de crédito e entrega de auxílio financeiro da União aos entes subnacionais.\n- Autoriza a suspensão imediata de pagamentos e aditamentos contratuais, determina que os valores não pagos sejam incorporados ao saldo devedor ao fim do período, prioriza o uso desses recursos em ações contra a pandemia, impede a execução de garantias pela União enquanto durar a suspensão e exige publicidade e transparência na aplicação.\n- Estabelece repasses federais para ações de saúde e para mitigação de efeitos financeiros, define critérios de divisão entre os entes com parte vinculada à incidência da doença e parte vinculada à população, condiciona transferências em caso de ações judiciais contra a União relacionadas à pandemia e incentiva preferência por micro e pequenas empresas nas compras.\n- Veda durante a calamidade concessão de aumentos de remuneração, criação de cargos e contratações que impliquem aumento de despesa, e criação ou majoração de benefícios, com exceções previstas para medidas de combate à pandemia, para profissionais diretamente envolvidos no enfrentamento e para decisões judiciais anteriores; prevê ainda regras para securitização de dívidas reestruturadas no mercado doméstico.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-26T02:56:11.740Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2252589": {
+      "sourceHash": "bdb9452e2f87cda198358f965d8e5c657b9ae732338875645b462ad957621cbe",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Amplia a regularização fundiária em terras da União e do Incra, permitindo doação, venda ou concessão de uso para formalizar ocupações.",
+      "resumoDetalhe": "- Amplia o alcance da regularização fundiária em terras da União e do Incra, autorizando a alienação (doação ou venda) e a concessão de direito real de uso (ceder o uso do imóvel para fins específicos) para formalizar ocupações.\n- Estabelece requisitos e documentos para que ocupantes e cooperativas de agricultura familiar peçam a regularização, com declaração sujeita a punição, comprovação de prática agrícola e inscrição cadastral, e veda regularização quando houver emprego de trabalhadores em condição análoga à de escravo ou exercício de cargo em órgãos públicos responsáveis por terras e patrimônio.\n- Autoriza o Incra e o Ministério competente a conduzir os processos de regularização, prevê demarcação com apoio dos municípios, permite o uso de sensoriamento remoto (imagens de satélite) para verificar ocupação e possibilita a dispensa de vistoria prévia dentro dos limites fixados pela lei, além de criar um sistema eletrônico para transparência dos atos.\n- Prevê que os títulos expedidos conterão condições de pagamento e poderão ser usados como garantia, disciplina renegociação e mecanismos de leilão em caso de inadimplência, determina o cancelamento de autorizações provisórias quando houver título definitivo, estabelece penalidade para declaração falsa e autoriza permuta de áreas da União para pagamento de ações judiciais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-26T02:56:11.740Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2253778": {
+      "sourceHash": "57b6756a1797e19d827227b4230ad4c6f82956407d6537c22e9170da89bf7792",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza o uso dos saldos de vários fundos públicos como fonte para enfrentar a calamidade nacional decorrente da pandemia da COVID-19 (doença causada pelo novo coronavírus).",
+      "resumoDetalhe": "- Autoriza, enquanto durar a calamidade pública nacional reconhecida pelo Congresso, a utilização dos saldos de superávit de diversos fundos públicos da Conta Única do Tesouro para financiar o enfrentamento da pandemia e seus efeitos sociais, econômicos e financeiros.\n- Destina obrigatoriamente esses recursos às despesas do auxílio emergencial previsto em lei, aos gastos com saúde e assistência social constantes do orçamento, ao apoio financeiro e compensações aos entes subnacionais por perda de receita, à manutenção do emprego e da renda e às despesas do Orçamento Fiscal e da Seguridade Social cuja fonte de financiamento apresentar frustração de arrecadação.\n- Estabelece regras de execução e transparência: dispensa o cumprimento de certas exigências fiscais, exige que os recursos sejam executados em classificação orçamentária específica para fácil identificação, permite aplicação direta pela União ou por transferências aos entes subnacionais e sugere a criação de um marcador orçamentário com prestação de contas especificada.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2255149": {
+      "sourceHash": "0d48091d646c666c75de7d6afb69b644f89a18cb501eca4097e4925e36eebfea",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exige que parte do dinheiro do PNAE seja usado para comprar leite fluido de laticínios locais.",
+      "resumoDetalhe": "- Exige que parte dos recursos do PNAE destinados à compra de leite seja aplicada na aquisição de leite fluido junto a laticínios locais registrados.\n- Permite a compra direta do leite fluido sem licitação quando o preço for compatível e a qualidade estiver garantida, e autoriza a compra de leite em pó de produtor nacional direto quando não for possível obter o leite fluido localmente, vedando a compra de embaladores que não produzem o leite.\n- Dispensa a obrigação quando faltar documento fiscal, houver inviabilidade de fornecimento regular, existirem problemas higiênico-sanitários ou não houver laticínios próximos.\n- Determina que os cardápios sejam elaborados por nutricionista com uso de gêneros básicos, priorizando alimentação saudável e menos ultraprocessados (alimentos muito industrializados), incentivando compras locais e da agricultura familiar, e exige que Estados, DF e Municípios instituam Conselhos de Alimentação Escolar para receber os recursos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T16:46:42.082Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2255199": {
+      "sourceHash": "f2a0f15ef498beea45636c170dd8fe429f29fe3db7935c99cd1eda63e16ac238",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza empresas de TVA a adaptar suas outorgas para prestar serviço de radiodifusão de sons e imagens, sujeitas à análise do Executivo e do Congresso.",
+      "resumoDetalhe": "- Autoriza prestadoras do Serviço Especial de TV por Assinatura (TVA) a requerer a adaptação da sua outorga para passar a prestar o serviço de radiodifusão de sons e imagens na mesma localidade.\n- Determina que o Poder Executivo analise os pedidos e, se a prestadora cumprir todas as exigências constitucionais, legais e regulamentares aplicáveis ao serviço de radiodifusão (incluindo regras sobre participação de capital estrangeiro), emita o ato de outorga e o encaminhe para apreciação do Congresso Nacional.\n- Estabelece que as prestadoras que optarem pela adaptação perderão o direito de executar o Serviço de Acesso Condicionado (o serviço de TV por assinatura regulado como telecomunicações).\n- Permite o exercício desse pedido por empresas cujas autorizações de uso de radiofrequência estavam em vigor na data da aprovação da lei, e também por aquelas cujas autorizações haviam expirado até a entrada em vigor da lei, exigindo que o requerimento seja apresentado dentro do prazo contado desde a promulgação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:12:46.007Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2256130": {
+      "sourceHash": "3da7bbbba6c5c9db68ec5d1f0e54a2d632e1157274f42e6926058c12b488c347",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Adia as eleições municipais de outubro de 2020 para novembro de 2020 por causa da pandemia e reprograma prazos eleitorais.",
+      "resumoDetalhe": "- Adia as eleições municipais marcadas para outubro para realização em novembro, por motivo da pandemia.\n- Estabelece um novo calendário eleitoral e reprograma prazos para vedação de participação em programas de rádio e TV, realização de convenções, registro de candidatos, início da propaganda, elaboração de plano de mídia, divulgação de relatórios de financiamento e envio das prestações de contas.\n- Autoriza partidos a realizarem convenções e reuniões por meios virtuais para escolher candidatos, formalizar coligações e definir critérios de distribuição de recursos; trata dos prazos de desincompatibilização e da diplomação dos eleitos; permite publicidade institucional municipal voltada ao enfrentamento da pandemia, com possibilidade de apuração de abuso.\n- Permite que o Tribunal Superior Eleitoral e, se necessário por causa da situação sanitária estadual, o Congresso Nacional designem novas datas locais para as votações, mediante manifestação de autoridade sanitária; autoriza o TSE a ajustar normas sobre fiscalização, auditoria, funcionamento das seções e medidas para garantir a segurança sanitária no dia da eleição.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:12:46.007Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2258964": {
+      "sourceHash": "bf18c0250bf16e429230d34de9d40241263e2f0076519d3511eb0bc4d9612e98",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza o INCRA a prorrogar contratos temporários remanescentes de processo seletivo até a data prevista na medida.",
+      "resumoDetalhe": "- Autoriza o INCRA a prorrogar contratos por tempo determinado que restaram de processo seletivo simplificado, para garantir a continuidade das atividades relacionadas à regularização fundiária.\n- Dispõe que a prorrogação pode ser feita independentemente de limites previstos em lei e alcança contratos firmados a partir da data indicada no texto que estejam vigentes quando a medida passar a valer.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:12:46.007Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2260433": {
+      "sourceHash": "773ceac6630ba559a89f80411abdd73a33aa37a53835d2a8ca1fff2e383fb6eb",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria o Programa BR do Mar para estimular a cabotagem (navegação entre portos do país), permitindo que empresas brasileiras usem embarcações de suas subsidiárias estrangeiras e definindo incentivos e regras para o setor.",
+      "resumoDetalhe": "- institui o Programa BR do Mar com objetivos para ampliar a oferta, melhorar a qualidade e aumentar a concorrência no transporte por cabotagem, e cria regras de habilitação e monitoramento pelo Ministério da Infraestrutura.\n- autoriza o afretamento de embarcações de subsidiárias estrangeiras por empresas brasileiras para operar na cabotagem, condicionando a operação a inspeções brasileiras, tripulação com maioria de brasileiros em cada nível técnico, comandante e chefias brasileiros, seguro marítimo obrigatório e regime especial de admissão temporária com suspensão de tributos federais.\n- permite o uso de recursos do AFRMM (taxa que financia a Marinha Mercante) para construção, manutenção, docagem e garantia de embarcações em estaleiros brasileiros; autoriza o uso temporário de áreas portuárias para operações especiais; e ajusta regras e a estrutura de agências reguladoras e órgãos responsáveis pela infraestrutura portuária.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-25T22:43:30.565Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2260971": {
+      "sourceHash": "b426e362cde032813d367223c4fe1085f2eef81d1fefe1928ae32ca7767744ad",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria o Programa Casa Verde e Amarela para promover moradia e ações habitacionais para famílias urbanas e rurais.",
+      "resumoDetalhe": "- Institui um programa federal de moradia para ampliar e melhorar moradias, regularizar terras e urbanizar áreas precárias, além de fomentar emprego e desenvolvimento local.\n- Organiza o financiamento do programa com recursos públicos e privados, fundos federais, FGTS (fundo com depósitos do trabalhador), empréstimos e doações, permitindo subvenções, financiamentos e contrapartidas para projetos habitacionais e obras de infraestrutura relacionadas.\n- Define responsabilidades dos atores: o Ministério do Desenvolvimento Regional como gestor e monitor, governos locais, bancos, entidades e empresas da construção com tarefas específicas, e obrigações básicas para as famílias beneficiárias, como fornecer documentos e cumprir pagamentos quando houver financiamento.\n- Estabelece regras para concessão de subvenção e acesso aos benefícios, incluindo restrições a quem já possui imóvel regular ou financiamento, exceções para casos de melhoria, reassentamento ou perda da casa por emergência, prioridade de formalização dos contratos e títulos em nome da mulher e medidas de proteção da posse, inclusive com apoio policial quando necessário.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-25T23:54:16.719Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2261121": {
+      "sourceHash": "97a4dcbcb9c3724ae92b7c87fa98462bcd1b937cbc797183d7868e3b97331fe9",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Regulamenta o FUNDEB, definindo de onde vêm os recursos, como serão distribuídos entre redes e como será a gestão e fiscalização.",
+      "resumoDetalhe": "- Cria o FUNDEB no âmbito de cada Estado e do Distrito Federal para financiar a educação básica pública e valorizar os profissionais da educação, incluindo sua remuneração.\n- Define as fontes de receita do Fundo e prevê complementação da União (recursos extras do governo federal), distribuída segundo três parâmetros chamados VAAF (valor anual por aluno, para equalização por Estado), VAAT (valor anual total por aluno, que considera a capacidade financeira das redes) e VAAR (complementação por resultados, ligada a indicadores de atendimento e aprendizagem).\n- Organiza a distribuição dos recursos com base nas matrículas presenciais e em ponderações por etapa, modalidade, duração de jornada e condições socioeconômicas, destinando parcela expressiva ao pagamento dos profissionais da educação e prevendo aplicação de recursos para investimentos e para a educação infantil.\n- Estabelece regras de transferência e gestão (contas específicas em bancos, aplicação de saldos), cria conselhos para controle social com representantes da sociedade, exige transparência e prestação de contas e prevê sanções e mecanismos de fiscalização em caso de descumprimento.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T19:32:44.100Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2261939": {
+      "sourceHash": "4c20634d72310716154572544f866b6287ff415992c7b08d0fe802047f0b1e1e",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Destina parte de recursos do setor elétrico à Conta de Desenvolvimento Energético (CDE), muda regras do setor e transfere para a União ações da CNEN relativas à INB e à Nuclep.",
+      "resumoDetalhe": "- Destina recursos não aplicados em projetos de pesquisa, desenvolvimento e eficiência energética à Conta de Desenvolvimento Energético (CDE) para ajudar a reduzir encargos dos consumidores durante o período de amortização de operações de crédito, dando à ANEEL a tarefa de regular e fiscalizar essa destinação e mantendo parte dos recursos para projetos em andamento.\n- Estabelece limites e condições para descontos nas tarifas de uso da rede, aplicando esses descontos apenas a novos empreendimentos que cumpram condições temporais e prevê diretrizes para reconhecer benefícios ambientais de fontes de baixa emissão, em articulação entre os órgãos responsáveis e levando em conta a segurança do suprimento e a competitividade.\n- Transfere para a União as ações pertencentes à CNEN que representam o capital da INB e da Nuclep e determina que essas empresas sejam transformadas em empresas públicas vinculadas ao Ministério de Minas e Energia, com resgate das ações privadas com base no patrimônio contábil; prevê representação da União nas assembleias pela Procuradoria‑Geral da Fazenda Nacional.\n- Autoriza a outorga e a contratação para a usina termonuclear Angra, definindo regras para formação do preço da energia, cláusulas de reajuste e revisão e prevendo que eventuais ganhos obtidos em contratações possam ser apropriados em benefício do consumidor.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-08T00:31:37.208Z",
+      "reviewedAt": "2026-07-08T00:35:04.621Z"
+    },
+    "2266116": {
+      "sourceHash": "ec19c0c81fde736357b1d728b59259bb3de96e2cbfedb3f6cbd749cbd9830e4f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exige que presos líderes de organizações criminosas, autores de homicídio qualificado ou com atuação interestadual cumpram regime disciplinar diferenciado em presídios federais de segurança máxima.",
+      "resumoDetalhe": "- Torna obrigatório o cumprimento do regime disciplinar diferenciado em estabelecimento prisional federal de segurança máxima para preso que exerça liderança em organização criminosa ou milícia, que tenha praticado homicídio qualificado ou que tenha atuação criminosa em vários Estados (regime disciplinar diferenciado = isolamento com regras mais rígidas).\n- Inclui em estabelecimentos penais federais de segurança máxima quem mereça a medida por interesse da segurança pública ou pela própria segurança do preso, e estabelece a inclusão obrigatória de quem esteja investigado, indiciado, acusado ou condenado por homicídio qualificado.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T23:22:20.432Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2267621": {
+      "sourceHash": "40470f627d3a7cbe2f1e579480795b7e813a9c1eb974d4f0591c965e0ee93b23",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Afasta certas restrições dessa lei para cargos de direção, funções específicas e para um quadro permanente previsto em outra lei.",
+      "resumoDetalhe": "- Afasta a aplicação de restrições previstas em um artigo daquela lei para cargos de direção e para funções especiais criadas por leis específicas. \n- Estende o mesmo afastamento ao quadro permanente previsto em outra lei.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T23:22:20.432Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2267686": {
+      "sourceHash": "133b38fcfed39d1bdcfd43b2aef9a2219836feefdbadaf4a26e20a18e5dd2ef9",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza Finam e Finor a quitar ou renegociar dívidas em debêntures e cria regras para desinvestimento, liquidação e extinção dos fundos.",
+      "resumoDetalhe": "- Estabelece regras para a quitação das dívidas em debêntures pelos fundos Finam e Finor, permitindo a concessão de rebates (descontos) e o pagamento à vista em dinheiro que extingue integralmente a dívida, com apuração do saldo atualizada pelo IPCA (índice de inflação oficial) e possibilidade de exclusão de encargos condicionada à quitação.\n- Autoriza a renegociação das dívidas em debêntures com rebates e condições específicas, como exigência de pagamento prévio de parte do saldo, concessão de carência antes do início das parcelas, amortização parcelada, cobrança de encargos calculados pela TLP (Taxa de Longo Prazo) com aplicação do CDR (Coeficiente de Desequilíbrio Regional, ajuste por região), exigência de garantias reais ou fidejussórias e consequências claras em caso de inadimplência, inclusive perda do desconto e execução pelo banco operador.\n- Determina limites e procedimentos para o desinvestimento, liquidação e extinção dos fundos: veda operações quando houver cancelamento de incentivos por desvio, fraude, improbidade ou crime; estabelece que os rebates serão custeados pelos próprios fundos sem aporte do Tesouro Nacional; fixa prazos para requerer as operações e para adoção da governança; e atribui ao Ministério do Desenvolvimento Regional a regulamentação, fiscalização, definição de cronograma e a coordenação do encerramento das carteiras.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2267745": {
+      "sourceHash": "ddb10112c98ffa0ac1d876f84df26ac56d93bfd88f486dba0a33bb5edae849ee",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reconhece as aulas presenciais da educação básica e do ensino superior como serviços essenciais e veda sua suspensão, salvo exceções fundamentadas em critérios técnicos e científicos.",
+      "resumoDetalhe": "- Reconhece a Educação Básica e o Ensino Superior presenciais, nas redes pública e privada, como serviços e atividades essenciais, inclusive em situações de pandemia, emergência e calamidade pública.\n- Veda a suspensão das atividades educacionais em formato presencial, exceto em situações excepcionais cujas restrições sejam justificadas por critérios técnicos e científicos comprovados.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T19:32:44.100Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2267811": {
+      "sourceHash": "8decb5cb607e6cd9a1a16cf6789f43324036a9cb224b94bf58694efa874dfcfc",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Altera valores de taxas e contribuições sobre serviços por satélite e iguala o tributo das VSAT ao dos terminais móveis.",
+      "resumoDetalhe": "- Altera valores cobrados pela Taxa de Fiscalização de Instalação, pela Contribuição para o Fomento da Radiodifusão Pública e pela Contribuição para o Desenvolvimento da Indústria Cinematográfica quando o serviço for prestado por satélite, estabelecendo valores distintos conforme o tipo de estação.\n- Reduz e iguala os valores aplicáveis às estações terrenas de pequeno porte (VSAT — antenas pequenas usadas para internet via satélite) aos mesmos valores cobrados de terminais móveis, fazendo com que essas VSAT paguem os mesmos encargos dos terminais móveis.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T17:19:37.817Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2268417": {
+      "sourceHash": "16ab520706e5d7a4553d2680d3e4afa3dbed7bdec7e298149f27a95785bc92df",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Estende a vigência de medidas da lei que tratam de reembolso e de créditos de passagens aéreas por cancelamentos e desistências ligados à pandemia.",
+      "resumoDetalhe": "- Estende a vigência de medidas emergenciais para a aviação civil relacionadas a reembolso e concessão de créditos, e revoga um dispositivo específico do texto anterior.\n- Estabelece que o reembolso das passagens de voos cancelados no período coberto será feito pela companhia aérea, com atualização monetária pelo INPC (índice usado para corrigir valores) e com prestação de assistência material quando aplicável.\n- Autoriza que o consumidor que desistir do voo no período coberto escolha entre receber reembolso, sujeito a eventuais penalidades contratuais, ou receber crédito pelo valor da passagem sem aplicação de penalidades, para uso futuro conforme regulamento.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T18:07:53.948Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    }
+  }
+}

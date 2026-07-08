@@ -1,0 +1,82 @@
+{
+  "ano": 2025,
+  "items": {
+    "2483495": {
+      "sourceHash": "ef2af221c1a022a6f04880e2b342c19f8d171d836c45f8787395ec55f56b8f44",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Define repasse federal de quinze bilhões de reais para apoiar a cultura nos estados, Distrito Federal e municípios, e condiciona a liberação de novas parcelas à apresentação de planos e à execução dos recursos recebidos.",
+      "resumoDetalhe": "- Estabelece que a União entregará um montante fixo aos estados, ao Distrito Federal e aos municípios e determina critérios de partilha que consideram a participação nos fundos e a proporção da população.\n- Condiciona a liberação das verbas à apresentação de plano de ação e à comprovação de que o ente aplicou uma parcela mínima dos recursos já recebidos; prevê que, em etapa futura, apenas entes com fundo de cultura poderão receber os repasses.\n- Exige a elaboração de Plano de Aplicação dos Recursos (PAAR) — documento anual ou plurianual que explica como o dinheiro será usado — com consulta à sociedade por meio dos Conselhos de Cultura, e atribui à autoridade federal a definição de diretrizes, regulamentos e a redistribuição de recursos não aplicados.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T16:52:37.780Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2497816": {
+      "sourceHash": "e2e13d75a9e8ea18163001b51fae7694d215a06c66aa21d121c16a4569a3965b",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Transforma cargos vagos no Tribunal Regional do Trabalho com sede em São Paulo para criar vagas de desembargador e cargos comissionados, usando recursos próprios e sem aumento de despesas.",
+      "resumoDetalhe": "- Transforma cargos vagos de juiz do trabalho substituto em cargos de desembargador do trabalho no Tribunal Regional do Trabalho com sede em São Paulo.\n- Aumenta a composição de desembargadores desse Tribunal para reforçar a atuação no segundo grau de jurisdição.\n- Cria cargos em comissão e funções comissionadas e determina que a criação use sobras orçamentárias do próprio Tribunal, com as despesas correndo por conta do orçamento do Tribunal e sem aumento de despesa.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T18:14:05.932Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2500260": {
+      "sourceHash": "ef38d38f833a9317f19b6b00f09567eb537eb35b3cb682cc5545453b500c62bd",
+      "generationStatus": "error",
+      "reviewStatus": "pending",
+      "resumoCard": null,
+      "resumoDetalhe": null,
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T16:52:37.780Z",
+      "reviewedAt": null
+    },
+    "2515300": {
+      "sourceHash": "b51b742f792964071caee6259a2c96690459c204b6d4bb5d731302a27f5f584a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reorganiza o setor elétrico: abre opção de fornecimento para consumidores de baixa tensão, cria regras para suprimento de emergência, redefine autoprodução e ajusta tarifas e encargos.",
+      "resumoDetalhe": "- Altera as regras de comercialização e distribuição, permitindo que consumidores atendidos em baixa tensão escolham livremente seu fornecedor, exigindo separação tarifária/contábil ou contratual entre comercialização e distribuição e criando o Supridor de Última Instância (SUI) para garantir atendimento quando faltar representante comercial.\n- Define que os custos do SUI e os efeitos financeiros decorrentes do atendimento emergencial serão rateados por encargo tarifário, e estabelece mecanismos para alocar despesas decorrentes de sobrecontratação e exposição involuntária entre consumidores e ambientes de contratação.\n- Ajusta benefícios e encargos: institui mudanças na Tarifa Social e isenções voltadas a famílias de baixa renda inscritas no cadastro social, amplia a base de consumidores que suportam determinados encargos setoriais e redistribui os encargos da Conta de Desenvolvimento Energético com base no consumo.\n- Define quem é considerado autoprodutor e limita as formas de equiparação, exigindo comprovação societária e registro, restringe novos arranjos de autoprodução em certas condições e cria regras para negociação de débitos do mercado de curto prazo ligados ao risco hidrológico por meio de mecanismo concorrencial centralizado, além de ampliar atribuições e responsabilidades da CCEE.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T20:09:47.061Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2530336": {
+      "sourceHash": "69591b2a835935c31e8dbc854594f42eb9914838dc2261110ae89d04841277ee",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria 330 funções comissionadas de nível FC-6 no quadro do Superior Tribunal de Justiça.",
+      "resumoDetalhe": "- cria centenas de funções comissionadas no quadro de pessoal do Superior Tribunal de Justiça\n- destina essas funções principalmente aos gabinetes dos ministros e eleva algumas funções atuais para outras unidades do Tribunal, especialmente às áreas que cuidam da tramitação e julgamento de processos\n- determina que as despesas serão pagas com as dotações orçamentárias do Tribunal, condiciona a implantação à autorização orçamentária",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2541109": {
+      "sourceHash": "d4ac8cc2f3b0ab7362fcec8888a6a8dca83bc814a6d0092017b59fdaea413a20",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exclui do cálculo dos limites e das metas fiscais despesas temporárias do Fundo Social para educação e saúde e despesas financiadas por empréstimos internacionais.",
+      "resumoDetalhe": "- Exclui do cômputo dos limites de despesas primárias as despesas temporárias de educação pública e saúde previstas na lei que destina parte dos recursos do Fundo Social e também as despesas pagas com recursos de empréstimos internacionais e suas contrapartidas.\n- Dispõe que as despesas com educação e saúde mencionadas não serão consideradas no cálculo do resultado fiscal nem para os pisos constitucionais de saúde e educação.\n- Determina que a Lei de Diretrizes Orçamentárias fixe a forma de dividir os recursos entre saúde e educação e aponte as ações prioritárias para aplicar esses recursos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T19:32:44.100Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2579832": {
+      "sourceHash": "e8fbebfaa8fc8a25935b9447a639d2a4d1501688e270f25a5ba12147db36bec7",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um regime mais duro para investigar, punir e apreender bens de organizações criminosas que controlam territórios e infiltram o poder público.",
+      "resumoDetalhe": "- Define e pune a organização criminosa qualificada, chamada facção criminosa, com penas mais severas, aumenta a pena para quem comanda e fixa agravantes para casos com violência, armas, participação de menores, infiltração em órgãos públicos ou morte de agentes de segurança\n- Autoriza procedimentos investigativos acelerados e prioritários, prevê infiltração policial e colaboração encoberta em facções, e amplia a cooperação entre órgãos nacionais e internacionais para obter provas\n- Estabelece medidas patrimoniais especiais: apreensão, bloqueio, intervenção judicial em empresas usadas por facções, gestão e alienação de bens e conversão de ativos estrangeiros, além de regras para devolução quando houver absolvição; prevê também a criação de um Banco Nacional de Facções Criminosas\n- Regula o uso de identidades e pessoas jurídicas fictícias para operações de infiltração, amplia o acesso de autoridades a dados cadastrais e de conexão mantidos por empresas, e autoriza o monitoramento audiovisual de comunicações e visitas em presídios vinculados a facções, com salvaguardas para a comunicação entre advogado e cliente",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T17:45:21.754Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    }
+  }
+}

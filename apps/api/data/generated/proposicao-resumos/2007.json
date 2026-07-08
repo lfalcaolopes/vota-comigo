@@ -1,0 +1,60 @@
+{
+  "ano": 2007,
+  "items": {
+    "340812": {
+      "sourceHash": "a07cd2ad009bf3ee3b5856bdaacafa9d51aee0ac60fc1f61c96d29f8e67c7bca",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria uma comissão permanente na Câmara para tratar dos direitos de mulheres, idosos, crianças, adolescentes, jovens e minorias.",
+      "resumoDetalhe": "- Cria uma Comissão Permanente na Câmara dos Deputados para cuidar dos direitos da mulher, do idoso, da criança e do adolescente, da juventude e das minorias.\n- Define que a comissão trata de assuntos relativos à proteção e aos direitos desses grupos e de outras matérias relacionadas.\n- Determina que a comissão receba, avalie e investigue denúncias sobre ameaça ou violação desses direitos.\n- Prevê que a comissão exerça as atribuições previstas no Regimento Interno da Câmara.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T19:31:12.147Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "344866": {
+      "sourceHash": "595f687a027d4fc8e1e760e403dc244b89554e8236450a6d326cdd803ba3cb6a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza o parcelamento dos débitos do Simples Nacional em até 120 parcelas para fatos geradores ocorridos até 31 de dezembro de 2006.",
+      "resumoDetalhe": "- Autoriza parcelamento em várias parcelas dos débitos relativos aos tributos e contribuições do Simples Nacional para microempresas, empresas de pequeno porte e seus titulares ou sócios, referentes aos fatos geradores indicados na proposta.\n- Alcança também débitos já inscritos em dívida ativa e prevê que o pedido do parcelamento seja apresentado à Fazenda competente.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "345311": {
+      "sourceHash": "ade1e625d0652e4b6ec2185ca80e02fd43d16600e093fe4fefd91dcf40e48ae6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exige que a demarcação das terras indígenas seja feita por lei e registrada em cartório de imóveis.",
+      "resumoDetalhe": "- Exige que a demarcação das terras indígenas seja formalizada por lei, levando a decisão ao Congresso Nacional para debate e votação.\n- Determina que a demarcação promovida por lei seja registrada no registro de imóveis competente (cartório).",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "347421": {
+      "sourceHash": "3142a7a91e235370a76500f85f407a7d682683487db15bca1733258ffa2171ea",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Unifica a lei do ICMS e cria um sistema que integra os principais tributos sobre o consumo, com um novo imposto federal e regras nacionais de cobrança e partilha.",
+      "resumoDetalhe": "- unifica a legislação do ICMS (imposto estadual sobre circulação de mercadorias e serviços) e define regras nacionais sobre alíquotas, cobrança entre estados, concessão de benefícios e punição por retenção de receita\n- integra ICMS, IPI (imposto sobre produtos industrializados), ISS (imposto sobre serviços) e um novo imposto federal no Sistema de Integração Tributária (SIT), permitindo que créditos fiscais de um tributo abatem débitos de outro e criando mecanismos de compensação entre governos\n- institui um imposto federal em substituição ao PIS/PASEP e à COFINS (contribuições sobre faturamento) e transforma a contribuição sobre movimentações financeiras em contribuição permanente com foco em fiscalização, prevendo que parte da arrecadação financie finalidades específicas\n- estabelece partilha de receitas e fundos para Estados e Municípios, regras de transição para incentivos fiscais estaduais e cria órgãos e normas para fortalecer a administração tributária, controlar a carga tributária e incorporar critérios de sustentabilidade ambiental",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "373327": {
+      "sourceHash": "02fae3f65ac98c8245b138adbf833e4e2ee8cde2533a5e3b24d843dfdb29f100",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Garante aos partidos a titularidade dos mandatos e prevê a perda do mandato para quem se desfiliar do partido pelo qual foi eleito, salvo extinção, incorporação ou fusão do partido.",
+      "resumoDetalhe": "- Garante aos partidos políticos a titularidade dos mandatos parlamentares.\n- Determina que o parlamentar ou ocupante de cargo executivo que se desfiliar do partido pelo qual foi eleito perde o mandato, salvo nos casos de extinção, incorporação ou fusão do partido.\n- Define como será declarada a perda do mandato: para cargos executivos, por instância eleitoral ou juiz eleitoral conforme o caso; para cargos legislativos, pela Mesa da Casa, mediante comunicação do órgão dirigente do partido e documento que comprove a desfiliação.\n- Estabelece que cada senador será eleito com suplentes do mesmo partido.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-25T22:22:05.880Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    }
+  }
+}

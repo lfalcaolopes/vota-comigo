@@ -1,0 +1,225 @@
+{
+  "ano": 2023,
+  "items": {
+    "2115253": {
+      "sourceHash": "1fab57f75b6a28a1271854dd98e6098f8f77b163914a826a7e0e458a7eda0412",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Determina que órgãos e entidades federais devem preferir contratar diretamente a Empresa Brasileira de Correios e Telégrafos (ECT) para serviços postais não exclusivos.",
+      "resumoDetalhe": "- Determina que órgãos e entidades do governo federal devem preferir contratar diretamente a Empresa Brasileira de Correios e Telégrafos (ECT), a empresa pública responsável pelo serviço postal, para serviços postais não exclusivos, ou seja, serviços que podem ser prestados por mais de uma empresa.\n- Determina que o Ministério do Planejamento, Orçamento e Gestão e o Ministério da Ciência, Tecnologia, Inovação e Comunicações publiquem norma específica que discipline as regras e condições para essas contratações.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T17:39:03.573Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2345493": {
+      "sourceHash": "d0fe2f5d3e8ef20eb5b8658a05ff100368060261f31f56d0f00ec6339f15e358",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Organiza a estrutura da Presidência e dos Ministérios, definindo órgãos, competências e regras para criação, transformação e transferência de ministérios, cargos e pessoal.",
+      "resumoDetalhe": "- Estabelece a organização básica da Presidência da República e dos Ministérios, indicando quais órgãos existem na Presidência e quais funções gerais cada órgão deve exercer, como coordenação política, comunicação, segurança e apoio ao Presidente.\n- Cria e transforma ministérios e cargos, atribui nomes a novas pastas (por exemplo, ministérios para igualdade racial e para povos indígenas) e determina a composição mínima da estrutura de cada ministério, com gabinetes, secretarias e consultoria jurídica.\n- Define competências e atribuições das áreas ministeriais e de órgãos de controle e gestão, organiza a alocação de cargos em comissão e funções de confiança sem aumento de despesa, e prevê a transferência de pessoal, de acervo patrimonial e de competências entre órgãos, além de disposições transitórias para a implementação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2349493": {
+      "sourceHash": "afa2e08236f45c5cea543869cf7ee1d34b92749dc9247788da7e41922bb5440d",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Impede que ocupantes ou invasores de propriedades privadas recebam benefícios federais ou assumam cargos públicos.",
+      "resumoDetalhe": "- Estabelece impedimento para ocupantes e invasores de propriedades rurais e urbanas particulares.\n- Impede que quem invade propriedade privada receba auxílios, benefícios e outros programas do Governo Federal e que tome posse em cargo ou função pública.\n- Aplica esses impedimentos também a quem for condenado por sentença penal definitiva pelo crime de esbulho possessório, ou seja, invadir e manter-se em propriedade de outra pessoa à força.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T18:15:29.632Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2351506": {
+      "sourceHash": "3a0d86e9b2905b22f58fb1592d5e4958260ed0028aacb53d38d335ce233b403a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Diz que a imunidade tributária (não pagar certos impostos) para algumas entidades também vale sobre a compra de bens e serviços usados para formar patrimônio, gerar renda e prestar serviços.",
+      "resumoDetalhe": "- Acrescenta um parágrafo na Constituição que explica que a vedação à cobrança de impostos sobre certas entidades inclui a aquisição de bens e serviços necessários para formar o patrimônio, gerar renda e prestar serviços.\n- Textualiza em lei a ideia defendida pelo autor de que insumos e cadeias de insumos ligados às finalidades essenciais das entidades estão cobertos pela imunidade tributária, para evitar disputas administrativas e judiciais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2352476": {
+      "sourceHash": "7120151e97c99671303a3ea888a4e7991d0b3d3d137455566ba4ecd9730dcfd3",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Isenta partidos de sanções por não cumprir cotas de sexo e raça em eleições anteriores e permite uso de recursos de empresas para quitar dívidas antigas.",
+      "resumoDetalhe": "- Isenta partidos de sanções, como devolução de valores, multa ou suspensão do recebimento do Fundo Partidário (verba pública para os partidos) e do Fundo Especial de Financiamento de Campanha (fundo eleitoral), quando não preencheram a cota mínima por sexo e raça em eleições anteriores à promulgação.\n- Isenta partidos de sanções nas prestações de contas — tanto as contas anuais quanto as contas eleitorais — que tenham sido apresentadas antes da promulgação desta alteração.\n- Permite que partidos recebam recursos de pessoas jurídicas para quitar dívidas com fornecedores contraídas antes da proibição de doações de empresas, com o objetivo de pagar débitos antigos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2357053": {
+      "sourceHash": "f8a8723aade753b98f139d40b55b561357b3ad92edb063831ce63628f1bbeb1c",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui um regime fiscal sustentável que fixa limites e regras para o crescimento das despesas e para o financiamento de investimentos.",
+      "resumoDetalhe": "- Institui um regime fiscal sustentável e exige que o projeto de lei de diretrizes orçamentárias traga metas para o resultado primário (medida que mostra se o governo fechou as contas sem contar os juros), intervalos de tolerância e um marco fiscal de médio prazo com projeções e o efeito das metas sobre a trajetória da dívida.\n- Estabelece limites individualizados de gasto para cada Poder e órgãos, determinando que esses limites sejam corrigidos pela inflação medida pelo IPCA (índice oficial de preços) e por um mecanismo de variação real da despesa ligado ao crescimento das receitas, em que o aumento permitido das despesas depende da arrecadação efetiva e de critérios fixados no ano inicial do governo.\n- Permite que qualquer excesso no resultado primário seja destinado a ampliar dotações para investimentos sem ser computado na meta de resultado primário nem em parte do limite de despesas, e garante que a programação de investimentos não fique abaixo do nível já previsto em lei para o exercício de referência.\n- Determina monitoramento periódico das estimativas de receita e despesa ao longo do ano, autoriza que, em situação de risco de descumprimento das metas, órgãos façam limitação de empenho e movimentação financeira com exceções para obrigações constitucionais e legais, obriga o Presidente a informar o Congresso sobre o descumprimento e altera dispositivos da Lei de Responsabilidade Fiscal, além de prever regras transitórias para o período inicial.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-06-26T02:30:38.288Z",
+      "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2358548": {
+      "sourceHash": "edf09feddc60a17b5d6fb7550ebbb62dbdad7a581ac5249925661ae446117de6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Concede anistia a quem participou ou apoiou manifestações de motivação política ocorridas entre o fim do pleito de outubro e a publicação desta lei.",
+      "resumoDetalhe": "- Concede anistia a quem participou ou apoiou manifestações de motivação política ou eleitoral por qualquer meio — doações, apoio logístico, prestação de serviços ou publicações em mídias e plataformas — no período entre o fim do pleito de outubro e a publicação desta lei.\n- Alcança crimes com motivação política ou eleitoral e crimes conexos, alcança medidas que restringem direitos relacionadas à liberdade de expressão e de manifestação nos meios de comunicação e plataformas, e alcança multas aplicadas pela Justiça Eleitoral ou pela Justiça Comum por atos descritos nesta lei.\n- Exclui da anistia crimes de extrema gravidade, como tortura; tráfico ilícito de drogas; terrorismo (ato violento com finalidade política ou discriminatória); crimes classificados como hediondos (crimes muito graves); crimes contra a vida; certas outras condutas graves; além de doações em dinheiro acima de uma quantia definida e infrações disciplinares cometidas por servidores ou por agentes de segurança pública.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T18:15:29.632Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2367600": {
+      "sourceHash": "138bfce24ff628353e1efd9caf02e1affe445c80fd9377b98a25b50269d77b0c",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Abre crédito extraordinário de duzentos milhões de reais ao Ministério da Agricultura para fortalecer o SUASA e financiar ações contra a Influenza Aviária de Alta Patogenicidade.",
+      "resumoDetalhe": "- Abre crédito extraordinário em favor do Ministério da Agricultura e Pecuária.\n- Destina os recursos para fortalecer o Sistema Unificado de Atenção à Sanidade Agropecuária (SUASA) e para ações de prevenção e combate à Influenza Aviária de Alta Patogenicidade (IAAP), que é uma forma grave de gripe em aves.\n- Autoriza o uso do dinheiro para despesas como deslocamento e contratação de equipes, compra de equipamentos de proteção e materiais de laboratório, aquisição de máquinas e pagamento de indenizações, e investimento em infraestrutura de biossegurança; indica que os recursos provêm de superávit financeiro apurado no balanço do exercício anterior.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T16:46:42.082Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2374400": {
+      "sourceHash": "0951dfe374a1110a7969bcffb2c4d0d62dc340de79a8a2ff33b06187fdfb1511",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria taxa para autorizar promoções e define novas regras de fiscalização, punição e tratamento de sorteios e apostas.",
+      "resumoDetalhe": "- Cria a Taxa de Autorização: uma taxa que quem organiza a promoção paga ao governo, com valores fixados em anexo, cobrada sobre o valor do plano da promoção.\n- Dispensa a autorização prévia para promoções de pequeno valor, mas mantém a obrigação de comunicar o Ministério da Fazenda antes de realizar e de recolher os impostos devidos.\n- Impõe limites e sanções: limita a participação por CPF em cada promoção e prevê penalidades como multa, proibição temporária de realizar operações e advertência, com agravamento em caso de reincidência; autoriza medidas cautelares para loterias e apostas, como desativar equipamentos, suspender pagamento de prêmios e recolher bilhetes.\n- Institui o termo de compromisso como forma de suspender processos administrativos quando o investigado se comprometer a cessar a prática, corrigir irregularidades e indenizar prejuízos; prevê publicação pública do acordo, execução em caso de descumprimento, arquivamento imediato de processos antigos sobre promoções de pequeno valor e a criação de estrutura no Ministério da Fazenda para regulamentar e fiscalizar prêmios e loterias.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T19:36:40.723Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2376169": {
+      "sourceHash": "d29b4c35995bbe10526a5a8156bc89e92ecd08d70709b03cf50f9782f59b3dad",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aumenta as penas previstas para os crimes de furto e de roubo, prevendo prisão e multa.",
+      "resumoDetalhe": "- Aumenta as penas aplicadas aos crimes de furto e de roubo.\n- Estabelece que as penas são de reclusão e multa, prevendo prazo de prisão maior para o roubo do que para o furto.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:12:46.007Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2381043": {
+      "sourceHash": "0be87a8ce17127e819dfbacab71464b1b100787315b2f23906ed85a8f1c27e44",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui agosto como mês de combate às desigualdades, quando o Congresso avalia e fiscaliza políticas públicas sociais do governo federal.",
+      "resumoDetalhe": "- Institui Agosto como mês de combate às desigualdades.\n- Determina que, durante esse mês, o Congresso Nacional analisa e fiscaliza a implementação, a consolidação e a expansão de políticas públicas sociais do governo federal em âmbito nacional.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2383019": {
+      "sourceHash": "0ff9b980917c654ec94f7da42906d4231b93352919dc957210aca64e7c1853ba",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Estabelece recenseamento obrigatório e regras de verificação para calcular o número de deputados federais, garantindo que nenhum Estado perca representação e prevendo penalidades para quem não se incluir.",
+      "resumoDetalhe": "- Define que o número de deputados federais será proporcional à população e garante que nenhum Estado perca a representação obtida na eleição anterior, mantendo o total mínimo previsto.\n- Estabelece que a população será apurada por recenseamento obrigatório no ano seguinte ao início da legislatura, com adesão eletrônica e coleta domiciliar, e que os dados serão confrontados com cadastros públicos e bases administrativas para checar a veracidade.\n- Estabelece auditoria e controle: o Tribunal Superior Eleitoral (TSE) fará os cálculos, que poderão ser impugnados, e o Tribunal de Contas da União (TCU) auditará e julgará as impugnações; será emitida certidão digital de participação e a lei prevê previsão orçamentária para a contagem, com manutenção dos mesmos números de representantes caso a contagem não seja realizada ou seus dados sejam considerados inseguros.\n- Impõe penalidades para quem não for incluído no recenseamento até regularizar a situação, como suspensão do CPF e do título de eleitor, suspensão de pagamento de benefícios do INSS e impedimentos para ocupar cargos públicos, receber auxílios ou crédito em bancos públicos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:12:46.007Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2383287": {
+      "sourceHash": "e77944b39286a4ef6571f0858fc20129a1a6186ab2e53e36fcb9ab9ea3af474a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Tributa no IRPF rendimentos de aplicações financeiras, lucros de entidades controladas e patrimônios em trusts no exterior.",
+      "resumoDetalhe": "- Tributa os rendimentos de aplicações financeiras no exterior e exige que sejam declarados separadamente na declaração anual, criando faixas de tributação progressiva; mantém isenção para variação cambial de depósitos não remunerados e estabelece regra com limite para moeda em espécie.\n- Tributa os lucros apurados por entidades controladas no exterior quando houver controle ou risco de tributação favorecida ou pouca renda ativa, define como apurar e converter esses lucros para declarar, autoriza dedução de imposto pago no exterior em certas condições e permite optar por tratar a entidade como se os bens fossem do contribuinte.\n- Trata os trusts no exterior como patrimônio do instituidor enquanto não houver distribuição ou até o falecimento, qualifica a transmissão ao beneficiário como doação ou herança conforme o caso, determina que os rendimentos sejam tributados pelo titular e exige que trustees forneçam informações e recursos para cumprimento das obrigações fiscais.\n- Permite ao contribuinte optar por atualizar os bens e direitos no exterior para valor de mercado na data-base e tributar a diferença mediante pagamento de imposto definitivo; autoriza compensação de perdas realizadas em aplicações no exterior com ganhos da mesma natureza e permite uso de perdas em períodos posteriores, segundo regras específicas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2384692": {
+      "sourceHash": "89c9d6d0b327edb16166feed894167e468fbe60719a6b1135436eae76fc137a3",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um crédito fiscal para empresas no regime de lucro real que recebam subvenção de entes federativos para implantar ou expandir empreendimento econômico.",
+      "resumoDetalhe": "- Cria um crédito fiscal para empresas tributadas pelo lucro real que receberem subvenção de União, Estados, Distrito Federal ou Municípios para implantar ou expandir um empreendimento econômico.\n- Exige habilitação prévia pela Receita Federal, com comprovação de que a subvenção foi concedida antes da implantação ou expansão e com registro expresso das condições e contrapartidas no ato concessivo.\n- Define as regras de apuração do crédito: o cálculo considera as receitas de subvenção multiplicadas pela alíquota do IRPJ (a taxa usada para calcular o imposto da empresa) e deve ser informado na Escrituração Contábil Fiscal do ano em que a receita for reconhecida; limita o que pode gerar crédito, aceitando apenas receitas ligadas à implantação ou expansão e reconhecidas depois da conclusão e do protocolo de habilitação, e veda a inclusão de receitas não relacionadas a despesas de depreciação/amortização/exaustão, parcelas que excedam essas despesas ou o total da subvenção, receitas que não tenham sido tributadas pelo IRPJ e pela CSLL, receitas decorrentes de outros incentivos ou do próprio crédito fiscal, além de receitas reconhecidas após a data limite prevista na medida.\n- Autoriza o uso do crédito para compensar débitos federais administrados pela Receita ou para ressarcimento em dinheiro, mediante demonstração do direito na ECF e observância dos prazos previstos; estabelece que o crédito não integra a base de cálculo do IRPJ, da CSLL, do PIS/Pasep e da Cofins; e prevê que a Receita Federal poderá disciplinar a aplicação do benefício e realizar avaliações periódicas, além de revogar dispositivos legais relacionados.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:23:14.848Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2386051": {
+      "sourceHash": "ebb1cf0807f9e51d5b39ddfa725c15e6bb8bf66b58c5f4171945270833a0f0be",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Proíbe a desapropriação de terras produtivas para fins de reforma agrária, segundo o parágrafo proposto.",
+      "resumoDetalhe": "- Acrescenta à lei um parágrafo que determina que, conforme a Constituição, não será possível desapropriar, para fins de reforma agrária, propriedade produtiva que não cumprir sua função social de terras produtivas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T23:22:20.432Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2387066": {
+      "sourceHash": "48731c51e49830caf531a697461561e94d29a3d7383b6d62714c2e8177675d19",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Estabelece novas regras eleitorais sobre distribuição de vagas, prestação de contas, federações, cotas, fundos, prazos de convenções e propaganda.",
+      "resumoDetalhe": "- Estabelece um novo processo em etapas para dividir as vagas nas eleições proporcionais, com critérios sucessivos que combinam votação pessoal dos candidatos e médias de votos dos partidos, e prevê que suplentes não precisam da votação mínima nominal.\n- Simplifica a prestação de contas e o registro de doações: dispensa declarações complexas para órgãos sem movimentação, afasta exigência de intervenção de advogado ou contador em atos específicos, exige envio automático pelas instituições financeiras das informações de doações feitas por PIX (sistema de pagamentos instantâneos) e elimina a necessidade de recibo assinado para doações por PIX, além de disciplinar análise simplificada das contas pela Justiça Eleitoral.\n- Regula federações, cotas e fundos: permite que partidos se organizem em federação com tratamento conjunto, limita sanções de um diretório para não atingir toda a federação, define regras para distribuir recursos e tempo de propaganda para candidaturas de mulheres e de pessoas negras, e estende proteção e possibilidades de uso dos recursos públicos de campanha, inclusive para contratação de segurança e serviços de cuidado.\n- Antecipa prazos e organiza a fase prévia da campanha: antecipa o período de convenções e o registro de candidaturas para dar mais tempo à Justiça Eleitoral, cria uma fase administrativa em que candidatos organizam comitês e procedimentos sem fazer propaganda, admite candidaturas coletivas com um representante formal e flexibiliza regras de propaganda, inclusive na internet e em material conjunto entre candidatos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T19:31:12.147Z",
+      "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2387579": {
+      "sourceHash": "ace6640e94a8422c7303d2203ca608218241673959278eeea36fc4e1c58c6acd",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um ministério federal para tratar de empreendedorismo, micro e pequenas empresas e microempreendedores.",
+      "resumoDetalhe": "- Cria o Ministério do Empreendedorismo, da Microempresa e da Empresa de Pequeno Porte e lhe dá competência para políticas e programas de apoio ao empreendedorismo, às micro e pequenas empresas, ao artesanato e ao microempreendedor, incluindo formalização, qualificação, inovação, acesso a mercados e promoção de exportações.\n- Transfere para o novo ministério competências relacionadas à microempresa, à empresa de pequeno porte, ao microempreendedor e ao registro público de empresas mercantis que estavam atribuídas a outro ministério.\n- Cria o cargo de Ministro e um cargo comissionado executivo de nível superior por transformação de cargos já existentes, e aplica as regras previstas na lei sobre a criação de órgãos à constituição do novo ministério.\n- Renomeia e transfere uma secretaria administrativa para outro ministério, determinando que essa secretaria prestará serviços administrativos compartilhados para vários ministérios, inclusive o novo ministério.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2399598": {
+      "sourceHash": "9724b4eed99e8e304e435d07a092dbfe513a5a83a6ea8cb000ba72172f2811b1",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Altera a Lei de Diretrizes e Bases para reorganizar o ensino médio, reforçando a formação geral, criando percursos de aprofundamento e priorizando ensino em tempo integral.",
+      "resumoDetalhe": "- Altera a organização do ensino médio para que o currículo tenha uma formação geral básica e percursos de aprofundamento e integração de estudos organizados a partir de múltiplas áreas do conhecimento\n- Recompõe a formação geral básica com oferta presencial, listando componentes curriculares obrigatórios como línguas (incluindo a retomada do espanhol), artes, educação física, matemática, humanidades e ciências, e incluindo estudos sobre cultura digital e pensamento computacional\n- Prioriza a expansão do ensino médio em tempo integral articulado à formação técnica e profissional, definindo regras para cursos técnicos e para a oferta de qualificação profissional em cooperação com instituições e secretarias de educação\n- Estabelece regras de implementação: exige planos de ação das secretarias, prevê apoio e formação pelo Ministério da Educação, regula o reconhecimento de aprendizagens extraescolares, veda o uso de educação a distância na formação geral básica e revoga dispositivos legais indicados no texto",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T22:22:36.991Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2413257": {
+      "sourceHash": "af554da772c510237ffd61fbeb10fcb1ffac0e9993ed4cee2724cadacf8b1015",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Torna crime a aproximação voluntária do agressor às áreas protegidas por ordem judicial, mesmo com o consentimento da vítima.",
+      "resumoDetalhe": "- Estabelece que a aproximação voluntária do agressor às áreas delimitadas por decisão judicial configura crime de descumprimento de medida protetiva, mesmo que a vítima consinta expressamente; medida protetiva = ordem judicial que afasta o agressor para proteger a vítima.\n- Inclui no texto da Lei Maria da Penha a previsão expressa dessa hipótese, deixando claro que o consentimento da vítima não impede a configuração do crime.\n- Busca reforçar a proteção das vítimas ao reconhecer que consentimentos podem ser fruto de pressão ou coação e, por isso, não devem anular a eficácia das medidas protetivas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2454495": {
+      "sourceHash": "baad05f73cf0e8a3373587a906376125fa60515c8ae1ff7ed8fd6f60b4a25dbf",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Limita pagamentos de precatórios dos municípios e cria parcelamentos e regras para dívidas previdenciárias, alinhando regras locais às da União.",
+      "resumoDetalhe": "- Limita os pagamentos de precatórios pelos Municípios, fixando tetos conforme o estoque de precatórios em atraso e prevendo medidas se os recursos não forem liberados, como suspensão de limites, sequestro de contas, responsabilização do chefe do Executivo e impedimento de transferências voluntárias.\n- Autoriza parcelamento excepcional das dívidas previdenciárias dos Municípios com seus regimes próprios de previdência social e com o Regime Geral de Previdência Social (RGPS, o sistema do INSS), permitindo longas prestações desde que o Município comprove adesão a um Programa de Regularidade Previdenciária, altere a legislação local e cumpra condições, com possibilidade de suspensão em caso de inadimplência.\n- Exige que Estados, Distrito Federal e Municípios prevejam em suas leis as mesmas regras do regime próprio de previdência social da União (as regras do plano de aposentadoria dos servidores federais), salvo se já tiverem regras mais rigorosas, e determina que, caso não promovam essas alterações no prazo previsto, passarão a vigorar automaticamente as regras da União.\n- Desvincula parte das receitas municipais por período determinado, estabelecendo limites e vedações para o uso desses recursos (incluindo proibição de destinar parte ao pagamento de pessoal, salvo magistério e capitalização de fundos de previdência), prevendo destinação de parte para pagamento de dívidas previdenciárias e precatórios; e autoriza destinar parte do superávit de fundos federais para financiar projetos de enfrentamento e adaptação às mudanças climáticas, com devolução gradual e regulamentação pelo Ministério da Fazenda.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T21:37:36.257Z",
+      "reviewedAt": "2026-07-07T23:39:36.860Z"
+    }
+  }
+}

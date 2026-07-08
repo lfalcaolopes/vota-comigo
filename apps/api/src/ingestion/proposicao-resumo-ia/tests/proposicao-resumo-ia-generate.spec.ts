@@ -418,6 +418,34 @@ describe('executeProposicaoResumoIaGenerate', () => {
       expect(aiClient.generate).toHaveBeenCalledTimes(1);
       expect(aiClient.generate).toHaveBeenCalledWith(src42);
     });
+
+    it('generates for every id in a comma-separated list', async () => {
+      // Arrange
+      const src42 = source({ externalIdProposicao: 42 });
+      const src99 = source({ externalIdProposicao: 99 });
+      const src7 = source({ externalIdProposicao: 7 });
+      const aiClient = { generate: jest.fn().mockResolvedValue(okOutcome()) };
+      const fs = makeFileSystem();
+
+      // Act
+      await executeProposicaoResumoIaGenerate(
+        ['--external-id-proposicao=42,7'],
+        {
+          repository: fakeRepository([src42, src99, src7]),
+          aiClient,
+          readdir: fs.readdir.bind(fs),
+          readFile: fs.readFile.bind(fs),
+          writeFile: fs.writeFile.bind(fs),
+          mkdir: fs.mkdir.bind(fs),
+        },
+      );
+
+      // Assert
+      expect(aiClient.generate).toHaveBeenCalledTimes(2);
+      expect(aiClient.generate).toHaveBeenCalledWith(src42);
+      expect(aiClient.generate).toHaveBeenCalledWith(src7);
+      expect(aiClient.generate).not.toHaveBeenCalledWith(src99);
+    });
   });
 
   describe('when AI client returns insufficient_source', () => {

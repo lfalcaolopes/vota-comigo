@@ -132,7 +132,7 @@ Variáveis obrigatórias:
 | `OPENROUTER_API_KEY` | Token usado no header `Authorization` da chamada ao OpenRouter.                                                                                           |
 | `OPENROUTER_MODEL`   | Modelo enviado no corpo da chamada. Também é gravado no JSON. Deve suportar entrada de arquivo (parser `native`) para que o inteiro teor seja processado. |
 
-O cliente chama `https://openrouter.ai/api/v1/chat/completions` com `response_format: { "type": "json_object" }`. Quando a proposição tem `url_inteiro_teor`, a mensagem inclui uma parte `file` com a URL do PDF e o corpo carrega `plugins: [{ "id": "file-parser", "pdf": { "engine": "native" } }]`; o custo de leitura do PDF é cobrado como tokens de entrada. Sem `url_inteiro_teor`, a mensagem é apenas texto. A resposta esperada do modelo é um JSON com `status`, `resumoCard` e `resumoDetalhe`.
+O cliente chama `https://openrouter.ai/api/v1/chat/completions` com `response_format: { "type": "json_object" }` e `provider: { "ignore": ["azure"] }` — a Azure serve o `gpt-5-mini` de forma instável para essas chamadas, então o roteamento do OpenRouter nunca a seleciona. Quando a proposição tem `url_inteiro_teor`, a mensagem inclui uma parte `file` com a URL do PDF e o corpo carrega `plugins: [{ "id": "file-parser", "pdf": { "engine": "native" } }]`; o custo de leitura do PDF é cobrado como tokens de entrada. Sem `url_inteiro_teor`, a mensagem é apenas texto. A resposta esperada do modelo é um JSON com `status`, `resumoCard` e `resumoDetalhe`.
 
 ### Flags
 
@@ -140,7 +140,7 @@ O cliente chama `https://openrouter.ai/api/v1/chat/completions` com `response_fo
 | ---------------------------- | ----------------------------------------------------------------------- |
 | `--year=YYYY`                | Restringe a geração a proposições daquele ano.                          |
 | `--limit=n`                  | Processa apenas os primeiros `n` alvos após ordenação e filtros.        |
-| `--external-id-proposicao=n` | Processa apenas uma proposição específica.                              |
+| `--external-id-proposicao=n[,n...]` | Processa apenas as proposições informadas; aceita um ou mais `externalId` separados por vírgula. |
 | `--regenerate`               | Regera todos os alvos filtrados com ano, inclusive itens já existentes. |
 | `--only-stale`               | Regera apenas itens cujo `reviewStatus` atual é `stale`.                |
 

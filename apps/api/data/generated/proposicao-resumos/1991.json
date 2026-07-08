@@ -1,0 +1,16 @@
+{
+  "ano": 1991,
+  "items": {
+    "15460": {
+      "sourceHash": "8a7f77700964a40f47b3ce5a7a575a606978a9e59e7ad9c00793492d13c3acf8",
+      "generationStatus": "insufficient_source",
+      "reviewStatus": "pending",
+      "resumoCard": null,
+      "resumoDetalhe": null,
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-07-07T18:15:29.632Z",
+      "reviewedAt": null
+    }
+  }
+}

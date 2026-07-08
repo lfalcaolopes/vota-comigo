@@ -106,8 +106,8 @@ export async function executeProposicaoResumoIaGenerate(
     let filteredSources = allSources.filter((src) => {
       if (config.year !== undefined && src.ano !== config.year) return false;
       if (
-        config.externalIdProposicao !== undefined &&
-        src.externalIdProposicao !== config.externalIdProposicao
+        config.externalIdsProposicao !== undefined &&
+        !config.externalIdsProposicao.includes(src.externalIdProposicao)
       )
         return false;
       return true;
