@@ -1,12 +1,18 @@
 "use client";
 
 import type { ProposicaoCard, TemaDisponivel } from "@vota-comigo/shared-types";
+import { useEffect, useRef } from "react";
 
 import { useFeedState } from "@/shared/proposicao";
 
 import { useMatcherState } from "../hooks/use-matcher-state";
+import {
+  buildCompletionEvent,
+  trackMatcherCompleted,
+  trackMatcherStarted,
+} from "../lib/matcher-analytics";
 import { buildExecucaoRequest } from "../lib/matcher-payload";
-import type { MatcherStep } from "../lib/matcher-state";
+import { resultadoDisplay, type MatcherStep } from "../lib/matcher-state";
 import { StepComparativo } from "./comparativo/step-comparativo";
 import { DeputadoDetalhe } from "./detalhe/deputado-detalhe";
 import { StepIndicator } from "./flow/step-indicator";
@@ -61,6 +67,26 @@ export function Matcher({
         }).posicoes;
 
   const feed = useFeedState(initialProposicoes, initialTotal);
+
+  const hasTrackedStartRef = useRef(false);
+  useEffect(() => {
+    if (hasTrackedStartRef.current) return;
+    if (state.step === "local") return;
+    hasTrackedStartRef.current = true;
+    trackMatcherStarted();
+  }, [state.step]);
+
+  const hasTrackedCompletionRef = useRef(false);
+  useEffect(() => {
+    if (state.step !== "resultado") {
+      hasTrackedCompletionRef.current = false;
+      return;
+    }
+    if (hasTrackedCompletionRef.current) return;
+    if (resultadoDisplay(state) !== "results") return;
+    hasTrackedCompletionRef.current = true;
+    trackMatcherCompleted(buildCompletionEvent(state));
+  }, [state]);
 
   return (
     <section className="grid gap-6 lg:gap-8">

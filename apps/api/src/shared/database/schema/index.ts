@@ -12,3 +12,4 @@ export * from './proposicao-computavel';
 export * from './votacao-proposicao';
 export * from './tema';
 export * from './proposicao-tema';
+export * from './matcher-completion';

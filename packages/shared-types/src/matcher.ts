@@ -55,6 +55,11 @@ export const posicaoMatcherSchema = z.object({
 
 export const escopoMatcherEnum = z.enum(["estadual", "nacional"]);
 
+export const matcherCompletionEventSchema = z.object({
+  totalSelecionadas: z.number().int().min(0),
+  totalRespondidas: z.number().int().min(0),
+});
+
 export const matcherExecucaoRequestSchema = z.object({
   siglaUf: siglaUfEnum,
   escopo: escopoMatcherEnum.default("estadual"),
@@ -156,6 +161,9 @@ export type MatcherExecucaoRequest = z.infer<
 >;
 export type MatcherExecucaoResumo = z.infer<typeof matcherExecucaoResumoSchema>;
 export type EscopoMatcher = z.infer<typeof escopoMatcherEnum>;
+export type MatcherCompletionEvent = z.infer<
+  typeof matcherCompletionEventSchema
+>;
 export type AlertaMatcher = z.infer<typeof alertaMatcherEnum>;
 export type MatcherDeputadoResumo = z.infer<typeof matcherDeputadoResumoSchema>;
 export type MatcherResultado = z.infer<typeof matcherResultadoSchema>;

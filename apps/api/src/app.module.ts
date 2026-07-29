@@ -4,6 +4,7 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
 
+import { AnalyticsModule } from './analytics/analytics.module';
 import { DeputadosModule } from './deputados/deputados.module';
 import { HealthModule } from './health/health.module';
 import { MatcherModule } from './matcher/matcher.module';
@@ -25,6 +26,7 @@ import { CacheControlInterceptor } from './shared/http/cache-control.interceptor
     ProposicoesModule,
     MatcherModule,
     DeputadosModule,
+    AnalyticsModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: SentryGlobalFilter },
