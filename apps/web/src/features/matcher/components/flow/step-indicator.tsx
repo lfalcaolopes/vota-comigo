@@ -1,40 +1,39 @@
 "use client";
 
-import {
-  STEP_ORDER,
-  stepStatus,
-  type MainMatcherStep,
-  type MatcherStep,
-} from "../../lib/matcher-state";
+import Link from "next/link";
 
-const STEP_LABELS: Record<MainMatcherStep, string> = {
-  local: "Onde você vota",
-  selecao: "Escolha proposições",
-  posicoes: "Sua posição",
-  resultado: "Quem vota com você",
+import {
+  MATCHER_ROUTE_ORDER,
+  stepStatus,
+  type MatcherRoute,
+} from "../../lib/matcher-route";
+
+const STEP_LABELS: Record<MatcherRoute, string> = {
+  "/matcher/local": "Onde você vota",
+  "/matcher/proposicoes": "Escolha proposições",
+  "/matcher/posicoes": "Sua posição",
+  "/matcher/resultado": "Quem vota com você",
 };
 
 type StepIndicatorProps = {
-  current: MatcherStep;
-  onNavigate: (step: MatcherStep) => void;
+  currentRoute: MatcherRoute;
 };
 
-export function StepIndicator({ current, onNavigate }: StepIndicatorProps) {
+export function StepIndicator({ currentRoute }: StepIndicatorProps) {
   return (
     <ol className="flex flex-wrap justify-start gap-2 text-xs font-[650] tabular-nums text-muted">
-      {STEP_ORDER.map((step, position) => {
-        const status = stepStatus(current, step);
+      {MATCHER_ROUTE_ORDER.map((route, position) => {
+        const status = stepStatus(currentRoute, route);
 
         if (status === "done") {
           return (
-            <li key={step}>
-              <button
+            <li key={route}>
+              <Link
                 className="cursor-pointer rounded-full border border-border px-2.5 py-1 hover:border-primary hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                onClick={() => onNavigate(step)}
-                type="button"
+                href={route}
               >
-                <StepLabel label={STEP_LABELS[step]} position={position} />
-              </button>
+                <StepLabel label={STEP_LABELS[route]} position={position} />
+              </Link>
             </li>
           );
         }
@@ -44,9 +43,9 @@ export function StepIndicator({ current, onNavigate }: StepIndicatorProps) {
             <li
               aria-current="step"
               className="rounded-full border border-primary bg-primary-soft px-2.5 py-1 text-ink"
-              key={step}
+              key={route}
             >
-              <StepLabel label={STEP_LABELS[step]} position={position} />
+              <StepLabel label={STEP_LABELS[route]} position={position} />
             </li>
           );
         }
@@ -54,9 +53,9 @@ export function StepIndicator({ current, onNavigate }: StepIndicatorProps) {
         return (
           <li
             className="rounded-full border border-border px-2.5 py-1 opacity-50"
-            key={step}
+            key={route}
           >
-            <StepLabel label={STEP_LABELS[step]} position={position} />
+            <StepLabel label={STEP_LABELS[route]} position={position} />
           </li>
         );
       })}

@@ -19,41 +19,13 @@ import {
 } from "./matcher-validation";
 import type { MatcherRascunho } from "./matcher-rascunho";
 
-export type MatcherStep =
-  | "local"
-  | "selecao"
-  | "posicoes"
-  | "resultado"
-  | "comparativo";
 export type MatcherStatus = "idle" | "loading" | "error";
-export type StepStatus = "done" | "current" | "upcoming";
-export type MainMatcherStep = Exclude<MatcherStep, "comparativo">;
-
-export const STEP_ORDER: MainMatcherStep[] = [
-  "local",
-  "selecao",
-  "posicoes",
-  "resultado",
-];
-
-export function stepStatus(
-  current: MatcherStep,
-  step: MainMatcherStep,
-): StepStatus {
-  const currentIndex =
-    current === "comparativo" ? STEP_ORDER.length : STEP_ORDER.indexOf(current);
-  const stepIndex = STEP_ORDER.indexOf(step);
-  if (stepIndex < currentIndex) return "done";
-  if (stepIndex === currentIndex) return "current";
-  return "upcoming";
-}
 
 const MIN_COMPARATIVO_DEPUTADOS = 2;
 const MAX_COMPARATIVO_DEPUTADOS = 3;
 
 export type MatcherState = {
   isHydrated: boolean;
-  step: MatcherStep;
   siglaUf: SiglaUf | null;
   cidade: string;
   selected: ProposicaoCard[];
@@ -67,6 +39,7 @@ export type MatcherState = {
   status: MatcherStatus;
   isSelectingComparativoDeputados: boolean;
   selectedComparativoDeputados: MatcherDeputadoResumo[];
+  isComparativoOpen: boolean;
   comparativoStatus: MatcherStatus;
   comparativoDetalhes: MatcherDeputadoDetalhe[];
   comparativoPerfis: DeputadoPerfil[];
@@ -81,7 +54,6 @@ export type MatcherAction =
       externalIdProposicao: number;
       posicao: PosicaoUsuarioMatcher;
     }
-  | { type: "goToStep"; step: MatcherStep }
   | { type: "runStart" }
   | { type: "runOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
   | { type: "runError" }
@@ -109,7 +81,6 @@ export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
 
   return {
     isHydrated: false,
-    step: "local",
     siglaUf: null,
     cidade: "",
     selected: [],
@@ -123,6 +94,7 @@ export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
     status: "idle",
     isSelectingComparativoDeputados: false,
     selectedComparativoDeputados: [],
+    isComparativoOpen: false,
     comparativoStatus: "idle",
     comparativoDetalhes: [],
     comparativoPerfis: [],
@@ -200,14 +172,11 @@ export function matcherReducer(
       posicoes.set(action.externalIdProposicao, action.posicao);
       return { ...state, posicoes };
     }
-    case "goToStep":
-      return { ...state, step: action.step };
     case "runStart":
       return { ...state, status: "loading" };
     case "runOk":
       return {
         ...state,
-        step: "resultado",
         status: "idle",
         escopo: action.escopo,
         resultados: { ...state.resultados, [action.escopo]: action.resultado },
@@ -299,7 +268,7 @@ export function matcherReducer(
       if (!canOpenComparativo(state)) return state;
       return {
         ...state,
-        step: "comparativo",
+        isComparativoOpen: true,
         comparativoStatus: "loading",
         comparativoDetalhes: [],
         comparativoPerfis: [],
@@ -322,7 +291,7 @@ export function matcherReducer(
     case "backFromComparativo":
       return {
         ...state,
-        step: "resultado",
+        isComparativoOpen: false,
         isSelectingComparativoDeputados: false,
         selectedComparativoDeputados: [],
         comparativoStatus: "idle",

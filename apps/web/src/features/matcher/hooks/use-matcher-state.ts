@@ -28,17 +28,12 @@ import {
   isDetalheOpen,
   matcherReducer,
   selectionCount,
-  type MatcherStep,
 } from "../lib/matcher-state";
 
 const PAGE_SIZE = 20;
 
-export function useMatcherState(candidates: ProposicaoCard[]) {
-  const [state, dispatch] = useReducer(
-    matcherReducer,
-    candidates,
-    initMatcherState,
-  );
+export function useMatcherState() {
+  const [state, dispatch] = useReducer(matcherReducer, [], initMatcherState);
 
   useEffect(() => {
     const rascunho = loadRascunho(window.sessionStorage);
@@ -79,18 +74,14 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     dispatch({ type: "setPosicao", externalIdProposicao, posicao });
   }
 
-  function goToStep(step: MatcherStep) {
-    dispatch({ type: "goToStep", step });
-  }
-
   async function runFetch(
     escopo: EscopoMatcher,
     offset: number,
     append: boolean,
     apenasEmAtividade: boolean = state.apenasEmAtividade,
   ) {
-    if (state.siglaUf === null || !canRunMatcher(state)) return;
-    if (state.status === "loading") return;
+    if (state.siglaUf === null || !canRunMatcher(state)) return false;
+    if (state.status === "loading") return false;
 
     dispatch({ type: "runStart" });
 
@@ -108,13 +99,15 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
       } else {
         dispatch({ type: "runOk", escopo, resultado });
       }
+      return true;
     } catch {
       dispatch({ type: "runError" });
+      return false;
     }
   }
 
   async function execute() {
-    await runFetch(state.escopo, 0, false);
+    return runFetch(state.escopo, 0, false);
   }
 
   async function setEscopo(escopo: EscopoMatcher) {
@@ -228,7 +221,6 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     setLocal,
     toggleProposicao,
     setPosicao,
-    goToStep,
     execute,
     setEscopo,
     setApenasEmAtividade,
