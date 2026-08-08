@@ -163,7 +163,7 @@ _Avoid_: Votadas recentemente.
 
 **Execução válida do matcher**: Execução com lista única de três a trinta proposições computáveis pelo matcher e pelo menos três posições computáveis do usuário.
 
-**Rascunho de execução do matcher**: Conjunto de entradas do usuário — UF, cidade, escopo, proposições selecionadas e posições do usuário — mantido no navegador enquanto a aba viver, ainda não necessariamente uma execução válida do matcher. Contém apenas entradas: resultado, detalhe e comparativo são derivados dele e recalculados sob demanda, nunca guardados. Nunca enviado nem armazenado no servidor.
+**Rascunho de execução do matcher**: Conjunto de entradas do usuário — UF, cidade, escopo, proposições selecionadas, posições do usuário e filtro de concordância do matcher — mantido no navegador enquanto a aba viver, ainda não necessariamente uma execução válida do matcher. Contém apenas entradas: resultado, detalhe e comparativo são derivados dele e recalculados sob demanda, nunca guardados. Nunca enviado nem armazenado no servidor.
 _Avoid_: Sessão do matcher, progresso salvo.
 
 **UF de resultado do matcher**: Estado mais recente conhecido do deputado, usado para filtrar a visualização padrão dos resultados.
@@ -179,6 +179,9 @@ _Avoid_: Sessão do matcher, progresso salvo.
 **Amostra pequena no matcher**: Alerta de resultado do matcher quando a amostra comparável de um deputado é menor que 50% das posições computáveis do usuário.
 
 **Sem bom match**: Condição do matcher quando o melhor resultado do escopo consultado tem compatibilidade bruta menor que 60%.
+
+**Filtro de concordância do matcher**: Recorte do resultado do matcher que exibe apenas deputados com concordância em todas as proposições marcadas pelo usuário, entre as que ele selecionou.
+_Avoid_: Filtro de proposição, recorte por concordância.
 
 **Resumo de resultado do matcher**: Apresentação enxuta de um deputado no ranking do matcher, com compatibilidade, amostra comparável e alertas curtos.
 
@@ -254,6 +257,14 @@ _Avoid_: Histórico bruto do deputado.
 - O ranking do **Matcher** é ordenado pelo **Score Wilson do matcher**, preservando a **Compatibilidade bruta** e a amostra comparável para exibição.
 - O **Resumo de resultado do matcher** preserva a transparência de amostra sem exibir todas as métricas; o **Detalhe de resultado do matcher** contém métricas completas e detalhamento voto a voto.
 - O **Matcher** sinaliza **Sem bom match** quando o melhor resultado do escopo consultado tem **Compatibilidade bruta** menor que 60%.
+- O **Filtro de concordância do matcher** restringe quais **Deputados** aparecem no resultado; ele não altera a **Compatibilidade**, a **Compatibilidade bruta**, a amostra comparável nem o **Score Wilson do matcher** de nenhum **Deputado**.
+- O **Filtro de concordância do matcher** exige concordância em todas as **Proposições** marcadas; **Abstenção**, **Obstrução**, **Ausência sem motivo conhecido**, **Artigo 17**, **Voto não informado**, ausência de **Em exercício** e **Lacuna de dados** reprovam.
+- Uma **Proposição** com **Posição do usuário** `não sei` não pode entrar no **Filtro de concordância do matcher**.
+- O **Filtro de concordância do matcher** é entrada do **Rascunho de execução do matcher** e, diferente do escopo e de **Em atividade**, nunca aparece em endereço de página, porque a **Proposição** marcada permite inferir a **Posição do usuário** a partir dos **Deputados** exibidos.
+- Qualquer mudança na lista de **Proposições** selecionadas ou no valor de uma **Posição do usuário** zera o **Filtro de concordância do matcher**; trocar escopo ou **Em atividade** não zera.
+- A condição **Sem bom match** considera o conjunto restrito pelo **Filtro de concordância do matcher**.
+- Um **Filtro de concordância do matcher** que não deixa nenhum **Deputado** passar não é falha: é informação sobre o conjunto consultado.
+- O **Detalhe de resultado do matcher** de um **Deputado** exibido sob **Filtro de concordância do matcher** continua mostrando todos os votos, inclusive os discordantes.
 - O **Comparativo de deputados** compara apenas **Deputados** cobertos pelo produto no MVP.
 - O **Rascunho de execução do matcher** guarda apenas entradas do usuário; resultado, detalhe e **Comparativo de deputados** são derivados dele e recalculados sob demanda.
 - O **Rascunho de execução do matcher** nunca trafega para o servidor e nunca aparece em endereço de página, porque **Posição do usuário** é convicção política.
