@@ -163,6 +163,9 @@ _Avoid_: Votadas recentemente.
 
 **Execução válida do matcher**: Execução com lista única de três a trinta proposições computáveis pelo matcher e pelo menos três posições computáveis do usuário.
 
+**Rascunho de execução do matcher**: Conjunto de entradas do usuário — UF, cidade, escopo, proposições selecionadas e posições do usuário — mantido no navegador enquanto a aba viver, ainda não necessariamente uma execução válida do matcher. Contém apenas entradas: resultado, detalhe e comparativo são derivados dele e recalculados sob demanda, nunca guardados. Nunca enviado nem armazenado no servidor.
+_Avoid_: Sessão do matcher, progresso salvo.
+
 **UF de resultado do matcher**: Estado mais recente conhecido do deputado, usado para filtrar a visualização padrão dos resultados.
 
 **Cidade informada no matcher**: Município opcional informado pelo usuário, sem efeito no cálculo ou filtro do matcher no MVP.
@@ -252,6 +255,10 @@ _Avoid_: Histórico bruto do deputado.
 - O **Resumo de resultado do matcher** preserva a transparência de amostra sem exibir todas as métricas; o **Detalhe de resultado do matcher** contém métricas completas e detalhamento voto a voto.
 - O **Matcher** sinaliza **Sem bom match** quando o melhor resultado do escopo consultado tem **Compatibilidade bruta** menor que 60%.
 - O **Comparativo de deputados** compara apenas **Deputados** cobertos pelo produto no MVP.
+- O **Rascunho de execução do matcher** guarda apenas entradas do usuário; resultado, detalhe e **Comparativo de deputados** são derivados dele e recalculados sob demanda.
+- O **Rascunho de execução do matcher** nunca trafega para o servidor e nunca aparece em endereço de página, porque **Posição do usuário** é convicção política.
+- Cada passo do **Matcher** e cada view derivada dele são endereçáveis, para que voltar e recarregar preservem o **Rascunho de execução do matcher**.
+- Um endereço do **Matcher** aberto sem **Rascunho de execução do matcher** suficiente não é erro: leva ao passo mais avançado que o rascunho sustenta.
 - No MVP-5, o **Comparativo de deputados** contextual reutiliza a **Posição do usuário** da execução atual do **Matcher**, sem persisti-la.
 - A **Concordância no comparativo** usa o mesmo efeito calculado pelo **Matcher** para a **Compatibilidade**, preservando a diferença entre concordância, discordância e fora do denominador.
 - O **Comparativo de deputados** contextual inclui apenas **Posições do usuário** computáveis e evita regras próprias quando a semântica já puder ser inferida do **Matcher**.

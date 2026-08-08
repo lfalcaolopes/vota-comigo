@@ -257,7 +257,7 @@ O MVP-4 implementa apenas a entrada contextual pós-matcher. O comparativo geral
 - Em telas pequenas, o comparativo mantém deputados como colunas com rolagem horizontal, preservando o modelo de grid lado a lado.
 - Cada coluna de deputado tem cabeçalho com informações básicas do deputado: foto, nome público, partido atual, status **Em atividade** e entrada para o **Perfil do deputado**.
 - A entrada para o **Perfil do deputado** abre em nova aba, preservando o comparativo efêmero.
-- No MVP-4, o comparativo não precisa ter URL própria compartilhável nem sobreviver a refresh; ele pode depender do estado atual da execução do matcher no cliente.
+- O comparativo tem endereço próprio (`/matcher/comparativo/{ids}`) e sobrevive a refresh reidratando o rascunho de execução do matcher e recalculando (ver ADR 0020); ele continua não sendo compartilhável, porque as linhas dependem das proposições e posições de quem o gerou.
 - Cada célula deputado × proposição exibe o voto real do deputado na votação de referência e um indicador de concordância com a posição do usuário, usando a mesma semântica de concordância/discordância/fora do denominador do matcher.
 - Cada linha de proposição exibe também a posição computável do usuário usada na comparação.
 - A linha de proposição pode exibir metadados enxutos da votação de referência; as células não repetem data ou descrição da votação.
