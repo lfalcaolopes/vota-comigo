@@ -5,7 +5,7 @@ import type {
   ProposicaoCard,
   ProposicaoDetalhe,
 } from "@vota-comigo/shared-types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import {
   EmentaDetalhada,
@@ -18,6 +18,7 @@ import {
 import { Button, ErrorState, SkeletonRows } from "@/shared/ui";
 
 import { useProposicaoDetalhe } from "../../hooks/use-proposicao-detalhe";
+import type { PosicoesRouteView } from "../../lib/matcher-route";
 import { PosicaoChoices } from "./posicao-choices";
 import { StepRevisao } from "./step-revisao";
 
@@ -26,6 +27,8 @@ const QUESTION_ID = "matcher-posicao-pergunta";
 type StepPosicoesProps = {
   selected: ProposicaoCard[];
   posicoes: Map<number, PosicaoUsuarioMatcher>;
+  index: number;
+  view: "card" | "revisao";
   faltamRespostas: number;
   faltamComputaveis: number;
   canRun: boolean;
@@ -34,23 +37,25 @@ type StepPosicoesProps = {
     posicao: PosicaoUsuarioMatcher,
   ) => void;
   onBack: () => void;
+  onNavigate: (destination: PosicoesRouteView) => void;
+  onReviewBack: () => void;
   onRun: () => void;
 };
-
-type View = "card" | "revisao";
 
 export function StepPosicoes({
   selected,
   posicoes,
+  index,
+  view,
   faltamRespostas,
   faltamComputaveis,
   canRun,
   onSetPosicao,
   onBack,
+  onNavigate,
+  onReviewBack,
   onRun,
 }: StepPosicoesProps) {
-  const [view, setView] = useState<View>("card");
-  const [index, setIndex] = useState(0);
   const cardPaneRef = useRef<HTMLDivElement>(null);
   const revisaoPaneRef = useRef<HTMLDivElement>(null);
 
@@ -78,7 +83,6 @@ export function StepPosicoes({
   }
 
   const card = selected[index];
-  const isFirst = index === 0;
   const isLast = index === selected.length - 1;
   const current = posicoes.get(card.externalIdProposicao);
 
@@ -86,18 +90,14 @@ export function StepPosicoes({
   // panes are always shown, so advancing past the last card is a visual no-op.
   function goNext() {
     if (isLast) {
-      setView("revisao");
+      onNavigate({ view: "revisao" });
     } else {
-      setIndex((v) => v + 1);
+      onNavigate({ view: "card", index: index + 1 });
     }
   }
 
   function goBack() {
-    if (isFirst) {
-      onBack();
-    } else {
-      setIndex((v) => v - 1);
-    }
+    onBack();
   }
 
   return (
@@ -142,13 +142,9 @@ export function StepPosicoes({
           faltamComputaveis={faltamComputaveis}
           faltamRespostas={faltamRespostas}
           highlightIndex={index}
-          onBack={() => {
-            setIndex(selected.length - 1);
-            setView("card");
-          }}
+          onBack={onReviewBack}
           onEditar={(editIndex) => {
-            setIndex(editIndex);
-            setView("card");
+            onNavigate({ view: "card", index: editIndex });
           }}
           onRun={onRun}
           posicoes={posicoes}

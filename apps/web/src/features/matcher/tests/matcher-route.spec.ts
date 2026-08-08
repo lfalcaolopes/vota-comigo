@@ -4,7 +4,9 @@ import { describe, expect, it } from "vitest";
 import {
   getFurthestMatcherRoute,
   resolveMatcherRoute,
+  resolvePosicoesSegment,
   stepStatus,
+  toPosicoesHref,
 } from "../lib/matcher-route";
 import type { MatcherRascunho } from "../lib/matcher-rascunho";
 
@@ -34,6 +36,58 @@ function card(externalIdProposicao: number): ProposicaoCard {
 }
 
 describe("matcher route", () => {
+  describe("when a proposition position is requested", () => {
+    it("resolves the one-based address to its selected proposition", () => {
+      // Arrange / Act
+      const position = resolvePosicoesSegment("2", 3);
+
+      // Assert
+      expect(position).toEqual({ view: "card", index: 1 });
+    });
+
+    it("limits an address above the selection to the last proposition", () => {
+      // Arrange / Act
+      const position = resolvePosicoesSegment("8", 3);
+
+      // Assert
+      expect(position).toEqual({ view: "card", index: 2 });
+    });
+
+    it("limits a numeric address below one to the first proposition", () => {
+      // Arrange / Act
+      const position = resolvePosicoesSegment("0", 3);
+
+      // Assert
+      expect(position).toEqual({ view: "card", index: 0 });
+    });
+
+    it("distinguishes review from a proposition index", () => {
+      // Arrange / Act
+      const position = resolvePosicoesSegment("revisao", 3);
+
+      // Assert
+      expect(position).toEqual({ view: "revisao" });
+    });
+
+    it("rejects an unrecognized non-numeric segment", () => {
+      // Arrange / Act
+      const position = resolvePosicoesSegment("desconhecido", 3);
+
+      // Assert
+      expect(position).toBeNull();
+    });
+  });
+
+  describe("when navigating to a proposition position", () => {
+    it("builds a one-based address from the internal index", () => {
+      // Arrange / Act
+      const href = toPosicoesHref({ view: "card", index: 1 });
+
+      // Assert
+      expect(href).toBe("/matcher/posicoes/2");
+    });
+  });
+
   describe("when showing the step indicator", () => {
     it("marks earlier, current and later routes from the current address", () => {
       // Arrange / Act / Assert

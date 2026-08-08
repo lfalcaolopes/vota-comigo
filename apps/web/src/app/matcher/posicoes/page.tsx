@@ -1,5 +1,5 @@
-import { MatcherPosicoes } from "@/features/matcher";
+import { redirect } from "next/navigation";
 
 export default function MatcherPosicoesPage() {
-  return <MatcherPosicoes />;
+  redirect("/matcher/posicoes/1");
 }

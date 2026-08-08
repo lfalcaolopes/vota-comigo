@@ -10,6 +10,13 @@ export type MatcherRoute =
   | "/matcher/posicoes"
   | "/matcher/resultado";
 export type StepStatus = "done" | "current" | "upcoming";
+export type PosicoesRouteView =
+  | { view: "card"; index: number }
+  | { view: "revisao" };
+export type PosicoesHref =
+  | `/matcher/posicoes/${number}`
+  | "/matcher/posicoes/revisao";
+export type MatcherHref = MatcherRoute | PosicoesHref;
 
 export const MATCHER_ROUTE_ORDER: readonly MatcherRoute[] = [
   "/matcher/local",
@@ -17,6 +24,25 @@ export const MATCHER_ROUTE_ORDER: readonly MatcherRoute[] = [
   "/matcher/posicoes",
   "/matcher/resultado",
 ];
+
+export function resolvePosicoesSegment(
+  segment: string,
+  totalSelecionadas: number,
+): PosicoesRouteView | null {
+  if (segment === "revisao") return { view: "revisao" };
+  if (totalSelecionadas === 0) return null;
+  const position = Number(segment);
+  if (!Number.isInteger(position)) return null;
+  return {
+    view: "card",
+    index: Math.min(Math.max(position - 1, 0), totalSelecionadas - 1),
+  };
+}
+
+export function toPosicoesHref(destination: PosicoesRouteView): PosicoesHref {
+  if (destination.view === "revisao") return "/matcher/posicoes/revisao";
+  return `/matcher/posicoes/${destination.index + 1}`;
+}
 
 export function stepStatus(
   currentRoute: MatcherRoute,

@@ -35,7 +35,7 @@ export function MatcherProposicoes({
             display={feed.display}
             items={feed.items}
             onAdvance={() => {
-              if (matcher.canAdvanceSelecao) navigate("/matcher/posicoes");
+              if (matcher.canAdvanceSelecao) navigate("/matcher/posicoes/1");
             }}
             onBack={() => navigate("/matcher/local")}
             onChangeOrdenacao={feed.changeOrdenacao}

@@ -58,22 +58,48 @@ function detalhe(
   };
 }
 
-function renderStep(selected: ProposicaoCard[]): string {
+function renderStep(
+  selected: ProposicaoCard[],
+  route: { index: number; view: "card" | "revisao" } = {
+    index: 0,
+    view: "card",
+  },
+): string {
   return renderToStaticMarkup(
     createElement(StepPosicoes, {
       selected,
+      index: route.index,
+      view: route.view,
       posicoes: new Map(),
       faltamRespostas: 0,
       faltamComputaveis: 0,
       canRun: false,
       onSetPosicao: vi.fn(),
       onBack: vi.fn(),
+      onNavigate: vi.fn(),
+      onReviewBack: vi.fn(),
       onRun: vi.fn(),
     }),
   );
 }
 
 describe("StepPosicoes", () => {
+  describe("when the address selects a proposition", () => {
+    it("shows the proposition identified by the route", () => {
+      // Arrange
+      const selected = [
+        card({ externalIdProposicao: 1 }),
+        card({ externalIdProposicao: 2 }),
+      ];
+
+      // Act
+      const html = renderStep(selected, { index: 1, view: "card" });
+
+      // Assert
+      expect(html).toContain('aria-label="Proposição 2 de 2"');
+    });
+  });
+
   describe("when no proposition is selected", () => {
     it("invites the user to go back instead of rendering a card", () => {
       // Act
