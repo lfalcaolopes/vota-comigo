@@ -9,6 +9,7 @@ export {
   type FeedSearchParams,
   type FeedUrlState,
 } from "./feed-url";
+export { ProposicaoResumo } from "./proposicao-resumo";
 export { ProposicaoRow } from "./proposicao-row";
 export { ProposicaoBreadcrumb } from "./proposicao-breadcrumb";
 export { ProposicaoDetalhe } from "./proposicao-detalhe";

@@ -14,7 +14,11 @@ import {
   toAtividadeAriaLabel,
   toAtividadeLabel,
 } from "@/shared/deputado/presentation";
-import { toIdentificadorLegislativo, toTextoResumo } from "@/shared/proposicao";
+import {
+  ProposicaoResumo,
+  toIdentificadorLegislativo,
+  toTextoResumo,
+} from "@/shared/proposicao";
 import {
   ArrowLeftIcon,
   Badge,
@@ -65,7 +69,7 @@ export function StepComparativo({
       ),
     ]),
   );
-  const gridTemplateColumns = `minmax(12rem,1.1fr) repeat(${grid.columns.length}, minmax(13rem,1fr))`;
+  const gridTemplateColumns = `minmax(8rem,0.6fr) repeat(${grid.columns.length}, minmax(13rem,1fr))`;
 
   return (
     <div className="grid gap-5">
@@ -94,7 +98,7 @@ export function StepComparativo({
               <div
                 className={`${labelColumnClassName} text-sm font-[650] text-muted`}
               >
-                Proposição
+                Sua posição
               </div>
               {grid.columns.map(({ deputado }) => (
                 <ComparativoDeputadoHeader
@@ -205,20 +209,29 @@ function ComparativoRow({ row }: ComparativoRowProps) {
 
   return (
     <>
+      <div className="col-[1/-1] border-b border-border bg-bg px-3 pb-3 pt-6">
+        <div className="sticky left-0 grid w-fit max-w-[65ch] gap-1">
+          <Link
+            className="block break-words text-base font-[680] leading-snug text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+            href={`/proposicoes/${row.proposicao.externalIdProposicao}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {identificador}
+          </Link>
+          {textoResumo ? (
+            <ProposicaoResumo
+              identificador={identificador}
+              texto={textoResumo}
+            />
+          ) : null}
+        </div>
+      </div>
+
       <div className={labelColumnClassName}>
-        <Link
-          className="block break-words text-sm font-[650] text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
-          href={`/proposicoes/${row.proposicao.externalIdProposicao}`}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          {identificador}
-        </Link>
-        {textoResumo ? (
-          <p className="mt-1 line-clamp-2 text-sm leading-normal text-muted">
-            {textoResumo}
-          </p>
-        ) : null}
+        <p className="text-sm font-[650] leading-normal text-ink">
+          {toPosicaoUsuarioValueLabel(row.posicaoUsuario)}
+        </p>
       </div>
 
       {row.cells.map((cell) => (
@@ -234,9 +247,6 @@ function ComparativoRow({ row }: ComparativoRowProps) {
               {cell.matcherEffectVerdict.label}
             </Badge>
             <dl className="grid gap-1 text-sm leading-normal">
-              <ComparativoCellFact label="Você">
-                {toPosicaoUsuarioValueLabel(row.posicaoUsuario)}
-              </ComparativoCellFact>
               <ComparativoCellFact label="Deputado">
                 {cell.situacaoLabel}
               </ComparativoCellFact>
@@ -293,9 +303,11 @@ function ComparativoMobileProposicao({
           {identificador}
         </Link>
         {textoResumo ? (
-          <p className="line-clamp-3 text-sm leading-normal text-muted">
-            {textoResumo}
-          </p>
+          <ProposicaoResumo
+            clampClassName="line-clamp-3"
+            identificador={identificador}
+            texto={textoResumo}
+          />
         ) : null}
         <dl className="grid rounded-md border border-border bg-surface px-3 py-2 text-sm leading-normal">
           <ComparativoCellFact label="Sua posição">

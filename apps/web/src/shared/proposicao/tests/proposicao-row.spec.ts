@@ -21,9 +21,14 @@ function card(overrides: Partial<ProposicaoCard> = {}): ProposicaoCard {
   };
 }
 
-function render(proposicao: ProposicaoCard): string {
+const EMENTA_LONGA =
+  "Reforma constitucional da previdência que cria um novo regime de " +
+  "capitalização, reorganiza os regimes dos servidores e define regras de " +
+  "transição.";
+
+function render(proposicao: ProposicaoCard, href?: string): string {
   return renderToStaticMarkup(
-    createElement(ProposicaoRow, { card: proposicao }),
+    createElement(ProposicaoRow, { card: proposicao, href }),
   );
 }
 
@@ -85,6 +90,34 @@ describe("ProposicaoRow", () => {
 
       // Assert
       expect(html).not.toContain("Resumo por IA");
+    });
+  });
+
+  describe("when the card stands on its own and the resumo is long", () => {
+    it("offers an expand control named after the proposicao", () => {
+      // Arrange
+      const proposicao = card({ ementa: EMENTA_LONGA });
+
+      // Act
+      const html = render(proposicao);
+
+      // Assert
+      expect(html).toContain(EMENTA_LONGA);
+      expect(html).toContain('aria-label="Ver mais do resumo de PL 1234/2023"');
+    });
+  });
+
+  describe("when the whole card links to the proposicao page", () => {
+    it("leaves the resumo clamped, since the card itself opens the full text", () => {
+      // Arrange
+      const proposicao = card({ ementa: EMENTA_LONGA });
+
+      // Act
+      const html = render(proposicao, "/proposicoes/42");
+
+      // Assert
+      expect(html).toContain('href="/proposicoes/42"');
+      expect(html).not.toContain("<button");
     });
   });
 });

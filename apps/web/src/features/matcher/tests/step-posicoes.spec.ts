@@ -104,6 +104,23 @@ describe("StepPosicoes", () => {
     });
   });
 
+  describe("when a selected proposition has a long summary", () => {
+    it("keeps it readable in the review list with an expand control", () => {
+      // Arrange
+      const ementa =
+        "Reforma constitucional da previdência que cria um novo regime de " +
+        "capitalização e estabelece regras de transição.";
+
+      // Act
+      const html = renderStep([card({ ementa })]);
+
+      // Assert
+      expect(html).toContain(ementa);
+      expect(html).toContain("Ver mais");
+      expect(html).not.toContain("line-clamp-1");
+    });
+  });
+
   describe("while the proposition detail is loading", () => {
     it("shows a skeleton and hides the answer options", () => {
       // Act

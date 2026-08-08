@@ -1,6 +1,10 @@
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
 
-import { toIdentificadorLegislativo, toTextoResumo } from "@/shared/proposicao";
+import {
+  ProposicaoResumo,
+  toIdentificadorLegislativo,
+  toTextoResumo,
+} from "@/shared/proposicao";
 
 const DEFAULT_LIST_CLASS =
   "-mr-1 grid max-h-96 overflow-x-hidden overflow-y-auto pr-1 lg:max-h-[min(55vh,32rem)] lg:divide-y lg:divide-border";
@@ -37,14 +41,16 @@ export function SelecaoResumo({
             className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 border-b border-border py-3 last:border-b-0 lg:border-b-0"
             key={card.externalIdProposicao}
           >
-            <div className="min-w-0">
+            <div className="grid min-w-0 gap-0.5">
               <p className="truncate font-mono text-sm font-[650] tracking-[-0.01em] text-ink">
                 {label}
               </p>
               {textoResumo ? (
-                <p className="mt-0.5 line-clamp-2 text-sm leading-snug text-muted">
-                  {textoResumo}
-                </p>
+                <ProposicaoResumo
+                  className="text-sm leading-snug text-muted"
+                  identificador={label}
+                  texto={textoResumo}
+                />
               ) : null}
             </div>
             <button

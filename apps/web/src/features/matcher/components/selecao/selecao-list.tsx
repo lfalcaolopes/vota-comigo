@@ -89,10 +89,21 @@ export function SelecaoList({
           const disabled = !isSelected && atLimit;
           return (
             <li key={card.externalIdProposicao}>
-              <label
+              {/* o card traz seus proprios controles, entao o clique na linha nao pode vir de um label */}
+              <div
                 className={`flex items-start gap-3 py-1 ${
                   disabled ? "cursor-not-allowed" : "cursor-pointer"
                 }`}
+                onClick={(event) => {
+                  if (disabled) return;
+                  if (
+                    event.target instanceof Element &&
+                    event.target.closest("button, a, input")
+                  ) {
+                    return;
+                  }
+                  onToggle(card);
+                }}
               >
                 <CheckboxControl
                   aria-label={`Selecionar proposição ${card.externalIdProposicao}`}
@@ -104,7 +115,7 @@ export function SelecaoList({
                 <div className="min-w-0 flex-1">
                   <ProposicaoRow card={card} />
                 </div>
-              </label>
+              </div>
             </li>
           );
         })}

@@ -90,4 +90,21 @@ describe("StepSelecao sidebar (Sua seleção)", () => {
       expect(html).toContain("Ementa oficial.");
     });
   });
+
+  describe("when a selected card has a summary longer than the sidebar clamp", () => {
+    it("offers an expand control named after the proposicao", () => {
+      // Arrange
+      const ementa =
+        "Reforma constitucional da previdência que cria um novo regime de " +
+        "capitalização e estabelece regras de transição.";
+      const selected = [card({ ementa })];
+
+      // Act
+      const html = render(selected);
+
+      // Assert
+      expect(html).toContain(ementa);
+      expect(html).toContain('aria-label="Ver mais do resumo de PL 100/2024"');
+    });
+  });
 });

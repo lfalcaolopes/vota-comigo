@@ -4,7 +4,9 @@ import type { ReactNode } from "react";
 
 import {
   formatShortDate,
+  ProposicaoResumo,
   toIdentificadorLegislativo,
+  toTextoResumo,
 } from "@/shared/proposicao";
 import { Badge } from "@/shared/ui";
 
@@ -25,44 +27,41 @@ export function VotoDetalheItem({ voto }: VotoDetalheItemProps) {
   const identificador =
     toIdentificadorLegislativo(proposicao) ??
     `Proposição ${proposicao.externalIdProposicao}`;
+  const textoResumo = toTextoResumo(proposicao);
   const verdict = toMatcherEffectVerdict(matcherEffect);
   const dataVotacao = formatShortDate(voto.votacaoReferencia.data);
 
   return (
-    <article className="border-b border-border">
-      <Link
-        className="-mx-2 grid gap-2 rounded-md px-2 py-3 transition-[background-color] duration-[180ms] ease-standard hover:bg-surface focus-visible:bg-surface"
-        href={`/proposicoes/${proposicao.externalIdProposicao}`}
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-sm font-[650] text-ink">{identificador}</p>
-          <Badge className="shrink-0" tone={verdict.tone}>
-            {verdict.label}
-          </Badge>
-        </div>
+    <article className="grid gap-2 border-b border-border py-3">
+      <div className="flex items-center justify-between gap-3">
+        <Link
+          className="break-words text-sm font-[650] text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+          href={`/proposicoes/${proposicao.externalIdProposicao}`}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {identificador}
+        </Link>
+        <Badge className="shrink-0" tone={verdict.tone}>
+          {verdict.label}
+        </Badge>
+      </div>
 
-        {proposicao.ementa ? (
-          <p className="line-clamp-2 text-sm leading-normal text-muted">
-            {proposicao.ementa}
-          </p>
+      {textoResumo ? (
+        <ProposicaoResumo identificador={identificador} texto={textoResumo} />
+      ) : null}
+
+      <dl className="mt-1 flex flex-wrap gap-x-5 gap-y-2 text-xs">
+        <MetaItem label="Sua posição">{toPosicaoLabel(posicaoUsuario)}</MetaItem>
+        <MetaItem label="Deputado votou">
+          {toSituacaoLabel(situacaoDeputadoVotacao)}
+        </MetaItem>
+        {dataVotacao ? (
+          <MetaItem label="Votação" mono>
+            {dataVotacao}
+          </MetaItem>
         ) : null}
-
-        <dl className="mt-1 flex flex-wrap gap-x-5 gap-y-2 text-xs">
-          <MetaItem label="Sua posição">
-            {toPosicaoLabel(posicaoUsuario)}
-          </MetaItem>
-          <MetaItem label="Deputado votou">
-            {toSituacaoLabel(situacaoDeputadoVotacao)}
-          </MetaItem>
-          {dataVotacao ? (
-            <MetaItem label="Votação" mono>
-              {dataVotacao}
-            </MetaItem>
-          ) : null}
-        </dl>
-      </Link>
+      </dl>
     </article>
   );
 }

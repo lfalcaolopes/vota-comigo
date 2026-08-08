@@ -12,6 +12,11 @@ import { describe, expect, it, vi } from "vitest";
 
 import { StepComparativo } from "../components/comparativo/step-comparativo";
 
+const EMENTA_LONGA =
+  "Reforma constitucional da previdência que cria um novo regime de " +
+  "capitalização, altera regras de idade mínima e tempo de contribuição e " +
+  "estabelece regras de transição.";
+
 function proposicao(
   externalIdProposicao: number,
   overrides: Partial<ProposicaoCard> = {},
@@ -262,6 +267,39 @@ describe("StepComparativo", () => {
       expect(html).not.toContain("Placar");
       expect(html).not.toContain("300 sim");
       expect(html).not.toContain("Votação 1");
+    });
+
+    it("gives the proposicao summary a full row band instead of the narrow label column", () => {
+      // Arrange / Act
+      const html = render({
+        status: "idle",
+        deputados: [deputado(20)],
+        detalhes: [detalhe(20, [voto(1)])],
+      });
+
+      // Assert
+      expect(html).toContain("col-[1/-1]");
+      expect(html).toContain("max-w-[65ch]");
+      expect(html.indexOf("Ementa 1")).toBeLessThan(html.indexOf("Alinhado"));
+    });
+
+    it("offers an expand control when the summary does not fit the clamp", () => {
+      // Arrange / Act
+      const html = render({
+        status: "idle",
+        deputados: [deputado(20)],
+        detalhes: [
+          detalhe(20, [
+            voto(1, {
+              proposicao: proposicao(1, { ementa: EMENTA_LONGA }),
+            }),
+          ]),
+        ],
+      });
+
+      // Assert
+      expect(html).toContain(EMENTA_LONGA);
+      expect(html).toContain("Ver mais");
     });
 
     it("shows deputado headers from perfil with profile links opening in a new tab", () => {

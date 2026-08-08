@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { Badge, SparklesIcon } from "../ui";
+import { ProposicaoResumo } from "./proposicao-resumo";
 import {
   formatShortDate,
   isResumoIaCard,
@@ -17,8 +18,6 @@ type ProposicaoRowProps = {
 };
 
 export function ProposicaoRow({ card, href }: ProposicaoRowProps) {
-  const content = <ProposicaoRowContent card={card} />;
-
   if (href) {
     return (
       <article className="border-b border-border">
@@ -26,7 +25,7 @@ export function ProposicaoRow({ card, href }: ProposicaoRowProps) {
           className="-mx-2 grid gap-2 rounded-md px-2 py-4 transition-[background-color] duration-[180ms] ease-standard hover:bg-surface focus-visible:bg-surface"
           href={href}
         >
-          {content}
+          <ProposicaoRowContent card={card} expansivel={false} />
         </Link>
       </article>
     );
@@ -34,17 +33,26 @@ export function ProposicaoRow({ card, href }: ProposicaoRowProps) {
 
   return (
     <article className="grid gap-2 border-b border-border py-4">
-      {content}
+      <ProposicaoRowContent card={card} expansivel />
     </article>
   );
 }
 
-function ProposicaoRowContent({ card }: { card: ProposicaoCard }) {
+function ProposicaoRowContent({
+  card,
+  expansivel,
+}: {
+  card: ProposicaoCard;
+  expansivel: boolean;
+}) {
   const identificador = toIdentificadorLegislativo(card);
   const ultimaVotacao = formatShortDate(card.dataUltimaVotacao);
   const anoApresentacao = toAnoApresentacao(card);
   const textoResumo = toTextoResumo(card);
   const resumoIa = isResumoIaCard(card);
+  const clampClassName = resumoIa
+    ? "sm:line-clamp-2"
+    : "line-clamp-4 sm:line-clamp-2";
 
   return (
     <>
@@ -65,13 +73,20 @@ function ProposicaoRowContent({ card }: { card: ProposicaoCard }) {
       </div>
 
       {textoResumo ? (
-        <p
-          className={`text-base leading-snug text-pretty text-muted ${
-            resumoIa ? "sm:line-clamp-2" : "line-clamp-4 sm:line-clamp-2"
-          }`}
-        >
-          {textoResumo}
-        </p>
+        expansivel ? (
+          <ProposicaoResumo
+            clampClassName={clampClassName}
+            className="text-base leading-snug text-pretty text-muted"
+            identificador={identificador ?? "Sem identificador"}
+            texto={textoResumo}
+          />
+        ) : (
+          <p
+            className={`text-base leading-snug text-pretty text-muted ${clampClassName}`}
+          >
+            {textoResumo}
+          </p>
+        )
       ) : null}
 
       <dl className="mt-1 flex flex-wrap gap-x-5 gap-y-2">
