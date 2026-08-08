@@ -10,7 +10,6 @@ import {
   parseResultadoUrlState,
 } from "../../lib/matcher-route";
 import { StepComparativo } from "../comparativo/step-comparativo";
-import { DeputadoDetalhe } from "../detalhe/deputado-detalhe";
 import { MatcherRouteGate } from "../flow/matcher-route-gate";
 import { MatcherStepFrame } from "../flow/matcher-step-frame";
 import { useMatcher } from "../matcher-provider";
@@ -107,49 +106,37 @@ export function MatcherResultado() {
       <MatcherStepFrame route={ROUTE}>
         <div className="mx-auto w-full max-w-6xl">
           <div className="w-full max-w-4xl">
-            {matcher.isDetalheOpen ? (
-              <DeputadoDetalhe
-                detalhe={matcher.detalhe}
-                detalheDeputadoId={state.detalheDeputadoId}
-                onBack={matcher.closeDetalhe}
-                onRetry={matcher.openDetalhe}
-                status={matcher.detalheStatus}
-              />
-            ) : (
-              <StepResultado
-                apenasEmAtividade={requestedFilters.apenasEmAtividade}
-                escopo={requestedFilters.escopo}
-                hasMore={matcher.hasMore}
-                onApenasEmAtividadeChange={(apenasEmAtividade) =>
-                  navigate(
-                    buildResultadoHref({
-                      ...requestedFilters,
-                      apenasEmAtividade,
-                    }),
-                    "filter",
-                  )
-                }
-                onBack={() => navigate("/matcher/posicoes")}
-                onCancelComparativoSelection={
-                  matcher.cancelComparativoSelection
-                }
-                onEscopoChange={(escopo) =>
-                  navigate(
-                    buildResultadoHref({ ...requestedFilters, escopo }),
-                    "filter",
-                  )
-                }
-                onLoadMore={matcher.loadMore}
-                onOpenComparativo={matcher.openComparativo}
-                onOpenDetalhe={matcher.openDetalhe}
-                onRetry={() => matcher.executeResultado(requestedFilters)}
-                onStartComparativoSelection={matcher.startComparativoSelection}
-                onToggleComparativoDeputado={matcher.toggleComparativoDeputado}
-                resultado={isWaitingForResultado ? null : matcher.resultado}
-                state={visibleState}
-                status={visibleState.status}
-              />
-            )}
+            <StepResultado
+              apenasEmAtividade={requestedFilters.apenasEmAtividade}
+              escopo={requestedFilters.escopo}
+              hasMore={matcher.hasMore}
+              onApenasEmAtividadeChange={(apenasEmAtividade) =>
+                navigate(
+                  buildResultadoHref({
+                    ...requestedFilters,
+                    apenasEmAtividade,
+                  }),
+                  "filter",
+                )
+              }
+              onCancelComparativoSelection={
+                matcher.cancelComparativoSelection
+              }
+              onEscopoChange={(escopo) =>
+                navigate(
+                  buildResultadoHref({ ...requestedFilters, escopo }),
+                  "filter",
+                )
+              }
+              onLoadMore={matcher.loadMore}
+              onOpenComparativo={matcher.openComparativo}
+              onRetry={() => matcher.executeResultado(requestedFilters)}
+              onStartComparativoSelection={matcher.startComparativoSelection}
+              onToggleComparativoDeputado={matcher.toggleComparativoDeputado}
+              resultado={isWaitingForResultado ? null : matcher.resultado}
+              state={visibleState}
+              status={visibleState.status}
+            />
           </div>
         </div>
       </MatcherStepFrame>

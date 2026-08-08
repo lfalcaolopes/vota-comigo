@@ -113,9 +113,7 @@ describe("DeputadoDetalhe", () => {
       const html = renderToStaticMarkup(
         createElement(DeputadoDetalhe, {
           detalhe: detalhe(),
-          detalheDeputadoId: 220593,
           status: "idle",
-          onBack: () => {},
           onRetry: () => {},
         }),
       );
@@ -124,6 +122,20 @@ describe("DeputadoDetalhe", () => {
       expect(html).toContain('href="/deputados/220593"');
       expect(html).toContain('target="_blank"');
       expect(html).toContain("Ver perfil do deputado");
+    });
+
+    it("does not expose a return button", () => {
+      // Act
+      const html = renderToStaticMarkup(
+        createElement(DeputadoDetalhe, {
+          detalhe: detalhe(),
+          status: "idle",
+          onRetry: () => {},
+        }),
+      );
+
+      // Assert
+      expect(html).not.toContain("Voltar ao resultado");
     });
   });
 });
@@ -136,12 +148,24 @@ describe("DeputadoCard", () => {
         createElement(DeputadoCard, {
           deputado: resumo(),
           totalPosicoesComputaveis: 3,
-          onOpen: () => {},
         }),
       );
 
       // Assert
       expect(html).not.toContain("/deputados/");
+    });
+
+    it("links to the contextual detail route", () => {
+      // Act
+      const html = renderToStaticMarkup(
+        createElement(DeputadoCard, {
+          deputado: resumo(),
+          totalPosicoesComputaveis: 3,
+        }),
+      );
+
+      // Assert
+      expect(html).toContain('href="/matcher/resultado/220593"');
     });
 
     it("does not expose selection controls in normal mode", () => {
@@ -150,7 +174,6 @@ describe("DeputadoCard", () => {
         createElement(DeputadoCard, {
           deputado: resumo(),
           totalPosicoesComputaveis: 3,
-          onOpen: () => {},
         }),
       );
 
@@ -172,7 +195,6 @@ describe("DeputadoCard", () => {
           },
           deputado: resumo(),
           totalPosicoesComputaveis: 3,
-          onOpen: () => {},
         }),
       );
 
@@ -202,12 +224,10 @@ describe("StepResultado", () => {
           escopo: "estadual",
           hasMore: false,
           onApenasEmAtividadeChange: () => {},
-          onBack: () => {},
           onCancelComparativoSelection: () => {},
           onEscopoChange: () => {},
           onLoadMore: () => {},
           onOpenComparativo: () => {},
-          onOpenDetalhe: () => {},
           onRetry: () => {},
           onStartComparativoSelection: () => {},
           onToggleComparativoDeputado: () => {},
@@ -227,6 +247,7 @@ describe("StepResultado", () => {
         html.indexOf("Apenas em atividade"),
       );
       expect(html).not.toContain("Selecionar Maria da Silva para comparação");
+      expect(html).not.toContain(">Voltar<");
     });
   });
 
@@ -258,12 +279,10 @@ describe("StepResultado", () => {
           escopo: "estadual",
           hasMore: false,
           onApenasEmAtividadeChange: () => {},
-          onBack: () => {},
           onCancelComparativoSelection: () => {},
           onEscopoChange: () => {},
           onLoadMore: () => {},
           onOpenComparativo: () => {},
-          onOpenDetalhe: () => {},
           onRetry: () => {},
           onStartComparativoSelection: () => {},
           onToggleComparativoDeputado: () => {},

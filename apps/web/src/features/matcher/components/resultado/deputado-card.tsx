@@ -1,4 +1,5 @@
 import type { MatcherDeputadoResumo } from "@vota-comigo/shared-types";
+import Link from "next/link";
 
 import { DeputadoAvatar } from "@/shared/deputado";
 import { Badge, CheckboxControl } from "@/shared/ui";
@@ -11,11 +12,11 @@ import {
   toAtividadeLabel,
   toAtividadeTone,
 } from "../../lib/matcher-presentation";
+import { buildResultadoDetalheHref } from "../../lib/matcher-route";
 
 type DeputadoCardProps = {
   deputado: MatcherDeputadoResumo;
   totalPosicoesComputaveis: number;
-  onOpen: (externalIdDeputado: number) => void;
   comparativoSelection?: {
     disabled: boolean;
     onToggle: (externalIdDeputado: number) => void;
@@ -27,7 +28,6 @@ export function DeputadoCard({
   comparativoSelection,
   deputado,
   totalPosicoesComputaveis,
-  onOpen,
 }: DeputadoCardProps) {
   const percentualLabel = formatPercentual(deputado.compatibilidadeBruta);
   const amostraLabel = toAmostraComparavelLabel(
@@ -164,13 +164,12 @@ export function DeputadoCard({
 
   return (
     <li className="border-b border-border">
-      <button
+      <Link
         className="group grid w-full cursor-pointer gap-3 py-3 text-left transition-colors duration-[180ms] ease-standard hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        onClick={() => onOpen(deputado.externalIdDeputado)}
-        type="button"
+        href={buildResultadoDetalheHref(deputado.externalIdDeputado)}
       >
         {content}
-      </button>
+      </Link>
     </li>
   );
 }

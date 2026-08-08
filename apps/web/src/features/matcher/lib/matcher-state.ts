@@ -33,9 +33,6 @@ export type MatcherState = {
   resultados: Record<EscopoMatcher, MatcherResultado | null>;
   escopo: EscopoMatcher;
   apenasEmAtividade: boolean;
-  detalhe: MatcherDeputadoDetalhe | null;
-  detalheStatus: MatcherStatus;
-  detalheDeputadoId: number | null;
   status: MatcherStatus;
   isSelectingComparativoDeputados: boolean;
   selectedComparativoDeputados: MatcherDeputadoResumo[];
@@ -65,10 +62,6 @@ export type MatcherAction =
     }
   | { type: "setApenasEmAtividade"; value: boolean }
   | { type: "loadMoreOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
-  | { type: "openDetalheStart"; externalIdDeputado: number }
-  | { type: "openDetalheOk"; detalhe: MatcherDeputadoDetalhe }
-  | { type: "openDetalheError" }
-  | { type: "closeDetalhe" }
   | { type: "startComparativoSelection" }
   | { type: "toggleComparativoDeputado"; deputado: MatcherDeputadoResumo }
   | { type: "cancelComparativoSelection" }
@@ -93,9 +86,6 @@ export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
     resultados: { estadual: null, nacional: null },
     escopo: "estadual",
     apenasEmAtividade: false,
-    detalhe: null,
-    detalheStatus: "idle",
-    detalheDeputadoId: null,
     status: "idle",
     isSelectingComparativoDeputados: false,
     selectedComparativoDeputados: [],
@@ -222,24 +212,6 @@ export function matcherReducer(
         },
       };
     }
-    case "openDetalheStart":
-      return {
-        ...state,
-        detalheStatus: "loading",
-        detalheDeputadoId: action.externalIdDeputado,
-        detalhe: null,
-      };
-    case "openDetalheOk":
-      return { ...state, detalheStatus: "idle", detalhe: action.detalhe };
-    case "openDetalheError":
-      return { ...state, detalheStatus: "error" };
-    case "closeDetalhe":
-      return {
-        ...state,
-        detalhe: null,
-        detalheDeputadoId: null,
-        detalheStatus: "idle",
-      };
     case "startComparativoSelection":
       return {
         ...state,
@@ -248,9 +220,6 @@ export function matcherReducer(
         comparativoStatus: "idle",
         comparativoDetalhes: [],
         comparativoPerfis: [],
-        detalhe: null,
-        detalheDeputadoId: null,
-        detalheStatus: "idle",
       };
     case "toggleComparativoDeputado": {
       const id = action.deputado.externalIdDeputado;
@@ -362,10 +331,6 @@ export function resultadoDisplay(state: MatcherState): ResultadoDisplay {
 
 export function isSemBomMatch(resultado: MatcherResultado | null): boolean {
   return resultado?.semBomMatch === true;
-}
-
-export function isDetalheOpen(state: MatcherState): boolean {
-  return state.detalheDeputadoId !== null;
 }
 
 export function isComparativoSelectionMode(state: MatcherState): boolean {

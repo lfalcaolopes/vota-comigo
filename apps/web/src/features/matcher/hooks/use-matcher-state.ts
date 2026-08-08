@@ -26,7 +26,6 @@ import {
   executionValidation,
   hasMoreDeputados,
   initMatcherState,
-  isDetalheOpen,
   matcherReducer,
   selectionCount,
 } from "../lib/matcher-state";
@@ -146,30 +145,6 @@ export function useMatcherState() {
     await runFetch(state.escopo, 0, false, value);
   }
 
-  async function openDetalhe(externalIdDeputado: number) {
-    if (state.siglaUf === null || !canRunMatcher(state)) return;
-
-    dispatch({ type: "openDetalheStart", externalIdDeputado });
-
-    try {
-      const request = buildExecucaoRequest({
-        siglaUf: state.siglaUf,
-        escopo: state.escopo,
-        cidade: state.cidade,
-        posicoes: state.posicoes,
-        apenasEmAtividade: state.apenasEmAtividade,
-      });
-      const detalhe = await getDeputadoDetalhe(externalIdDeputado, request);
-      dispatch({ type: "openDetalheOk", detalhe });
-    } catch {
-      dispatch({ type: "openDetalheError" });
-    }
-  }
-
-  function closeDetalhe() {
-    dispatch({ type: "closeDetalhe" });
-  }
-
   function startComparativoSelection() {
     dispatch({ type: "startComparativoSelection" });
   }
@@ -232,9 +207,6 @@ export function useMatcherState() {
     escopo: state.escopo,
     apenasEmAtividade: state.apenasEmAtividade,
     hasMore: hasMoreDeputados(state),
-    detalhe: state.detalhe,
-    detalheStatus: state.detalheStatus,
-    isDetalheOpen: isDetalheOpen(state),
     setLocal,
     toggleProposicao,
     setPosicao,
@@ -243,8 +215,6 @@ export function useMatcherState() {
     setEscopo,
     setApenasEmAtividade,
     loadMore,
-    openDetalhe,
-    closeDetalhe,
     startComparativoSelection,
     toggleComparativoDeputado,
     cancelComparativoSelection,

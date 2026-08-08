@@ -38,12 +38,10 @@ type StepResultadoProps = {
   escopo: EscopoMatcher;
   apenasEmAtividade: boolean;
   hasMore: boolean;
-  onBack: () => void;
   onRetry: () => void;
   onEscopoChange: (escopo: EscopoMatcher) => void;
   onApenasEmAtividadeChange: (value: boolean) => void;
   onLoadMore: () => void;
-  onOpenDetalhe: (externalIdDeputado: number) => void;
   onStartComparativoSelection: () => void;
   onToggleComparativoDeputado: (externalIdDeputado: number) => void;
   onCancelComparativoSelection: () => void;
@@ -57,12 +55,10 @@ export function StepResultado({
   escopo,
   apenasEmAtividade,
   hasMore,
-  onBack,
   onRetry,
   onEscopoChange,
   onApenasEmAtividadeChange,
   onLoadMore,
-  onOpenDetalhe,
   onStartComparativoSelection,
   onToggleComparativoDeputado,
   onCancelComparativoSelection,
@@ -153,7 +149,6 @@ export function StepResultado({
         {escopoControl}
         <ResultadoVazio
           escopo={escopo}
-          onBack={onBack}
           onEscopoChange={onEscopoChange}
         />
       </div>
@@ -195,7 +190,6 @@ export function StepResultado({
               }
               deputado={deputado}
               key={deputado.externalIdDeputado}
-              onOpen={onOpenDetalhe}
               totalPosicoesComputaveis={resultado!.totalPosicoesComputaveis}
             />
           );
@@ -220,9 +214,6 @@ export function StepResultado({
         </div>
       ) : null}
 
-      <div>
-        <Button onClick={onBack}>Voltar</Button>
-      </div>
     </div>
   );
 }

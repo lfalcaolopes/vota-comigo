@@ -4,13 +4,11 @@ import { Button, EmptyState } from "@/shared/ui";
 
 type ResultadoVazioProps = {
   escopo: EscopoMatcher;
-  onBack: () => void;
   onEscopoChange: (escopo: EscopoMatcher) => void;
 };
 
 export function ResultadoVazio({
   escopo,
-  onBack,
   onEscopoChange,
 }: ResultadoVazioProps) {
   if (escopo === "estadual") {
@@ -24,7 +22,6 @@ export function ResultadoVazio({
             >
               Ver todos os deputados (Brasil)
             </Button>
-            <Button onClick={onBack}>Voltar</Button>
           </div>
         }
         body="Não há deputados federais com votos comparáveis às suas posições neste estado. Você pode expandir para ver todos os deputados do Brasil."
@@ -35,7 +32,6 @@ export function ResultadoVazio({
 
   return (
     <EmptyState
-      action={<Button onClick={onBack}>Voltar</Button>}
       body="Não há deputados federais com votos comparáveis às suas posições para as proposições escolhidas."
       title="Nenhum comparável encontrado"
     />

@@ -22,7 +22,12 @@ export type PosicoesHref =
 export type ResultadoHref =
   | "/matcher/resultado"
   | `/matcher/resultado?${string}`;
-export type MatcherHref = MatcherRoute | PosicoesHref | ResultadoHref;
+export type ResultadoDetalheHref = `/matcher/resultado/${number}`;
+export type MatcherHref =
+  | MatcherRoute
+  | PosicoesHref
+  | ResultadoHref
+  | ResultadoDetalheHref;
 export type ResultadoSearchParams = {
   atividade?: string;
   escopo?: string;
@@ -54,6 +59,12 @@ export function buildResultadoHref(state: ResultadoUrlState): ResultadoHref {
   if (state.apenasEmAtividade) params.set("atividade", "1");
   const search = params.toString();
   return search ? `/matcher/resultado?${search}` : "/matcher/resultado";
+}
+
+export function buildResultadoDetalheHref(
+  externalIdDeputado: number,
+): ResultadoDetalheHref {
+  return `/matcher/resultado/${externalIdDeputado}`;
 }
 
 export function resolvePosicoesSegment(
