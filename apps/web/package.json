@@ -18,7 +18,8 @@
     "@vota-comigo/shared-types": "workspace:^",
     "next": "16.2.3",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.0",

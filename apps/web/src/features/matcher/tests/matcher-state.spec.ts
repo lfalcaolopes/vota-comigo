@@ -113,6 +113,38 @@ describe("matcherReducer", () => {
     });
   });
 
+  describe("when resuming a matcher draft", () => {
+    it("restores every user input", () => {
+      // Arrange
+      const state = initMatcherState(candidates);
+      const selected = [card(2), card(4)];
+      const posicoes = new Map([
+        [2, "aprovar" as const],
+        [4, "nao_sei" as const],
+      ]);
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "hydrateRascunho",
+        rascunho: {
+          siglaUf: "BA",
+          cidade: "Salvador",
+          escopo: "nacional",
+          selected,
+          posicoes,
+        },
+      });
+
+      // Assert
+      expect(next.siglaUf).toBe("BA");
+      expect(next.cidade).toBe("Salvador");
+      expect(next.escopo).toBe("nacional");
+      expect(next.selected).toEqual(selected);
+      expect(next.posicoes).toEqual(posicoes);
+      expect(next.isHydrated).toBe(true);
+    });
+  });
+
   describe("when toggling a proposicao", () => {
     it("removes an already-selected proposicao and its declared position", () => {
       // Arrange

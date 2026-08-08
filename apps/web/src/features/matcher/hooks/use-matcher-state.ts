@@ -6,13 +6,17 @@ import type {
   ProposicaoCard,
   SiglaUf,
 } from "@vota-comigo/shared-types";
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 
 import { perfil as getDeputadoPerfil } from "@/shared/deputado";
 import { getDeputadoDetalhe, runMatcher } from "@/shared/matcher";
 
 import { loadComparativoDeputadosData } from "../lib/comparativo-deputados-detalhes";
 import { buildExecucaoRequest } from "../lib/matcher-payload";
+import {
+  loadRascunho,
+  saveRascunho,
+} from "../lib/matcher-rascunho-storage";
 import {
   activeResultado,
   canAdvanceSelecao,
@@ -35,6 +39,30 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     candidates,
     initMatcherState,
   );
+
+  useEffect(() => {
+    const rascunho = loadRascunho(window.sessionStorage);
+    dispatch({ type: "hydrateRascunho", rascunho });
+  }, []);
+
+  useEffect(() => {
+    if (!state.isHydrated) return;
+
+    saveRascunho(window.sessionStorage, {
+      siglaUf: state.siglaUf,
+      cidade: state.cidade,
+      escopo: state.escopo,
+      selected: state.selected,
+      posicoes: state.posicoes,
+    });
+  }, [
+    state.cidade,
+    state.escopo,
+    state.isHydrated,
+    state.posicoes,
+    state.selected,
+    state.siglaUf,
+  ]);
 
   function setLocal(siglaUf: SiglaUf, cidade: string) {
     dispatch({ type: "setLocal", siglaUf, cidade });
@@ -185,6 +213,7 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
 
   return {
     state,
+    isHydrated: state.isHydrated,
     validation: executionValidation(state),
     canAdvanceSelecao: canAdvanceSelecao(state),
     canRun: canRunMatcher(state),

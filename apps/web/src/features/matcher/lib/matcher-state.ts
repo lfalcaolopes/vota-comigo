@@ -17,6 +17,7 @@ import {
   validateExecucao,
   type ExecucaoValidation,
 } from "./matcher-validation";
+import type { MatcherRascunho } from "./matcher-rascunho";
 
 export type MatcherStep =
   | "local"
@@ -51,6 +52,7 @@ const MIN_COMPARATIVO_DEPUTADOS = 2;
 const MAX_COMPARATIVO_DEPUTADOS = 3;
 
 export type MatcherState = {
+  isHydrated: boolean;
   step: MatcherStep;
   siglaUf: SiglaUf | null;
   cidade: string;
@@ -71,6 +73,7 @@ export type MatcherState = {
 };
 
 export type MatcherAction =
+  | { type: "hydrateRascunho"; rascunho: MatcherRascunho | null }
   | { type: "setLocal"; siglaUf: SiglaUf; cidade: string }
   | { type: "toggleProposicao"; proposicao: ProposicaoCard }
   | {
@@ -105,6 +108,7 @@ export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
   void candidates;
 
   return {
+    isHydrated: false,
     step: "local",
     siglaUf: null,
     cidade: "",
@@ -175,6 +179,10 @@ export function matcherReducer(
   action: MatcherAction,
 ): MatcherState {
   switch (action.type) {
+    case "hydrateRascunho":
+      return action.rascunho === null
+        ? { ...state, isHydrated: true }
+        : { ...state, ...action.rascunho, isHydrated: true };
     case "setLocal":
       return { ...state, siglaUf: action.siglaUf, cidade: action.cidade };
     case "toggleProposicao": {
