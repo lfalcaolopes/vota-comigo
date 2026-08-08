@@ -1,4 +1,3 @@
-import { compareRanking } from './proposicoes-ranking';
 import type {
   ProposicaoCardResumo,
   ProposicaoFeedItem,
@@ -40,11 +39,6 @@ export type SearchableProposicao = {
   ano: string;
 };
 
-export type ProposicaoSearchMatch = {
-  ranked: ProposicaoFeedItem;
-  refMatches: number;
-};
-
 export function toSearchableProposicao(
   proposicao: ProposicaoCardResumo,
 ): SearchableProposicao {
@@ -73,24 +67,6 @@ export function matchesAllTokens(
   tokens: readonly string[],
 ): boolean {
   return tokens.every((token) => tokenMatchesField(fields, token));
-}
-
-function tokenMatchesIdentifier(
-  fields: SearchableProposicao,
-  token: string,
-): boolean {
-  return (
-    token === fields.siglaTipo ||
-    token === fields.numero ||
-    token === fields.ano
-  );
-}
-
-export function referenceMatchCount(
-  fields: SearchableProposicao,
-  tokens: readonly string[],
-): number {
-  return tokens.filter((token) => tokenMatchesIdentifier(fields, token)).length;
 }
 
 export type Citation = {
@@ -145,14 +121,4 @@ export function matchesCitation(
     return false;
   if (citation.ano !== undefined && fields.ano !== citation.ano) return false;
   return true;
-}
-
-export function compareSearchRelevance(
-  a: ProposicaoSearchMatch,
-  b: ProposicaoSearchMatch,
-): number {
-  if (a.refMatches !== b.refMatches) {
-    return b.refMatches - a.refMatches;
-  }
-  return compareRanking(a.ranked, b.ranked);
 }

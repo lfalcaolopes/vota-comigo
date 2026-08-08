@@ -3,7 +3,6 @@ import {
   matchesCitation,
   matchesAllTokens,
   parseCitation,
-  referenceMatchCount,
   tokenizeQuery,
   type Citation,
   type SearchableProposicao,
@@ -114,36 +113,6 @@ describe('matchesAllTokens', () => {
 
       // Assert
       expect(matched).toBe(false);
-    });
-  });
-});
-
-describe('referenceMatchCount', () => {
-  describe('when tokens hit the legislative identifier fields', () => {
-    it('counts tokens matching siglaTipo, numero or ano', () => {
-      // Arrange
-      const fields = searchable();
-      const tokens = tokenizeQuery('pl 1234 2024');
-
-      // Act
-      const count = referenceMatchCount(fields, tokens);
-
-      // Assert
-      expect(count).toBe(3);
-    });
-  });
-
-  describe('when a token only appears in the ementa', () => {
-    it('does not count it as an identifier match', () => {
-      // Arrange
-      const fields = searchable();
-      const tokens = tokenizeQuery('saude pl');
-
-      // Act
-      const count = referenceMatchCount(fields, tokens);
-
-      // Assert
-      expect(count).toBe(1);
     });
   });
 });
