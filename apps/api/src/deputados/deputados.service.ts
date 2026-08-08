@@ -14,17 +14,6 @@ import {
   type DeputadosRepository,
 } from './deputados.repository';
 
-function normalizeSearchText(value: string): string {
-  return value
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .toLocaleLowerCase('pt-BR');
-}
-
-function normalizePartidoSigla(value: string): string {
-  return value.trim().toLocaleUpperCase('pt-BR');
-}
-
 @Injectable()
 export class DeputadosService {
   constructor(
@@ -40,41 +29,14 @@ export class DeputadosService {
     uf?: string,
     partido?: string,
   ): Promise<DeputadosFeedResponse> {
-    const rows = await this.repository.loadDeputadosFeed();
-    const cards = rows.map(toDeputadoCard);
-    const normalizedQuery =
-      q === undefined ? undefined : normalizeSearchText(q.trim());
-    const searchFiltered =
-      normalizedQuery === undefined || normalizedQuery.length === 0
-        ? cards
-        : cards.filter((card) =>
-            [card.nomePublico, card.nomeCivil].some((value) =>
-              value === null
-                ? false
-                : normalizeSearchText(value).includes(normalizedQuery),
-            ),
-          );
-    const filtered =
-      emAtividade === true
-        ? searchFiltered.filter((card) => card.emAtividade)
-        : searchFiltered;
-    const ufFiltered =
-      uf === undefined
-        ? filtered
-        : filtered.filter((card) => card.siglaUf === uf);
-    const partidoFiltered =
-      partido === undefined
-        ? ufFiltered
-        : ufFiltered.filter(
-            (card) =>
-              card.siglaPartido !== null &&
-              normalizePartidoSigla(card.siglaPartido) ===
-                normalizePartidoSigla(partido),
-          );
+    const page = await this.repository.loadDeputadosFeed(
+      { q, emAtividade, uf, partido },
+      { limit, offset },
+    );
 
     return {
-      items: partidoFiltered.slice(offset, offset + limit),
-      total: partidoFiltered.length,
+      items: page.items.map(toDeputadoCard),
+      total: page.total,
       limit,
       offset,
     };

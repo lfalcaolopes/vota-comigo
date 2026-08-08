@@ -75,7 +75,7 @@ function fakeRepository(
   result: ProposicaoDetalheResult | null,
 ): ProposicoesRepository {
   return {
-    loadProposicoesComputaveis: async () => [],
+    loadProposicoesComputaveis: async () => ({ items: [], total: 0 }),
     loadComputableExternalIds: async () => [],
     loadProposicaoDetalhe: async () => result,
     loadProposicaoTemas: async () => [],

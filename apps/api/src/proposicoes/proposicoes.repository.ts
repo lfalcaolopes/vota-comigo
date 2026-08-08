@@ -1,8 +1,9 @@
-import { and, eq, exists, sql } from 'drizzle-orm';
+import { and, eq, exists, sql, type SQL } from 'drizzle-orm';
 import {
   proposicaoResumoIaGenerationStatus,
   proposicaoResumoIaReviewStatus,
 } from '@vota-comigo/shared-types';
+import type { FeedOrdenacao } from '@vota-comigo/shared-types';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
 import type {
@@ -133,10 +134,22 @@ function toProposicaoResumoIaProjection(row: {
   };
 }
 
+export type ProposicoesFeedQuery = {
+  readonly ordenacao: FeedOrdenacao;
+  readonly tema?: number;
+  // Ausente quando a busca textual roda em memoria e precisa do conjunto todo.
+  readonly pagination?: { readonly limit: number; readonly offset: number };
+};
+
+export type ProposicoesFeedPage = {
+  readonly items: readonly ProposicaoFeedItem[];
+  readonly total: number;
+};
+
 export type ProposicoesRepository = {
   loadProposicoesComputaveis(
-    tema?: number,
-  ): Promise<readonly ProposicaoFeedItem[]>;
+    query: ProposicoesFeedQuery,
+  ): Promise<ProposicoesFeedPage>;
   loadComputableExternalIds(): Promise<readonly number[]>;
   loadProposicaoDetalhe(
     externalIdProposicao: number,
@@ -144,11 +157,24 @@ export type ProposicoesRepository = {
   loadProposicaoTemas(): Promise<readonly ProposicaoTemaRow[]>;
 };
 
+// Desempate de compareTieBreak: ano e numero desc com nulo por ultimo, sigla
+// ascendente com nulo como '', e o external id como criterio final. O collate
+// "C" mantem a comparacao byte a byte, igual a do JS e independente da
+// collation do banco.
+const DESEMPATE = sql`${proposicao.ano} desc nulls last, ${proposicao.numero} desc nulls last, coalesce(${proposicao.siglaTipo}, '') collate "C" asc, ${proposicao.externalIdProposicao} asc`;
+
+function ordenacaoSql(ordenacao: FeedOrdenacao): SQL {
+  return ordenacao === 'mais-recentes'
+    ? sql`${proposicao.dataApresentacao} desc nulls last, ${DESEMPATE}`
+    : sql`${proposicaoComputavel.volumeVotacoesPlenario} desc, ${DESEMPATE}`;
+}
+
 export function createProposicoesRepository(
   db: DrizzleDatabase,
 ): ProposicoesRepository {
   return {
-    async loadProposicoesComputaveis(tema?: number) {
+    async loadProposicoesComputaveis(query) {
+      const { tema } = query;
       const temaCondition =
         tema !== undefined
           ? exists(
@@ -164,7 +190,7 @@ export function createProposicoesRepository(
             )
           : undefined;
 
-      const query = db
+      const base = db
         .select({
           externalIdProposicao: proposicao.externalIdProposicao,
           siglaTipo: proposicao.siglaTipo,
@@ -177,6 +203,7 @@ export function createProposicoesRepository(
           resumoIaGenerationStatus: proposicaoResumoIa.generationStatus,
           resumoIaReviewStatus: proposicaoResumoIa.reviewStatus,
           resumoIaCard: proposicaoResumoIa.resumoCard,
+          total: sql<string>`count(*) over ()`,
         })
         .from(proposicaoComputavel)
         .innerJoin(
@@ -186,14 +213,18 @@ export function createProposicoesRepository(
         .leftJoin(
           proposicaoResumoIa,
           eq(proposicaoResumoIa.proposicaoId, proposicao.id),
-        );
+        )
+        .where(temaCondition)
+        .orderBy(ordenacaoSql(query.ordenacao));
 
       const rows =
-        temaCondition === undefined
-          ? await query
-          : await query.where(temaCondition);
+        query.pagination === undefined
+          ? await base
+          : await base
+              .limit(query.pagination.limit)
+              .offset(query.pagination.offset);
 
-      return rows.map((row) => ({
+      const items = rows.map((row) => ({
         proposicao: {
           externalIdProposicao: row.externalIdProposicao,
           siglaTipo: row.siglaTipo,
@@ -218,6 +249,8 @@ export function createProposicoesRepository(
         volumeVotacoesPlenario: row.volumeVotacoesPlenario,
         dataUltimaVotacao: row.dataUltimaVotacao,
       }));
+
+      return { items, total: Number(rows.at(0)?.total ?? 0) };
     },
 
     async loadComputableExternalIds() {

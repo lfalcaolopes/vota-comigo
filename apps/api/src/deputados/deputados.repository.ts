@@ -1,18 +1,37 @@
-import { and, desc, eq, gt, inArray, isNotNull } from 'drizzle-orm';
+import {
+  and,
+  desc,
+  eq,
+  exists,
+  gt,
+  isNotNull,
+  isNull,
+  sql,
+  type SQL,
+} from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
   deputado,
+  deputadoExercicioIntervalo,
   deputadoHistorico,
   deputadoPresenca,
   legislatura,
   partido,
 } from '@/shared/database/schema';
 
+import {
+  normalizeSearchText,
+  normalizedColumn,
+  toLikePattern,
+} from './rules/texto-normalizado';
 import type {
-  DeputadoHistoricoEventoSource,
+  DeputadoCardRow,
   DeputadoLegislaturaPeriodoSource,
+  DeputadosFeedFilters,
+  DeputadosFeedPage,
+  DeputadosFeedPagination,
   DeputadoPerfilSource,
   DeputadoResumoPresencaRow,
 } from './types/deputados.types';
@@ -20,7 +39,10 @@ import type {
 export const DEPUTADOS_REPOSITORY = Symbol('DEPUTADOS_REPOSITORY');
 
 export interface DeputadosRepository {
-  loadDeputadosFeed(): Promise<readonly DeputadoPerfilSource[]>;
+  loadDeputadosFeed(
+    filters: DeputadosFeedFilters,
+    pagination: DeputadosFeedPagination,
+  ): Promise<DeputadosFeedPage>;
   loadUfsDisponiveis(): Promise<readonly string[]>;
   loadPartidosDisponiveis(): Promise<readonly string[]>;
   loadDeputadoPerfil(
@@ -45,6 +67,23 @@ function toLegislaturaPeriodoSource(
 export function createDeputadosRepository(
   db: DrizzleDatabase,
 ): DeputadosRepository {
+  // O DISTINCT ON tem de ficar sozinho sobre deputado_historico: qualquer join
+  // aqui dentro faz o planner trocar o index scan por sort, perdendo o indice
+  // que cobre exatamente estas colunas.
+  function snapshotPublico() {
+    return db
+      .selectDistinctOn([deputadoHistorico.deputadoId], {
+        deputadoId: deputadoHistorico.deputadoId,
+        nomeEleitoral: deputadoHistorico.nomeEleitoral,
+        siglaUf: deputadoHistorico.siglaUf,
+        urlFoto: deputadoHistorico.urlFoto,
+        partidoId: deputadoHistorico.partidoId,
+      })
+      .from(deputadoHistorico)
+      .orderBy(deputadoHistorico.deputadoId, desc(deputadoHistorico.dataHora))
+      .as('snapshot');
+  }
+
   async function loadEventosByDeputadoId(deputadoId: string) {
     return db
       .select({
@@ -61,47 +100,58 @@ export function createDeputadosRepository(
       .where(eq(deputadoHistorico.deputadoId, deputadoId));
   }
 
-  async function loadEventosByDeputadoIds(deputadoIds: readonly string[]) {
-    const byDeputadoId = new Map<string, DeputadoHistoricoEventoSource[]>();
-    if (deputadoIds.length === 0) return byDeputadoId;
-
-    const eventos = await db
-      .select({
-        deputadoId: deputadoHistorico.deputadoId,
-        dataHora: deputadoHistorico.dataHora,
-        situacao: deputadoHistorico.situacao,
-        descricaoStatus: deputadoHistorico.descricaoStatus,
-        nomeEleitoral: deputadoHistorico.nomeEleitoral,
-        siglaUf: deputadoHistorico.siglaUf,
-        urlFoto: deputadoHistorico.urlFoto,
-        siglaPartido: partido.sigla,
-      })
-      .from(deputadoHistorico)
-      .leftJoin(partido, eq(deputadoHistorico.partidoId, partido.id))
-      .where(inArray(deputadoHistorico.deputadoId, deputadoIds));
-
-    for (const evento of eventos) {
-      const { deputadoId, ...source } = evento;
-      byDeputadoId.set(deputadoId, [
-        ...(byDeputadoId.get(deputadoId) ?? []),
-        source,
-      ]);
-    }
-    return byDeputadoId;
-  }
-
   return {
-    async loadDeputadosFeed() {
+    async loadDeputadosFeed(filters, pagination) {
+      const snapshot = snapshotPublico();
+
+      const nomePublico = sql<
+        string | null
+      >`coalesce(${snapshot.nomeEleitoral}, ${deputado.nome}, ${deputado.nomeCivil})`;
+
+      // deputado_exercicio_intervalo e deriveIntervalosExercicio persistido;
+      // um intervalo em aberto e exatamente isEmAtividade.
+      const emAtividade = exists(
+        db
+          .select({ one: sql`1` })
+          .from(deputadoExercicioIntervalo)
+          .where(
+            and(
+              eq(deputadoExercicioIntervalo.deputadoId, deputado.id),
+              isNull(deputadoExercicioIntervalo.closedAt),
+            ),
+          ),
+      );
+
+      const conditions: SQL[] = [];
+      if (filters.emAtividade === true) {
+        conditions.push(emAtividade);
+      }
+      if (filters.uf !== undefined) {
+        conditions.push(eq(snapshot.siglaUf, filters.uf));
+      }
+      if (filters.partido !== undefined) {
+        conditions.push(
+          sql`${normalizedColumn(sql`trim(${partido.sigla})`)} = ${normalizeSearchText(filters.partido.trim())}`,
+        );
+      }
+      if (filters.q !== undefined && filters.q.trim().length > 0) {
+        const pattern = toLikePattern(normalizeSearchText(filters.q.trim()));
+        conditions.push(
+          sql`(${normalizedColumn(nomePublico)} like ${pattern} or ${normalizedColumn(deputado.nomeCivil)} like ${pattern})`,
+        );
+      }
+
+      const ordenacao = normalizedColumn(nomePublico);
       const rows = await db
         .select({
-          id: deputado.id,
           externalIdDeputado: deputado.externalIdDeputado,
-          nome: deputado.nome,
+          nomePublico,
           nomeCivil: deputado.nomeCivil,
-          dataNascimento: deputado.dataNascimento,
-          municipioNascimento: deputado.municipioNascimento,
-          ufNascimento: deputado.ufNascimento,
-          urlRedeSocial: deputado.urlRedeSocial,
+          siglaPartido: partido.sigla,
+          siglaUf: snapshot.siglaUf,
+          urlFoto: snapshot.urlFoto,
+          emAtividade: sql<boolean>`${emAtividade}`,
+          total: sql<string>`count(*) over ()`,
         })
         .from(deputado)
         .innerJoin(
@@ -110,74 +160,59 @@ export function createDeputadosRepository(
             eq(deputadoPresenca.deputadoId, deputado.id),
             gt(deputadoPresenca.presencas, 0),
           ),
-        );
+        )
+        .leftJoin(snapshot, eq(snapshot.deputadoId, deputado.id))
+        .leftJoin(partido, eq(partido.id, snapshot.partidoId))
+        .where(conditions.length === 0 ? undefined : and(...conditions))
+        .orderBy(sql`${ordenacao} asc nulls last`, deputado.externalIdDeputado)
+        .limit(pagination.limit)
+        .offset(pagination.offset);
 
-      const eventosByDeputadoId = await loadEventosByDeputadoIds(
-        rows.map((row) => row.id),
-      );
-
-      return rows.map((row) => ({
-        id: row.id,
+      const items: DeputadoCardRow[] = rows.map((row) => ({
         externalIdDeputado: row.externalIdDeputado,
-        nome: row.nome,
+        nomePublico: row.nomePublico,
         nomeCivil: row.nomeCivil,
-        dataNascimento: row.dataNascimento,
-        municipioNascimento: row.municipioNascimento,
-        ufNascimento: row.ufNascimento,
-        urlRedeSocial: row.urlRedeSocial,
-        externalIdLegislaturaInicial: null,
-        externalIdLegislaturaFinal: null,
-        legislaturaInicialPeriodo: null,
-        legislaturaFinalPeriodo: null,
-        eventos: eventosByDeputadoId.get(row.id) ?? [],
+        siglaPartido: row.siglaPartido,
+        siglaUf: row.siglaUf,
+        urlFoto: row.urlFoto,
+        emAtividade: row.emAtividade,
       }));
+
+      return { items, total: Number(rows.at(0)?.total ?? 0) };
     },
 
     async loadUfsDisponiveis() {
-      const maisRecente = db
-        .selectDistinctOn([deputadoHistorico.deputadoId], {
-          siglaUf: deputadoHistorico.siglaUf,
-        })
-        .from(deputadoHistorico)
+      const snapshot = snapshotPublico();
+
+      const rows = await db
+        .selectDistinct({ siglaUf: snapshot.siglaUf })
+        .from(snapshot)
         .innerJoin(
           deputadoPresenca,
           and(
-            eq(deputadoPresenca.deputadoId, deputadoHistorico.deputadoId),
+            eq(deputadoPresenca.deputadoId, snapshot.deputadoId),
             gt(deputadoPresenca.presencas, 0),
           ),
         )
-        .orderBy(deputadoHistorico.deputadoId, desc(deputadoHistorico.dataHora))
-        .as('mais_recente');
-
-      const rows = await db
-        .selectDistinct({ siglaUf: maisRecente.siglaUf })
-        .from(maisRecente)
-        .where(isNotNull(maisRecente.siglaUf));
+        .where(isNotNull(snapshot.siglaUf));
 
       return rows.flatMap((row) => (row.siglaUf === null ? [] : [row.siglaUf]));
     },
 
     async loadPartidosDisponiveis() {
-      const maisRecente = db
-        .selectDistinctOn([deputadoHistorico.deputadoId], {
-          deputadoId: deputadoHistorico.deputadoId,
-          partidoId: deputadoHistorico.partidoId,
-        })
-        .from(deputadoHistorico)
-        .innerJoin(
-          deputadoPresenca,
-          and(
-            eq(deputadoPresenca.deputadoId, deputadoHistorico.deputadoId),
-            gt(deputadoPresenca.presencas, 0),
-          ),
-        )
-        .orderBy(deputadoHistorico.deputadoId, desc(deputadoHistorico.dataHora))
-        .as('mais_recente');
+      const snapshot = snapshotPublico();
 
       const rows = await db
         .selectDistinct({ sigla: partido.sigla })
-        .from(maisRecente)
-        .innerJoin(partido, eq(maisRecente.partidoId, partido.id))
+        .from(snapshot)
+        .innerJoin(
+          deputadoPresenca,
+          and(
+            eq(deputadoPresenca.deputadoId, snapshot.deputadoId),
+            gt(deputadoPresenca.presencas, 0),
+          ),
+        )
+        .innerJoin(partido, eq(partido.id, snapshot.partidoId))
         .where(isNotNull(partido.sigla));
 
       return rows.flatMap((row) => (row.sigla === null ? [] : [row.sigla]));

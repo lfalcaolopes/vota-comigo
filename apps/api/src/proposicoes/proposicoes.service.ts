@@ -13,7 +13,6 @@ import {
   PROPOSICOES_REPOSITORY,
   type ProposicoesRepository,
 } from './proposicoes.repository';
-import { selectComparator } from './rules/proposicoes-ranking';
 import { toTemasDisponiveis } from './rules/temas-disponiveis';
 import { filterProposicoesByQuery } from './rules/proposicoes-search';
 
@@ -31,16 +30,30 @@ export class ProposicoesService {
     tema?: number,
     q?: string,
   ): Promise<ProposicoesFeedResponse> {
-    const computaveis = await this.repository.loadProposicoesComputaveis(tema);
-    const filtered =
-      q !== undefined && q.trim().length > 0
-        ? filterProposicoesByQuery(computaveis, q.trim())
-        : computaveis;
-    const ranked = [...filtered].sort(selectComparator(ordenacao));
+    const termo = q?.trim();
+    const busca = termo !== undefined && termo.length > 0;
 
+    // A busca textual tem parser de citacao e casamento por token, que seguem
+    // em JS; por isso ela precisa do conjunto inteiro antes de paginar.
+    const page = await this.repository.loadProposicoesComputaveis({
+      ordenacao,
+      tema,
+      pagination: busca ? undefined : { limit, offset },
+    });
+
+    if (!busca) {
+      return {
+        items: page.items.map(toProposicaoCard),
+        total: page.total,
+        limit,
+        offset,
+      };
+    }
+
+    const filtered = filterProposicoesByQuery(page.items, termo);
     return {
-      items: ranked.slice(offset, offset + limit).map(toProposicaoCard),
-      total: ranked.length,
+      items: filtered.slice(offset, offset + limit).map(toProposicaoCard),
+      total: filtered.length,
       limit,
       offset,
     };

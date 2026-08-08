@@ -1,4 +1,11 @@
-import { bigint, pgTable, text, unique, uuid } from 'drizzle-orm/pg-core';
+import {
+  bigint,
+  index,
+  pgTable,
+  text,
+  unique,
+  uuid,
+} from 'drizzle-orm/pg-core';
 
 import { proposicao } from './proposicao';
 import { votacao } from './votacao';
@@ -19,5 +26,11 @@ export const votacaoProposicao = pgTable(
       table.externalIdVotacao,
       table.externalIdProposicao,
     ),
+    // O unique acima lidera por external_id_votacao, entao nao serve ao filtro
+    // por proposicao isolado que o detalhe faz.
+    index('votacao_proposicao_external_id_proposicao_idx').on(
+      table.externalIdProposicao,
+    ),
+    index('votacao_proposicao_votacao_id_idx').on(table.votacaoId),
   ],
 );

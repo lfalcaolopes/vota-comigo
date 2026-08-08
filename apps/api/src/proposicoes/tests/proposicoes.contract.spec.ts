@@ -119,18 +119,29 @@ type FakeData = {
 
 function fakeRepository(data: FakeData): ProposicoesRepository {
   return {
-    loadProposicoesComputaveis: async (tema?: number) => {
-      const lista = data.lista ?? [];
-      const computaveis = toProposicoesComputaveis(lista);
-      if (tema === undefined) return computaveis;
+    // O filtro de tema e a paginacao rodam no SQL; o fake os reproduz apenas
+    // para os testes de contrato exercitarem o formato da resposta.
+    loadProposicoesComputaveis: async ({ tema, pagination }) => {
+      const computaveis = toProposicoesComputaveis(data.lista ?? []);
       const matchingIds = new Set(
         (data.temas ?? [])
           .filter((t) => t.externalCodTema === tema)
           .map((t) => t.externalIdProposicao),
       );
-      return computaveis.filter((row) =>
-        matchingIds.has(row.proposicao.externalIdProposicao),
-      );
+      const filtrados =
+        tema === undefined
+          ? computaveis
+          : computaveis.filter((row) =>
+              matchingIds.has(row.proposicao.externalIdProposicao),
+            );
+      const items =
+        pagination === undefined
+          ? filtrados
+          : filtrados.slice(
+              pagination.offset,
+              pagination.offset + pagination.limit,
+            );
+      return { items, total: filtrados.length };
     },
     loadComputableExternalIds: async () =>
       toProposicoesComputaveis(data.lista ?? []).map(
