@@ -1,9 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { useMatcherNavigation } from "../../hooks/use-matcher-navigation";
 import { buildExecucaoRequest } from "../../lib/matcher-payload";
+import {
+  buildResultadoHref,
+  parseResultadoUrlState,
+} from "../../lib/matcher-route";
 import { StepComparativo } from "../comparativo/step-comparativo";
 import { DeputadoDetalhe } from "../detalhe/deputado-detalhe";
 import { MatcherRouteGate } from "../flow/matcher-route-gate";
@@ -16,7 +21,13 @@ const ROUTE = "/matcher/resultado" as const;
 export function MatcherResultado() {
   const matcher = useMatcher();
   const navigate = useMatcherNavigation();
-  const hasRequestedResultadoRef = useRef(false);
+  const searchParams = useSearchParams();
+  const requestedFilters = parseResultadoUrlState({
+    escopo: searchParams.get("escopo") ?? undefined,
+    atividade: searchParams.get("atividade") ?? undefined,
+  });
+  const requestedFiltersKey = `${requestedFilters.escopo}:${requestedFilters.apenasEmAtividade}`;
+  const requestedFiltersRef = useRef<string | null>(null);
   const { state } = matcher;
   const comparativoPosicoes =
     state.siglaUf === null
@@ -30,10 +41,40 @@ export function MatcherResultado() {
         }).posicoes;
 
   useEffect(() => {
-    if (matcher.resultado !== null || hasRequestedResultadoRef.current) return;
-    hasRequestedResultadoRef.current = true;
-    void matcher.execute();
-  }, [matcher]);
+    if (!matcher.isHydrated || requestedFiltersRef.current === requestedFiltersKey) {
+      return;
+    }
+    requestedFiltersRef.current = requestedFiltersKey;
+    if (
+      matcher.resultado !== null &&
+      matcher.escopo === requestedFilters.escopo &&
+      matcher.apenasEmAtividade === requestedFilters.apenasEmAtividade
+    ) {
+      return;
+    }
+    void matcher.executeResultado(requestedFilters);
+  }, [matcher, requestedFilters, requestedFiltersKey]);
+
+  const areRequestedFiltersActive =
+    matcher.escopo === requestedFilters.escopo &&
+    matcher.apenasEmAtividade === requestedFilters.apenasEmAtividade;
+  const hasRequestedResult =
+    matcher.resultado !== null && areRequestedFiltersActive;
+  const isWaitingForResultado =
+    !hasRequestedResult &&
+    (!areRequestedFiltersActive || state.status !== "error");
+  const visibleState = isWaitingForResultado
+    ? {
+        ...state,
+        escopo: requestedFilters.escopo,
+        apenasEmAtividade: requestedFilters.apenasEmAtividade,
+        resultados: {
+          ...state.resultados,
+          [requestedFilters.escopo]: null,
+        },
+        status: "loading" as const,
+      }
+    : state;
 
   if (state.isComparativoOpen) {
     return (
@@ -76,24 +117,37 @@ export function MatcherResultado() {
               />
             ) : (
               <StepResultado
-                apenasEmAtividade={matcher.apenasEmAtividade}
-                escopo={matcher.escopo}
+                apenasEmAtividade={requestedFilters.apenasEmAtividade}
+                escopo={requestedFilters.escopo}
                 hasMore={matcher.hasMore}
-                onApenasEmAtividadeChange={matcher.setApenasEmAtividade}
+                onApenasEmAtividadeChange={(apenasEmAtividade) =>
+                  navigate(
+                    buildResultadoHref({
+                      ...requestedFilters,
+                      apenasEmAtividade,
+                    }),
+                    "filter",
+                  )
+                }
                 onBack={() => navigate("/matcher/posicoes")}
                 onCancelComparativoSelection={
                   matcher.cancelComparativoSelection
                 }
-                onEscopoChange={matcher.setEscopo}
+                onEscopoChange={(escopo) =>
+                  navigate(
+                    buildResultadoHref({ ...requestedFilters, escopo }),
+                    "filter",
+                  )
+                }
                 onLoadMore={matcher.loadMore}
                 onOpenComparativo={matcher.openComparativo}
                 onOpenDetalhe={matcher.openDetalhe}
-                onRetry={matcher.execute}
+                onRetry={() => matcher.executeResultado(requestedFilters)}
                 onStartComparativoSelection={matcher.startComparativoSelection}
                 onToggleComparativoDeputado={matcher.toggleComparativoDeputado}
-                resultado={matcher.resultado}
-                state={state}
-                status={state.status}
+                resultado={isWaitingForResultado ? null : matcher.resultado}
+                state={visibleState}
+                status={visibleState.status}
               />
             )}
           </div>

@@ -378,6 +378,32 @@ describe("matcherReducer", () => {
     });
   });
 
+  describe("when resultado URL filters are applied", () => {
+    it("activates the filters and resets the requested first page", () => {
+      // Arrange
+      const state = {
+        ...initMatcherState(candidates),
+        resultados: {
+          estadual: resultado("estadual"),
+          nacional: resultado("nacional"),
+        },
+      };
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setResultadoFilters",
+        escopo: "nacional",
+        apenasEmAtividade: true,
+      });
+
+      // Assert
+      expect(next.escopo).toBe("nacional");
+      expect(next.apenasEmAtividade).toBe(true);
+      expect(next.resultados.nacional).toBeNull();
+      expect(next.resultados.estadual).not.toBeNull();
+    });
+  });
+
   describe("loadMoreOk", () => {
     it("appends deputados to the active scope and preserves total", () => {
       // Arrange

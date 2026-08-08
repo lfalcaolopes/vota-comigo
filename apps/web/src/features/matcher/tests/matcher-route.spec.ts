@@ -2,7 +2,9 @@ import type { ProposicaoCard } from "@vota-comigo/shared-types";
 import { describe, expect, it } from "vitest";
 
 import {
+  buildResultadoHref,
   getFurthestMatcherRoute,
+  parseResultadoUrlState,
   resolveMatcherRoute,
   resolvePosicoesSegment,
   stepStatus,
@@ -36,6 +38,70 @@ function card(externalIdProposicao: number): ProposicaoCard {
 }
 
 describe("matcher route", () => {
+  describe("when resultado filters are absent", () => {
+    it("uses the default resultado filters", () => {
+      // Arrange / Act
+      const filters = parseResultadoUrlState({});
+
+      // Assert
+      expect(filters).toEqual({
+        escopo: "estadual",
+        apenasEmAtividade: false,
+      });
+    });
+  });
+
+  describe("when the national scope is requested", () => {
+    it("uses the national resultado scope", () => {
+      // Arrange / Act
+      const filters = parseResultadoUrlState({ escopo: "nacional" });
+
+      // Assert
+      expect(filters.escopo).toBe("nacional");
+    });
+  });
+
+  describe("when active deputados are requested", () => {
+    it("enables the activity filter", () => {
+      // Arrange / Act
+      const filters = parseResultadoUrlState({ atividade: "1" });
+
+      // Assert
+      expect(filters.apenasEmAtividade).toBe(true);
+    });
+  });
+
+  describe("when resultado filters are invalid", () => {
+    it("falls back to the default resultado filters", () => {
+      // Arrange / Act
+      const filters = parseResultadoUrlState({
+        escopo: "municipal",
+        atividade: "sim",
+      });
+
+      // Assert
+      expect(filters).toEqual({
+        escopo: "estadual",
+        apenasEmAtividade: false,
+      });
+    });
+  });
+
+  describe("when resultado filters change", () => {
+    it("builds an address with the non-default filters", () => {
+      // Arrange / Act
+      const href = buildResultadoHref({
+        escopo: "nacional",
+        apenasEmAtividade: true,
+      });
+
+      // Assert
+      expect(href).toBe(
+        "/matcher/resultado?escopo=nacional&atividade=1",
+      );
+    });
+  });
+
   describe("when a proposition position is requested", () => {
     it("resolves the one-based address to its selected proposition", () => {
       // Arrange / Act

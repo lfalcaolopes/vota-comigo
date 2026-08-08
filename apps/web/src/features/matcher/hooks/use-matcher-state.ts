@@ -6,13 +6,14 @@ import type {
   ProposicaoCard,
   SiglaUf,
 } from "@vota-comigo/shared-types";
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useRef } from "react";
 
 import { perfil as getDeputadoPerfil } from "@/shared/deputado";
 import { getDeputadoDetalhe, runMatcher } from "@/shared/matcher";
 
 import { loadComparativoDeputadosData } from "../lib/comparativo-deputados-detalhes";
 import { buildExecucaoRequest } from "../lib/matcher-payload";
+import type { ResultadoUrlState } from "../lib/matcher-route";
 import {
   loadRascunho,
   saveRascunho,
@@ -34,6 +35,7 @@ const PAGE_SIZE = 20;
 
 export function useMatcherState() {
   const [state, dispatch] = useReducer(matcherReducer, [], initMatcherState);
+  const resultadoRequestIdRef = useRef(0);
 
   useEffect(() => {
     const rascunho = loadRascunho(window.sessionStorage);
@@ -81,7 +83,10 @@ export function useMatcherState() {
     apenasEmAtividade: boolean = state.apenasEmAtividade,
   ) {
     if (state.siglaUf === null || !canRunMatcher(state)) return false;
-    if (state.status === "loading") return false;
+    if (append && state.status === "loading") return false;
+
+    const requestId = resultadoRequestIdRef.current + 1;
+    resultadoRequestIdRef.current = requestId;
 
     dispatch({ type: "runStart" });
 
@@ -94,6 +99,7 @@ export function useMatcherState() {
         apenasEmAtividade,
       });
       const resultado = await runMatcher(request, { limit: PAGE_SIZE, offset });
+      if (requestId !== resultadoRequestIdRef.current) return false;
       if (append) {
         dispatch({ type: "loadMoreOk", escopo, resultado });
       } else {
@@ -101,6 +107,7 @@ export function useMatcherState() {
       }
       return true;
     } catch {
+      if (requestId !== resultadoRequestIdRef.current) return false;
       dispatch({ type: "runError" });
       return false;
     }
@@ -108,6 +115,16 @@ export function useMatcherState() {
 
   async function execute() {
     return runFetch(state.escopo, 0, false);
+  }
+
+  async function executeResultado(filters: ResultadoUrlState) {
+    dispatch({ type: "setResultadoFilters", ...filters });
+    return runFetch(
+      filters.escopo,
+      0,
+      false,
+      filters.apenasEmAtividade,
+    );
   }
 
   async function setEscopo(escopo: EscopoMatcher) {
@@ -222,6 +239,7 @@ export function useMatcherState() {
     toggleProposicao,
     setPosicao,
     execute,
+    executeResultado,
     setEscopo,
     setApenasEmAtividade,
     loadMore,

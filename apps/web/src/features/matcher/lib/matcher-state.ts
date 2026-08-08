@@ -58,6 +58,11 @@ export type MatcherAction =
   | { type: "runOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
   | { type: "runError" }
   | { type: "setEscopo"; escopo: EscopoMatcher }
+  | {
+      type: "setResultadoFilters";
+      escopo: EscopoMatcher;
+      apenasEmAtividade: boolean;
+    }
   | { type: "setApenasEmAtividade"; value: boolean }
   | { type: "loadMoreOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
   | { type: "openDetalheStart"; externalIdDeputado: number }
@@ -185,6 +190,16 @@ export function matcherReducer(
       return { ...state, status: "error" };
     case "setEscopo":
       return { ...state, escopo: action.escopo };
+    case "setResultadoFilters":
+      return {
+        ...state,
+        escopo: action.escopo,
+        apenasEmAtividade: action.apenasEmAtividade,
+        resultados: {
+          ...state.resultados,
+          [action.escopo]: null,
+        },
+      };
     case "setApenasEmAtividade":
       return {
         ...state,

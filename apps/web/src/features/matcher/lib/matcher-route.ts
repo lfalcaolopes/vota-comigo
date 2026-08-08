@@ -1,5 +1,8 @@
 import { MIN_POSICOES_COMPUTAVEIS } from "@vota-comigo/shared-types";
-import type { PosicaoUsuarioMatcher } from "@vota-comigo/shared-types";
+import type {
+  EscopoMatcher,
+  PosicaoUsuarioMatcher,
+} from "@vota-comigo/shared-types";
 
 import type { MatcherRascunho } from "./matcher-rascunho";
 import { validateExecucao } from "./matcher-validation";
@@ -16,7 +19,18 @@ export type PosicoesRouteView =
 export type PosicoesHref =
   | `/matcher/posicoes/${number}`
   | "/matcher/posicoes/revisao";
-export type MatcherHref = MatcherRoute | PosicoesHref;
+export type ResultadoHref =
+  | "/matcher/resultado"
+  | `/matcher/resultado?${string}`;
+export type MatcherHref = MatcherRoute | PosicoesHref | ResultadoHref;
+export type ResultadoSearchParams = {
+  atividade?: string;
+  escopo?: string;
+};
+export type ResultadoUrlState = {
+  apenasEmAtividade: boolean;
+  escopo: EscopoMatcher;
+};
 
 export const MATCHER_ROUTE_ORDER: readonly MatcherRoute[] = [
   "/matcher/local",
@@ -24,6 +38,23 @@ export const MATCHER_ROUTE_ORDER: readonly MatcherRoute[] = [
   "/matcher/posicoes",
   "/matcher/resultado",
 ];
+
+export function parseResultadoUrlState(
+  params: ResultadoSearchParams,
+): ResultadoUrlState {
+  return {
+    escopo: params.escopo === "nacional" ? "nacional" : "estadual",
+    apenasEmAtividade: params.atividade === "1",
+  };
+}
+
+export function buildResultadoHref(state: ResultadoUrlState): ResultadoHref {
+  const params = new URLSearchParams();
+  if (state.escopo === "nacional") params.set("escopo", state.escopo);
+  if (state.apenasEmAtividade) params.set("atividade", "1");
+  const search = params.toString();
+  return search ? `/matcher/resultado?${search}` : "/matcher/resultado";
+}
 
 export function resolvePosicoesSegment(
   segment: string,
