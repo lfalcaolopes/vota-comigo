@@ -311,7 +311,9 @@ export function createProposicoesRepository(
           votosObstrucao: votacaoVotos.votosObstrucao,
           votosArtigo17: votacaoVotos.votosArtigo17,
           votosNaoInformado: votacaoVotos.votosNaoInformado,
-          isReferenciaMatcher: sql<boolean>`${votacao.id} = ${head.votacaoReferenciaId}`,
+          // coalesce porque votacaoReferenciaId e null quando a proposicao nao
+          // e computavel, e `id = null` renderia null em vez de false.
+          isReferenciaMatcher: sql<boolean>`coalesce(${votacao.id} = ${head.votacaoReferenciaId}, false)`,
         })
         .from(votacaoProposicao)
         .innerJoin(votacao, eq(votacaoProposicao.votacaoId, votacao.id))
@@ -321,6 +323,10 @@ export function createProposicoesRepository(
             eq(votacaoProposicao.externalIdProposicao, externalIdProposicao),
             eq(votacao.escopoVotacao, 'plenario'),
           ),
+        )
+        .orderBy(
+          sql`${votacao.dataHoraRegistro} desc nulls last`,
+          votacao.externalIdVotacao,
         );
 
       const temas = await db
