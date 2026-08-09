@@ -4,6 +4,7 @@ import type {
   EscopoMatcher,
   MatcherResultado,
 } from "@vota-comigo/shared-types";
+import { useId, useRef, useState } from "react";
 
 import {
   Button,
@@ -25,6 +26,7 @@ import {
 } from "../../lib/matcher-state";
 import { DeputadoCard } from "./deputado-card";
 import { OrdenacaoDisclosure } from "./ordenacao-disclosure";
+import { ResultadoFiltroConcordanciaVazio } from "./resultado-filtro-concordancia-vazio";
 import { ResultadoVazio } from "./resultado-vazio";
 import { SemBomMatchBanner } from "./sem-bom-match-banner";
 
@@ -72,6 +74,9 @@ export function StepResultado({
   onCancelComparativoSelection,
   onOpenComparativo,
 }: StepResultadoProps) {
+  const filtroPanelId = useId();
+  const filtroTriggerRef = useRef<HTMLButtonElement>(null);
+  const [isFiltroOpen, setIsFiltroOpen] = useState(false);
   const isSelectingComparativo = isComparativoSelectionMode(state);
   const canCompare = canOpenComparativo(state);
   const hasDeputadoLimit = hasComparativoDeputadoLimit(state);
@@ -79,6 +84,14 @@ export function StepResultado({
     const posicao = state.posicoes.get(card.externalIdProposicao);
     return posicao === "aprovar" || posicao === "rejeitar";
   });
+  const proposicoesMarcadas = proposicoesElegiveis.filter((card) =>
+    externalIdProposicoesFiltroConcordancia.includes(card.externalIdProposicao),
+  );
+  const display = resultadoDisplay(state);
+  const filtroCountLabel =
+    externalIdProposicoesFiltroConcordancia.length === 1
+      ? "1 proposição marcada"
+      : `${externalIdProposicoesFiltroConcordancia.length} proposições marcadas`;
   const compareAction = isSelectingComparativo ? (
     <div className="grid grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
       <Button
@@ -125,39 +138,62 @@ export function StepResultado({
           onChange={(e) => onApenasEmAtividadeChange(e.target.checked)}
         />
         <div className="order-4 col-span-full grid gap-1 sm:order-3 sm:w-80">
-          <details className="rounded-md border border-border bg-white px-3 py-2">
-            <summary className="cursor-pointer text-sm font-[650] text-ink">
+          <div className="rounded-md border border-border bg-white px-3 py-2">
+            <button
+              aria-controls={filtroPanelId}
+              aria-expanded={isFiltroOpen}
+              aria-label={`Votou comigo, ${filtroCountLabel}`}
+              className="cursor-pointer text-sm font-[650] text-ink"
+              onClick={() => setIsFiltroOpen((isOpen) => !isOpen)}
+              ref={filtroTriggerRef}
+              type="button"
+            >
               Votou comigo
               {externalIdProposicoesFiltroConcordancia.length > 0
                 ? ` (${externalIdProposicoesFiltroConcordancia.length})`
                 : ""}
-            </summary>
-            <ProposicoesSelecionadasList
-              ariaLabel="Proposições do filtro de concordância"
-              className="mt-3 max-h-[min(55vh,24rem)] overflow-y-auto pr-1"
-              posicoes={state.posicoes}
-              proposicoes={proposicoesElegiveis}
-              renderAction={(proposicao, _index, identificador) => (
-                <Checkbox
-                  checked={externalIdProposicoesFiltroConcordancia.includes(
-                    proposicao.externalIdProposicao,
-                  )}
-                  className="size-11 justify-center"
-                  hideLabel
-                  label={`Exigir concordância em ${identificador}`}
-                  onChange={() =>
-                    onToggleFiltroConcordancia(
+            </button>
+            <div hidden={!isFiltroOpen} id={filtroPanelId}>
+              <ProposicoesSelecionadasList
+                ariaLabel="Proposições do filtro de concordância"
+                className="mt-3 max-h-[min(55vh,24rem)] overflow-y-auto pr-1"
+                posicoes={state.posicoes}
+                proposicoes={proposicoesElegiveis}
+                renderAction={(proposicao, _index, identificador) => (
+                  <Checkbox
+                    checked={externalIdProposicoesFiltroConcordancia.includes(
                       proposicao.externalIdProposicao,
-                    )
-                  }
-                />
-              )}
-            />
-          </details>
+                    )}
+                    className="size-11 justify-center"
+                    hideLabel
+                    label={`Exigir concordância em ${identificador}`}
+                    onChange={() =>
+                      onToggleFiltroConcordancia(
+                        proposicao.externalIdProposicao,
+                      )
+                    }
+                  />
+                )}
+              />
+              <Button
+                className="mt-2"
+                onClick={() => {
+                  setIsFiltroOpen(false);
+                  filtroTriggerRef.current?.focus();
+                }}
+                variant="ghost"
+              >
+                Fechar filtro
+              </Button>
+            </div>
+          </div>
           {externalIdProposicoesFiltroConcordancia.length > 0 ? (
             <Button
               className="justify-self-start"
-              onClick={onClearFiltroConcordancia}
+              onClick={() => {
+                onClearFiltroConcordancia();
+                filtroTriggerRef.current?.focus();
+              }}
               variant="ghost"
             >
               Limpar filtro
@@ -167,20 +203,39 @@ export function StepResultado({
       </div>
     </div>
   );
-  const escopoControl = renderFilterControls();
   const resultadoControls = (
     <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start sm:gap-4">
-      <div className="order-1 sm:order-2 sm:ml-auto">{compareAction}</div>
+      <div className="order-1 sm:order-2 sm:ml-auto">
+        {display === "results" ? compareAction : null}
+      </div>
       <div className="order-2 sm:order-1">{renderFilterControls()}</div>
     </div>
   );
 
-  const display = resultadoDisplay(state);
+  const resultadoAnnouncement =
+    display === "loading"
+      ? "Atualizando lista de deputados."
+      : display === "error"
+        ? "Não foi possível atualizar a lista de deputados."
+        : display === "empty" &&
+            externalIdProposicoesFiltroConcordancia.length > 0
+          ? "Resultado atualizado: nenhum deputado votou com você em todas as proposições marcadas."
+          : display === "empty"
+            ? "Resultado atualizado: nenhum deputado encontrado."
+            : resultado!.total === 1
+              ? "Resultado atualizado: 1 deputado no resultado."
+              : `Resultado atualizado: ${resultado!.total} deputados no resultado.`;
+  const resultadoStatus = (
+    <p aria-atomic="true" className="sr-only" role="status">
+      {resultadoAnnouncement}
+    </p>
+  );
 
   if (display === "loading") {
     return (
       <div className="grid gap-5">
-        {escopoControl}
+        {resultadoStatus}
+        {resultadoControls}
         <SkeletonRows count={5} />
       </div>
     );
@@ -189,7 +244,8 @@ export function StepResultado({
   if (display === "error") {
     return (
       <div className="grid gap-5">
-        {escopoControl}
+        {resultadoStatus}
+        {resultadoControls}
         <ErrorState onRetry={onRetry} />
       </div>
     );
@@ -198,14 +254,26 @@ export function StepResultado({
   if (display === "empty") {
     return (
       <div className="grid gap-4">
-        {escopoControl}
-        <ResultadoVazio escopo={escopo} onEscopoChange={onEscopoChange} />
+        {resultadoStatus}
+        {resultadoControls}
+        {externalIdProposicoesFiltroConcordancia.length > 0 ? (
+          <ResultadoFiltroConcordanciaVazio
+            escopo={escopo}
+            onEscopoChange={onEscopoChange}
+            onToggleProposicao={onToggleFiltroConcordancia}
+            posicoes={state.posicoes}
+            proposicoes={proposicoesMarcadas}
+          />
+        ) : (
+          <ResultadoVazio escopo={escopo} onEscopoChange={onEscopoChange} />
+        )}
       </div>
     );
   }
 
   return (
     <div className="grid gap-5">
+      {resultadoStatus}
       {resultadoControls}
       {isSelectingComparativo ? (
         <div className="text-sm text-muted">
