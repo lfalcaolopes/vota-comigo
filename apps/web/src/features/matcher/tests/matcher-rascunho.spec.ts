@@ -166,6 +166,33 @@ describe("Rascunho de execução do matcher", () => {
     });
   });
 
+  describe("quando o rascunho foi gravado antes do filtro de concordância", () => {
+    it("retoma o rascunho sem marcações", () => {
+      // Arrange
+      const legacy = JSON.stringify({
+        version: 1,
+        siglaUf: "SP",
+        cidade: "Campinas",
+        escopo: "estadual",
+        selected,
+        posicoes: [{ externalIdProposicao: 123, posicao: "aprovar" }],
+      });
+
+      // Act
+      const parsed = parseRascunho(legacy);
+
+      // Assert
+      expect(parsed).toEqual({
+        siglaUf: "SP",
+        cidade: "Campinas",
+        escopo: "estadual",
+        selected,
+        posicoes: new Map([[123, "aprovar"]]),
+        externalIdProposicoesFiltroConcordancia: [],
+      });
+    });
+  });
+
   describe("quando uma entrada viola o contrato compartilhado", () => {
     it("descarta o rascunho", () => {
       // Arrange
@@ -176,6 +203,64 @@ describe("Rascunho de execução do matcher", () => {
         escopo: "estadual",
         selected: [],
         posicoes: [],
+      });
+
+      // Act
+      const parsed = parseRascunho(invalid);
+
+      // Assert
+      expect(parsed).toBeNull();
+    });
+
+    it("descarta marcações inválidas do filtro de concordância", () => {
+      // Arrange
+      const invalid = JSON.stringify({
+        version: 1,
+        siglaUf: "SP",
+        cidade: "Campinas",
+        escopo: "estadual",
+        selected,
+        posicoes: [{ externalIdProposicao: 123, posicao: "aprovar" }],
+        externalIdProposicoesFiltroConcordancia: ["123"],
+      });
+
+      // Act
+      const parse = () => parseRascunho(invalid);
+
+      // Assert
+      expect(parse).not.toThrow();
+      expect(parse()).toBeNull();
+    });
+
+    it("descarta marcação ausente das posições computáveis", () => {
+      // Arrange
+      const invalid = JSON.stringify({
+        version: 1,
+        siglaUf: "SP",
+        cidade: "Campinas",
+        escopo: "estadual",
+        selected,
+        posicoes: [{ externalIdProposicao: 123, posicao: "aprovar" }],
+        externalIdProposicoesFiltroConcordancia: [456],
+      });
+
+      // Act
+      const parsed = parseRascunho(invalid);
+
+      // Assert
+      expect(parsed).toBeNull();
+    });
+
+    it("descarta marcação cuja posição é não sei", () => {
+      // Arrange
+      const invalid = JSON.stringify({
+        version: 1,
+        siglaUf: "SP",
+        cidade: "Campinas",
+        escopo: "estadual",
+        selected,
+        posicoes: [{ externalIdProposicao: 123, posicao: "nao_sei" }],
+        externalIdProposicoesFiltroConcordancia: [123],
       });
 
       // Act

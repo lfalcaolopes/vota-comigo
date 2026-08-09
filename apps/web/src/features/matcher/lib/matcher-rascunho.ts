@@ -1,6 +1,7 @@
 import {
   MAX_POSICOES,
   escopoMatcherEnum,
+  posicaoComputavelMatcherEnum,
   posicaoMatcherSchema,
   proposicaoCardSchema,
   siglaUfEnum,
@@ -48,7 +49,29 @@ const serializedRascunhoSchema = z
       .max(MAX_POSICOES)
       .default([]),
   })
-  .strict();
+  .strict()
+  .superRefine((rascunho, context) => {
+    const externalIdProposicoesComputaveis = new Set(
+      rascunho.posicoes
+        .filter(
+          ({ posicao }) =>
+            posicaoComputavelMatcherEnum.safeParse(posicao).success,
+        )
+        .map(({ externalIdProposicao }) => externalIdProposicao),
+    );
+
+    rascunho.externalIdProposicoesFiltroConcordancia.forEach(
+      (externalIdProposicao, index) => {
+        if (!externalIdProposicoesComputaveis.has(externalIdProposicao)) {
+          context.addIssue({
+            code: "custom",
+            path: ["externalIdProposicoesFiltroConcordancia", index],
+            message: `proposicao ausente das posicoes computaveis: ${externalIdProposicao}`,
+          });
+        }
+      },
+    );
+  });
 
 export function serializeRascunho(rascunho: MatcherRascunho): string {
   return JSON.stringify({

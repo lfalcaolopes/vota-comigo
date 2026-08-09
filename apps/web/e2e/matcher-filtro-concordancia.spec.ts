@@ -94,17 +94,154 @@ const resultado = {
   semBomMatch: false,
 };
 
-async function storeRascunho(page: Page) {
+async function storeRascunho(page: Page, value = rascunho) {
   await page.goto("/");
-  await page.evaluate((value) => {
+  await page.evaluate((storedValue) => {
     window.sessionStorage.setItem(
       "vota-comigo:matcher-rascunho",
-      JSON.stringify(value),
+      JSON.stringify(storedValue),
     );
-  }, rascunho);
+  }, value);
 }
 
 test.describe("filtro de concordância no resultado do matcher", () => {
+  test("preserva as proposições marcadas ao recarregar o resultado", async ({
+    page,
+  }) => {
+    // Arrange
+    const requests: Array<{
+      externalIdProposicoesFiltroConcordancia: number[];
+    }> = [];
+    await page.route("http://localhost:3001/matcher?**", async (route) => {
+      requests.push(route.request().postDataJSON());
+      await route.fulfill({ json: resultado });
+    });
+    await storeRascunho(page, {
+      ...rascunho,
+      externalIdProposicoesFiltroConcordancia: [1],
+    });
+    await page.goto("/matcher/resultado");
+    await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+
+    // Act
+    await page.reload();
+    await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+
+    // Assert
+    expect(requests).toHaveLength(2);
+    expect(
+      requests.map(
+        (request) => request.externalIdProposicoesFiltroConcordancia,
+      ),
+    ).toEqual([[1], [1]]);
+    await expect(page).toHaveURL(/\/matcher\/resultado$/);
+  });
+
+  test("preserva as proposições marcadas ao abrir o detalhe e voltar", async ({
+    page,
+  }) => {
+    // Arrange
+    let detalheRequest: {
+      externalIdProposicoesFiltroConcordancia: number[];
+    } | null = null;
+    await page.route("http://localhost:3001/matcher?**", async (route) => {
+      await route.fulfill({ json: resultado });
+    });
+    await page.route(
+      "http://localhost:3001/matcher/deputados/10",
+      async (route) => {
+        detalheRequest = route.request().postDataJSON();
+        await route.fulfill({ status: 500, json: {} });
+      },
+    );
+    await storeRascunho(page, {
+      ...rascunho,
+      externalIdProposicoesFiltroConcordancia: [1],
+    });
+    await page.goto("/matcher/resultado");
+    await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+
+    // Act
+    await page.getByRole("link", { name: /Deputada Exemplo/ }).click();
+    await expect(page).toHaveURL(/\/matcher\/resultado\/10$/);
+    await expect.poll(() => detalheRequest).not.toBeNull();
+    await page.goBack();
+
+    // Assert
+    expect(detalheRequest).toMatchObject({
+      externalIdProposicoesFiltroConcordancia: [1],
+    });
+    await expect(page).toHaveURL(/\/matcher\/resultado$/);
+    await page.getByText("Votou comigo (1)", { exact: true }).click();
+    await expect(
+      page.getByLabel("Exigir concordância em PL 2630/2020"),
+    ).toBeChecked();
+  });
+
+  test("preserva as proposições marcadas ao ampliar o escopo", async ({
+    page,
+  }) => {
+    // Arrange
+    const requests: Array<{
+      escopo: string;
+      externalIdProposicoesFiltroConcordancia: number[];
+    }> = [];
+    await page.route("http://localhost:3001/matcher?**", async (route) => {
+      requests.push(route.request().postDataJSON());
+      await route.fulfill({ json: { ...resultado, escopo: "nacional" } });
+    });
+    await storeRascunho(page, {
+      ...rascunho,
+      externalIdProposicoesFiltroConcordancia: [1],
+    });
+    await page.goto("/matcher/resultado");
+    await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+
+    // Act
+    await page.getByRole("button", { name: "Brasil" }).click();
+
+    // Assert
+    await expect
+      .poll(() => requests.at(-1))
+      .toMatchObject({
+        escopo: "nacional",
+        externalIdProposicoesFiltroConcordancia: [1],
+      });
+    await expect(page).toHaveURL("/matcher/resultado?escopo=nacional");
+  });
+
+  test("preserva as proposições marcadas ao filtrar por atividade", async ({
+    page,
+  }) => {
+    // Arrange
+    const requests: Array<{
+      apenasEmAtividade: boolean;
+      externalIdProposicoesFiltroConcordancia: number[];
+    }> = [];
+    await page.route("http://localhost:3001/matcher?**", async (route) => {
+      requests.push(route.request().postDataJSON());
+      await route.fulfill({ json: resultado });
+    });
+    await storeRascunho(page, {
+      ...rascunho,
+      externalIdProposicoesFiltroConcordancia: [1],
+    });
+    await page.goto("/matcher/resultado");
+    await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+
+    // Act
+    await page.getByText("Apenas em atividade", { exact: true }).click();
+
+    // Assert
+    await expect
+      .poll(() => requests.at(-1))
+      .toMatchObject({
+        apenasEmAtividade: true,
+        externalIdProposicoesFiltroConcordancia: [1],
+      });
+    await expect(page).toHaveURL("/matcher/resultado?atividade=1");
+  });
+
   test("oferece contexto apenas para posições computáveis sem buscar novos dados", async ({
     page,
   }) => {
@@ -123,9 +260,7 @@ test.describe("filtro de concordância no resultado do matcher", () => {
     await page.getByText("Votou comigo", { exact: true }).click();
 
     // Assert
-    await expect(
-      page.getByText("PL 2630/2020", { exact: true }),
-    ).toBeVisible();
+    await expect(page.getByText("PL 2630/2020", { exact: true })).toBeVisible();
     await expect(
       page.getByText("Estabelece regras para plataformas digitais."),
     ).toBeVisible();
@@ -143,8 +278,9 @@ test.describe("filtro de concordância no resultado do matcher", () => {
     page,
   }) => {
     // Arrange
-    const requests: Array<{ externalIdProposicoesFiltroConcordancia: number[] }> =
-      [];
+    const requests: Array<{
+      externalIdProposicoesFiltroConcordancia: number[];
+    }> = [];
     await page.route("http://localhost:3001/matcher?**", async (route) => {
       requests.push(route.request().postDataJSON());
       await route.fulfill({ json: resultado });
@@ -155,9 +291,7 @@ test.describe("filtro de concordância no resultado do matcher", () => {
     await page.getByText("Votou comigo", { exact: true }).click();
 
     // Act
-    await page
-      .getByLabel("Exigir concordância em PL 2630/2020")
-      .press("Space");
+    await page.getByLabel("Exigir concordância em PL 2630/2020").press("Space");
 
     // Assert
     await expect
