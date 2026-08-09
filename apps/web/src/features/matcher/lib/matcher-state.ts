@@ -61,6 +61,7 @@ export type MatcherAction =
       type: "toggleFiltroConcordancia";
       externalIdProposicao: number;
     }
+  | { type: "clearFiltroConcordancia" }
   | { type: "loadMoreOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
   | { type: "startComparativoSelection" }
   | { type: "toggleComparativoDeputado"; deputado: MatcherDeputadoResumo }
@@ -205,6 +206,12 @@ export function matcherReducer(
         resultados: { estadual: null, nacional: null },
       };
     }
+    case "clearFiltroConcordancia":
+      return {
+        ...state,
+        externalIdProposicoesFiltroConcordancia: [],
+        resultados: { estadual: null, nacional: null },
+      };
     case "loadMoreOk": {
       const existing = state.resultados[action.escopo];
       if (existing === null) return state;

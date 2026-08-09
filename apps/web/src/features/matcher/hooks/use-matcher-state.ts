@@ -167,6 +167,12 @@ export function useMatcherState() {
     await runFetch(state.escopo, 0, false, state.apenasEmAtividade, next);
   }
 
+  async function clearFiltroConcordancia() {
+    if (state.externalIdProposicoesFiltroConcordancia.length === 0) return;
+    dispatch({ type: "clearFiltroConcordancia" });
+    await runFetch(state.escopo, 0, false, state.apenasEmAtividade, []);
+  }
+
   function startComparativoSelection() {
     dispatch({ type: "startComparativoSelection" });
   }
@@ -211,6 +217,7 @@ export function useMatcherState() {
     setEscopo,
     setApenasEmAtividade,
     toggleFiltroConcordancia,
+    clearFiltroConcordancia,
     loadMore,
     startComparativoSelection,
     toggleComparativoDeputado,

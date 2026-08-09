@@ -11,6 +11,10 @@ export {
 } from "./feed-url";
 export { ProposicaoResumo } from "./proposicao-resumo";
 export { ProposicaoRow } from "./proposicao-row";
+export {
+  ProposicoesSelecionadasList,
+  toPosicaoUsuarioLabel,
+} from "./proposicoes-selecionadas-list";
 export { ProposicaoBreadcrumb } from "./proposicao-breadcrumb";
 export { ProposicaoDetalhe } from "./proposicao-detalhe";
 export {

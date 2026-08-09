@@ -89,6 +89,7 @@ export function MatcherResultado() {
                 )
               }
               onCancelComparativoSelection={matcher.cancelComparativoSelection}
+              onClearFiltroConcordancia={matcher.clearFiltroConcordancia}
               onEscopoChange={(escopo) =>
                 navigate(
                   buildResultadoHref({ ...requestedFilters, escopo }),

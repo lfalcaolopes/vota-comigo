@@ -13,7 +13,7 @@ import {
   SkeletonRows,
   Switch,
 } from "@/shared/ui";
-import { toIdentificadorLegislativo } from "@/shared/proposicao";
+import { ProposicoesSelecionadasList } from "@/shared/proposicao";
 
 import type { MatcherState, MatcherStatus } from "../../lib/matcher-state";
 import {
@@ -44,6 +44,7 @@ type StepResultadoProps = {
   onRetry: () => void;
   onEscopoChange: (escopo: EscopoMatcher) => void;
   onApenasEmAtividadeChange: (value: boolean) => void;
+  onClearFiltroConcordancia: () => void;
   onToggleFiltroConcordancia: (externalIdProposicao: number) => void;
   onLoadMore: () => void;
   onStartComparativoSelection: () => void;
@@ -63,6 +64,7 @@ export function StepResultado({
   onRetry,
   onEscopoChange,
   onApenasEmAtividadeChange,
+  onClearFiltroConcordancia,
   onToggleFiltroConcordancia,
   onLoadMore,
   onStartComparativoSelection,
@@ -73,6 +75,10 @@ export function StepResultado({
   const isSelectingComparativo = isComparativoSelectionMode(state);
   const canCompare = canOpenComparativo(state);
   const hasDeputadoLimit = hasComparativoDeputadoLimit(state);
+  const proposicoesElegiveis = state.selected.filter((card) => {
+    const posicao = state.posicoes.get(card.externalIdProposicao);
+    return posicao === "aprovar" || posicao === "rejeitar";
+  });
   const compareAction = isSelectingComparativo ? (
     <div className="grid grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
       <Button
@@ -101,7 +107,7 @@ export function StepResultado({
     </Button>
   );
   const renderFilterControls = () => (
-    <div className="grid min-w-0 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
+    <div className="grid min-w-0 gap-2 sm:flex sm:flex-wrap sm:items-start sm:gap-4">
       <p className="text-sm font-[650] text-muted sm:hidden">Filtros</p>
       <div className="grid min-w-0 grid-cols-2 gap-2 sm:contents">
         <SegmentedControl
@@ -118,43 +124,52 @@ export function StepResultado({
           label="Apenas em atividade"
           onChange={(e) => onApenasEmAtividadeChange(e.target.checked)}
         />
-        <details className="order-4 col-span-full rounded-md border border-border bg-white px-3 py-2 sm:order-3">
-          <summary className="cursor-pointer text-sm font-[650] text-ink">
-            Votou comigo
-            {externalIdProposicoesFiltroConcordancia.length > 0
-              ? ` (${externalIdProposicoesFiltroConcordancia.length})`
-              : ""}
-          </summary>
-          <ul className="mt-3 grid max-h-64 gap-3 overflow-y-auto pb-1">
-            {state.selected.map((card) => {
-              const posicao = state.posicoes.get(card.externalIdProposicao);
-              const isComputavel =
-                posicao === "aprovar" || posicao === "rejeitar";
-              const identificador =
-                toIdentificadorLegislativo(card) ?? "Sem identificador";
-              return (
-                <li key={card.externalIdProposicao}>
-                  <Checkbox
-                    checked={externalIdProposicoesFiltroConcordancia.includes(
-                      card.externalIdProposicao,
-                    )}
-                    disabled={!isComputavel}
-                    label={identificador}
-                    onChange={() =>
-                      onToggleFiltroConcordancia(card.externalIdProposicao)
-                    }
-                  />
-                </li>
-              );
-            })}
-          </ul>
-        </details>
+        <div className="order-4 col-span-full grid gap-1 sm:order-3 sm:w-80">
+          <details className="rounded-md border border-border bg-white px-3 py-2">
+            <summary className="cursor-pointer text-sm font-[650] text-ink">
+              Votou comigo
+              {externalIdProposicoesFiltroConcordancia.length > 0
+                ? ` (${externalIdProposicoesFiltroConcordancia.length})`
+                : ""}
+            </summary>
+            <ProposicoesSelecionadasList
+              ariaLabel="Proposições do filtro de concordância"
+              className="mt-3 max-h-[min(55vh,24rem)] overflow-y-auto pr-1"
+              posicoes={state.posicoes}
+              proposicoes={proposicoesElegiveis}
+              renderAction={(proposicao, _index, identificador) => (
+                <Checkbox
+                  checked={externalIdProposicoesFiltroConcordancia.includes(
+                    proposicao.externalIdProposicao,
+                  )}
+                  className="size-11 justify-center"
+                  hideLabel
+                  label={`Exigir concordância em ${identificador}`}
+                  onChange={() =>
+                    onToggleFiltroConcordancia(
+                      proposicao.externalIdProposicao,
+                    )
+                  }
+                />
+              )}
+            />
+          </details>
+          {externalIdProposicoesFiltroConcordancia.length > 0 ? (
+            <Button
+              className="justify-self-start"
+              onClick={onClearFiltroConcordancia}
+              variant="ghost"
+            >
+              Limpar filtro
+            </Button>
+          ) : null}
+        </div>
       </div>
     </div>
   );
   const escopoControl = renderFilterControls();
   const resultadoControls = (
-    <div className="grid min-w-0 gap-3 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
+    <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start sm:gap-4">
       <div className="order-1 sm:order-2 sm:ml-auto">{compareAction}</div>
       <div className="order-2 sm:order-1">{renderFilterControls()}</div>
     </div>
@@ -202,6 +217,17 @@ export function StepResultado({
         </div>
       ) : null}
       {isSemBomMatch(resultado) && <SemBomMatchBanner />}
+      {externalIdProposicoesFiltroConcordancia.length > 0 ? (
+        <header aria-live="polite" className="grid gap-1">
+          <h2 className="text-base font-[680] text-ink">
+            Deputados que votaram com você nas proposições marcadas
+          </h2>
+          <p className="text-sm text-muted">
+            Resultado restrito à concordância em todas as proposições marcadas.
+            A compatibilidade continua considerando todas as suas posições.
+          </p>
+        </header>
+      ) : null}
       <OrdenacaoDisclosure />
 
       <ul className="grid">

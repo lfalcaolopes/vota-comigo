@@ -6,14 +6,8 @@ import type {
   ProposicaoCard,
 } from "@vota-comigo/shared-types";
 
-import {
-  ProposicaoResumo,
-  toIdentificadorLegislativo,
-  toTextoResumo,
-} from "@/shared/proposicao";
+import { ProposicoesSelecionadasList } from "@/shared/proposicao";
 import { Button } from "@/shared/ui";
-
-import { buildRevisaoItems, posicaoLabel } from "../../lib/matcher-revisao";
 
 type StepRevisaoProps = {
   selected: ProposicaoCard[];
@@ -38,8 +32,6 @@ export function StepRevisao({
   onBack,
   onRun,
 }: StepRevisaoProps) {
-  const items = buildRevisaoItems(selected, posicoes);
-
   return (
     <div className="grid min-w-0 gap-6">
       <div>
@@ -49,51 +41,23 @@ export function StepRevisao({
         </p>
       </div>
 
-      <ul className="-mr-1 grid max-h-96 divide-y divide-border overflow-x-hidden overflow-y-auto pr-1 lg:max-h-[min(55vh,32rem)]">
-        {items.map((item, index) => {
-          const identificador = toIdentificadorLegislativo(item.card);
-          const textoResumo = toTextoResumo(item.card);
-          const pendente = item.posicao === null;
-          const label = posicaoLabel(item.posicao);
-
-          return (
-            <li
-              className={`grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 py-4 ${index === highlightIndex ? "rounded-md bg-surface-muted px-3" : ""}`}
-              key={item.card.externalIdProposicao}
-            >
-              <div className="grid min-w-0 gap-0.5">
-                <p className="truncate font-mono text-sm font-[650] tracking-[-0.01em] text-ink">
-                  {identificador ?? "Sem identificador"}
-                </p>
-                {textoResumo ? (
-                  <ProposicaoResumo
-                    identificador={identificador ?? "proposição"}
-                    texto={textoResumo}
-                  />
-                ) : null}
-                <p
-                  aria-label={pendente ? "posição pendente" : undefined}
-                  className={
-                    pendente
-                      ? "mt-1 text-xs font-[650] text-warning-strong underline decoration-dotted underline-offset-2"
-                      : "mt-1 text-xs font-[650] text-subtle"
-                  }
-                >
-                  {pendente ? "A decidir" : label}
-                </p>
-              </div>
-              <Button
-                aria-label={`Editar posição para ${identificador ?? "proposição"}`}
-                className="shrink-0"
-                onClick={() => onEditar(index)}
-                variant="ghost"
-              >
-                Editar
-              </Button>
-            </li>
-          );
-        })}
-      </ul>
+      <ProposicoesSelecionadasList
+        ariaLabel="Proposições selecionadas"
+        className="-mr-1 max-h-96 overflow-y-auto pr-1 lg:max-h-[min(55vh,32rem)]"
+        highlightIndex={highlightIndex}
+        posicoes={posicoes}
+        proposicoes={selected}
+        renderAction={(_proposicao, index, identificador) => (
+          <Button
+            aria-label={`Editar posição para ${identificador}`}
+            className="shrink-0"
+            onClick={() => onEditar(index)}
+            variant="ghost"
+          >
+            Editar
+          </Button>
+        )}
+      />
 
       {!canRun && faltamRespostas > 0 ? (
         <p
