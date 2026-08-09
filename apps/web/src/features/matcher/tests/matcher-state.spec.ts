@@ -139,6 +139,32 @@ describe("matcherReducer", () => {
     });
   });
 
+  describe("when starting a new matcher execution", () => {
+    it("discards user inputs and derived results", () => {
+      // Arrange
+      const withLocal = matcherReducer(initMatcherState(candidates), {
+        type: "setLocal",
+        siglaUf: "SP",
+        cidade: "Santos",
+      });
+      const withSelection = matcherReducer(withLocal, {
+        type: "toggleProposicao",
+        proposicao: card(1),
+      });
+
+      // Act
+      const next = matcherReducer(withSelection, { type: "resetMatcher" });
+
+      // Assert
+      expect(next.siglaUf).toBeNull();
+      expect(next.cidade).toBe("");
+      expect(next.selected).toEqual([]);
+      expect(next.posicoes).toEqual(new Map());
+      expect(next.resultados).toEqual({ estadual: null, nacional: null });
+      expect(next.isHydrated).toBe(true);
+    });
+  });
+
   describe("when toggling a proposicao", () => {
     it("removes an already-selected proposicao and its declared position", () => {
       // Arrange

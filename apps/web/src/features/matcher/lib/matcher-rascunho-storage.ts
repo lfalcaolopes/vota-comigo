@@ -35,3 +35,9 @@ export function saveRascunho(
     storage.setItem(STORAGE_KEY, serializeRascunho(rascunho));
   } catch {}
 }
+
+export function clearRascunho(storage: RascunhoStorage): void {
+  try {
+    storage.removeItem(STORAGE_KEY);
+  } catch {}
+}

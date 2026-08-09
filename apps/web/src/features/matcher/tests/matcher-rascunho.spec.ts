@@ -5,6 +5,7 @@ import type {
 import { describe, expect, it } from "vitest";
 
 import {
+  hasRascunhoEntries,
   parseRascunho,
   serializeRascunho,
 } from "../lib/matcher-rascunho";
@@ -70,6 +71,23 @@ describe("Rascunho de execução do matcher", () => {
       // Assert
       expect(parsed).toEqual(emptyRascunho);
     });
+
+    it("não oferece uma retomada vazia", () => {
+      // Arrange
+      const emptyRascunho = {
+        siglaUf: null,
+        cidade: "",
+        escopo: "estadual" as const,
+        selected: [],
+        posicoes: new Map<number, PosicaoUsuarioMatcher>(),
+      };
+
+      // Act
+      const hasEntries = hasRascunhoEntries(emptyRascunho);
+
+      // Assert
+      expect(hasEntries).toBe(false);
+    });
   });
 
   describe("quando somente o local foi preenchido", () => {
@@ -88,6 +106,23 @@ describe("Rascunho de execução do matcher", () => {
 
       // Assert
       expect(parsed).toEqual(partialRascunho);
+    });
+
+    it("oferece a retomada do rascunho parcial", () => {
+      // Arrange
+      const partialRascunho = {
+        siglaUf: "PE" as const,
+        cidade: "Recife",
+        escopo: "estadual" as const,
+        selected: [],
+        posicoes: new Map<number, PosicaoUsuarioMatcher>(),
+      };
+
+      // Act
+      const hasEntries = hasRascunhoEntries(partialRascunho);
+
+      // Assert
+      expect(hasEntries).toBe(true);
     });
   });
 

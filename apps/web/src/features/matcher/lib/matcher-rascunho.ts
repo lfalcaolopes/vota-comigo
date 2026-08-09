@@ -21,6 +21,16 @@ export type MatcherRascunho = {
   posicoes: Map<number, PosicaoUsuarioMatcher>;
 };
 
+export function hasRascunhoEntries(rascunho: MatcherRascunho): boolean {
+  return (
+    rascunho.siglaUf !== null ||
+    rascunho.cidade.trim() !== "" ||
+    rascunho.escopo !== "estadual" ||
+    rascunho.selected.length > 0 ||
+    rascunho.posicoes.size > 0
+  );
+}
+
 const CURRENT_VERSION = 1 as const;
 
 const serializedRascunhoSchema = z

@@ -38,6 +38,7 @@ export type MatcherState = {
 
 export type MatcherAction =
   | { type: "hydrateRascunho"; rascunho: MatcherRascunho | null }
+  | { type: "resetMatcher" }
   | { type: "setLocal"; siglaUf: SiglaUf; cidade: string }
   | { type: "toggleProposicao"; proposicao: ProposicaoCard }
   | {
@@ -132,6 +133,8 @@ export function matcherReducer(
       return action.rascunho === null
         ? { ...state, isHydrated: true }
         : { ...state, ...action.rascunho, isHydrated: true };
+    case "resetMatcher":
+      return { ...initMatcherState([]), isHydrated: true };
     case "setLocal":
       return { ...state, siglaUf: action.siglaUf, cidade: action.cidade };
     case "toggleProposicao": {

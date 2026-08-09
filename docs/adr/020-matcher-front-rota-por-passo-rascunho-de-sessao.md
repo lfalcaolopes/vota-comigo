@@ -7,7 +7,7 @@ A decisão vem de teste com usuários reais, não de preferência arquitetural. 
 O mapa de endereços é:
 
 ```
-/matcher                              redireciona ao passo mais avançado que o rascunho sustenta
+/matcher                              oferece retomar ou apagar um rascunho existente; sem rascunho, inicia em local
 /matcher/local
 /matcher/proposicoes
 /matcher/posicoes/[index]             replace entre proposições
@@ -16,6 +16,8 @@ O mapa de endereços é:
 /matcher/resultado/[externalIdDeputado]  push
 /matcher/comparativo/[ids]            push
 ```
+
+A raiz do matcher é um ponto de entrada, não uma retomada implícita. Quando existe rascunho com entradas, `/matcher` mostra um resumo e oferece continuar do passo mais avançado ou apagar o rascunho e começar de novo. As duas saídas substituem a entrada atual do histórico. Endereços internos continuam retomando automaticamente, porque recarregar uma página ou usar o botão voltar já expressa a intenção de permanecer naquela execução.
 
 A escolha entre `push` e `replace` não é estilística: ela define o que o botão voltar significa em cada tela. Onde existe um botão de voltar ou cancelar visível, o histórico é empilhado para que os dois gestos coincidam — detalhe do deputado, comparativo e revisão. Onde empilhar criaria uma armadilha de histórico, a entrada é substituída: como a seleção admite até trinta proposições, dar `push` a cada resposta obrigaria o usuário a clicar trinta vezes em voltar para sair do matcher, punindo exatamente o gesto que motivou este ADR. O mesmo vale para os filtros do resultado. O modo de seleção do comparativo continua efêmero e é cancelado apenas pelo botão, por ser modo sobre uma tela e não uma tela.
 

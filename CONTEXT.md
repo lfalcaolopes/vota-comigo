@@ -269,6 +269,7 @@ _Avoid_: Histórico bruto do deputado.
 - O **Rascunho de execução do matcher** guarda apenas entradas do usuário; resultado, detalhe e **Comparativo de deputados** são derivados dele e recalculados sob demanda.
 - O **Rascunho de execução do matcher** nunca trafega para o servidor e nunca aparece em endereço de página, porque **Posição do usuário** é convicção política.
 - Cada passo do **Matcher** e cada view derivada dele são endereçáveis, para que voltar e recarregar preservem o **Rascunho de execução do matcher**.
+- Ao entrar pela raiz do **Matcher** com um **Rascunho de execução do matcher** existente, o usuário escolhe entre retomá-lo e apagá-lo; recarregar ou abrir um endereço interno retoma automaticamente.
 - Um endereço do **Matcher** aberto sem **Rascunho de execução do matcher** suficiente não é erro: leva ao passo mais avançado que o rascunho sustenta.
 - No MVP-5, o **Comparativo de deputados** contextual reutiliza a **Posição do usuário** da execução atual do **Matcher**, sem persisti-la.
 - A **Concordância no comparativo** usa o mesmo efeito calculado pelo **Matcher** para a **Compatibilidade**, preservando a diferença entre concordância, discordância e fora do denominador.

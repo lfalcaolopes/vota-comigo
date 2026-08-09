@@ -13,9 +13,11 @@ import { runMatcher } from "@/shared/matcher";
 import { buildExecucaoRequest } from "../lib/matcher-payload";
 import type { ResultadoUrlState } from "../lib/matcher-route";
 import {
+  clearRascunho,
   loadRascunho,
   saveRascunho,
 } from "../lib/matcher-rascunho-storage";
+import { hasRascunhoEntries } from "../lib/matcher-rascunho";
 import {
   activeResultado,
   canAdvanceSelecao,
@@ -41,13 +43,19 @@ export function useMatcherState() {
   useEffect(() => {
     if (!state.isHydrated) return;
 
-    saveRascunho(window.sessionStorage, {
+    const rascunho = {
       siglaUf: state.siglaUf,
       cidade: state.cidade,
       escopo: state.escopo,
       selected: state.selected,
       posicoes: state.posicoes,
-    });
+    };
+
+    if (hasRascunhoEntries(rascunho)) {
+      saveRascunho(window.sessionStorage, rascunho);
+    } else {
+      clearRascunho(window.sessionStorage);
+    }
   }, [
     state.cidade,
     state.escopo,
@@ -159,6 +167,12 @@ export function useMatcherState() {
     dispatch({ type: "cancelComparativoSelection" });
   }
 
+  function resetMatcher() {
+    resultadoRequestIdRef.current += 1;
+    clearRascunho(window.sessionStorage);
+    dispatch({ type: "resetMatcher" });
+  }
+
   return {
     state,
     isHydrated: state.isHydrated,
@@ -181,5 +195,6 @@ export function useMatcherState() {
     startComparativoSelection,
     toggleComparativoDeputado,
     cancelComparativoSelection,
+    resetMatcher,
   };
 }
