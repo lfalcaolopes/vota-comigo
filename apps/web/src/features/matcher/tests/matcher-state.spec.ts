@@ -20,6 +20,11 @@ import {
   resultadoDisplay,
   selectionCount,
 } from "../lib/matcher-state";
+import {
+  loadRascunho,
+  saveRascunho,
+  type RascunhoStorage,
+} from "../lib/matcher-rascunho-storage";
 
 function card(externalIdProposicao: number): ProposicaoCard {
   return {
@@ -73,6 +78,19 @@ function resultado(
 }
 
 const candidates = [card(1), card(2), card(3), card(4), card(5), card(6)];
+
+function stateWithFiltroConcordancia() {
+  return {
+    ...initMatcherState(candidates),
+    selected: [card(1), card(2), card(3)],
+    posicoes: new Map([
+      [1, "aprovar" as const],
+      [2, "rejeitar" as const],
+      [3, "aprovar" as const],
+    ]),
+    externalIdProposicoesFiltroConcordancia: [1],
+  };
+}
 
 describe("matcherReducer", () => {
   describe("when toggling the filtro de concordancia", () => {
@@ -185,6 +203,34 @@ describe("matcherReducer", () => {
   });
 
   describe("when toggling a proposicao", () => {
+    it("clears the filtro de concordancia when adding a proposicao", () => {
+      // Arrange
+      const state = stateWithFiltroConcordancia();
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "toggleProposicao",
+        proposicao: card(4),
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([]);
+    });
+
+    it("clears the filtro de concordancia when removing a proposicao", () => {
+      // Arrange
+      const state = stateWithFiltroConcordancia();
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "toggleProposicao",
+        proposicao: card(3),
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([]);
+    });
+
     it("removes an already-selected proposicao and its declared position", () => {
       // Arrange
       const selected = matcherReducer(initMatcherState(candidates), {
@@ -246,6 +292,61 @@ describe("matcherReducer", () => {
       expect(next.selected.some((c) => c.externalIdProposicao === 31)).toBe(
         false,
       );
+    });
+  });
+
+  describe("when setting a posição do usuário", () => {
+    it("clears the filtro de concordancia when the position changes", () => {
+      // Arrange
+      const state = stateWithFiltroConcordancia();
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setPosicao",
+        externalIdProposicao: 1,
+        posicao: "rejeitar",
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([]);
+    });
+
+    it("persists the cleared filtro de concordancia in the rascunho", () => {
+      // Arrange
+      const values = new Map<string, string>();
+      const storage: RascunhoStorage = {
+        getItem: (key) => values.get(key) ?? null,
+        setItem: (key, value) => values.set(key, value),
+        removeItem: (key) => values.delete(key),
+      };
+      const state = stateWithFiltroConcordancia();
+      const next = matcherReducer(state, {
+        type: "setPosicao",
+        externalIdProposicao: 1,
+        posicao: "rejeitar",
+      });
+
+      // Act
+      saveRascunho(storage, next);
+      const persisted = loadRascunho(storage);
+
+      // Assert
+      expect(persisted?.externalIdProposicoesFiltroConcordancia).toEqual([]);
+    });
+
+    it("preserves the filtro de concordancia when the position is unchanged", () => {
+      // Arrange
+      const state = stateWithFiltroConcordancia();
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setPosicao",
+        externalIdProposicao: 1,
+        posicao: "aprovar",
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([1]);
     });
   });
 
@@ -336,6 +437,23 @@ describe("matcherReducer", () => {
   });
 
   describe("setEscopo", () => {
+    it("preserves the filtro de concordancia", () => {
+      // Arrange
+      const state = {
+        ...initMatcherState(candidates),
+        externalIdProposicoesFiltroConcordancia: [1],
+      };
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setEscopo",
+        escopo: "nacional",
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([1]);
+    });
+
     it("flips the active escopo without touching selected or posicoes", () => {
       // Arrange
       let state = initMatcherState(candidates);
@@ -856,6 +974,23 @@ describe("matcherReducer", () => {
   });
 
   describe("setApenasEmAtividade", () => {
+    it("preserves the filtro de concordancia", () => {
+      // Arrange
+      const state = {
+        ...initMatcherState(candidates),
+        externalIdProposicoesFiltroConcordancia: [1],
+      };
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setApenasEmAtividade",
+        value: true,
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([1]);
+    });
+
     it("sets apenasEmAtividade to true", () => {
       // Arrange
       const state = initMatcherState(candidates);

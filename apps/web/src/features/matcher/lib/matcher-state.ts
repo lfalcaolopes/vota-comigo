@@ -15,6 +15,7 @@ import {
   validateExecucao,
   type ExecucaoValidation,
 } from "./matcher-validation";
+import { shouldClearFiltroConcordancia } from "./filtro-concordancia-reset";
 import type { MatcherRascunho } from "./matcher-rascunho";
 
 export type MatcherStatus = "idle" | "loading" | "error";
@@ -95,19 +96,29 @@ function isSelected(
   );
 }
 
+function applyFiltroConcordanciaReset(
+  previous: MatcherState,
+  next: MatcherState,
+): MatcherState {
+  return shouldClearFiltroConcordancia(previous, next)
+    ? { ...next, externalIdProposicoesFiltroConcordancia: [] }
+    : next;
+}
+
 function deselect(
   state: MatcherState,
   externalIdProposicao: number,
 ): MatcherState {
   const posicoes = new Map(state.posicoes);
   posicoes.delete(externalIdProposicao);
-  return {
+  const next = {
     ...state,
     selected: state.selected.filter(
       (card) => card.externalIdProposicao !== externalIdProposicao,
     ),
     posicoes,
   };
+  return applyFiltroConcordanciaReset(state, next);
 }
 
 function hasSelectedComparativoDeputado(
@@ -152,12 +163,17 @@ export function matcherReducer(
       if (state.selected.length >= MAX_POSICOES) {
         return state;
       }
-      return { ...state, selected: [...state.selected, action.proposicao] };
+      const next = {
+        ...state,
+        selected: [...state.selected, action.proposicao],
+      };
+      return applyFiltroConcordanciaReset(state, next);
     }
     case "setPosicao": {
       const posicoes = new Map(state.posicoes);
       posicoes.set(action.externalIdProposicao, action.posicao);
-      return { ...state, posicoes };
+      const next = { ...state, posicoes };
+      return applyFiltroConcordanciaReset(state, next);
     }
     case "runStart":
       return { ...state, status: "loading" };
