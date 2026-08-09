@@ -23,11 +23,13 @@ export type ResultadoHref =
   | "/matcher/resultado"
   | `/matcher/resultado?${string}`;
 export type ResultadoDetalheHref = `/matcher/resultado/${number}`;
+export type ComparativoHref = `/matcher/comparativo/${string}`;
 export type MatcherHref =
   | MatcherRoute
   | PosicoesHref
   | ResultadoHref
-  | ResultadoDetalheHref;
+  | ResultadoDetalheHref
+  | ComparativoHref;
 export type ResultadoSearchParams = {
   atividade?: string;
   escopo?: string;
@@ -65,6 +67,31 @@ export function buildResultadoDetalheHref(
   externalIdDeputado: number,
 ): ResultadoDetalheHref {
   return `/matcher/resultado/${externalIdDeputado}`;
+}
+
+export function parseComparativoIds(segment: string): number[] | null {
+  let decodedSegment: string;
+  try {
+    decodedSegment = decodeURIComponent(segment);
+  } catch {
+    return null;
+  }
+  const ids = decodedSegment.split(",").map(Number);
+  if (
+    ids.length < 2 ||
+    ids.length > 3 ||
+    new Set(ids).size !== ids.length ||
+    ids.some((id) => !Number.isInteger(id) || id <= 0)
+  ) {
+    return null;
+  }
+  return ids;
+}
+
+export function buildComparativoHref(
+  externalIdsDeputado: readonly number[],
+): ComparativoHref {
+  return `/matcher/comparativo/${externalIdsDeputado.join(",")}`;
 }
 
 export function resolvePosicoesSegment(

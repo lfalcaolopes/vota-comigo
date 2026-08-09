@@ -167,7 +167,7 @@ test.describe("detalhe de resultado do matcher", () => {
             headers: {
               "access-control-allow-headers": "content-type",
               "access-control-allow-methods": "POST",
-              "access-control-allow-origin": "http://localhost:3000",
+              "access-control-allow-origin": "*",
             },
           });
           return;
@@ -177,7 +177,7 @@ test.describe("detalhe de resultado do matcher", () => {
           await route.fulfill({
             status: 500,
             headers: {
-              "access-control-allow-origin": "http://localhost:3000",
+              "access-control-allow-origin": "*",
             },
           });
           return;
@@ -185,7 +185,7 @@ test.describe("detalhe de resultado do matcher", () => {
         await route.fulfill({
           json: detalhe,
           headers: {
-            "access-control-allow-origin": "http://localhost:3000",
+            "access-control-allow-origin": "*",
           },
         });
       },

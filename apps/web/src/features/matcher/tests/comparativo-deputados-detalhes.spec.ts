@@ -1,27 +1,11 @@
 import type {
   DeputadoPerfil,
   MatcherDeputadoDetalhe,
-  MatcherDeputadoResumo,
   MatcherExecucaoRequest,
 } from "@vota-comigo/shared-types";
 import { describe, expect, it, vi } from "vitest";
 
 import { loadComparativoDeputadosData } from "../lib/comparativo-deputados-detalhes";
-
-function deputado(externalIdDeputado: number): MatcherDeputadoResumo {
-  return {
-    externalIdDeputado,
-    nome: `Deputado ${externalIdDeputado}`,
-    partido: "PP",
-    siglaUf: "SP",
-    urlFoto: null,
-    emAtividade: true,
-    compatibilidadeBruta: 80,
-    amostraComparavel: 3,
-    scoreOrdenacaoPercentual: 75,
-    alertas: [],
-  };
-}
 
 function detalhe(externalIdDeputado: number): MatcherDeputadoDetalhe {
   return {
@@ -105,7 +89,7 @@ describe("loadComparativoDeputadosData", () => {
 
       // Act
       const data = await loadComparativoDeputadosData({
-        selectedDeputados: [deputado(20), deputado(10), deputado(30)],
+        externalIdsDeputado: [20, 10, 30],
         request,
         getDeputadoDetalhe,
         getDeputadoPerfil,

@@ -2,8 +2,10 @@ import type { ProposicaoCard } from "@vota-comigo/shared-types";
 import { describe, expect, it } from "vitest";
 
 import {
+  buildComparativoHref,
   buildResultadoHref,
   getFurthestMatcherRoute,
+  parseComparativoIds,
   parseResultadoUrlState,
   resolveMatcherRoute,
   resolvePosicoesSegment,
@@ -38,6 +40,65 @@ function card(externalIdProposicao: number): ProposicaoCard {
 }
 
 describe("matcher route", () => {
+  describe("when two deputados are selected for comparison", () => {
+    it("preserves their selection order in the comparison address", () => {
+      // Arrange
+      const selectedIds = [7, 5];
+
+      // Act
+      const href = buildComparativoHref(selectedIds);
+      const parsedIds = parseComparativoIds("7,5");
+
+      // Assert
+      expect(href).toBe("/matcher/comparativo/7,5");
+      expect(parsedIds).toEqual(selectedIds);
+    });
+  });
+
+  describe("when the comparison segment is URL-encoded", () => {
+    it("reads the ids delivered by the app router", () => {
+      // Arrange / Act
+      const parsedIds = parseComparativoIds("20%2C10");
+
+      // Assert
+      expect(parsedIds).toEqual([20, 10]);
+    });
+  });
+
+  describe("when three deputados are selected for comparison", () => {
+    it("preserves their selection order in the comparison address", () => {
+      // Arrange
+      const selectedIds = [7, 5, 9];
+
+      // Act
+      const href = buildComparativoHref(selectedIds);
+      const parsedIds = parseComparativoIds("7,5,9");
+
+      // Assert
+      expect(href).toBe("/matcher/comparativo/7,5,9");
+      expect(parsedIds).toEqual(selectedIds);
+    });
+  });
+
+  describe("when comparison ids are invalid", () => {
+    it("rejects invalid arity, repeated ids and non-numeric segments", () => {
+      // Arrange
+      const invalidSegments = [
+        "7",
+        "7,5,9,11",
+        "7,7",
+        "7,maria",
+        "%E0%A4%A",
+      ];
+
+      // Act
+      const parsedIds = invalidSegments.map(parseComparativoIds);
+
+      // Assert
+      expect(parsedIds).toEqual([null, null, null, null, null]);
+    });
+  });
+
   describe("when resultado filters are absent", () => {
     it("uses the default resultado filters", () => {
       // Arrange / Act

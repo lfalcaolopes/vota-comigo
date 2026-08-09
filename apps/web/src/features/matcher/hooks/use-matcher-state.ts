@@ -8,10 +8,8 @@ import type {
 } from "@vota-comigo/shared-types";
 import { useEffect, useReducer, useRef } from "react";
 
-import { perfil as getDeputadoPerfil } from "@/shared/deputado";
-import { getDeputadoDetalhe, runMatcher } from "@/shared/matcher";
+import { runMatcher } from "@/shared/matcher";
 
-import { loadComparativoDeputadosData } from "../lib/comparativo-deputados-detalhes";
 import { buildExecucaoRequest } from "../lib/matcher-payload";
 import type { ResultadoUrlState } from "../lib/matcher-route";
 import {
@@ -21,7 +19,6 @@ import {
 import {
   activeResultado,
   canAdvanceSelecao,
-  canOpenComparativo,
   canRunMatcher,
   executionValidation,
   hasMoreDeputados,
@@ -162,40 +159,6 @@ export function useMatcherState() {
     dispatch({ type: "cancelComparativoSelection" });
   }
 
-  async function openComparativo() {
-    if (state.siglaUf === null || !canRunMatcher(state)) return;
-    if (!canOpenComparativo(state)) return;
-
-    dispatch({ type: "openComparativoStart" });
-
-    try {
-      const request = buildExecucaoRequest({
-        siglaUf: state.siglaUf,
-        escopo: state.escopo,
-        cidade: state.cidade,
-        posicoes: state.posicoes,
-        apenasEmAtividade: state.apenasEmAtividade,
-      });
-      const data = await loadComparativoDeputadosData({
-        selectedDeputados: state.selectedComparativoDeputados,
-        request,
-        getDeputadoDetalhe,
-        getDeputadoPerfil,
-      });
-      dispatch({
-        type: "openComparativoOk",
-        detalhes: data.detalhes,
-        perfis: data.perfis,
-      });
-    } catch {
-      dispatch({ type: "openComparativoError" });
-    }
-  }
-
-  function backFromComparativo() {
-    dispatch({ type: "backFromComparativo" });
-  }
-
   return {
     state,
     isHydrated: state.isHydrated,
@@ -218,7 +181,5 @@ export function useMatcherState() {
     startComparativoSelection,
     toggleComparativoDeputado,
     cancelComparativoSelection,
-    openComparativo,
-    backFromComparativo,
   };
 }

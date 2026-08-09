@@ -1,7 +1,6 @@
 import type {
   DeputadoPerfil,
   MatcherDeputadoDetalhe,
-  MatcherDeputadoResumo,
   MatcherExecucaoRequest,
 } from "@vota-comigo/shared-types";
 
@@ -14,45 +13,29 @@ type GetDeputadoPerfil = (
   externalIdDeputado: number,
 ) => Promise<DeputadoPerfil>;
 
-type LoadComparativoDeputadosDetalhesInput = {
-  selectedDeputados: MatcherDeputadoResumo[];
+type LoadComparativoDeputadosDataInput = {
+  externalIdsDeputado: number[];
   request: MatcherExecucaoRequest;
   getDeputadoDetalhe: GetDeputadoDetalhe;
+  getDeputadoPerfil: GetDeputadoPerfil;
 };
-
-type LoadComparativoDeputadosDataInput =
-  LoadComparativoDeputadosDetalhesInput & {
-    getDeputadoPerfil: GetDeputadoPerfil;
-  };
 
 export type ComparativoDeputadosData = {
   detalhes: MatcherDeputadoDetalhe[];
   perfis: DeputadoPerfil[];
 };
 
-export function loadComparativoDeputadosDetalhes({
-  selectedDeputados,
-  request,
-  getDeputadoDetalhe,
-}: LoadComparativoDeputadosDetalhesInput): Promise<MatcherDeputadoDetalhe[]> {
-  return Promise.all(
-    selectedDeputados.map((deputado) =>
-      getDeputadoDetalhe(deputado.externalIdDeputado, request),
-    ),
-  );
-}
-
 export async function loadComparativoDeputadosData({
-  selectedDeputados,
+  externalIdsDeputado,
   request,
   getDeputadoDetalhe,
   getDeputadoPerfil,
 }: LoadComparativoDeputadosDataInput): Promise<ComparativoDeputadosData> {
   const items = await Promise.all(
-    selectedDeputados.map(async (deputado) => {
+    externalIdsDeputado.map(async (externalIdDeputado) => {
       const [detalhe, perfil] = await Promise.all([
-        getDeputadoDetalhe(deputado.externalIdDeputado, request),
-        getDeputadoPerfil(deputado.externalIdDeputado),
+        getDeputadoDetalhe(externalIdDeputado, request),
+        getDeputadoPerfil(externalIdDeputado),
       ]);
 
       return { detalhe, perfil };

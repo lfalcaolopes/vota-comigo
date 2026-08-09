@@ -3,9 +3,7 @@ import {
   MIN_POSICOES_COMPUTAVEIS,
 } from "@vota-comigo/shared-types";
 import type {
-  DeputadoPerfil,
   EscopoMatcher,
-  MatcherDeputadoDetalhe,
   MatcherDeputadoResumo,
   MatcherResultado,
   PosicaoUsuarioMatcher,
@@ -36,10 +34,6 @@ export type MatcherState = {
   status: MatcherStatus;
   isSelectingComparativoDeputados: boolean;
   selectedComparativoDeputados: MatcherDeputadoResumo[];
-  isComparativoOpen: boolean;
-  comparativoStatus: MatcherStatus;
-  comparativoDetalhes: MatcherDeputadoDetalhe[];
-  comparativoPerfis: DeputadoPerfil[];
 };
 
 export type MatcherAction =
@@ -64,15 +58,7 @@ export type MatcherAction =
   | { type: "loadMoreOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
   | { type: "startComparativoSelection" }
   | { type: "toggleComparativoDeputado"; deputado: MatcherDeputadoResumo }
-  | { type: "cancelComparativoSelection" }
-  | { type: "openComparativoStart" }
-  | {
-      type: "openComparativoOk";
-      detalhes: MatcherDeputadoDetalhe[];
-      perfis: DeputadoPerfil[];
-    }
-  | { type: "openComparativoError" }
-  | { type: "backFromComparativo" };
+  | { type: "cancelComparativoSelection" };
 
 export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
   void candidates;
@@ -89,10 +75,6 @@ export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
     status: "idle",
     isSelectingComparativoDeputados: false,
     selectedComparativoDeputados: [],
-    isComparativoOpen: false,
-    comparativoStatus: "idle",
-    comparativoDetalhes: [],
-    comparativoPerfis: [],
   };
 }
 
@@ -217,9 +199,6 @@ export function matcherReducer(
         ...state,
         isSelectingComparativoDeputados: true,
         selectedComparativoDeputados: [],
-        comparativoStatus: "idle",
-        comparativoDetalhes: [],
-        comparativoPerfis: [],
       };
     case "toggleComparativoDeputado": {
       const id = action.deputado.externalIdDeputado;
@@ -244,43 +223,6 @@ export function matcherReducer(
         ...state,
         isSelectingComparativoDeputados: false,
         selectedComparativoDeputados: [],
-        comparativoStatus: "idle",
-        comparativoDetalhes: [],
-        comparativoPerfis: [],
-      };
-    case "openComparativoStart":
-      if (!canOpenComparativo(state)) return state;
-      return {
-        ...state,
-        isComparativoOpen: true,
-        comparativoStatus: "loading",
-        comparativoDetalhes: [],
-        comparativoPerfis: [],
-        isSelectingComparativoDeputados: false,
-      };
-    case "openComparativoOk":
-      return {
-        ...state,
-        comparativoStatus: "idle",
-        comparativoDetalhes: action.detalhes,
-        comparativoPerfis: action.perfis,
-      };
-    case "openComparativoError":
-      return {
-        ...state,
-        comparativoStatus: "error",
-        comparativoDetalhes: [],
-        comparativoPerfis: [],
-      };
-    case "backFromComparativo":
-      return {
-        ...state,
-        isComparativoOpen: false,
-        isSelectingComparativoDeputados: false,
-        selectedComparativoDeputados: [],
-        comparativoStatus: "idle",
-        comparativoDetalhes: [],
-        comparativoPerfis: [],
       };
   }
 }
