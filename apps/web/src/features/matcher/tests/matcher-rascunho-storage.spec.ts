@@ -28,6 +28,7 @@ describe("Persistência do rascunho de execução do matcher", () => {
         escopo: "estadual" as const,
         selected: [],
         posicoes: new Map<number, PosicaoUsuarioMatcher>(),
+        externalIdProposicoesFiltroConcordancia: [],
       };
 
       // Act
@@ -58,6 +59,7 @@ describe("Persistência do rascunho de execução do matcher", () => {
         escopo: "estadual",
         selected: [],
         posicoes: new Map(),
+        externalIdProposicoesFiltroConcordancia: [],
       });
 
       // Act

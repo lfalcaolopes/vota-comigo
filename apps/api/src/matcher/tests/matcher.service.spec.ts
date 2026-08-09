@@ -30,6 +30,7 @@ function request(
     siglaUf: 'PE',
     escopo: 'estadual',
     apenasEmAtividade: false,
+    externalIdProposicoesFiltroConcordancia: [],
     posicoes: [
       posicao({ externalIdProposicao: 1, posicao: 'aprovar' }),
       posicao({ externalIdProposicao: 2, posicao: 'rejeitar' }),
@@ -121,6 +122,88 @@ function votacaoReferenciaVotos(
 const pagina = { limit: 20, offset: 0 };
 
 describe('MatcherService.execute', () => {
+  describe('when filtering by concordancia', () => {
+    it('restricts deputados without recalculating compatibility', async () => {
+      // Arrange
+      const votacoes = [
+        votacaoReferenciaVotos(
+          1,
+          new Map([
+            ['dep-1', 'sim'],
+            ['dep-2', 'nao'],
+          ]),
+        ),
+        votacaoReferenciaVotos(
+          2,
+          new Map([
+            ['dep-1', 'nao'],
+            ['dep-2', 'sim'],
+          ]),
+        ),
+        votacaoReferenciaVotos(
+          3,
+          new Map([
+            ['dep-1', 'nao'],
+            ['dep-2', 'sim'],
+          ]),
+        ),
+      ];
+      const deputados = [
+        {
+          deputadoId: 'dep-1',
+          externalIdDeputado: 1,
+          nome: 'Concorda no filtro',
+          nomeEleitoral: null,
+          nomeCivil: null,
+          partido: 'PT',
+          siglaUf: 'PE' as const,
+          urlFoto: null,
+          intervalos: [emExercicio],
+        },
+        {
+          deputadoId: 'dep-2',
+          externalIdDeputado: 2,
+          nome: 'Discorda no filtro',
+          nomeEleitoral: null,
+          nomeCivil: null,
+          partido: 'PT',
+          siglaUf: 'PE' as const,
+          urlFoto: null,
+          intervalos: [emExercicio],
+        },
+      ];
+      const service = new MatcherService(
+        fakeRepository({
+          computaveis: new Set([1, 2, 3]),
+          votacoes,
+          deputados,
+        }),
+      );
+
+      // Act
+      const resultado = await service.execute(
+        request({
+          posicoes: [
+            posicao({ externalIdProposicao: 1, posicao: 'aprovar' }),
+            posicao({ externalIdProposicao: 2, posicao: 'aprovar' }),
+            posicao({ externalIdProposicao: 3, posicao: 'aprovar' }),
+          ],
+          externalIdProposicoesFiltroConcordancia: [1],
+        }),
+        pagina,
+      );
+
+      // Assert
+      expect(resultado.total).toBe(1);
+      expect(resultado.totalDeputadosAvaliados).toBe(1);
+      expect(resultado.deputados[0]).toMatchObject({
+        externalIdDeputado: 1,
+        compatibilidadeBruta: 33.33,
+      });
+      expect(resultado.semBomMatch).toBe(true);
+    });
+  });
+
   describe('when the execution is valid', () => {
     it('returns the estadual result with the validation summary and engine deputados', async () => {
       // Arrange
@@ -740,6 +823,30 @@ describe('MatcherService and the public name of the deputado', () => {
       // Assert
       expect(detalhe.deputado.nome).toBe('Ze do Povo');
       expect(detalhe.deputado.urlFoto).toBe('https://foto/recente.jpg');
+    });
+
+    it('keeps every vote when the ranking uses the concordancia filter', async () => {
+      // Arrange
+      const repo = repository();
+      repo.loadVotacoesReferenciaWithVotos = async () => [
+        votacaoReferenciaVotos(1, new Map([['dep-1', 'sim']])),
+        votacaoReferenciaVotos(2, new Map([['dep-1', 'sim']])),
+        votacaoReferenciaVotos(3, new Map([['dep-1', 'nao']])),
+      ];
+
+      // Act
+      const detalhe = await new MatcherService(repo).detail(
+        100,
+        request({ externalIdProposicoesFiltroConcordancia: [1] }),
+      );
+
+      // Assert
+      expect(detalhe.votos).toHaveLength(3);
+      expect(detalhe.votos.map((voto) => voto.matcherEffect)).toEqual([
+        'concordancia',
+        'discordancia',
+        'discordancia',
+      ]);
     });
   });
 });

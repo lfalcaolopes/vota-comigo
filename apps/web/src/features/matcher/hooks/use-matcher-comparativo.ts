@@ -42,6 +42,8 @@ export function useMatcherComparativo(externalIdsDeputado: number[] | null) {
         cidade: state.cidade,
         posicoes: state.posicoes,
         apenasEmAtividade: state.apenasEmAtividade,
+        externalIdProposicoesFiltroConcordancia:
+          state.externalIdProposicoesFiltroConcordancia,
       });
       const data = await loadComparativoDeputadosData({
         externalIdsDeputado,

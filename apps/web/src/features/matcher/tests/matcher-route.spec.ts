@@ -21,6 +21,7 @@ function emptyRascunho(): MatcherRascunho {
     escopo: "estadual",
     selected: [],
     posicoes: new Map(),
+    externalIdProposicoesFiltroConcordancia: [],
   };
 }
 

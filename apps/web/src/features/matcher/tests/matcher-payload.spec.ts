@@ -13,6 +13,26 @@ function posicoesMap(
 }
 
 describe("matcherExecucaoRequestSchema", () => {
+  describe("when the filtro de concordancia is omitted", () => {
+    it("defaults to an empty list", () => {
+      // Arrange
+      const partial = {
+        siglaUf: "SP" as const,
+        posicoes: [
+          { externalIdProposicao: 1, posicao: "aprovar" as const },
+          { externalIdProposicao: 2, posicao: "aprovar" as const },
+          { externalIdProposicao: 3, posicao: "aprovar" as const },
+        ],
+      };
+
+      // Act
+      const parsed = matcherExecucaoRequestSchema.parse(partial);
+
+      // Assert
+      expect(parsed.externalIdProposicoesFiltroConcordancia).toEqual([]);
+    });
+  });
+
   describe("when apenasEmAtividade is omitted", () => {
     it("defaults to false", () => {
       // Arrange
@@ -75,6 +95,29 @@ describe("matcherExecucaoRequestSchema", () => {
 });
 
 describe("buildExecucaoRequest", () => {
+  describe("when propositions are marked in the filtro de concordancia", () => {
+    it("forwards their identifiers in the request", () => {
+      // Arrange
+      const input = {
+        siglaUf: "SP" as const,
+        escopo: "estadual" as const,
+        apenasEmAtividade: false,
+        posicoes: posicoesMap([
+          [1, "aprovar"],
+          [2, "rejeitar"],
+          [3, "aprovar"],
+        ]),
+        externalIdProposicoesFiltroConcordancia: [1, 3],
+      };
+
+      // Act
+      const request = buildExecucaoRequest(input);
+
+      // Assert
+      expect(request.externalIdProposicoesFiltroConcordancia).toEqual([1, 3]);
+    });
+  });
+
   describe("when positions mix computable and nao_sei", () => {
     it("includes only the computable positions and omits nao_sei", () => {
       // Arrange

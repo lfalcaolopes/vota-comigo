@@ -7,11 +7,13 @@ import type {
 
 import {
   Button,
+  Checkbox,
   ErrorState,
   SegmentedControl,
   SkeletonRows,
   Switch,
 } from "@/shared/ui";
+import { toIdentificadorLegislativo } from "@/shared/proposicao";
 
 import type { MatcherState, MatcherStatus } from "../../lib/matcher-state";
 import {
@@ -37,10 +39,12 @@ type StepResultadoProps = {
   resultado: MatcherResultado | null;
   escopo: EscopoMatcher;
   apenasEmAtividade: boolean;
+  externalIdProposicoesFiltroConcordancia: readonly number[];
   hasMore: boolean;
   onRetry: () => void;
   onEscopoChange: (escopo: EscopoMatcher) => void;
   onApenasEmAtividadeChange: (value: boolean) => void;
+  onToggleFiltroConcordancia: (externalIdProposicao: number) => void;
   onLoadMore: () => void;
   onStartComparativoSelection: () => void;
   onToggleComparativoDeputado: (externalIdDeputado: number) => void;
@@ -54,10 +58,12 @@ export function StepResultado({
   resultado,
   escopo,
   apenasEmAtividade,
+  externalIdProposicoesFiltroConcordancia,
   hasMore,
   onRetry,
   onEscopoChange,
   onApenasEmAtividadeChange,
+  onToggleFiltroConcordancia,
   onLoadMore,
   onStartComparativoSelection,
   onToggleComparativoDeputado,
@@ -112,6 +118,37 @@ export function StepResultado({
           label="Apenas em atividade"
           onChange={(e) => onApenasEmAtividadeChange(e.target.checked)}
         />
+        <details className="order-4 col-span-full rounded-md border border-border bg-white px-3 py-2 sm:order-3">
+          <summary className="cursor-pointer text-sm font-[650] text-ink">
+            Votou comigo
+            {externalIdProposicoesFiltroConcordancia.length > 0
+              ? ` (${externalIdProposicoesFiltroConcordancia.length})`
+              : ""}
+          </summary>
+          <ul className="mt-3 grid max-h-64 gap-3 overflow-y-auto pb-1">
+            {state.selected.map((card) => {
+              const posicao = state.posicoes.get(card.externalIdProposicao);
+              const isComputavel =
+                posicao === "aprovar" || posicao === "rejeitar";
+              const identificador =
+                toIdentificadorLegislativo(card) ?? "Sem identificador";
+              return (
+                <li key={card.externalIdProposicao}>
+                  <Checkbox
+                    checked={externalIdProposicoesFiltroConcordancia.includes(
+                      card.externalIdProposicao,
+                    )}
+                    disabled={!isComputavel}
+                    label={identificador}
+                    onChange={() =>
+                      onToggleFiltroConcordancia(card.externalIdProposicao)
+                    }
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </details>
       </div>
     </div>
   );
@@ -147,10 +184,7 @@ export function StepResultado({
     return (
       <div className="grid gap-4">
         {escopoControl}
-        <ResultadoVazio
-          escopo={escopo}
-          onEscopoChange={onEscopoChange}
-        />
+        <ResultadoVazio escopo={escopo} onEscopoChange={onEscopoChange} />
       </div>
     );
   }
@@ -213,7 +247,6 @@ export function StepResultado({
           </Button>
         </div>
       ) : null}
-
     </div>
   );
 }

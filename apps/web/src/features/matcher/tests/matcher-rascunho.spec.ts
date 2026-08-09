@@ -40,6 +40,7 @@ describe("Rascunho de execução do matcher", () => {
         escopo: "nacional",
         selected,
         posicoes,
+        externalIdProposicoesFiltroConcordancia: [123],
       });
       const parsed = parseRascunho(serialized);
 
@@ -50,6 +51,7 @@ describe("Rascunho de execução do matcher", () => {
         escopo: "nacional",
         selected,
         posicoes,
+        externalIdProposicoesFiltroConcordancia: [123],
       });
     });
   });
@@ -63,6 +65,7 @@ describe("Rascunho de execução do matcher", () => {
         escopo: "estadual" as const,
         selected: [],
         posicoes: new Map<number, PosicaoUsuarioMatcher>(),
+        externalIdProposicoesFiltroConcordancia: [],
       };
 
       // Act
@@ -80,6 +83,7 @@ describe("Rascunho de execução do matcher", () => {
         escopo: "estadual" as const,
         selected: [],
         posicoes: new Map<number, PosicaoUsuarioMatcher>(),
+        externalIdProposicoesFiltroConcordancia: [],
       };
 
       // Act
@@ -99,6 +103,7 @@ describe("Rascunho de execução do matcher", () => {
         escopo: "estadual" as const,
         selected: [],
         posicoes: new Map<number, PosicaoUsuarioMatcher>(),
+        externalIdProposicoesFiltroConcordancia: [],
       };
 
       // Act
@@ -116,6 +121,7 @@ describe("Rascunho de execução do matcher", () => {
         escopo: "estadual" as const,
         selected: [],
         posicoes: new Map<number, PosicaoUsuarioMatcher>(),
+        externalIdProposicoesFiltroConcordancia: [],
       };
 
       // Act
@@ -188,9 +194,8 @@ describe("Rascunho de execução do matcher", () => {
         cidade: "Campinas",
         escopo: "estadual" as const,
         selected,
-        posicoes: new Map<number, PosicaoUsuarioMatcher>([
-          [123, "aprovar"],
-        ]),
+        posicoes: new Map<number, PosicaoUsuarioMatcher>([[123, "aprovar"]]),
+        externalIdProposicoesFiltroConcordancia: [123],
         resultados: { estadual: { deputados: [] } },
         detalhe: { externalIdDeputado: 456 },
         comparativo: [456, 789],
@@ -208,6 +213,7 @@ describe("Rascunho de execução do matcher", () => {
         escopo: "estadual",
         selected,
         posicoes: [{ externalIdProposicao: 123, posicao: "aprovar" }],
+        externalIdProposicoesFiltroConcordancia: [123],
       });
     });
   });

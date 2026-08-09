@@ -28,6 +28,8 @@ export function useMatcherResultadoDetalhe(externalIdDeputado: number) {
         cidade: state.cidade,
         posicoes: state.posicoes,
         apenasEmAtividade: state.apenasEmAtividade,
+        externalIdProposicoesFiltroConcordancia:
+          state.externalIdProposicoesFiltroConcordancia,
       });
       const nextDetalhe = await getDeputadoDetalhe(externalIdDeputado, request);
       setDetalhe(nextDetalhe);

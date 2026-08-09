@@ -31,6 +31,7 @@ export type MatcherState = {
   resultados: Record<EscopoMatcher, MatcherResultado | null>;
   escopo: EscopoMatcher;
   apenasEmAtividade: boolean;
+  externalIdProposicoesFiltroConcordancia: number[];
   status: MatcherStatus;
   isSelectingComparativoDeputados: boolean;
   selectedComparativoDeputados: MatcherDeputadoResumo[];
@@ -56,6 +57,10 @@ export type MatcherAction =
       apenasEmAtividade: boolean;
     }
   | { type: "setApenasEmAtividade"; value: boolean }
+  | {
+      type: "toggleFiltroConcordancia";
+      externalIdProposicao: number;
+    }
   | { type: "loadMoreOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
   | { type: "startComparativoSelection" }
   | { type: "toggleComparativoDeputado"; deputado: MatcherDeputadoResumo }
@@ -73,6 +78,7 @@ export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
     resultados: { estadual: null, nacional: null },
     escopo: "estadual",
     apenasEmAtividade: false,
+    externalIdProposicoesFiltroConcordancia: [],
     status: "idle",
     isSelectingComparativoDeputados: false,
     selectedComparativoDeputados: [],
@@ -181,6 +187,24 @@ export function matcherReducer(
         apenasEmAtividade: action.value,
         resultados: { estadual: null, nacional: null },
       };
+    case "toggleFiltroConcordancia": {
+      const isMarked = state.externalIdProposicoesFiltroConcordancia.includes(
+        action.externalIdProposicao,
+      );
+      return {
+        ...state,
+        externalIdProposicoesFiltroConcordancia: isMarked
+          ? state.externalIdProposicoesFiltroConcordancia.filter(
+              (externalIdProposicao) =>
+                externalIdProposicao !== action.externalIdProposicao,
+            )
+          : [
+              ...state.externalIdProposicoesFiltroConcordancia,
+              action.externalIdProposicao,
+            ],
+        resultados: { estadual: null, nacional: null },
+      };
+    }
     case "loadMoreOk": {
       const existing = state.resultados[action.escopo];
       if (existing === null) return state;

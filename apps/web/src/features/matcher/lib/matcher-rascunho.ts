@@ -19,6 +19,7 @@ export type MatcherRascunho = {
   escopo: EscopoMatcher;
   selected: ProposicaoCard[];
   posicoes: Map<number, PosicaoUsuarioMatcher>;
+  externalIdProposicoesFiltroConcordancia: number[];
 };
 
 export function hasRascunhoEntries(rascunho: MatcherRascunho): boolean {
@@ -27,7 +28,8 @@ export function hasRascunhoEntries(rascunho: MatcherRascunho): boolean {
     rascunho.cidade.trim() !== "" ||
     rascunho.escopo !== "estadual" ||
     rascunho.selected.length > 0 ||
-    rascunho.posicoes.size > 0
+    rascunho.posicoes.size > 0 ||
+    rascunho.externalIdProposicoesFiltroConcordancia.length > 0
   );
 }
 
@@ -41,6 +43,10 @@ const serializedRascunhoSchema = z
     escopo: escopoMatcherEnum,
     selected: z.array(proposicaoCardSchema).max(MAX_POSICOES),
     posicoes: z.array(posicaoMatcherSchema).max(MAX_POSICOES),
+    externalIdProposicoesFiltroConcordancia: z
+      .array(z.number().int().positive())
+      .max(MAX_POSICOES)
+      .default([]),
   })
   .strict();
 
@@ -51,12 +57,12 @@ export function serializeRascunho(rascunho: MatcherRascunho): string {
     cidade: rascunho.cidade,
     escopo: rascunho.escopo,
     selected: rascunho.selected,
-    posicoes: [...rascunho.posicoes].map(
-      ([externalIdProposicao, posicao]) => ({
-        externalIdProposicao,
-        posicao,
-      }),
-    ),
+    posicoes: [...rascunho.posicoes].map(([externalIdProposicao, posicao]) => ({
+      externalIdProposicao,
+      posicao,
+    })),
+    externalIdProposicoesFiltroConcordancia:
+      rascunho.externalIdProposicoesFiltroConcordancia,
   });
 }
 
@@ -77,6 +83,8 @@ export function parseRascunho(raw: string): MatcherRascunho | null {
           posicao,
         ]),
       ),
+      externalIdProposicoesFiltroConcordancia:
+        data.externalIdProposicoesFiltroConcordancia,
     };
   } catch {
     return null;

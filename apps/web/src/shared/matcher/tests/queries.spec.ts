@@ -12,6 +12,7 @@ const request: MatcherExecucaoRequest = {
   siglaUf: "SP",
   escopo: "estadual",
   apenasEmAtividade: false,
+  externalIdProposicoesFiltroConcordancia: [],
   posicoes: [
     { externalIdProposicao: 1, posicao: "aprovar" },
     { externalIdProposicao: 2, posicao: "rejeitar" },

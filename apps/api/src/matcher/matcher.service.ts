@@ -20,6 +20,7 @@ import { toMatcherResultado } from './mappers/compatibilidade-resumida.mapper';
 import { computeCompatibilidadeDetalhe } from './rules/compatibilidade-detalhe';
 import { computeCompatibilidadeResumida } from './rules/compatibilidade-resumida';
 import { filtrarPorAtividade } from './rules/filtro-atividade';
+import { passesFiltroConcordancia } from './rules/filtro-concordancia';
 import { validateExecucao } from './rules/matcher-execucao-validation';
 import type { Pagination } from './rules/pagination';
 import { sortRanking } from './rules/ranking';
@@ -67,6 +68,8 @@ export class MatcherService {
       siglaUf: request.siglaUf,
       cidade: request.cidade,
       posicoes: request.posicoes,
+      externalIdProposicoesFiltroConcordancia:
+        request.externalIdProposicoesFiltroConcordancia,
       externalIdProposicoesComputaveis,
     });
 
@@ -116,9 +119,19 @@ export class MatcherService {
       request.siglaUf,
     );
 
+    const externalIdProposicoesFiltroConcordancia = new Set(
+      request.externalIdProposicoesFiltroConcordancia,
+    );
+    const posicoesMarcadas = posicoes.filter((posicao) =>
+      externalIdProposicoesFiltroConcordancia.has(posicao.externalIdProposicao),
+    );
+    const deputadosConcordantes = deputados.filter((deputado) =>
+      passesFiltroConcordancia(deputado, posicoesMarcadas),
+    );
+
     const resultado = computeCompatibilidadeResumida({
       posicoes,
-      deputados,
+      deputados: deputadosConcordantes,
       totalPosicoesComputaveis: resumo.totalPosicoesComputaveis,
     });
 

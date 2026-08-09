@@ -13,6 +13,7 @@ export type ExecucaoValidationInput = {
   siglaUf: SiglaUf;
   cidade?: string;
   posicoes: readonly PosicaoMatcher[];
+  externalIdProposicoesFiltroConcordancia: readonly number[];
   externalIdProposicoesComputaveis: ReadonlySet<number>;
 };
 
@@ -30,6 +31,22 @@ export function validateExecucao(
   const posicoesComputaveisSelecionadas = input.posicoes.filter((posicao) =>
     isComputavel(posicao.posicao),
   );
+  const externalIdPosicoesComputaveisSelecionadas = new Set(
+    posicoesComputaveisSelecionadas.map(
+      (posicao) => posicao.externalIdProposicao,
+    ),
+  );
+  const filtroConcordanciaInvalido =
+    input.externalIdProposicoesFiltroConcordancia.filter(
+      (externalIdProposicao) =>
+        !externalIdPosicoesComputaveisSelecionadas.has(externalIdProposicao),
+    );
+  if (filtroConcordanciaInvalido.length > 0) {
+    return {
+      ok: false,
+      error: `proposicoes do filtro de concordancia ausentes das posicoes computaveis: ${filtroConcordanciaInvalido.join(', ')}`,
+    };
+  }
 
   const posicoesNaoComputaveis = posicoesComputaveisSelecionadas.filter(
     (posicao) =>

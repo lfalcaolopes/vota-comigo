@@ -29,7 +29,10 @@ export function MatcherResultado() {
   const { state } = matcher;
 
   useEffect(() => {
-    if (!matcher.isHydrated || requestedFiltersRef.current === requestedFiltersKey) {
+    if (
+      !matcher.isHydrated ||
+      requestedFiltersRef.current === requestedFiltersKey
+    ) {
       return;
     }
     requestedFiltersRef.current = requestedFiltersKey;
@@ -71,6 +74,9 @@ export function MatcherResultado() {
           <div className="w-full max-w-4xl">
             <StepResultado
               apenasEmAtividade={requestedFilters.apenasEmAtividade}
+              externalIdProposicoesFiltroConcordancia={
+                matcher.externalIdProposicoesFiltroConcordancia
+              }
               escopo={requestedFilters.escopo}
               hasMore={matcher.hasMore}
               onApenasEmAtividadeChange={(apenasEmAtividade) =>
@@ -82,9 +88,7 @@ export function MatcherResultado() {
                   "filter",
                 )
               }
-              onCancelComparativoSelection={
-                matcher.cancelComparativoSelection
-              }
+              onCancelComparativoSelection={matcher.cancelComparativoSelection}
               onEscopoChange={(escopo) =>
                 navigate(
                   buildResultadoHref({ ...requestedFilters, escopo }),
@@ -92,6 +96,7 @@ export function MatcherResultado() {
                 )
               }
               onLoadMore={matcher.loadMore}
+              onToggleFiltroConcordancia={matcher.toggleFiltroConcordancia}
               onOpenComparativo={() => {
                 const href = buildComparativoHref(
                   state.selectedComparativoDeputados.map(

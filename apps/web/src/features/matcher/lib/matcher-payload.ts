@@ -13,6 +13,7 @@ export type ExecucaoPayloadInput = {
   cidade?: string;
   posicoes: ReadonlyMap<number, PosicaoUsuarioMatcher>;
   apenasEmAtividade: boolean;
+  externalIdProposicoesFiltroConcordancia?: readonly number[];
 };
 
 function isComputavel(posicao: PosicaoUsuarioMatcher): boolean {
@@ -36,6 +37,9 @@ export function buildExecucaoRequest(
     escopo: input.escopo,
     posicoes,
     apenasEmAtividade: input.apenasEmAtividade,
+    externalIdProposicoesFiltroConcordancia: [
+      ...(input.externalIdProposicoesFiltroConcordancia ?? []),
+    ],
     ...(cidade ? { cidade } : {}),
   };
 }

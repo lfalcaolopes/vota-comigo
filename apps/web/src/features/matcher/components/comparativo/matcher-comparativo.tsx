@@ -28,6 +28,8 @@ export function MatcherComparativo({ ids }: { ids: string }) {
           cidade: state.cidade,
           posicoes: state.posicoes,
           apenasEmAtividade: state.apenasEmAtividade,
+          externalIdProposicoesFiltroConcordancia:
+            state.externalIdProposicoesFiltroConcordancia,
         }).posicoes;
   const deputados = detalhes.map(({ deputado, metrics }) => ({
     ...deputado,

@@ -221,9 +221,11 @@ describe("StepResultado", () => {
       const html = renderToStaticMarkup(
         createElement(StepResultado, {
           apenasEmAtividade: false,
+          externalIdProposicoesFiltroConcordancia: [],
           escopo: "estadual",
           hasMore: false,
           onApenasEmAtividadeChange: () => {},
+          onToggleFiltroConcordancia: () => {},
           onCancelComparativoSelection: () => {},
           onEscopoChange: () => {},
           onLoadMore: () => {},
@@ -239,6 +241,7 @@ describe("StepResultado", () => {
 
       // Assert
       expect(html).toContain("Filtros");
+      expect(html).toContain("Votou comigo");
       expect(html).toContain("Comparar deputados");
       expect(html.indexOf("Comparar deputados")).toBeLessThan(
         html.indexOf("Filtros"),
@@ -276,9 +279,11 @@ describe("StepResultado", () => {
       const html = renderToStaticMarkup(
         createElement(StepResultado, {
           apenasEmAtividade: false,
+          externalIdProposicoesFiltroConcordancia: [],
           escopo: "estadual",
           hasMore: false,
           onApenasEmAtividadeChange: () => {},
+          onToggleFiltroConcordancia: () => {},
           onCancelComparativoSelection: () => {},
           onEscopoChange: () => {},
           onLoadMore: () => {},

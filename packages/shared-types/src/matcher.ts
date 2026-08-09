@@ -82,6 +82,10 @@ export const matcherExecucaoRequestSchema = z.object({
       });
     }),
   apenasEmAtividade: z.boolean().default(false),
+  externalIdProposicoesFiltroConcordancia: z
+    .array(z.number().int().positive())
+    .max(MAX_POSICOES)
+    .default([]),
 });
 
 export const matcherExecucaoResumoSchema = z.object({

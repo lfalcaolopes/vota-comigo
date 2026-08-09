@@ -436,6 +436,26 @@ describe('POST /matcher', () => {
     });
   });
 
+  describe('when the filtro de concordancia cites an absent position', () => {
+    it('returns 400', async () => {
+      // Act
+      const response = await request(getTestServer(app))
+        .post('/matcher')
+        .send({
+          siglaUf: 'PE',
+          posicoes: [
+            posicao({ externalIdProposicao: 1 }),
+            posicao({ externalIdProposicao: 2 }),
+            posicao({ externalIdProposicao: 3 }),
+          ],
+          externalIdProposicoesFiltroConcordancia: [99],
+        });
+
+      // Assert
+      expect(response.status).toBe(400);
+    });
+  });
+
   describe('when paginating through the query string', () => {
     function validBody() {
       return {

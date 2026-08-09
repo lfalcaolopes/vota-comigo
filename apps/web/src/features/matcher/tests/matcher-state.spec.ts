@@ -75,6 +75,23 @@ function resultado(
 const candidates = [card(1), card(2), card(3), card(4), card(5), card(6)];
 
 describe("matcherReducer", () => {
+  describe("when toggling the filtro de concordancia", () => {
+    it("marks an unmarked proposition", () => {
+      // Arrange
+      const state = initMatcherState(candidates);
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "toggleFiltroConcordancia",
+        externalIdProposicao: 1,
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([1]);
+      expect(state.externalIdProposicoesFiltroConcordancia).toEqual([]);
+    });
+  });
+
   describe("when initialised with candidate proposicoes", () => {
     it("starts without pre-selected proposicoes", () => {
       // Arrange / Act
@@ -126,6 +143,7 @@ describe("matcherReducer", () => {
           escopo: "nacional",
           selected,
           posicoes,
+          externalIdProposicoesFiltroConcordancia: [2],
         },
       });
 
@@ -135,6 +153,7 @@ describe("matcherReducer", () => {
       expect(next.escopo).toBe("nacional");
       expect(next.selected).toEqual(selected);
       expect(next.posicoes).toEqual(posicoes);
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([2]);
       expect(next.isHydrated).toBe(true);
     });
   });
