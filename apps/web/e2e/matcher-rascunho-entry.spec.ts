@@ -34,6 +34,36 @@ async function storeRascunho(page: Page) {
   }, rascunho);
 }
 
+test.describe("entrada do matcher sem rascunho", () => {
+  test("apresenta o processo antes de iniciar a comparação", async ({
+    page,
+  }) => {
+    // Arrange / Act
+    await page.goto("/matcher");
+
+    // Assert
+    await expect(
+      page.getByRole("heading", {
+        name: "Compare suas posições com votos reais da Câmara",
+      }),
+    ).toBeVisible();
+    await expect(page.getByText("Declare suas posições")).toBeVisible();
+    await expect(page).toHaveURL(/\/matcher$/);
+  });
+
+  test("inicia uma nova comparação por escolha explícita", async ({ page }) => {
+    // Arrange
+    await page.goto("/matcher");
+
+    // Act
+    await page.getByRole("button", { name: "Começar comparação" }).click();
+
+    // Assert
+    await expect(page).toHaveURL(/\/matcher\/local$/);
+    await expect(page.getByLabel("Estado (UF)")).toHaveValue("");
+  });
+});
+
 test.describe("entrada do matcher com rascunho", () => {
   test("pede uma escolha antes de retomar pela raiz", async ({ page }) => {
     // Arrange
@@ -73,13 +103,15 @@ test.describe("entrada do matcher com rascunho", () => {
     await page.goto("/matcher");
 
     // Act
-    await page
-      .getByRole("button", { name: "Começar nova comparação" })
-      .click();
+    await page.getByRole("button", { name: "Começar nova comparação" }).click();
 
     // Assert
-    await expect(page).toHaveURL(/\/matcher\/local$/);
-    await expect(page.getByLabel("Estado (UF)")).toHaveValue("");
+    await expect(
+      page.getByRole("heading", {
+        name: "Compare suas posições com votos reais da Câmara",
+      }),
+    ).toBeVisible();
+    await expect(page).toHaveURL(/\/matcher$/);
     const stored = await page.evaluate(() =>
       window.sessionStorage.getItem("vota-comigo:matcher-rascunho"),
     );
