@@ -47,6 +47,8 @@
   --shadow-popover: 0 8px 24px oklch(0.205 0.012 48 / 0.12);
   --shadow-bar: 0 -8px 20px -12px oklch(0.205 0.012 48 / 0.18);
 
+  --z-index-popover: 20;
+
   --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
 
   --animate-skeleton: skeleton 1.4s var(--ease-standard) infinite;

@@ -9,6 +9,7 @@ import { useId, useRef, useState } from "react";
 import {
   Button,
   Checkbox,
+  ChevronDownIcon,
   ErrorState,
   SegmentedControl,
   SkeletonRows,
@@ -120,7 +121,7 @@ export function StepResultado({
     </Button>
   );
   const renderFilterControls = () => (
-    <div className="grid min-w-0 gap-2 sm:flex sm:flex-wrap sm:items-start sm:gap-4">
+    <div className="grid min-w-0 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2">
       <p className="text-sm font-[650] text-muted sm:hidden">Filtros</p>
       <div className="grid min-w-0 grid-cols-2 gap-2 sm:contents">
         <SegmentedControl
@@ -131,80 +132,101 @@ export function StepResultado({
           label="Escopo dos resultados"
           onSelect={(id) => onEscopoChange(id as EscopoMatcher)}
         />
-        <Switch
-          checked={apenasEmAtividade}
-          className="order-3 col-span-full h-11 min-w-0 justify-start rounded-md border border-border bg-white px-3 py-2.5 sm:order-2 sm:h-auto sm:border-0 sm:bg-transparent sm:px-0 sm:py-0"
-          label="Apenas em atividade"
-          onChange={(e) => onApenasEmAtividadeChange(e.target.checked)}
-        />
-        <div className="order-4 col-span-full grid gap-1 sm:order-3 sm:w-80">
-          <div className="rounded-md border border-border bg-white px-3 py-2">
-            <button
-              aria-controls={filtroPanelId}
-              aria-expanded={isFiltroOpen}
-              aria-label={`Votou comigo, ${filtroCountLabel}`}
-              className="cursor-pointer text-sm font-[650] text-ink"
-              onClick={() => setIsFiltroOpen((isOpen) => !isOpen)}
-              ref={filtroTriggerRef}
-              type="button"
-            >
-              Votou comigo
-              {externalIdProposicoesFiltroConcordancia.length > 0
-                ? ` (${externalIdProposicoesFiltroConcordancia.length})`
-                : ""}
-            </button>
-            <div hidden={!isFiltroOpen} id={filtroPanelId}>
-              <ProposicoesSelecionadasList
-                ariaLabel="Proposições do filtro de concordância"
-                className="mt-3 max-h-[min(55vh,24rem)] overflow-y-auto pr-1"
-                posicoes={state.posicoes}
-                proposicoes={proposicoesElegiveis}
-                renderAction={(proposicao, _index, identificador) => (
-                  <Checkbox
-                    checked={externalIdProposicoesFiltroConcordancia.includes(
-                      proposicao.externalIdProposicao,
-                    )}
-                    className="size-11 justify-center"
-                    hideLabel
-                    label={`Exigir concordância em ${identificador}`}
-                    onChange={() =>
-                      onToggleFiltroConcordancia(
-                        proposicao.externalIdProposicao,
-                      )
-                    }
-                  />
-                )}
-              />
+        <div className="order-2 col-span-full min-w-0 sm:relative">
+          <button
+            aria-controls={filtroPanelId}
+            aria-expanded={isFiltroOpen}
+            aria-label={`Exigir concordância, ${filtroCountLabel}`}
+            className={`inline-flex h-11 w-full min-w-0 cursor-pointer items-center justify-between gap-2 rounded-md border px-3 py-2.5 text-sm font-[650] leading-[1.2] text-ink transition-[background-color,border-color] duration-[180ms] ease-standard hover:border-border-strong hover:bg-surface-muted sm:w-auto ${
+              externalIdProposicoesFiltroConcordancia.length > 0
+                ? "border-primary bg-primary-soft"
+                : "border-border bg-white"
+            }`}
+            onClick={() => setIsFiltroOpen((isOpen) => !isOpen)}
+            ref={filtroTriggerRef}
+            type="button"
+          >
+            <span>Exigir concordância</span>
+            {externalIdProposicoesFiltroConcordancia.length > 0 ? (
+              <span
+                aria-hidden="true"
+                className="inline-flex min-w-6 items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-white"
+              >
+                {externalIdProposicoesFiltroConcordancia.length}
+              </span>
+            ) : null}
+            <ChevronDownIcon
+              aria-hidden="true"
+              className={`shrink-0 text-muted transition-transform duration-[180ms] ease-standard ${
+                isFiltroOpen ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+          <div
+            className="mt-2 grid w-full gap-3 rounded-md border border-border bg-white p-3 sm:absolute sm:top-full sm:left-0 sm:z-popover sm:w-96 sm:shadow-popover"
+            hidden={!isFiltroOpen}
+            id={filtroPanelId}
+          >
+            <p className="text-sm leading-normal text-muted">
+              Marque as proposições em que o deputado precisa ter votado de
+              acordo com você.
+            </p>
+            <ProposicoesSelecionadasList
+              ariaLabel="Proposições do filtro de concordância"
+              className="max-h-[min(55vh,24rem)] overflow-y-auto pr-1"
+              posicoes={state.posicoes}
+              proposicoes={proposicoesElegiveis}
+              renderAction={(proposicao, _index, identificador) => (
+                <Checkbox
+                  checked={externalIdProposicoesFiltroConcordancia.includes(
+                    proposicao.externalIdProposicao,
+                  )}
+                  className="size-11 justify-center"
+                  hideLabel
+                  label={`Exigir concordância em ${identificador}`}
+                  onChange={() =>
+                    onToggleFiltroConcordancia(proposicao.externalIdProposicao)
+                  }
+                />
+              )}
+            />
+            <div className="flex items-center justify-between gap-2 border-t border-border pt-3">
               <Button
-                className="mt-2"
+                disabled={
+                  externalIdProposicoesFiltroConcordancia.length === 0
+                }
                 onClick={() => {
+                  onClearFiltroConcordancia();
                   setIsFiltroOpen(false);
                   filtroTriggerRef.current?.focus();
                 }}
                 variant="ghost"
               >
+                Limpar seleção
+              </Button>
+              <Button
+                onClick={() => {
+                  setIsFiltroOpen(false);
+                  filtroTriggerRef.current?.focus();
+                }}
+                variant="secondary"
+              >
                 Fechar filtro
               </Button>
             </div>
           </div>
-          {externalIdProposicoesFiltroConcordancia.length > 0 ? (
-            <Button
-              className="justify-self-start"
-              onClick={() => {
-                onClearFiltroConcordancia();
-                filtroTriggerRef.current?.focus();
-              }}
-              variant="ghost"
-            >
-              Limpar filtro
-            </Button>
-          ) : null}
         </div>
+        <Switch
+          checked={apenasEmAtividade}
+          className="order-3 col-span-full h-11 min-w-0 justify-start rounded-md border border-border bg-white px-3 py-2.5 sm:h-auto sm:border-0 sm:bg-transparent sm:px-0 sm:py-0"
+          label="Apenas em atividade"
+          onChange={(e) => onApenasEmAtividadeChange(e.target.checked)}
+        />
       </div>
     </div>
   );
   const resultadoControls = (
-    <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start sm:gap-4">
+    <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-4">
       <div className="order-1 sm:order-2 sm:ml-auto">
         {display === "results" ? compareAction : null}
       </div>

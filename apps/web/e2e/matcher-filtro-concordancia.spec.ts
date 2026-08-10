@@ -119,21 +119,21 @@ test.describe("filtro de concordância no resultado do matcher", () => {
       });
       await page.goto("/matcher/resultado");
       const trigger = page.getByRole("button", {
-        name: "Votou comigo, 1 proposição marcada",
+        name: "Exigir concordância, 1 proposição marcada",
       });
-      await trigger.focus();
-      await page.keyboard.press("Tab");
-      const clear = page.getByRole("button", { name: "Limpar filtro" });
-      await expect(clear).toBeFocused();
+      await trigger.click();
+      const clear = page.getByRole("button", { name: "Limpar seleção" });
+      await clear.focus();
 
       // Act
       await page.keyboard.press("Enter");
 
       // Assert
       const updatedTrigger = page.getByRole("button", {
-        name: "Votou comigo, 0 proposições marcadas",
+        name: "Exigir concordância, 0 proposições marcadas",
       });
       await expect(updatedTrigger).toBeFocused();
+      await expect(updatedTrigger).toHaveAttribute("aria-expanded", "false");
     });
 
     test("anuncia o total do recorte depois de marcar uma proposição", async ({
@@ -165,7 +165,7 @@ test.describe("filtro de concordância no resultado do matcher", () => {
       await page.goto("/matcher/resultado");
       await page
         .getByRole("button", {
-          name: "Votou comigo, 0 proposições marcadas",
+          name: "Exigir concordância, 0 proposições marcadas",
         })
         .click();
 
@@ -200,7 +200,7 @@ test.describe("filtro de concordância no resultado do matcher", () => {
       await expect(page.getByText("Deputada Exemplo")).toBeVisible();
       await page
         .getByRole("button", {
-          name: "Votou comigo, 0 proposições marcadas",
+          name: "Exigir concordância, 0 proposições marcadas",
         })
         .click();
       const proposicao = page.getByLabel(
@@ -234,7 +234,7 @@ test.describe("filtro de concordância no resultado do matcher", () => {
       });
       await page.goto("/matcher/resultado");
       const trigger = page.getByRole("button", {
-        name: "Votou comigo, 1 proposição marcada",
+        name: "Exigir concordância, 1 proposição marcada",
       });
 
       // Act
@@ -254,7 +254,9 @@ test.describe("filtro de concordância no resultado do matcher", () => {
       await storeRascunho(page);
       await page.goto("/matcher/resultado");
       await expect(page.getByText("Deputada Exemplo")).toBeVisible();
-      const trigger = page.getByText("Votou comigo", { exact: true });
+      const trigger = page.getByRole("button", {
+        name: "Exigir concordância, 0 proposições marcadas",
+      });
       await trigger.click();
 
       // Act
@@ -474,7 +476,11 @@ test.describe("filtro de concordância no resultado do matcher", () => {
         externalIdProposicoesFiltroConcordancia: [1],
       });
       await expect(page).toHaveURL(/\/matcher\/resultado$/);
-      await page.getByText("Votou comigo (1)", { exact: true }).click();
+      await page
+        .getByRole("button", {
+          name: "Exigir concordância, 1 proposição marcada",
+        })
+        .click();
       await expect(
         page.getByLabel("Exigir concordância em PL 2630/2020"),
       ).toBeChecked();
@@ -561,7 +567,7 @@ test.describe("filtro de concordância no resultado do matcher", () => {
       const requestsBeforeOpening = matcherRequests;
 
       // Act
-      await page.getByText("Votou comigo", { exact: true }).click();
+      await page.getByText("Exigir concordância", { exact: true }).click();
 
       // Assert
       await expect(
@@ -594,7 +600,7 @@ test.describe("filtro de concordância no resultado do matcher", () => {
       await storeRascunho(page);
       await page.goto("/matcher/resultado");
       await expect(page.getByText("Deputada Exemplo")).toBeVisible();
-      await page.getByText("Votou comigo", { exact: true }).click();
+      await page.getByText("Exigir concordância", { exact: true }).click();
 
       // Act
       await page
@@ -614,25 +620,24 @@ test.describe("filtro de concordância no resultado do matcher", () => {
         }),
       ).toBeVisible();
       const trigger = page.getByRole("button", {
-        name: "Votou comigo, 1 proposição marcada",
+        name: "Exigir concordância, 1 proposição marcada",
       });
       if ((await trigger.getAttribute("aria-expanded")) === "true") {
         await trigger.click();
       }
       await expect(trigger).toHaveAttribute("aria-expanded", "false");
-      await expect(
-        page.getByText("Votou comigo (1)", { exact: true }),
-      ).toBeVisible();
+      await expect(trigger).toBeVisible();
 
       // Act
-      await page.getByRole("button", { name: "Limpar filtro" }).click();
+      await trigger.click();
+      await page.getByRole("button", { name: "Limpar seleção" }).click();
 
       // Assert
       await expect
         .poll(() => requests.at(-1)?.externalIdProposicoesFiltroConcordancia)
         .toEqual([]);
       await expect(
-        page.getByText("Votou comigo", { exact: true }),
+        page.getByText("Exigir concordância", { exact: true }),
       ).toBeVisible();
       await expect(
         page.getByRole("heading", {

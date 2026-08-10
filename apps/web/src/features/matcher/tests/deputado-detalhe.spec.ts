@@ -242,7 +242,10 @@ describe("StepResultado", () => {
 
       // Assert
       expect(html).toContain("Filtros");
-      expect(html).toContain("Votou comigo");
+      expect(html).toContain("Exigir concordância");
+      expect(html).toContain(
+        "Marque as proposições em que o deputado precisa ter votado de acordo com você.",
+      );
       expect(html).toContain("Comparar deputados");
       expect(html.indexOf("Comparar deputados")).toBeLessThan(
         html.indexOf("Filtros"),
