@@ -1,4 +1,5 @@
 import type {
+  DeputadoDiscursosResponse,
   DeputadoPerfil,
   DeputadoOrgaosResponse,
   DeputadosFeedResponse,
@@ -7,7 +8,13 @@ import type {
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { NotFoundError } from "../../lib/api-client";
-import { feed, orgaos, partidosDisponiveis, perfil } from "../queries";
+import {
+  discursos,
+  feed,
+  orgaos,
+  partidosDisponiveis,
+  perfil,
+} from "../queries";
 
 const response: DeputadoPerfil = {
   externalIdDeputado: 220593,
@@ -54,6 +61,12 @@ const partidosResponse: PartidosDisponiveisResponse = {
 };
 
 const orgaosResponse: DeputadoOrgaosResponse = {
+  year: 2022,
+  items: [],
+  total: 0,
+};
+
+const discursosResponse: DeputadoDiscursosResponse = {
   year: 2022,
   items: [],
   total: 0,
@@ -141,6 +154,29 @@ describe("orgaos", () => {
         "http://localhost:3001/deputados/74646/orgaos?year=2022",
       );
       expect(result).toEqual(orgaosResponse);
+    });
+  });
+});
+
+describe("discursos", () => {
+  describe("when the request succeeds", () => {
+    it("fetches the selected year through the product API", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => discursosResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      const result = await discursos(74646, 2022);
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/74646/discursos?year=2022",
+      );
+      expect(result).toEqual(discursosResponse);
     });
   });
 });

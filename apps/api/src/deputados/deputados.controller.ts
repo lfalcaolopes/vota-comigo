@@ -9,6 +9,7 @@ import {
 import { Throttle } from '@nestjs/throttler';
 
 import type {
+  DeputadoDiscursosResponse,
   DeputadoPerfil,
   DeputadoOrgaosResponse,
   DeputadosFeedResponse,
@@ -129,6 +130,16 @@ export class DeputadosController {
     @Query('year', ParseIntPipe) year: number,
   ): Promise<DeputadoOrgaosResponse> {
     return this.service.orgaos(externalIdDeputado, year);
+  }
+
+  @Get(':externalIdDeputado/discursos')
+  @Throttle({ default: { ttl: 60_000, limit: 20 } })
+  @CacheControl(CACHE_EXTERNAL_RUNTIME)
+  async discursos(
+    @Param('externalIdDeputado', ParseIntPipe) externalIdDeputado: number,
+    @Query('year', ParseIntPipe) year: number,
+  ): Promise<DeputadoDiscursosResponse> {
+    return this.service.discursos(externalIdDeputado, year);
   }
 
   @Get(':externalIdDeputado')

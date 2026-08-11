@@ -56,6 +56,41 @@ export const deputadoOrgaosResponseSchema = z.object({
   total: z.number().int().nonnegative(),
 });
 
+export const deputadoDiscursoLinkKindSchema = z.enum([
+  "video",
+  "audio",
+  "text",
+]);
+
+const externalHttpUrlSchema = z.url().refine((value) => {
+  try {
+    const protocol = new URL(value).protocol;
+    return protocol === "https:" || protocol === "http:";
+  } catch {
+    return false;
+  }
+});
+
+export const deputadoDiscursoLinkSchema = z.object({
+  kind: deputadoDiscursoLinkKindSchema,
+  url: externalHttpUrlSchema,
+});
+
+export const deputadoDiscursoSchema = z.object({
+  dataHoraInicio: z.string().min(1),
+  tipoDiscurso: z.string().min(1),
+  fase: z.string().min(1).nullable(),
+  sumario: z.string().min(1).nullable(),
+  assuntos: z.array(z.string().min(1)),
+  links: z.array(deputadoDiscursoLinkSchema),
+});
+
+export const deputadoDiscursosResponseSchema = z.object({
+  year: z.number().int(),
+  items: z.array(deputadoDiscursoSchema),
+  total: z.number().int().nonnegative(),
+});
+
 export const deputadoPerfilSchema = z
   .object({
     externalIdDeputado: z.number(),
@@ -202,6 +237,14 @@ export type DeputadoPerfilValidYearRange = z.infer<
 export type DeputadoOrgao = z.infer<typeof deputadoOrgaoSchema>;
 export type DeputadoOrgaosResponse = z.infer<
   typeof deputadoOrgaosResponseSchema
+>;
+export type DeputadoDiscursoLinkKind = z.infer<
+  typeof deputadoDiscursoLinkKindSchema
+>;
+export type DeputadoDiscursoLink = z.infer<typeof deputadoDiscursoLinkSchema>;
+export type DeputadoDiscurso = z.infer<typeof deputadoDiscursoSchema>;
+export type DeputadoDiscursosResponse = z.infer<
+  typeof deputadoDiscursosResponseSchema
 >;
 export type DeputadoPerfil = z.infer<typeof deputadoPerfilSchema>;
 export type DeputadoCard = z.infer<typeof deputadoCardSchema>;

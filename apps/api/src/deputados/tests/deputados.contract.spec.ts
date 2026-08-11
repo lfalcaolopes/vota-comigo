@@ -1,6 +1,7 @@
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import {
+  deputadoDiscursosResponseSchema,
   deputadoFeedResponseSchema,
   deputadoPerfilSchema,
   partidosDisponiveisResponseSchema,
@@ -14,7 +15,10 @@ import {
   type DeputadosRepository,
 } from '../deputados.repository';
 import { DeputadosService } from '../deputados.service';
-import { CAMARA_PAGINATED_CLIENT } from '../../shared/camara/camara-paginated-client';
+import {
+  CAMARA_PAGINATED_CLIENT,
+  type CamaraPaginatedClient,
+} from '../../shared/camara/camara-paginated-client';
 import { deriveSnapshotPublico } from '../rules/snapshot-publico';
 import type {
   DeputadoCardRow,
@@ -129,6 +133,11 @@ async function buildApp(
   byExternalId: ReadonlyMap<number, DeputadoPerfilSource>,
   resumoById?: ResumoById,
   feedPage?: DeputadosFeedPage,
+  camaraClient: CamaraPaginatedClient = {
+    fetchAll: async () => {
+      throw new Error('should not call the Câmara');
+    },
+  },
 ): Promise<INestApplication> {
   const moduleRef = await Test.createTestingModule({
     controllers: [DeputadosController],
@@ -136,11 +145,7 @@ async function buildApp(
       DeputadosService,
       {
         provide: CAMARA_PAGINATED_CLIENT,
-        useValue: {
-          fetchAll: async () => {
-            throw new Error('should not call the Câmara');
-          },
-        },
+        useValue: camaraClient,
       },
       {
         provide: DEPUTADOS_REPOSITORY,
@@ -153,6 +158,62 @@ async function buildApp(
   await app.init();
   return app;
 }
+
+describe('GET /deputados/:externalIdDeputado/discursos', () => {
+  describe('quando a Câmara devolve um pronunciamento com transcrição', () => {
+    it('responde o ano inteiro pelo contrato público sem transcrição ou paginação', async () => {
+      // Arrange
+      const app = await buildApp(
+        new Map([[220593, source()]]),
+        undefined,
+        undefined,
+        {
+          fetchAll: async () => ({
+            ok: true,
+            pages: 1,
+            items: [
+              {
+                dataHoraInicio: '2022-08-16T15:42:00',
+                tipoDiscurso: 'Discurso',
+                sumario: 'Defesa da transparência pública.',
+                transcricao: 'Texto integral restrito ao backend.',
+              },
+            ],
+          }),
+        },
+      );
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/220593/discursos?year=2022',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoDiscursosResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body).toEqual({
+        year: 2022,
+        items: [
+          {
+            dataHoraInicio: '2022-08-16T15:42:00',
+            tipoDiscurso: 'Discurso',
+            fase: null,
+            sumario: 'Defesa da transparência pública.',
+            assuntos: [],
+            links: [],
+          },
+        ],
+        total: 1,
+      });
+      expect(response.body).not.toHaveProperty('limit');
+      expect(response.body).not.toHaveProperty('offset');
+      expect(JSON.stringify(response.body)).not.toContain('transcricao');
+      await app.close();
+    });
+  });
+});
 
 describe('GET /deputados/feed', () => {
   let app: INestApplication;

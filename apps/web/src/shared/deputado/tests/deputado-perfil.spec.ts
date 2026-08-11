@@ -374,6 +374,19 @@ describe("DeputadoPerfil", () => {
       expect(html).toContain('<option value="2026" selected="">2026</option>');
     });
 
+    it("starts the discursos section independently in its loading state", () => {
+      // Arrange
+      const perfil = makePerfil();
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Discursos");
+      expect(html).toContain("deputado-discursos-title");
+      expect(html.match(/aria-label="Carregando conteúdo"/g)).toHaveLength(2);
+    });
+
     it("keeps the page usable without a selector when years are unavailable", () => {
       // Arrange
       const perfil = makePerfil({

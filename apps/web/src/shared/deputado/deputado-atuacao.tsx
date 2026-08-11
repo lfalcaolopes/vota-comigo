@@ -10,8 +10,12 @@ import { useEffect, useRef, useState } from "react";
 import { InlineMessage, SkeletonRows } from "@/shared/ui";
 
 import { DeputadoPerfilYearSelector } from "./deputado-perfil-year-selector";
+import {
+  DeputadoDiscursosSection,
+  type DiscursosState,
+} from "./deputado-discursos";
 import { formatData } from "./presentation";
-import { orgaos } from "./queries";
+import { discursos, orgaos } from "./queries";
 
 type OrgaosState =
   | { status: "loading" }
@@ -32,6 +36,12 @@ export function DeputadoAtuacao({
     [initialYear]: { status: "loading" },
   });
   const requestedYears = useRef(new Set<number>());
+  const [discursosCache, setDiscursosCache] = useState<
+    Record<number, DiscursosState>
+  >({
+    [initialYear]: { status: "loading" },
+  });
+  const requestedDiscursosYears = useRef(new Set<number>());
 
   useEffect(() => {
     if (requestedYears.current.has(year)) return;
@@ -57,7 +67,32 @@ export function DeputadoAtuacao({
     );
   }, [externalIdDeputado, year]);
 
+  useEffect(() => {
+    if (requestedDiscursosYears.current.has(year)) return;
+    requestedDiscursosYears.current.add(year);
+    setDiscursosCache((current) => ({
+      ...current,
+      [year]: current[year] ?? { status: "loading" },
+    }));
+
+    void discursos(externalIdDeputado, year).then(
+      (response) => {
+        setDiscursosCache((current) => ({
+          ...current,
+          [year]: { status: "success", response },
+        }));
+      },
+      () => {
+        setDiscursosCache((current) => ({
+          ...current,
+          [year]: { status: "error" },
+        }));
+      },
+    );
+  }, [externalIdDeputado, year]);
+
   const state = cache[year] ?? { status: "loading" };
+  const discursosState = discursosCache[year] ?? { status: "loading" };
 
   return (
     <section
@@ -81,6 +116,7 @@ export function DeputadoAtuacao({
         validYearRange={validYearRange}
       />
       <OrgaosSection state={state} />
+      <DeputadoDiscursosSection state={discursosState} />
     </section>
   );
 }
