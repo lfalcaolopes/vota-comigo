@@ -207,6 +207,18 @@ _Avoid_: Lista de presença.
 **Histórico partidário do deputado**: Linha do tempo condensada dos partidos de um deputado, derivada de mudanças no histórico parlamentar, sem listar eventos administrativos brutos.
 _Avoid_: Histórico bruto do deputado.
 
+**Proposição assinada pelo deputado**: Proposição em que a Câmara registra o deputado como signatário no ano de apresentação, sem distinguir se ele foi proponente ou apoiador. Pelo Regimento Interno, todo signatário é autor, e a rota pública de busca não informa o papel nem a ordem de assinatura.
+_Avoid_: Proposição criada pelo deputado, Proposição que o deputado apresentou, Iniciativa do deputado, Autoria do deputado como título público.
+
+**Cota parlamentar**: Cota para o Exercício da Atividade Parlamentar (CEAP), limite mensal de reembolso de despesas ligadas à atividade parlamentar, cujo teto varia por estado de origem do deputado porque embute o preço da passagem aérea até a capital.
+_Avoid_: Verba indenizatória, Salário do deputado, Auxílio.
+
+**Gasto da cota do deputado**: Valor debitado da cota parlamentar por um deputado em um mês e uma categoria oficial, calculado como o valor líquido menos a restituição posterior.
+_Avoid_: Despesa do deputado, Gasto pessoal do deputado.
+
+**Cobertura do dado da cota**: Último mês de um ano que o arquivo oficial da CEAP efetivamente cobria quando foi carregado, usado para distinguir um mês sem gasto de um mês ainda não carregado.
+_Avoid_: Mês zerado como sinônimo de mês sem dado.
+
 ## Relationships
 
 - Uma **Legislatura** contém múltiplos **Deputados** com **Mandatos**.
@@ -291,7 +303,19 @@ _Avoid_: Histórico bruto do deputado.
 - Um **Perfil do deputado** existe quando o **Deputado** está cadastrado; ausência de histórico parlamentar é **Lacuna de dados**, não ausência do perfil.
 - O cargo exibido no **Perfil do deputado** é "Deputado federal"; condições como **Titular**, **Suplente**, **Licença**, **Em exercício** e **Em atividade** não substituem o cargo.
 - O **Perfil do deputado** pode exibir **Em atividade** como status público separado do cargo, usando a mesma regra derivada por intervalos de exercício do **Matcher**.
-- O **Perfil do deputado** exibe fonte oficial da Câmara derivada do `externalIdDeputado`, sem buscar dados em runtime na fonte.
+- O **Perfil do deputado** exibe fonte oficial da Câmara derivada do `externalIdDeputado`, sem depender de chamada à fonte para montar esse link.
+- O navegador nunca consulta a **Câmara** diretamente; toda leitura da fonte passa pelo backend do produto, que valida e transforma a resposta antes de publicá-la.
+- Os blocos de identidade do **Perfil do deputado** — **Snapshot público do deputado**, **Resumo de presença do deputado** e **Histórico partidário do deputado** — vêm do banco do produto e não dependem da disponibilidade da **Câmara**.
+- As seções do **Perfil do deputado** que consultam a **Câmara** em runtime falham isoladamente: indisponibilidade da fonte degrada a seção afetada, nunca os blocos de identidade nem as demais seções.
+- O **Perfil do deputado** exibe **Proposições assinadas pelo deputado** recortadas pelo ano de apresentação, derivado de `dataApresentacao` e não do campo legislativo `ano`.
+- O conjunto de **Proposições assinadas pelo deputado** não distingue proponente de apoiador e não sustenta afirmação de iniciativa, primeira assinatura, redação ou relatoria.
+- A quantidade de **Proposições assinadas pelo deputado** não é métrica de produtividade e não cria comparação ou ranking entre **Deputados**, pela mesma razão que valem para presença, órgãos e discursos.
+- O **Perfil do deputado** exibe **Gastos da cota do deputado** agregados por mês e por categoria oficial, sem despesas individuais, fornecedores nem comprovantes.
+- Um mês além da **Cobertura do dado da cota** é **Lacuna de dados**, não gasto zero; os dois nunca são apresentados da mesma forma.
+- Um ano ainda não carregado é **Lacuna de dados**, não ausência de gasto; o **Perfil do deputado** só oferece anos carregados e distingue os dois vazios por texto próprio.
+- O total anual de **Gastos da cota do deputado** é acompanhado da mediana do estado no mesmo ano, porque o teto da **Cota parlamentar** varia por estado e um valor absoluto isolado mede geografia antes de comportamento.
+- A mediana do estado considera apenas **Deputados** que exerceram o ano inteiro; um **Deputado** com exercício parcial não recebe comparação, e seu gasto nunca é extrapolado por pró-rata.
+- Comparar um **Deputado** contra a distribuição do seu estado é permitido; confronto nominal de gastos entre **Deputados** não entra no MVP.
 - Uma **Bancada** emite **Orientação** para uma **Votação**.
 - Um **Partido** pertence a zero ou uma **Federação** e a zero ou um **Bloco** em uma dada **Legislatura**.
 - Quando uma **Federação** orienta, os **Partidos** membros não orientam separadamente naquela **Votação**.
