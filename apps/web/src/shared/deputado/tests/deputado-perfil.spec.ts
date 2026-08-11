@@ -384,7 +384,20 @@ describe("DeputadoPerfil", () => {
       // Assert
       expect(html).toContain("Discursos");
       expect(html).toContain("deputado-discursos-title");
-      expect(html.match(/aria-label="Carregando conteúdo"/g)).toHaveLength(2);
+      expect(html.match(/aria-label="Carregando conteúdo"/g)).toHaveLength(3);
+    });
+
+    it("starts the proposições assinadas section independently in its loading state", () => {
+      // Arrange
+      const perfil = makePerfil();
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Proposições assinadas");
+      expect(html).toContain("deputado-proposicoes-assinadas-title");
+      expect(html).not.toContain("proposições assinadas em");
     });
 
     it("keeps the page usable without a selector when years are unavailable", () => {

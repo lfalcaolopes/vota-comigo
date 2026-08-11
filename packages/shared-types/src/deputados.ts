@@ -56,6 +56,22 @@ export const deputadoOrgaosResponseSchema = z.object({
   total: z.number().int().nonnegative(),
 });
 
+export const deputadoProposicaoAssinadaSchema = z.object({
+  externalIdProposicao: z.number().int().positive(),
+  siglaTipo: z.string().min(1).nullable(),
+  numero: z.number().int().positive().nullable(),
+  ano: z.number().int().positive().nullable(),
+  ementa: z.string().min(1).nullable(),
+  dataApresentacao: isoDateSchema,
+  urlOficial: z.url(),
+});
+
+export const deputadoProposicoesAssinadasResponseSchema = z.object({
+  year: z.number().int(),
+  items: z.array(deputadoProposicaoAssinadaSchema),
+  total: z.number().int().nonnegative(),
+});
+
 export const deputadoDiscursoLinkKindSchema = z.enum([
   "video",
   "audio",
@@ -237,6 +253,12 @@ export type DeputadoPerfilValidYearRange = z.infer<
 export type DeputadoOrgao = z.infer<typeof deputadoOrgaoSchema>;
 export type DeputadoOrgaosResponse = z.infer<
   typeof deputadoOrgaosResponseSchema
+>;
+export type DeputadoProposicaoAssinada = z.infer<
+  typeof deputadoProposicaoAssinadaSchema
+>;
+export type DeputadoProposicoesAssinadasResponse = z.infer<
+  typeof deputadoProposicoesAssinadasResponseSchema
 >;
 export type DeputadoDiscursoLinkKind = z.infer<
   typeof deputadoDiscursoLinkKindSchema

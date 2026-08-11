@@ -10,11 +10,9 @@ import { useId, useState } from "react";
 import { InlineMessage, SkeletonRows, SourceLink } from "@/shared/ui";
 
 import { formatData } from "./presentation";
+import type { DeputadoYearCacheState } from "./use-deputado-year-cache";
 
-export type DiscursosState =
-  | { status: "loading" }
-  | { status: "error" }
-  | { status: "success"; response: DeputadoDiscursosResponse };
+export type DiscursosState = DeputadoYearCacheState<DeputadoDiscursosResponse>;
 
 export function DeputadoDiscursosSection({ state }: { state: DiscursosState }) {
   return (

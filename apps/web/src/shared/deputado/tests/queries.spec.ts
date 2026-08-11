@@ -2,6 +2,7 @@ import type {
   DeputadoDiscursosResponse,
   DeputadoPerfil,
   DeputadoOrgaosResponse,
+  DeputadoProposicoesAssinadasResponse,
   DeputadosFeedResponse,
   PartidosDisponiveisResponse,
 } from "@vota-comigo/shared-types";
@@ -14,6 +15,7 @@ import {
   orgaos,
   partidosDisponiveis,
   perfil,
+  proposicoesAssinadas,
 } from "../queries";
 
 const response: DeputadoPerfil = {
@@ -61,6 +63,12 @@ const partidosResponse: PartidosDisponiveisResponse = {
 };
 
 const orgaosResponse: DeputadoOrgaosResponse = {
+  year: 2022,
+  items: [],
+  total: 0,
+};
+
+const proposicoesAssinadasResponse: DeputadoProposicoesAssinadasResponse = {
   year: 2022,
   items: [],
   total: 0,
@@ -177,6 +185,29 @@ describe("discursos", () => {
         "http://localhost:3001/deputados/74646/discursos?year=2022",
       );
       expect(result).toEqual(discursosResponse);
+    });
+  });
+});
+
+describe("proposicoesAssinadas", () => {
+  describe("when the request succeeds", () => {
+    it("fetches the selected year through the product API", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => proposicoesAssinadasResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      const result = await proposicoesAssinadas(74646, 2022);
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/74646/proposicoes-assinadas?year=2022",
+      );
+      expect(result).toEqual(proposicoesAssinadasResponse);
     });
   });
 });

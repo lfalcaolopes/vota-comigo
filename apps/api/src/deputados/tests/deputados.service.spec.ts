@@ -285,3 +285,142 @@ describe('DeputadosService discursos', () => {
     });
   });
 });
+
+describe('DeputadosService proposições assinadas', () => {
+  describe('quando o ano tem proposições espalhadas pelos trimestres', () => {
+    it('consulta os quatro intervalos e devolve o ano inteiro unido', async () => {
+      // Arrange
+      const byQuarter: Record<string, unknown[]> = {
+        '2022-01-01': [
+          {
+            id: 2318532,
+            siglaTipo: 'REQ',
+            numero: 388,
+            ano: 2022,
+            ementa: 'Requer a criação da Comissão Especial.',
+            dataApresentacao: '2022-03-23T16:06',
+          },
+        ],
+        '2022-04-01': [
+          {
+            id: 2327419,
+            siglaTipo: 'PL',
+            numero: 1234,
+            ano: 2022,
+            ementa: 'Dispõe sobre transparência.',
+            dataApresentacao: '2022-05-04T10:00',
+          },
+        ],
+        '2022-07-01': [],
+        '2022-10-01': [],
+      };
+      const client: CamaraPaginatedClient = {
+        fetchAll: jest.fn().mockImplementation((url: string) => {
+          const start = new URL(url).searchParams.get(
+            'dataApresentacaoInicio',
+          ) as string;
+          return Promise.resolve({
+            ok: true,
+            items: byQuarter[start],
+            pages: 1,
+          });
+        }),
+      };
+      const service = new DeputadosService(
+        fakeRepository({ loadDeputadoPerfil: async () => perfilSource() }),
+        client,
+      );
+
+      // Act
+      const result = await service.proposicoesAssinadas(74646, 2022);
+
+      // Assert
+      expect(client.fetchAll).toHaveBeenCalledTimes(4);
+      expect(result).toMatchObject({
+        year: 2022,
+        total: 2,
+        items: [
+          { externalIdProposicao: 2327419, dataApresentacao: '2022-05-04' },
+          { externalIdProposicao: 2318532, dataApresentacao: '2022-03-23' },
+        ],
+      });
+    });
+  });
+
+  describe('quando um dos trimestres falha', () => {
+    it('derruba a seção em vez de publicar um total anual parcial', async () => {
+      // Arrange
+      const client: CamaraPaginatedClient = {
+        fetchAll: jest.fn().mockImplementation((url: string) => {
+          const start = new URL(url).searchParams.get('dataApresentacaoInicio');
+          if (start === '2022-07-01') {
+            return Promise.resolve({
+              ok: false,
+              kind: 'timeout',
+              message: 'timeout',
+              pages: 0,
+              receivedItems: 0,
+            });
+          }
+          return Promise.resolve({
+            ok: true,
+            items: [
+              {
+                id: 2318532,
+                siglaTipo: 'REQ',
+                numero: 388,
+                ano: 2022,
+                ementa: 'Requer a criação da Comissão Especial.',
+                dataApresentacao: '2022-03-23T16:06',
+              },
+            ],
+            pages: 1,
+          });
+        }),
+      };
+      const service = new DeputadosService(
+        fakeRepository({ loadDeputadoPerfil: async () => perfilSource() }),
+        client,
+      );
+
+      // Act
+      const result = service.proposicoesAssinadas(74646, 2022);
+
+      // Assert
+      await expect(result).rejects.toMatchObject({ status: 503 });
+    });
+  });
+
+  describe('quando o deputado não existe', () => {
+    it('rejeita a consulta antes de chamar a Câmara', async () => {
+      // Arrange
+      const client: CamaraPaginatedClient = { fetchAll: jest.fn() };
+      const service = new DeputadosService(fakeRepository({}), client);
+
+      // Act
+      const result = service.proposicoesAssinadas(999999, 2022);
+
+      // Assert
+      await expect(result).rejects.toMatchObject({ status: 404 });
+      expect(client.fetchAll).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('quando o ano está fora da faixa do deputado', () => {
+    it('rejeita a consulta antes de chamar a Câmara', async () => {
+      // Arrange
+      const client: CamaraPaginatedClient = { fetchAll: jest.fn() };
+      const service = new DeputadosService(
+        fakeRepository({ loadDeputadoPerfil: async () => perfilSource() }),
+        client,
+      );
+
+      // Act
+      const result = service.proposicoesAssinadas(74646, 2014);
+
+      // Assert
+      await expect(result).rejects.toMatchObject({ status: 400 });
+      expect(client.fetchAll).not.toHaveBeenCalled();
+    });
+  });
+});

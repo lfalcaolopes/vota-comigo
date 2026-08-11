@@ -12,6 +12,7 @@ import type {
   DeputadoDiscursosResponse,
   DeputadoPerfil,
   DeputadoOrgaosResponse,
+  DeputadoProposicoesAssinadasResponse,
   DeputadosFeedResponse,
   PartidosDisponiveisResponse,
   UfsDisponiveisResponse,
@@ -130,6 +131,16 @@ export class DeputadosController {
     @Query('year', ParseIntPipe) year: number,
   ): Promise<DeputadoOrgaosResponse> {
     return this.service.orgaos(externalIdDeputado, year);
+  }
+
+  @Get(':externalIdDeputado/proposicoes-assinadas')
+  @Throttle({ default: { ttl: 60_000, limit: 20 } })
+  @CacheControl(CACHE_EXTERNAL_RUNTIME)
+  async proposicoesAssinadas(
+    @Param('externalIdDeputado', ParseIntPipe) externalIdDeputado: number,
+    @Query('year', ParseIntPipe) year: number,
+  ): Promise<DeputadoProposicoesAssinadasResponse> {
+    return this.service.proposicoesAssinadas(externalIdDeputado, year);
   }
 
   @Get(':externalIdDeputado/discursos')

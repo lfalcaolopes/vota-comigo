@@ -4,6 +4,7 @@ import {
   deputadoDiscursosResponseSchema,
   deputadoFeedResponseSchema,
   deputadoPerfilSchema,
+  deputadoProposicoesAssinadasResponseSchema,
   partidosDisponiveisResponseSchema,
   ufsDisponiveisResponseSchema,
 } from '@vota-comigo/shared-types';
@@ -158,6 +159,101 @@ async function buildApp(
   await app.init();
   return app;
 }
+
+describe('GET /deputados/:externalIdDeputado/proposicoes-assinadas', () => {
+  describe('quando a Câmara devolve proposições do ano', () => {
+    it('responde o ano inteiro pelo contrato público, sem paginação', async () => {
+      // Arrange
+      const app = await buildApp(
+        new Map([[220593, source()]]),
+        undefined,
+        undefined,
+        {
+          fetchAll: async (url: string) => ({
+            ok: true,
+            pages: 1,
+            items:
+              new URL(url).searchParams.get('dataApresentacaoInicio') ===
+              '2022-01-01'
+                ? [
+                    {
+                      id: 2314871,
+                      siglaTipo: 'RDF',
+                      numero: 1,
+                      ano: 0,
+                      ementa: 'Aprova o texto do Acordo sobre a Mobilidade.',
+                      dataApresentacao: '2022-02-09T23:59',
+                    },
+                  ]
+                : [],
+          }),
+        },
+      );
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/220593/proposicoes-assinadas?year=2022',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoProposicoesAssinadasResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body).toEqual({
+        year: 2022,
+        items: [
+          {
+            externalIdProposicao: 2314871,
+            siglaTipo: 'RDF',
+            numero: 1,
+            ano: null,
+            ementa: 'Aprova o texto do Acordo sobre a Mobilidade.',
+            dataApresentacao: '2022-02-09',
+            urlOficial:
+              'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=2314871',
+          },
+        ],
+        total: 1,
+      });
+      expect(response.body).not.toHaveProperty('limit');
+      expect(response.body).not.toHaveProperty('offset');
+      await app.close();
+    });
+  });
+
+  describe('quando o deputado não existe no produto', () => {
+    it('responde 404 sem consultar a Câmara', async () => {
+      // Arrange
+      const app = await buildApp(new Map());
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/999999/proposicoes-assinadas?year=2022',
+      );
+
+      // Assert
+      expect(response.status).toBe(404);
+      await app.close();
+    });
+  });
+
+  describe('quando o ano está fora da faixa do deputado', () => {
+    it('responde erro de entrada sem consultar a Câmara', async () => {
+      // Arrange
+      const app = await buildApp(new Map([[220593, source()]]));
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/220593/proposicoes-assinadas?year=2010',
+      );
+
+      // Assert
+      expect(response.status).toBe(400);
+      await app.close();
+    });
+  });
+});
 
 describe('GET /deputados/:externalIdDeputado/discursos', () => {
   describe('quando a Câmara devolve um pronunciamento com transcrição', () => {

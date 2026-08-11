@@ -2,6 +2,7 @@ import type {
   DeputadoDiscursosResponse,
   DeputadoPerfil,
   DeputadoOrgaosResponse,
+  DeputadoProposicoesAssinadasResponse,
   DeputadosFeedResponse,
   PartidosDisponiveisResponse,
   UfsDisponiveisResponse,
@@ -47,6 +48,15 @@ export function orgaos(
 ): Promise<DeputadoOrgaosResponse> {
   return apiGet<DeputadoOrgaosResponse>(
     `/deputados/${externalIdDeputado}/orgaos?year=${year}`,
+  );
+}
+
+export function proposicoesAssinadas(
+  externalIdDeputado: number,
+  year: number,
+): Promise<DeputadoProposicoesAssinadasResponse> {
+  return apiGet<DeputadoProposicoesAssinadasResponse>(
+    `/deputados/${externalIdDeputado}/proposicoes-assinadas?year=${year}`,
   );
 }
 

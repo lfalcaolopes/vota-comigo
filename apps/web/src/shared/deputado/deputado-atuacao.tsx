@@ -5,22 +5,21 @@ import type {
   DeputadoOrgaosResponse,
   DeputadoPerfilValidYearRange,
 } from "@vota-comigo/shared-types";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 import { InlineMessage, SkeletonRows } from "@/shared/ui";
 
 import { DeputadoPerfilYearSelector } from "./deputado-perfil-year-selector";
-import {
-  DeputadoDiscursosSection,
-  type DiscursosState,
-} from "./deputado-discursos";
+import { DeputadoDiscursosSection } from "./deputado-discursos";
+import { DeputadoProposicoesAssinadasSection } from "./deputado-proposicoes-assinadas";
 import { formatData } from "./presentation";
-import { discursos, orgaos } from "./queries";
+import { discursos, orgaos, proposicoesAssinadas } from "./queries";
+import {
+  useDeputadoYearCache,
+  type DeputadoYearCacheState,
+} from "./use-deputado-year-cache";
 
-type OrgaosState =
-  | { status: "loading" }
-  | { status: "error" }
-  | { status: "success"; response: DeputadoOrgaosResponse };
+type OrgaosState = DeputadoYearCacheState<DeputadoOrgaosResponse>;
 
 export function DeputadoAtuacao({
   externalIdDeputado,
@@ -32,67 +31,16 @@ export function DeputadoAtuacao({
   validYearRange: DeputadoPerfilValidYearRange;
 }) {
   const [year, setYear] = useState(initialYear);
-  const [cache, setCache] = useState<Record<number, OrgaosState>>({
-    [initialYear]: { status: "loading" },
+  const yearCache = { externalIdDeputado, initialYear, year };
+  const proposicoesState = useDeputadoYearCache({
+    ...yearCache,
+    query: proposicoesAssinadas,
   });
-  const requestedYears = useRef(new Set<number>());
-  const [discursosCache, setDiscursosCache] = useState<
-    Record<number, DiscursosState>
-  >({
-    [initialYear]: { status: "loading" },
+  const orgaosState = useDeputadoYearCache({ ...yearCache, query: orgaos });
+  const discursosState = useDeputadoYearCache({
+    ...yearCache,
+    query: discursos,
   });
-  const requestedDiscursosYears = useRef(new Set<number>());
-
-  useEffect(() => {
-    if (requestedYears.current.has(year)) return;
-    requestedYears.current.add(year);
-    setCache((current) => ({
-      ...current,
-      [year]: current[year] ?? { status: "loading" },
-    }));
-
-    void orgaos(externalIdDeputado, year).then(
-      (response) => {
-        setCache((current) => ({
-          ...current,
-          [year]: { status: "success", response },
-        }));
-      },
-      () => {
-        setCache((current) => ({
-          ...current,
-          [year]: { status: "error" },
-        }));
-      },
-    );
-  }, [externalIdDeputado, year]);
-
-  useEffect(() => {
-    if (requestedDiscursosYears.current.has(year)) return;
-    requestedDiscursosYears.current.add(year);
-    setDiscursosCache((current) => ({
-      ...current,
-      [year]: current[year] ?? { status: "loading" },
-    }));
-
-    void discursos(externalIdDeputado, year).then(
-      (response) => {
-        setDiscursosCache((current) => ({
-          ...current,
-          [year]: { status: "success", response },
-        }));
-      },
-      () => {
-        setDiscursosCache((current) => ({
-          ...current,
-          [year]: { status: "error" },
-        }));
-      },
-    );
-  }, [externalIdDeputado, year]);
-
-  const state = cache[year] ?? { status: "loading" };
-  const discursosState = discursosCache[year] ?? { status: "loading" };
 
   return (
     <section
@@ -115,7 +63,8 @@ export function DeputadoAtuacao({
         onYearChange={setYear}
         validYearRange={validYearRange}
       />
-      <OrgaosSection state={state} />
+      <DeputadoProposicoesAssinadasSection state={proposicoesState} />
+      <OrgaosSection state={orgaosState} />
       <DeputadoDiscursosSection state={discursosState} />
     </section>
   );

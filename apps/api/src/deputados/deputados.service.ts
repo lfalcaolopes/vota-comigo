@@ -12,6 +12,7 @@ import type {
   DeputadoDiscursosResponse,
   DeputadoPerfil,
   DeputadoOrgaosResponse,
+  DeputadoProposicoesAssinadasResponse,
   DeputadosFeedResponse,
   PartidosDisponiveisResponse,
   UfsDisponiveisResponse,
@@ -20,6 +21,10 @@ import type {
 import { toDeputadoCard } from './mappers/deputado-card.mapper';
 import { toDeputadoPerfil } from './mappers/deputado-perfil.mapper';
 import { deriveDeputadoDiscursos } from './rules/deputado-discursos';
+import {
+  buildProposicoesAssinadasQuarters,
+  deriveDeputadoProposicoesAssinadas,
+} from './rules/deputado-proposicoes-assinadas';
 import { deriveDeputadoOrgaos } from './rules/deputado-orgaos';
 import { deriveDeputadoPerfilYear } from './rules/deputado-perfil-year';
 import {
@@ -32,6 +37,30 @@ import {
 } from '../shared/camara/camara-paginated-client';
 
 const CAMARA_API_BASE_URL = 'https://dadosabertos.camara.leg.br/api/v2';
+const PROPOSICOES_ASSINADAS_CONCURRENCY = 2;
+
+async function mapWithConcurrency<TInput, TOutput>(
+  inputs: readonly TInput[],
+  concurrency: number,
+  run: (input: TInput) => Promise<TOutput>,
+): Promise<TOutput[]> {
+  const outputs: TOutput[] = new Array<TOutput>(inputs.length);
+  let next = 0;
+
+  const workers = Array.from(
+    { length: Math.min(concurrency, inputs.length) },
+    async () => {
+      while (next < inputs.length) {
+        const index = next;
+        next += 1;
+        outputs[index] = await run(inputs[index]);
+      }
+    },
+  );
+
+  await Promise.all(workers);
+  return outputs;
+}
 
 @Injectable()
 export class DeputadosService {
@@ -169,6 +198,106 @@ export class DeputadosService {
     };
   }
 
+  async proposicoesAssinadas(
+    externalIdDeputado: number,
+    year: number,
+  ): Promise<DeputadoProposicoesAssinadasResponse> {
+    const startedAt = Date.now();
+    const source = await this.repository.loadDeputadoPerfil(externalIdDeputado);
+    if (source === null) {
+      this.logProposicoesAssinadas({
+        externalIdDeputado,
+        year,
+        startedAt,
+        validationError: 'deputado_not_found',
+      });
+      throw new NotFoundException('deputado nao encontrado');
+    }
+
+    const yearRule = deriveDeputadoPerfilYear(source, new Date().getFullYear());
+    if (!yearRule.isValidYear(year)) {
+      this.logProposicoesAssinadas({
+        externalIdDeputado,
+        year,
+        startedAt,
+        validationError: 'year_out_of_range',
+      });
+      throw new BadRequestException('year fora da faixa do deputado');
+    }
+
+    const results = await mapWithConcurrency(
+      buildProposicoesAssinadasQuarters(year),
+      PROPOSICOES_ASSINADAS_CONCURRENCY,
+      (quarter) => {
+        const params = new URLSearchParams({
+          idDeputadoAutor: String(externalIdDeputado),
+          dataApresentacaoInicio: quarter.start,
+          dataApresentacaoFim: quarter.end,
+          itens: '100',
+          ordem: 'ASC',
+          ordenarPor: 'id',
+        });
+        return this.camaraClient.fetchAll(
+          `${CAMARA_API_BASE_URL}/proposicoes?${params}`,
+        );
+      },
+    );
+
+    const pages = results.reduce((total, result) => total + result.pages, 0);
+    const failure = results.find((result) => !result.ok);
+    if (failure !== undefined && !failure.ok) {
+      this.logProposicoesAssinadas({
+        externalIdDeputado,
+        year,
+        startedAt,
+        pages,
+        receivedItems: results.reduce(
+          (total, result) =>
+            total + (result.ok ? result.items.length : result.receivedItems),
+          0,
+        ),
+        timeout: failure.kind === 'timeout',
+        error: failure.kind,
+      });
+      throw new ServiceUnavailableException(
+        'proposições assinadas da Câmara indisponíveis',
+      );
+    }
+
+    const received = results.flatMap((result) =>
+      result.ok ? [...result.items] : [],
+    );
+    const transformed = deriveDeputadoProposicoesAssinadas(received, year);
+    if (!transformed.ok) {
+      this.logProposicoesAssinadas({
+        externalIdDeputado,
+        year,
+        startedAt,
+        pages,
+        receivedItems: received.length,
+        transformedItems: 0,
+        validationError: 'invalid_camara_item',
+      });
+      throw new BadGatewayException('resposta inválida da Câmara');
+    }
+
+    this.logProposicoesAssinadas({
+      externalIdDeputado,
+      year,
+      startedAt,
+      pages,
+      receivedItems: received.length,
+      transformedItems: transformed.items.length,
+      timeout: false,
+    });
+
+    return {
+      year,
+      items: [...transformed.items],
+      total: transformed.items.length,
+    };
+  }
+
   async discursos(
     externalIdDeputado: number,
     year: number,
@@ -264,6 +393,31 @@ export class DeputadosService {
       items: [...transformed.items],
       total: transformed.items.length,
     };
+  }
+
+  private logProposicoesAssinadas(event: {
+    externalIdDeputado: number;
+    year: number;
+    startedAt: number;
+    pages?: number;
+    receivedItems?: number;
+    transformedItems?: number;
+    timeout?: boolean;
+    error?: string;
+    validationError?: string;
+  }): void {
+    this.logger.log({
+      event: 'deputado_proposicoes_assinadas_query',
+      externalIdDeputado: event.externalIdDeputado,
+      year: event.year,
+      pages: event.pages ?? 0,
+      receivedItems: event.receivedItems ?? 0,
+      transformedItems: event.transformedItems ?? 0,
+      durationMs: Date.now() - event.startedAt,
+      timeout: event.timeout ?? false,
+      error: event.error,
+      validationError: event.validationError,
+    });
   }
 
   private logDiscursos(event: {
