@@ -2,6 +2,7 @@ import { dirname } from 'node:path';
 
 import { fetchCsv } from '../adapters/fetch-csv-transport';
 import { nodeFileSystem } from '../adapters/node-file-system';
+import { extractZipEntry } from '../adapters/zip-archive-extractor';
 import {
   InactivityTimeoutError,
   bodyWithInactivityTimeout,
@@ -18,6 +19,7 @@ import type {
   CsvDownloadTransport,
   CsvPlanItemDownloaderOptions,
   CsvPlanItemDownloadResult,
+  CsvPlanItemFileSystem,
 } from '../types/csv-downloader.types';
 
 export async function downloadCsvPlanItem(
@@ -31,7 +33,10 @@ export async function downloadCsvPlanItem(
   const maxAttempts = options.maxAttempts ?? 3;
   const retryBackoffMs = options.retryBackoffMs ?? [1000, 2000];
   const sleep = options.sleep ?? sleepFor;
+  const extractArchive = options.extractArchive ?? extractZipEntry;
   const temporaryPath = `${item.localPath}.tmp`;
+  const downloadPath =
+    item.archive === undefined ? temporaryPath : `${item.localPath}.zip.tmp`;
 
   try {
     if (!force && (await fileSystem.exists(item.localPath))) {
@@ -44,6 +49,10 @@ export async function downloadCsvPlanItem(
 
     await fileSystem.mkdir(dirname(item.localPath));
     await fileSystem.remove(temporaryPath);
+
+    if (downloadPath !== temporaryPath) {
+      await fileSystem.remove(downloadPath);
+    }
 
     for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
       const abortController = new AbortController();
@@ -85,13 +94,23 @@ export async function downloadCsvPlanItem(
 
       try {
         await fileSystem.write(
-          temporaryPath,
+          downloadPath,
           bodyWithInactivityTimeout(
             response.body,
             inactivityTimeoutMs,
             abortController,
           ),
         );
+
+        if (item.archive !== undefined) {
+          await extractArchive({
+            archivePath: downloadPath,
+            entryName: item.archive.entryName,
+            destinationPath: temporaryPath,
+          });
+          await fileSystem.remove(downloadPath);
+        }
+
         await fileSystem.rename(temporaryPath, item.localPath);
       } catch (error) {
         if (error instanceof InactivityTimeoutError && attempt < maxAttempts) {
@@ -115,12 +134,27 @@ export async function downloadCsvPlanItem(
 
     throw new Error('tentativas esgotadas');
   } catch (error) {
+    await discardTemporaryFiles(fileSystem, [temporaryPath, downloadPath]);
+
     return {
       status: 'failed',
       item,
       message: `${item.filename}: ${errorMessage(error)}`,
       error,
     };
+  }
+}
+
+async function discardTemporaryFiles(
+  fileSystem: CsvPlanItemFileSystem,
+  paths: readonly string[],
+): Promise<void> {
+  for (const path of new Set(paths)) {
+    try {
+      await fileSystem.remove(path);
+    } catch {
+      // A falha original é o que importa; sobra de temporário não a substitui.
+    }
   }
 }
 

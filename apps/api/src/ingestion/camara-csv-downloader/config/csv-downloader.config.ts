@@ -1,3 +1,7 @@
+import {
+  selectCsvDatasetStrategies,
+  type CsvDatasetStrategy,
+} from '../plan/csv-dataset-strategy';
 import type {
   CsvDownloaderConfigResolution,
   CsvDownloaderOptions,
@@ -69,7 +73,7 @@ export function resolveCsvDownloaderConfig(
     return to;
   }
 
-  const fromYear = from.value ?? firstCsvYear;
+  const fromYear = from.value ?? defaultFirstYear(datasets);
   const toYear = to.value ?? currentYear;
 
   if (fromYear > toYear) {
@@ -106,10 +110,20 @@ function configResolution(
   currentYear: number,
   datasets?: readonly string[],
 ): CsvDownloaderConfigResolution {
-  // Proposições e seus temas legítimos existem antes de 2001 (ex.: 1991,
-  // 1997-2000), então o piso não se aplica quando só esses datasets são
-  // baixados (ADR 0012).
-  const floorYear = shouldWaiveYearFloor(datasets) ? 0 : firstCsvYear;
+  const strategies = selectCsvDatasetStrategies(datasets);
+  const datasetFloorMessage = findDatasetYearFloorMessage(strategies, years);
+
+  if (datasetFloorMessage !== undefined) {
+    return {
+      ok: false,
+      message: datasetFloorMessage,
+    };
+  }
+
+  const floorYear = strategies.reduce(
+    (floor, strategy) => Math.max(floor, strategy.firstYear),
+    0,
+  );
   const invalidYear = years.find(
     (year) => year < floorYear || year > currentYear,
   );
@@ -131,14 +145,30 @@ function configResolution(
   };
 }
 
-const preCsvFloorDatasets = new Set(['proposicoes', 'proposicoesTemas']);
-
-function shouldWaiveYearFloor(datasets?: readonly string[]): boolean {
-  return (
-    datasets !== undefined &&
-    datasets.length > 0 &&
-    datasets.every((dataset) => preCsvFloorDatasets.has(dataset))
+function defaultFirstYear(datasets?: readonly string[]): number {
+  return selectCsvDatasetStrategies(datasets).reduce(
+    (firstYear, strategy) => Math.max(firstYear, strategy.firstYear),
+    firstCsvYear,
   );
+}
+
+function findDatasetYearFloorMessage(
+  strategies: readonly CsvDatasetStrategy[],
+  years: readonly number[],
+): string | undefined {
+  for (const strategy of strategies) {
+    if (strategy.yearFloorMessage === undefined) {
+      continue;
+    }
+
+    const invalidYear = years.find((year) => year < strategy.firstYear);
+
+    if (invalidYear !== undefined) {
+      return strategy.yearFloorMessage(invalidYear);
+    }
+  }
+
+  return undefined;
 }
 
 function parseYears(
