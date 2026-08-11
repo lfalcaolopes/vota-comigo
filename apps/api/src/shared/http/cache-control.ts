@@ -40,3 +40,9 @@ export const CACHE_LISTING: CacheControlDirectives = {
   sMaxAge: 300,
   staleWhileRevalidate: 3_600,
 };
+
+export const CACHE_EXTERNAL_RUNTIME: CacheControlDirectives = {
+  public: true,
+  maxAge: 300,
+  sMaxAge: 300,
+};

@@ -1,5 +1,6 @@
 import type {
   DeputadoPerfil,
+  DeputadoOrgaosResponse,
   DeputadosFeedResponse,
   PartidosDisponiveisResponse,
   UfsDisponiveisResponse,
@@ -37,4 +38,13 @@ export function partidosDisponiveis(): Promise<PartidosDisponiveisResponse> {
 
 export function perfil(externalIdDeputado: number): Promise<DeputadoPerfil> {
   return apiGet<DeputadoPerfil>(`/deputados/${externalIdDeputado}`);
+}
+
+export function orgaos(
+  externalIdDeputado: number,
+  year: number,
+): Promise<DeputadoOrgaosResponse> {
+  return apiGet<DeputadoOrgaosResponse>(
+    `/deputados/${externalIdDeputado}/orgaos?year=${year}`,
+  );
 }

@@ -14,6 +14,7 @@ import {
   type DeputadosRepository,
 } from '../deputados.repository';
 import { DeputadosService } from '../deputados.service';
+import { CAMARA_PAGINATED_CLIENT } from '../../shared/camara/camara-paginated-client';
 import { deriveSnapshotPublico } from '../rules/snapshot-publico';
 import type {
   DeputadoCardRow,
@@ -133,6 +134,14 @@ async function buildApp(
     controllers: [DeputadosController],
     providers: [
       DeputadosService,
+      {
+        provide: CAMARA_PAGINATED_CLIENT,
+        useValue: {
+          fetchAll: async () => {
+            throw new Error('should not call the Câmara');
+          },
+        },
+      },
       {
         provide: DEPUTADOS_REPOSITORY,
         useValue: fakeRepository(byExternalId, resumoById, feedPage),

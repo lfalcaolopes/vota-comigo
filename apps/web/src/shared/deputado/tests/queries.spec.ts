@@ -1,12 +1,13 @@
 import type {
   DeputadoPerfil,
+  DeputadoOrgaosResponse,
   DeputadosFeedResponse,
   PartidosDisponiveisResponse,
 } from "@vota-comigo/shared-types";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { NotFoundError } from "../../lib/api-client";
-import { feed, partidosDisponiveis, perfil } from "../queries";
+import { feed, orgaos, partidosDisponiveis, perfil } from "../queries";
 
 const response: DeputadoPerfil = {
   externalIdDeputado: 220593,
@@ -50,6 +51,12 @@ const feedResponse: DeputadosFeedResponse = {
 
 const partidosResponse: PartidosDisponiveisResponse = {
   items: [{ siglaPartido: "PSOL" }, { siglaPartido: "PT" }],
+};
+
+const orgaosResponse: DeputadoOrgaosResponse = {
+  year: 2022,
+  items: [],
+  total: 0,
 };
 
 afterEach(() => {
@@ -111,6 +118,29 @@ describe("feed", () => {
         "http://localhost:3001/deputados/feed?limit=20&offset=40&q=maria%20silva&emAtividade=true&uf=SP&partido=PT",
       );
       expect(result.items[0].externalIdDeputado).toBe(220593);
+    });
+  });
+});
+
+describe("orgaos", () => {
+  describe("when the request succeeds", () => {
+    it("fetches the selected year through the product API", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => orgaosResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      const result = await orgaos(74646, 2022);
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/74646/orgaos?year=2022",
+      );
+      expect(result).toEqual(orgaosResponse);
     });
   });
 });

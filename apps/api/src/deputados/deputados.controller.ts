@@ -6,16 +6,22 @@ import {
   ParseIntPipe,
   Query,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 
 import type {
   DeputadoPerfil,
+  DeputadoOrgaosResponse,
   DeputadosFeedResponse,
   PartidosDisponiveisResponse,
   UfsDisponiveisResponse,
 } from '@vota-comigo/shared-types';
 
 import { DeputadosService } from './deputados.service';
-import { CACHE_LISTING, CACHE_REFERENCE } from '../shared/http/cache-control';
+import {
+  CACHE_EXTERNAL_RUNTIME,
+  CACHE_LISTING,
+  CACHE_REFERENCE,
+} from '../shared/http/cache-control';
 import { CacheControl } from '../shared/http/cache-control.decorator';
 
 const LIMIT_DEFAULT = 20;
@@ -113,6 +119,16 @@ export class DeputadosController {
       uf,
       partido,
     );
+  }
+
+  @Get(':externalIdDeputado/orgaos')
+  @Throttle({ default: { ttl: 60_000, limit: 20 } })
+  @CacheControl(CACHE_EXTERNAL_RUNTIME)
+  async orgaos(
+    @Param('externalIdDeputado', ParseIntPipe) externalIdDeputado: number,
+    @Query('year', ParseIntPipe) year: number,
+  ): Promise<DeputadoOrgaosResponse> {
+    return this.service.orgaos(externalIdDeputado, year);
   }
 
   @Get(':externalIdDeputado')

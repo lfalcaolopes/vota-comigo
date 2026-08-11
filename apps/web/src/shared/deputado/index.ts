@@ -1,4 +1,10 @@
-export { feed, partidosDisponiveis, perfil, ufsDisponiveis } from "./queries";
+export {
+  feed,
+  orgaos,
+  partidosDisponiveis,
+  perfil,
+  ufsDisponiveis,
+} from "./queries";
 export {
   buildDeputadosFeedHref,
   buildDeputadosFeedSearchParams,

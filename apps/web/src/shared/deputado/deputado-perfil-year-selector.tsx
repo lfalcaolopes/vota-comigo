@@ -8,11 +8,13 @@ import { buildDeputadoPerfilYearHref } from "./deputado-perfil-year-url";
 
 type DeputadoPerfilYearSelectorProps = {
   initialYear: number | null;
+  onYearChange?: (year: number) => void;
   validYearRange: DeputadoPerfilValidYearRange | null;
 };
 
 export function DeputadoPerfilYearSelector({
   initialYear,
+  onYearChange,
   validYearRange,
 }: DeputadoPerfilYearSelectorProps) {
   if (initialYear === null || validYearRange === null) return null;
@@ -20,6 +22,7 @@ export function DeputadoPerfilYearSelector({
   return (
     <AvailableDeputadoPerfilYearSelector
       initialYear={initialYear}
+      onYearChange={onYearChange}
       validYearRange={validYearRange}
     />
   );
@@ -27,9 +30,11 @@ export function DeputadoPerfilYearSelector({
 
 function AvailableDeputadoPerfilYearSelector({
   initialYear,
+  onYearChange,
   validYearRange,
 }: {
   initialYear: number;
+  onYearChange?: (year: number) => void;
   validYearRange: DeputadoPerfilValidYearRange;
 }) {
   const [year, setYear] = useState(initialYear);
@@ -49,6 +54,7 @@ function AvailableDeputadoPerfilYearSelector({
           const selectedYear = Number(event.target.value);
           setYear(selectedYear);
           replaceYearInAddress(selectedYear);
+          onYearChange?.(selectedYear);
         }}
         value={year}
       >

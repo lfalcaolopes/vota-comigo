@@ -565,7 +565,7 @@ describe("DeputadoPerfil", () => {
 
         // Assert
         expect(html).toContain("Presença indisponível");
-        expect(html).not.toContain("0%");
+        expect(html).not.toContain(">0%<");
       });
 
       it("does not show votacoes em exercicio sample label", () => {

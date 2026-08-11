@@ -1,5 +1,15 @@
 import { z } from "zod";
 
+const isoDateSchema = z.string().refine(isValidIsoDate);
+
+function isValidIsoDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00.000Z`);
+  return (
+    !Number.isNaN(date.valueOf()) && date.toISOString().slice(0, 10) === value
+  );
+}
+
 export const deputadoSnapshotPublicoSchema = z.object({
   nomeEleitoral: z.string().nullable(),
   siglaPartido: z.string().nullable(),
@@ -16,8 +26,8 @@ export const deputadoResumoPresencaSchema = z.object({
 
 export const deputadoPeriodoPartidarioSchema = z.object({
   siglaPartido: z.string(),
-  dataInicio: z.string(),
-  dataFim: z.string().nullable(),
+  dataInicio: isoDateSchema,
+  dataFim: isoDateSchema.nullable(),
   atual: z.boolean(),
 });
 
@@ -29,6 +39,21 @@ export const deputadoLegislaturaPeriodoSchema = z.object({
 export const deputadoPerfilValidYearRangeSchema = z.object({
   startYear: z.number().int(),
   endYear: z.number().int(),
+});
+
+export const deputadoOrgaoSchema = z.object({
+  externalIdOrgao: z.number().int().positive(),
+  siglaOrgao: z.string().nullable(),
+  nome: z.string().min(1),
+  titulo: z.string().min(1),
+  dataInicio: z.string(),
+  dataFim: z.string().nullable(),
+});
+
+export const deputadoOrgaosResponseSchema = z.object({
+  year: z.number().int(),
+  items: z.array(deputadoOrgaoSchema),
+  total: z.number().int().nonnegative(),
 });
 
 export const deputadoPerfilSchema = z
@@ -173,6 +198,10 @@ export type DeputadoLegislaturaPeriodo = z.infer<
 >;
 export type DeputadoPerfilValidYearRange = z.infer<
   typeof deputadoPerfilValidYearRangeSchema
+>;
+export type DeputadoOrgao = z.infer<typeof deputadoOrgaoSchema>;
+export type DeputadoOrgaosResponse = z.infer<
+  typeof deputadoOrgaosResponseSchema
 >;
 export type DeputadoPerfil = z.infer<typeof deputadoPerfilSchema>;
 export type DeputadoCard = z.infer<typeof deputadoCardSchema>;
