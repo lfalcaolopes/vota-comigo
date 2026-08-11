@@ -31,6 +31,15 @@ The downloader writes the Câmara source CSVs to `apps/api/data/raw/{dataset}/..
 - Mock only external dependencies; never mock the unit under test.
 - Unit tests never touch real databases, network, or other modules.
 
+## Validação final
+
+- Durante TDD, rode apenas os testes focados de cada ciclo. Antes das suítes completas, revise o diff, aplique a formatação e execute `git diff --check`; resolva nessa etapa qualquer edge case tardio.
+- Com o código estabilizado, agrupe em paralelo as verificações independentes: build de `@vota-comigo/shared-types`, build da API, lint do frontend e testes do frontend.
+- Execute `pnpm --filter web build` fora do sandbox desde a primeira tentativa. O Turbopack abre uma porta local durante o build e falha com `EPERM` dentro do sandbox. Se houver `.next/lock`, confirme primeiro que nenhum build está ativo antes de mover o lock obsoleto.
+- Execute a suíte completa da API fora do sandbox, pois os testes de contrato com Supertest precisam abrir uma porta local.
+- Rode cada suíte completa uma única vez, depois que o diff estiver estável. Se surgir uma alteração tardia, repita os testes focados e somente a suíte completa da aplicação afetada; mudanças em contrato compartilhado exigem verificar também seus consumidores.
+- Não repita builds ou suítes bem-sucedidos de áreas não afetadas. Ao relatar falhas, diferencie regressão de código de limitação de infraestrutura ou sandbox.
+
 ## Browser automation
 
 Playwright is configured in `apps/web` for agent-driven browser interaction with the web app. Agent browser runs use port `3000`.

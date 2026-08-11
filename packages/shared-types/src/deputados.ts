@@ -26,6 +26,11 @@ export const deputadoLegislaturaPeriodoSchema = z.object({
   dataFim: z.string(),
 });
 
+export const deputadoPerfilValidYearRangeSchema = z.object({
+  startYear: z.number().int(),
+  endYear: z.number().int(),
+});
+
 export const deputadoPerfilSchema = z
   .object({
     externalIdDeputado: z.number(),
@@ -44,6 +49,8 @@ export const deputadoPerfilSchema = z
     externalIdLegislaturaFinal: z.number().nullable(),
     legislaturaInicialPeriodo: deputadoLegislaturaPeriodoSchema.nullable(),
     legislaturaFinalPeriodo: deputadoLegislaturaPeriodoSchema.nullable(),
+    defaultYear: z.number().int().nullable(),
+    validYearRange: deputadoPerfilValidYearRangeSchema.nullable(),
     resumoPresencaDisponivel: z.boolean(),
     resumoPresenca: deputadoResumoPresencaSchema.nullable(),
     historicoPartidarioDisponivel: z.boolean(),
@@ -80,6 +87,27 @@ export const deputadoPerfilSchema = z
         path: ["historicoPartidario"],
         message:
           "historicoPartidarioDisponivel deve coincidir com a presença de períodos partidários",
+      });
+    }
+
+    if ((perfil.defaultYear === null) !== (perfil.validYearRange === null)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["validYearRange"],
+        message: "defaultYear e validYearRange devem estar disponíveis juntos",
+      });
+    }
+
+    if (
+      perfil.defaultYear !== null &&
+      perfil.validYearRange !== null &&
+      (perfil.defaultYear < perfil.validYearRange.startYear ||
+        perfil.defaultYear > perfil.validYearRange.endYear)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["defaultYear"],
+        message: "defaultYear deve pertencer a validYearRange",
       });
     }
 
@@ -142,6 +170,9 @@ export type DeputadoPeriodoPartidario = z.infer<
 >;
 export type DeputadoLegislaturaPeriodo = z.infer<
   typeof deputadoLegislaturaPeriodoSchema
+>;
+export type DeputadoPerfilValidYearRange = z.infer<
+  typeof deputadoPerfilValidYearRangeSchema
 >;
 export type DeputadoPerfil = z.infer<typeof deputadoPerfilSchema>;
 export type DeputadoCard = z.infer<typeof deputadoCardSchema>;

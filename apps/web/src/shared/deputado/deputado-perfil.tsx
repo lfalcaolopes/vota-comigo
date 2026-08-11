@@ -3,6 +3,7 @@ import type { DeputadoPerfil as DeputadoPerfilData } from "@vota-comigo/shared-t
 import { Badge, InlineMessage, SourceLink } from "@/shared/ui";
 
 import { DeputadoAvatar } from "./deputado-avatar";
+import { DeputadoPerfilYearSelector } from "./deputado-perfil-year-selector";
 import {
   CARGO_DEPUTADO,
   HISTORICO_PARTIDARIO_INDISPONIVEL,
@@ -21,12 +22,40 @@ import {
   toRedeSocialNome,
 } from "./presentation";
 
-export function DeputadoPerfil({ perfil }: { perfil: DeputadoPerfilData }) {
+export function DeputadoPerfil({
+  perfil,
+  initialYear = perfil.defaultYear,
+}: {
+  perfil: DeputadoPerfilData;
+  initialYear?: number | null;
+}) {
   return (
     <div className="grid gap-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-x-0">
       <Identidade perfil={perfil} />
       <Evidencia perfil={perfil} />
       <Metadados perfil={perfil} />
+      {initialYear !== null && perfil.validYearRange !== null ? (
+        <section
+          aria-labelledby="deputado-atuacao-title"
+          className="grid gap-5 border-t border-border pt-8 lg:col-span-2"
+        >
+          <div className="grid max-w-[70ch] gap-2">
+            <h2
+              className="text-lg font-[680] leading-snug text-ink"
+              id="deputado-atuacao-title"
+            >
+              Atuação na Câmara
+            </h2>
+            <p className="text-sm leading-normal text-muted">
+              Selecione o ano para consultar as atividades do deputado.
+            </p>
+          </div>
+          <DeputadoPerfilYearSelector
+            initialYear={initialYear}
+            validYearRange={perfil.validYearRange}
+          />
+        </section>
+      ) : null}
     </div>
   );
 }

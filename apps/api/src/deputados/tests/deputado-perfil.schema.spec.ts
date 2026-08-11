@@ -32,6 +32,11 @@ function perfil(overrides: Partial<DeputadoPerfil> = {}): DeputadoPerfil {
       dataInicio: '2023-02-01',
       dataFim: '2027-01-31',
     },
+    defaultYear: 2026,
+    validYearRange: {
+      startYear: 2015,
+      endYear: 2026,
+    },
     resumoPresencaDisponivel: true,
     resumoPresenca: {
       percentualPresenca: 80,
@@ -105,6 +110,31 @@ describe('deputadoPerfilSchema invariants', () => {
             urlFoto: null,
           },
         }),
+      );
+
+      // Assert
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('profile year coupling', () => {
+    it('rejects a default year outside the valid range', () => {
+      // Act
+      const result = deputadoPerfilSchema.safeParse(
+        perfil({
+          defaultYear: 2014,
+          validYearRange: { startYear: 2015, endYear: 2026 },
+        }),
+      );
+
+      // Assert
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects a default year without a valid range', () => {
+      // Act
+      const result = deputadoPerfilSchema.safeParse(
+        perfil({ defaultYear: 2026, validYearRange: null }),
       );
 
       // Assert

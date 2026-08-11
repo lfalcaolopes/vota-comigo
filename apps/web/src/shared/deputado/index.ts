@@ -21,6 +21,7 @@ export {
   type UseDeputadoFeedState,
 } from "./use-deputado-feed-state";
 export { DeputadoPerfil } from "./deputado-perfil";
+export { parseDeputadoPerfilYear } from "./deputado-perfil-year-url";
 export { DeputadoPerfilSkeleton } from "./deputado-perfil-skeleton";
 export { DeputadoBreadcrumb } from "./deputado-breadcrumb";
 export { DeputadoAvatar } from "./deputado-avatar";

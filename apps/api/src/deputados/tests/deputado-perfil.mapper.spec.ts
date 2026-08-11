@@ -190,6 +190,21 @@ describe('toDeputadoPerfil', () => {
         dataFim: '2027-01-31',
       });
     });
+
+    it('exposes the default year and valid range derived from legislaturas', () => {
+      // Arrange
+      const row = source();
+
+      // Act
+      const perfil = toDeputadoPerfil(row, null, 2026);
+
+      // Assert
+      expect(perfil.defaultYear).toBe(2026);
+      expect(perfil.validYearRange).toEqual({
+        startYear: 2015,
+        endYear: 2026,
+      });
+    });
   });
 
   describe('when the deputado has no history events', () => {

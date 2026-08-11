@@ -36,6 +36,11 @@ function makePerfil(
       dataInicio: "2023-02-01",
       dataFim: "2027-01-31",
     },
+    defaultYear: 2026,
+    validYearRange: {
+      startYear: 2015,
+      endYear: 2026,
+    },
     resumoPresencaDisponivel: true,
     resumoPresenca: {
       percentualPresenca: 80,
@@ -353,6 +358,38 @@ describe("DeputadoPerfil", () => {
 
       // Assert
       expect(html).not.toContain("Legislatura inicial");
+    });
+  });
+
+  describe("eixo temporal da atuacao", () => {
+    it("shows the activity section with the default year selected", () => {
+      // Arrange
+      const perfil = makePerfil();
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Atuação na Câmara");
+      expect(html).toContain('<option value="2026" selected="">2026</option>');
+    });
+
+    it("keeps the page usable without a selector when years are unavailable", () => {
+      // Arrange
+      const perfil = makePerfil({
+        legislaturaInicialPeriodo: null,
+        legislaturaFinalPeriodo: null,
+        defaultYear: null,
+        validYearRange: null,
+      });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Maria da Silva");
+      expect(html).not.toContain("Atuação na Câmara");
+      expect(html).not.toContain("deputado-perfil-year");
     });
   });
 
