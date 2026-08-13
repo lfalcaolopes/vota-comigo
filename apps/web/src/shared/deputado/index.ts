@@ -1,4 +1,5 @@
 export {
+  ceap,
   discursos,
   feed,
   orgaos,

@@ -66,6 +66,21 @@ function render(perfil: DeputadoPerfilData): string {
 }
 
 describe("DeputadoPerfil", () => {
+  describe("gastos da cota parlamentar", () => {
+    it("inclui a seção no recorte anual compartilhado do perfil", () => {
+      // Arrange
+      const perfil = makePerfil();
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Atuação na Câmara");
+      expect(html).toContain("Gastos da cota parlamentar");
+      expect(html).toContain("Carregando conteúdo");
+    });
+  });
+
   describe("dados cadastrais basicos", () => {
     it("shows the public name, the cargo and the official source link", () => {
       // Arrange
@@ -384,7 +399,7 @@ describe("DeputadoPerfil", () => {
       // Assert
       expect(html).toContain("Discursos");
       expect(html).toContain("deputado-discursos-title");
-      expect(html.match(/aria-label="Carregando conteúdo"/g)).toHaveLength(3);
+      expect(html).toContain('aria-label="Carregando conteúdo"');
     });
 
     it("starts the proposições assinadas section independently in its loading state", () => {

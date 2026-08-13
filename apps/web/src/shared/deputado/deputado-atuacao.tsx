@@ -11,9 +11,10 @@ import { InlineMessage, SkeletonRows } from "@/shared/ui";
 
 import { DeputadoPerfilYearSelector } from "./deputado-perfil-year-selector";
 import { DeputadoDiscursosSection } from "./deputado-discursos";
+import { DeputadoGastosCotaSection } from "./deputado-gastos-cota";
 import { DeputadoProposicoesAssinadasSection } from "./deputado-proposicoes-assinadas";
 import { formatData } from "./presentation";
-import { discursos, orgaos, proposicoesAssinadas } from "./queries";
+import { ceap, discursos, orgaos, proposicoesAssinadas } from "./queries";
 import {
   useDeputadoYearCache,
   type DeputadoYearCacheState,
@@ -32,6 +33,7 @@ export function DeputadoAtuacao({
 }) {
   const [year, setYear] = useState(initialYear);
   const yearCache = { externalIdDeputado, initialYear, year };
+  const gastosCotaState = useDeputadoYearCache({ ...yearCache, query: ceap });
   const proposicoesState = useDeputadoYearCache({
     ...yearCache,
     query: proposicoesAssinadas,
@@ -59,10 +61,16 @@ export function DeputadoAtuacao({
         </p>
       </div>
       <DeputadoPerfilYearSelector
+        availableYears={
+          gastosCotaState.status === "success"
+            ? gastosCotaState.response.availableYears
+            : undefined
+        }
         initialYear={initialYear}
         onYearChange={setYear}
         validYearRange={validYearRange}
       />
+      <DeputadoGastosCotaSection state={gastosCotaState} />
       <DeputadoProposicoesAssinadasSection state={proposicoesState} />
       <OrgaosSection state={orgaosState} />
       <DeputadoDiscursosSection state={discursosState} />

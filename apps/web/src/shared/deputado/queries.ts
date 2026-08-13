@@ -1,4 +1,5 @@
 import type {
+  DeputadoCeapResponse,
   DeputadoDiscursosResponse,
   DeputadoPerfil,
   DeputadoOrgaosResponse,
@@ -40,6 +41,15 @@ export function partidosDisponiveis(): Promise<PartidosDisponiveisResponse> {
 
 export function perfil(externalIdDeputado: number): Promise<DeputadoPerfil> {
   return apiGet<DeputadoPerfil>(`/deputados/${externalIdDeputado}`);
+}
+
+export function ceap(
+  externalIdDeputado: number,
+  year: number,
+): Promise<DeputadoCeapResponse> {
+  return apiGet<DeputadoCeapResponse>(
+    `/deputados/${externalIdDeputado}/ceap?year=${year}`,
+  );
 }
 
 export function orgaos(

@@ -1,4 +1,5 @@
 import type {
+  DeputadoCeapResponse,
   DeputadoDiscursosResponse,
   DeputadoPerfil,
   DeputadoOrgaosResponse,
@@ -10,6 +11,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { NotFoundError } from "../../lib/api-client";
 import {
+  ceap,
   discursos,
   feed,
   orgaos,
@@ -78,6 +80,12 @@ const discursosResponse: DeputadoDiscursosResponse = {
   year: 2022,
   items: [],
   total: 0,
+};
+
+const ceapResponse: DeputadoCeapResponse = {
+  year: 2022,
+  availableYears: [2024, 2023, 2022],
+  status: "ano-nao-carregado",
 };
 
 afterEach(() => {
@@ -208,6 +216,29 @@ describe("proposicoesAssinadas", () => {
         "http://localhost:3001/deputados/74646/proposicoes-assinadas?year=2022",
       );
       expect(result).toEqual(proposicoesAssinadasResponse);
+    });
+  });
+});
+
+describe("ceap", () => {
+  describe("when the request succeeds", () => {
+    it("fetches the selected year through the product API", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => ceapResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      const result = await ceap(74646, 2022);
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/74646/ceap?year=2022",
+      );
+      expect(result).toEqual(ceapResponse);
     });
   });
 });

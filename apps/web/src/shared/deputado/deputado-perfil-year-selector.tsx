@@ -7,12 +7,14 @@ import { listDeputadoPerfilYears } from "./deputado-perfil-year-options";
 import { buildDeputadoPerfilYearHref } from "./deputado-perfil-year-url";
 
 type DeputadoPerfilYearSelectorProps = {
+  availableYears?: readonly number[];
   initialYear: number | null;
   onYearChange?: (year: number) => void;
   validYearRange: DeputadoPerfilValidYearRange | null;
 };
 
 export function DeputadoPerfilYearSelector({
+  availableYears,
   initialYear,
   onYearChange,
   validYearRange,
@@ -21,6 +23,7 @@ export function DeputadoPerfilYearSelector({
 
   return (
     <AvailableDeputadoPerfilYearSelector
+      availableYears={availableYears}
       initialYear={initialYear}
       onYearChange={onYearChange}
       validYearRange={validYearRange}
@@ -29,16 +32,28 @@ export function DeputadoPerfilYearSelector({
 }
 
 function AvailableDeputadoPerfilYearSelector({
+  availableYears,
   initialYear,
   onYearChange,
   validYearRange,
 }: {
+  availableYears?: readonly number[];
   initialYear: number;
   onYearChange?: (year: number) => void;
   validYearRange: DeputadoPerfilValidYearRange;
 }) {
   const [year, setYear] = useState(initialYear);
-  const years = listDeputadoPerfilYears(validYearRange);
+  const years =
+    availableYears === undefined
+      ? listDeputadoPerfilYears(validYearRange)
+      : [...availableYears]
+          .filter(
+            (availableYear) =>
+              availableYear >= validYearRange.startYear &&
+              availableYear <= validYearRange.endYear,
+          )
+          .sort((first, second) => second - first);
+  const selectedYear = years.includes(year) ? year : "";
 
   useEffect(() => {
     replaceYearInAddress(initialYear);
@@ -56,8 +71,15 @@ function AvailableDeputadoPerfilYearSelector({
           replaceYearInAddress(selectedYear);
           onYearChange?.(selectedYear);
         }}
-        value={year}
+        value={selectedYear}
       >
+        {selectedYear === "" ? (
+          <option disabled value="">
+            {years.length === 0
+              ? "Nenhum ano carregado"
+              : "Selecione um ano carregado"}
+          </option>
+        ) : null}
         {years.map((option) => (
           <option key={option} value={option}>
             {option}
