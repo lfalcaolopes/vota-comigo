@@ -414,9 +414,13 @@ Total utilizado em 2025
 
 As seis fatias representam as cinco maiores categorias e **Outras despesas**. A legenda fica ao lado em telas largas e abaixo do gráfico no celular.
 
-A rosca é a **única** representação da distribuição anual. Não há caminho alternativo em lista de barras, e não há regra condicional escolhendo entre os dois. Construir os dois significaria manter um caminho que quase nunca dispara e que, por isso, quase nunca é exercitado em uso real.
+A rosca **não é** a única representação da distribuição anual. A exclusividade dependia de uma premissa que a varredura de #118 derrubou: agregados negativos ocorrem no recorte exibido, em 0,77% dos pares deputado-ano e em quase todos os anos — ver [Resultados da validação](#resultados-da-validação). Uma rosca com fatia negativa, ou com total anual não positivo, é matematicamente enganosa, porque o ângulo de uma fatia não representa valor negativo.
 
-Isso depende de uma premissa ainda não verificada, registrada em [Pendências de validação](#pendências-de-validação): que agregados negativos não ocorrem no recorte efetivamente exibido. Uma rosca com fatia negativa, ou com total anual não positivo, é matematicamente enganosa — o ângulo de uma fatia não representa valor negativo. Se a validação encontrar negativos, esta decisão reabre.
+**Regra de domínio adotada.** Para um par deputado-ano, a distribuição anual usa a rosca, exceto quando algum grupo de apresentação tem valor anual negativo ou o total anual não é positivo. Nesse caso, e somente nele, a distribuição é apresentada como lista de barras horizontais, que representa negativo nativamente. A regra é do par, não da sessão: trocar de ano pode trocar de representação.
+
+O caminho de barras dispara em 58 dos 7.448 pares medidos (0,78%). É pouco, e um caminho que quase nunca dispara quase nunca é exercitado — por isso ele não é opcional nos testes: o modo barras tem cobertura de teste própria, com um par negativo real do conjunto ingerido, e não depende de ser encontrado por acaso em uso.
+
+A alternativa de desenhar a rosca sobre valores absolutos foi rejeitada: faria a soma visual deixar de corresponder ao total retornado pela API, contrariando um critério de aceite desta própria seção.
 
 ### Gastos por mês
 
@@ -483,7 +487,22 @@ A cor é atribuída por **`numSubCota`**, a partir de uma paleta fixa, e nunca p
 
 Atribuir por posição faria a mesma cor significar categorias diferentes ao trocar de ano, já que o top 5 é calculado por deputado e por ano. É o mesmo defeito que a regra do top 5 anual evita no eixo mensal — o doc já argumenta que recalcular por mês "faria cores e legendas mudarem de significado" —, só que um nível acima. E o dano é maior aqui: quem troca de ano está procurando mudança de comportamento, e cor remapeada inventa mudança onde não houve.
 
-Fixar cor para as 19 categorias é inviável: não existem 19 cores distinguíveis com contraste acessível. A saída é uma paleta fixa para as categorias que dominam nacionalmente, com todo o resto caindo em **Outras despesas**. Isso depende de uma premissa a verificar, registrada nas [Pendências de validação](#pendências-de-validação).
+Fixar cor para as 20 categorias é inviável: não existem 20 cores distinguíveis com contraste acessível. A saída é uma paleta fixa para as categorias que dominam nacionalmente, com todo o resto herdando a cor neutra.
+
+A varredura de #118 mediu a concentração e fixou o tamanho da paleta em **oito códigos**, que cobrem 92,0% dos segmentos desenhados:
+
+| `numSubCota` | Categoria                        | Pares em que aparece no top 5 |
+| ------------ | -------------------------------- | ----------------------------- |
+| 5            | Divulgação da atividade          | 82,6%                         |
+| 3            | Combustíveis e lubrificantes     | 76,0%                         |
+| 120          | Locação ou fretamento de veículos | 68,8%                         |
+| 1            | Manutenção de escritório         | 66,7%                         |
+| 999          | Passagem aérea — RPA             | 49,2%                         |
+| 998          | Passagem aérea — SIGEPA          | 38,8%                         |
+| 10           | Telefonia                        | 33,6%                         |
+| 4            | Consultorias e trabalhos técnicos | 29,5%                         |
+
+O nono código mais frequente cai para 8,6%, o que torna oito um corte natural. Estender a paleta a dez subiria a cobertura para 95,5% ao custo de duas cores adicionais que precisariam se distinguir das oito com contraste acessível.
 
 - Uma cor representa a mesma categoria em todos os gráficos, deputados e anos.
 - **Outras despesas** usa sempre uma cor neutra.
@@ -519,35 +538,62 @@ Os dois textos nunca se substituem. O primeiro afirma ausência de gasto; o segu
 
 **Mês além da cobertura:** mês presente no eixo, marcado como sem dados, fora do total.
 
-## Pendências de validação
+## Resultados da validação
 
-Itens que precisam ser verificados contra o conjunto completo ingerido, **antes** de fechar a implementação. Nenhum deles está resolvido hoje; a evidência atual vem apenas do arquivo de 2025.
+As varreduras de #118 rodaram em 2026-08-13 sobre o conjunto ingerido de **2015 a 2026** — 7.448 pares deputado-ano, 12 arquivos anuais. Elas mediram os **seis grupos de apresentação** (as cinco maiores categorias anuais mais **Outras despesas**), não as categorias cruas, aplicando o módulo puro `deriveGruposGastoCota` sobre a matriz mês × categoria já persistida.
 
-**1. Agregados negativos no recorte exibido.** Bloqueia a rosca. É preciso varrer todos os anos ingeridos e responder, para o recorte que a interface efetivamente desenha — as cinco maiores categorias anuais mais **Outras despesas**, por deputado e por ano, e também por mês:
+Os anos de 2008 a 2014 ficaram deliberadamente fora: os arquivos existem na fonte, mas o produto começa em 2015 e nenhuma decisão desta seção dependia deles. Reabrir a faixa exige repetir estas varreduras.
 
-- existe algum agregado **anual** por grupo com valor negativo?
-- existe algum agregado **mensal** por grupo com valor negativo?
-- existe algum total anual por deputado que não seja positivo?
+**1. Agregados negativos no recorte exibido — ocorrem.**
 
-Resposta negativa em todos: a rosca exclusiva se sustenta como está. Qualquer ocorrência reabre a decisão — as opções são voltar à lista de barras ou definir uma regra de domínio documentada para o caso.
+| Recorte                      | Pares afetados | % dos pares | Pior caso        |
+| ---------------------------- | -------------- | ----------- | ---------------- |
+| Grupo anual negativo         | 57             | 0,77%       | −R$ 13.288,98    |
+| Grupo mensal negativo        | 1.085          | 14,57%      | −R$ 30.309,96    |
+| Total anual não positivo     | 36             | 0,48%       | —                |
 
-Vale notar que a agregação em **Outras despesas** pode absorver um negativo dentro de um grupo positivo, e que o recorte exibido é mais grosso que o recorte da evidência atual (que mediu categorias individuais, não os seis grupos). A varredura precisa medir os grupos de apresentação, não as categorias cruas.
+Os negativos se concentram nas passagens aéreas — `998` (SIGEPA) e `999` (RPA) respondem por 44 das 59 ocorrências anuais e por 1.258 das 1.377 mensais —, o que é coerente com compensações e cancelamentos de bilhete. Quinze das ocorrências anuais caem dentro de **Outras despesas**: o agrupamento de fato absorve negativos, como a hipótese previa. Não é um outlier de um ano: há grupo anual negativo em oito dos doze anos.
 
-**2. Armazenamento no Neon.** ~~Estimar antes de ingerir tudo.~~ Medido em 2026-08-12 sobre o ano de 2024 ingerido: o grão relacional custava 10 MB por ano (~190 MB de 2008 em diante), e a forma por deputado-ano custa 1 MB por ano (~20 MB). Sobre um free tier de 0,5 GB e um dump que já ocupa ~120 MB, a segunda cabe com folga larga; a primeira, não. Decidiu-se pela forma agregada — ver [Persistência](#persistência). Resta confirmar a medição com o conjunto completo depois de ingerir todos os anos.
+Consequência: a rosca exclusiva **reabriu e foi substituída** pela regra de domínio descrita em [Distribuição anual](#distribuição-anual). A união dos dois gatilhos — algum grupo anual negativo ou total anual não positivo — atinge 58 pares, 0,78% do conjunto.
 
-**3. Tamanho de amostra da mediana nas UFs pequenas.** Estados com bancada reduzida, filtrados ainda por exercício de ano inteiro, podem produzir medianas sobre um punhado de deputados. Levantar o menor `deputado_count` por `(year, sigla_uf)` após a ingestão completa e definir um piso abaixo do qual a comparação não é exibida. Medido em #117 sobre 2015–2026: as amostras vão de **4 a 67 deputados**, com apenas dois pares `(year, sigla_uf)` abaixo de cinco, e nenhuma mediana não positiva. Falta a decisão do piso.
+**2. Concentração das categorias no top 5 — oito códigos bastam.**
 
-**4. Periodicidade real da fonte.** A afirmação de que o arquivo é atualizado diariamente circula, mas a página oficial de descrição dos dados da CEAP **não declara periodicidade alguma**. Como a fronteira do dado depende disso, convém observar o arquivo por alguns dias e registrar o comportamento real em vez de assumir.
+Dos 20 códigos existentes, **19 aparecem em algum top 5**, então fixar cor por código é inviável e a paleta precisa de um corte. A cobertura pelas N mais frequentes:
 
-**5. Concentração das categorias no top 5.** Define o tamanho da paleta fixa. Sobre o conjunto completo, levantar:
+| N   | Pares com o top 5 inteiro dentro da paleta | Segmentos cobertos |
+| --- | ------------------------------------------ | ------------------ |
+| 5   | 8,8%                                       | 70,9%              |
+| 6   | 25,3%                                      | 78,9%              |
+| 7   | 43,1%                                      | 85,9%              |
+| 8   | 66,4%                                      | 92,0%              |
+| 9   | 72,9%                                      | 93,7%              |
+| 10  | 80,0%                                      | 95,5%              |
 
-- quantas `numSubCota` distintas aparecem em algum top 5, considerando todos os deputados e anos;
-- que fração dos pares deputado-ano é coberta pelas N mais frequentes, para N de 5 a 10;
-- com que frequência o conjunto do top 5 muda entre anos consecutivos do mesmo deputado.
+A paleta fixa foi definida em **oito códigos** — ver [Cores](#cores). A métrica que governa a decisão é a de segmentos, não a de pares: um par com uma categoria fora da paleta continua legível, porque essa fatia herda a cor neutra e é distinguida pela legenda.
 
-Se um punhado de categorias cobrir a esmagadora maioria, a paleta fixa se sustenta. Se o conjunto for disperso, a alternativa é calcular o top 5 pela união dos anos do deputado — série estável para aquele deputado, ao custo de o top 5 de um ano deixar de ser exatamente o top 5 daquele ano.
+O churn do top entre anos consecutivos do mesmo deputado é alto: em 61,96% dos 5.865 pares de anos consecutivos o conjunto muda ao menos uma categoria, quase sempre exatamente uma (2.865 casos). Isso **confirma** a decisão de atribuir cor por `numSubCota` e nunca por posição no ranking — com cor por posição, três em cada cinco trocas de ano remapeariam cores e inventariam mudança de comportamento onde não houve. Não justifica migrar para top pela união dos anos: o custo dessa alternativa é o top de um ano deixar de ser o top daquele ano, e o problema que ela resolveria já está resolvido pela cor por código.
 
-**6. Invariantes por ano, não só em 2025.** A relação um-para-um entre `numSubCota` e `txtDescricao`, a cobertura de `ideCadastro` e o conjunto de códigos foram verificados apenas no arquivo de 2025. A ingestão valida isso por arquivo, mas convém saber de antemão quais anos falham.
+**3. Armazenamento — folga confirmada.**
+
+Medido no banco local com os 12 anos ingeridos: `deputado_gasto_cota` ocupa 9,5 MB no total, dos quais 1,3 MB de índices — cerca de 0,8 MB por ano, contra os 10 MB por ano que o grão relacional custava. `cota_categoria`, `cota_cobertura` e `cota_mediana_uf` são desprezíveis. O banco inteiro está em 130 MB. Estender a carga a 2008 somaria cerca de 5,5 MB. Contra os 512 MB do free tier, a folga é larga e a decisão de [Persistência](#persistência) se confirma sobre o conjunto completo.
+
+**4. Tamanho de amostra da mediana — sem piso, com denominador visível.**
+
+Sobre os 324 pares `(year, sigla_uf)`, as amostras vão de **4 a 67 deputados**; apenas quatro pares ficam abaixo de seis, e o menor é 4 (2025/AP e 2024/SE). Nenhuma mediana é não positiva.
+
+Decisão: **não há piso**. A comparação é sempre exibida, acompanhada de `deputado_count`. Suprimir a mediana em uma UF pequena tiraria a referência justamente de quem tem menos referência própria, e o denominador publicado já permite ao leitor calibrar a confiança — que é a razão de ele existir.
+
+**5. Periodicidade real da fonte — não se aplica.**
+
+A pergunta pressupunha um produto que acompanha a fonte. Não é o caso: a ingestão é manual e produção funciona como um snapshot, sem atualização automática. A periodicidade do arquivo oficial, declarada ou não, não afeta a cobertura do dado exibida — quem a determina é o momento da última ingestão manual, que é o que o carimbo de [Fronteira do dado](#fronteira-do-dado) comunica.
+
+**6. Invariantes por ano — nenhum ano falha.**
+
+Os 12 arquivos foram ingeridos sem nenhuma rejeição fatal, o que já prova, por ano, a relação um-para-um entre `numSubCota` e `txtDescricao` e a ausência de `ideCadastro` com duas `sgUF`. A varredura acrescentou o eixo entre anos: **nenhum código muda de descrição de um ano para outro**.
+
+O conjunto de códigos **cresce ao longo do tempo** — a união dos 12 anos tem 20 códigos, e cada ano tem entre 18 e 20: `998` (passagem aérea SIGEPA) aparece a partir de 2019 e `145` (tokens e certificados digitais) a partir de 2022. É exatamente o caso que a ingestão já aceita, por tratar código novo como categoria nova em vez de rejeição.
+
+Linhas sem `ideCadastro`, referentes a lideranças e ignoradas pela ingestão, variam de 392 a 937 por ano.
 
 ## Biblioteca de gráficos
 
@@ -619,7 +665,6 @@ Animações são curtas e comunicam somente a troca de ano ou seleção. `prefer
 - Hover, clique, foco e toque dão acesso a período, categoria e valor.
 - A interface não depende somente de cor.
 - Valores mensais negativos aparecem abaixo de zero.
-- A distribuição anual usa exclusivamente a rosca, sem caminho alternativo.
 - Meses além da cobertura do dado aparecem como sem dados, não como zero, e ficam fora do total.
 - A seção exibe o carimbo de cobertura da fonte.
 - O total anual aparece acompanhado da mediana da UF no ano e do número de deputados no cálculo.
@@ -627,7 +672,9 @@ Animações são curtas e comunicam somente a troca de ano ou seleção. `prefer
 - Deputado com exercício parcial no ano não recebe comparação, e sim o período exercido.
 - Nenhum pró-rata é aplicado a gastos de exercício parcial.
 - A seção exibe a ressalva de que a cota varia por estado.
-- As pendências de validação foram executadas contra o conjunto completo antes do fechamento.
+- As varreduras de validação foram executadas contra o conjunto ingerido antes do frontend.
+- A distribuição anual cai para lista de barras quando algum grupo anual é negativo ou o total anual não é positivo, e o modo barras tem cobertura de teste própria.
+- A mediana da UF é sempre exibida, acompanhada do número de deputados no cálculo, sem piso de amostra.
 - Estados de carregamento, ausência de dados e falha não alteram o restante do perfil.
 - Testes de navegador cobrem troca de ano, seleção por toque e navegação por teclado.
 
@@ -637,12 +684,12 @@ Animações são curtas e comunicam somente a troca de ano ou seleção. `prefer
 2. implementar o download e a extração da fonte CEAP;
 3. adicionar tabelas e migrações: agregados mensais por categoria, cobertura por ano, UF por deputado-ano, mediana por UF-ano;
 4. implementar o passo anual de ingestão, suas invariantes, a cobertura e a mediana;
-5. **executar as [Pendências de validação](#pendências-de-validação) contra o conjunto completo** — os resultados podem reabrir a rosca exclusiva e a paleta fixa, então isso vem antes do frontend;
+5. ~~executar as varreduras de validação contra o conjunto ingerido~~ — feito em #118; os [Resultados da validação](#resultados-da-validação) reabriram a rosca exclusiva e fixaram a paleta em oito códigos;
 6. adicionar schemas e tipos compartilhados, já com `status`, cobertura e mediana estabilizados pelo passo anterior;
 7. implementar repositório, serviço e endpoint dos gastos da cota;
-8. implementar transformação pura de top 5 mais **Outras despesas**;
+8. ~~implementar transformação pura de top 5 mais **Outras despesas**~~ — feito em #118 (`deriveGruposGastoCota`), porque as varreduras precisavam medir os grupos de apresentação;
 9. implementar seletor de ano, os três estados e o carimbo de cobertura;
 10. adicionar os gráficos com Recharts e alternativa textual acessível;
 11. validar responsividade, teclado, toque, valores negativos e a fronteira do dado com Playwright.
 
-A ordem mudou de propósito: a ingestão e a validação vêm **antes** dos schemas e do frontend. Duas decisões de interface — rosca exclusiva e paleta fixa — dependem de premissas que só o conjunto completo confirma. Construir a interface primeiro arriscaria refazê-la.
+A ordem mudou de propósito: a ingestão e a validação vêm **antes** dos schemas e do frontend. Duas decisões de interface — rosca exclusiva e paleta fixa — dependiam de premissas que só o conjunto ingerido confirma, e a validação de fato derrubou a primeira. Construir a interface primeiro teria significado refazê-la.

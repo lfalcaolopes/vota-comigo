@@ -315,6 +315,8 @@ _Avoid_: Mês zerado como sinônimo de mês sem dado.
 - Um ano ainda não carregado é **Lacuna de dados**, não ausência de gasto; o **Perfil do deputado** só oferece anos carregados e distingue os dois vazios por texto próprio.
 - O total anual de **Gastos da cota do deputado** é acompanhado da mediana do estado no mesmo ano, porque o teto da **Cota parlamentar** varia por estado e um valor absoluto isolado mede geografia antes de comportamento.
 - A mediana do estado considera apenas **Deputados** que exerceram o ano inteiro; um **Deputado** com exercício parcial não recebe comparação, e seu gasto nunca é extrapolado por pró-rata.
+- A mediana do estado é sempre exibida com o número de **Deputados** que entraram no cálculo, sem piso de amostra: o denominador é o que calibra a confiança, e suprimi-la tiraria a referência das bancadas pequenas, que têm menos referência própria.
+- Um **Gasto da cota do deputado** agregado pode ser negativo, porque compensações e cancelamentos de passagem aérea excedem o gasto do período; o valor negativo é preservado e nunca apresentado em forma que o exiba como despesa positiva.
 - Comparar um **Deputado** contra a distribuição do seu estado é permitido; confronto nominal de gastos entre **Deputados** não entra no MVP.
 - Uma **Bancada** emite **Orientação** para uma **Votação**.
 - Um **Partido** pertence a zero ou uma **Federação** e a zero ou um **Bloco** em uma dada **Legislatura**.
