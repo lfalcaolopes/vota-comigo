@@ -58,7 +58,13 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).toContain("R$ 427.123,45");
       expect(html).toContain("Mediana em SP");
       expect(html).toContain("R$ 398.000,00");
-      expect(html).toContain("63 deputados com ano completo");
+      expect(html).toContain("7% acima da mediana");
+      expect(html).toContain(
+        "Comparação com 63 deputados de SP em exercício durante todo o ano",
+      );
+      expect(html).toContain(
+        'aria-label="Comparação visual entre o total utilizado e a mediana em SP"',
+      );
       expect(html).toContain("Dados disponíveis: janeiro a outubro de 2024");
       expect(html).toContain("outubro de 2024");
       expect(html).not.toContain("Fonte: Câmara dos Deputados");
@@ -94,7 +100,25 @@ describe("seção de gastos da cota parlamentar", () => {
       // Assert
       expect(html).toContain("Mediana em RR");
       expect(html).toContain("R$ 410.000,00");
-      expect(html).toContain("4 deputados com ano completo");
+      expect(html).toContain(
+        "Comparação com 4 deputados de RR em exercício durante todo o ano",
+      );
+    });
+
+    it("resume quanto o total ficou abaixo da mediana", () => {
+      // Arrange
+      const response = loadedResponse({
+        totalAmountUsedCents: 4_733_534,
+        medianaUf: { amountUsedCents: 22_739_011, deputadoCount: 64 },
+      });
+
+      // Act
+      const html = render(response);
+
+      // Assert
+      expect(html).toContain("79% abaixo da mediana");
+      expect(html).toContain("R$ 47.335,34");
+      expect(html).toContain("R$ 227.390,11");
     });
 
     it("apresenta a distribuição anual e sua alternativa textual na mesma ordem", () => {
@@ -163,6 +187,17 @@ describe("seção de gastos da cota parlamentar", () => {
       );
       expect(alternativaTextual).toContain(
         "Ver composição de Outras despesas (2 categorias)",
+      );
+      const composicaoSummaryStart = alternativaTextual.indexOf("<summary");
+      const composicaoSummaryTag = alternativaTextual.slice(
+        composicaoSummaryStart,
+        alternativaTextual.indexOf(">", composicaoSummaryStart),
+      );
+      expect(composicaoSummaryTag).toContain("text-muted");
+      expect(composicaoSummaryTag).not.toContain("text-info");
+      expect(composicaoSummaryTag).not.toContain("underline");
+      expect(html).toContain(
+        "sm:grid-cols-[minmax(15rem,20rem)_minmax(0,1fr)] sm:gap-8 sm:items-start",
       );
       expect(alternativaTextual).toContain("Categoria 6");
       expect(alternativaTextual).toContain("R$ 40,00");

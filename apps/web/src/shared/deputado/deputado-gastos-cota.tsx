@@ -47,28 +47,25 @@ export function DeputadoGastosCotaSection({
 
       {response !== null && response.status === "ok" ? (
         <div className="grid min-w-0 gap-5">
-          <div className="grid gap-1">
+          {!response.exercicioAnoCompleto ? (
             <p className="text-sm text-muted">
-              Dados disponíveis:{" "}
-              {formatCoverageRange(response.coveredThroughMonth, response.year)}
-              .
+              Exercício no ano:{" "}
+              {response.periodosExercicio
+                .map(
+                  (periodo) =>
+                    `${formatData(periodo.startDate)} a ${formatData(periodo.endDate)}`,
+                )
+                .join("; ")}
+              . Sem comparação com deputados que exerceram o ano inteiro.
             </p>
-            {!response.exercicioAnoCompleto ? (
-              <p className="text-sm text-muted">
-                Exercício no ano:{" "}
-                {response.periodosExercicio
-                  .map(
-                    (periodo) =>
-                      `${formatData(periodo.startDate)} a ${formatData(periodo.endDate)}`,
-                  )
-                  .join("; ")}
-                . Sem comparação com deputados que exerceram o ano inteiro.
-              </p>
-            ) : null}
-          </div>
+          ) : null}
 
           <GastoCotaDistribuicaoAnual
             categories={response.categories}
+            coverageLabel={formatCoverageRange(
+              response.coveredThroughMonth,
+              response.year,
+            )}
             key={response.year}
             medianaUf={response.medianaUf}
             siglaUf={response.siglaUf}

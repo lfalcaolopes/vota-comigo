@@ -13,7 +13,7 @@ export function GastoCotaComposicao({
 
   return (
     <details className="mt-2 rounded-md bg-surface-muted px-3 py-2">
-      <summary className="min-h-11 cursor-pointer content-center text-sm font-[650] text-info underline decoration-info/35 underline-offset-[0.18em]">
+      <summary className="min-h-11 cursor-pointer content-center text-sm font-[650] text-muted transition-colors duration-200 hover:text-ink motion-reduce:transition-none">
         Ver composição de Outras despesas ({categories.length}{" "}
         {categories.length === 1 ? "categoria" : "categorias"})
       </summary>

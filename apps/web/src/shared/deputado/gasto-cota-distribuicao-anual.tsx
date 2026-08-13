@@ -4,7 +4,17 @@ import type {
   DeputadoCeapCategory,
   DeputadoCeapMedianaUf,
 } from "@vota-comigo/shared-types";
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
+import {
+  Bar,
+  BarChart,
+  Cell,
+  Pie,
+  PieChart,
+  ReferenceLine,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import { GastoCotaComposicao } from "./gasto-cota-composicao";
 import { deriveGastoCotaDistribuicao } from "./gasto-cota-distribuicao";
@@ -15,12 +25,14 @@ import { formatGastoCotaAmount } from "./gasto-cota-presentation";
 
 export function GastoCotaDistribuicaoAnual({
   categories,
+  coverageLabel,
   medianaUf,
   siglaUf,
   totalAmountUsedCents,
   year,
 }: {
   categories: readonly DeputadoCeapCategory[];
+  coverageLabel: string;
   medianaUf: DeputadoCeapMedianaUf | null;
   siglaUf: string | null;
   totalAmountUsedCents: number;
@@ -33,6 +45,7 @@ export function GastoCotaDistribuicaoAnual({
     return (
       <div className="grid gap-4">
         <GastoCotaComparacao
+          coverageLabel={coverageLabel}
           medianaUf={medianaUf}
           siglaUf={siglaUf}
           totalAmountUsedCents={totalAmountUsedCents}
@@ -48,16 +61,16 @@ export function GastoCotaDistribuicaoAnual({
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-5">
       <figure
         aria-label={`Distribuição anual dos gastos por categoria em ${year}`}
-        className="grid min-w-0 items-center gap-5 sm:grid-cols-[minmax(15rem,20rem)_minmax(0,1fr)] sm:gap-8"
+        className="grid min-w-0 items-center gap-5 sm:grid-cols-[minmax(15rem,20rem)_minmax(0,1fr)] sm:gap-8 sm:items-start"
       >
         <p className="sr-only">
           Total utilizado em {year}:{" "}
           {formatGastoCotaAmount(totalAmountUsedCents)}.
         </p>
-        <div className="grid justify-items-center gap-2">
+        <div className="grid justify-items-center">
           <div
             aria-hidden="true"
             className="relative aspect-square w-full max-w-72 sm:max-w-80"
@@ -96,7 +109,6 @@ export function GastoCotaDistribuicaoAnual({
               <span className="mt-1 text-xs text-muted">{year}</span>
             </div>
           </div>
-          <GastoCotaMediana medianaUf={medianaUf} siglaUf={siglaUf} />
         </div>
 
         <ol
@@ -126,62 +138,160 @@ export function GastoCotaDistribuicaoAnual({
           ))}
         </ol>
       </figure>
+      <GastoCotaComparacao
+        coverageLabel={coverageLabel}
+        medianaUf={medianaUf}
+        siglaUf={siglaUf}
+        totalAmountUsedCents={totalAmountUsedCents}
+        year={year}
+      />
     </div>
   );
 }
 
 function GastoCotaComparacao({
+  coverageLabel,
   medianaUf,
   siglaUf,
   totalAmountUsedCents,
   year,
 }: {
+  coverageLabel: string;
   medianaUf: DeputadoCeapMedianaUf | null;
   siglaUf: string | null;
   totalAmountUsedCents: number;
   year: number;
 }) {
   const hasMediana = medianaUf !== null && siglaUf !== null;
+  const chartDomain = getGastoCotaComparacaoDomain(
+    totalAmountUsedCents,
+    medianaUf?.amountUsedCents ?? null,
+  );
 
   return (
-    <div
-      className={`grid max-w-xl rounded-md bg-surface-muted px-4 py-3 ${hasMediana ? "grid-cols-2 divide-x divide-border" : ""}`}
+    <figure
+      aria-label={
+        hasMediana
+          ? `Comparação visual entre o total utilizado e a mediana em ${siglaUf}`
+          : `Total utilizado em ${year}`
+      }
+      className="grid gap-3 rounded-md bg-surface-muted px-4 py-4"
     >
-      <div className="grid gap-1 pr-4">
-        <span className="text-xs text-muted">Total utilizado em {year}</span>
-        <strong className="text-base font-[680] tabular-nums text-ink">
-          {formatGastoCotaAmount(totalAmountUsedCents)}
-        </strong>
+      <div className={`grid gap-4 ${hasMediana ? "grid-cols-2" : ""}`}>
+        <GastoCotaValor
+          label={`Total utilizado em ${year}`}
+          value={totalAmountUsedCents}
+        />
+        {hasMediana ? (
+          <GastoCotaValor
+            align="right"
+            label={`Mediana em ${siglaUf}`}
+            value={medianaUf.amountUsedCents}
+          />
+        ) : null}
       </div>
+
       {hasMediana ? (
-        <div className="pl-4">
-          <GastoCotaMediana medianaUf={medianaUf} siglaUf={siglaUf} />
-        </div>
+        <>
+          <div aria-hidden="true" className="h-12 min-w-0 w-full">
+            <ResponsiveContainer height="100%" minWidth={0} width="100%">
+              <BarChart
+                barCategoryGap={0}
+                data={[
+                  { amountUsedCents: totalAmountUsedCents, label: "total" },
+                ]}
+                layout="vertical"
+                margin={{ top: 2, right: 2, bottom: 2, left: 2 }}
+              >
+                <XAxis domain={chartDomain} hide type="number" />
+                <YAxis dataKey="label" hide type="category" />
+                <Bar
+                  background={{ fill: "var(--color-border)" }}
+                  dataKey="amountUsedCents"
+                  fill="var(--color-muted)"
+                  isAnimationActive={false}
+                  radius={[0, 4, 4, 0]}
+                />
+                <ReferenceLine
+                  stroke="var(--color-primary)"
+                  strokeWidth={3}
+                  x={medianaUf.amountUsedCents}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <strong className="text-sm font-[680] text-ink">
+            {formatGastoCotaComparacao(
+              totalAmountUsedCents,
+              medianaUf.amountUsedCents,
+            )}
+          </strong>
+        </>
       ) : null}
+
+      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1 text-xs text-muted">
+        {hasMediana ? (
+          <span>
+            Comparação com {medianaUf.deputadoCount}{" "}
+            {medianaUf.deputadoCount === 1 ? "deputado" : "deputados"} de{" "}
+            {siglaUf} em exercício durante todo o ano
+          </span>
+        ) : (
+          <span />
+        )}
+        <span className="ml-auto text-right">
+          Dados disponíveis: {coverageLabel}.
+        </span>
+      </div>
+    </figure>
+  );
+}
+
+function GastoCotaValor({
+  align = "left",
+  label,
+  value,
+}: {
+  align?: "left" | "right";
+  label: string;
+  value: number;
+}) {
+  return (
+    <div className={`grid gap-1 ${align === "right" ? "text-right" : ""}`}>
+      <span className="text-xs text-muted">{label}</span>
+      <strong className="text-base font-[680] tabular-nums text-ink">
+        {formatGastoCotaAmount(value)}
+      </strong>
     </div>
   );
 }
 
-function GastoCotaMediana({
-  medianaUf,
-  siglaUf,
-}: {
-  medianaUf: DeputadoCeapMedianaUf | null;
-  siglaUf: string | null;
-}) {
-  if (medianaUf === null || siglaUf === null) return null;
+function getGastoCotaComparacaoDomain(
+  totalAmountUsedCents: number,
+  medianaAmountUsedCents: number | null,
+): [number, number] {
+  const mediana = medianaAmountUsedCents ?? 0;
+  const minValue = Math.min(0, totalAmountUsedCents, mediana);
+  const maxValue = Math.max(0, totalAmountUsedCents, mediana);
+  const padding = Math.max((maxValue - minValue) * 0.08, 1);
 
-  return (
-    <div className="grid justify-items-center gap-1 text-center">
-      <span className="text-xs text-muted">Mediana em {siglaUf}</span>
-      <strong className="text-base font-[680] tabular-nums text-ink">
-        {formatGastoCotaAmount(medianaUf.amountUsedCents)}
-      </strong>
-      <span className="text-xs text-muted">
-        {medianaUf.deputadoCount}{" "}
-        {medianaUf.deputadoCount === 1 ? "deputado" : "deputados"} com ano
-        completo
-      </span>
-    </div>
+  return [minValue < 0 ? minValue - padding : 0, maxValue + padding];
+}
+
+function formatGastoCotaComparacao(
+  totalAmountUsedCents: number,
+  medianaAmountUsedCents: number,
+): string {
+  const difference = totalAmountUsedCents - medianaAmountUsedCents;
+
+  if (difference === 0) return "Mesmo valor da mediana";
+  if (medianaAmountUsedCents <= 0 || totalAmountUsedCents < 0) {
+    return `${formatGastoCotaAmount(Math.abs(difference))} ${difference < 0 ? "abaixo" : "acima"} da mediana`;
+  }
+
+  const percentage = Math.round(
+    (Math.abs(difference) / medianaAmountUsedCents) * 100,
   );
+
+  return `${percentage}% ${difference < 0 ? "abaixo" : "acima"} da mediana`;
 }
