@@ -6,6 +6,7 @@ import { InlineMessage, Skeleton, SkeletonRows, SourceLink } from "@/shared/ui";
 
 import { formatData } from "./presentation";
 import { GastoCotaDistribuicaoAnual } from "./gasto-cota-distribuicao-anual";
+import { GastoCotaDistribuicaoMensal } from "./gasto-cota-distribuicao-mensal-chart";
 import { formatGastoCotaAmount } from "./gasto-cota-presentation";
 import type { DeputadoYearCacheState } from "./use-deputado-year-cache";
 
@@ -40,6 +41,7 @@ export function DeputadoGastosCotaSection({
         <div className="grid gap-5">
           <SkeletonRows count={2} />
           <GastoCotaDistribuicaoSkeleton />
+          <GastoCotaDistribuicaoMensalSkeleton />
         </div>
       ) : null}
       {state.status === "error" ? (
@@ -95,6 +97,14 @@ export function DeputadoGastosCotaSection({
             year={response.year}
           />
 
+          <GastoCotaDistribuicaoMensal
+            categories={response.categories}
+            key={`mensal-${response.year}`}
+            months={response.months}
+            totalAmountUsedCents={response.totalAmountUsedCents}
+            year={response.year}
+          />
+
           <CotaCoverageAndSource
             coveredThroughMonth={response.coveredThroughMonth}
             year={response.year}
@@ -145,6 +155,28 @@ function GastoCotaDistribuicaoSkeleton() {
             <Skeleton className="h-8 w-full rounded-md" key={index} />
           ))}
         </div>
+      </div>
+      <Skeleton className="h-20 w-full rounded-md" />
+    </div>
+  );
+}
+
+function GastoCotaDistribuicaoMensalSkeleton() {
+  return (
+    <div
+      aria-label="Carregando distribuição mensal dos gastos"
+      className="grid gap-4 border-t border-border pt-5"
+      role="status"
+    >
+      <div className="grid gap-2">
+        <Skeleton className="h-5 w-36 rounded-md" />
+        <Skeleton className="h-4 w-full max-w-lg rounded-full" />
+      </div>
+      <Skeleton className="h-72 w-full rounded-md" />
+      <div className="flex flex-wrap gap-3">
+        {Array.from({ length: 6 }, (_, index) => (
+          <Skeleton className="h-5 w-28 rounded-md" key={index} />
+        ))}
       </div>
       <Skeleton className="h-20 w-full rounded-md" />
     </div>

@@ -165,6 +165,40 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(alternativaTextual).not.toContain("Categoria 7");
     });
 
+    it("apresenta a distribuição mensal com os dados do mesmo ano", () => {
+      // Arrange
+      const response = loadedResponse({
+        totalAmountUsedCents: 90_000,
+        categories: [
+          {
+            externalNumSubCota: 3,
+            description: "Combustíveis",
+            amountUsedCents: 90_000,
+          },
+        ],
+        months: Array.from({ length: 12 }, (_, index) => ({
+          month: index + 1,
+          totalAmountUsedCents: index === 0 ? 90_000 : 0,
+          categories:
+            index === 0
+              ? [{ externalNumSubCota: 3, amountUsedCents: 90_000 }]
+              : [],
+        })),
+      });
+
+      // Act
+      const html = render(response);
+
+      // Assert
+      expect(html).toContain("Gastos por mês");
+      expect(html).toContain(
+        'aria-label="Gráfico de barras empilhadas dos gastos mensais em 2024"',
+      );
+      expect(html).toContain(
+        'aria-label="Alternativa textual dos gastos mensais"',
+      );
+    });
+
     it("não representa um grupo negativo como fatia positiva", () => {
       // Arrange
       const response = loadedResponse({
@@ -287,6 +321,17 @@ describe("seção de gastos da cota parlamentar", () => {
       );
       expect(html).toContain("aspect-square");
       expect(html).toContain("max-w-80");
+    });
+
+    it("reserva a altura final da distribuição mensal", () => {
+      // Arrange / Act
+      const html = renderState({ status: "loading" });
+
+      // Assert
+      expect(html).toContain(
+        'aria-label="Carregando distribuição mensal dos gastos"',
+      );
+      expect(html).toContain("h-72");
     });
   });
 
