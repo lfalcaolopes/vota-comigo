@@ -12,6 +12,7 @@ import {
   YAxis,
 } from "recharts";
 
+import { GastoCotaComposicao } from "./gasto-cota-composicao";
 import type { GastoCotaSerieComCor } from "./gasto-cota-paleta";
 import { formatGastoCotaAmount } from "./gasto-cota-presentation";
 import {
@@ -22,9 +23,11 @@ import {
 
 export function GastoCotaDistribuicaoAnualBarras({
   series,
+  totalAmountUsedCents,
   year,
 }: {
   series: readonly GastoCotaSerieComCor[];
+  totalAmountUsedCents: number;
   year: number;
 }) {
   const [selecao, dispatchSelecao] = useReducer(
@@ -41,6 +44,10 @@ export function GastoCotaDistribuicaoAnualBarras({
       className="grid min-w-0 gap-4"
       onMouseLeave={() => dispatchSelecao({ type: "clear-preview" })}
     >
+      <p className="sr-only">
+        Total utilizado em {year}: {formatGastoCotaAmount(totalAmountUsedCents)}
+        .
+      </p>
       <div aria-hidden="true" className="h-72 min-w-0 w-full">
         <ResponsiveContainer height="100%" minWidth={0} width="100%">
           <BarChart
@@ -116,6 +123,10 @@ export function GastoCotaDistribuicaoAnualBarras({
                 {formatGastoCotaAmount(serie.amountUsedCents)}
               </span>
             </button>
+            <GastoCotaComposicao
+              categories={serie.groupedCategories ?? []}
+              totalAmountUsedCents={totalAmountUsedCents}
+            />
           </li>
         ))}
       </ol>

@@ -5,6 +5,7 @@ export type GastoCotaSerie = Omit<
   "externalNumSubCota"
 > & {
   externalNumSubCota: number | null;
+  groupedCategories?: readonly DeputadoCeapCategory[];
 };
 
 export function deriveGastoCotaDistribuicao(
@@ -29,6 +30,7 @@ export function deriveGastoCotaDistribuicao(
         (total, category) => total + category.amountUsedCents,
         0,
       ),
+      groupedCategories: remaining,
     },
   ];
 }

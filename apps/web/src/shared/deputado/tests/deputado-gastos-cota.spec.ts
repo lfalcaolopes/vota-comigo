@@ -46,7 +46,7 @@ function renderState(
 
 describe("seção de gastos da cota parlamentar", () => {
   describe("quando o deputado exerceu o ano inteiro e tem gastos", () => {
-    it("apresenta o total com a escala da UF, cobertura e fonte oficial", () => {
+    it("aproxima do gráfico o total e a mediana da UF, com cobertura e fonte oficial", () => {
       // Arrange
       const response = loadedResponse();
 
@@ -56,11 +56,13 @@ describe("seção de gastos da cota parlamentar", () => {
       // Assert
       expect(html).toContain("Gastos da cota parlamentar");
       expect(html).toContain("R$ 427.123,45");
-      expect(html).toContain(
-        "Mediana entre 63 deputados de SP que exerceram o ano inteiro: R$ 398.000,00",
+      expect(html).toContain("Mediana em SP");
+      expect(html).toContain("R$ 398.000,00");
+      expect(html).toContain("63 deputados com ano completo");
+      expect(html.indexOf("Distribuição anual por categoria")).toBeLessThan(
+        html.indexOf("Mediana em SP"),
       );
-      expect(html).toContain("63 deputados");
-      expect(html).toContain("O teto da cota varia por estado");
+      expect(html).toContain("Dados disponíveis: janeiro a outubro de 2024");
       expect(html).toContain("outubro de 2024");
       expect(html).toContain("Câmara dos Deputados");
       expect(html).not.toContain("canvas");
@@ -93,10 +95,9 @@ describe("seção de gastos da cota parlamentar", () => {
       const html = render(response);
 
       // Assert
-      expect(html).toContain(
-        "Mediana entre 4 deputados de RR que exerceram o ano inteiro: R$ 410.000,00",
-      );
-      expect(html).toContain("4 deputados");
+      expect(html).toContain("Mediana em RR");
+      expect(html).toContain("R$ 410.000,00");
+      expect(html).toContain("4 deputados com ano completo");
     });
 
     it("apresenta a distribuição anual e sua alternativa textual na mesma ordem", () => {
@@ -147,9 +148,7 @@ describe("seção de gastos da cota parlamentar", () => {
 
       // Assert
       expect(html).toContain("Distribuição anual por categoria");
-      expect(html).toContain(
-        'aria-label="Total da distribuição: R$ 3.543,00 em 2024"',
-      );
+      expect(html).toContain("Total utilizado em 2024: R$ 3.543,00.");
       expect(html).toContain(
         'aria-label="Alternativa textual da distribuição anual"',
       );
@@ -158,20 +157,23 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).not.toContain('aria-label="Ver detalhes de Categoria 1"');
       expect(html).toContain('aria-pressed="false"');
       expect(html).toContain('aria-live="polite"');
-      expect(html).toContain(
-        "Passe o mouse, toque ou use o teclado para ver uma categoria",
-      );
+      expect(html).toContain("Selecione uma categoria para ver detalhes");
       const alternativaTextual = html.slice(
         html.indexOf('aria-label="Alternativa textual da distribuição anual"'),
       );
       expect(alternativaTextual.indexOf("Categoria 1")).toBeLessThan(
         alternativaTextual.indexOf("Outras despesas"),
       );
-      expect(alternativaTextual).not.toContain("Categoria 6");
-      expect(alternativaTextual).not.toContain("Categoria 7");
+      expect(alternativaTextual).toContain(
+        "Ver composição de Outras despesas (2 categorias)",
+      );
+      expect(alternativaTextual).toContain("Categoria 6");
+      expect(alternativaTextual).toContain("R$ 40,00");
+      expect(alternativaTextual).toContain("1,1%");
+      expect(alternativaTextual).toContain("Categoria 7");
     });
 
-    it("apresenta a distribuição mensal com os dados do mesmo ano", () => {
+    it("não apresenta exploração mensal", () => {
       // Arrange
       const response = loadedResponse({
         totalAmountUsedCents: 90_000,
@@ -196,13 +198,9 @@ describe("seção de gastos da cota parlamentar", () => {
       const html = render(response);
 
       // Assert
-      expect(html).toContain("Gastos por mês");
-      expect(html).toContain(
-        'aria-label="Gráfico de barras empilhadas dos gastos mensais em 2024"',
-      );
-      expect(html).toContain(
-        'aria-label="Alternativa textual dos gastos mensais"',
-      );
+      expect(html).not.toContain("Gastos por mês");
+      expect(html).not.toContain("Explorar valores");
+      expect(html).not.toContain("Alternativa textual dos gastos mensais");
     });
 
     it("representa em barras o par real com Outras despesas negativas", () => {
@@ -289,6 +287,32 @@ describe("seção de gastos da cota parlamentar", () => {
         "A distribuição por categoria não pode ser exibida",
       );
     });
+
+    it("não calcula participação quando compensações zeram o total anual", () => {
+      // Arrange
+      const response = loadedResponse({
+        totalAmountUsedCents: 0,
+        categories: [
+          ...Array.from({ length: 5 }, (_, index) => ({
+            externalNumSubCota: index + 1,
+            description: `Categoria ${index + 1}`,
+            amountUsedCents: 1_000,
+          })),
+          {
+            externalNumSubCota: 6,
+            description: "Compensação",
+            amountUsedCents: -5_000,
+          },
+        ],
+      });
+
+      // Act
+      const html = render(response);
+
+      // Assert
+      expect(html).toContain("Participação indisponível");
+      expect(html).not.toContain("∞");
+    });
   });
 
   describe("quando o deputado exerceu apenas parte do ano", () => {
@@ -307,7 +331,9 @@ describe("seção de gastos da cota parlamentar", () => {
       // Assert
       expect(html).toContain("R$ 150.000,00");
       expect(html).toContain("15/08/2024 a 31/12/2024");
-      expect(html).toContain("não é comparado com quem exerceu o ano inteiro");
+      expect(html).toContain(
+        "Sem comparação com deputados que exerceram o ano inteiro",
+      );
       expect(html).not.toContain("Mediana");
       expect(html).not.toContain("projetado");
       expect(html).not.toContain("anualizado");
@@ -385,15 +411,13 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).toContain("max-w-80");
     });
 
-    it("reserva a altura final da distribuição mensal", () => {
+    it("não reserva espaço para a distribuição mensal removida", () => {
       // Arrange / Act
       const html = renderState({ status: "loading" });
 
       // Assert
-      expect(html).toContain(
-        'aria-label="Carregando distribuição mensal dos gastos"',
-      );
-      expect(html).toContain("h-72");
+      expect(html).not.toContain("Carregando distribuição mensal dos gastos");
+      expect(html).not.toContain("h-72");
     });
   });
 

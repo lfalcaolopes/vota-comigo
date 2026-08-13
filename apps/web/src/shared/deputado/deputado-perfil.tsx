@@ -37,6 +37,7 @@ export function DeputadoPerfil({
       {initialYear !== null && perfil.validYearRange !== null ? (
         <DeputadoAtuacao
           externalIdDeputado={perfil.externalIdDeputado}
+          fonteOficial={perfil.fonteOficial}
           initialYear={initialYear}
           key={perfil.externalIdDeputado}
           validYearRange={perfil.validYearRange}
@@ -85,6 +86,8 @@ function Identidade({ perfil }: { perfil: DeputadoPerfilData }) {
 }
 
 function Evidencia({ perfil }: { perfil: DeputadoPerfilData }) {
+  const [periodoRecente, ...periodosAnteriores] = perfil.historicoPartidario;
+
   return (
     <div className="grid content-start gap-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:border-l lg:border-border lg:pl-8">
       <section className="grid gap-3">
@@ -128,21 +131,31 @@ function Evidencia({ perfil }: { perfil: DeputadoPerfilData }) {
 
       <section className="grid gap-3 border-t border-border pt-6">
         <h2 className="text-sm font-medium text-muted">Histórico partidário</h2>
-        {perfil.historicoPartidarioDisponivel ? (
-          <ul className="grid gap-2">
-            {perfil.historicoPartidario.map((periodo) => (
-              <li
-                key={`${periodo.siglaPartido}-${periodo.dataInicio}`}
-                className="flex flex-wrap items-center gap-2"
-              >
-                <span className="text-sm text-ink">{periodo.siglaPartido}</span>
-                <span className="text-sm text-muted">
-                  {toPeriodoPartidarioLabel(periodo)}
-                </span>
-                {periodo.atual ? <Badge tone="success">Atual</Badge> : null}
-              </li>
-            ))}
-          </ul>
+        {perfil.historicoPartidarioDisponivel &&
+        periodoRecente !== undefined ? (
+          <div className="grid gap-3">
+            <PeriodoPartidario
+              label={perfil.emAtividade ? "Atual" : "Último registro"}
+              periodo={periodoRecente}
+            />
+            {periodosAnteriores.length > 0 ? (
+              <details className="group grid gap-3">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 border-t border-border py-3 text-sm font-[650] text-muted transition-colors duration-[140ms] ease-standard marker:content-none hover:text-ink group-open:hidden">
+                  Ver histórico completo ({periodosAnteriores.length}{" "}
+                  {periodosAnteriores.length === 1 ? "anterior" : "anteriores"}
+                  )
+                  <DisclosureChevron />
+                </summary>
+                <ul className="grid gap-2 border-t border-border pt-3">
+                  {periodosAnteriores.map((periodo) => (
+                    <li key={`${periodo.siglaPartido}-${periodo.dataInicio}`}>
+                      <PeriodoPartidario periodo={periodo} />
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            ) : null}
+          </div>
         ) : (
           <InlineMessage
             title="Histórico partidário indisponível"
@@ -157,6 +170,45 @@ function Evidencia({ perfil }: { perfil: DeputadoPerfilData }) {
           body="Este deputado está cadastrado, mas ainda não há histórico parlamentar na base para exibir snapshot atual, presença e histórico partidário."
         />
       )}
+    </div>
+  );
+}
+
+function DisclosureChevron() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-4 shrink-0"
+      fill="none"
+      viewBox="0 0 20 20"
+    >
+      <path
+        d="m5 7.5 5 5 5-5"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
+
+function PeriodoPartidario({
+  periodo,
+  label,
+}: {
+  periodo: DeputadoPerfilData["historicoPartidario"][number];
+  label?: "Atual" | "Último registro";
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="text-sm text-ink">{periodo.siglaPartido}</span>
+      <span className="text-sm text-muted">
+        {toPeriodoPartidarioLabel(periodo)}
+      </span>
+      {label !== undefined ? (
+        <Badge tone={label === "Atual" ? "success" : "neutral"}>{label}</Badge>
+      ) : null}
     </div>
   );
 }

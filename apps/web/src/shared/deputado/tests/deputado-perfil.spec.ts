@@ -389,7 +389,7 @@ describe("DeputadoPerfil", () => {
       expect(html).toContain('<option value="2026" selected="">2026</option>');
     });
 
-    it("starts the discursos section independently in its loading state", () => {
+    it("shows annual activity data below the parliamentary allowance chart", () => {
       // Arrange
       const perfil = makePerfil();
 
@@ -397,22 +397,18 @@ describe("DeputadoPerfil", () => {
       const html = render(perfil);
 
       // Assert
-      expect(html).toContain("Discursos");
-      expect(html).toContain("deputado-discursos-title");
-      expect(html).toContain('aria-label="Carregando conteúdo"');
-    });
-
-    it("starts the proposições assinadas section independently in its loading state", () => {
-      // Arrange
-      const perfil = makePerfil();
-
-      // Act
-      const html = render(perfil);
-
-      // Assert
+      expect(html).toContain("Discursos registrados");
       expect(html).toContain("Proposições assinadas");
-      expect(html).toContain("deputado-proposicoes-assinadas-title");
-      expect(html).not.toContain("proposições assinadas em");
+      expect(html).toContain("Comissões e outros órgãos");
+      expect(html.match(/h-7 w-24/g)).toHaveLength(2);
+      expect(html).toContain("Consultar detalhes no Portal da Câmara");
+      expect(html).not.toContain("Selecione o ano para consultar");
+      expect(html.indexOf("Gastos da cota parlamentar")).toBeLessThan(
+        html.indexOf("Proposições assinadas"),
+      );
+      expect(html.indexOf("Gastos da cota parlamentar")).toBeLessThan(
+        html.indexOf("Comissões e outros órgãos"),
+      );
     });
 
     it("keeps the page usable without a selector when years are unavailable", () => {
@@ -654,11 +650,46 @@ describe("DeputadoPerfil", () => {
         expect(html).toContain("Histórico partidário");
         expect(html).toContain("PSB");
         expect(html).toContain("Atual");
+        expect(html).toContain("Ver histórico completo (1 anterior)");
+        expect(html).toContain("<details");
+        expect(html).not.toContain("<details open");
+        const summaryStart = html.indexOf("<summary");
+        const summaryTag = html.slice(
+          summaryStart,
+          html.indexOf(">", summaryStart),
+        );
+        expect(summaryTag).toContain("text-muted");
+        expect(summaryTag).toContain("group-open:hidden");
+        expect(summaryTag).not.toContain("text-info");
+        expect(summaryTag).not.toContain("underline");
+        expect(html).not.toContain("Recolher histórico partidário");
         expect(html).toContain("jan/2023 – atual");
         expect(html).toContain("fev/2021 – jan/2023");
         expect(html.indexOf("jan/2023 – atual")).toBeLessThan(
           html.indexOf("fev/2021 – jan/2023"),
         );
+      });
+
+      it("labels the most recent period as the last record for an inactive deputado", () => {
+        // Arrange
+        const perfil = makePerfil({
+          emAtividade: false,
+          historicoPartidario: [
+            {
+              siglaPartido: "PSB",
+              dataInicio: "2023-01-01",
+              dataFim: null,
+              atual: true,
+            },
+          ],
+        });
+
+        // Act
+        const html = render(perfil);
+
+        // Assert
+        expect(html).toContain("Último registro");
+        expect(html).not.toContain(">Atual<");
       });
     });
 

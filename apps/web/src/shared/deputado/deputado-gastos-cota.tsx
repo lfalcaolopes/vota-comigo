@@ -6,8 +6,6 @@ import { InlineMessage, Skeleton, SkeletonRows, SourceLink } from "@/shared/ui";
 
 import { formatData } from "./presentation";
 import { GastoCotaDistribuicaoAnual } from "./gasto-cota-distribuicao-anual";
-import { GastoCotaDistribuicaoMensal } from "./gasto-cota-distribuicao-mensal-chart";
-import { formatGastoCotaAmount } from "./gasto-cota-presentation";
 import type { DeputadoYearCacheState } from "./use-deputado-year-cache";
 
 export type GastosCotaState = DeputadoYearCacheState<DeputadoCeapResponse>;
@@ -24,24 +22,19 @@ export function DeputadoGastosCotaSection({
       aria-labelledby="deputado-gastos-cota-title"
       className="grid min-w-0 gap-5"
     >
-      <div className="grid max-w-[70ch] gap-2 border-t border-border pt-6">
+      <div className="border-t border-border pt-6">
         <h3
           className="text-lg font-[680] leading-snug text-ink text-balance"
           id="deputado-gastos-cota-title"
         >
           Gastos da cota parlamentar
         </h3>
-        <p className="text-sm leading-normal text-muted text-pretty">
-          Valores utilizados da Cota para o Exercício da Atividade Parlamentar.
-          O teto da cota varia por estado.
-        </p>
       </div>
 
       {state.status === "loading" ? (
         <div className="grid gap-5">
           <SkeletonRows count={2} />
           <GastoCotaDistribuicaoSkeleton />
-          <GastoCotaDistribuicaoMensalSkeleton />
         </div>
       ) : null}
       {state.status === "error" ? (
@@ -54,57 +47,31 @@ export function DeputadoGastosCotaSection({
 
       {response !== null && response.status === "ok" ? (
         <div className="grid min-w-0 gap-5">
-          <div className="grid gap-2">
+          <div className="grid gap-1">
             <p className="text-sm text-muted">
-              Total utilizado{" "}
+              Dados disponíveis:{" "}
               {formatCoverageRange(response.coveredThroughMonth, response.year)}
-            </p>
-            <p className="text-3xl leading-none font-[680] tabular-nums text-ink md:text-4xl">
-              {formatGastoCotaAmount(response.totalAmountUsedCents)}
-            </p>
-            {response.medianaUf !== null && response.siglaUf !== null ? (
-              <p className="text-sm text-muted">
-                Mediana entre {response.medianaUf.deputadoCount}{" "}
-                {response.medianaUf.deputadoCount === 1
-                  ? "deputado"
-                  : "deputados"}
-                {` de ${response.siglaUf} que exerceram o ano inteiro: `}
-                {formatGastoCotaAmount(response.medianaUf.amountUsedCents)}
-              </p>
-            ) : null}
-            <p className="text-sm text-muted">
-              Dados da Câmara atualizados até{" "}
-              {formatCoverage(response.coveredThroughMonth, response.year)}.
+              .
             </p>
             {!response.exercicioAnoCompleto ? (
-              <div className="grid gap-1 text-sm text-muted">
-                <p>
-                  Exercício no ano:{" "}
-                  {response.periodosExercicio
-                    .map(
-                      (periodo) =>
-                        `${formatData(periodo.startDate)} a ${formatData(periodo.endDate)}`,
-                    )
-                    .join("; ")}
-                </p>
-                <p>
-                  O deputado não é comparado com quem exerceu o ano inteiro.
-                </p>
-              </div>
+              <p className="text-sm text-muted">
+                Exercício no ano:{" "}
+                {response.periodosExercicio
+                  .map(
+                    (periodo) =>
+                      `${formatData(periodo.startDate)} a ${formatData(periodo.endDate)}`,
+                  )
+                  .join("; ")}
+                . Sem comparação com deputados que exerceram o ano inteiro.
+              </p>
             ) : null}
           </div>
 
           <GastoCotaDistribuicaoAnual
             categories={response.categories}
             key={response.year}
-            totalAmountUsedCents={response.totalAmountUsedCents}
-            year={response.year}
-          />
-
-          <GastoCotaDistribuicaoMensal
-            categories={response.categories}
-            key={`mensal-${response.year}`}
-            months={response.months}
+            medianaUf={response.medianaUf}
+            siglaUf={response.siglaUf}
             totalAmountUsedCents={response.totalAmountUsedCents}
             year={response.year}
           />
@@ -162,28 +129,6 @@ function GastoCotaDistribuicaoSkeleton() {
   );
 }
 
-function GastoCotaDistribuicaoMensalSkeleton() {
-  return (
-    <div
-      aria-label="Carregando distribuição mensal dos gastos"
-      className="grid gap-4 border-t border-border pt-5"
-      role="status"
-    >
-      <div className="grid gap-2">
-        <Skeleton className="h-5 w-36 rounded-md" />
-        <Skeleton className="h-4 w-full max-w-lg rounded-full" />
-      </div>
-      <Skeleton className="h-72 w-full rounded-md" />
-      <div className="flex flex-wrap gap-3">
-        {Array.from({ length: 6 }, (_, index) => (
-          <Skeleton className="h-5 w-28 rounded-md" key={index} />
-        ))}
-      </div>
-      <Skeleton className="h-20 w-full rounded-md" />
-    </div>
-  );
-}
-
 function CotaCoverageAndSource({
   coveredThroughMonth,
   year,
@@ -224,6 +169,6 @@ function formatCoverage(month: number, year: number): string {
 }
 
 function formatCoverageRange(month: number, year: number): string {
-  if (month === 12) return `em ${year}`;
-  return `de janeiro a ${formatCoverage(month, year)}`;
+  if (month === 12) return `ano de ${year}`;
+  return `janeiro a ${formatCoverage(month, year)}`;
 }

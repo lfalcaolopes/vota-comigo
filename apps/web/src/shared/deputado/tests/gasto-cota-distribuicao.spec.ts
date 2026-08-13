@@ -119,6 +119,18 @@ describe("distribuição anual dos gastos da cota", () => {
         [null, 4_300],
       ]);
       expect(distribuicao.at(-1)?.description).toBe("Outras despesas");
+      expect(distribuicao.at(-1)?.groupedCategories).toEqual([
+        {
+          externalNumSubCota: 6,
+          description: "Categoria 6",
+          amountUsedCents: 4_000,
+        },
+        {
+          externalNumSubCota: 7,
+          description: "Categoria 7",
+          amountUsedCents: 300,
+        },
+      ]);
     });
   });
 
