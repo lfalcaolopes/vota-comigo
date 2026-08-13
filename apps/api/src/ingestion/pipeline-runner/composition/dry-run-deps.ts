@@ -11,6 +11,7 @@ import type { ProposicaoComputavelRepository } from '../steps/proposicao-computa
 import type { DeputadoPresencaRepository } from '../steps/deputado-presenca/deputado-presenca.repository.types';
 import type { DeputadoExercicioIntervaloRepository } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.repository.types';
 import type { DeputadoGastoCotaRepository } from '../steps/deputado-gasto-cota/deputado-gasto-cota.repository.types';
+import type { CotaMedianaUfRepository } from '../steps/cota-mediana-uf/cota-mediana-uf.repository.types';
 import type { SanityRepository } from '../steps/sanity/sanity.repository.types';
 import type {
   TemaLookup,
@@ -108,6 +109,14 @@ export const dryRunDeputadoExercicioIntervaloRepository: DeputadoExercicioInterv
 
 export const dryRunDeputadoGastoCotaRepository: DeputadoGastoCotaRepository = {
   loadDeputadoIdByExternalId: () => Promise.resolve(new Map()),
+  replaceAno: dryRunWriteGuard,
+};
+
+export const dryRunCotaMedianaUfRepository: CotaMedianaUfRepository = {
+  loadAnosComCobertura: () => Promise.resolve([]),
+  loadDatasInicioLegislatura: () => Promise.resolve([]),
+  loadGastosAnuais: () => Promise.resolve([]),
+  loadIntervalosByDeputadoId: () => Promise.resolve(new Map()),
   replaceAno: dryRunWriteGuard,
 };
 

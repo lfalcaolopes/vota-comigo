@@ -53,6 +53,7 @@ describe('agregacao dos gastos da cota', () => {
           deputadoId: 'deputado-uuid',
           year: 2024,
           month: 3,
+          siglaUf: 'MG',
           externalNumSubCota: 1,
           descricao:
             'MANUTENÇÃO DE ESCRITÓRIO DE APOIO À ATIVIDADE PARLAMENTAR',
@@ -271,6 +272,56 @@ describe('relacao entre codigo e descricao da categoria', () => {
       expect(result.fatal).toBeNull();
       expect(result.rows).toMatchObject([
         { externalNumSubCota: 999, descricao: 'CATEGORIA NOVA' },
+      ]);
+    });
+  });
+});
+
+describe('estado do deputado no ano', () => {
+  describe('when the same deputado appears under conflicting sgUF', () => {
+    it('fails the whole load instead of picking one estado', async () => {
+      // Arrange
+      const rows = [line(2, { sgUF: 'MG' }), line(3, { sgUF: 'BA' })];
+
+      // Act
+      const result = await aggregateDeputadoGastoCota({
+        rows,
+        sourceFile: 'Ano-2024.csv',
+        year: 2024,
+        deputadoIds,
+      });
+
+      // Assert
+      expect(result.fatal).toMatchObject({
+        file: 'Ano-2024.csv',
+        line: 3,
+        type: 'uf_conflitante',
+        fields: { ideCadastro: '204379', sgUF: 'BA', siglaUfAnterior: 'MG' },
+      });
+    });
+  });
+
+  describe('when two deputados come from different estados', () => {
+    it('keeps each estado on its own aggregates', async () => {
+      // Arrange
+      const rows = [
+        line(2, { sgUF: 'MG' }),
+        line(3, { ideCadastro: '204380', sgUF: 'BA' }),
+      ];
+
+      // Act
+      const result = await aggregateDeputadoGastoCota({
+        rows,
+        sourceFile: 'Ano-2024.csv',
+        year: 2024,
+        deputadoIds,
+      });
+
+      // Assert
+      expect(result.fatal).toBeNull();
+      expect(result.rows).toMatchObject([
+        { deputadoId: 'deputado-uuid', siglaUf: 'MG' },
+        { deputadoId: 'outro-deputado-uuid', siglaUf: 'BA' },
       ]);
     });
   });

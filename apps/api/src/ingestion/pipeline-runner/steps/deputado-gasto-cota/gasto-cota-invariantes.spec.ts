@@ -8,6 +8,7 @@ function row(
     deputadoId: 'deputado-uuid',
     year: 2024,
     month: 3,
+    siglaUf: 'MG',
     externalNumSubCota: 1,
     descricao: 'MANUTENÇÃO DE ESCRITÓRIO',
     valorUtilizadoCentavos: 10000,

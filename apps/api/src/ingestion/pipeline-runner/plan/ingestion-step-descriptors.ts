@@ -22,5 +22,7 @@ export const ingestionStepDescriptors: readonly IngestionStepDescriptor[] = [
     scope: 'single',
     source: 'derived',
   },
+  // Depois dos intervalos: a mediana só considera quem exerceu o ano inteiro.
+  { name: 'cota_mediana_uf', scope: 'single', source: 'derived' },
   { name: 'sanity', scope: 'single', source: 'db' },
 ];

@@ -82,6 +82,7 @@ describe('passo de ingestao dos gastos da cota', () => {
             {
               deputadoId: 'deputado-uuid',
               year: 2024,
+              siglaUf: 'MG',
               gastosJson: { '3': { '1': 10000 }, '7': { '1': 5000 } },
             },
           ],
@@ -91,6 +92,31 @@ describe('passo de ingestao dos gastos da cota', () => {
         },
       ]);
       expect(result).toMatchObject({ read: 2, inserted: 1, rejected: [] });
+    });
+  });
+
+  describe('when the annual file carries the estado of the deputado', () => {
+    it('persists the sgUF from the file with the year aggregates', async () => {
+      // Arrange
+      const repository = createRepository();
+      const step = createDeputadoGastoCotaStep(repository);
+      const context = createContext([
+        line(2, { sgUF: 'BA' }),
+        line(3, { numMes: '4', sgUF: 'BA' }),
+      ]);
+
+      // Act
+      await step.run(context);
+
+      // Assert
+      expect(repository.replacements[0].rows).toEqual([
+        {
+          deputadoId: 'deputado-uuid',
+          year: 2024,
+          siglaUf: 'BA',
+          gastosJson: { '3': { '1': 10000 }, '4': { '1': 10000 } },
+        },
+      ]);
     });
   });
 

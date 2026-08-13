@@ -73,6 +73,7 @@ function toValues(
   return {
     deputadoId: row.deputadoId,
     year: row.year,
+    siglaUf: row.siglaUf,
     gastosJson: row.gastosJson,
   };
 }

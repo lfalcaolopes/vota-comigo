@@ -16,3 +16,4 @@ export * from './matcher-completion';
 export * from './deputado-gasto-cota';
 export * from './cota-categoria';
 export * from './cota-cobertura';
+export * from './cota-mediana-uf';

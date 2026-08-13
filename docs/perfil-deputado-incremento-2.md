@@ -61,16 +61,16 @@ O arquivo analisado nesta investigação foi `csv/Ano-2025.csv`, com 208.240 reg
 
 ## Campos usados
 
-| Campo da fonte | Uso |
-| --- | --- |
-| `ideCadastro` | Identificador do deputado usado para resolver a FK interna `deputado_id`. |
-| `numSubCota` | Código oficial da categoria da despesa. |
-| `txtDescricao` | Descrição oficial da categoria. |
-| `vlrLiquido` | Valor efetivamente debitado da cota antes de eventual restituição posterior. |
+| Campo da fonte   | Uso                                                                                    |
+| ---------------- | -------------------------------------------------------------------------------------- |
+| `ideCadastro`    | Identificador do deputado usado para resolver a FK interna `deputado_id`.              |
+| `numSubCota`     | Código oficial da categoria da despesa.                                                |
+| `txtDescricao`   | Descrição oficial da categoria.                                                        |
+| `vlrLiquido`     | Valor efetivamente debitado da cota antes de eventual restituição posterior.           |
 | `vlrRestituicao` | Valor posteriormente devolvido à Câmara. Campo vazio equivale a zero para a agregação. |
-| `numMes` | Mês de competência financeira da despesa. |
-| `numAno` | Ano de competência financeira da despesa. |
-| `sgUF` | Estado pelo qual o deputado foi eleito, usado para a mediana da UF. |
+| `numMes`         | Mês de competência financeira da despesa.                                              |
+| `numAno`         | Ano de competência financeira da despesa.                                              |
+| `sgUF`           | Estado pelo qual o deputado foi eleito, usado para a mediana da UF.                    |
 
 `sgUF` vem do próprio arquivo, e não do snapshot público do produto, porque o snapshot representa o estado mais recente — usá-lo atribuiria a UF atual a um ano antigo.
 
@@ -157,6 +157,10 @@ Regra: a mediana é calculada **somente sobre deputados que exerceram o ano inte
 
 Deliberadamente não se aplica pró-rata. Extrapolar o gasto de cinco meses para doze presume um padrão mensal constante que a distribuição real não sustenta, e produziria um número que nunca existiu.
 
+**A janela do ano não é o ano civil.** Medido contra a base completa na implementação de #117: ancorar a regra em 1º de janeiro produz **zero** deputados elegíveis em 2015, 2019 e 2023. Em ano de início de legislatura ninguém atravessa 1º de janeiro — todos os intervalos abrem na posse, inclusive os dos reeleitos, que ganham intervalo novo. Em 2023, 513 intervalos abrem no mesmo instante, `2023-02-01 12:05`.
+
+Regra adotada: a janela começa no mais tarde entre 1º de janeiro e o **fim do dia** de início de uma legislatura que comece dentro do ano, e termina em 31 de dezembro. O fim do dia, e não o instante da posse, porque a sessão acontece no meio do dia. Com isso 2023 devolve 460 elegíveis, na mesma faixa dos demais anos, e quem assumiu dias depois da posse continua fora. A comparação permanece justa porque, nesses anos, todos começaram na mesma data.
+
 ### Cinco maiores categorias
 
 As cinco categorias principais são escolhidas pela soma anual, em ordem decrescente de valor utilizado. Todas as demais formam **Outras despesas**.
@@ -190,12 +194,12 @@ Um mesmo código com descrições conflitantes dentro do mesmo arquivo é uma re
 
 A menor unidade **agregada** continua sendo deputado, ano, mês e categoria. A menor unidade **persistida** é o par deputado-ano: `deputado_gasto_cota` guarda uma linha por `(deputado_id, year)`, com a matriz mês × categoria em `jsonb`.
 
-| Coluna | Tipo | Regra |
-| --- | --- | --- |
-| `id` | `uuid` | Surrogate key interna. |
-| `deputado_id` | `uuid` | FK para `deputado.id`. |
-| `year` | `integer` | Ano de competência. |
-| `gastos_json` | `jsonb` | `{ mês: { numSubCota: centavos } }`. |
+| Coluna        | Tipo      | Regra                                |
+| ------------- | --------- | ------------------------------------ |
+| `id`          | `uuid`    | Surrogate key interna.               |
+| `deputado_id` | `uuid`    | FK para `deputado.id`.               |
+| `year`        | `integer` | Ano de competência.                  |
+| `gastos_json` | `jsonb`   | `{ mês: { numSubCota: centavos } }`. |
 
 Restrição única: `(deputado_id, year)`.
 
@@ -213,11 +217,11 @@ Centavos são inteiros dentro do JSON, o que elimina a fronteira `numeric` ↔ c
 
 `numSubCota` identifica a categoria e é a chave dentro do JSON; a descrição vive em `cota_categoria`, uma linha por código:
 
-| Coluna | Tipo | Regra |
-| --- | --- | --- |
-| `id` | `uuid` | Surrogate key interna. |
-| `external_num_sub_cota` | `integer` | Código da fonte, único. |
-| `descricao` | `text` | Descrição oficial da categoria no arquivo anual. |
+| Coluna                  | Tipo      | Regra                                            |
+| ----------------------- | --------- | ------------------------------------------------ |
+| `id`                    | `uuid`    | Surrogate key interna.                           |
+| `external_num_sub_cota` | `integer` | Código da fonte, único.                          |
+| `descricao`             | `text`    | Descrição oficial da categoria no arquivo anual. |
 
 São 18 a 19 linhas. Antes, a mesma descrição de 34 caracteres se repetia em 38 mil linhas por ano. A tabela também torna estrutural a regra de que o código identifica e a descrição é só texto — a validação de descrições conflitantes dentro de um arquivo continua na ingestão.
 
@@ -225,12 +229,12 @@ São 18 a 19 linhas. Antes, a mesma descrição de 34 caracteres se repetia em 3
 
 A fronteira do dado é propriedade do **arquivo anual**, não de um deputado, então mora em `cota_cobertura` — uma linha por ano carregado:
 
-| Coluna | Tipo | Regra |
-| --- | --- | --- |
-| `id` | `uuid` | Surrogate key interna. |
-| `year` | `integer` | Ano de competência, único. |
-| `covered_through_month` | `integer` | Último mês coberto pelo arquivo, entre 1 e 12. |
-| `ingested_at` | `timestamptz` | Momento da substituição anual. |
+| Coluna                  | Tipo          | Regra                                          |
+| ----------------------- | ------------- | ---------------------------------------------- |
+| `id`                    | `uuid`        | Surrogate key interna.                         |
+| `year`                  | `integer`     | Ano de competência, único.                     |
+| `covered_through_month` | `integer`     | Último mês coberto pelo arquivo, entre 1 e 12. |
+| `ingested_at`           | `timestamptz` | Momento da substituição anual.                 |
 
 `covered_through_month` é derivado na ingestão como o maior `numMes` presente no arquivo daquele ano, sobre todos os deputados — não por deputado, senão um parlamentar sem gasto em dezembro faria dezembro virar lacuna para ele. Anos encerrados e completos gravam `12`.
 
@@ -238,19 +242,25 @@ Sem essa tabela, a interface não consegue distinguir "não gastou" de "não car
 
 ### Mediana por UF e ano
 
-A mediana é **pré-calculada na ingestão**, não no request. Calculá-la em runtime exigiria somar os agregados de todos os deputados de um estado a cada leitura de perfil, no free tier. Como a ingestão já faz substituição anual completa e tem todos os agregados em memória, derivar a mediana ali é praticamente de graça e torna a leitura O(1).
+A mediana é **pré-calculada na ingestão**, não no request. Calculá-la em runtime exigiria somar os agregados de todos os deputados de um estado a cada leitura de perfil, no free tier.
 
-| Coluna | Tipo | Regra |
-| --- | --- | --- |
-| `id` | `uuid` | Surrogate key interna. |
-| `year` | `integer` | Ano de competência. |
-| `sigla_uf` | `text` | UF vinda de `sgUF` no arquivo. |
-| `valor_utilizado_mediana` | `bigint` | Mediana dos totais anuais, em centavos. |
-| `deputado_count` | `integer` | Quantos deputados entraram no cálculo. |
+Ela não sai do passo anual, e sim de um passo derivado próprio, `cota_mediana_uf`, declarado **depois** de `deputado_exercicio_intervalo`. O motivo é de ordem: no plano, `deputado_gasto_cota` roda antes dos intervalos, então derivar a mediana dentro dele consumiria intervalos da execução anterior. Como passo derivado, ele também se refaz sozinho quando o histórico — que é manual — chega depois, e recalcula todos os anos que têm cobertura. Se os intervalos ainda não existem, o passo pula sem apagar medianas boas, como os demais passos derivados.
 
-Único em `(year, sigla_uf)`. Entram apenas deputados que exerceram o ano inteiro, conforme a regra de exercício parcial. `deputado_count` é publicado junto com a mediana: uma mediana sobre três deputados não merece a mesma confiança que uma sobre setenta, e esconder o denominador esconde isso.
+| Coluna                    | Tipo      | Regra                                   |
+| ------------------------- | --------- | --------------------------------------- |
+| `id`                      | `uuid`    | Surrogate key interna.                  |
+| `year`                    | `integer` | Ano de competência.                     |
+| `sigla_uf`                | `text`    | UF vinda de `sgUF` no arquivo.          |
+| `valor_utilizado_mediana` | `bigint`  | Mediana dos totais anuais, em centavos. |
+| `deputado_count`          | `integer` | Quantos deputados entraram no cálculo.  |
 
-A UF de cada deputado no ano também precisa ser persistida, já que os agregados não a carregam — uma linha por `(deputado_id, year)` com a `sigla_uf` do arquivo, na ordem de 10 mil linhas no total. Ela pode entrar como coluna de `deputado_gasto_cota`, que já tem exatamente esse grão.
+A tabela é `cota_mediana_uf`, única em `(year, sigla_uf)`. Entram apenas deputados que exerceram o ano inteiro, conforme a regra de exercício parcial. `deputado_count` é publicado junto com a mediana: uma mediana sobre três deputados não merece a mesma confiança que uma sobre setenta, e esconder o denominador esconde isso.
+
+Amostra par cai em meio centavo, porque a mediana é a média dos dois valores centrais. O arredondamento é para o centavo mais próximo, afastando de zero, para não puxar um par negativo na direção do positivo.
+
+A UF de cada deputado no ano entrou como coluna `sigla_uf` de `deputado_gasto_cota`, que já tem exatamente o grão `(deputado_id, year)`. Um mesmo `ideCadastro` com dois `sgUF` no mesmo arquivo aborta a carga, pelo mesmo motivo que um código de categoria com descrições conflitantes: UF errada contamina a mediana de dois estados em silêncio. Nas 3,1 milhões de linhas de 2015 a 2026 não houve nenhuma ocorrência.
+
+Como a UF só existe no arquivo, linha a linha, nenhuma linha já carregada tinha como recebê-la: a migração `0014` limpa `deputado_gasto_cota` e `cota_cobertura` antes de adicionar a coluna, e os anos são reingeridos por substituição anual completa.
 
 Os nomes passaram pela ADR 007 na implementação: substantivo de domínio em português (`deputado_gasto_cota`, `cota_categoria`, `cota_cobertura`, `valor_utilizado`), genéricos em inglês (`year`, `month`, `covered_through_month`). O rascunho anterior — `deputado_ceap_monthly_category`, `amount_used` — misturava sigla de domínio com substantivos genéricos em inglês na mesma posição.
 
@@ -261,7 +271,7 @@ Os nomes passaram pela ADR 007 na implementação: substantivo de domínio em po
 Chamar a CEAP de "fonte específica" subestima a mudança. Hoje `buildCsvDownloadPlan` monta toda URL por uma fórmula única, a partir de um só host:
 
 ```ts
-url: `${baseUrl}/${dataset}/csv/${filename}`
+url: `${baseUrl}/${dataset}/csv/${filename}`;
 ```
 
 A CEAP diverge em **todos** os eixos dessa fórmula — host (`www.camara.leg.br`, não `dadosabertos`), forma do caminho (`/cotas/`), nome do arquivo (`Ano-{year}`, não `{dataset}-{year}`) e formato (ZIP, não CSV). Não é um membro atípico da família existente; é uma segunda família.
@@ -525,7 +535,7 @@ Vale notar que a agregação em **Outras despesas** pode absorver um negativo de
 
 **2. Armazenamento no Neon.** ~~Estimar antes de ingerir tudo.~~ Medido em 2026-08-12 sobre o ano de 2024 ingerido: o grão relacional custava 10 MB por ano (~190 MB de 2008 em diante), e a forma por deputado-ano custa 1 MB por ano (~20 MB). Sobre um free tier de 0,5 GB e um dump que já ocupa ~120 MB, a segunda cabe com folga larga; a primeira, não. Decidiu-se pela forma agregada — ver [Persistência](#persistência). Resta confirmar a medição com o conjunto completo depois de ingerir todos os anos.
 
-**3. Tamanho de amostra da mediana nas UFs pequenas.** Estados com bancada reduzida, filtrados ainda por exercício de ano inteiro, podem produzir medianas sobre um punhado de deputados. Levantar o menor `deputado_count` por `(year, sigla_uf)` após a ingestão completa e definir um piso abaixo do qual a comparação não é exibida.
+**3. Tamanho de amostra da mediana nas UFs pequenas.** Estados com bancada reduzida, filtrados ainda por exercício de ano inteiro, podem produzir medianas sobre um punhado de deputados. Levantar o menor `deputado_count` por `(year, sigla_uf)` após a ingestão completa e definir um piso abaixo do qual a comparação não é exibida. Medido em #117 sobre 2015–2026: as amostras vão de **4 a 67 deputados**, com apenas dois pares `(year, sigla_uf)` abaixo de cinco, e nenhuma mediana não positiva. Falta a decisão do piso.
 
 **4. Periodicidade real da fonte.** A afirmação de que o arquivo é atualizado diariamente circula, mas a página oficial de descrição dos dados da CEAP **não declara periodicidade alguma**. Como a fronteira do dado depende disso, convém observar o arquivo por alguns dias e registrar o comportamento real em vez de assumir.
 

@@ -44,6 +44,21 @@ export async function aggregateDeputadoGastoCota(
   let coveredThroughMonth: number | null = null;
   let totalValorUtilizadoCentavos = 0;
   const descricaoByNumSubCota = new Map<number, string>();
+  const siglaUfByDeputadoId = new Map<string, string>();
+
+  function abort(fatal: Rejection): AggregateDeputadoGastoCotaResult {
+    return {
+      rows: [],
+      coveredThroughMonth: null,
+      totalValorUtilizadoCentavos: 0,
+      categorias: [],
+      fatal,
+      read,
+      ignored,
+      rejected,
+      externalGaps: [...externalGapsByExternalId.values()],
+    };
+  }
 
   for await (const { lineNumber, record } of input.rows) {
     read += 1;
@@ -118,33 +133,43 @@ export async function aggregateDeputadoGastoCota(
       descricaoConhecida !== undefined &&
       descricaoConhecida !== record.txtDescricao
     ) {
-      return {
-        rows: [],
-        coveredThroughMonth: null,
-        totalValorUtilizadoCentavos: 0,
-        categorias: [],
-        fatal: {
-          file: input.sourceFile,
-          line: lineNumber,
-          type: 'descricao_conflitante',
-          fields: {
-            ideCadastro: record.ideCadastro,
-            numSubCota: record.numSubCota,
-            txtDescricao: record.txtDescricao,
-            descricaoAnterior: descricaoConhecida,
-          },
-          message:
-            `Categoria ${record.numSubCota} aparece com descrições ` +
-            `conflitantes em ${input.sourceFile}: "${descricaoConhecida}" e ` +
-            `"${record.txtDescricao}".`,
+      return abort({
+        file: input.sourceFile,
+        line: lineNumber,
+        type: 'descricao_conflitante',
+        fields: {
+          ideCadastro: record.ideCadastro,
+          numSubCota: record.numSubCota,
+          txtDescricao: record.txtDescricao,
+          descricaoAnterior: descricaoConhecida,
         },
-        read,
-        ignored,
-        rejected,
-        externalGaps: [...externalGapsByExternalId.values()],
-      };
+        message:
+          `Categoria ${record.numSubCota} aparece com descrições ` +
+          `conflitantes em ${input.sourceFile}: "${descricaoConhecida}" e ` +
+          `"${record.txtDescricao}".`,
+      });
     }
 
+    const siglaUfConhecida = siglaUfByDeputadoId.get(deputadoId);
+
+    if (siglaUfConhecida !== undefined && siglaUfConhecida !== record.sgUF) {
+      return abort({
+        file: input.sourceFile,
+        line: lineNumber,
+        type: 'uf_conflitante',
+        fields: {
+          ideCadastro: record.ideCadastro,
+          sgUF: record.sgUF,
+          siglaUfAnterior: siglaUfConhecida,
+        },
+        message:
+          `Deputado externo ${record.ideCadastro} aparece com estados ` +
+          `conflitantes em ${input.sourceFile}: "${siglaUfConhecida}" e ` +
+          `"${record.sgUF}".`,
+      });
+    }
+
+    siglaUfByDeputadoId.set(deputadoId, record.sgUF);
     descricaoByNumSubCota.set(externalNumSubCota, record.txtDescricao);
     coveredThroughMonth = Math.max(coveredThroughMonth ?? month, month);
     totalValorUtilizadoCentavos += valor.centavos;
@@ -156,6 +181,7 @@ export async function aggregateDeputadoGastoCota(
       deputadoId,
       year: input.year,
       month,
+      siglaUf: record.sgUF,
       externalNumSubCota,
       descricao: record.txtDescricao,
       valorUtilizadoCentavos:

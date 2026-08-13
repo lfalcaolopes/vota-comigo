@@ -38,6 +38,8 @@ import { createDeputadoPresencaRepository } from '../steps/deputado-presenca/dep
 import { createDeputadoPresencaStep } from '../steps/deputado-presenca/deputado-presenca.step';
 import { createDeputadoGastoCotaRepository } from '../steps/deputado-gasto-cota/deputado-gasto-cota.repository';
 import { createDeputadoGastoCotaStep } from '../steps/deputado-gasto-cota/deputado-gasto-cota.step';
+import { createCotaMedianaUfRepository } from '../steps/cota-mediana-uf/cota-mediana-uf.repository';
+import { createCotaMedianaUfStep } from '../steps/cota-mediana-uf/cota-mediana-uf.step';
 import { createDeputadoExercicioIntervaloRepository } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.repository';
 import { createDeputadoExercicioIntervaloStep } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.step';
 import { createTemaRepository } from '../steps/tema/tema.repository';
@@ -58,6 +60,7 @@ import {
   dryRunProposicaoComputavelRepository,
   dryRunDeputadoPresencaRepository,
   dryRunDeputadoExercicioIntervaloRepository,
+  dryRunCotaMedianaUfRepository,
   dryRunDeputadoGastoCotaRepository,
   dryRunProposicaoLookup,
   dryRunProposicaoRepository,
@@ -122,6 +125,7 @@ export function createIngestionSteps(
         createDeputadoExercicioIntervaloStep(
           dryRunDeputadoExercicioIntervaloRepository,
         ),
+        createCotaMedianaUfStep(dryRunCotaMedianaUfRepository),
         createSanityStep(dryRunSanityRepository),
       ],
       close: () => Promise.resolve(),
@@ -182,6 +186,7 @@ export function createIngestionSteps(
     createDeputadoExercicioIntervaloStep(
       createDeputadoExercicioIntervaloRepository(db),
     ),
+    createCotaMedianaUfStep(createCotaMedianaUfRepository(db)),
     createSanityStep(createSanityRepository(db)),
   ];
 

@@ -4,6 +4,7 @@ export type DeputadoGastoCotaRow = {
   deputadoId: string;
   year: number;
   month: number;
+  siglaUf: string;
   externalNumSubCota: number;
   descricao: string;
   valorUtilizadoCentavos: number;
@@ -15,6 +16,7 @@ export type GastoCotaJson = Record<string, Record<string, number>>;
 export type DeputadoGastoCotaAnoRow = {
   deputadoId: string;
   year: number;
+  siglaUf: string;
   gastosJson: GastoCotaJson;
 };
 

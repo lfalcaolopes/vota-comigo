@@ -1,4 +1,11 @@
-import { integer, jsonb, pgTable, unique, uuid } from 'drizzle-orm/pg-core';
+import {
+  integer,
+  jsonb,
+  pgTable,
+  text,
+  unique,
+  uuid,
+} from 'drizzle-orm/pg-core';
 
 import { deputado } from './deputado';
 
@@ -12,6 +19,9 @@ export const deputadoGastoCota = pgTable(
       .notNull()
       .references(() => deputado.id),
     year: integer('year').notNull(),
+    // UF do arquivo da cota, não do snapshot: o snapshot é o estado mais
+    // recente e atribuiria a UF de hoje a um ano antigo.
+    siglaUf: text('sigla_uf').notNull(),
     // { mês: { numSubCota: centavos } }
     gastosJson: jsonb('gastos_json').notNull(),
   },
