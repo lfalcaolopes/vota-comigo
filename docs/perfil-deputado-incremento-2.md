@@ -483,13 +483,13 @@ Não há texto explicativo adicional da categoria.
 
 ### Cores
 
-A cor é atribuída por **`numSubCota`**, a partir de uma paleta fixa, e nunca por posição no ranking.
+A cor é atribuída por **`numSubCota`** e nunca por posição no ranking. Os oito códigos que dominam nacionalmente usam uma paleta principal de alta distinção; os demais recebem cores secundárias menos saturadas, derivadas deterministicamente do código.
 
 Atribuir por posição faria a mesma cor significar categorias diferentes ao trocar de ano, já que o top 5 é calculado por deputado e por ano. É o mesmo defeito que a regra do top 5 anual evita no eixo mensal — o doc já argumenta que recalcular por mês "faria cores e legendas mudarem de significado" —, só que um nível acima. E o dano é maior aqui: quem troca de ano está procurando mudança de comportamento, e cor remapeada inventa mudança onde não houve.
 
-Fixar cor para as 20 categorias é inviável: não existem 20 cores distinguíveis com contraste acessível. A saída é uma paleta fixa para as categorias que dominam nacionalmente, com todo o resto herdando a cor neutra.
+Fixar 20 cores com a mesma prioridade perceptiva é inviável: não existem 20 cores simultaneamente distinguíveis com contraste acessível. A saída é uma hierarquia em duas camadas. A paleta principal cobre as categorias que dominam nacionalmente; as demais recebem cores secundárias que preservam a identidade da categoria sem competir com as oito principais. A cor neutra fica reservada a **Outras despesas**, porque reutilizá-la em uma categoria específica torna duas fatias diferentes visualmente idênticas.
 
-A varredura de #118 mediu a concentração e fixou o tamanho da paleta em **oito códigos**, que cobrem 92,0% dos segmentos desenhados:
+A varredura de #118 mediu a concentração e fixou o tamanho da paleta principal em **oito códigos**, que cobrem 92,0% dos segmentos desenhados:
 
 | `numSubCota` | Categoria                        | Pares em que aparece no top 5 |
 | ------------ | -------------------------------- | ----------------------------- |
@@ -504,11 +504,11 @@ A varredura de #118 mediu a concentração e fixou o tamanho da paleta em **oito
 
 O nono código mais frequente cai para 8,6%, o que torna oito um corte natural. Estender a paleta a dez subiria a cobertura para 95,5% ao custo de duas cores adicionais que precisariam se distinguir das oito com contraste acessível.
 
-- Uma cor representa a mesma categoria em todos os gráficos, deputados e anos.
+- Uma cor representa a mesma categoria em todos os gráficos, deputados e anos, inclusive quando ela está fora da paleta principal.
 - **Outras despesas** usa sempre uma cor neutra.
-- Categoria fora da paleta fixa que apareça em um top 5 herda a cor neutra e é distinguida pela legenda e pela alternativa textual, nunca pela cor.
+- Categoria fora da paleta principal que apareça em um top 5 recebe uma cor secundária menos saturada, derivada deterministicamente de `numSubCota`.
 - Cores não representam avaliação positiva, negativa, partido ou ideologia.
-- Segmentos adjacentes mantêm contraste perceptível.
+- As oito categorias principais recebem a maior distinção perceptiva; as secundárias podem ter menor distinção entre si, mas nunca usam a cor neutra de **Outras despesas**.
 - A legenda e a região textual impedem que a leitura dependa somente de cor.
 - A ordem das séries é a mesma na rosca, na legenda, nas barras e na alternativa textual.
 
@@ -556,7 +556,7 @@ Os negativos se concentram nas passagens aéreas — `998` (SIGEPA) e `999` (RPA
 
 Consequência: a rosca exclusiva **reabriu e foi substituída** pela regra de domínio descrita em [Distribuição anual](#distribuição-anual). A união dos dois gatilhos — algum grupo anual negativo ou total anual não positivo — atinge 58 pares, 0,78% do conjunto.
 
-**2. Concentração das categorias no top 5 — oito códigos bastam.**
+**2. Concentração das categorias no top 5 — oito códigos bastam para a paleta principal.**
 
 Dos 20 códigos existentes, **19 aparecem em algum top 5**, então fixar cor por código é inviável e a paleta precisa de um corte. A cobertura pelas N mais frequentes:
 
@@ -569,7 +569,7 @@ Dos 20 códigos existentes, **19 aparecem em algum top 5**, então fixar cor por
 | 9   | 72,9%                                      | 93,7%              |
 | 10  | 80,0%                                      | 95,5%              |
 
-A paleta fixa foi definida em **oito códigos** — ver [Cores](#cores). A métrica que governa a decisão é a de segmentos, não a de pares: um par com uma categoria fora da paleta continua legível, porque essa fatia herda a cor neutra e é distinguida pela legenda.
+A paleta principal foi definida em **oito códigos** — ver [Cores](#cores). A métrica que governa a decisão é a de segmentos, não a de pares: ela determina quais categorias recebem máxima distinção perceptiva. Uma revisão visual da #121 mostrou que usar a mesma cor neutra para uma categoria específica e para **Outras despesas** prejudica a associação entre fatia e legenda. Por isso categorias fora da paleta principal recebem cores secundárias estáveis, enquanto a legenda e a alternativa textual continuam sendo as referências definitivas.
 
 O churn do top entre anos consecutivos do mesmo deputado é alto: em 61,96% dos 5.865 pares de anos consecutivos o conjunto muda ao menos uma categoria, quase sempre exatamente uma (2.865 casos). Isso **confirma** a decisão de atribuir cor por `numSubCota` e nunca por posição no ranking — com cor por posição, três em cada cinco trocas de ano remapeariam cores e inventariam mudança de comportamento onde não houve. Não justifica migrar para top pela união dos anos: o custo dessa alternativa é o top de um ano deixar de ser o top daquele ano, e o problema que ela resolveria já está resolvido pela cor por código.
 
@@ -684,7 +684,7 @@ Animações são curtas e comunicam somente a troca de ano ou seleção. `prefer
 2. implementar o download e a extração da fonte CEAP;
 3. adicionar tabelas e migrações: agregados mensais por categoria, cobertura por ano, UF por deputado-ano, mediana por UF-ano;
 4. implementar o passo anual de ingestão, suas invariantes, a cobertura e a mediana;
-5. ~~executar as varreduras de validação contra o conjunto ingerido~~ — feito em #118; os [Resultados da validação](#resultados-da-validação) reabriram a rosca exclusiva e fixaram a paleta em oito códigos;
+5. ~~executar as varreduras de validação contra o conjunto ingerido~~ — feito em #118; os [Resultados da validação](#resultados-da-validação) reabriram a rosca exclusiva e fixaram a paleta principal em oito códigos;
 6. adicionar schemas e tipos compartilhados, já com `status`, cobertura e mediana estabilizados pelo passo anterior;
 7. implementar repositório, serviço e endpoint dos gastos da cota;
 8. ~~implementar transformação pura de top 5 mais **Outras despesas**~~ — feito em #118 (`deriveGruposGastoCota`), porque as varreduras precisavam medir os grupos de apresentação;
@@ -692,4 +692,4 @@ Animações são curtas e comunicam somente a troca de ano ou seleção. `prefer
 10. adicionar os gráficos com Recharts e alternativa textual acessível;
 11. validar responsividade, teclado, toque, valores negativos e a fronteira do dado com Playwright.
 
-A ordem mudou de propósito: a ingestão e a validação vêm **antes** dos schemas e do frontend. Duas decisões de interface — rosca exclusiva e paleta fixa — dependiam de premissas que só o conjunto ingerido confirma, e a validação de fato derrubou a primeira. Construir a interface primeiro teria significado refazê-la.
+A ordem mudou de propósito: a ingestão e a validação vêm **antes** dos schemas e do frontend. Duas decisões de interface — rosca exclusiva e paleta principal — dependiam de premissas que só o conjunto ingerido confirma, e a validação de fato derrubou a primeira. Construir a interface primeiro teria significado refazê-la.

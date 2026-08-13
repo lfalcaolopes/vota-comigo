@@ -2,9 +2,11 @@
 
 import type { DeputadoCeapResponse } from "@vota-comigo/shared-types";
 
-import { InlineMessage, SkeletonRows, SourceLink } from "@/shared/ui";
+import { InlineMessage, Skeleton, SkeletonRows, SourceLink } from "@/shared/ui";
 
 import { formatData } from "./presentation";
+import { GastoCotaDistribuicaoAnual } from "./gasto-cota-distribuicao-anual";
+import { formatGastoCotaAmount } from "./gasto-cota-presentation";
 import type { DeputadoYearCacheState } from "./use-deputado-year-cache";
 
 export type GastosCotaState = DeputadoYearCacheState<DeputadoCeapResponse>;
@@ -34,7 +36,12 @@ export function DeputadoGastosCotaSection({
         </p>
       </div>
 
-      {state.status === "loading" ? <SkeletonRows count={2} /> : null}
+      {state.status === "loading" ? (
+        <div className="grid gap-5">
+          <SkeletonRows count={2} />
+          <GastoCotaDistribuicaoSkeleton />
+        </div>
+      ) : null}
       {state.status === "error" ? (
         <InlineMessage
           body="Tente novamente mais tarde. O restante do perfil continua disponível."
@@ -50,12 +57,12 @@ export function DeputadoGastosCotaSection({
               Total utilizado em {response.year}
             </p>
             <p className="text-3xl leading-none font-[680] tabular-nums text-ink md:text-4xl">
-              {formatAmountUsedCents(response.totalAmountUsedCents)}
+              {formatGastoCotaAmount(response.totalAmountUsedCents)}
             </p>
             {response.medianaUf !== null && response.siglaUf !== null ? (
               <p className="text-sm text-muted">
                 Mediana de {response.siglaUf}:{" "}
-                {formatAmountUsedCents(response.medianaUf.amountUsedCents)} ({" "}
+                {formatGastoCotaAmount(response.medianaUf.amountUsedCents)} ({" "}
                 {response.medianaUf.deputadoCount}{" "}
                 {response.medianaUf.deputadoCount === 1
                   ? "deputado"
@@ -80,6 +87,13 @@ export function DeputadoGastosCotaSection({
               </div>
             ) : null}
           </div>
+
+          <GastoCotaDistribuicaoAnual
+            categories={response.categories}
+            key={response.year}
+            totalAmountUsedCents={response.totalAmountUsedCents}
+            year={response.year}
+          />
 
           <CotaCoverageAndSource
             coveredThroughMonth={response.coveredThroughMonth}
@@ -113,6 +127,30 @@ export function DeputadoGastosCotaSection({
   );
 }
 
+function GastoCotaDistribuicaoSkeleton() {
+  return (
+    <div
+      aria-label="Carregando distribuição anual dos gastos"
+      className="grid gap-4 border-t border-border pt-5"
+      role="status"
+    >
+      <div className="grid gap-2">
+        <Skeleton className="h-5 w-56 rounded-md" />
+        <Skeleton className="h-4 w-full max-w-md rounded-full" />
+      </div>
+      <div className="grid items-center gap-5 sm:grid-cols-[minmax(15rem,20rem)_minmax(0,1fr)] sm:gap-8">
+        <Skeleton className="aspect-square w-full max-w-80 justify-self-center rounded-full" />
+        <div className="grid gap-3">
+          {Array.from({ length: 6 }, (_, index) => (
+            <Skeleton className="h-8 w-full rounded-md" key={index} />
+          ))}
+        </div>
+      </div>
+      <Skeleton className="h-20 w-full rounded-md" />
+    </div>
+  );
+}
+
 function CotaCoverageAndSource({
   coveredThroughMonth,
   year,
@@ -141,14 +179,6 @@ function CotaSourceLink() {
       Fonte: Câmara dos Deputados
     </SourceLink>
   );
-}
-
-function formatAmountUsedCents(amountUsedCents: number): string {
-  const signal = amountUsedCents < 0 ? "-" : "";
-  const digits = String(Math.abs(amountUsedCents)).padStart(3, "0");
-  const reais = Number(digits.slice(0, -2)).toLocaleString("pt-BR");
-  const centavos = digits.slice(-2);
-  return `${signal}R$ ${reais},${centavos}`;
 }
 
 function formatCoverage(month: number, year: number): string {

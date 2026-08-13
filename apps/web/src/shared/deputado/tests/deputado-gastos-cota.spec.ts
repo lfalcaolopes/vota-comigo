@@ -74,6 +74,10 @@ describe("seção de gastos da cota parlamentar", () => {
       // Assert
       expect(html).toContain("-R$ 123,45");
       expect(html).not.toContain(">R$ 123,45<");
+      expect(html).toContain(
+        "A distribuição por categoria não pode ser exibida para este ano",
+      );
+      expect(html).not.toContain("Total da distribuição");
     });
 
     it("mantém a mediana de uma bancada pequena junto do tamanho da amostra", () => {
@@ -89,6 +93,105 @@ describe("seção de gastos da cota parlamentar", () => {
       // Assert
       expect(html).toContain("Mediana de RR: R$ 410.000,00");
       expect(html).toContain("4 deputados");
+    });
+
+    it("apresenta a distribuição anual e sua alternativa textual na mesma ordem", () => {
+      // Arrange
+      const response = loadedResponse({
+        totalAmountUsedCents: 354_300,
+        categories: [
+          {
+            externalNumSubCota: 1,
+            description: "Categoria 1",
+            amountUsedCents: 90_000,
+          },
+          {
+            externalNumSubCota: 2,
+            description: "Categoria 2",
+            amountUsedCents: 80_000,
+          },
+          {
+            externalNumSubCota: 3,
+            description: "Categoria 3",
+            amountUsedCents: 70_000,
+          },
+          {
+            externalNumSubCota: 4,
+            description: "Categoria 4",
+            amountUsedCents: 60_000,
+          },
+          {
+            externalNumSubCota: 5,
+            description: "Categoria 5",
+            amountUsedCents: 50_000,
+          },
+          {
+            externalNumSubCota: 6,
+            description: "Categoria 6",
+            amountUsedCents: 4_000,
+          },
+          {
+            externalNumSubCota: 7,
+            description: "Categoria 7",
+            amountUsedCents: 300,
+          },
+        ],
+      });
+
+      // Act
+      const html = render(response);
+
+      // Assert
+      expect(html).toContain("Distribuição anual por categoria");
+      expect(html).toContain(
+        'aria-label="Total da distribuição: R$ 3.543,00 em 2024"',
+      );
+      expect(html).toContain(
+        'aria-label="Alternativa textual da distribuição anual"',
+      );
+      expect(html).toContain('aria-label="Ver detalhes de Categoria 1"');
+      expect(html).toContain('aria-pressed="false"');
+      expect(html).toContain('aria-live="polite"');
+      expect(html).toContain(
+        "Passe o mouse, toque ou use o teclado para ver uma categoria",
+      );
+      const alternativaTextual = html.slice(
+        html.indexOf('aria-label="Alternativa textual da distribuição anual"'),
+      );
+      expect(alternativaTextual.indexOf("Categoria 1")).toBeLessThan(
+        alternativaTextual.indexOf("Outras despesas"),
+      );
+      expect(alternativaTextual).not.toContain("Categoria 6");
+      expect(alternativaTextual).not.toContain("Categoria 7");
+    });
+
+    it("não representa um grupo negativo como fatia positiva", () => {
+      // Arrange
+      const response = loadedResponse({
+        totalAmountUsedCents: 89_000,
+        categories: [
+          {
+            externalNumSubCota: 1,
+            description: "Combustíveis",
+            amountUsedCents: 90_000,
+          },
+          {
+            externalNumSubCota: 10,
+            description: "Passagens",
+            amountUsedCents: -1_000,
+          },
+        ],
+      });
+
+      // Act
+      const html = render(response);
+
+      // Assert
+      expect(html).toContain("R$ 890,00");
+      expect(html).toContain(
+        "A distribuição por categoria não pode ser exibida para este ano",
+      );
+      expect(html).not.toContain("Total da distribuição");
     });
   });
 
@@ -172,6 +275,18 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).toContain("Gastos da cota parlamentar");
       expect(html).toContain("Carregando conteúdo");
       expect(html).not.toContain("Não foi possível carregar");
+    });
+
+    it("reserva as dimensões finais da distribuição anual", () => {
+      // Arrange / Act
+      const html = renderState({ status: "loading" });
+
+      // Assert
+      expect(html).toContain(
+        'aria-label="Carregando distribuição anual dos gastos"',
+      );
+      expect(html).toContain("aspect-square");
+      expect(html).toContain("max-w-80");
     });
   });
 
