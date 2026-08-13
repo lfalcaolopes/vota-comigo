@@ -10,6 +10,7 @@ import { Throttle } from '@nestjs/throttler';
 
 import type {
   DeputadoDiscursosResponse,
+  DeputadoCeapResponse,
   DeputadoPerfil,
   DeputadoOrgaosResponse,
   DeputadoProposicoesAssinadasResponse,
@@ -151,6 +152,15 @@ export class DeputadosController {
     @Query('year', ParseIntPipe) year: number,
   ): Promise<DeputadoDiscursosResponse> {
     return this.service.discursos(externalIdDeputado, year);
+  }
+
+  @Get(':externalIdDeputado/ceap')
+  @CacheControl(CACHE_LISTING)
+  async ceap(
+    @Param('externalIdDeputado', ParseIntPipe) externalIdDeputado: number,
+    @Query('year', new ParseIntPipe({ optional: true })) year?: number,
+  ): Promise<DeputadoCeapResponse> {
+    return this.service.ceap(externalIdDeputado, year);
   }
 
   @Get(':externalIdDeputado')

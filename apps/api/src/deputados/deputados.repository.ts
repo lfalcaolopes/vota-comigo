@@ -1,5 +1,6 @@
 import {
   and,
+  asc,
   desc,
   eq,
   exists,
@@ -13,10 +14,14 @@ import { alias } from 'drizzle-orm/pg-core';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
+  cotaCategoria,
+  cotaCobertura,
+  cotaMedianaUf,
   deputado,
   deputadoExercicioIntervalo,
   deputadoHistorico,
   deputadoPresenca,
+  deputadoGastoCota,
   legislatura,
   partido,
 } from '@/shared/database/schema';
@@ -28,6 +33,7 @@ import {
 } from './rules/texto-normalizado';
 import type {
   DeputadoCardRow,
+  DeputadoCeapSource,
   DeputadoLegislaturaPeriodoSource,
   DeputadosFeedFilters,
   DeputadosFeedPage,
@@ -51,6 +57,10 @@ export interface DeputadosRepository {
   loadResumoPresenca(
     deputadoId: string,
   ): Promise<DeputadoResumoPresencaRow | null>;
+  loadDeputadoCeapSource(
+    deputadoId: string,
+    year: number,
+  ): Promise<DeputadoCeapSource>;
 }
 
 function toLegislaturaPeriodoSource(
@@ -291,6 +301,88 @@ export function createDeputadosRepository(
         .limit(1);
 
       return row ?? null;
+    },
+
+    async loadDeputadoCeapSource(deputadoId, year) {
+      const [coberturas, gastoRows, categorias, intervalosExercicio, datas] =
+        await Promise.all([
+          db
+            .select({
+              year: cotaCobertura.year,
+              coveredThroughMonth: cotaCobertura.coveredThroughMonth,
+            })
+            .from(cotaCobertura)
+            .orderBy(asc(cotaCobertura.year)),
+          db
+            .select({
+              siglaUf: deputadoGastoCota.siglaUf,
+              gastosJson: deputadoGastoCota.gastosJson,
+            })
+            .from(deputadoGastoCota)
+            .where(
+              and(
+                eq(deputadoGastoCota.deputadoId, deputadoId),
+                eq(deputadoGastoCota.year, year),
+              ),
+            )
+            .limit(1),
+          db
+            .select({
+              externalNumSubCota: cotaCategoria.externalNumSubCota,
+              description: cotaCategoria.descricao,
+            })
+            .from(cotaCategoria)
+            .orderBy(asc(cotaCategoria.externalNumSubCota)),
+          db
+            .select({
+              openedAt: deputadoExercicioIntervalo.openedAt,
+              closedAt: deputadoExercicioIntervalo.closedAt,
+            })
+            .from(deputadoExercicioIntervalo)
+            .where(eq(deputadoExercicioIntervalo.deputadoId, deputadoId)),
+          db
+            .select({ dataInicio: legislatura.dataInicio })
+            .from(legislatura)
+            .where(isNotNull(legislatura.dataInicio)),
+        ]);
+
+      const gastoRow = gastoRows[0];
+      const medianaRows =
+        gastoRow === undefined
+          ? []
+          : await db
+              .select({
+                amountUsedCents: cotaMedianaUf.valorUtilizadoMediana,
+                deputadoCount: cotaMedianaUf.deputadoCount,
+              })
+              .from(cotaMedianaUf)
+              .where(
+                and(
+                  eq(cotaMedianaUf.year, year),
+                  eq(cotaMedianaUf.siglaUf, gastoRow.siglaUf),
+                ),
+              )
+              .limit(1);
+
+      return {
+        coberturas,
+        gasto:
+          gastoRow === undefined
+            ? null
+            : {
+                siglaUf: gastoRow.siglaUf,
+                gastosJson: gastoRow.gastosJson as Record<
+                  string,
+                  Record<string, number>
+                >,
+              },
+        categorias,
+        medianaUf: medianaRows[0] ?? null,
+        intervalosExercicio,
+        datasInicioLegislatura: datas.flatMap((row) =>
+          row.dataInicio === null ? [] : [row.dataInicio],
+        ),
+      };
     },
   };
 }

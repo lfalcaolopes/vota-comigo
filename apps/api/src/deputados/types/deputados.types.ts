@@ -1,3 +1,5 @@
+import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
+
 export type DeputadoHistoricoEventoSource = {
   dataHora: string;
   situacao: string | null;
@@ -32,6 +34,27 @@ export type DeputadoPerfilSource = {
 export type DeputadoResumoPresencaRow = {
   presencas: number;
   ausenciasSemMotivoConhecido: number;
+};
+
+export type DeputadoCeapSource = {
+  coberturas: readonly {
+    year: number;
+    coveredThroughMonth: number;
+  }[];
+  gasto: {
+    siglaUf: string;
+    gastosJson: Record<string, Record<string, number>>;
+  } | null;
+  categorias: readonly {
+    externalNumSubCota: number;
+    description: string;
+  }[];
+  medianaUf: {
+    amountUsedCents: number;
+    deputadoCount: number;
+  } | null;
+  intervalosExercicio: readonly IntervaloExercicio[];
+  datasInicioLegislatura: readonly string[];
 };
 
 export type DeputadoCardRow = {

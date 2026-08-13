@@ -10,6 +10,7 @@ import {
 
 import type {
   DeputadoDiscursosResponse,
+  DeputadoCeapResponse,
   DeputadoPerfil,
   DeputadoOrgaosResponse,
   DeputadoProposicoesAssinadasResponse,
@@ -19,8 +20,10 @@ import type {
 } from '@vota-comigo/shared-types';
 
 import { toDeputadoCard } from './mappers/deputado-card.mapper';
+import { toDeputadoCeapLoadedResponse } from './mappers/deputado-ceap.mapper';
 import { toDeputadoPerfil } from './mappers/deputado-perfil.mapper';
 import { deriveDeputadoDiscursos } from './rules/deputado-discursos';
+import { deriveDeputadoCeapState } from './rules/deputado-ceap-state';
 import {
   buildProposicoesAssinadasQuarters,
   deriveDeputadoProposicoesAssinadas,
@@ -115,6 +118,60 @@ export class DeputadosService {
     }
     const resumoPresenca = await this.repository.loadResumoPresenca(source.id);
     return toDeputadoPerfil(source, resumoPresenca);
+  }
+
+  async ceap(
+    externalIdDeputado: number,
+    year?: number,
+  ): Promise<DeputadoCeapResponse> {
+    const source = await this.repository.loadDeputadoPerfil(externalIdDeputado);
+    if (source === null) {
+      throw new NotFoundException('deputado nao encontrado');
+    }
+
+    const yearRule = deriveDeputadoPerfilYear(source, new Date().getFullYear());
+    const selectedYear = year ?? yearRule.defaultYear;
+    if (
+      selectedYear === null ||
+      yearRule.validYearRange === null ||
+      !yearRule.isValidYear(selectedYear)
+    ) {
+      throw new BadRequestException('year fora da faixa do deputado');
+    }
+
+    const ceapSource = await this.repository.loadDeputadoCeapSource(
+      source.id,
+      selectedYear,
+    );
+    const state = deriveDeputadoCeapState({
+      year: selectedYear,
+      validYearRange: yearRule.validYearRange,
+      ingestedYears: ceapSource.coberturas.map((item) => item.year),
+      hasGastos: ceapSource.gasto !== null,
+    });
+
+    if (state.status === 'ano-nao-carregado') {
+      return {
+        year: selectedYear,
+        availableYears: [...state.availableYears],
+        status: state.status,
+      };
+    }
+
+    const cobertura = ceapSource.coberturas.find(
+      (item) => item.year === selectedYear,
+    );
+    if (state.status === null || cobertura === undefined) {
+      throw new BadRequestException('year fora da faixa do deputado');
+    }
+
+    return toDeputadoCeapLoadedResponse({
+      year: selectedYear,
+      availableYears: state.availableYears,
+      status: state.status,
+      coveredThroughMonth: cobertura.coveredThroughMonth,
+      source: ceapSource,
+    });
   }
 
   async orgaos(

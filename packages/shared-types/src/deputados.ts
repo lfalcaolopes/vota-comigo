@@ -41,6 +41,144 @@ export const deputadoPerfilValidYearRangeSchema = z.object({
   endYear: z.number().int(),
 });
 
+export const deputadoCeapStatusSchema = z.enum([
+  "ok",
+  "sem-gastos",
+  "ano-nao-carregado",
+]);
+
+const amountUsedCentsSchema = z.number().int().safe();
+
+export const deputadoCeapCategorySchema = z.object({
+  externalNumSubCota: z.number().int().nonnegative(),
+  description: z.string().min(1),
+  amountUsedCents: amountUsedCentsSchema,
+});
+
+export const deputadoCeapMonthCategorySchema = z.object({
+  externalNumSubCota: z.number().int().nonnegative(),
+  amountUsedCents: amountUsedCentsSchema,
+});
+
+export const deputadoCeapMonthSchema = z.object({
+  month: z.number().int().min(1).max(12),
+  totalAmountUsedCents: amountUsedCentsSchema.nullable(),
+  categories: z.array(deputadoCeapMonthCategorySchema),
+});
+
+export const deputadoCeapPeriodoExercicioSchema = z.object({
+  startDate: z.string().min(1),
+  endDate: z.string().min(1),
+});
+
+export const deputadoCeapMedianaUfSchema = z.object({
+  amountUsedCents: amountUsedCentsSchema,
+  deputadoCount: z.number().int().positive(),
+});
+
+const deputadoCeapResponseBaseShape = {
+  year: z.number().int(),
+  availableYears: z.array(z.number().int()),
+};
+
+const deputadoCeapLoadedResponseSchema = z.object({
+  ...deputadoCeapResponseBaseShape,
+  status: deputadoCeapStatusSchema.extract([
+    deputadoCeapStatusSchema.enum.ok,
+    deputadoCeapStatusSchema.enum["sem-gastos"],
+  ]),
+  coveredThroughMonth: z.number().int().min(1).max(12),
+  totalAmountUsedCents: amountUsedCentsSchema,
+  siglaUf: z.string().length(2).nullable(),
+  exercicioAnoCompleto: z.boolean(),
+  periodosExercicio: z.array(deputadoCeapPeriodoExercicioSchema),
+  medianaUf: deputadoCeapMedianaUfSchema.nullable(),
+  categories: z.array(deputadoCeapCategorySchema),
+  months: z.array(deputadoCeapMonthSchema).length(12),
+});
+
+export const deputadoCeapResponseSchema = z
+  .discriminatedUnion("status", [
+    deputadoCeapLoadedResponseSchema,
+    z.object({
+      ...deputadoCeapResponseBaseShape,
+      status: z.literal(deputadoCeapStatusSchema.enum["ano-nao-carregado"]),
+    }),
+  ])
+  .superRefine((response, ctx) => {
+    if (
+      response.status !== deputadoCeapStatusSchema.enum["ano-nao-carregado"] &&
+      response.months.some((item, index) => item.month !== index + 1)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["months"],
+        message: "months deve conter os meses 1 a 12 em ordem",
+      });
+    }
+
+    if (
+      response.status !== deputadoCeapStatusSchema.enum["ano-nao-carregado"] &&
+      response.months.some((item) =>
+        item.month <= response.coveredThroughMonth
+          ? item.totalAmountUsedCents === null
+          : item.totalAmountUsedCents !== null || item.categories.length > 0,
+      )
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["months"],
+        message: "months deve distinguir cobertura de ausência de dados",
+      });
+    }
+
+    if (
+      response.status !== deputadoCeapStatusSchema.enum["ano-nao-carregado"] &&
+      response.medianaUf !== null &&
+      (!response.exercicioAnoCompleto ||
+        response.status !== deputadoCeapStatusSchema.enum.ok)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["medianaUf"],
+        message:
+          "medianaUf só pode acompanhar dados de exercício anual completo",
+      });
+    }
+
+    if (
+      response.status === deputadoCeapStatusSchema.enum.ok &&
+      response.exercicioAnoCompleto &&
+      response.medianaUf === null
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["medianaUf"],
+        message: "medianaUf é obrigatória no exercício anual completo",
+      });
+    }
+
+    if (
+      response.status === deputadoCeapStatusSchema.enum["sem-gastos"] &&
+      (response.totalAmountUsedCents !== 0 ||
+        response.siglaUf !== null ||
+        response.medianaUf !== null ||
+        response.categories.length > 0 ||
+        response.months.some(
+          (item) =>
+            item.categories.length > 0 ||
+            (item.month <= response.coveredThroughMonth &&
+              item.totalAmountUsedCents !== 0),
+        ))
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["status"],
+        message: "sem-gastos não pode carregar valores ou categorias",
+      });
+    }
+  });
+
 export const deputadoOrgaoSchema = z.object({
   externalIdOrgao: z.number().int().positive(),
   siglaOrgao: z.string().nullable(),
@@ -250,6 +388,17 @@ export type DeputadoLegislaturaPeriodo = z.infer<
 export type DeputadoPerfilValidYearRange = z.infer<
   typeof deputadoPerfilValidYearRangeSchema
 >;
+export type DeputadoCeapStatus = z.infer<typeof deputadoCeapStatusSchema>;
+export type DeputadoCeapCategory = z.infer<typeof deputadoCeapCategorySchema>;
+export type DeputadoCeapMonthCategory = z.infer<
+  typeof deputadoCeapMonthCategorySchema
+>;
+export type DeputadoCeapMonth = z.infer<typeof deputadoCeapMonthSchema>;
+export type DeputadoCeapPeriodoExercicio = z.infer<
+  typeof deputadoCeapPeriodoExercicioSchema
+>;
+export type DeputadoCeapMedianaUf = z.infer<typeof deputadoCeapMedianaUfSchema>;
+export type DeputadoCeapResponse = z.infer<typeof deputadoCeapResponseSchema>;
 export type DeputadoOrgao = z.infer<typeof deputadoOrgaoSchema>;
 export type DeputadoOrgaosResponse = z.infer<
   typeof deputadoOrgaosResponseSchema

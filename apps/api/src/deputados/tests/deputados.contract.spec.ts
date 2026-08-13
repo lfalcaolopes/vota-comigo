@@ -127,6 +127,14 @@ function fakeRepository(
       byExternalId.get(externalIdDeputado) ?? null,
     loadResumoPresenca: async (deputadoId) =>
       resumoById.get(deputadoId) ?? null,
+    loadDeputadoCeapSource: async () => ({
+      coberturas: [],
+      gasto: null,
+      categorias: [],
+      medianaUf: null,
+      intervalosExercicio: [],
+      datasInicioLegislatura: [],
+    }),
   };
 }
 
