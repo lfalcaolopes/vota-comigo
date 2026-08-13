@@ -27,7 +27,7 @@ export function DeputadoGastosCotaSection({
           className="text-lg font-[680] leading-snug text-ink text-balance"
           id="deputado-gastos-cota-title"
         >
-          Gastos da cota parlamentar
+          Gastos anuais da cota parlamentar
         </h3>
       </div>
 
@@ -75,8 +75,6 @@ export function DeputadoGastosCotaSection({
             totalAmountUsedCents={response.totalAmountUsedCents}
             year={response.year}
           />
-
-          <CotaSourceLink />
         </div>
       ) : null}
       {response !== null && response.status === "sem-gastos" ? (
@@ -109,13 +107,9 @@ function GastoCotaDistribuicaoSkeleton() {
   return (
     <div
       aria-label="Carregando distribuição anual dos gastos"
-      className="grid gap-4 border-t border-border pt-5"
+      className="grid gap-4"
       role="status"
     >
-      <div className="grid gap-2">
-        <Skeleton className="h-5 w-56 rounded-md" />
-        <Skeleton className="h-4 w-full max-w-md rounded-full" />
-      </div>
       <div className="grid items-center gap-5 sm:grid-cols-[minmax(15rem,20rem)_minmax(0,1fr)] sm:gap-8">
         <Skeleton className="aspect-square w-full max-w-80 justify-self-center rounded-full" />
         <div className="grid gap-3">
@@ -124,7 +118,6 @@ function GastoCotaDistribuicaoSkeleton() {
           ))}
         </div>
       </div>
-      <Skeleton className="h-20 w-full rounded-md" />
     </div>
   );
 }

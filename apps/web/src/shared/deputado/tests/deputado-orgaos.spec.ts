@@ -84,7 +84,8 @@ describe("comissões e outros órgãos", () => {
       expect(visibleContent).not.toContain("Órgão 4");
       expect(collapsedContent).toContain("Órgão 4");
       expect(collapsedContent).toContain("Órgão 5");
-      expect(html).toContain("Ver mais vínculos (2)");
+      expect(html).toContain("Ver mais vínculos");
+      expect(html).not.toContain("Ver mais vínculos (2)");
       expect(html).not.toContain("Recolher vínculos");
       expect(html).not.toContain("<details open");
       const summaryTag = collapsedContent.slice(

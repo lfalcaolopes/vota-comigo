@@ -46,7 +46,7 @@ function renderState(
 
 describe("seção de gastos da cota parlamentar", () => {
   describe("quando o deputado exerceu o ano inteiro e tem gastos", () => {
-    it("aproxima do gráfico o total e a mediana da UF, com cobertura e fonte oficial", () => {
+    it("aproxima do gráfico o total e a mediana da UF, com cobertura", () => {
       // Arrange
       const response = loadedResponse();
 
@@ -54,17 +54,14 @@ describe("seção de gastos da cota parlamentar", () => {
       const html = render(response);
 
       // Assert
-      expect(html).toContain("Gastos da cota parlamentar");
+      expect(html).toContain("Gastos anuais da cota parlamentar");
       expect(html).toContain("R$ 427.123,45");
       expect(html).toContain("Mediana em SP");
       expect(html).toContain("R$ 398.000,00");
       expect(html).toContain("63 deputados com ano completo");
-      expect(html.indexOf("Distribuição anual por categoria")).toBeLessThan(
-        html.indexOf("Mediana em SP"),
-      );
       expect(html).toContain("Dados disponíveis: janeiro a outubro de 2024");
       expect(html).toContain("outubro de 2024");
-      expect(html).toContain("Câmara dos Deputados");
+      expect(html).not.toContain("Fonte: Câmara dos Deputados");
       expect(html).not.toContain("canvas");
     });
 
@@ -147,7 +144,7 @@ describe("seção de gastos da cota parlamentar", () => {
       const html = render(response);
 
       // Assert
-      expect(html).toContain("Distribuição anual por categoria");
+      expect(html).not.toContain("Distribuição anual por categoria");
       expect(html).toContain("Total utilizado em 2024: R$ 3.543,00.");
       expect(html).toContain(
         'aria-label="Alternativa textual da distribuição anual"',
@@ -155,9 +152,9 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).toContain("Categoria 1");
       expect(html).toContain("R$ 900,00");
       expect(html).not.toContain('aria-label="Ver detalhes de Categoria 1"');
-      expect(html).toContain('aria-pressed="false"');
-      expect(html).toContain('aria-live="polite"');
-      expect(html).toContain("Selecione uma categoria para ver detalhes");
+      expect(html).not.toContain('aria-pressed="false"');
+      expect(html).not.toContain('aria-live="polite"');
+      expect(html).not.toContain("Selecione uma categoria para ver detalhes");
       const alternativaTextual = html.slice(
         html.indexOf('aria-label="Alternativa textual da distribuição anual"'),
       );
@@ -249,10 +246,12 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).toContain(
         'aria-label="Gráfico de barras horizontais da distribuição anual em 2023"',
       );
-      expect(html).toContain('aria-labelledby="gasto-cota-distribuicao-title"');
+      expect(html).not.toContain(
+        'aria-labelledby="gasto-cota-distribuicao-title"',
+      );
       expect(html).toContain("-R$ 13.288,98");
       expect(html).toContain("R$ 30.281,13");
-      expect(html).toContain(
+      expect(html).not.toContain(
         "Este ano inclui ajustes que reduzem ou anulam valores de algumas categorias",
       );
       expect(html).toContain("LOCAÇÃO OU FRETAMENTO DE AERONAVES");
@@ -394,7 +393,7 @@ describe("seção de gastos da cota parlamentar", () => {
       const html = renderState({ status: "loading" });
 
       // Assert
-      expect(html).toContain("Gastos da cota parlamentar");
+      expect(html).toContain("Gastos anuais da cota parlamentar");
       expect(html).toContain("Carregando conteúdo");
       expect(html).not.toContain("Não foi possível carregar");
     });
@@ -409,6 +408,8 @@ describe("seção de gastos da cota parlamentar", () => {
       );
       expect(html).toContain("aspect-square");
       expect(html).toContain("max-w-80");
+      expect(html).not.toContain("h-5 w-56");
+      expect(html).not.toContain("h-20");
     });
 
     it("não reserva espaço para a distribuição mensal removida", () => {

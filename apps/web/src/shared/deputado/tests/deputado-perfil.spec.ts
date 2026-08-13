@@ -76,7 +76,7 @@ describe("DeputadoPerfil", () => {
 
       // Assert
       expect(html).toContain("Atuação na Câmara");
-      expect(html).toContain("Gastos da cota parlamentar");
+      expect(html).toContain("Gastos anuais da cota parlamentar");
       expect(html).toContain("Carregando conteúdo");
     });
   });
@@ -401,12 +401,12 @@ describe("DeputadoPerfil", () => {
       expect(html).toContain("Proposições assinadas");
       expect(html).toContain("Comissões e outros órgãos");
       expect(html.match(/h-7 w-24/g)).toHaveLength(2);
-      expect(html).toContain("Consultar detalhes no Portal da Câmara");
+      expect(html).not.toContain("Consultar detalhes no Portal da Câmara");
       expect(html).not.toContain("Selecione o ano para consultar");
-      expect(html.indexOf("Gastos da cota parlamentar")).toBeLessThan(
+      expect(html.indexOf("Gastos anuais da cota parlamentar")).toBeLessThan(
         html.indexOf("Proposições assinadas"),
       );
-      expect(html.indexOf("Gastos da cota parlamentar")).toBeLessThan(
+      expect(html.indexOf("Gastos anuais da cota parlamentar")).toBeLessThan(
         html.indexOf("Comissões e outros órgãos"),
       );
     });
@@ -650,7 +650,8 @@ describe("DeputadoPerfil", () => {
         expect(html).toContain("Histórico partidário");
         expect(html).toContain("PSB");
         expect(html).toContain("Atual");
-        expect(html).toContain("Ver histórico completo (1 anterior)");
+        expect(html).toContain("Ver histórico completo");
+        expect(html).not.toContain("Ver histórico completo (1 anterior)");
         expect(html).toContain("<details");
         expect(html).not.toContain("<details open");
         const summaryStart = html.indexOf("<summary");

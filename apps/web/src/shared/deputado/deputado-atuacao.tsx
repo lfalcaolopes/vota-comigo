@@ -9,7 +9,7 @@ import type {
 } from "@vota-comigo/shared-types";
 import { useState } from "react";
 
-import { InlineMessage, Skeleton, SkeletonRows, SourceLink } from "@/shared/ui";
+import { InlineMessage, Skeleton, SkeletonRows } from "@/shared/ui";
 
 import { DeputadoGastosCotaSection } from "./deputado-gastos-cota";
 import { DeputadoPerfilYearSelector } from "./deputado-perfil-year-selector";
@@ -27,12 +27,10 @@ type DiscursosState = DeputadoYearCacheState<DeputadoDiscursosResponse>;
 
 export function DeputadoAtuacao({
   externalIdDeputado,
-  fonteOficial,
   initialYear,
   validYearRange,
 }: {
   externalIdDeputado: number;
-  fonteOficial: string;
   initialYear: number;
   validYearRange: DeputadoPerfilValidYearRange;
 }) {
@@ -81,17 +79,6 @@ export function DeputadoAtuacao({
       />
 
       <DeputadoOrgaosSection state={orgaosState} />
-
-      <div className="grid max-w-[70ch] gap-2">
-        <p className="text-sm leading-normal text-muted">
-          Proposições assinadas incluem registros em que o deputado consta como
-          proponente ou apoiador. Cada vínculo representa um cargo e período; um
-          mesmo órgão pode ter mais de um vínculo.
-        </p>
-        <SourceLink href={fonteOficial} rel="noreferrer" target="_blank">
-          Consultar detalhes no Portal da Câmara
-        </SourceLink>
-      </div>
     </section>
   );
 }
@@ -134,7 +121,7 @@ export function DeputadoOrgaosSection({ state }: { state: OrgaosState }) {
 
   return (
     <section aria-labelledby="deputado-orgaos-title" className="grid gap-4">
-      <div className="grid max-w-[70ch] gap-1 border-t border-border pt-6">
+      <div className="grid max-w-[70ch] gap-1 pt-6">
         <h3
           className="text-lg font-[680] leading-snug text-ink"
           id="deputado-orgaos-title"
@@ -164,8 +151,8 @@ export function DeputadoOrgaosSection({ state }: { state: OrgaosState }) {
           <OrgaosList items={visibleItems} />
           {remainingItems.length > 0 ? (
             <details className="group grid gap-3">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 border-b border-border py-3 text-sm font-[650] text-muted transition-colors duration-[140ms] ease-standard marker:content-none hover:text-ink group-open:hidden">
-                Ver mais vínculos ({remainingItems.length})
+              <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 py-3 text-sm font-[650] text-muted transition-colors duration-[140ms] ease-standard marker:content-none hover:text-ink group-open:hidden">
+                Ver mais vínculos
                 <DisclosureChevron />
               </summary>
               <OrgaosList items={remainingItems} />
@@ -198,7 +185,7 @@ function DisclosureChevron() {
 
 function OrgaosList({ items }: { items: readonly DeputadoOrgao[] }) {
   return (
-    <ul className="divide-y divide-border border-y border-border">
+    <ul className="divide-y divide-border border-t border-border">
       {items.map((item, index) => (
         <li
           className="grid gap-1 py-4 sm:grid-cols-[minmax(0,1fr)_minmax(12rem,0.6fr)] sm:gap-6"

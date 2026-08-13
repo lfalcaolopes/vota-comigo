@@ -37,7 +37,6 @@ export function DeputadoPerfil({
       {initialYear !== null && perfil.validYearRange !== null ? (
         <DeputadoAtuacao
           externalIdDeputado={perfil.externalIdDeputado}
-          fonteOficial={perfil.fonteOficial}
           initialYear={initialYear}
           key={perfil.externalIdDeputado}
           validYearRange={perfil.validYearRange}
@@ -140,13 +139,10 @@ function Evidencia({ perfil }: { perfil: DeputadoPerfilData }) {
             />
             {periodosAnteriores.length > 0 ? (
               <details className="group grid gap-3">
-                <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 border-t border-border py-3 text-sm font-[650] text-muted transition-colors duration-[140ms] ease-standard marker:content-none hover:text-ink group-open:hidden">
-                  Ver histórico completo ({periodosAnteriores.length}{" "}
-                  {periodosAnteriores.length === 1 ? "anterior" : "anteriores"}
-                  )
-                  <DisclosureChevron />
+                <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-[650] text-muted transition-colors duration-[140ms] ease-standard marker:content-none hover:text-ink group-open:hidden">
+                  Ver histórico completo <DisclosureChevron />
                 </summary>
-                <ul className="grid gap-2 border-t border-border pt-3">
+                <ul className="grid gap-2">
                   {periodosAnteriores.map((periodo) => (
                     <li key={`${periodo.siglaPartido}-${periodo.dataInicio}`}>
                       <PeriodoPartidario periodo={periodo} />
