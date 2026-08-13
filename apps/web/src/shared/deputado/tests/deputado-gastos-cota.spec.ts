@@ -75,7 +75,7 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).toContain("-R$ 123,45");
       expect(html).not.toContain(">R$ 123,45<");
       expect(html).toContain(
-        "A distribuição por categoria não pode ser exibida para este ano",
+        'aria-label="Gráfico de barras horizontais da distribuição anual em 2024"',
       );
       expect(html).not.toContain("Total da distribuição");
     });
@@ -199,20 +199,41 @@ describe("seção de gastos da cota parlamentar", () => {
       );
     });
 
-    it("não representa um grupo negativo como fatia positiva", () => {
+    it("representa em barras o par real com Outras despesas negativas", () => {
       // Arrange
       const response = loadedResponse({
-        totalAmountUsedCents: 89_000,
+        year: 2023,
+        totalAmountUsedCents: 3_028_113,
         categories: [
           {
-            externalNumSubCota: 1,
-            description: "Combustíveis",
-            amountUsedCents: 90_000,
+            externalNumSubCota: 119,
+            description: "LOCAÇÃO OU FRETAMENTO DE AERONAVES",
+            amountUsedCents: 2_079_030,
+          },
+          {
+            externalNumSubCota: 120,
+            description: "LOCAÇÃO OU FRETAMENTO DE VEÍCULOS AUTOMOTORES",
+            amountUsedCents: 1_178_240,
+          },
+          {
+            externalNumSubCota: 9,
+            description: "PASSAGEM AÉREA - REEMBOLSO",
+            amountUsedCents: 929_563,
+          },
+          {
+            externalNumSubCota: 5,
+            description: "DIVULGAÇÃO DA ATIVIDADE PARLAMENTAR.",
+            amountUsedCents: 170_000,
           },
           {
             externalNumSubCota: 10,
-            description: "Passagens",
-            amountUsedCents: -1_000,
+            description: "TELEFONIA",
+            amountUsedCents: 178,
+          },
+          {
+            externalNumSubCota: 998,
+            description: "PASSAGEM AÉREA - SIGEPA",
+            amountUsedCents: -1_328_898,
           },
         ],
       });
@@ -221,11 +242,45 @@ describe("seção de gastos da cota parlamentar", () => {
       const html = render(response);
 
       // Assert
-      expect(html).toContain("R$ 890,00");
       expect(html).toContain(
-        "A distribuição por categoria não pode ser exibida para este ano",
+        'aria-label="Gráfico de barras horizontais da distribuição anual em 2023"',
       );
+      expect(html).toContain('aria-labelledby="gasto-cota-distribuicao-title"');
+      expect(html).toContain("-R$ 13.288,98");
+      expect(html).toContain("R$ 30.281,13");
+      expect(html).toContain(
+        "Este ano inclui ajustes que reduzem ou anulam valores de algumas categorias",
+      );
+      expect(html).toContain(
+        'aria-label="Ver detalhes de LOCAÇÃO OU FRETAMENTO DE AERONAVES"',
+      );
+      expect(html).toContain('aria-pressed="false"');
+      expect(html).toContain('aria-live="polite"');
+      expect(html).toContain(
+        "Passe o mouse, toque ou use o teclado para ver uma categoria",
+      );
+      const alternativaTextual = html.slice(
+        html.indexOf('aria-label="Alternativa textual da distribuição anual"'),
+        html.indexOf("</ol>"),
+      );
+      expect(
+        alternativaTextual.indexOf("LOCAÇÃO OU FRETAMENTO DE AERONAVES"),
+      ).toBeLessThan(
+        alternativaTextual.indexOf(
+          "LOCAÇÃO OU FRETAMENTO DE VEÍCULOS AUTOMOTORES",
+        ),
+      );
+      expect(
+        alternativaTextual.indexOf(
+          "LOCAÇÃO OU FRETAMENTO DE VEÍCULOS AUTOMOTORES",
+        ),
+      ).toBeLessThan(alternativaTextual.indexOf("Outras despesas"));
+      expect(alternativaTextual).toContain("background-color:#009988");
+      expect(alternativaTextual).toContain("background-color:#737373");
       expect(html).not.toContain("Total da distribuição");
+      expect(html).not.toContain(
+        "A distribuição por categoria não pode ser exibida",
+      );
     });
   });
 

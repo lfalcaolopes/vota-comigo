@@ -4,9 +4,9 @@ import type { DeputadoCeapCategory } from "@vota-comigo/shared-types";
 import { useReducer } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
-import { InlineMessage } from "@/shared/ui";
-
 import { deriveGastoCotaDistribuicao } from "./gasto-cota-distribuicao";
+import { GastoCotaDistribuicaoAnualBarras } from "./gasto-cota-distribuicao-anual-barras";
+import { deriveGastoCotaDistribuicaoMode } from "./gasto-cota-distribuicao-mode";
 import { applyGastoCotaPaleta } from "./gasto-cota-paleta";
 import { formatGastoCotaAmount } from "./gasto-cota-presentation";
 import {
@@ -32,21 +32,27 @@ export function GastoCotaDistribuicaoAnual({
   const activeIndex = getGastoCotaIndiceAtivo(selecao);
   const activeSerie =
     activeIndex === null ? null : (series[activeIndex] ?? null);
-  const canRenderRosca =
-    totalAmountUsedCents > 0 &&
-    series.every((serie) => serie.amountUsedCents >= 0);
+  const mode = deriveGastoCotaDistribuicaoMode(series, totalAmountUsedCents);
 
-  if (!canRenderRosca) {
+  if (mode === "barras") {
     return (
-      <section className="grid gap-4 border-t border-border pt-5">
-        <h4 className="text-base font-[680] leading-snug text-ink">
-          Distribuição anual por categoria
-        </h4>
-        <InlineMessage
-          body="O total continua disponível acima. Uma visualização adequada para compensações e cancelamentos será adicionada em uma próxima etapa."
-          title="A distribuição por categoria não pode ser exibida para este ano."
-          tone="warning"
-        />
+      <section
+        aria-labelledby="gasto-cota-distribuicao-title"
+        className="grid gap-4 border-t border-border pt-5"
+      >
+        <div className="grid gap-1">
+          <h4
+            className="text-base font-[680] leading-snug text-ink"
+            id="gasto-cota-distribuicao-title"
+          >
+            Distribuição anual por categoria
+          </h4>
+          <p className="max-w-[65ch] text-sm leading-normal text-muted">
+            Este ano inclui ajustes que reduzem ou anulam valores de algumas
+            categorias. As barras preservam esses valores na escala.
+          </p>
+        </div>
+        <GastoCotaDistribuicaoAnualBarras series={series} year={year} />
       </section>
     );
   }

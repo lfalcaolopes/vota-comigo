@@ -2,6 +2,8 @@ import type { GastoCotaSerie } from "./gasto-cota-distribuicao";
 
 export const GASTO_COTA_COR_NEUTRA = "#737373";
 
+export type GastoCotaSerieComCor = GastoCotaSerie & { color: string };
+
 const corByExternalNumSubCota = new Map<number, string>([
   [5, "#332288"],
   [3, "#0077BB"],
@@ -28,7 +30,7 @@ function deriveGastoCotaCorSecundaria(externalNumSubCota: number): string {
 
 export function applyGastoCotaPaleta(
   series: readonly GastoCotaSerie[],
-): readonly (GastoCotaSerie & { color: string })[] {
+): readonly GastoCotaSerieComCor[] {
   return series.map((serie) => ({
     ...serie,
     color: getGastoCotaCor(serie.externalNumSubCota),
