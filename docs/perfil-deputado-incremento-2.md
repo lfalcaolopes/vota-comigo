@@ -110,15 +110,15 @@ Todo cálculo monetário usa decimal exato. O banco usa `numeric` com duas casas
 
 ## Agregação
 
-### Unidade persistida
+### Unidade agregada
 
-A menor unidade persistida é:
+A menor unidade agregada é:
 
 ```text
 deputado + ano + mês + categoria
 ```
 
-Para cada combinação, a ingestão soma o valor utilizado dos registros da fonte.
+Para cada combinação, a ingestão soma o valor utilizado dos registros da fonte. Essa matriz é gravada por deputado-ano, conforme [Persistência](#persistência).
 
 O total mensal é derivado pela soma das categorias do mês. O total anual é derivado pela soma dos doze meses. Não se persiste uma segunda cópia desses totais.
 
@@ -186,39 +186,48 @@ A fonte é preservada sem alteração na persistência. A apresentação pode no
 
 Um mesmo código com descrições conflitantes dentro do mesmo arquivo é uma rejeição de ingestão. Um código novo é aceito e agregado normalmente.
 
-## Persistência proposta
+## Persistência
 
-A tabela conceitual `deputado_ceap_monthly_category` contém:
+A menor unidade **agregada** continua sendo deputado, ano, mês e categoria. A menor unidade **persistida** é o par deputado-ano: `deputado_gasto_cota` guarda uma linha por `(deputado_id, year)`, com a matriz mês × categoria em `jsonb`.
 
 | Coluna | Tipo | Regra |
 | --- | --- | --- |
 | `id` | `uuid` | Surrogate key interna. |
 | `deputado_id` | `uuid` | FK para `deputado.id`. |
 | `year` | `integer` | Ano de competência. |
-| `month` | `integer` | Inteiro entre 1 e 12. |
-| `external_num_sub_cota` | `integer` | Código `numSubCota` da fonte, conforme ADR 007. |
-| `source_description` | `text` | Descrição oficial da categoria no arquivo anual. |
-| `amount_used` | `numeric(..., 2)` | Soma de `vlrLiquido - vlrRestituicao`. |
+| `gastos_json` | `jsonb` | `{ mês: { numSubCota: centavos } }`. |
 
-Restrição única:
+Restrição única: `(deputado_id, year)`.
 
-```text
-(deputado_id, year, month, external_num_sub_cota)
-```
+A razão é o padrão de leitura. Toda consulta do produto pede um deputado e um ano, e devolve o ano inteiro: o endpoint de gastos, a rosca anual e as barras mensais consomem a mesma resposta. Nenhuma leitura cruza deputados ou anos — a mediana da UF é pré-calculada na ingestão, que já tem todos os agregados em memória, e as varreduras de validação rodam sobre os arquivos brutos com o módulo puro, sem banco.
 
-Índices de leitura:
+O grão relacional foi medido antes da decisão: um ano ocupava 10 MB (38.889 linhas, 5,4 MB só de índices) contra **1 MB** na forma agregada — cerca de 190 MB contra 20 MB para 2008 em diante, sobre um free tier de 512 MB que também carrega o resto do dump. Havia ainda três índices sobrepostos, dois deles prefixos do índice único.
 
-```text
-(deputado_id, year)
-(deputado_id, year, month)
-```
+O precedente é `votacao_votos.votosJson`, que guarda os votos de uma votação como JSON pela mesma razão: a leitura sempre quer o conjunto inteiro.
 
-### Cobertura por ano
+O custo aceito é perder consulta analítica ad-hoc por categoria no SQL. Confronto nominal de gastos entre deputados está fora de escopo, e a análise exploratória tem os arquivos anuais e o agregador puro.
 
-A fronteira do dado é propriedade do **arquivo anual**, não de um deputado, então mora em tabela própria — uma linha por ano carregado:
+Centavos são inteiros dentro do JSON, o que elimina a fronteira `numeric` ↔ centavos: um total anual gira na casa de 5 × 10⁷ centavos, muito abaixo do limite de inteiro exato em ponto flutuante binário, então o valor atravessa serialização e desserialização sem perda. Não existe mais coluna numérica na cadeia.
+
+### Categorias
+
+`numSubCota` identifica a categoria e é a chave dentro do JSON; a descrição vive em `cota_categoria`, uma linha por código:
 
 | Coluna | Tipo | Regra |
 | --- | --- | --- |
+| `id` | `uuid` | Surrogate key interna. |
+| `external_num_sub_cota` | `integer` | Código da fonte, único. |
+| `descricao` | `text` | Descrição oficial da categoria no arquivo anual. |
+
+São 18 a 19 linhas. Antes, a mesma descrição de 34 caracteres se repetia em 38 mil linhas por ano. A tabela também torna estrutural a regra de que o código identifica e a descrição é só texto — a validação de descrições conflitantes dentro de um arquivo continua na ingestão.
+
+### Cobertura por ano
+
+A fronteira do dado é propriedade do **arquivo anual**, não de um deputado, então mora em `cota_cobertura` — uma linha por ano carregado:
+
+| Coluna | Tipo | Regra |
+| --- | --- | --- |
+| `id` | `uuid` | Surrogate key interna. |
 | `year` | `integer` | Ano de competência, único. |
 | `covered_through_month` | `integer` | Último mês coberto pelo arquivo, entre 1 e 12. |
 | `ingested_at` | `timestamptz` | Momento da substituição anual. |
@@ -229,20 +238,21 @@ Sem essa tabela, a interface não consegue distinguir "não gastou" de "não car
 
 ### Mediana por UF e ano
 
-A mediana é **pré-calculada na ingestão**, não no request. Calculá-la em runtime exigiria somar os agregados mensais de todos os deputados de um estado — dezenas de milhares de linhas por leitura de perfil, no free tier. Como a ingestão já faz substituição anual completa, derivar a mediana ali é praticamente de graça e torna a leitura O(1).
+A mediana é **pré-calculada na ingestão**, não no request. Calculá-la em runtime exigiria somar os agregados de todos os deputados de um estado a cada leitura de perfil, no free tier. Como a ingestão já faz substituição anual completa e tem todos os agregados em memória, derivar a mediana ali é praticamente de graça e torna a leitura O(1).
 
 | Coluna | Tipo | Regra |
 | --- | --- | --- |
+| `id` | `uuid` | Surrogate key interna. |
 | `year` | `integer` | Ano de competência. |
 | `sigla_uf` | `text` | UF vinda de `sgUF` no arquivo. |
-| `median_amount_used` | `numeric(..., 2)` | Mediana dos totais anuais. |
+| `valor_utilizado_mediana` | `bigint` | Mediana dos totais anuais, em centavos. |
 | `deputado_count` | `integer` | Quantos deputados entraram no cálculo. |
 
 Único em `(year, sigla_uf)`. Entram apenas deputados que exerceram o ano inteiro, conforme a regra de exercício parcial. `deputado_count` é publicado junto com a mediana: uma mediana sobre três deputados não merece a mesma confiança que uma sobre setenta, e esconder o denominador esconde isso.
 
-A UF de cada deputado no ano também precisa ser persistida, já que os agregados mensais não a carregam — uma linha por `(deputado_id, year)` com a `sigla_uf` do arquivo, na ordem de 10 mil linhas no total.
+A UF de cada deputado no ano também precisa ser persistida, já que os agregados não a carregam — uma linha por `(deputado_id, year)` com a `sigla_uf` do arquivo, na ordem de 10 mil linhas no total. Ela pode entrar como coluna de `deputado_gasto_cota`, que já tem exatamente esse grão.
 
-Os nomes desta tabela e das anteriores ainda precisam de uma passada da ADR 007 na implementação: `deputado_ceap_monthly_category` mistura sigla de domínio com substantivos genéricos em inglês, e a convenção do repositório não foi conferida contra ela.
+Os nomes passaram pela ADR 007 na implementação: substantivo de domínio em português (`deputado_gasto_cota`, `cota_categoria`, `cota_cobertura`, `valor_utilizado`), genéricos em inglês (`year`, `month`, `covered_through_month`). O rascunho anterior — `deputado_ceap_monthly_category`, `amount_used` — misturava sigla de domínio com substantivos genéricos em inglês na mesma posição.
 
 ## Ingestão
 
@@ -513,7 +523,7 @@ Resposta negativa em todos: a rosca exclusiva se sustenta como está. Qualquer o
 
 Vale notar que a agregação em **Outras despesas** pode absorver um negativo dentro de um grupo positivo, e que o recorte exibido é mais grosso que o recorte da evidência atual (que mediu categorias individuais, não os seis grupos). A varredura precisa medir os grupos de apresentação, não as categorias cruas.
 
-**2. Armazenamento no Neon.** O free tier tem 0,5 GB e o dump atual já ocupa ~91 MB. Estimar as linhas de `2008..ano corrente` na granularidade deputado + ano + mês + categoria antes de ingerir tudo, e confirmar a folga.
+**2. Armazenamento no Neon.** ~~Estimar antes de ingerir tudo.~~ Medido em 2026-08-12 sobre o ano de 2024 ingerido: o grão relacional custava 10 MB por ano (~190 MB de 2008 em diante), e a forma por deputado-ano custa 1 MB por ano (~20 MB). Sobre um free tier de 0,5 GB e um dump que já ocupa ~120 MB, a segunda cabe com folga larga; a primeira, não. Decidiu-se pela forma agregada — ver [Persistência](#persistência). Resta confirmar a medição com o conjunto completo depois de ingerir todos os anos.
 
 **3. Tamanho de amostra da mediana nas UFs pequenas.** Estados com bancada reduzida, filtrados ainda por exercício de ano inteiro, podem produzir medianas sobre um punhado de deputados. Levantar o menor `deputado_count` por `(year, sigla_uf)` após a ingestão completa e definir um piso abaixo do qual a comparação não é exibida.
 

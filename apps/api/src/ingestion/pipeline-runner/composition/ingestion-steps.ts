@@ -36,6 +36,8 @@ import { createProposicaoComputavelRepository } from '../steps/proposicao-comput
 import { createProposicaoComputavelStep } from '../steps/proposicao-computavel/proposicao-computavel.step';
 import { createDeputadoPresencaRepository } from '../steps/deputado-presenca/deputado-presenca.repository';
 import { createDeputadoPresencaStep } from '../steps/deputado-presenca/deputado-presenca.step';
+import { createDeputadoGastoCotaRepository } from '../steps/deputado-gasto-cota/deputado-gasto-cota.repository';
+import { createDeputadoGastoCotaStep } from '../steps/deputado-gasto-cota/deputado-gasto-cota.step';
 import { createDeputadoExercicioIntervaloRepository } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.repository';
 import { createDeputadoExercicioIntervaloStep } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.step';
 import { createTemaRepository } from '../steps/tema/tema.repository';
@@ -56,6 +58,7 @@ import {
   dryRunProposicaoComputavelRepository,
   dryRunDeputadoPresencaRepository,
   dryRunDeputadoExercicioIntervaloRepository,
+  dryRunDeputadoGastoCotaRepository,
   dryRunProposicaoLookup,
   dryRunProposicaoRepository,
   dryRunSanityRepository,
@@ -92,6 +95,7 @@ export function createIngestionSteps(
         createDeputadosStep(dryRunDeputadoRepository, dryRunLegislaturaLookup),
         createPartidosStep(dryRunPartidoRepository),
         createVotacoesStep(dryRunVotacaoRepository),
+        createDeputadoGastoCotaStep(dryRunDeputadoGastoCotaRepository),
         createVotacaoVotosStep({
           repository: dryRunVotacaoVotosRepository,
           votacaoLookup: dryRunVotacaoLookup,
@@ -139,6 +143,7 @@ export function createIngestionSteps(
     ),
     createPartidosStep(createPartidoRepository(db)),
     createVotacoesStep(createVotacaoRepository(db)),
+    createDeputadoGastoCotaStep(createDeputadoGastoCotaRepository(db)),
     createVotacaoVotosStep({
       repository: createVotacaoVotosRepository(db),
       votacaoLookup: createVotacaoLookup(db),

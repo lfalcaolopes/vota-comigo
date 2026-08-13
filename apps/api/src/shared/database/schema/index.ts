@@ -13,3 +13,6 @@ export * from './votacao-proposicao';
 export * from './tema';
 export * from './proposicao-tema';
 export * from './matcher-completion';
+export * from './deputado-gasto-cota';
+export * from './cota-categoria';
+export * from './cota-cobertura';

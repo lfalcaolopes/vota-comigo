@@ -10,6 +10,7 @@ import type { ProposicaoRepository } from '../steps/proposicoes/proposicoes.repo
 import type { ProposicaoComputavelRepository } from '../steps/proposicao-computavel/proposicao-computavel.repository.types';
 import type { DeputadoPresencaRepository } from '../steps/deputado-presenca/deputado-presenca.repository.types';
 import type { DeputadoExercicioIntervaloRepository } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.repository.types';
+import type { DeputadoGastoCotaRepository } from '../steps/deputado-gasto-cota/deputado-gasto-cota.repository.types';
 import type { SanityRepository } from '../steps/sanity/sanity.repository.types';
 import type {
   TemaLookup,
@@ -104,6 +105,11 @@ export const dryRunDeputadoExercicioIntervaloRepository: DeputadoExercicioInterv
     loadDeputadosComHistorico: () => Promise.resolve([]),
     fullReplace: dryRunWriteGuard,
   };
+
+export const dryRunDeputadoGastoCotaRepository: DeputadoGastoCotaRepository = {
+  loadDeputadoIdByExternalId: () => Promise.resolve(new Map()),
+  replaceAno: dryRunWriteGuard,
+};
 
 export const dryRunSanityRepository: SanityRepository = {
   loadPlacares: dryRunReadGuard,

@@ -10,6 +10,7 @@ export const ingestionStepDescriptors: readonly IngestionStepDescriptor[] = [
     companionDatasets: ['votacoesVotos'],
   },
   { name: 'votacao_votos', scope: 'annual', dataset: 'votacoesVotos' },
+  { name: 'deputado_gasto_cota', scope: 'annual', dataset: 'ceap' },
   { name: 'proposicoes', scope: 'single', source: 'derived' },
   { name: 'votacao_proposicao', scope: 'single', source: 'derived' },
   { name: 'proposicao_computavel', scope: 'single', source: 'derived' },
