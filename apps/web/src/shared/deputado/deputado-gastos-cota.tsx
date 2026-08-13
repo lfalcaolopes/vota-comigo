@@ -26,12 +26,12 @@ export function DeputadoGastosCotaSection({
     >
       <div className="grid max-w-[70ch] gap-2 border-t border-border pt-6">
         <h3
-          className="text-lg font-[680] leading-snug text-ink"
+          className="text-lg font-[680] leading-snug text-ink text-balance"
           id="deputado-gastos-cota-title"
         >
           Gastos da cota parlamentar
         </h3>
-        <p className="text-sm leading-normal text-muted">
+        <p className="text-sm leading-normal text-muted text-pretty">
           Valores utilizados da Cota para o Exercício da Atividade Parlamentar.
           O teto da cota varia por estado.
         </p>
@@ -56,22 +56,26 @@ export function DeputadoGastosCotaSection({
         <div className="grid min-w-0 gap-5">
           <div className="grid gap-2">
             <p className="text-sm text-muted">
-              Total utilizado em {response.year}
+              Total utilizado{" "}
+              {formatCoverageRange(response.coveredThroughMonth, response.year)}
             </p>
             <p className="text-3xl leading-none font-[680] tabular-nums text-ink md:text-4xl">
               {formatGastoCotaAmount(response.totalAmountUsedCents)}
             </p>
             {response.medianaUf !== null && response.siglaUf !== null ? (
               <p className="text-sm text-muted">
-                Mediana de {response.siglaUf}:{" "}
-                {formatGastoCotaAmount(response.medianaUf.amountUsedCents)} ({" "}
-                {response.medianaUf.deputadoCount}{" "}
+                Mediana entre {response.medianaUf.deputadoCount}{" "}
                 {response.medianaUf.deputadoCount === 1
                   ? "deputado"
                   : "deputados"}
-                )
+                {` de ${response.siglaUf} que exerceram o ano inteiro: `}
+                {formatGastoCotaAmount(response.medianaUf.amountUsedCents)}
               </p>
             ) : null}
+            <p className="text-sm text-muted">
+              Dados da Câmara atualizados até{" "}
+              {formatCoverage(response.coveredThroughMonth, response.year)}.
+            </p>
             {!response.exercicioAnoCompleto ? (
               <div className="grid gap-1 text-sm text-muted">
                 <p>
@@ -105,16 +109,13 @@ export function DeputadoGastosCotaSection({
             year={response.year}
           />
 
-          <CotaCoverageAndSource
-            coveredThroughMonth={response.coveredThroughMonth}
-            year={response.year}
-          />
+          <CotaSourceLink />
         </div>
       ) : null}
       {response !== null && response.status === "sem-gastos" ? (
         <div className="grid gap-5">
           <InlineMessage
-            body="O deputado não registrou gastos da cota neste ano."
+            body="Não há registros de gastos da cota para este deputado neste ano."
             title="Nenhum gasto registrado"
           />
           <CotaCoverageAndSource
@@ -220,4 +221,9 @@ function formatCoverage(month: number, year: number): string {
   }).format(new Date(Date.UTC(year, month - 1, 1)));
 
   return `${monthLabel} de ${year}`;
+}
+
+function formatCoverageRange(month: number, year: number): string {
+  if (month === 12) return `em ${year}`;
+  return `de janeiro a ${formatCoverage(month, year)}`;
 }

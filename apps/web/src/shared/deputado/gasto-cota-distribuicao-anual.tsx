@@ -71,17 +71,21 @@ export function GastoCotaDistribuicaoAnual({
         </h4>
         <p className="max-w-[65ch] text-sm leading-normal text-muted">
           As cinco maiores categorias aparecem separadas. As demais são reunidas
-          em Outras despesas.
+          em Outras despesas. As cores também são usadas no gráfico mensal.
         </p>
       </div>
 
       <figure
+        aria-label={`Distribuição anual dos gastos por categoria em ${year}`}
         className="grid min-w-0 items-center gap-5 sm:grid-cols-[minmax(15rem,20rem)_minmax(0,1fr)] sm:gap-8"
         onMouseLeave={() => dispatchSelecao({ type: "clear-preview" })}
       >
-        <div className="relative aspect-square w-full max-w-80 justify-self-center">
+        <div
+          aria-hidden="true"
+          className="relative aspect-square w-full max-w-72 justify-self-center sm:max-w-80"
+        >
           <ResponsiveContainer height="100%" minWidth={0} width="100%">
-            <PieChart accessibilityLayer>
+            <PieChart accessibilityLayer={false} tabIndex={-1}>
               <Pie
                 data={series}
                 dataKey="amountUsedCents"
@@ -94,12 +98,13 @@ export function GastoCotaDistribuicaoAnual({
                 }
                 outerRadius="88%"
                 paddingAngle={series.length === 1 ? 0 : 1}
+                rootTabIndex={-1}
                 stroke="#ffffff"
                 strokeWidth={2}
               >
                 {series.map((serie, index) => (
                   <Cell
-                    className="transition-opacity duration-200 motion-reduce:transition-none"
+                    className="vc-data-segment transition-opacity duration-200"
                     fill={serie.color}
                     key={serie.externalNumSubCota ?? "outras-despesas"}
                     opacity={
@@ -129,13 +134,17 @@ export function GastoCotaDistribuicaoAnual({
           {series.map((serie, index) => (
             <li key={serie.externalNumSubCota ?? "outras-despesas"}>
               <button
-                aria-label={`Ver detalhes de ${serie.description}`}
                 aria-pressed={activeIndex === index}
                 className="grid min-h-11 w-full min-w-0 grid-cols-[0.75rem_minmax(0,1fr)_max-content] items-start gap-x-3 rounded-md px-2 py-2 text-left text-sm transition-colors duration-200 hover:bg-surface-muted aria-pressed:bg-surface-muted motion-reduce:transition-none"
                 onBlur={() => dispatchSelecao({ type: "clear-preview" })}
                 onClick={() => dispatchSelecao({ type: "pin", index })}
                 onFocus={() => dispatchSelecao({ type: "preview", index })}
                 onMouseEnter={() => dispatchSelecao({ type: "preview", index })}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") {
+                    dispatchSelecao({ type: "clear" });
+                  }
+                }}
                 type="button"
               >
                 <span
@@ -155,6 +164,7 @@ export function GastoCotaDistribuicaoAnual({
         </ol>
 
         <figcaption
+          aria-atomic="true"
           aria-live="polite"
           className="min-h-20 rounded-md bg-surface-muted px-4 py-3 text-sm sm:col-span-2"
         >

@@ -48,5 +48,22 @@ describe("seleção de categoria na distribuição anual", () => {
       expect(getGastoCotaIndiceAtivo(previewState)).toBe(3);
       expect(getGastoCotaIndiceAtivo(finalState)).toBe(1);
     });
+
+    it("limpa a seleção ao acionar a categoria fixada novamente", () => {
+      // Arrange
+      const pinnedState = reduceGastoCotaSelecao(gastoCotaSelecaoInicial, {
+        type: "pin",
+        index: 1,
+      });
+
+      // Act
+      const finalState = reduceGastoCotaSelecao(pinnedState, {
+        type: "pin",
+        index: 1,
+      });
+
+      // Assert
+      expect(getGastoCotaIndiceAtivo(finalState)).toBeNull();
+    });
   });
 });

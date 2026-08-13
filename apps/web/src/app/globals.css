@@ -99,4 +99,8 @@
     scroll-behavior: auto !important;
     transition-duration: 1ms !important;
   }
+
+  .vc-data-segment {
+    transition: none !important;
+  }
 }

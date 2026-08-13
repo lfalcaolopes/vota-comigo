@@ -11,7 +11,8 @@ export type GastoCotaSelecaoMensal = {
 export type GastoCotaSelecaoMensalAction =
   | { type: "preview"; point: GastoCotaPontoMensal }
   | { type: "clear-preview" }
-  | { type: "pin"; point: GastoCotaPontoMensal };
+  | { type: "pin"; point: GastoCotaPontoMensal }
+  | { type: "clear" };
 
 export const gastoCotaSelecaoMensalInicial: GastoCotaSelecaoMensal = {
   previewPoint: null,
@@ -34,7 +35,14 @@ export function reduceGastoCotaSelecaoMensal(
   if (action.type === "clear-preview") {
     return { ...state, previewPoint: null };
   }
-  return { previewPoint: null, pinnedPoint: action.point };
+  if (action.type === "clear") return gastoCotaSelecaoMensalInicial;
+  const isPinnedPoint =
+    state.pinnedPoint?.monthIndex === action.point.monthIndex &&
+    state.pinnedPoint.seriesIndex === action.point.seriesIndex;
+  return {
+    previewPoint: null,
+    pinnedPoint: isPinnedPoint ? null : action.point,
+  };
 }
 
 export function getGastoCotaPontoMensalAtivo(

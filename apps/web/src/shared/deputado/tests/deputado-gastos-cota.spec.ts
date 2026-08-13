@@ -56,7 +56,9 @@ describe("seção de gastos da cota parlamentar", () => {
       // Assert
       expect(html).toContain("Gastos da cota parlamentar");
       expect(html).toContain("R$ 427.123,45");
-      expect(html).toContain("Mediana de SP: R$ 398.000,00");
+      expect(html).toContain(
+        "Mediana entre 63 deputados de SP que exerceram o ano inteiro: R$ 398.000,00",
+      );
       expect(html).toContain("63 deputados");
       expect(html).toContain("O teto da cota varia por estado");
       expect(html).toContain("outubro de 2024");
@@ -91,7 +93,9 @@ describe("seção de gastos da cota parlamentar", () => {
       const html = render(response);
 
       // Assert
-      expect(html).toContain("Mediana de RR: R$ 410.000,00");
+      expect(html).toContain(
+        "Mediana entre 4 deputados de RR que exerceram o ano inteiro: R$ 410.000,00",
+      );
       expect(html).toContain("4 deputados");
     });
 
@@ -149,7 +153,9 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).toContain(
         'aria-label="Alternativa textual da distribuição anual"',
       );
-      expect(html).toContain('aria-label="Ver detalhes de Categoria 1"');
+      expect(html).toContain("Categoria 1");
+      expect(html).toContain("R$ 900,00");
+      expect(html).not.toContain('aria-label="Ver detalhes de Categoria 1"');
       expect(html).toContain('aria-pressed="false"');
       expect(html).toContain('aria-live="polite"');
       expect(html).toContain(
@@ -251,7 +257,8 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).toContain(
         "Este ano inclui ajustes que reduzem ou anulam valores de algumas categorias",
       );
-      expect(html).toContain(
+      expect(html).toContain("LOCAÇÃO OU FRETAMENTO DE AERONAVES");
+      expect(html).not.toContain(
         'aria-label="Ver detalhes de LOCAÇÃO OU FRETAMENTO DE AERONAVES"',
       );
       expect(html).toContain('aria-pressed="false"');
@@ -323,7 +330,7 @@ describe("seção de gastos da cota parlamentar", () => {
 
       // Assert
       expect(html).toContain(
-        "O deputado não registrou gastos da cota neste ano",
+        "Não há registros de gastos da cota para este deputado neste ano",
       );
       expect(html).toContain("outubro de 2024");
       expect(html).not.toContain("Este ano ainda não foi carregado");

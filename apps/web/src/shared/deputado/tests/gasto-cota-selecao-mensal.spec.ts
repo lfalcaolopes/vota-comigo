@@ -34,6 +34,24 @@ describe("seleção de um gasto mensal", () => {
         seriesIndex: 1,
       });
     });
+
+    it("limpa a seleção ao acionar o ponto fixado novamente", () => {
+      // Arrange
+      const point = { monthIndex: 2, seriesIndex: 1 };
+      const pinnedState = reduceGastoCotaSelecaoMensal(
+        gastoCotaSelecaoMensalInicial,
+        { type: "pin", point },
+      );
+
+      // Act
+      const finalState = reduceGastoCotaSelecaoMensal(pinnedState, {
+        type: "pin",
+        point,
+      });
+
+      // Assert
+      expect(getGastoCotaPontoMensalAtivo(finalState)).toBeNull();
+    });
   });
 
   describe("quando a prévia já está ativa no mesmo ponto", () => {

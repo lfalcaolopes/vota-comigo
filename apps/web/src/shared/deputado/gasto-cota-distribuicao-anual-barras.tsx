@@ -41,14 +41,15 @@ export function GastoCotaDistribuicaoAnualBarras({
       className="grid min-w-0 gap-4"
       onMouseLeave={() => dispatchSelecao({ type: "clear-preview" })}
     >
-      <div className="h-72 min-w-0 w-full">
+      <div aria-hidden="true" className="h-72 min-w-0 w-full">
         <ResponsiveContainer height="100%" minWidth={0} width="100%">
           <BarChart
-            accessibilityLayer
+            accessibilityLayer={false}
             barCategoryGap="24%"
             data={series}
             layout="vertical"
             margin={{ top: 4, right: 8, bottom: 4, left: 8 }}
+            tabIndex={-1}
           >
             <CartesianGrid horizontal={false} stroke="var(--color-border)" />
             <XAxis
@@ -63,24 +64,14 @@ export function GastoCotaDistribuicaoAnualBarras({
             <Bar
               dataKey="amountUsedCents"
               isAnimationActive={false}
-              onBlur={() => dispatchSelecao({ type: "clear-preview" })}
               onClick={(_, index) => dispatchSelecao({ type: "pin", index })}
-              onFocus={(_, index) =>
-                dispatchSelecao({ type: "preview", index })
-              }
-              onKeyDown={(_, index, event) => {
-                if (event.key !== "Enter" && event.key !== " ") return;
-                event.preventDefault();
-                dispatchSelecao({ type: "pin", index });
-              }}
               onMouseEnter={(_, index) =>
                 dispatchSelecao({ type: "preview", index })
               }
-              tabIndex={0}
             >
               {series.map((serie, index) => (
                 <Cell
-                  className="transition-opacity duration-200 motion-reduce:transition-none"
+                  className="vc-data-segment transition-opacity duration-200"
                   fill={serie.color}
                   key={serie.externalNumSubCota ?? "outras-despesas"}
                   opacity={
@@ -100,13 +91,17 @@ export function GastoCotaDistribuicaoAnualBarras({
         {series.map((serie, index) => (
           <li key={serie.externalNumSubCota ?? "outras-despesas"}>
             <button
-              aria-label={`Ver detalhes de ${serie.description}`}
               aria-pressed={activeIndex === index}
               className="grid min-h-11 w-full min-w-0 grid-cols-[0.75rem_minmax(0,1fr)_max-content] items-start gap-x-3 rounded-md px-2 py-2 text-left text-sm transition-colors duration-200 hover:bg-surface-muted aria-pressed:bg-surface-muted motion-reduce:transition-none"
               onBlur={() => dispatchSelecao({ type: "clear-preview" })}
               onClick={() => dispatchSelecao({ type: "pin", index })}
               onFocus={() => dispatchSelecao({ type: "preview", index })}
               onMouseEnter={() => dispatchSelecao({ type: "preview", index })}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") {
+                  dispatchSelecao({ type: "clear" });
+                }
+              }}
               type="button"
             >
               <span
@@ -126,6 +121,7 @@ export function GastoCotaDistribuicaoAnualBarras({
       </ol>
 
       <figcaption
+        aria-atomic="true"
         aria-live="polite"
         className="min-h-20 rounded-md bg-surface-muted px-4 py-3 text-sm"
       >

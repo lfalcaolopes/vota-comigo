@@ -50,6 +50,9 @@ describe("gráfico mensal dos gastos da cota", () => {
         expect(html).toContain(`>${month}<`);
       }
       expect(html).toContain("Dados ainda não carregados");
+      expect(html).toContain(
+        "Setembro a dezembro aparecem como lacunas porque ainda não foram carregados",
+      );
     });
   });
 
@@ -128,9 +131,12 @@ describe("gráfico mensal dos gastos da cota", () => {
 
       // Assert
       expect(html).toContain('aria-live="polite"');
-      expect(html).toContain(
-        "Passe o mouse, toque ou use o teclado para explorar mês e categoria",
-      );
+      expect(html).toContain("Toque em uma barra ou selecione mês e categoria");
+      expect(html).toContain("Explorar valores");
+      expect(html).toContain("Selecione um mês");
+      expect(html).toContain("Selecione uma categoria");
+      expect(html).toContain("Ver tabela de gastos por mês");
+      expect(html).toContain('class="max-w-full overflow-x-auto pb-2"');
     });
   });
 });

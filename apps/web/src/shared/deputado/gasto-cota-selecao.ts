@@ -6,7 +6,8 @@ export type GastoCotaSelecao = {
 export type GastoCotaSelecaoAction =
   | { type: "preview"; index: number }
   | { type: "clear-preview" }
-  | { type: "pin"; index: number };
+  | { type: "pin"; index: number }
+  | { type: "clear" };
 
 export const gastoCotaSelecaoInicial: GastoCotaSelecao = {
   previewIndex: null,
@@ -23,7 +24,11 @@ export function reduceGastoCotaSelecao(
   if (action.type === "clear-preview") {
     return { ...state, previewIndex: null };
   }
-  return { previewIndex: null, pinnedIndex: action.index };
+  if (action.type === "clear") return gastoCotaSelecaoInicial;
+  return {
+    previewIndex: null,
+    pinnedIndex: state.pinnedIndex === action.index ? null : action.index,
+  };
 }
 
 export function getGastoCotaIndiceAtivo(
