@@ -212,6 +212,7 @@ export const deputadoProposicoesAssinadasResponseSchema = z
       disponivel: z.literal(true),
       total: z.number().int().nonnegative(),
       totalPrimeiroSignatario: z.number().int().nonnegative(),
+      coveredThroughDate: z.iso.date().nullable(),
     }),
     z.object({
       year: z.number().int(),
@@ -219,15 +220,29 @@ export const deputadoProposicoesAssinadasResponseSchema = z
     }),
   ])
   .superRefine((response, ctx) => {
-    if (
-      response.disponivel &&
-      response.totalPrimeiroSignatario > response.total
-    ) {
+    if (!response.disponivel) {
+      return;
+    }
+
+    if (response.totalPrimeiroSignatario > response.total) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["totalPrimeiroSignatario"],
         message:
           "totalPrimeiroSignatario não pode exceder o total de assinaturas",
+      });
+    }
+
+    // Um ano disponível tem assinaturas datadas nele, então a fronteira da
+    // fonte é sempre igual ou posterior a esse ano.
+    if (
+      response.coveredThroughDate !== null &&
+      Number(response.coveredThroughDate.slice(0, 4)) < response.year
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["coveredThroughDate"],
+        message: "coveredThroughDate não pode ser anterior ao ano disponível",
       });
     }
   });

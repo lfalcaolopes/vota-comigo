@@ -266,7 +266,13 @@ export class DeputadosService {
       totalPrimeiroSignatario,
     });
 
-    return { year, disponivel: true, total, totalPrimeiroSignatario };
+    return {
+      year,
+      disponivel: true,
+      total,
+      totalPrimeiroSignatario,
+      coveredThroughDate: proposicoesSource.coveredThroughDate,
+    };
   }
 
   async discursos(

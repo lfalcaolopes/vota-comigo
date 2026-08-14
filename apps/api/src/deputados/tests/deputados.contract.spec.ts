@@ -106,6 +106,7 @@ function fakeRepository(
   proposicoesAssinadasSource: DeputadosRepository['loadDeputadoProposicoesAssinadasSource'] = async () => ({
     anoCoberto: false,
     assinaturasJson: null,
+    coveredThroughDate: null,
   }),
 ): DeputadosRepository {
   return {
@@ -195,6 +196,7 @@ describe('GET /deputados/:externalIdDeputado/proposicoes-assinadas', () => {
             '2022-03-23': [2, 1],
             '2022-05-04': [1, 0],
           },
+          coveredThroughDate: '2026-08-13',
         }),
       );
 
@@ -213,9 +215,30 @@ describe('GET /deputados/:externalIdDeputado/proposicoes-assinadas', () => {
         disponivel: true,
         total: 3,
         totalPrimeiroSignatario: 1,
+        coveredThroughDate: '2026-08-13',
       });
       expect(response.body).not.toHaveProperty('items');
       await app.close();
+    });
+  });
+
+  describe('quando a fronteira da fonte é anterior ao ano consultado', () => {
+    it('rejeita a resposta pelo contrato público', () => {
+      // Arrange
+      const response = {
+        year: 2026,
+        disponivel: true,
+        total: 3,
+        totalPrimeiroSignatario: 1,
+        coveredThroughDate: '2025-12-19',
+      };
+
+      // Act
+      const result =
+        deputadoProposicoesAssinadasResponseSchema.safeParse(response);
+
+      // Assert
+      expect(result.success).toBe(false);
     });
   });
 
@@ -227,7 +250,11 @@ describe('GET /deputados/:externalIdDeputado/proposicoes-assinadas', () => {
         undefined,
         undefined,
         undefined,
-        async () => ({ anoCoberto: false, assinaturasJson: null }),
+        async () => ({
+          anoCoberto: false,
+          assinaturasJson: null,
+          coveredThroughDate: null,
+        }),
       );
 
       // Act

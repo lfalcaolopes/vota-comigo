@@ -32,6 +32,7 @@ function fakeRepository(
     loadDeputadoProposicoesAssinadasSource: async () => ({
       anoCoberto: false,
       assinaturasJson: null,
+      coveredThroughDate: null,
     }),
     ...overrides,
   };
@@ -363,6 +364,7 @@ describe('DeputadosService proposições assinadas', () => {
               '2022-03-23': [2, 1],
               '2022-05-04': [1, 0],
             },
+            coveredThroughDate: '2022-12-19',
           }),
         }),
         client,
@@ -377,8 +379,30 @@ describe('DeputadosService proposições assinadas', () => {
         disponivel: true,
         total: 3,
         totalPrimeiroSignatario: 1,
+        coveredThroughDate: '2022-12-19',
       });
       expect(client.fetchAll).not.toHaveBeenCalled();
+    });
+
+    it('expõe a fronteira da fonte, não a do ano consultado', async () => {
+      // Arrange
+      const service = new DeputadosService(
+        fakeRepository({
+          loadDeputadoPerfil: async () => perfilSource(),
+          loadDeputadoProposicoesAssinadasSource: async () => ({
+            anoCoberto: true,
+            assinaturasJson: { '2022-03-23': [2, 1] },
+            coveredThroughDate: '2026-08-13',
+          }),
+        }),
+        { fetchAll: jest.fn() },
+      );
+
+      // Act
+      const result = await service.proposicoesAssinadas(74646, 2022);
+
+      // Assert
+      expect(result).toMatchObject({ coveredThroughDate: '2026-08-13' });
     });
   });
 
@@ -391,6 +415,7 @@ describe('DeputadosService proposições assinadas', () => {
           loadDeputadoProposicoesAssinadasSource: async () => ({
             anoCoberto: true,
             assinaturasJson: null,
+            coveredThroughDate: '2022-12-19',
           }),
         }),
         { fetchAll: jest.fn() },
@@ -405,6 +430,7 @@ describe('DeputadosService proposições assinadas', () => {
         disponivel: true,
         total: 0,
         totalPrimeiroSignatario: 0,
+        coveredThroughDate: '2022-12-19',
       });
     });
   });
@@ -419,6 +445,7 @@ describe('DeputadosService proposições assinadas', () => {
           loadDeputadoProposicoesAssinadasSource: async () => ({
             anoCoberto: false,
             assinaturasJson: null,
+            coveredThroughDate: '2026-08-13',
           }),
         }),
         client,
@@ -445,6 +472,7 @@ describe('DeputadosService proposições assinadas', () => {
           loadDeputadoProposicoesAssinadasSource: async () => ({
             anoCoberto: true,
             assinaturasJson: { '2022-03-23': [2, 1] },
+            coveredThroughDate: '2022-12-19',
           }),
         }),
         client,
@@ -459,6 +487,7 @@ describe('DeputadosService proposições assinadas', () => {
         disponivel: true,
         total: 2,
         totalPrimeiroSignatario: 1,
+        coveredThroughDate: '2022-12-19',
       });
       expect(client.fetchAll).not.toHaveBeenCalled();
     });

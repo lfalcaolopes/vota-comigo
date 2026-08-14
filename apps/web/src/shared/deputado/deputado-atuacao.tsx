@@ -100,40 +100,67 @@ export function AtuacaoResumo({
     proposicoesState.status === "success" &&
     !proposicoesState.response.disponivel;
 
+  const coberturaEmAberto =
+    proposicoesDisponivel !== null &&
+    proposicoesDisponivel.coveredThroughDate !== null &&
+    proposicoesDisponivel.coveredThroughDate.startsWith(
+      String(proposicoesDisponivel.year),
+    )
+      ? proposicoesDisponivel.coveredThroughDate
+      : null;
+
   return (
-    <dl className="grid divide-y divide-border border-b border-border sm:grid-cols-2 sm:divide-x sm:divide-y-0">
-      <Contagem
-        detail={
-          proposicoesDisponivel !== null
-            ? primeiroSignatarioLabel(
-                proposicoesDisponivel.totalPrimeiroSignatario,
-              )
-            : null
-        }
-        label="Proposições assinadas"
-        lacuna={proposicoesLacuna}
-        state={proposicoesState}
-        value={
-          proposicoesDisponivel !== null
-            ? String(proposicoesDisponivel.total)
-            : null
-        }
-      />
-      <Contagem
-        label="Discursos registrados"
-        state={discursosState}
-        value={
-          discursosState.status === "success"
-            ? String(discursosState.response.total)
-            : null
-        }
-      />
-    </dl>
+    <div className="grid gap-3">
+      <dl className="grid divide-y divide-border border-b border-border sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+        <Contagem
+          detail={
+            proposicoesDisponivel !== null
+              ? primeiroSignatarioLabel(
+                  proposicoesDisponivel.totalPrimeiroSignatario,
+                )
+              : null
+          }
+          label="Proposições assinadas"
+          lacuna={proposicoesLacuna}
+          state={proposicoesState}
+          value={
+            proposicoesDisponivel !== null
+              ? String(proposicoesDisponivel.total)
+              : null
+          }
+        />
+        <Contagem
+          label="Discursos registrados"
+          state={discursosState}
+          value={
+            discursosState.status === "success"
+              ? String(discursosState.response.total)
+              : null
+          }
+        />
+      </dl>
+      {coberturaEmAberto !== null ? (
+        <p className="text-sm text-muted">
+          Última atualização: {formatCobertura(coberturaEmAberto)}.
+        </p>
+      ) : null}
+    </div>
   );
 }
 
 function primeiroSignatarioLabel(totalPrimeiroSignatario: number): string {
   return `${totalPrimeiroSignatario} como primeiro signatário`;
+}
+
+const coberturaFormatter = new Intl.DateTimeFormat("pt-BR", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+function formatCobertura(iso: string): string {
+  return coberturaFormatter.format(new Date(`${iso}T00:00:00Z`));
 }
 
 export function DeputadoOrgaosSection({ state }: { state: OrgaosState }) {

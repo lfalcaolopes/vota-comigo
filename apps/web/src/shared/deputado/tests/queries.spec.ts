@@ -75,6 +75,7 @@ const proposicoesAssinadasResponse: DeputadoProposicoesAssinadasResponse = {
   disponivel: true,
   total: 0,
   totalPrimeiroSignatario: 0,
+  coveredThroughDate: "2026-08-13",
 };
 
 const discursosResponse: DeputadoDiscursosResponse = {

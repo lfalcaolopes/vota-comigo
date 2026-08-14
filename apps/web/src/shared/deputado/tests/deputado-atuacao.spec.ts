@@ -37,6 +37,7 @@ describe("resumo de atuação", () => {
         disponivel: true,
         total: 12,
         totalPrimeiroSignatario: 3,
+        coveredThroughDate: "2026-08-13",
       };
 
       // Act
@@ -49,6 +50,63 @@ describe("resumo de atuação", () => {
     });
   });
 
+  describe("quando o ano exibido é o que a fonte ainda está preenchendo", () => {
+    it("informa até quando a Câmara foi lida", () => {
+      // Arrange
+      const response: DeputadoProposicoesAssinadasResponse = {
+        year: 2026,
+        disponivel: true,
+        total: 236,
+        totalPrimeiroSignatario: 212,
+        coveredThroughDate: "2026-08-13",
+      };
+
+      // Act
+      const html = render({ status: "success", response });
+
+      // Assert
+      expect(html).toContain("13 de agosto de 2026");
+    });
+  });
+
+  describe("quando o ano exibido já está inteiramente coberto", () => {
+    it("omite a linha de cobertura", () => {
+      // Arrange
+      const response: DeputadoProposicoesAssinadasResponse = {
+        year: 2024,
+        disponivel: true,
+        total: 12,
+        totalPrimeiroSignatario: 3,
+        coveredThroughDate: "2026-08-13",
+      };
+
+      // Act
+      const html = render({ status: "success", response });
+
+      // Assert
+      expect(html).not.toContain("atualização");
+    });
+  });
+
+  describe("quando a fronteira da fonte não é conhecida", () => {
+    it("omite a linha de cobertura em vez de inventar uma data", () => {
+      // Arrange
+      const response: DeputadoProposicoesAssinadasResponse = {
+        year: 2026,
+        disponivel: true,
+        total: 236,
+        totalPrimeiroSignatario: 212,
+        coveredThroughDate: null,
+      };
+
+      // Act
+      const html = render({ status: "success", response });
+
+      // Assert
+      expect(html).not.toContain("atualização");
+    });
+  });
+
   describe("quando o ano está carregado mas o deputado não assinou nada", () => {
     it("exibe zero em vez do texto de lacuna", () => {
       // Arrange
@@ -57,6 +115,7 @@ describe("resumo de atuação", () => {
         disponivel: true,
         total: 0,
         totalPrimeiroSignatario: 0,
+        coveredThroughDate: "2026-08-13",
       };
 
       // Act

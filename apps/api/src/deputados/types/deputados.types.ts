@@ -65,6 +65,7 @@ export type ContadorAssinaturas = readonly [
 export type DeputadoProposicoesAssinadasSource = {
   anoCoberto: boolean;
   assinaturasJson: Record<string, ContadorAssinaturas> | null;
+  coveredThroughDate: string | null;
 };
 
 export type DeputadoOrgaoSource = {

@@ -439,7 +439,7 @@ export function createDeputadosRepository(
     },
 
     async loadDeputadoProposicoesAssinadasSource(deputadoId, year) {
-      const [coberturaRows, deputadoRows] = await Promise.all([
+      const [coberturaRows, deputadoRows, fronteiraRows] = await Promise.all([
         db
           .select({ year: deputadoProposicaoAssinada.year })
           .from(deputadoProposicaoAssinada)
@@ -457,6 +457,16 @@ export function createDeputadosRepository(
             ),
           )
           .limit(1),
+        // A fronteira da fonte é o dia mais recente varrido pela ingestão, e
+        // ele vive no ano mais recente carregado — não no ano consultado.
+        db.execute<{ coveredThroughDate: string | null }>(sql`
+          select max(assinatura.key) as "coveredThroughDate"
+          from ${deputadoProposicaoAssinada} as assinada,
+               jsonb_each(assinada.assinaturas_json) as assinatura
+          where assinada.year = (
+            select max(year) from ${deputadoProposicaoAssinada}
+          )
+        `),
       ]);
 
       return {
@@ -465,6 +475,7 @@ export function createDeputadosRepository(
           (deputadoRows[0]
             ?.assinaturasJson as DeputadoProposicoesAssinadasSource['assinaturasJson']) ??
           null,
+        coveredThroughDate: fronteiraRows[0]?.coveredThroughDate ?? null,
       };
     },
   };
