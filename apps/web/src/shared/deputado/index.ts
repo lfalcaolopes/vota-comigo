@@ -1,5 +1,6 @@
 export {
   ceap,
+  comparativoDeputados,
   discursos,
   feed,
   orgaos,
@@ -28,6 +29,27 @@ export {
   useDeputadoFeedState,
   type UseDeputadoFeedState,
 } from "./use-deputado-feed-state";
+export {
+  buildComparativoDeputadosHref,
+  canOpenComparativo,
+  hasComparativoDeputadoLimit,
+  parseComparativoDeputadosIds,
+  toComparativoDeputadosSegment,
+  toggleComparativoDeputado,
+  MAX_COMPARATIVO_DEPUTADOS,
+  MIN_COMPARATIVO_DEPUTADOS,
+  type ComparativoDeputadosHref,
+} from "./comparativo-selecao";
+export { ComparativoDeputados } from "./comparativo-deputados";
+export { ComparativoDeputadosView } from "./comparativo-deputados-view";
+export {
+  buildComparativoDeputadosGrid,
+  type ComparativoDeputadosGrid,
+} from "./comparativo-deputados-grid";
+export {
+  useComparativoDeputados,
+  type ComparativoDeputadosState,
+} from "./use-comparativo-deputados";
 export { DeputadoPerfil } from "./deputado-perfil";
 export { parseDeputadoPerfilYear } from "./deputado-perfil-year-url";
 export { DeputadoPerfilSkeleton } from "./deputado-perfil-skeleton";

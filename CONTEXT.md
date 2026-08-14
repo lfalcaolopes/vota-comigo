@@ -187,7 +187,7 @@ _Avoid_: Filtro de proposição, recorte por concordância.
 
 **Detalhe de resultado do matcher**: Apresentação expandida de um deputado no matcher, com métricas completas e detalhamento voto a voto.
 
-**Comparativo de deputados**: Experiência pública que coloca dois ou três deputados lado a lado para comparar seus votos e dados consolidados em um recorte de proposições.
+**Comparativo de deputados**: Experiência pública que coloca dois ou três deputados lado a lado para comparar seus dados consolidados e, quando aberta a partir do matcher, também seus votos em um recorte de proposições.
 _Avoid_: Comparativo de políticos.
 
 **Concordância no comparativo**: Indicador de uma célula do Comparativo de deputados que reutiliza a mesma semântica de concordância, discordância e fora do denominador do Matcher.
@@ -297,6 +297,11 @@ _Avoid_: Mês zerado como sinônimo de mês sem dado.
 - O **Comparativo de deputados** usa **Em atividade** como status público atual do deputado, não **Em exercício**.
 - O **Comparativo de deputados** oferece entrada para o **Perfil do deputado** no cabeçalho de cada deputado comparado.
 - O **Resumo de presença do deputado** exibido no **Comparativo de deputados** usa o mesmo recorte do **Perfil do deputado**, não apenas as proposições comparadas.
+- O **Comparativo de deputados** tem duas entradas: a seleção de **Deputados** no resultado do **Matcher** e a seleção na listagem pública de **Deputados**; a segunda não tem **Posição do usuário** e por isso compara apenas dados consolidados.
+- Aberto pelo **Matcher**, o **Comparativo de deputados** oferece a grade de votos e a comparação de dados consolidados como visualizações da mesma tela, não como endereços diferentes.
+- As métricas anuais do **Comparativo de deputados** usam o ano coberto mais recente comum aos **Deputados** comparados, o mesmo recorte de ano do **Perfil do deputado**.
+- Mandatos sem nenhum ano em comum não impedem o **Comparativo de deputados**: identidade e **Resumo de presença do deputado** continuam, e as métricas anuais aparecem como **Lacuna de dados**.
+- No **Comparativo de deputados**, os **Gastos da cota do deputado** aparecem como posição frente à mediana do estado, sem valor absoluto, porque dois totais lado a lado seriam confronto nominal de gastos.
 - Um **Perfil do deputado** pertence a exatamente um **Deputado**.
 - O **Perfil do deputado** usa dados cadastrais estáveis do **Deputado** e o **Snapshot público do deputado** para partido, UF representada, foto e outros dados públicos atuais.
 - O **Perfil do deputado** e os cards de resultado do **Matcher** usam a mesma regra de **Nome público do deputado**.

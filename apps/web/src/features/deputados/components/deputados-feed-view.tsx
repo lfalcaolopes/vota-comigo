@@ -9,9 +9,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 import {
+  buildComparativoDeputadosHref,
   buildDeputadosFeedHref,
+  canOpenComparativo,
   DeputadoPartidoControl,
   DeputadoUfControl,
+  hasComparativoDeputadoLimit,
+  toggleComparativoDeputado,
   useDeputadoFeedState,
 } from "@/shared/deputado";
 import { Button, SearchField, Switch } from "@/shared/ui";
@@ -73,7 +77,41 @@ export function DeputadosFeedView({
 
   const [draft, setDraft] = useState(initialQuery ?? "");
   const [openFilter, setOpenFilter] = useState<OpenFilter>(null);
+  const [isSelectingComparativo, setIsSelectingComparativo] = useState(false);
+  const [selectedComparativo, setSelectedComparativo] = useState<
+    readonly DeputadoCard[]
+  >([]);
   const activeQuery = query || null;
+  const canCompare = canOpenComparativo(selectedComparativo);
+  const hasDeputadoLimit = hasComparativoDeputadoLimit(selectedComparativo);
+
+  function startComparativoSelection() {
+    setSelectedComparativo([]);
+    setIsSelectingComparativo(true);
+  }
+
+  function cancelComparativoSelection() {
+    setSelectedComparativo([]);
+    setIsSelectingComparativo(false);
+  }
+
+  function handleToggleComparativo(externalIdDeputado: number) {
+    const card = items.find(
+      (item) => item.externalIdDeputado === externalIdDeputado,
+    );
+    if (card === undefined) return;
+    setSelectedComparativo((selecionados) =>
+      toggleComparativoDeputado(selecionados, card),
+    );
+  }
+
+  function openComparativo() {
+    router.push(
+      buildComparativoDeputadosHref(
+        selectedComparativo.map((card) => card.externalIdDeputado),
+      ),
+    );
+  }
 
   async function handleClear() {
     setDraft("");
@@ -190,6 +228,34 @@ export function DeputadosFeedView({
     await clearFilters();
   }
 
+  const compareAction = isSelectingComparativo ? (
+    <div className="grid grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
+      <Button
+        className="h-11 min-w-0 sm:h-auto"
+        onClick={cancelComparativoSelection}
+        variant="ghost"
+      >
+        Cancelar
+      </Button>
+      <Button
+        className="h-11 min-w-0 sm:h-auto"
+        disabled={!canCompare}
+        onClick={openComparativo}
+        variant="primary"
+      >
+        Comparar
+      </Button>
+    </div>
+  ) : (
+    <Button
+      className="h-11 w-full min-w-0 !border-border-strong sm:h-auto sm:w-auto sm:shrink-0 sm:px-5"
+      onClick={startComparativoSelection}
+      variant="secondary"
+    >
+      Comparar deputados
+    </Button>
+  );
+
   const filterPanelClassName = "order-last";
   const filterTriggerClassName =
     "w-full [&>button]:w-full [&>button]:justify-center [&>span]:w-full sm:w-auto sm:[&>button]:w-auto sm:[&>span]:w-auto";
@@ -288,12 +354,34 @@ export function DeputadosFeedView({
         </div>
       </div>
 
+      <div className="grid min-w-0 gap-3">
+        <div className="sm:flex sm:justify-end">{compareAction}</div>
+        {isSelectingComparativo ? (
+          <p className="text-sm text-muted">
+            {hasDeputadoLimit
+              ? "Você pode comparar até 3 deputados."
+              : "Selecione 2 ou 3 deputados para comparar."}
+          </p>
+        ) : null}
+      </div>
+
       <DeputadosFeedList
         canLoadMore={canLoadMore}
         display={display}
         items={items}
         onClearFilters={handleClearFilters}
         onLoadMore={loadMore}
+        selection={
+          isSelectingComparativo
+            ? {
+                hasLimit: hasDeputadoLimit,
+                onToggle: handleToggleComparativo,
+                selectedIds: selectedComparativo.map(
+                  (card) => card.externalIdDeputado,
+                ),
+              }
+            : undefined
+        }
         status={status}
         total={total}
       />

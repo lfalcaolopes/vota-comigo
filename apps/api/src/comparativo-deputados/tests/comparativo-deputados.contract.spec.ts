@@ -1,0 +1,233 @@
+import type { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { comparativoDeputadosResponseSchema } from '@vota-comigo/shared-types';
+import request from 'supertest';
+
+import {
+  DEPUTADOS_REPOSITORY,
+  type DeputadosRepository,
+} from '@/deputados/deputados.repository';
+import type { DeputadoPerfilSource } from '@/deputados/types/deputados.types';
+
+import { ComparativoDeputadosController } from '../comparativo-deputados.controller';
+import { ComparativoDeputadosService } from '../comparativo-deputados.service';
+
+type TestServer = Parameters<typeof request>[0];
+
+function getTestServer(app: INestApplication): TestServer {
+  const server: unknown = app.getHttpServer();
+  return server as TestServer;
+}
+
+function perfilSource(externalIdDeputado: number): DeputadoPerfilSource {
+  return {
+    id: `deputado-${externalIdDeputado}`,
+    externalIdDeputado,
+    nome: `Deputado ${externalIdDeputado}`,
+    nomeCivil: `Deputado ${externalIdDeputado} da Silva`,
+    dataNascimento: null,
+    municipioNascimento: null,
+    ufNascimento: null,
+    urlRedeSocial: null,
+    externalIdLegislaturaInicial: 56,
+    externalIdLegislaturaFinal: 57,
+    legislaturaInicialPeriodo: {
+      dataInicio: '2019-02-01',
+      dataFim: '2023-01-31',
+    },
+    legislaturaFinalPeriodo: {
+      dataInicio: '2023-02-01',
+      dataFim: '2027-01-31',
+    },
+    eventos: [
+      {
+        dataHora: '2023-02-01T00:00:00',
+        situacao: 'Exercício',
+        descricaoStatus: 'Titular',
+        nomeEleitoral: `Deputado ${externalIdDeputado}`,
+        siglaPartido: 'PT',
+        siglaUf: 'MG',
+        urlFoto: null,
+      },
+    ],
+  };
+}
+
+function createRepository(): DeputadosRepository {
+  return {
+    loadDeputadosFeed: async () => ({ items: [], total: 0 }),
+    loadUfsDisponiveis: async () => [],
+    loadPartidosDisponiveis: async () => [],
+    loadDeputadoPerfil: async (externalIdDeputado) =>
+      externalIdDeputado === 220593 || externalIdDeputado === 204554
+        ? perfilSource(externalIdDeputado)
+        : null,
+    loadResumoPresenca: async () => ({
+      presencas: 90,
+      ausenciasSemMotivoConhecido: 10,
+    }),
+    loadDeputadoCeapSource: async () => ({
+      coberturas: [{ year: 2024, coveredThroughMonth: 12 }],
+      gasto: { siglaUf: 'MG', gastosJson: { '1': { '1': 100_000 } } },
+      categorias: [{ externalNumSubCota: 1, description: 'PASSAGENS AÉREAS' }],
+      medianaUf: { amountUsedCents: 200_000, deputadoCount: 53 },
+      intervalosExercicio: [
+        { openedAt: '2019-02-01T00:00:00.000Z', closedAt: null },
+      ],
+      datasInicioLegislatura: ['2023-02-01T00:00:00.000Z'],
+    }),
+    loadDeputadoOrgaos: async () => [
+      {
+        externalIdOrgao: 2001,
+        siglaOrgao: 'CCJC',
+        nome: 'Comissão de Constituição e Justiça e de Cidadania',
+        titulo: 'Titular',
+        dataInicio: '2024-03-01',
+        dataFim: null,
+      },
+    ],
+    loadDeputadoProposicoesAssinadasSource: async () => ({
+      anoCoberto: true,
+      assinaturasJson: { '2024-03-04': [4, 1] },
+      coveredThroughDate: '2025-08-14',
+    }),
+  };
+}
+
+async function createApp(): Promise<INestApplication> {
+  const moduleRef = await Test.createTestingModule({
+    controllers: [ComparativoDeputadosController],
+    providers: [
+      ComparativoDeputadosService,
+      { provide: DEPUTADOS_REPOSITORY, useValue: createRepository() },
+    ],
+  }).compile();
+  const app: INestApplication = moduleRef.createNestApplication();
+  await app.init();
+  return app;
+}
+
+describe('GET /comparativo-deputados', () => {
+  describe('quando dois deputados são comparados em um ano coberto', () => {
+    it('responde pelo contrato público sem o valor absoluto da cota', async () => {
+      // Arrange
+      const app = await createApp();
+
+      // Act
+      const response = await request(getTestServer(app))
+        .get('/comparativo-deputados?ids=220593,204554&year=2024')
+        .expect(200);
+
+      // Assert
+      expect(
+        comparativoDeputadosResponseSchema.safeParse(response.body).success,
+      ).toBe(true);
+      expect(response.body.items[0].cota).toEqual({
+        status: 'comparavel',
+        percentualSobreMedianaUf: 50,
+        medianaUf: { siglaUf: 'MG', deputadoCount: 53 },
+      });
+      await app.close();
+    });
+
+    it('responde as mesmas contagens do perfil para o ano', async () => {
+      // Arrange
+      const app = await createApp();
+
+      // Act
+      const response = await request(getTestServer(app))
+        .get('/comparativo-deputados?ids=220593,204554&year=2024')
+        .expect(200);
+
+      // Assert
+      expect({
+        proposicoesAssinadas: response.body.items[1].proposicoesAssinadas,
+        orgaos: response.body.items[1].orgaos.total,
+      }).toEqual({
+        proposicoesAssinadas: {
+          year: 2024,
+          disponivel: true,
+          total: 4,
+          totalPrimeiroSignatario: 1,
+          coveredThroughDate: '2025-08-14',
+        },
+        orgaos: 1,
+      });
+      await app.close();
+    });
+  });
+
+  describe('quando a lista de ids é inválida', () => {
+    it('recusa um único deputado', async () => {
+      // Arrange
+      const app = await createApp();
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/comparativo-deputados?ids=220593',
+      );
+
+      // Assert
+      expect(response.status).toBe(400);
+      await app.close();
+    });
+
+    it('recusa ids repetidos', async () => {
+      // Arrange
+      const app = await createApp();
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/comparativo-deputados?ids=220593,220593',
+      );
+
+      // Assert
+      expect(response.status).toBe(400);
+      await app.close();
+    });
+
+    it('recusa mais de três deputados', async () => {
+      // Arrange
+      const app = await createApp();
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/comparativo-deputados?ids=1,2,3,4',
+      );
+
+      // Assert
+      expect(response.status).toBe(400);
+      await app.close();
+    });
+
+    it('recusa um id não numérico', async () => {
+      // Arrange
+      const app = await createApp();
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/comparativo-deputados?ids=220593,abc',
+      );
+
+      // Assert
+      expect(response.status).toBe(400);
+      await app.close();
+    });
+  });
+
+  describe('quando um deputado não existe', () => {
+    it('responde 404', async () => {
+      // Arrange
+      const app = await createApp();
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/comparativo-deputados?ids=220593,999999',
+      );
+
+      // Assert
+      expect(response.status).toBe(404);
+      await app.close();
+    });
+  });
+});

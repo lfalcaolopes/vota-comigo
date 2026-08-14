@@ -4,6 +4,11 @@ import type {
   PosicaoUsuarioMatcher,
 } from "@vota-comigo/shared-types";
 
+import {
+  parseComparativoDeputadosIds,
+  toComparativoDeputadosSegment,
+} from "@/shared/deputado";
+
 import type { MatcherRascunho } from "./matcher-rascunho";
 import { validateExecucao } from "./matcher-validation";
 
@@ -70,28 +75,13 @@ export function buildResultadoDetalheHref(
 }
 
 export function parseComparativoIds(segment: string): number[] | null {
-  let decodedSegment: string;
-  try {
-    decodedSegment = decodeURIComponent(segment);
-  } catch {
-    return null;
-  }
-  const ids = decodedSegment.split(",").map(Number);
-  if (
-    ids.length < 2 ||
-    ids.length > 3 ||
-    new Set(ids).size !== ids.length ||
-    ids.some((id) => !Number.isInteger(id) || id <= 0)
-  ) {
-    return null;
-  }
-  return ids;
+  return parseComparativoDeputadosIds(segment);
 }
 
 export function buildComparativoHref(
   externalIdsDeputado: readonly number[],
 ): ComparativoHref {
-  return `/matcher/comparativo/${externalIdsDeputado.join(",")}`;
+  return `/matcher/comparativo/${toComparativoDeputadosSegment(externalIdsDeputado)}`;
 }
 
 export function resolvePosicoesSegment(

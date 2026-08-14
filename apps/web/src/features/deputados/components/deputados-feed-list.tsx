@@ -8,6 +8,12 @@ import type {
   DeputadoFeedStatus,
 } from "@/shared/deputado";
 
+type DeputadosFeedListSelection = {
+  hasLimit: boolean;
+  onToggle: (externalIdDeputado: number) => void;
+  selectedIds: readonly number[];
+};
+
 type DeputadosFeedListProps = {
   items: DeputadoCard[];
   total: number;
@@ -16,6 +22,7 @@ type DeputadosFeedListProps = {
   canLoadMore: boolean;
   onLoadMore: () => void;
   onClearFilters: () => void;
+  selection?: DeputadosFeedListSelection;
 };
 
 export function DeputadosFeedList({
@@ -26,6 +33,7 @@ export function DeputadosFeedList({
   canLoadMore,
   onLoadMore,
   onClearFilters,
+  selection,
 }: DeputadosFeedListProps) {
   if (display === "loading") {
     return <SkeletonRows count={3} />;
@@ -76,13 +84,29 @@ export function DeputadosFeedList({
   return (
     <div className="grid min-w-0 gap-6">
       <div className="grid min-w-0 border-t border-border">
-        {items.map((card) => (
-          <DeputadoRow
-            card={card}
-            href={`/deputados/${card.externalIdDeputado}`}
-            key={card.externalIdDeputado}
-          />
-        ))}
+        {items.map((card) => {
+          const isSelected =
+            selection?.selectedIds.includes(card.externalIdDeputado) ?? false;
+
+          return (
+            <DeputadoRow
+              card={card}
+              href={
+                selection ? undefined : `/deputados/${card.externalIdDeputado}`
+              }
+              key={card.externalIdDeputado}
+              selection={
+                selection
+                  ? {
+                      disabled: selection.hasLimit && !isSelected,
+                      onToggle: selection.onToggle,
+                      selected: isSelected,
+                    }
+                  : undefined
+              }
+            />
+          );
+        })}
         {status === "loading" ? <SkeletonRows count={3} /> : null}
       </div>
 

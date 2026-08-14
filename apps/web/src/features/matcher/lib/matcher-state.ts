@@ -12,6 +12,12 @@ import type {
 } from "@vota-comigo/shared-types";
 
 import {
+  canOpenComparativo as canOpenComparativoDeputados,
+  hasComparativoDeputadoLimit as hasComparativoDeputadoLimitReached,
+  toggleComparativoDeputado as toggleComparativoDeputadoSelecionado,
+} from "@/shared/deputado";
+
+import {
   validateExecucao,
   type ExecucaoValidation,
 } from "./matcher-validation";
@@ -19,9 +25,6 @@ import { shouldClearFiltroConcordancia } from "./filtro-concordancia-reset";
 import type { MatcherRascunho } from "./matcher-rascunho";
 
 export type MatcherStatus = "idle" | "loading" | "error";
-
-const MIN_COMPARATIVO_DEPUTADOS = 2;
-const MAX_COMPARATIVO_DEPUTADOS = 3;
 
 export type MatcherState = {
   isHydrated: boolean;
@@ -119,27 +122,6 @@ function deselect(
     posicoes,
   };
   return applyFiltroConcordanciaReset(state, next);
-}
-
-function hasSelectedComparativoDeputado(
-  state: MatcherState,
-  externalIdDeputado: number,
-): boolean {
-  return state.selectedComparativoDeputados.some(
-    (deputado) => deputado.externalIdDeputado === externalIdDeputado,
-  );
-}
-
-function deselectComparativoDeputado(
-  state: MatcherState,
-  externalIdDeputado: number,
-): MatcherState {
-  return {
-    ...state,
-    selectedComparativoDeputados: state.selectedComparativoDeputados.filter(
-      (deputado) => deputado.externalIdDeputado !== externalIdDeputado,
-    ),
-  };
 }
 
 export function matcherReducer(
@@ -251,22 +233,16 @@ export function matcherReducer(
         selectedComparativoDeputados: [],
       };
     case "toggleComparativoDeputado": {
-      const id = action.deputado.externalIdDeputado;
-      if (hasSelectedComparativoDeputado(state, id)) {
-        return deselectComparativoDeputado(state, id);
-      }
-      if (
-        state.selectedComparativoDeputados.length >= MAX_COMPARATIVO_DEPUTADOS
-      ) {
-        return state;
-      }
-      return {
-        ...state,
-        selectedComparativoDeputados: [
-          ...state.selectedComparativoDeputados,
-          action.deputado,
-        ],
-      };
+      const selectedComparativoDeputados = toggleComparativoDeputadoSelecionado(
+        state.selectedComparativoDeputados,
+        action.deputado,
+      );
+      return selectedComparativoDeputados === state.selectedComparativoDeputados
+        ? state
+        : {
+            ...state,
+            selectedComparativoDeputados: [...selectedComparativoDeputados],
+          };
     }
     case "cancelComparativoSelection":
       return {
@@ -330,12 +306,9 @@ export function isComparativoSelectionMode(state: MatcherState): boolean {
 }
 
 export function canOpenComparativo(state: MatcherState): boolean {
-  return (
-    state.selectedComparativoDeputados.length >= MIN_COMPARATIVO_DEPUTADOS &&
-    state.selectedComparativoDeputados.length <= MAX_COMPARATIVO_DEPUTADOS
-  );
+  return canOpenComparativoDeputados(state.selectedComparativoDeputados);
 }
 
 export function hasComparativoDeputadoLimit(state: MatcherState): boolean {
-  return state.selectedComparativoDeputados.length >= MAX_COMPARATIVO_DEPUTADOS;
+  return hasComparativoDeputadoLimitReached(state.selectedComparativoDeputados);
 }

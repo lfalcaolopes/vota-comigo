@@ -36,5 +36,6 @@ const CAMARA_RUNTIME_TIMEOUT_MS = 5_000;
       useFactory: (db: DrizzleDatabase) => createDeputadosRepository(db),
     },
   ],
+  exports: [DEPUTADOS_REPOSITORY],
 })
 export class DeputadosModule {}

@@ -1,4 +1,5 @@
 import type {
+  ComparativoDeputadosResponse,
   DeputadoCeapResponse,
   DeputadoDiscursosResponse,
   DeputadoPerfil,
@@ -76,5 +77,16 @@ export function discursos(
 ): Promise<DeputadoDiscursosResponse> {
   return apiGet<DeputadoDiscursosResponse>(
     `/deputados/${externalIdDeputado}/discursos?year=${year}`,
+  );
+}
+
+export function comparativoDeputados(
+  externalIdsDeputado: readonly number[],
+  year?: number,
+): Promise<ComparativoDeputadosResponse> {
+  const yearParam = year !== undefined ? `&year=${year}` : "";
+
+  return apiGet<ComparativoDeputadosResponse>(
+    `/comparativo-deputados?ids=${externalIdsDeputado.join(",")}${yearParam}`,
   );
 }

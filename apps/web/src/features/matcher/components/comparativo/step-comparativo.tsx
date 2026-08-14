@@ -1,3 +1,5 @@
+"use client";
+
 import type {
   DeputadoPerfil,
   MatcherDeputadoDetalhe,
@@ -6,9 +8,9 @@ import type {
   PosicaoUsuarioMatcher,
 } from "@vota-comigo/shared-types";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
-import { DeputadoAvatar } from "@/shared/deputado";
+import { ComparativoDeputados, DeputadoAvatar } from "@/shared/deputado";
 import {
   nomePublicoLabel,
   toAtividadeAriaLabel,
@@ -24,11 +26,17 @@ import {
   Badge,
   Button,
   ErrorState,
+  SegmentedControl,
   SkeletonRows,
 } from "@/shared/ui";
 
 import { buildComparativoDeputadosGrid } from "../../lib/comparativo-deputados-grid";
 import type { MatcherStatus } from "../../lib/matcher-state";
+
+const COMPARATIVO_VIEW_ITEMS = [
+  { id: "votos", label: "Votos comparados" },
+  { id: "gerais", label: "Dados gerais" },
+];
 
 const labelColumnClassName =
   "sticky left-0 z-10 border-r border-b border-border bg-bg p-3";
@@ -70,6 +78,7 @@ export function StepComparativo({
     ]),
   );
   const gridTemplateColumns = `minmax(8rem,0.6fr) repeat(${grid.columns.length}, minmax(13rem,1fr))`;
+  const [view, setView] = useState("votos");
 
   return (
     <div className="grid gap-5">
@@ -80,15 +89,35 @@ export function StepComparativo({
         </Button>
       </div>
 
-      {status === "loading" ? <SkeletonRows count={5} /> : null}
-      {status === "error" ? (
+      <SegmentedControl
+        activeId={view}
+        className="w-full sm:w-auto sm:justify-self-start"
+        itemClassName="flex-1 sm:flex-none"
+        items={COMPARATIVO_VIEW_ITEMS}
+        label="Visualização do comparativo"
+        onSelect={setView}
+      />
+
+      {view === "gerais" ? (
+        <ComparativoDeputados
+          externalIdsDeputado={deputados.map(
+            (deputado) => deputado.externalIdDeputado,
+          )}
+          showYearSelector={false}
+        />
+      ) : null}
+
+      {view === "votos" && status === "loading" ? (
+        <SkeletonRows count={5} />
+      ) : null}
+      {view === "votos" && status === "error" ? (
         <ErrorState
           body="Não foi possível carregar o comparativo. Tente novamente."
           onRetry={onRetry}
         />
       ) : null}
 
-      {status === "idle" ? (
+      {view === "votos" && status === "idle" ? (
         <>
           <div className="lg:hidden">
             <ComparativoMobile rows={grid.rows} deputadosById={deputadosById} />

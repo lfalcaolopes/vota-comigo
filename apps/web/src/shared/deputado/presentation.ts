@@ -1,6 +1,5 @@
 import type {
   DeputadoLegislaturaPeriodo,
-  DeputadoPerfil,
   DeputadoPeriodoPartidario,
 } from "@vota-comigo/shared-types";
 
@@ -100,8 +99,10 @@ export function toLegislaturaPeriodoLabel(
   return `${toYearLabel(periodo.dataInicio)} – ${toYearLabel(periodo.dataFim)}`;
 }
 
-export function nomePublicoLabel(perfil: DeputadoPerfil): string {
-  return perfil.nomePublico ?? CARGO_DEPUTADO;
+export function nomePublicoLabel(deputado: {
+  nomePublico: string | null;
+}): string {
+  return deputado.nomePublico ?? CARGO_DEPUTADO;
 }
 
 export function toAtividadeLabel(emAtividade: boolean): string {

@@ -108,6 +108,47 @@ const resultado = {
   semBomMatch: false,
 };
 
+function comparativoDeputado(externalIdDeputado: number) {
+  return {
+    externalIdDeputado,
+    nomePublico: `Deputado ${externalIdDeputado}`,
+    nomeCivil: null,
+    fonteOficial: `https://www.camara.leg.br/deputados/${externalIdDeputado}`,
+    emAtividade: true,
+    snapshotPublicoDisponivel: true,
+    snapshotPublico: {
+      nomeEleitoral: `Deputado ${externalIdDeputado}`,
+      siglaPartido: "PP",
+      siglaUf: "SP",
+      urlFoto: null,
+    },
+    legislaturaInicialPeriodo: null,
+    legislaturaFinalPeriodo: null,
+    resumoPresencaDisponivel: true,
+    resumoPresenca: {
+      percentualPresenca: 92,
+      presencas: 92,
+      totalVotacoesEmExercicio: 100,
+      ausenciasSemMotivoConhecido: 8,
+    },
+    proposicoesAssinadas: {
+      year: 2025,
+      disponivel: true,
+      total: 12,
+      totalPrimeiroSignatario: 3,
+      coveredThroughDate: "2025-08-14",
+    },
+    orgaos: { year: 2025, items: [], total: 0 },
+    cota: { status: "ano-nao-carregado" },
+  };
+}
+
+const comparativoGeral = {
+  year: 2025,
+  comparableYears: [2025],
+  items: [comparativoDeputado(20), comparativoDeputado(10)],
+};
+
 async function storeRascunho(page: Page) {
   await page.goto("/");
   await page.evaluate((value) => {
@@ -127,16 +168,22 @@ test.describe("comparativo de deputados do matcher", () => {
     let perfilRequests = 0;
     let resultadoRequests = 0;
     await storeRascunho(page);
-    await page.route(/http:\/\/localhost:3001\/matcher\/deputados\/(20|10)$/, async (route) => {
-      detalheRequests += 1;
-      const id = Number(route.request().url().split("/").at(-1));
-      await route.fulfill({ json: detalhe(id) });
-    });
-    await page.route(/http:\/\/localhost:3001\/deputados\/(20|10)$/, async (route) => {
-      perfilRequests += 1;
-      const id = Number(route.request().url().split("/").at(-1));
-      await route.fulfill({ json: perfil(id) });
-    });
+    await page.route(
+      /http:\/\/localhost:3001\/matcher\/deputados\/(20|10)$/,
+      async (route) => {
+        detalheRequests += 1;
+        const id = Number(route.request().url().split("/").at(-1));
+        await route.fulfill({ json: detalhe(id) });
+      },
+    );
+    await page.route(
+      /http:\/\/localhost:3001\/deputados\/(20|10)$/,
+      async (route) => {
+        perfilRequests += 1;
+        const id = Number(route.request().url().split("/").at(-1));
+        await route.fulfill({ json: perfil(id) });
+      },
+    );
     await page.route("http://localhost:3001/matcher?*", async (route) => {
       resultadoRequests += 1;
       await route.fulfill({ json: resultado });
@@ -173,14 +220,20 @@ test.describe("comparativo de deputados do matcher", () => {
     await page.route("http://localhost:3001/matcher?*", async (route) => {
       await route.fulfill({ json: resultado });
     });
-    await page.route(/http:\/\/localhost:3001\/matcher\/deputados\/(20|10)$/, async (route) => {
-      const id = Number(route.request().url().split("/").at(-1));
-      await route.fulfill({ json: detalhe(id) });
-    });
-    await page.route(/http:\/\/localhost:3001\/deputados\/(20|10)$/, async (route) => {
-      const id = Number(route.request().url().split("/").at(-1));
-      await route.fulfill({ json: perfil(id) });
-    });
+    await page.route(
+      /http:\/\/localhost:3001\/matcher\/deputados\/(20|10)$/,
+      async (route) => {
+        const id = Number(route.request().url().split("/").at(-1));
+        await route.fulfill({ json: detalhe(id) });
+      },
+    );
+    await page.route(
+      /http:\/\/localhost:3001\/deputados\/(20|10)$/,
+      async (route) => {
+        const id = Number(route.request().url().split("/").at(-1));
+        await route.fulfill({ json: perfil(id) });
+      },
+    );
     await page.goto("/matcher/resultado");
 
     // Act
@@ -208,7 +261,66 @@ test.describe("comparativo de deputados do matcher", () => {
     ).toHaveCount(0);
   });
 
-  test("redireciona identificadores inválidos ao resultado", async ({ page }) => {
+  test("alterna entre a grade de votos e os dados gerais na mesma tela", async ({
+    page,
+  }) => {
+    // Arrange
+    let comparativoRequests = 0;
+    await storeRascunho(page);
+    await page.route(
+      /http:\/\/localhost:3001\/matcher\/deputados\/(20|10)$/,
+      async (route) => {
+        const id = Number(route.request().url().split("/").at(-1));
+        await route.fulfill({ json: detalhe(id) });
+      },
+    );
+    await page.route(
+      /http:\/\/localhost:3001\/deputados\/(20|10)$/,
+      async (route) => {
+        const id = Number(route.request().url().split("/").at(-1));
+        await route.fulfill({ json: perfil(id) });
+      },
+    );
+    await page.route(
+      "http://localhost:3001/comparativo-deputados?*",
+      async (route) => {
+        comparativoRequests += 1;
+        await route.fulfill({ json: comparativoGeral });
+      },
+    );
+    await page.goto("/matcher/comparativo/20,10");
+    await expect(
+      page.getByRole("heading", { name: "Comparativo de deputados" }),
+    ).toBeVisible({ timeout: 15_000 });
+
+    // Act
+    await page.getByRole("button", { name: "Dados gerais" }).click();
+
+    // Assert
+    await expect(
+      page.getByText("Presença registrada").filter({ visible: true }).first(),
+    ).toBeVisible();
+    await expect(
+      page
+        .getByText("Proposições assinadas em 2025")
+        .filter({ visible: true })
+        .first(),
+    ).toBeVisible();
+    expect(comparativoRequests).toBe(1);
+
+    // Act
+    await page.getByRole("button", { name: "Votos comparados" }).click();
+
+    // Assert
+    await expect(page.getByText("Presença registrada")).toHaveCount(0);
+    await expect(
+      page.getByRole("button", { name: "Voltar ao resultado" }),
+    ).toBeVisible();
+  });
+
+  test("redireciona identificadores inválidos ao resultado", async ({
+    page,
+  }) => {
     // Arrange
     await storeRascunho(page);
     await page.route("http://localhost:3001/matcher?*", async (route) => {
@@ -230,10 +342,13 @@ test.describe("comparativo de deputados do matcher", () => {
   }) => {
     // Arrange
     let detalheRequests = 0;
-    await page.route(/http:\/\/localhost:3001\/matcher\/deputados\/(20|10)$/, async (route) => {
-      detalheRequests += 1;
-      await route.fulfill({ json: detalhe(20) });
-    });
+    await page.route(
+      /http:\/\/localhost:3001\/matcher\/deputados\/(20|10)$/,
+      async (route) => {
+        detalheRequests += 1;
+        await route.fulfill({ json: detalhe(20) });
+      },
+    );
 
     // Act
     await page.goto("/matcher/comparativo/20,10");

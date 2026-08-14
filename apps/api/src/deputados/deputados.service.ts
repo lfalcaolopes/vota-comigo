@@ -11,7 +11,6 @@ import {
 import type {
   DeputadoDiscursosResponse,
   DeputadoCeapResponse,
-  DeputadoOrgao,
   DeputadoPerfil,
   DeputadoOrgaosResponse,
   DeputadoProposicoesAssinadasResponse,
@@ -22,11 +21,11 @@ import type {
 
 import { toDeputadoCard } from './mappers/deputado-card.mapper';
 import { toDeputadoCeapLoadedResponse } from './mappers/deputado-ceap.mapper';
+import { toDeputadoOrgaosResponse } from './mappers/deputado-orgaos.mapper';
 import { toDeputadoPerfil } from './mappers/deputado-perfil.mapper';
+import { toDeputadoProposicoesAssinadasResponse } from './mappers/deputado-proposicoes-assinadas.mapper';
 import { deriveDeputadoDiscursos } from './rules/deputado-discursos';
 import { deriveDeputadoCeapState } from './rules/deputado-ceap-state';
-import { somarAssinaturasDoAno } from './rules/deputado-proposicoes-assinadas';
-import { sortDeputadoOrgaos } from './rules/deputado-orgaos';
 import { deriveDeputadoPerfilYear } from './rules/deputado-perfil-year';
 import {
   DEPUTADOS_REPOSITORY,
@@ -179,35 +178,16 @@ export class DeputadosService {
       source.id,
       year,
     );
-
-    const items: DeputadoOrgao[] = orgaosSource.flatMap((item) =>
-      item.nome === null || item.titulo === null
-        ? []
-        : [
-            {
-              externalIdOrgao: item.externalIdOrgao,
-              siglaOrgao: item.siglaOrgao,
-              nome: item.nome,
-              titulo: item.titulo,
-              dataInicio: item.dataInicio,
-              dataFim: item.dataFim,
-            },
-          ],
-    );
-    const sorted = sortDeputadoOrgaos(items);
+    const response = toDeputadoOrgaosResponse(year, orgaosSource);
 
     this.logOrgaos({
       externalIdDeputado,
       year,
       startedAt,
-      items: sorted.length,
+      items: response.total,
     });
 
-    return {
-      year,
-      items: [...sorted],
-      total: sorted.length,
-    };
+    return response;
   }
 
   async proposicoesAssinadas(
@@ -243,36 +223,23 @@ export class DeputadosService {
         year,
       );
 
-    if (!proposicoesSource.anoCoberto) {
-      this.logProposicoesAssinadas({
-        externalIdDeputado,
-        year,
-        startedAt,
-        anoCoberto: false,
-      });
-      return { year, disponivel: false };
-    }
-
-    const { total, totalPrimeiroSignatario } = somarAssinaturasDoAno(
-      proposicoesSource.assinaturasJson ?? {},
+    const response = toDeputadoProposicoesAssinadasResponse(
+      year,
+      proposicoesSource,
     );
 
     this.logProposicoesAssinadas({
       externalIdDeputado,
       year,
       startedAt,
-      anoCoberto: true,
-      total,
-      totalPrimeiroSignatario,
+      anoCoberto: response.disponivel,
+      total: response.disponivel ? response.total : undefined,
+      totalPrimeiroSignatario: response.disponivel
+        ? response.totalPrimeiroSignatario
+        : undefined,
     });
 
-    return {
-      year,
-      disponivel: true,
-      total,
-      totalPrimeiroSignatario,
-      coveredThroughDate: proposicoesSource.coveredThroughDate,
-    };
+    return response;
   }
 
   async discursos(
