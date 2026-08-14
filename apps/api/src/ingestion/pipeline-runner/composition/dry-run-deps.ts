@@ -13,6 +13,7 @@ import type { DeputadoExercicioIntervaloRepository } from '../steps/deputado-exe
 import type { DeputadoGastoCotaRepository } from '../steps/deputado-gasto-cota/deputado-gasto-cota.repository.types';
 import type { OrgaoRepository } from '../steps/orgaos/orgaos.repository.types';
 import type { DeputadoOrgaoRepository } from '../steps/deputado-orgao/deputado-orgao.repository.types';
+import type { DeputadoProposicaoAssinadaRepository } from '../steps/deputado-proposicao-assinada/deputado-proposicao-assinada.repository.types';
 import type { CotaMedianaUfRepository } from '../steps/cota-mediana-uf/cota-mediana-uf.repository.types';
 import type { SanityRepository } from '../steps/sanity/sanity.repository.types';
 import type {
@@ -52,6 +53,13 @@ export const dryRunDeputadoOrgaoRepository: DeputadoOrgaoRepository = {
   loadOrgaoIdByExternalId: () => Promise.resolve(new Map()),
   replaceLegislatura: dryRunWriteGuard,
 };
+
+export const dryRunDeputadoProposicaoAssinadaRepository: DeputadoProposicaoAssinadaRepository =
+  {
+    loadDeputadoIdByExternalId: () => Promise.resolve(new Map()),
+    upsertTipos: dryRunWriteGuard,
+    replaceAno: dryRunWriteGuard,
+  };
 
 export const dryRunVotacaoRepository: VotacaoRepository = {
   upsert: dryRunWriteGuard,

@@ -20,3 +20,5 @@ export * from './cota-mediana-uf';
 export * from './ingestion-step-run';
 export * from './orgao';
 export * from './deputado-orgao';
+export * from './proposicao-tipo';
+export * from './deputado-proposicao-assinada';

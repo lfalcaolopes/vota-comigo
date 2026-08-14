@@ -5,6 +5,11 @@ export const ingestionStepDescriptors: readonly IngestionStepDescriptor[] = [
   { name: 'deputados', scope: 'single' },
   { name: 'orgaos', scope: 'single' },
   { name: 'deputado_orgao', scope: 'single', source: 'derived' },
+  {
+    name: 'deputado_proposicao_assinada',
+    scope: 'single',
+    source: 'derived',
+  },
   { name: 'partidos', scope: 'annual', dataset: 'votacoesVotos' },
   {
     name: 'votacoes',

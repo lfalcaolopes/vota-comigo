@@ -13,6 +13,8 @@ import { createOrgaoRepository } from '../steps/orgaos/orgaos.repository';
 import { createOrgaosStep } from '../steps/orgaos/orgaos.step';
 import { createDeputadoOrgaoRepository } from '../steps/deputado-orgao/deputado-orgao.repository';
 import { createDeputadoOrgaoStep } from '../steps/deputado-orgao/deputado-orgao.step';
+import { createDeputadoProposicaoAssinadaRepository } from '../steps/deputado-proposicao-assinada/deputado-proposicao-assinada.repository';
+import { createDeputadoProposicaoAssinadaStep } from '../steps/deputado-proposicao-assinada/deputado-proposicao-assinada.step';
 import { createPartidoRepository } from '../steps/partidos/partidos.repository';
 import { createPartidosStep } from '../steps/partidos/partidos.step';
 import {
@@ -58,6 +60,7 @@ import {
   dryRunDeputadoLookup,
   dryRunDeputadoRepository,
   dryRunDeputadoOrgaoRepository,
+  dryRunDeputadoProposicaoAssinadaRepository,
   dryRunHistoricoDeps,
   dryRunLegislaturaLookup,
   dryRunLegislaturaRepository,
@@ -105,6 +108,9 @@ export function createIngestionSteps(
         createDeputadosStep(dryRunDeputadoRepository, dryRunLegislaturaLookup),
         createOrgaosStep(dryRunOrgaoRepository),
         createDeputadoOrgaoStep(dryRunDeputadoOrgaoRepository),
+        createDeputadoProposicaoAssinadaStep(
+          dryRunDeputadoProposicaoAssinadaRepository,
+        ),
         createPartidosStep(dryRunPartidoRepository),
         createVotacoesStep(dryRunVotacaoRepository),
         createDeputadoGastoCotaStep(dryRunDeputadoGastoCotaRepository),
@@ -156,6 +162,9 @@ export function createIngestionSteps(
     ),
     createOrgaosStep(createOrgaoRepository(db)),
     createDeputadoOrgaoStep(createDeputadoOrgaoRepository(db)),
+    createDeputadoProposicaoAssinadaStep(
+      createDeputadoProposicaoAssinadaRepository(db),
+    ),
     createPartidosStep(createPartidoRepository(db)),
     createVotacoesStep(createVotacaoRepository(db)),
     createDeputadoGastoCotaStep(createDeputadoGastoCotaRepository(db)),
