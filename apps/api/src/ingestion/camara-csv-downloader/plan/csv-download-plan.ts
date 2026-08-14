@@ -1,4 +1,5 @@
 import { selectCsvDatasetStrategies } from './csv-dataset-strategy';
+import { deriveLegislaturasFromYears } from './legislatura-range';
 import type {
   CsvDownloadPlanItem,
   CsvDownloaderConfig,
@@ -23,7 +24,14 @@ export function buildCsvDownloadPlan(
       .map((strategy) => strategy.buildItem({ baseUrl, year })),
   );
 
-  return [...singleFileItems, ...annualItems];
+  const legislaturaItems = deriveLegislaturasFromYears(config.years).flatMap(
+    (legislatura) =>
+      selected
+        .filter((strategy) => strategy.scope === 'by-legislatura')
+        .map((strategy) => strategy.buildItem({ baseUrl, legislatura })),
+  );
+
+  return [...singleFileItems, ...annualItems, ...legislaturaItems];
 }
 
 function removeTrailingSlash(value: string): string {

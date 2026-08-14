@@ -46,18 +46,38 @@ Os arquivos são gravados em `apps/api/data/raw/` (a pasta fica no `.gitignore`;
 
 ## Catálogo de datasets
 
-Cada dataset carrega sua própria estratégia de URL. A família do portal de dados abertos segue o padrão `{baseUrl}/{dataset}/csv/{filename}`, com base `https://dadosabertos.camara.leg.br/arquivos`; a cota parlamentar tem host, caminho e convenção de nome próprios. O caminho local é sempre `data/raw/{dataset}/{filename}`. A janela temporal aplica-se só aos arquivos anuais; os arquivos únicos são baixados sempre (quando não filtrados por `--dataset`).
+Cada dataset carrega sua própria estratégia de URL. A família do portal de dados abertos segue o padrão `{baseUrl}/{dataset}/csv/{filename}`, com base `https://dadosabertos.camara.leg.br/arquivos`; a cota parlamentar tem host, caminho e convenção de nome próprios. O caminho local é sempre `data/raw/{dataset}/{filename}`. A janela temporal governa os arquivos anuais e, indiretamente, os por legislatura; os arquivos únicos são baixados sempre (quando não filtrados por `--dataset`).
 
-| Dataset               | Tipo  | Arquivo                         | Caminho local                   |
-| --------------------- | ----- | ------------------------------- | ------------------------------- |
-| `votacoes`            | anual | `votacoes-{ano}.csv`            | `data/raw/votacoes/`            |
-| `votacoesVotos`       | anual | `votacoesVotos-{ano}.csv`       | `data/raw/votacoesVotos/`       |
-| `votacoesProposicoes` | anual | `votacoesProposicoes-{ano}.csv` | `data/raw/votacoesProposicoes/` |
-| `proposicoes`         | anual | `proposicoes-{ano}.csv`         | `data/raw/proposicoes/`         |
-| `proposicoesTemas`    | anual | `proposicoesTemas-{ano}.csv`    | `data/raw/proposicoesTemas/`    |
-| `deputados`           | único | `deputados.csv`                 | `data/raw/deputados/`           |
-| `legislaturas`        | único | `legislaturas.csv`              | `data/raw/legislaturas/`        |
-| `ceap`                | anual | `Ano-{ano}.csv`                 | `data/raw/ceap/`                |
+| Dataset               | Tipo            | Arquivo                              | Caminho local                   |
+| --------------------- | --------------- | ------------------------------------ | ------------------------------- |
+| `votacoes`            | anual           | `votacoes-{ano}.csv`                 | `data/raw/votacoes/`            |
+| `votacoesVotos`       | anual           | `votacoesVotos-{ano}.csv`            | `data/raw/votacoesVotos/`       |
+| `votacoesProposicoes` | anual           | `votacoesProposicoes-{ano}.csv`      | `data/raw/votacoesProposicoes/` |
+| `proposicoes`         | anual           | `proposicoes-{ano}.csv`              | `data/raw/proposicoes/`         |
+| `proposicoesTemas`    | anual           | `proposicoesTemas-{ano}.csv`         | `data/raw/proposicoesTemas/`    |
+| `proposicoesAutores`  | anual           | `proposicoesAutores-{ano}.csv`       | `data/raw/proposicoesAutores/`  |
+| `deputados`           | único           | `deputados.csv`                      | `data/raw/deputados/`           |
+| `legislaturas`        | único           | `legislaturas.csv`                   | `data/raw/legislaturas/`        |
+| `orgaos`              | único           | `orgaos.csv`                         | `data/raw/orgaos/`              |
+| `orgaosDeputados`     | por legislatura | `orgaosDeputados-L{legislatura}.csv` | `data/raw/orgaosDeputados/`     |
+| `ceap`                | anual           | `Ano-{ano}.csv`                      | `data/raw/ceap/`                |
+
+### `orgaosDeputados` — escopo por legislatura
+
+É o único dataset cujo arquivo não é anual nem único. A faixa de legislaturas é **derivada dos anos já em escopo**, pela fórmula
+
+```text
+legislatura = 51 + floor((ano - 1999) / 4)
+```
+
+limitada pelo piso 51 da [ADR-003](../adr/003-filtro-deputados-legislatura-minima.md), que é também a primeira legislatura publicada pela Câmara nesse dataset. Assim `--from`/`--to`, `--years` e `--last` continuam governando esse dataset como governam os anuais, e cada legislatura em escopo entra no plano uma única vez.
+
+```text
+2023..2026   ->  L57
+1997..2004   ->  L51, L52   (1997 e 1998 ficam abaixo do piso e são descartados)
+```
+
+A faixa não vem de um teto codificado nem de `legislaturas.csv` em disco: o downloader roda **antes** da ingestão, e um plano vazio por causa de um arquivo ainda não baixado seria silencioso. Anos abaixo do piso são descartados sem abortar o plano — os demais datasets da mesma janela continuam sendo baixados.
 
 ### `ceap` — cota parlamentar
 
@@ -100,7 +120,7 @@ pnpm download:csvs -- --last=10
 
 ### `--dataset={dataset1,dataset2,...}`
 
-Restringe o plano a datasets específicos (anuais e/ou únicos), separados por vírgula. Sem a flag, baixa todos. Útil para rebaixar só um dataset corrigido sem varrer os demais.
+Restringe o plano a datasets específicos (anuais, únicos e/ou por legislatura), separados por vírgula. Sem a flag, baixa todos. Útil para rebaixar só um dataset corrigido sem varrer os demais.
 
 ```bash
 pnpm download:csvs -- --years=2024 --dataset=votacoes
@@ -123,6 +143,7 @@ O piso vem do dataset, não de uma constante única:
 
 - **Exceção (ADR-0012):** o piso de 2001 é dispensado quando `--dataset` contém **apenas** `proposicoes` e/ou `proposicoesTemas`, porque proposições e seus temas legítimos existem antes de 2001 (ex.: 1991, 1997-2000). Nesse caso o piso passa a ser `0`.
 - **`ceap`:** piso 2008, com mensagem própria informando desde quando os arquivos da cota existem.
+- **`orgaosDeputados`:** sem piso por ano, porque o recorte é por legislatura. O piso 51 já descarta os anos que o dataset não alcança, então rejeitar a janela inteira recusaria também a parte que ele atende.
 
 ```bash
 # Permitido: proposições pré-2001 isoladas

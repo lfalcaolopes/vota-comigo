@@ -42,20 +42,26 @@ describe('csv downloader cota parlamentar source', () => {
       expect(plan.map((item) => item.dataset)).toEqual([
         'deputados',
         'legislaturas',
+        'orgaos',
         'votacoes',
         'votacoesVotos',
         'votacoesProposicoes',
         'proposicoes',
         'proposicoesTemas',
+        'proposicoesAutores',
+        'orgaosDeputados',
       ]);
       expect(plan.map((item) => item.url)).toEqual([
         'https://dadosabertos.camara.leg.br/arquivos/deputados/csv/deputados.csv',
         'https://dadosabertos.camara.leg.br/arquivos/legislaturas/csv/legislaturas.csv',
+        'https://dadosabertos.camara.leg.br/arquivos/orgaos/csv/orgaos.csv',
         'https://dadosabertos.camara.leg.br/arquivos/votacoes/csv/votacoes-2025.csv',
         'https://dadosabertos.camara.leg.br/arquivos/votacoesVotos/csv/votacoesVotos-2025.csv',
         'https://dadosabertos.camara.leg.br/arquivos/votacoesProposicoes/csv/votacoesProposicoes-2025.csv',
         'https://dadosabertos.camara.leg.br/arquivos/proposicoes/csv/proposicoes-2025.csv',
         'https://dadosabertos.camara.leg.br/arquivos/proposicoesTemas/csv/proposicoesTemas-2025.csv',
+        'https://dadosabertos.camara.leg.br/arquivos/proposicoesAutores/csv/proposicoesAutores-2025.csv',
+        'https://dadosabertos.camara.leg.br/arquivos/orgaosDeputados/csv/orgaosDeputados-L57.csv',
       ]);
     });
   });

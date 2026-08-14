@@ -1,8 +1,10 @@
 import type { CsvDownloadPlanItem } from '../types/csv-downloader.types';
 
+export type CsvDatasetScope = 'single-file' | 'annual' | 'by-legislatura';
+
 export type CsvDatasetStrategy = {
   dataset: string;
-  scope: 'single-file' | 'annual';
+  scope: CsvDatasetScope;
   firstYear: number;
   // Conjuntos opt-in ficam fora do plano padrão e só entram quando pedidos.
   optIn: boolean;
@@ -13,6 +15,7 @@ export type CsvDatasetStrategy = {
 export type CsvDatasetItemInput = {
   baseUrl: string;
   year?: number;
+  legislatura?: number;
 };
 
 const dadosAbertosFirstYear = 2001;
@@ -25,9 +28,16 @@ const dadosAbertosAnnualDatasets = [
   'votacoesProposicoes',
   'proposicoes',
   'proposicoesTemas',
+  'proposicoesAutores',
 ] as const;
 
-const dadosAbertosSingleFileDatasets = ['deputados', 'legislaturas'] as const;
+const dadosAbertosSingleFileDatasets = [
+  'deputados',
+  'legislaturas',
+  'orgaos',
+] as const;
+
+const dadosAbertosLegislaturaDatasets = ['orgaosDeputados'] as const;
 
 // Proposições e seus temas legítimos existem antes de 2001 (ex.: 1991,
 // 1997-2000), então o piso não se aplica a eles (ADR 0012).
@@ -39,6 +49,9 @@ export const csvDatasetStrategies: readonly CsvDatasetStrategy[] = [
   ),
   ...dadosAbertosAnnualDatasets.map((dataset) =>
     dadosAbertosStrategy(dataset, 'annual'),
+  ),
+  ...dadosAbertosLegislaturaDatasets.map((dataset) =>
+    dadosAbertosStrategy(dataset, 'by-legislatura'),
   ),
   {
     dataset: 'ceap',
@@ -74,16 +87,15 @@ export function selectCsvDatasetStrategies(
 
 function dadosAbertosStrategy(
   dataset: string,
-  scope: 'single-file' | 'annual',
+  scope: CsvDatasetScope,
 ): CsvDatasetStrategy {
   return {
     dataset,
     scope,
-    firstYear: preCsvFloorDatasets.has(dataset) ? 0 : dadosAbertosFirstYear,
+    firstYear: hasYearFloor(dataset, scope) ? dadosAbertosFirstYear : 0,
     optIn: false,
-    buildItem({ baseUrl, year }) {
-      const filename =
-        scope === 'annual' ? `${dataset}-${year}.csv` : `${dataset}.csv`;
+    buildItem({ baseUrl, year, legislatura }) {
+      const filename = buildFilename(dataset, scope, year, legislatura);
 
       return {
         dataset,
@@ -93,4 +105,27 @@ function dadosAbertosStrategy(
       };
     },
   };
+}
+
+function buildFilename(
+  dataset: string,
+  scope: CsvDatasetScope,
+  year?: number,
+  legislatura?: number,
+): string {
+  if (scope === 'annual') {
+    return `${dataset}-${year}.csv`;
+  }
+
+  if (scope === 'by-legislatura') {
+    return `${dataset}-L${legislatura}.csv`;
+  }
+
+  return `${dataset}.csv`;
+}
+
+// O recorte por legislatura já descarta o que fica abaixo do piso da ADR 003,
+// então um piso por ano rejeitaria janelas que o dataset atende em parte.
+function hasYearFloor(dataset: string, scope: CsvDatasetScope): boolean {
+  return scope !== 'by-legislatura' && !preCsvFloorDatasets.has(dataset);
 }

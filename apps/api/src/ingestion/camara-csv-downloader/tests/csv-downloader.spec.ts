@@ -16,7 +16,7 @@ describe('csv downloader entrypoint', () => {
       const plan = buildCsvDownloadPlan(config);
 
       // Assert
-      expect(plan).toHaveLength(17);
+      expect(plan).toHaveLength(23);
       expect(plan).toContainEqual({
         dataset: 'deputados',
         filename: 'deputados.csv',
@@ -171,7 +171,7 @@ describe('csv downloader entrypoint', () => {
       // Assert
       expect(result.ok).toBe(true);
       if (result.ok) {
-        expect(result.plan).toHaveLength(12);
+        expect(result.plan).toHaveLength(17);
         expect(result.plan).toContainEqual({
           dataset: 'votacoesVotos',
           filename: 'votacoesVotos-2021.csv',
@@ -216,7 +216,7 @@ describe('csv downloader entrypoint', () => {
       // Assert
       expect(result.ok).toBe(true);
       if (result.ok) {
-        expect(result.plan).toHaveLength(27);
+        expect(result.plan).toHaveLength(35);
         expect(result.plan).toContainEqual({
           dataset: 'votacoesProposicoes',
           filename: 'votacoesProposicoes-2026.csv',
@@ -326,21 +326,24 @@ describe('csv downloader entrypoint', () => {
       });
 
       // Assert
-      expect(downloadItem).toHaveBeenCalledTimes(7);
+      expect(downloadItem).toHaveBeenCalledTimes(10);
       expect(downloadItem.mock.calls.map(([item]) => item.filename)).toEqual([
         'deputados.csv',
         'legislaturas.csv',
+        'orgaos.csv',
         'votacoes-2025.csv',
         'votacoesVotos-2025.csv',
         'votacoesProposicoes-2025.csv',
         'proposicoes-2025.csv',
         'proposicoesTemas-2025.csv',
+        'proposicoesAutores-2025.csv',
+        'orgaosDeputados-L57.csv',
       ]);
       expect(result).toMatchObject({
         ok: true,
         exitCode: 0,
         summary: {
-          downloaded: 6,
+          downloaded: 9,
           skipped: 1,
           failed: 0,
           failures: [],
@@ -375,7 +378,7 @@ describe('csv downloader entrypoint', () => {
 
       // Assert
       expect(result.exitCode).toBe(0);
-      expect(downloadItem).toHaveBeenCalledTimes(7);
+      expect(downloadItem).toHaveBeenCalledTimes(10);
       expect(maxActiveDownloads).toBe(3);
     });
 
@@ -419,12 +422,12 @@ describe('csv downloader entrypoint', () => {
       });
 
       // Assert
-      expect(downloadItem).toHaveBeenCalledTimes(7);
+      expect(downloadItem).toHaveBeenCalledTimes(10);
       expect(result).toMatchObject({
         ok: true,
         exitCode: 1,
         summary: {
-          downloaded: 5,
+          downloaded: 8,
           skipped: 1,
           failed: 1,
           failures: [
@@ -440,7 +443,7 @@ describe('csv downloader entrypoint', () => {
         expect.arrayContaining([
           '[deputados.csv] pulado',
           '[legislaturas.csv] falhou: 404 Not Found',
-          'Resumo: 5 baixados, 1 pulados, 1 erros.',
+          'Resumo: 8 baixados, 1 pulados, 1 erros.',
           'Falhas:',
           '  - legislaturas.csv: 404 Not Found',
           'Para baixar apenas os que faltam, execute:',
