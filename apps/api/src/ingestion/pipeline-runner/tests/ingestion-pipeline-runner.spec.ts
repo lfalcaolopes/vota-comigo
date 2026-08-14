@@ -1,6 +1,8 @@
 import { Readable } from 'node:stream';
 
 import { executeIngestionPipelineRunner } from '../ingestion-pipeline-runner';
+import type { IngestionStepRunRow } from '../run-record/ingestion-step-run';
+import type { IngestionStepRunRepository } from '../run-record/ingestion-step-run.repository.types';
 import { readCsvRecords } from '../sources/csv-reader';
 import { StrictModeError } from '../errors/strict-mode-error';
 import { createLegislaturasStep } from '../steps/legislaturas/legislaturas.step';
@@ -65,13 +67,34 @@ function createFakeRepository(): LegislaturaRepository & {
   };
 }
 
-function createReporter(): IngestionReporter & { readonly lines: string[] } {
+function createFakeStepRunRepository(): IngestionStepRunRepository & {
+  readonly calls: (readonly IngestionStepRunRow[])[];
+} {
+  const calls: (readonly IngestionStepRunRow[])[] = [];
+
+  return {
+    calls,
+    async upsert(rows) {
+      calls.push(rows);
+    },
+  };
+}
+
+function createReporter(): IngestionReporter & {
+  readonly lines: string[];
+  readonly errors: string[];
+} {
   const lines: string[] = [];
+  const errors: string[] = [];
 
   return {
     lines,
+    errors,
     log(message) {
       lines.push(message);
+    },
+    error(message) {
+      errors.push(message);
     },
   };
 }
@@ -801,6 +824,171 @@ describe('ingestion pipeline-runner', () => {
       }
       expect(result.summary).toMatchObject({ dryRun: true, totalInserted: 0 });
       expect(repository.upserted).toEqual([]);
+    });
+  });
+
+  describe('when recording the ingestion step run', () => {
+    it('upserts one row per step with the injected executed_at', async () => {
+      // Arrange
+      const repository = createFakeRepository();
+      const stepRunRepository = createFakeStepRunRepository();
+
+      // Act
+      const result = await executeIngestionPipelineRunner(
+        ['--only=legislaturas'],
+        {
+          currentYear: 2026,
+          csvReader: readCsvRecords,
+          openSource: () => Readable.from(legislaturasCsv),
+          createSteps: async () => ({
+            steps: [createLegislaturasStep(repository)],
+            close: async () => {},
+            stepRunRepository,
+          }),
+          errorLog: {
+            fileSystem: { async mkdir() {}, async writeFile() {} },
+            now: () => new Date('2026-05-30T12:00:00.000Z'),
+          },
+        },
+      );
+
+      // Assert
+      expect(result.ok).toBe(true);
+      if (!result.ok) {
+        throw new Error(result.message);
+      }
+      expect(stepRunRepository.calls).toEqual([
+        [
+          {
+            stepName: 'legislaturas',
+            executedAt: '2026-05-30T12:00:00.000Z',
+            recordsRead: 2,
+            firstYear: null,
+            lastYear: null,
+          },
+        ],
+      ]);
+    });
+
+    it('does not record when --dry-run is set', async () => {
+      // Arrange
+      const repository = createFakeRepository();
+      const stepRunRepository = createFakeStepRunRepository();
+
+      // Act
+      const result = await executeIngestionPipelineRunner(
+        ['--only=legislaturas', '--dry-run'],
+        {
+          currentYear: 2026,
+          csvReader: readCsvRecords,
+          openSource: () => Readable.from(legislaturasCsv),
+          createSteps: async () => ({
+            steps: [createLegislaturasStep(repository)],
+            close: async () => {},
+            stepRunRepository,
+          }),
+        },
+      );
+
+      // Assert
+      expect(result.ok).toBe(true);
+      expect(stepRunRepository.calls).toEqual([]);
+    });
+
+    it('does not record when --limit truncates the run', async () => {
+      // Arrange
+      const repository = createFakeRepository();
+      const stepRunRepository = createFakeStepRunRepository();
+
+      // Act
+      const result = await executeIngestionPipelineRunner(
+        ['--only=legislaturas', '--limit=1'],
+        {
+          currentYear: 2026,
+          csvReader: readCsvRecords,
+          openSource: () => Readable.from(legislaturasCsv),
+          createSteps: async () => ({
+            steps: [createLegislaturasStep(repository)],
+            close: async () => {},
+            stepRunRepository,
+          }),
+        },
+      );
+
+      // Assert
+      expect(result.ok).toBe(true);
+      expect(stepRunRepository.calls).toEqual([]);
+    });
+
+    it('discards the aborted step but records steps completed before it', async () => {
+      // Arrange
+      const stepRunRepository = createFakeStepRunRepository();
+      const repository = createFakeRepository();
+      const csv = ['idLegislatura;uri', 'abc;https://example/x'].join('\n');
+
+      // Act
+      const result = await executeIngestionPipelineRunner(
+        ['--only=legislaturas', '--strict'],
+        {
+          currentYear: 2026,
+          csvReader: readCsvRecords,
+          openSource: () => Readable.from(csv),
+          createSteps: async () => ({
+            steps: [createLegislaturasStep(repository)],
+            close: async () => {},
+            stepRunRepository,
+          }),
+          errorLog: {
+            fileSystem: { async mkdir() {}, async writeFile() {} },
+            now: () => new Date('2026-05-30T12:00:00.000Z'),
+          },
+        },
+      );
+
+      // Assert
+      expect(result.ok).toBe(true);
+      if (!result.ok) {
+        throw new Error(result.message);
+      }
+      expect(result.summary.aborted).toBe(true);
+      expect(stepRunRepository.calls).toEqual([[]]);
+    });
+
+    it('reports an upsert failure but keeps a zero exit code', async () => {
+      // Arrange
+      const repository = createFakeRepository();
+      const reporter = createReporter();
+      const stepRunRepository: IngestionStepRunRepository = {
+        async upsert() {
+          throw new Error('conexão recusada');
+        },
+      };
+
+      // Act
+      const result = await executeIngestionPipelineRunner(
+        ['--only=legislaturas'],
+        {
+          currentYear: 2026,
+          csvReader: readCsvRecords,
+          openSource: () => Readable.from(legislaturasCsv),
+          createSteps: async () => ({
+            steps: [createLegislaturasStep(repository)],
+            close: async () => {},
+            stepRunRepository,
+          }),
+          reporter,
+        },
+      );
+
+      // Assert
+      expect(result.ok).toBe(true);
+      if (!result.ok) {
+        throw new Error(result.message);
+      }
+      expect(result.exitCode).toBe(0);
+      expect(
+        reporter.errors.some((line) => line.includes('conexão recusada')),
+      ).toBe(true);
     });
   });
 });

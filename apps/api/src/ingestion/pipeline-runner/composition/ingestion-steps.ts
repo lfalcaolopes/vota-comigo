@@ -9,6 +9,10 @@ import {
   createLegislaturaLookup,
 } from '../steps/deputados/deputados.repository';
 import { createDeputadosStep } from '../steps/deputados/deputados.step';
+import { createOrgaoRepository } from '../steps/orgaos/orgaos.repository';
+import { createOrgaosStep } from '../steps/orgaos/orgaos.step';
+import { createDeputadoOrgaoRepository } from '../steps/deputado-orgao/deputado-orgao.repository';
+import { createDeputadoOrgaoStep } from '../steps/deputado-orgao/deputado-orgao.step';
 import { createPartidoRepository } from '../steps/partidos/partidos.repository';
 import { createPartidosStep } from '../steps/partidos/partidos.step';
 import {
@@ -40,6 +44,7 @@ import { createDeputadoGastoCotaRepository } from '../steps/deputado-gasto-cota/
 import { createDeputadoGastoCotaStep } from '../steps/deputado-gasto-cota/deputado-gasto-cota.step';
 import { createCotaMedianaUfRepository } from '../steps/cota-mediana-uf/cota-mediana-uf.repository';
 import { createCotaMedianaUfStep } from '../steps/cota-mediana-uf/cota-mediana-uf.step';
+import { createIngestionStepRunRepository } from '../run-record/ingestion-step-run.repository';
 import { createDeputadoExercicioIntervaloRepository } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.repository';
 import { createDeputadoExercicioIntervaloStep } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.step';
 import { createTemaRepository } from '../steps/tema/tema.repository';
@@ -52,9 +57,11 @@ import { fetchCamaraJson } from '../shared/camara-api-transport';
 import {
   dryRunDeputadoLookup,
   dryRunDeputadoRepository,
+  dryRunDeputadoOrgaoRepository,
   dryRunHistoricoDeps,
   dryRunLegislaturaLookup,
   dryRunLegislaturaRepository,
+  dryRunOrgaoRepository,
   dryRunPartidoRepository,
   dryRunProposicaoDownloader,
   dryRunProposicaoComputavelRepository,
@@ -96,6 +103,8 @@ export function createIngestionSteps(
       steps: [
         createLegislaturasStep(dryRunLegislaturaRepository),
         createDeputadosStep(dryRunDeputadoRepository, dryRunLegislaturaLookup),
+        createOrgaosStep(dryRunOrgaoRepository),
+        createDeputadoOrgaoStep(dryRunDeputadoOrgaoRepository),
         createPartidosStep(dryRunPartidoRepository),
         createVotacoesStep(dryRunVotacaoRepository),
         createDeputadoGastoCotaStep(dryRunDeputadoGastoCotaRepository),
@@ -145,6 +154,8 @@ export function createIngestionSteps(
       createDeputadoRepository(db),
       createLegislaturaLookup(db),
     ),
+    createOrgaosStep(createOrgaoRepository(db)),
+    createDeputadoOrgaoStep(createDeputadoOrgaoRepository(db)),
     createPartidosStep(createPartidoRepository(db)),
     createVotacoesStep(createVotacaoRepository(db)),
     createDeputadoGastoCotaStep(createDeputadoGastoCotaRepository(db)),
@@ -190,5 +201,9 @@ export function createIngestionSteps(
     createSanityStep(createSanityRepository(db)),
   ];
 
-  return Promise.resolve({ steps, close });
+  return Promise.resolve({
+    steps,
+    close,
+    stepRunRepository: createIngestionStepRunRepository(db),
+  });
 }

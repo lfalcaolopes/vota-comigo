@@ -11,6 +11,8 @@ import type { ProposicaoComputavelRepository } from '../steps/proposicao-computa
 import type { DeputadoPresencaRepository } from '../steps/deputado-presenca/deputado-presenca.repository.types';
 import type { DeputadoExercicioIntervaloRepository } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.repository.types';
 import type { DeputadoGastoCotaRepository } from '../steps/deputado-gasto-cota/deputado-gasto-cota.repository.types';
+import type { OrgaoRepository } from '../steps/orgaos/orgaos.repository.types';
+import type { DeputadoOrgaoRepository } from '../steps/deputado-orgao/deputado-orgao.repository.types';
 import type { CotaMedianaUfRepository } from '../steps/cota-mediana-uf/cota-mediana-uf.repository.types';
 import type { SanityRepository } from '../steps/sanity/sanity.repository.types';
 import type {
@@ -38,6 +40,17 @@ export const dryRunDeputadoRepository: DeputadoRepository = {
 
 export const dryRunPartidoRepository: PartidoRepository = {
   upsert: dryRunWriteGuard,
+};
+
+export const dryRunOrgaoRepository: OrgaoRepository = {
+  upsert: dryRunWriteGuard,
+};
+
+export const dryRunDeputadoOrgaoRepository: DeputadoOrgaoRepository = {
+  loadDeputadoIdByExternalId: () => Promise.resolve(new Map()),
+  loadLegislaturaIdByExternalId: () => Promise.resolve(new Map()),
+  loadOrgaoIdByExternalId: () => Promise.resolve(new Map()),
+  replaceLegislatura: dryRunWriteGuard,
 };
 
 export const dryRunVotacaoRepository: VotacaoRepository = {

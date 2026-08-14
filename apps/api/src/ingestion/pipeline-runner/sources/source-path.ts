@@ -11,7 +11,11 @@ export function defaultSourcePath(entry: IngestionPlanEntry): string {
   // O downloader é dono de onde cada conjunto cai no disco; o pipeline lê do
   // mesmo lugar em vez de repetir a convenção de nome.
   if (strategy !== undefined) {
-    return strategy.buildItem({ baseUrl: '', year: entry.year }).localPath;
+    return strategy.buildItem({
+      baseUrl: '',
+      year: entry.year,
+      legislatura: entry.legislatura,
+    }).localPath;
   }
 
   if (entry.scope === 'single') {

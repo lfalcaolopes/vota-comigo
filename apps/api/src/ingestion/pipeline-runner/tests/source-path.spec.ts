@@ -29,6 +29,24 @@ describe('caminho do arquivo de origem', () => {
     });
   });
 
+  describe('when the dataset is scoped by legislatura', () => {
+    it('builds the -L{legislatura} filename the downloader wrote to disk', () => {
+      // Arrange
+      const entry = {
+        stepName: 'deputado_orgao',
+        scope: 'single' as const,
+        dataset: 'orgaosDeputados',
+        legislatura: 57,
+      };
+
+      // Act
+      const path = defaultSourcePath(entry);
+
+      // Assert
+      expect(path).toBe('data/raw/orgaosDeputados/orgaosDeputados-L57.csv');
+    });
+  });
+
   describe('when the dataset is the cota parlamentar file', () => {
     it('uses the filename convention the downloader wrote to disk', () => {
       // Arrange

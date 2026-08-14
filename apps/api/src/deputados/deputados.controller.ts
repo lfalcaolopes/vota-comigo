@@ -125,8 +125,7 @@ export class DeputadosController {
   }
 
   @Get(':externalIdDeputado/orgaos')
-  @Throttle({ default: { ttl: 60_000, limit: 20 } })
-  @CacheControl(CACHE_EXTERNAL_RUNTIME)
+  @CacheControl(CACHE_LISTING)
   async orgaos(
     @Param('externalIdDeputado', ParseIntPipe) externalIdDeputado: number,
     @Query('year', ParseIntPipe) year: number,

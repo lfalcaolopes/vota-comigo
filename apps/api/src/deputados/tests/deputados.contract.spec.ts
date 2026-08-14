@@ -135,6 +135,7 @@ function fakeRepository(
       intervalosExercicio: [],
       datasInicioLegislatura: [],
     }),
+    loadDeputadoOrgaos: async () => [],
   };
 }
 

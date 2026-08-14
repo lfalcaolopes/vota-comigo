@@ -14,6 +14,8 @@ import { nodeGapLogReaderFileSystem } from './logs/node-gap-log-reader-file-syst
 import { buildIngestionPlan } from './plan/ingestion-plan';
 import { ingestionStepDescriptors } from './plan/ingestion-step-descriptors';
 import { reportRunStart, reportSummary } from './reporting/run-reporting';
+import { buildIngestionStepRunRows } from './run-record/ingestion-step-run';
+import type { IngestionStepRunRepository } from './run-record/ingestion-step-run.repository.types';
 import { readCsvRecords } from './sources/csv-reader';
 import type { CsvReader } from './sources/csv-reader';
 import { defaultSourcePath } from './sources/source-path';
@@ -109,7 +111,8 @@ export async function executeIngestionPipelineRunner(
     );
   }
 
-  const { steps, close } = await createSteps({
+  const now = options.errorLog?.now ?? (() => new Date());
+  const { steps, close, stepRunRepository } = await createSteps({
     dryRun: config.dryRun,
     retryExternalIds,
     refetchHistorico: config.refetchHistorico,
@@ -128,6 +131,7 @@ export async function executeIngestionPipelineRunner(
   const rejections: Rejection[] = [];
   const externalGaps: ExternalGap[] = [];
   let aborted = false;
+  let abortedStepName: string | undefined;
 
   reportRunStart(config, plan, options.reporter);
 
@@ -149,9 +153,19 @@ export async function executeIngestionPipelineRunner(
 
       if (stepResult.aborted) {
         aborted = true;
+        abortedStepName = entry.stepName;
         break;
       }
     }
+
+    await recordIngestionStepRuns({
+      config,
+      summaries,
+      abortedStepName,
+      stepRunRepository,
+      now,
+      reporter: options.reporter,
+    });
   } finally {
     await close();
   }
@@ -160,7 +174,7 @@ export async function executeIngestionPipelineRunner(
     rejections.length > 0
       ? await writeErrorLog(rejections, {
           fileSystem: options.errorLog?.fileSystem ?? nodeErrorLogFileSystem,
-          now: options.errorLog?.now ?? (() => new Date()),
+          now,
         })
       : undefined;
 
@@ -168,7 +182,7 @@ export async function executeIngestionPipelineRunner(
     externalGaps.length > 0
       ? await writeGapLog(externalGaps, {
           fileSystem: options.errorLog?.fileSystem ?? nodeErrorLogFileSystem,
-          now: options.errorLog?.now ?? (() => new Date()),
+          now,
         })
       : undefined;
 
@@ -191,6 +205,35 @@ export async function executeIngestionPipelineRunner(
   reportSummary(summary, options.reporter);
 
   return { ok: true, exitCode: aborted ? 1 : 0, summary };
+}
+
+async function recordIngestionStepRuns(input: {
+  config: IngestionPipelineRunnerConfig;
+  summaries: readonly StepSummary[];
+  abortedStepName?: string;
+  stepRunRepository?: IngestionStepRunRepository;
+  now: () => Date;
+  reporter?: IngestionReporter;
+}): Promise<void> {
+  if (
+    input.config.dryRun ||
+    input.config.limit !== undefined ||
+    input.stepRunRepository === undefined
+  ) {
+    return;
+  }
+
+  try {
+    const rows = buildIngestionStepRunRows(input.summaries, {
+      abortedStepName: input.abortedStepName,
+      executedAt: input.now().toISOString(),
+    });
+    await input.stepRunRepository.upsert(rows);
+  } catch (error) {
+    input.reporter?.error?.(
+      `Falha ao registrar execução dos passos: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
 }
 
 function emptySummary(config: IngestionPipelineRunnerConfig): IngestionSummary {

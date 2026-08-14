@@ -11,6 +11,7 @@ import {
 import type {
   DeputadoDiscursosResponse,
   DeputadoCeapResponse,
+  DeputadoOrgao,
   DeputadoPerfil,
   DeputadoOrgaosResponse,
   DeputadoProposicoesAssinadasResponse,
@@ -28,7 +29,7 @@ import {
   buildProposicoesAssinadasQuarters,
   deriveDeputadoProposicoesAssinadas,
 } from './rules/deputado-proposicoes-assinadas';
-import { deriveDeputadoOrgaos } from './rules/deputado-orgaos';
+import { sortDeputadoOrgaos } from './rules/deputado-orgaos';
 import { deriveDeputadoPerfilYear } from './rules/deputado-perfil-year';
 import {
   DEPUTADOS_REPOSITORY,
@@ -201,57 +202,38 @@ export class DeputadosService {
       throw new BadRequestException('year fora da faixa do deputado');
     }
 
-    const params = new URLSearchParams({
-      dataInicio: `${year}-01-01`,
-      dataFim: `${year}-12-31`,
-      itens: '100',
-      ordem: 'ASC',
-      ordenarPor: 'dataInicio',
-    });
-    const result = await this.camaraClient.fetchAll(
-      `${CAMARA_API_BASE_URL}/deputados/${externalIdDeputado}/orgaos?${params}`,
+    const orgaosSource = await this.repository.loadDeputadoOrgaos(
+      source.id,
+      year,
     );
-    if (!result.ok) {
-      this.logOrgaos({
-        externalIdDeputado,
-        year,
-        startedAt,
-        pages: result.pages,
-        receivedItems: result.receivedItems,
-        timeout: result.kind === 'timeout',
-        error: result.kind,
-      });
-      throw new ServiceUnavailableException('orgaos da Câmara indisponíveis');
-    }
 
-    const transformed = deriveDeputadoOrgaos(result.items);
-    if (!transformed.ok) {
-      this.logOrgaos({
-        externalIdDeputado,
-        year,
-        startedAt,
-        pages: result.pages,
-        receivedItems: result.items.length,
-        transformedItems: 0,
-        validationError: 'invalid_camara_item',
-      });
-      throw new BadGatewayException('resposta inválida da Câmara');
-    }
+    const items: DeputadoOrgao[] = orgaosSource.flatMap((item) =>
+      item.nome === null || item.titulo === null
+        ? []
+        : [
+            {
+              externalIdOrgao: item.externalIdOrgao,
+              siglaOrgao: item.siglaOrgao,
+              nome: item.nome,
+              titulo: item.titulo,
+              dataInicio: item.dataInicio,
+              dataFim: item.dataFim,
+            },
+          ],
+    );
+    const sorted = sortDeputadoOrgaos(items);
 
     this.logOrgaos({
       externalIdDeputado,
       year,
       startedAt,
-      pages: result.pages,
-      receivedItems: result.items.length,
-      transformedItems: transformed.items.length,
-      timeout: false,
+      items: sorted.length,
     });
 
     return {
       year,
-      items: [...transformed.items],
-      total: transformed.items.length,
+      items: [...sorted],
+      total: sorted.length,
     };
   }
 
@@ -514,23 +496,15 @@ export class DeputadosService {
     externalIdDeputado: number;
     year: number;
     startedAt: number;
-    pages?: number;
-    receivedItems?: number;
-    transformedItems?: number;
-    timeout?: boolean;
-    error?: string;
+    items?: number;
     validationError?: string;
   }): void {
     this.logger.log({
       event: 'deputado_orgaos_query',
       externalIdDeputado: event.externalIdDeputado,
       year: event.year,
-      pages: event.pages ?? 0,
-      receivedItems: event.receivedItems ?? 0,
-      transformedItems: event.transformedItems ?? 0,
+      items: event.items ?? 0,
       durationMs: Date.now() - event.startedAt,
-      timeout: event.timeout ?? false,
-      error: event.error,
       validationError: event.validationError,
     });
   }

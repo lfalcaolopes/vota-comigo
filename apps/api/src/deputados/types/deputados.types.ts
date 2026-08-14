@@ -57,6 +57,15 @@ export type DeputadoCeapSource = {
   datasInicioLegislatura: readonly string[];
 };
 
+export type DeputadoOrgaoSource = {
+  externalIdOrgao: number;
+  siglaOrgao: string | null;
+  nome: string | null;
+  titulo: string | null;
+  dataInicio: string;
+  dataFim: string | null;
+};
+
 export type DeputadoCardRow = {
   externalIdDeputado: number;
   nomePublico: string | null;

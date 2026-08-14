@@ -1,3 +1,5 @@
+import type { IngestionStepRunRepository } from '../run-record/ingestion-step-run.repository.types';
+
 export type IngestionPipelineRunnerConfig = {
   only?: readonly string[];
   years: readonly number[];
@@ -48,6 +50,7 @@ export type IngestionPlanEntry = {
   dataset?: string;
   companionDatasets?: readonly string[];
   year?: number;
+  legislatura?: number;
 };
 
 export type Rejection = {
@@ -98,6 +101,12 @@ export type IngestionStepContext = {
   // Abre qualquer dataset anual para um ano arbitrário. Undefined quando o
   // arquivo do ano está ausente em disco.
   readDataset?: (dataset: string, year: number) => CsvRowSource | undefined;
+  // Abre um dataset recortado por legislatura (ex.: orgaosDeputados-L57.csv).
+  // Undefined quando o arquivo daquela legislatura está ausente em disco.
+  readLegislaturaDataset?: (
+    dataset: string,
+    legislatura: number,
+  ) => CsvRowSource | undefined;
 };
 
 export type IngestionStep = IngestionStepDescriptor & {
@@ -167,4 +176,5 @@ export type CreateStepsInput = {
 export type CreateStepsResult = {
   steps: readonly IngestionStep[];
   close: () => Promise<void>;
+  stepRunRepository?: IngestionStepRunRepository;
 };

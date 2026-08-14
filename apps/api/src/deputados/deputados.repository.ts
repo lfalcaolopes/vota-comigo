@@ -5,8 +5,11 @@ import {
   eq,
   exists,
   gt,
+  gte,
   isNotNull,
   isNull,
+  lte,
+  or,
   sql,
   type SQL,
 } from 'drizzle-orm';
@@ -20,9 +23,11 @@ import {
   deputado,
   deputadoExercicioIntervalo,
   deputadoHistorico,
+  deputadoOrgao,
   deputadoPresenca,
   deputadoGastoCota,
   legislatura,
+  orgao,
   partido,
 } from '@/shared/database/schema';
 
@@ -38,6 +43,7 @@ import type {
   DeputadosFeedFilters,
   DeputadosFeedPage,
   DeputadosFeedPagination,
+  DeputadoOrgaoSource,
   DeputadoPerfilSource,
   DeputadoResumoPresencaRow,
 } from './types/deputados.types';
@@ -61,6 +67,10 @@ export interface DeputadosRepository {
     deputadoId: string,
     year: number,
   ): Promise<DeputadoCeapSource>;
+  loadDeputadoOrgaos(
+    deputadoId: string,
+    year: number,
+  ): Promise<readonly DeputadoOrgaoSource[]>;
 }
 
 function toLegislaturaPeriodoSource(
@@ -383,6 +393,43 @@ export function createDeputadosRepository(
           row.dataInicio === null ? [] : [row.dataInicio],
         ),
       };
+    },
+
+    async loadDeputadoOrgaos(deputadoId, year) {
+      const yearStart = `${year}-01-01`;
+      const yearEnd = `${year}-12-31`;
+
+      const rows = await db
+        .select({
+          externalIdOrgao: orgao.externalIdOrgao,
+          siglaOrgao: orgao.sigla,
+          nomePublicacao: orgao.nomePublicacao,
+          nome: orgao.nome,
+          titulo: deputadoOrgao.cargo,
+          dataInicio: deputadoOrgao.dataInicio,
+          dataFim: deputadoOrgao.dataFim,
+        })
+        .from(deputadoOrgao)
+        .innerJoin(orgao, eq(orgao.id, deputadoOrgao.orgaoId))
+        .where(
+          and(
+            eq(deputadoOrgao.deputadoId, deputadoId),
+            lte(deputadoOrgao.dataInicio, yearEnd),
+            or(
+              isNull(deputadoOrgao.dataFim),
+              gte(deputadoOrgao.dataFim, yearStart),
+            ),
+          ),
+        );
+
+      return rows.map((row) => ({
+        externalIdOrgao: row.externalIdOrgao,
+        siglaOrgao: row.siglaOrgao,
+        nome: row.nomePublicacao?.trim() || row.nome,
+        titulo: row.titulo,
+        dataInicio: row.dataInicio,
+        dataFim: row.dataFim,
+      }));
     },
   };
 }

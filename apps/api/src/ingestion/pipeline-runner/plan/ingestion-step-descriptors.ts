@@ -3,6 +3,8 @@ import type { IngestionStepDescriptor } from '../types/ingestion-pipeline-runner
 export const ingestionStepDescriptors: readonly IngestionStepDescriptor[] = [
   { name: 'legislaturas', scope: 'single' },
   { name: 'deputados', scope: 'single' },
+  { name: 'orgaos', scope: 'single' },
+  { name: 'deputado_orgao', scope: 'single', source: 'derived' },
   { name: 'partidos', scope: 'annual', dataset: 'votacoesVotos' },
   {
     name: 'votacoes',

@@ -28,6 +28,7 @@ function fakeRepository(
       intervalosExercicio: [],
       datasInicioLegislatura: [],
     }),
+    loadDeputadoOrgaos: async () => [],
     ...overrides,
   };
 }
@@ -95,17 +96,15 @@ describe('DeputadosService availability lists', () => {
 
 describe('DeputadosService órgãos', () => {
   describe('quando o ano válido não tem vínculos', () => {
-    it('devolve sucesso com uma lista vazia', async () => {
+    it('devolve sucesso com uma lista vazia sem chamar a Câmara', async () => {
       // Arrange
-      const client: CamaraPaginatedClient = {
-        fetchAll: jest.fn().mockResolvedValue({
-          ok: true,
-          items: [],
-          pages: 1,
-        }),
-      };
+      const client: CamaraPaginatedClient = { fetchAll: jest.fn() };
+      const loadDeputadoOrgaos = jest.fn().mockResolvedValue([]);
       const service = new DeputadosService(
-        fakeRepository({ loadDeputadoPerfil: async () => perfilSource() }),
+        fakeRepository({
+          loadDeputadoPerfil: async () => perfilSource(),
+          loadDeputadoOrgaos,
+        }),
         client,
       );
 
@@ -114,37 +113,88 @@ describe('DeputadosService órgãos', () => {
 
       // Assert
       expect(result).toEqual({ year: 2022, items: [], total: 0 });
-      expect(client.fetchAll).toHaveBeenCalledWith(
-        'https://dadosabertos.camara.leg.br/api/v2/deputados/74646/orgaos?dataInicio=2022-01-01&dataFim=2022-12-31&itens=100&ordem=ASC&ordenarPor=dataInicio',
+      expect(loadDeputadoOrgaos).toHaveBeenCalledWith('deputado-id', 2022);
+      expect(client.fetchAll).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('quando há vínculos que cruzam a borda do ano', () => {
+    it('preserva o vínculo iniciado antes e o vínculo ainda aberto', async () => {
+      // Arrange
+      const client: CamaraPaginatedClient = { fetchAll: jest.fn() };
+      const service = new DeputadosService(
+        fakeRepository({
+          loadDeputadoPerfil: async () => perfilSource(),
+          loadDeputadoOrgaos: async () => [
+            {
+              externalIdOrgao: 2004,
+              siglaOrgao: 'CCJC',
+              nome: 'Comissão de Constituição e Justiça e de Cidadania',
+              titulo: 'Titular',
+              dataInicio: '2020-01-01',
+              dataFim: '2022-01-15',
+            },
+            {
+              externalIdOrgao: 180,
+              siglaOrgao: 'PLEN',
+              nome: 'Plenário',
+              titulo: 'Titular',
+              dataInicio: '2022-06-01',
+              dataFim: null,
+            },
+          ],
+        }),
+        client,
       );
+
+      // Act
+      const result = await service.orgaos(74646, 2022);
+
+      // Assert
+      expect(result.total).toBe(2);
+      expect(result.items).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            externalIdOrgao: 2004,
+            dataFim: '2022-01-15',
+          }),
+          expect.objectContaining({ externalIdOrgao: 180, dataFim: null }),
+        ]),
+      );
+      expect(client.fetchAll).not.toHaveBeenCalled();
     });
   });
 
   describe('quando o deputado não existe', () => {
-    it('rejeita a consulta antes de chamar a Câmara', async () => {
+    it('rejeita a consulta antes de ler os vínculos', async () => {
       // Arrange
-      const client: CamaraPaginatedClient = {
-        fetchAll: jest.fn(),
-      };
-      const service = new DeputadosService(fakeRepository({}), client);
+      const client: CamaraPaginatedClient = { fetchAll: jest.fn() };
+      const loadDeputadoOrgaos = jest.fn();
+      const service = new DeputadosService(
+        fakeRepository({ loadDeputadoOrgaos }),
+        client,
+      );
 
       // Act
       const result = service.orgaos(999999, 2022);
 
       // Assert
       await expect(result).rejects.toMatchObject({ status: 404 });
+      expect(loadDeputadoOrgaos).not.toHaveBeenCalled();
       expect(client.fetchAll).not.toHaveBeenCalled();
     });
   });
 
   describe('quando o ano está fora da faixa do deputado', () => {
-    it('rejeita a consulta antes de chamar a Câmara', async () => {
+    it('rejeita a consulta antes de ler os vínculos', async () => {
       // Arrange
-      const client: CamaraPaginatedClient = {
-        fetchAll: jest.fn(),
-      };
+      const client: CamaraPaginatedClient = { fetchAll: jest.fn() };
+      const loadDeputadoOrgaos = jest.fn();
       const service = new DeputadosService(
-        fakeRepository({ loadDeputadoPerfil: async () => perfilSource() }),
+        fakeRepository({
+          loadDeputadoPerfil: async () => perfilSource(),
+          loadDeputadoOrgaos,
+        }),
         client,
       );
 
@@ -153,6 +203,7 @@ describe('DeputadosService órgãos', () => {
 
       // Assert
       await expect(result).rejects.toMatchObject({ status: 400 });
+      expect(loadDeputadoOrgaos).not.toHaveBeenCalled();
       expect(client.fetchAll).not.toHaveBeenCalled();
     });
   });

@@ -17,3 +17,6 @@ export * from './deputado-gasto-cota';
 export * from './cota-categoria';
 export * from './cota-cobertura';
 export * from './cota-mediana-uf';
+export * from './ingestion-step-run';
+export * from './orgao';
+export * from './deputado-orgao';

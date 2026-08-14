@@ -59,6 +59,7 @@ describe('GET /deputados/:externalIdDeputado/ceap', () => {
           intervalosExercicio: [],
           datasInicioLegislatura: [],
         }),
+        loadDeputadoOrgaos: async () => [],
       };
       const camaraClient: CamaraPaginatedClient = {
         fetchAll: async () => {
