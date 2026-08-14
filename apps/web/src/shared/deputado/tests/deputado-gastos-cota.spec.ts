@@ -12,6 +12,7 @@ function loadedResponse(
     year: 2024,
     availableYears: [2024, 2023],
     status: "ok",
+    sigepaDataStatus: "completo",
     coveredThroughMonth: 10,
     totalAmountUsedCents: 42_712_345,
     siglaUf: "SP",
@@ -69,6 +70,32 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).toContain("outubro de 2024");
       expect(html).not.toContain("Fonte: Câmara dos Deputados");
       expect(html).not.toContain("canvas");
+    });
+
+    it("apresenta discretamente a limitação do SIGEPA sem comparar a mediana", () => {
+      // Arrange
+      const response = loadedResponse({
+        year: 2025,
+        sigepaDataStatus: "incompleto",
+        medianaUf: null,
+      });
+
+      // Act
+      const html = render(response);
+
+      // Assert
+      expect(html).toContain("Nota sobre os dados:");
+      expect(html).toContain(
+        "passagens emitidas pelo SIGEPA não constam nesta fonte a partir de agosto de 2025",
+      );
+      expect(html).toContain(
+        "O total pode estar abaixo do informado pela Câmara",
+      );
+      expect(html).toContain("Ver dados na Câmara");
+      expect(html).toContain("Total registrado em 2025");
+      expect(html).not.toContain("Mediana em");
+      expect(html).not.toContain("bg-warning-soft");
+      expect(html).not.toContain('role="alert"');
     });
 
     it("preserva compensações negativas em vez de apresentá-las como despesa positiva", () => {

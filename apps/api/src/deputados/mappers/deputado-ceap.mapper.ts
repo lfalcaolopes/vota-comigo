@@ -38,9 +38,14 @@ export function toDeputadoCeapLoadedResponse(
     input.source.categorias,
     input.coveredThroughMonth,
   );
+  const sigepaDataStatus = deriveSigepaDataStatus(
+    input.year,
+    input.coveredThroughMonth,
+  );
   if (
     input.status === 'ok' &&
     exercicioAnoCompleto &&
+    sigepaDataStatus !== 'incompleto' &&
     input.source.medianaUf === null
   ) {
     throw new Error('mediana da UF não encontrada para exercício completo');
@@ -50,15 +55,29 @@ export function toDeputadoCeapLoadedResponse(
     year: input.year,
     availableYears: [...input.availableYears],
     status: input.status,
+    sigepaDataStatus,
     coveredThroughMonth: input.coveredThroughMonth,
     totalAmountUsedCents: aggregates.totalAmountUsedCents,
     siglaUf: input.source.gasto?.siglaUf ?? null,
     exercicioAnoCompleto,
     periodosExercicio: clipIntervalos(input.source.intervalosExercicio, janela),
-    medianaUf: exercicioAnoCompleto ? input.source.medianaUf : null,
+    medianaUf:
+      exercicioAnoCompleto && sigepaDataStatus !== 'incompleto'
+        ? input.source.medianaUf
+        : null,
     categories: aggregates.categories,
     months: aggregates.months,
   };
+}
+
+function deriveSigepaDataStatus(
+  year: number,
+  coveredThroughMonth: number,
+): DeputadoCeapLoadedResponse['sigepaDataStatus'] {
+  if (year < 2019) return 'nao-aplicavel';
+  if (year === 2025 && coveredThroughMonth >= 8) return 'incompleto';
+  if (year === 2026) return 'incompleto';
+  return 'completo';
 }
 
 function deriveAggregates(

@@ -3,6 +3,7 @@
 import type {
   DeputadoCeapCategory,
   DeputadoCeapMedianaUf,
+  DeputadoCeapSigepaDataStatus,
 } from "@vota-comigo/shared-types";
 import {
   Bar,
@@ -27,6 +28,7 @@ export function GastoCotaDistribuicaoAnual({
   categories,
   coverageLabel,
   medianaUf,
+  sigepaDataStatus,
   siglaUf,
   totalAmountUsedCents,
   year,
@@ -34,12 +36,15 @@ export function GastoCotaDistribuicaoAnual({
   categories: readonly DeputadoCeapCategory[];
   coverageLabel: string;
   medianaUf: DeputadoCeapMedianaUf | null;
+  sigepaDataStatus: DeputadoCeapSigepaDataStatus;
   siglaUf: string | null;
   totalAmountUsedCents: number;
   year: number;
 }) {
   const series = applyGastoCotaPaleta(deriveGastoCotaDistribuicao(categories));
   const mode = deriveGastoCotaDistribuicaoMode(series, totalAmountUsedCents);
+  const totalLabel =
+    sigepaDataStatus === "incompleto" ? "Total registrado" : "Total utilizado";
 
   if (mode === "barras") {
     return (
@@ -48,11 +53,13 @@ export function GastoCotaDistribuicaoAnual({
           coverageLabel={coverageLabel}
           medianaUf={medianaUf}
           siglaUf={siglaUf}
+          totalLabel={totalLabel}
           totalAmountUsedCents={totalAmountUsedCents}
           year={year}
         />
         <GastoCotaDistribuicaoAnualBarras
           series={series}
+          totalLabel={totalLabel}
           totalAmountUsedCents={totalAmountUsedCents}
           year={year}
         />
@@ -67,8 +74,7 @@ export function GastoCotaDistribuicaoAnual({
         className="grid min-w-0 items-center gap-5 sm:grid-cols-[minmax(15rem,20rem)_minmax(0,1fr)] sm:gap-8 sm:items-start"
       >
         <p className="sr-only">
-          Total utilizado em {year}:{" "}
-          {formatGastoCotaAmount(totalAmountUsedCents)}.
+          {totalLabel} em {year}: {formatGastoCotaAmount(totalAmountUsedCents)}.
         </p>
         <div className="grid justify-items-center">
           <div
@@ -102,7 +108,7 @@ export function GastoCotaDistribuicaoAnual({
               aria-hidden="true"
               className="pointer-events-none absolute inset-1/4 grid place-content-center text-center"
             >
-              <span className="text-xs text-muted">Total utilizado</span>
+              <span className="text-xs text-muted">{totalLabel}</span>
               <strong className="mt-1 text-lg leading-tight font-[680] tabular-nums text-ink">
                 {formatGastoCotaAmount(totalAmountUsedCents)}
               </strong>
@@ -142,6 +148,7 @@ export function GastoCotaDistribuicaoAnual({
         coverageLabel={coverageLabel}
         medianaUf={medianaUf}
         siglaUf={siglaUf}
+        totalLabel={totalLabel}
         totalAmountUsedCents={totalAmountUsedCents}
         year={year}
       />
@@ -153,12 +160,14 @@ function GastoCotaComparacao({
   coverageLabel,
   medianaUf,
   siglaUf,
+  totalLabel,
   totalAmountUsedCents,
   year,
 }: {
   coverageLabel: string;
   medianaUf: DeputadoCeapMedianaUf | null;
   siglaUf: string | null;
+  totalLabel: string;
   totalAmountUsedCents: number;
   year: number;
 }) {
@@ -173,13 +182,13 @@ function GastoCotaComparacao({
       aria-label={
         hasMediana
           ? `Comparação visual entre o total utilizado e a mediana em ${siglaUf}`
-          : `Total utilizado em ${year}`
+          : `${totalLabel} em ${year}`
       }
       className="grid gap-3 rounded-md bg-surface-muted px-4 py-4"
     >
       <div className={`grid gap-4 ${hasMediana ? "grid-cols-2" : ""}`}>
         <GastoCotaValor
-          label={`Total utilizado em ${year}`}
+          label={`${totalLabel} em ${year}`}
           value={totalAmountUsedCents}
         />
         {hasMediana ? (

@@ -139,6 +139,7 @@ describe('DeputadosService gastos da cota', () => {
         year: 2024,
         availableYears: [2024],
         status: 'sem-gastos',
+        sigepaDataStatus: 'completo',
         coveredThroughMonth: 8,
         totalAmountUsedCents: 0,
         siglaUf: null,
@@ -195,6 +196,7 @@ describe('DeputadosService gastos da cota', () => {
       // Assert
       expect(result).toMatchObject({
         status: 'ok',
+        sigepaDataStatus: 'completo',
         coveredThroughMonth: 3,
         totalAmountUsedCents: 10200,
         siglaUf: 'MG',
@@ -234,6 +236,74 @@ describe('DeputadosService gastos da cota', () => {
           categories: [],
         })),
       ]);
+    });
+  });
+
+  describe('quando a fonte não contém todos os gastos do SIGEPA', () => {
+    it('marca 2025 a partir de agosto e não publica a mediana', async () => {
+      // Arrange
+      const service = new DeputadosService(
+        fakeRepository({
+          loadDeputadoPerfil: async () => perfilSource(),
+          loadDeputadoCeapSource: async () => ({
+            coberturas: [{ year: 2025, coveredThroughMonth: 12 }],
+            gasto: {
+              siglaUf: 'MG',
+              gastosJson: { '8': { '1': 10000 } },
+            },
+            categorias: [
+              { externalNumSubCota: 1, description: 'Combustíveis' },
+            ],
+            medianaUf: { amountUsedCents: 9500, deputadoCount: 53 },
+            intervalosExercicio: [
+              { openedAt: '2023-02-02T00:00:00.000Z', closedAt: null },
+            ],
+            datasInicioLegislatura: [],
+          }),
+        }),
+      );
+
+      // Act
+      const result = await service.ceap(220593, 2025);
+
+      // Assert
+      expect(result).toMatchObject({
+        sigepaDataStatus: 'incompleto',
+        medianaUf: null,
+      });
+    });
+
+    it('mantém julho de 2025 como completo', async () => {
+      // Arrange
+      const service = new DeputadosService(
+        fakeRepository({
+          loadDeputadoPerfil: async () => perfilSource(),
+          loadDeputadoCeapSource: async () => ({
+            coberturas: [{ year: 2025, coveredThroughMonth: 7 }],
+            gasto: {
+              siglaUf: 'MG',
+              gastosJson: { '7': { '1': 10000 } },
+            },
+            categorias: [
+              { externalNumSubCota: 1, description: 'Combustíveis' },
+            ],
+            medianaUf: { amountUsedCents: 9500, deputadoCount: 53 },
+            intervalosExercicio: [
+              { openedAt: '2023-02-02T00:00:00.000Z', closedAt: null },
+            ],
+            datasInicioLegislatura: [],
+          }),
+        }),
+      );
+
+      // Act
+      const result = await service.ceap(220593, 2025);
+
+      // Assert
+      expect(result).toMatchObject({
+        sigepaDataStatus: 'completo',
+        medianaUf: { amountUsedCents: 9500, deputadoCount: 53 },
+      });
     });
   });
 

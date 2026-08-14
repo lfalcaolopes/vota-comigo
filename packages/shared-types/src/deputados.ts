@@ -47,6 +47,12 @@ export const deputadoCeapStatusSchema = z.enum([
   "ano-nao-carregado",
 ]);
 
+export const deputadoCeapSigepaDataStatusSchema = z.enum([
+  "nao-aplicavel",
+  "completo",
+  "incompleto",
+]);
+
 const amountUsedCentsSchema = z.number().int().safe();
 
 export const deputadoCeapCategorySchema = z.object({
@@ -87,6 +93,7 @@ const deputadoCeapLoadedResponseSchema = z.object({
     deputadoCeapStatusSchema.enum.ok,
     deputadoCeapStatusSchema.enum["sem-gastos"],
   ]),
+  sigepaDataStatus: deputadoCeapSigepaDataStatusSchema,
   coveredThroughMonth: z.number().int().min(1).max(12),
   totalAmountUsedCents: amountUsedCentsSchema,
   siglaUf: z.string().length(2).nullable(),
@@ -135,7 +142,9 @@ export const deputadoCeapResponseSchema = z
     if (
       response.status !== deputadoCeapStatusSchema.enum["ano-nao-carregado"] &&
       response.medianaUf !== null &&
-      (!response.exercicioAnoCompleto ||
+      (response.sigepaDataStatus ===
+        deputadoCeapSigepaDataStatusSchema.enum.incompleto ||
+        !response.exercicioAnoCompleto ||
         response.status !== deputadoCeapStatusSchema.enum.ok)
     ) {
       ctx.addIssue({
@@ -149,6 +158,8 @@ export const deputadoCeapResponseSchema = z
     if (
       response.status === deputadoCeapStatusSchema.enum.ok &&
       response.exercicioAnoCompleto &&
+      response.sigepaDataStatus !==
+        deputadoCeapSigepaDataStatusSchema.enum.incompleto &&
       response.medianaUf === null
     ) {
       ctx.addIssue({
@@ -389,6 +400,9 @@ export type DeputadoPerfilValidYearRange = z.infer<
   typeof deputadoPerfilValidYearRangeSchema
 >;
 export type DeputadoCeapStatus = z.infer<typeof deputadoCeapStatusSchema>;
+export type DeputadoCeapSigepaDataStatus = z.infer<
+  typeof deputadoCeapSigepaDataStatusSchema
+>;
 export type DeputadoCeapCategory = z.infer<typeof deputadoCeapCategorySchema>;
 export type DeputadoCeapMonthCategory = z.infer<
   typeof deputadoCeapMonthCategorySchema

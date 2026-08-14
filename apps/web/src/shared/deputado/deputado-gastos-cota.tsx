@@ -48,6 +48,9 @@ export function DeputadoGastosCotaSection({
 
       {response !== null && response.status === "ok" ? (
         <div className="grid min-w-0 gap-5">
+          {response.sigepaDataStatus === "incompleto" ? (
+            <CotaSigepaDataNote />
+          ) : null}
           {!response.exercicioAnoCompleto ? (
             <p className="text-sm text-muted">
               Exercício no ano:{" "}
@@ -69,6 +72,7 @@ export function DeputadoGastosCotaSection({
             )}
             key={response.year}
             medianaUf={response.medianaUf}
+            sigepaDataStatus={response.sigepaDataStatus}
             siglaUf={response.siglaUf}
             totalAmountUsedCents={response.totalAmountUsedCents}
             year={response.year}
@@ -77,9 +81,20 @@ export function DeputadoGastosCotaSection({
       ) : null}
       {response !== null && response.status === "sem-gastos" ? (
         <div className="grid gap-5">
+          {response.sigepaDataStatus === "incompleto" ? (
+            <CotaSigepaDataNote />
+          ) : null}
           <InlineMessage
-            body="Não há registros de gastos da cota para este deputado neste ano."
-            title="Nenhum gasto registrado"
+            body={
+              response.sigepaDataStatus === "incompleto"
+                ? "Não há outros registros de gastos para este deputado neste ano."
+                : "Não há registros de gastos da cota para este deputado neste ano."
+            }
+            title={
+              response.sigepaDataStatus === "incompleto"
+                ? "Nenhum gasto encontrado na fonte disponível"
+                : "Nenhum gasto registrado"
+            }
           />
           <CotaCoverageAndSource
             coveredThroughMonth={response.coveredThroughMonth}
@@ -98,6 +113,24 @@ export function DeputadoGastosCotaSection({
         </div>
       ) : null}
     </section>
+  );
+}
+
+function CotaSigepaDataNote() {
+  return (
+    <p className="rounded-md bg-surface-muted px-4 py-3 text-sm leading-normal text-muted">
+      <strong className="font-[650] text-ink">Nota sobre os dados:</strong>{" "}
+      passagens emitidas pelo SIGEPA não constam nesta fonte a partir de agosto
+      de 2025. O total pode estar abaixo do informado pela Câmara.{" "}
+      <a
+        className="font-[650] text-info underline decoration-info/35 underline-offset-[0.18em]"
+        href="https://www.camara.leg.br/transparencia/gastos-parlamentares"
+        rel="noreferrer"
+        target="_blank"
+      >
+        Ver dados na Câmara
+      </a>
+    </p>
   );
 }
 

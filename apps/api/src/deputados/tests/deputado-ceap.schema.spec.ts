@@ -5,6 +5,7 @@ function loadedResponse() {
     year: 2025,
     availableYears: [2025],
     status: 'ok',
+    sigepaDataStatus: 'completo',
     coveredThroughMonth: 8,
     totalAmountUsedCents: 100,
     siglaUf: 'MG',
@@ -28,6 +29,7 @@ describe('contrato dos gastos da cota do deputado', () => {
         year: 2025,
         availableYears: [2023, 2024, 2025],
         status: 'ok',
+        sigepaDataStatus: 'completo',
         coveredThroughMonth: 8,
         totalAmountUsedCents: 42797820,
         siglaUf: 'MG',
@@ -90,6 +92,7 @@ describe('contrato dos gastos da cota do deputado', () => {
         year: 2025,
         availableYears: [2025],
         status: 'ok',
+        sigepaDataStatus: 'completo',
         coveredThroughMonth: 8,
         totalAmountUsedCents: 100,
         siglaUf: 'MG',
@@ -140,6 +143,37 @@ describe('contrato dos gastos da cota do deputado', () => {
         totalAmountUsedCents: 1,
         siglaUf: null,
         medianaUf: null,
+      };
+
+      // Act
+      const result = deputadoCeapResponseSchema.safeParse(response);
+
+      // Assert
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('quando os dados do SIGEPA estão incompletos', () => {
+    it('aceita os gastos sem publicar uma mediana da UF', () => {
+      // Arrange
+      const response = {
+        ...loadedResponse(),
+        sigepaDataStatus: 'incompleto',
+        medianaUf: null,
+      };
+
+      // Act
+      const result = deputadoCeapResponseSchema.safeParse(response);
+
+      // Assert
+      expect(result.success).toBe(true);
+    });
+
+    it('rejeita uma mediana calculada sobre os dados incompletos', () => {
+      // Arrange
+      const response = {
+        ...loadedResponse(),
+        sigepaDataStatus: 'incompleto',
       };
 
       // Act

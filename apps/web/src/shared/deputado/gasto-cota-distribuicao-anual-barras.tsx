@@ -23,10 +23,12 @@ import {
 
 export function GastoCotaDistribuicaoAnualBarras({
   series,
+  totalLabel,
   totalAmountUsedCents,
   year,
 }: {
   series: readonly GastoCotaSerieComCor[];
+  totalLabel: string;
   totalAmountUsedCents: number;
   year: number;
 }) {
@@ -45,8 +47,7 @@ export function GastoCotaDistribuicaoAnualBarras({
       onMouseLeave={() => dispatchSelecao({ type: "clear-preview" })}
     >
       <p className="sr-only">
-        Total utilizado em {year}: {formatGastoCotaAmount(totalAmountUsedCents)}
-        .
+        {totalLabel} em {year}: {formatGastoCotaAmount(totalAmountUsedCents)}.
       </p>
       <div aria-hidden="true" className="h-72 min-w-0 w-full">
         <ResponsiveContainer height="100%" minWidth={0} width="100%">
