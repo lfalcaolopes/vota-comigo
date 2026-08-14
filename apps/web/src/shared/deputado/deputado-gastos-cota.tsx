@@ -20,9 +20,10 @@ export function DeputadoGastosCotaSection({
   return (
     <section
       aria-labelledby="deputado-gastos-cota-title"
-      className="grid min-w-0 gap-5"
+      className="grid min-w-0 scroll-mt-20 gap-5 md:scroll-mt-24"
+      id="gastos"
     >
-      <div className="border-t border-border pt-6">
+      <div className="pt-6">
         <h3
           className="text-lg font-[680] leading-snug text-ink text-balance"
           id="deputado-gastos-cota-title"

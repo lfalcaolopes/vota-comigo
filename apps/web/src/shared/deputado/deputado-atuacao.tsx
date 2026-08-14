@@ -50,9 +50,10 @@ export function DeputadoAtuacao({
   return (
     <section
       aria-labelledby="deputado-atuacao-title"
-      className="grid gap-6 border-t border-border pt-8 lg:col-span-2"
+      className="grid scroll-mt-20 gap-8 border-t border-border pt-8 md:scroll-mt-24"
+      id="atuacao"
     >
-      <div className="flex flex-wrap items-end justify-between gap-4">
+      <div className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-start sm:justify-between">
         <h2
           className="text-lg font-[680] leading-snug text-ink"
           id="deputado-atuacao-title"
@@ -71,12 +72,12 @@ export function DeputadoAtuacao({
         />
       </div>
 
-      <DeputadoGastosCotaSection state={gastosCotaState} />
-
       <AtuacaoResumo
         discursosState={discursosState}
         proposicoesState={proposicoesState}
       />
+
+      <DeputadoGastosCotaSection state={gastosCotaState} />
 
       <DeputadoOrgaosSection state={orgaosState} />
     </section>
@@ -91,7 +92,7 @@ function AtuacaoResumo({
   proposicoesState: ProposicoesState;
 }) {
   return (
-    <dl className="grid divide-y divide-border border-y border-border sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+    <dl className="grid divide-y divide-border border-b border-border sm:grid-cols-2 sm:divide-x sm:divide-y-0">
       <Contagem
         label="Proposições assinadas"
         state={proposicoesState}
@@ -120,7 +121,11 @@ export function DeputadoOrgaosSection({ state }: { state: OrgaosState }) {
   const remainingItems = items.slice(3);
 
   return (
-    <section aria-labelledby="deputado-orgaos-title" className="grid gap-4">
+    <section
+      aria-labelledby="deputado-orgaos-title"
+      className="grid scroll-mt-20 gap-4 md:scroll-mt-24"
+      id="comissoes"
+    >
       <div className="grid max-w-[70ch] gap-1 pt-6">
         <h3
           className="text-lg font-[680] leading-snug text-ink"
@@ -151,7 +156,7 @@ export function DeputadoOrgaosSection({ state }: { state: OrgaosState }) {
           <OrgaosList items={visibleItems} />
           {remainingItems.length > 0 ? (
             <details className="group grid gap-3">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 py-3 text-sm font-[650] text-muted transition-colors duration-[140ms] ease-standard marker:content-none hover:text-ink group-open:hidden">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 py-3 text-sm font-[650] text-muted transition-colors duration-140 ease-standard marker:content-none hover:text-ink group-open:hidden">
                 Ver mais vínculos
                 <DisclosureChevron />
               </summary>
