@@ -29,6 +29,10 @@ function fakeRepository(
       datasInicioLegislatura: [],
     }),
     loadDeputadoOrgaos: async () => [],
+    loadDeputadoProposicoesAssinadasSource: async () => ({
+      anoCoberto: false,
+      assinaturasJson: null,
+    }),
     ...overrides,
   };
 }
@@ -346,47 +350,21 @@ describe('DeputadosService discursos', () => {
 });
 
 describe('DeputadosService proposições assinadas', () => {
-  describe('quando o ano tem proposições espalhadas pelos trimestres', () => {
-    it('consulta os quatro intervalos e devolve o ano inteiro unido', async () => {
+  describe('quando o ano está coberto e o deputado tem assinaturas', () => {
+    it('soma os totais persistidos sem chamar a Câmara', async () => {
       // Arrange
-      const byQuarter: Record<string, unknown[]> = {
-        '2022-01-01': [
-          {
-            id: 2318532,
-            siglaTipo: 'REQ',
-            numero: 388,
-            ano: 2022,
-            ementa: 'Requer a criação da Comissão Especial.',
-            dataApresentacao: '2022-03-23T16:06',
-          },
-        ],
-        '2022-04-01': [
-          {
-            id: 2327419,
-            siglaTipo: 'PL',
-            numero: 1234,
-            ano: 2022,
-            ementa: 'Dispõe sobre transparência.',
-            dataApresentacao: '2022-05-04T10:00',
-          },
-        ],
-        '2022-07-01': [],
-        '2022-10-01': [],
-      };
-      const client: CamaraPaginatedClient = {
-        fetchAll: jest.fn().mockImplementation((url: string) => {
-          const start = new URL(url).searchParams.get(
-            'dataApresentacaoInicio',
-          ) as string;
-          return Promise.resolve({
-            ok: true,
-            items: byQuarter[start],
-            pages: 1,
-          });
-        }),
-      };
+      const client: CamaraPaginatedClient = { fetchAll: jest.fn() };
       const service = new DeputadosService(
-        fakeRepository({ loadDeputadoPerfil: async () => perfilSource() }),
+        fakeRepository({
+          loadDeputadoPerfil: async () => perfilSource(),
+          loadDeputadoProposicoesAssinadasSource: async () => ({
+            anoCoberto: true,
+            assinaturasJson: {
+              '2022-03-23': [2, 1],
+              '2022-05-04': [1, 0],
+            },
+          }),
+        }),
         client,
       );
 
@@ -394,59 +372,95 @@ describe('DeputadosService proposições assinadas', () => {
       const result = await service.proposicoesAssinadas(74646, 2022);
 
       // Assert
-      expect(client.fetchAll).toHaveBeenCalledTimes(4);
-      expect(result).toMatchObject({
+      expect(result).toEqual({
         year: 2022,
-        total: 2,
-        items: [
-          { externalIdProposicao: 2327419, dataApresentacao: '2022-05-04' },
-          { externalIdProposicao: 2318532, dataApresentacao: '2022-03-23' },
-        ],
+        disponivel: true,
+        total: 3,
+        totalPrimeiroSignatario: 1,
+      });
+      expect(client.fetchAll).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('quando o ano está coberto mas o deputado não assinou nada', () => {
+    it('devolve zeros disponíveis em vez de lacuna', async () => {
+      // Arrange
+      const service = new DeputadosService(
+        fakeRepository({
+          loadDeputadoPerfil: async () => perfilSource(),
+          loadDeputadoProposicoesAssinadasSource: async () => ({
+            anoCoberto: true,
+            assinaturasJson: null,
+          }),
+        }),
+        { fetchAll: jest.fn() },
+      );
+
+      // Act
+      const result = await service.proposicoesAssinadas(74646, 2022);
+
+      // Assert
+      expect(result).toEqual({
+        year: 2022,
+        disponivel: true,
+        total: 0,
+        totalPrimeiroSignatario: 0,
       });
     });
   });
 
-  describe('quando um dos trimestres falha', () => {
-    it('derruba a seção em vez de publicar um total anual parcial', async () => {
+  describe('quando o ano não foi coberto pela ingestão', () => {
+    it('devolve disponivel false em vez de um total parcial', async () => {
       // Arrange
-      const client: CamaraPaginatedClient = {
-        fetchAll: jest.fn().mockImplementation((url: string) => {
-          const start = new URL(url).searchParams.get('dataApresentacaoInicio');
-          if (start === '2022-07-01') {
-            return Promise.resolve({
-              ok: false,
-              kind: 'timeout',
-              message: 'timeout',
-              pages: 0,
-              receivedItems: 0,
-            });
-          }
-          return Promise.resolve({
-            ok: true,
-            items: [
-              {
-                id: 2318532,
-                siglaTipo: 'REQ',
-                numero: 388,
-                ano: 2022,
-                ementa: 'Requer a criação da Comissão Especial.',
-                dataApresentacao: '2022-03-23T16:06',
-              },
-            ],
-            pages: 1,
-          });
-        }),
-      };
+      const client: CamaraPaginatedClient = { fetchAll: jest.fn() };
       const service = new DeputadosService(
-        fakeRepository({ loadDeputadoPerfil: async () => perfilSource() }),
+        fakeRepository({
+          loadDeputadoPerfil: async () => perfilSource(),
+          loadDeputadoProposicoesAssinadasSource: async () => ({
+            anoCoberto: false,
+            assinaturasJson: null,
+          }),
+        }),
         client,
       );
 
       // Act
-      const result = service.proposicoesAssinadas(74646, 2022);
+      const result = await service.proposicoesAssinadas(74646, 2022);
 
       // Assert
-      await expect(result).rejects.toMatchObject({ status: 503 });
+      expect(result).toEqual({ year: 2022, disponivel: false });
+      expect(client.fetchAll).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('quando a Câmara estaria fora de alcance', () => {
+    it('responde corretamente mesmo com o cliente da Câmara lançando', async () => {
+      // Arrange
+      const client: CamaraPaginatedClient = {
+        fetchAll: jest.fn().mockRejectedValue(new Error('rede indisponível')),
+      };
+      const service = new DeputadosService(
+        fakeRepository({
+          loadDeputadoPerfil: async () => perfilSource(),
+          loadDeputadoProposicoesAssinadasSource: async () => ({
+            anoCoberto: true,
+            assinaturasJson: { '2022-03-23': [2, 1] },
+          }),
+        }),
+        client,
+      );
+
+      // Act
+      const result = await service.proposicoesAssinadas(74646, 2022);
+
+      // Assert
+      expect(result).toEqual({
+        year: 2022,
+        disponivel: true,
+        total: 2,
+        totalPrimeiroSignatario: 1,
+      });
+      expect(client.fetchAll).not.toHaveBeenCalled();
     });
   });
 

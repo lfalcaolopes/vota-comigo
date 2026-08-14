@@ -26,6 +26,7 @@ import {
   deputadoOrgao,
   deputadoPresenca,
   deputadoGastoCota,
+  deputadoProposicaoAssinada,
   legislatura,
   orgao,
   partido,
@@ -45,6 +46,7 @@ import type {
   DeputadosFeedPagination,
   DeputadoOrgaoSource,
   DeputadoPerfilSource,
+  DeputadoProposicoesAssinadasSource,
   DeputadoResumoPresencaRow,
 } from './types/deputados.types';
 
@@ -71,6 +73,10 @@ export interface DeputadosRepository {
     deputadoId: string,
     year: number,
   ): Promise<readonly DeputadoOrgaoSource[]>;
+  loadDeputadoProposicoesAssinadasSource(
+    deputadoId: string,
+    year: number,
+  ): Promise<DeputadoProposicoesAssinadasSource>;
 }
 
 function toLegislaturaPeriodoSource(
@@ -430,6 +436,36 @@ export function createDeputadosRepository(
         dataInicio: row.dataInicio,
         dataFim: row.dataFim,
       }));
+    },
+
+    async loadDeputadoProposicoesAssinadasSource(deputadoId, year) {
+      const [coberturaRows, deputadoRows] = await Promise.all([
+        db
+          .select({ year: deputadoProposicaoAssinada.year })
+          .from(deputadoProposicaoAssinada)
+          .where(eq(deputadoProposicaoAssinada.year, year))
+          .limit(1),
+        db
+          .select({
+            assinaturasJson: deputadoProposicaoAssinada.assinaturasJson,
+          })
+          .from(deputadoProposicaoAssinada)
+          .where(
+            and(
+              eq(deputadoProposicaoAssinada.deputadoId, deputadoId),
+              eq(deputadoProposicaoAssinada.year, year),
+            ),
+          )
+          .limit(1),
+      ]);
+
+      return {
+        anoCoberto: coberturaRows.length > 0,
+        assinaturasJson:
+          (deputadoRows[0]
+            ?.assinaturasJson as DeputadoProposicoesAssinadasSource['assinaturasJson']) ??
+          null,
+      };
     },
   };
 }

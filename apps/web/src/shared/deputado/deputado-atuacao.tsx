@@ -84,21 +84,38 @@ export function DeputadoAtuacao({
   );
 }
 
-function AtuacaoResumo({
+export function AtuacaoResumo({
   discursosState,
   proposicoesState,
 }: {
   discursosState: DiscursosState;
   proposicoesState: ProposicoesState;
 }) {
+  const proposicoesDisponivel =
+    proposicoesState.status === "success" &&
+    proposicoesState.response.disponivel
+      ? proposicoesState.response
+      : null;
+  const proposicoesLacuna =
+    proposicoesState.status === "success" &&
+    !proposicoesState.response.disponivel;
+
   return (
     <dl className="grid divide-y divide-border border-b border-border sm:grid-cols-2 sm:divide-x sm:divide-y-0">
       <Contagem
+        detail={
+          proposicoesDisponivel !== null
+            ? primeiroSignatarioLabel(
+                proposicoesDisponivel.totalPrimeiroSignatario,
+              )
+            : null
+        }
         label="Proposições assinadas"
+        lacuna={proposicoesLacuna}
         state={proposicoesState}
         value={
-          proposicoesState.status === "success"
-            ? String(proposicoesState.response.total)
+          proposicoesDisponivel !== null
+            ? String(proposicoesDisponivel.total)
             : null
         }
       />
@@ -113,6 +130,10 @@ function AtuacaoResumo({
       />
     </dl>
   );
+}
+
+function primeiroSignatarioLabel(totalPrimeiroSignatario: number): string {
+  return `${totalPrimeiroSignatario} como primeiro signatário`;
 }
 
 export function DeputadoOrgaosSection({ state }: { state: OrgaosState }) {
@@ -219,11 +240,15 @@ function formatPeriodo(item: DeputadoOrgao): string {
 }
 
 function Contagem({
+  detail,
   label,
+  lacuna,
   state,
   value,
 }: {
+  detail?: string | null;
   label: string;
+  lacuna?: boolean;
   state: ProposicoesState | OrgaosState | DiscursosState;
   value: string | null;
 }) {
@@ -237,10 +262,20 @@ function Contagem({
         {state.status === "error" ? (
           <span className="text-sm font-[650] text-danger">Indisponível</span>
         ) : null}
-        {state.status === "success" ? (
-          <span className="text-2xl leading-none font-[680] tabular-nums text-ink">
-            {value}
+        {state.status === "success" && lacuna === true ? (
+          <span className="text-sm font-[650] text-muted">
+            Ano não carregado
           </span>
+        ) : null}
+        {state.status === "success" && lacuna !== true ? (
+          <>
+            <span className="text-2xl leading-none font-[680] tabular-nums text-ink">
+              {value}
+            </span>
+            {detail !== null && detail !== undefined ? (
+              <p className="text-sm text-muted">{detail}</p>
+            ) : null}
+          </>
         ) : null}
       </dd>
     </div>

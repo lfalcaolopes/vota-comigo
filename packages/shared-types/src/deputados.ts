@@ -205,21 +205,32 @@ export const deputadoOrgaosResponseSchema = z.object({
   total: z.number().int().nonnegative(),
 });
 
-export const deputadoProposicaoAssinadaSchema = z.object({
-  externalIdProposicao: z.number().int().positive(),
-  siglaTipo: z.string().min(1).nullable(),
-  numero: z.number().int().positive().nullable(),
-  ano: z.number().int().positive().nullable(),
-  ementa: z.string().min(1).nullable(),
-  dataApresentacao: isoDateSchema,
-  urlOficial: z.url(),
-});
-
-export const deputadoProposicoesAssinadasResponseSchema = z.object({
-  year: z.number().int(),
-  items: z.array(deputadoProposicaoAssinadaSchema),
-  total: z.number().int().nonnegative(),
-});
+export const deputadoProposicoesAssinadasResponseSchema = z
+  .discriminatedUnion("disponivel", [
+    z.object({
+      year: z.number().int(),
+      disponivel: z.literal(true),
+      total: z.number().int().nonnegative(),
+      totalPrimeiroSignatario: z.number().int().nonnegative(),
+    }),
+    z.object({
+      year: z.number().int(),
+      disponivel: z.literal(false),
+    }),
+  ])
+  .superRefine((response, ctx) => {
+    if (
+      response.disponivel &&
+      response.totalPrimeiroSignatario > response.total
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["totalPrimeiroSignatario"],
+        message:
+          "totalPrimeiroSignatario não pode exceder o total de assinaturas",
+      });
+    }
+  });
 
 export const deputadoDiscursoLinkKindSchema = z.enum([
   "video",
@@ -416,9 +427,6 @@ export type DeputadoCeapResponse = z.infer<typeof deputadoCeapResponseSchema>;
 export type DeputadoOrgao = z.infer<typeof deputadoOrgaoSchema>;
 export type DeputadoOrgaosResponse = z.infer<
   typeof deputadoOrgaosResponseSchema
->;
-export type DeputadoProposicaoAssinada = z.infer<
-  typeof deputadoProposicaoAssinadaSchema
 >;
 export type DeputadoProposicoesAssinadasResponse = z.infer<
   typeof deputadoProposicoesAssinadasResponseSchema

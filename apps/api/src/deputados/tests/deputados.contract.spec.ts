@@ -103,6 +103,10 @@ function fakeRepository(
   byExternalId: ReadonlyMap<number, DeputadoPerfilSource>,
   resumoById: ResumoById = new Map(),
   feedPage: DeputadosFeedPage = { items: [card()], total: 1 },
+  proposicoesAssinadasSource: DeputadosRepository['loadDeputadoProposicoesAssinadasSource'] = async () => ({
+    anoCoberto: false,
+    assinaturasJson: null,
+  }),
 ): DeputadosRepository {
   return {
     loadDeputadosFeed: async (filters, pagination) => {
@@ -136,6 +140,7 @@ function fakeRepository(
       datasInicioLegislatura: [],
     }),
     loadDeputadoOrgaos: async () => [],
+    loadDeputadoProposicoesAssinadasSource: proposicoesAssinadasSource,
   };
 }
 
@@ -148,6 +153,7 @@ async function buildApp(
       throw new Error('should not call the Câmara');
     },
   },
+  proposicoesAssinadasSource?: DeputadosRepository['loadDeputadoProposicoesAssinadasSource'],
 ): Promise<INestApplication> {
   const moduleRef = await Test.createTestingModule({
     controllers: [DeputadosController],
@@ -159,7 +165,12 @@ async function buildApp(
       },
       {
         provide: DEPUTADOS_REPOSITORY,
-        useValue: fakeRepository(byExternalId, resumoById, feedPage),
+        useValue: fakeRepository(
+          byExternalId,
+          resumoById,
+          feedPage,
+          proposicoesAssinadasSource,
+        ),
       },
     ],
   }).compile();
@@ -170,33 +181,21 @@ async function buildApp(
 }
 
 describe('GET /deputados/:externalIdDeputado/proposicoes-assinadas', () => {
-  describe('quando a Câmara devolve proposições do ano', () => {
-    it('responde o ano inteiro pelo contrato público, sem paginação', async () => {
+  describe('quando o ano está coberto e o deputado tem assinaturas', () => {
+    it('responde os totais pelo contrato público, sem consultar a Câmara', async () => {
       // Arrange
       const app = await buildApp(
         new Map([[220593, source()]]),
         undefined,
         undefined,
-        {
-          fetchAll: async (url: string) => ({
-            ok: true,
-            pages: 1,
-            items:
-              new URL(url).searchParams.get('dataApresentacaoInicio') ===
-              '2022-01-01'
-                ? [
-                    {
-                      id: 2314871,
-                      siglaTipo: 'RDF',
-                      numero: 1,
-                      ano: 0,
-                      ementa: 'Aprova o texto do Acordo sobre a Mobilidade.',
-                      dataApresentacao: '2022-02-09T23:59',
-                    },
-                  ]
-                : [],
-          }),
-        },
+        undefined,
+        async () => ({
+          anoCoberto: true,
+          assinaturasJson: {
+            '2022-03-23': [2, 1],
+            '2022-05-04': [1, 0],
+          },
+        }),
       );
 
       // Act
@@ -211,22 +210,37 @@ describe('GET /deputados/:externalIdDeputado/proposicoes-assinadas', () => {
       );
       expect(body).toEqual({
         year: 2022,
-        items: [
-          {
-            externalIdProposicao: 2314871,
-            siglaTipo: 'RDF',
-            numero: 1,
-            ano: null,
-            ementa: 'Aprova o texto do Acordo sobre a Mobilidade.',
-            dataApresentacao: '2022-02-09',
-            urlOficial:
-              'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=2314871',
-          },
-        ],
-        total: 1,
+        disponivel: true,
+        total: 3,
+        totalPrimeiroSignatario: 1,
       });
-      expect(response.body).not.toHaveProperty('limit');
-      expect(response.body).not.toHaveProperty('offset');
+      expect(response.body).not.toHaveProperty('items');
+      await app.close();
+    });
+  });
+
+  describe('quando o ano não foi coberto pela ingestão', () => {
+    it('responde disponivel false pelo contrato público', async () => {
+      // Arrange
+      const app = await buildApp(
+        new Map([[220593, source()]]),
+        undefined,
+        undefined,
+        undefined,
+        async () => ({ anoCoberto: false, assinaturasJson: null }),
+      );
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/220593/proposicoes-assinadas?year=2022',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoProposicoesAssinadasResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body).toEqual({ year: 2022, disponivel: false });
       await app.close();
     });
   });
@@ -260,6 +274,33 @@ describe('GET /deputados/:externalIdDeputado/proposicoes-assinadas', () => {
       // Assert
       expect(response.status).toBe(400);
       await app.close();
+    });
+  });
+
+  describe('validação do contrato', () => {
+    it('aceita disponivel false sem os campos de total', () => {
+      // Arrange
+      const body = { year: 2018, disponivel: false };
+
+      // Act / Assert
+      expect(() =>
+        deputadoProposicoesAssinadasResponseSchema.parse(body),
+      ).not.toThrow();
+    });
+
+    it('rejeita totalPrimeiroSignatario maior que o total', () => {
+      // Arrange
+      const body = {
+        year: 2022,
+        disponivel: true,
+        total: 2,
+        totalPrimeiroSignatario: 3,
+      };
+
+      // Act / Assert
+      expect(() =>
+        deputadoProposicoesAssinadasResponseSchema.parse(body),
+      ).toThrow();
     });
   });
 });

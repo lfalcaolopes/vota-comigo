@@ -72,8 +72,9 @@ const orgaosResponse: DeputadoOrgaosResponse = {
 
 const proposicoesAssinadasResponse: DeputadoProposicoesAssinadasResponse = {
   year: 2022,
-  items: [],
+  disponivel: true,
   total: 0,
+  totalPrimeiroSignatario: 0,
 };
 
 const discursosResponse: DeputadoDiscursosResponse = {

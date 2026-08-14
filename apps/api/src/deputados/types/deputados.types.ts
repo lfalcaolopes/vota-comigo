@@ -57,6 +57,16 @@ export type DeputadoCeapSource = {
   datasInicioLegislatura: readonly string[];
 };
 
+export type ContadorAssinaturas = readonly [
+  assinadas: number,
+  primeiras: number,
+];
+
+export type DeputadoProposicoesAssinadasSource = {
+  anoCoberto: boolean;
+  assinaturasJson: Record<string, ContadorAssinaturas> | null;
+};
+
 export type DeputadoOrgaoSource = {
   externalIdOrgao: number;
   siglaOrgao: string | null;
