@@ -45,6 +45,7 @@ export function GastoCotaDistribuicaoAnual({
   const mode = deriveGastoCotaDistribuicaoMode(series, totalAmountUsedCents);
   const totalLabel =
     sigepaDataStatus === "incompleto" ? "Total registrado" : "Total utilizado";
+  const hasMediana = medianaUf !== null && siglaUf !== null;
 
   if (mode === "barras") {
     return (
@@ -144,14 +145,16 @@ export function GastoCotaDistribuicaoAnual({
           ))}
         </ol>
       </figure>
-      <GastoCotaComparacao
-        coverageLabel={coverageLabel}
-        medianaUf={medianaUf}
-        siglaUf={siglaUf}
-        totalLabel={totalLabel}
-        totalAmountUsedCents={totalAmountUsedCents}
-        year={year}
-      />
+      {hasMediana ? (
+        <GastoCotaComparacao
+          coverageLabel={coverageLabel}
+          medianaUf={medianaUf}
+          siglaUf={siglaUf}
+          totalLabel={totalLabel}
+          totalAmountUsedCents={totalAmountUsedCents}
+          year={year}
+        />
+      ) : null}
     </div>
   );
 }

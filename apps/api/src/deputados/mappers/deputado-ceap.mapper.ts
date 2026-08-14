@@ -45,7 +45,6 @@ export function toDeputadoCeapLoadedResponse(
   if (
     input.status === 'ok' &&
     exercicioAnoCompleto &&
-    sigepaDataStatus !== 'incompleto' &&
     input.source.medianaUf === null
   ) {
     throw new Error('mediana da UF não encontrada para exercício completo');
@@ -61,10 +60,7 @@ export function toDeputadoCeapLoadedResponse(
     siglaUf: input.source.gasto?.siglaUf ?? null,
     exercicioAnoCompleto,
     periodosExercicio: clipIntervalos(input.source.intervalosExercicio, janela),
-    medianaUf:
-      exercicioAnoCompleto && sigepaDataStatus !== 'incompleto'
-        ? input.source.medianaUf
-        : null,
+    medianaUf: exercicioAnoCompleto ? input.source.medianaUf : null,
     categories: aggregates.categories,
     months: aggregates.months,
   };

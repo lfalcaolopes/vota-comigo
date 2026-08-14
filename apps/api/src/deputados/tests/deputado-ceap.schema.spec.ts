@@ -154,12 +154,11 @@ describe('contrato dos gastos da cota do deputado', () => {
   });
 
   describe('quando os dados do SIGEPA estão incompletos', () => {
-    it('aceita os gastos sem publicar uma mediana da UF', () => {
+    it('aceita a mediana calculada sobre os dados incompletos', () => {
       // Arrange
       const response = {
         ...loadedResponse(),
         sigepaDataStatus: 'incompleto',
-        medianaUf: null,
       };
 
       // Act
@@ -169,11 +168,12 @@ describe('contrato dos gastos da cota do deputado', () => {
       expect(result.success).toBe(true);
     });
 
-    it('rejeita uma mediana calculada sobre os dados incompletos', () => {
+    it('rejeita a ausência de mediana no exercício anual completo', () => {
       // Arrange
       const response = {
         ...loadedResponse(),
         sigepaDataStatus: 'incompleto',
+        medianaUf: null,
       };
 
       // Act

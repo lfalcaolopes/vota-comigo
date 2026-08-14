@@ -181,10 +181,6 @@ export function DeputadoOrgaosSection({ state }: { state: OrgaosState }) {
         >
           Comissões e outros órgãos
         </h3>
-        <p className="text-sm leading-normal text-muted">
-          Cada vínculo corresponde ao cargo e ao período registrados pela
-          Câmara.
-        </p>
       </div>
       {state.status === "loading" ? <SkeletonRows count={3} /> : null}
       {state.status === "error" ? (

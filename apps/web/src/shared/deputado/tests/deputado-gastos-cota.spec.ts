@@ -72,12 +72,11 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).not.toContain("canvas");
     });
 
-    it("apresenta discretamente a limitação do SIGEPA sem comparar a mediana", () => {
+    it("apresenta discretamente a limitação do SIGEPA sem deixar de comparar a mediana", () => {
       // Arrange
       const response = loadedResponse({
         year: 2025,
         sigepaDataStatus: "incompleto",
-        medianaUf: null,
       });
 
       // Act
@@ -93,9 +92,32 @@ describe("seção de gastos da cota parlamentar", () => {
       );
       expect(html).toContain("Ver dados na Câmara");
       expect(html).toContain("Total registrado em 2025");
-      expect(html).not.toContain("Mediana em");
+      expect(html).toContain("Mediana em SP");
       expect(html).not.toContain("bg-warning-soft");
       expect(html).not.toContain('role="alert"');
+    });
+
+    it("sem exercício anual completo, não mostra card de total nem mediana redundante", () => {
+      // Arrange
+      const response = loadedResponse({
+        year: 2025,
+        sigepaDataStatus: "incompleto",
+        medianaUf: null,
+        exercicioAnoCompleto: false,
+        periodosExercicio: [
+          { startDate: "2025-08-01", endDate: "2025-12-31" },
+        ],
+      });
+
+      // Act
+      const html = render(response);
+
+      // Assert
+      expect(html).toContain(
+        "Total registrado em 2025: R$ 427.123,45.",
+      );
+      expect(html).not.toContain("Dados disponíveis:");
+      expect(html).not.toContain("Mediana em");
     });
 
     it("preserva compensações negativas em vez de apresentá-las como despesa positiva", () => {

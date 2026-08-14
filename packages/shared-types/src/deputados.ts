@@ -142,9 +142,7 @@ export const deputadoCeapResponseSchema = z
     if (
       response.status !== deputadoCeapStatusSchema.enum["ano-nao-carregado"] &&
       response.medianaUf !== null &&
-      (response.sigepaDataStatus ===
-        deputadoCeapSigepaDataStatusSchema.enum.incompleto ||
-        !response.exercicioAnoCompleto ||
+      (!response.exercicioAnoCompleto ||
         response.status !== deputadoCeapStatusSchema.enum.ok)
     ) {
       ctx.addIssue({
@@ -158,8 +156,6 @@ export const deputadoCeapResponseSchema = z
     if (
       response.status === deputadoCeapStatusSchema.enum.ok &&
       response.exercicioAnoCompleto &&
-      response.sigepaDataStatus !==
-        deputadoCeapSigepaDataStatusSchema.enum.incompleto &&
       response.medianaUf === null
     ) {
       ctx.addIssue({
