@@ -207,8 +207,14 @@ _Avoid_: Lista de presença.
 **Histórico partidário do deputado**: Linha do tempo condensada dos partidos de um deputado, derivada de mudanças no histórico parlamentar, sem listar eventos administrativos brutos.
 _Avoid_: Histórico bruto do deputado.
 
-**Proposição assinada pelo deputado**: Proposição em que a Câmara registra o deputado como signatário no ano de apresentação, sem distinguir se ele foi proponente ou apoiador. Pelo Regimento Interno, todo signatário é autor, e a rota pública de busca não informa o papel nem a ordem de assinatura.
+**Proposição assinada pelo deputado**: Proposição em que a Câmara registra o deputado como signatário, atribuída ao ano de `dataApresentacao`, sem distinguir se ele foi proponente ou apoiador e sem considerar a ordem da assinatura. Pelo Regimento Interno, todo signatário é autor. Ficam de fora os tipos `DOC` e `OF`, que a Câmara não trata como proposta legislativa.
 _Avoid_: Proposição criada pelo deputado, Proposição que o deputado apresentou, Iniciativa do deputado, Autoria do deputado como título público.
+
+**Primeiro signatário de proposição**: Deputado registrado pela Câmara com `ordemAssinatura` igual a 1 no CSV de autores da proposição, independentemente do indicador `proponente`.
+_Avoid_: Autor principal, Único autor, Criador da proposição.
+
+**Relatoria de proposição**: Designação de um deputado como relator de uma proposição. A Câmara não publica essa designação em arquivo aberto nem permite filtrá-la pela API, então o produto não a exibe.
+_Avoid_: Proposição relatada como sinônimo de Proposição assinada pelo deputado.
 
 **Cota parlamentar**: Cota para o Exercício da Atividade Parlamentar (CEAP), limite mensal de reembolso de despesas ligadas à atividade parlamentar, cujo teto varia por estado de origem do deputado porque embute o preço da passagem aérea até a capital.
 _Avoid_: Verba indenizatória, Salário do deputado, Auxílio.
@@ -307,9 +313,14 @@ _Avoid_: Mês zerado como sinônimo de mês sem dado.
 - O navegador nunca consulta a **Câmara** diretamente; toda leitura da fonte passa pelo backend do produto, que valida e transforma a resposta antes de publicá-la.
 - Os blocos de identidade do **Perfil do deputado** — **Snapshot público do deputado**, **Resumo de presença do deputado** e **Histórico partidário do deputado** — vêm do banco do produto e não dependem da disponibilidade da **Câmara**.
 - As seções do **Perfil do deputado** que consultam a **Câmara** em runtime falham isoladamente: indisponibilidade da fonte degrada a seção afetada, nunca os blocos de identidade nem as demais seções.
+- **Proposições assinadas pelo deputado** e os vínculos do **Deputado** com órgãos vêm do banco do produto, ingeridos de arquivo. Discursos são a única leitura da **Câmara** em runtime no **Perfil do deputado** e permanecem assim, porque a **Câmara** não os publica em arquivo.
 - O **Perfil do deputado** exibe **Proposições assinadas pelo deputado** recortadas pelo ano de apresentação, derivado de `dataApresentacao` e não do campo legislativo `ano`.
-- O conjunto de **Proposições assinadas pelo deputado** não distingue proponente de apoiador e não sustenta afirmação de iniciativa, primeira assinatura, redação ou relatoria.
-- A quantidade de **Proposições assinadas pelo deputado** não é métrica de produtividade e não cria comparação ou ranking entre **Deputados**, pela mesma razão que valem para presença, órgãos e discursos.
+- A quantidade de **Proposições assinadas pelo deputado** reproduz deliberadamente o contador "de sua autoria" da página oficial do deputado: proposições distintas com assinatura dele e `dataApresentacao` no ano, excluídos os tipos `DOC` e `OF`. Divergir desse número faria o usuário ver dois valores para o mesmo deputado e o mesmo ano.
+- O conjunto de **Proposições assinadas pelo deputado** não distingue proponente de apoiador e não sustenta afirmação de iniciativa, redação ou **Relatoria de proposição**.
+- A quantidade de **Proposições assinadas pelo deputado** não é métrica de produtividade e não cria comparação ou ranking entre **Deputados**, pela mesma razão que valem para presença, órgãos e discursos. A composição é desigual por razão institucional: quem ocupa cadeira na Mesa e relata muito acumula milhares de assinaturas que não descrevem atuação comparável.
+- A quantidade de proposições em que o **Deputado** foi **Primeiro signatário de proposição** é exibida como contador separado, nunca como recorte da quantidade de **Proposições assinadas pelo deputado**.
+- O **Perfil do deputado** exibe **Proposições assinadas pelo deputado** apenas como quantidades, não como lista; as proposições contadas não são importadas para o produto e não existem como **Proposição** no banco.
+- Um ano que a ingestão de **Proposições assinadas pelo deputado** ainda não cobre é **Lacuna de dados**, não zero assinaturas; um **Deputado** sem assinatura em ano coberto é zero real, e os dois nunca são apresentados da mesma forma.
 - O **Perfil do deputado** exibe **Gastos da cota do deputado** agregados por mês e por categoria oficial, sem despesas individuais, fornecedores nem comprovantes.
 - Um mês além da **Cobertura do dado da cota** é **Lacuna de dados**, não gasto zero; os dois nunca são apresentados da mesma forma.
 - Um ano ainda não carregado é **Lacuna de dados**, não ausência de gasto; o **Perfil do deputado** só oferece anos carregados e distingue os dois vazios por texto próprio.
