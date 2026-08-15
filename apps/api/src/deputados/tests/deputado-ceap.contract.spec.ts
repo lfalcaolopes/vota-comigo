@@ -53,8 +53,16 @@ describe('GET /deputados/:externalIdDeputado/ceap', () => {
           eventos: [],
         }),
         loadDeputadoCeapSource: async () => ({
-          coberturas: [{ year: 2024, coveredThroughMonth: 12 }],
+          coberturas: [
+            {
+              year: 2024,
+              coveredThroughMonth: 12,
+              sigepaReposto: false,
+              sigepaCoveredThroughMonth: null,
+            },
+          ],
           gasto: null,
+          gastosSigepaJson: null,
           categorias: [],
           medianaUf: null,
           intervalosExercicio: [],

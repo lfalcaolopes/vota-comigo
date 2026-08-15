@@ -1,5 +1,6 @@
+import { CATEGORIA_PASSAGEM_AEREA_SIGEPA } from '@/shared/cota/categorias-passagem-aerea';
+
 import type { Rejection } from '../../types/ingestion-pipeline-runner.types';
-import { CATEGORIA_PASSAGEM_AEREA_SIGEPA } from '../deputado-gasto-cota/passagem-aerea-relatorio';
 import type {
   DespesaCota,
   GastoCotaSigepaJson,

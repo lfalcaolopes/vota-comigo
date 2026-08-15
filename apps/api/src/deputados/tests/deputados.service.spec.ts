@@ -24,6 +24,7 @@ function fakeRepository(
     loadDeputadoCeapSource: async () => ({
       coberturas: [],
       gasto: null,
+      gastosSigepaJson: null,
       categorias: [],
       medianaUf: null,
       intervalosExercicio: [],

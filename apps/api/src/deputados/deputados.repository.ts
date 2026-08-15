@@ -27,6 +27,7 @@ import {
   deputadoOrgao,
   deputadoPresenca,
   deputadoGastoCota,
+  deputadoGastoCotaSigepa,
   deputadoProposicaoAssinada,
   legislatura,
   orgao,
@@ -424,6 +425,7 @@ export function createDeputadosRepository(
       const [
         coberturas,
         gastoRows,
+        gastoSigepaRows,
         categorias,
         intervalosExercicio,
         legislaturas,
@@ -432,6 +434,8 @@ export function createDeputadosRepository(
           .select({
             year: cotaCobertura.year,
             coveredThroughMonth: cotaCobertura.coveredThroughMonth,
+            sigepaReposto: cotaCobertura.sigepaReposto,
+            sigepaCoveredThroughMonth: cotaCobertura.sigepaCoveredThroughMonth,
           })
           .from(cotaCobertura)
           .orderBy(asc(cotaCobertura.year)),
@@ -445,6 +449,16 @@ export function createDeputadosRepository(
             and(
               eq(deputadoGastoCota.deputadoId, deputadoId),
               eq(deputadoGastoCota.year, year),
+            ),
+          )
+          .limit(1),
+        db
+          .select({ gastosJson: deputadoGastoCotaSigepa.gastosJson })
+          .from(deputadoGastoCotaSigepa)
+          .where(
+            and(
+              eq(deputadoGastoCotaSigepa.deputadoId, deputadoId),
+              eq(deputadoGastoCotaSigepa.year, year),
             ),
           )
           .limit(1),
@@ -489,6 +503,10 @@ export function createDeputadosRepository(
                   Record<string, number>
                 >,
               },
+        gastosSigepaJson:
+          (gastoSigepaRows[0]?.gastosJson as
+            | Record<string, number>
+            | undefined) ?? null,
         categorias,
         medianaUf: medianaRows[0] ?? null,
         intervalosExercicio,

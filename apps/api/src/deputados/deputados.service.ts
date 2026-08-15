@@ -19,6 +19,9 @@ import type {
   UfsDisponiveisResponse,
 } from '@vota-comigo/shared-types';
 
+import { isAnoReposto } from '@/shared/cota/ano-reposto';
+import { applyReposicaoSigepa } from '@/shared/cota/reposicao-sigepa';
+
 import { toDeputadoCard } from './mappers/deputado-card.mapper';
 import { toDeputadoCeapLoadedResponse } from './mappers/deputado-ceap.mapper';
 import { toDeputadoOrgaosResponse } from './mappers/deputado-orgaos.mapper';
@@ -116,11 +119,21 @@ export class DeputadosService {
       source.id,
       selectedYear,
     );
+    const cobertura = ceapSource.coberturas.find(
+      (item) => item.year === selectedYear,
+    );
+    const anoReposto = cobertura !== undefined && isAnoReposto(cobertura);
+    const gastosJson = applyReposicaoSigepa({
+      year: selectedYear,
+      anoReposto,
+      gastosJson: ceapSource.gasto?.gastosJson ?? null,
+      gastosSigepaJson: ceapSource.gastosSigepaJson,
+    });
     const state = deriveDeputadoCeapState({
       year: selectedYear,
       validYearRange: yearRule.validYearRange,
       ingestedYears: ceapSource.coberturas.map((item) => item.year),
-      hasGastos: ceapSource.gasto !== null,
+      hasGastos: gastosJson !== null,
     });
 
     if (state.status === 'ano-nao-carregado') {
@@ -131,9 +144,6 @@ export class DeputadosService {
       };
     }
 
-    const cobertura = ceapSource.coberturas.find(
-      (item) => item.year === selectedYear,
-    );
     if (state.status === null || cobertura === undefined) {
       throw new BadRequestException('year fora da faixa do deputado');
     }
@@ -143,6 +153,8 @@ export class DeputadosService {
       availableYears: state.availableYears,
       status: state.status,
       coveredThroughMonth: cobertura.coveredThroughMonth,
+      anoReposto,
+      gastosJson: gastosJson ?? {},
       source: ceapSource,
     });
   }

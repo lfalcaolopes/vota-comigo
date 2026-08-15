@@ -5,6 +5,10 @@ import {
   exerceuAnoInteiro,
 } from '@/exercicio/rules/exercicio-ano';
 import { toEpochMillis } from '@/exercicio/rules/instante';
+import {
+  deriveSigepaDataStatus,
+  type GastosCotaJson,
+} from '@/shared/cota/reposicao-sigepa';
 
 import type { DeputadoCeapSource } from '../types/deputados.types';
 
@@ -18,6 +22,8 @@ type DeputadoCeapLoadedInput = {
   availableYears: readonly number[];
   status: DeputadoCeapLoadedResponse['status'];
   coveredThroughMonth: number;
+  anoReposto: boolean;
+  gastosJson: GastosCotaJson;
   source: DeputadoCeapSource;
 };
 
@@ -34,17 +40,21 @@ export function toDeputadoCeapLoadedResponse(
     janela,
   );
   const aggregates = deriveAggregates(
-    input.source.gasto?.gastosJson ?? {},
+    input.gastosJson,
     input.source.categorias,
     input.coveredThroughMonth,
   );
-  const sigepaDataStatus = deriveSigepaDataStatus(
-    input.year,
-    input.coveredThroughMonth,
-  );
+  const sigepaDataStatus = deriveSigepaDataStatus({
+    year: input.year,
+    coveredThroughMonth: input.coveredThroughMonth,
+    anoReposto: input.anoReposto,
+  });
+  // Sem linha no dump não há UF, e sem UF não há mediana a exigir: é o deputado
+  // cujo único gasto do ano veio da reposição.
   if (
     input.status === 'ok' &&
     exercicioAnoCompleto &&
+    input.source.gasto !== null &&
     input.source.medianaUf === null
   ) {
     throw new Error('mediana da UF não encontrada para exercício completo');
@@ -85,18 +95,8 @@ export function somarGastosAteMes(
   return total;
 }
 
-export function deriveSigepaDataStatus(
-  year: number,
-  coveredThroughMonth: number,
-): DeputadoCeapLoadedResponse['sigepaDataStatus'] {
-  if (year < 2019) return 'nao-aplicavel';
-  if (year === 2025 && coveredThroughMonth >= 8) return 'incompleto';
-  if (year === 2026) return 'incompleto';
-  return 'completo';
-}
-
 function deriveAggregates(
-  gastosJson: Record<string, Record<string, number>>,
+  gastosJson: GastosCotaJson,
   categoriasSource: DeputadoCeapSource['categorias'],
   coveredThroughMonth: number,
 ) {

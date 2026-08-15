@@ -43,6 +43,7 @@ function fakeRepository(
     loadDeputadoCeapSource: async () => ({
       coberturas: [],
       gasto: null,
+      gastosSigepaJson: null,
       categorias: [],
       medianaUf: null,
       intervalosExercicio: [],
@@ -107,6 +108,7 @@ describe('DeputadosService gastos da cota', () => {
       const loadDeputadoCeapSource = jest.fn().mockResolvedValue({
         coberturas: [],
         gasto: null,
+        gastosSigepaJson: null,
         categorias: [],
         medianaUf: null,
         intervalosExercicio: [],
@@ -139,8 +141,16 @@ describe('DeputadosService gastos da cota', () => {
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource: async () => ({
-            coberturas: [{ year: 2024, coveredThroughMonth: 8 }],
+            coberturas: [
+              {
+                year: 2024,
+                coveredThroughMonth: 8,
+                sigepaReposto: false,
+                sigepaCoveredThroughMonth: null,
+              },
+            ],
             gasto: null,
+            gastosSigepaJson: null,
             categorias: [],
             medianaUf: null,
             intervalosExercicio: [
@@ -188,7 +198,14 @@ describe('DeputadosService gastos da cota', () => {
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource: async () => ({
-            coberturas: [{ year: 2024, coveredThroughMonth: 3 }],
+            coberturas: [
+              {
+                year: 2024,
+                coveredThroughMonth: 3,
+                sigepaReposto: false,
+                sigepaCoveredThroughMonth: null,
+              },
+            ],
             gasto: {
               siglaUf: 'MG',
               gastosJson: {
@@ -197,6 +214,7 @@ describe('DeputadosService gastos da cota', () => {
                 '12': { '1': 999999 },
               },
             },
+            gastosSigepaJson: null,
             categorias: [
               { externalNumSubCota: 1, description: 'Combustíveis' },
               { externalNumSubCota: 2, description: 'Passagens' },
@@ -266,11 +284,19 @@ describe('DeputadosService gastos da cota', () => {
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource: async () => ({
-            coberturas: [{ year: 2025, coveredThroughMonth: 12 }],
+            coberturas: [
+              {
+                year: 2025,
+                coveredThroughMonth: 12,
+                sigepaReposto: false,
+                sigepaCoveredThroughMonth: null,
+              },
+            ],
             gasto: {
               siglaUf: 'MG',
               gastosJson: { '8': { '1': 10000 } },
             },
+            gastosSigepaJson: null,
             categorias: [
               { externalNumSubCota: 1, description: 'Combustíveis' },
             ],
@@ -299,11 +325,19 @@ describe('DeputadosService gastos da cota', () => {
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource: async () => ({
-            coberturas: [{ year: 2025, coveredThroughMonth: 7 }],
+            coberturas: [
+              {
+                year: 2025,
+                coveredThroughMonth: 7,
+                sigepaReposto: false,
+                sigepaCoveredThroughMonth: null,
+              },
+            ],
             gasto: {
               siglaUf: 'MG',
               gastosJson: { '7': { '1': 10000 } },
             },
+            gastosSigepaJson: null,
             categorias: [
               { externalNumSubCota: 1, description: 'Combustíveis' },
             ],
@@ -327,6 +361,201 @@ describe('DeputadosService gastos da cota', () => {
     });
   });
 
+  describe('quando o ano da janela está reposto', () => {
+    it('substitui a categoria 998 do dump pela reposição, mês a mês e no total', async () => {
+      // Arrange
+      const service = new DeputadosService(
+        fakeRepository({
+          loadDeputadoPerfil: async () => perfilSource(),
+          loadDeputadoCeapSource: async () => ({
+            coberturas: [
+              {
+                year: 2025,
+                coveredThroughMonth: 9,
+                sigepaReposto: true,
+                sigepaCoveredThroughMonth: 9,
+              },
+            ],
+            gasto: {
+              siglaUf: 'MG',
+              gastosJson: {
+                '7': { '1': 1000, '998': 40000 },
+                '8': { '1': 2000, '998': -2500 },
+                '9': { '998': -1000 },
+              },
+            },
+            gastosSigepaJson: { '7': 999999, '8': 700000, '9': 120000 },
+            categorias: [
+              { externalNumSubCota: 1, description: 'Combustíveis' },
+              {
+                externalNumSubCota: 998,
+                description: 'PASSAGEM AÉREA - SIGEPA',
+              },
+            ],
+            medianaUf: { amountUsedCents: 9500, deputadoCount: 53 },
+            intervalosExercicio: [
+              { openedAt: '2023-02-02T00:00:00.000Z', closedAt: null },
+            ],
+            datasInicioLegislatura: [],
+          }),
+        }),
+      );
+
+      // Act
+      const result = await service.ceap(220593, 2025);
+
+      // Assert
+      expect(result).toMatchObject({
+        status: 'ok',
+        sigepaDataStatus: 'completo',
+        totalAmountUsedCents: 1000 + 40000 + 2000 + 700000 + 120000,
+        categories: [
+          {
+            externalNumSubCota: 1,
+            description: 'Combustíveis',
+            amountUsedCents: 3000,
+          },
+          {
+            externalNumSubCota: 998,
+            description: 'PASSAGEM AÉREA - SIGEPA',
+            amountUsedCents: 40000 + 700000 + 120000,
+          },
+        ],
+      });
+      expect('months' in result ? result.months.slice(6, 9) : []).toEqual([
+        {
+          month: 7,
+          totalAmountUsedCents: 41000,
+          categories: [
+            { externalNumSubCota: 1, amountUsedCents: 1000 },
+            { externalNumSubCota: 998, amountUsedCents: 40000 },
+          ],
+        },
+        {
+          month: 8,
+          totalAmountUsedCents: 702000,
+          categories: [
+            { externalNumSubCota: 1, amountUsedCents: 2000 },
+            { externalNumSubCota: 998, amountUsedCents: 700000 },
+          ],
+        },
+        {
+          month: 9,
+          totalAmountUsedCents: 120000,
+          categories: [{ externalNumSubCota: 998, amountUsedCents: 120000 }],
+        },
+      ]);
+    });
+
+    it('publica o gasto do deputado que só aparece na reposição', async () => {
+      // Arrange
+      const service = new DeputadosService(
+        fakeRepository({
+          loadDeputadoPerfil: async () => perfilSource(),
+          loadDeputadoCeapSource: async () => ({
+            coberturas: [
+              {
+                year: 2025,
+                coveredThroughMonth: 9,
+                sigepaReposto: true,
+                sigepaCoveredThroughMonth: 9,
+              },
+            ],
+            gasto: null,
+            gastosSigepaJson: { '9': 120000 },
+            categorias: [
+              {
+                externalNumSubCota: 998,
+                description: 'PASSAGEM AÉREA - SIGEPA',
+              },
+            ],
+            medianaUf: null,
+            intervalosExercicio: [
+              { openedAt: '2023-02-02T00:00:00.000Z', closedAt: null },
+            ],
+            datasInicioLegislatura: [],
+          }),
+        }),
+      );
+
+      // Act
+      const result = await service.ceap(220593, 2025);
+
+      // Assert
+      expect(result).toMatchObject({
+        status: 'ok',
+        siglaUf: null,
+        totalAmountUsedCents: 120000,
+        categories: [
+          {
+            externalNumSubCota: 998,
+            description: 'PASSAGEM AÉREA - SIGEPA',
+            amountUsedCents: 120000,
+          },
+        ],
+      });
+    });
+  });
+
+  describe('quando o ano da janela ainda não está reposto', () => {
+    it('lê o dump puro, com os estornos negativos da categoria 998', async () => {
+      // Arrange
+      const service = new DeputadosService(
+        fakeRepository({
+          loadDeputadoPerfil: async () => perfilSource(),
+          loadDeputadoCeapSource: async () => ({
+            coberturas: [
+              {
+                year: 2025,
+                coveredThroughMonth: 9,
+                sigepaReposto: false,
+                sigepaCoveredThroughMonth: null,
+              },
+            ],
+            gasto: {
+              siglaUf: 'MG',
+              gastosJson: { '8': { '1': 2000, '998': -2500 } },
+            },
+            gastosSigepaJson: { '8': 700000 },
+            categorias: [
+              { externalNumSubCota: 1, description: 'Combustíveis' },
+              {
+                externalNumSubCota: 998,
+                description: 'PASSAGEM AÉREA - SIGEPA',
+              },
+            ],
+            medianaUf: { amountUsedCents: 9500, deputadoCount: 53 },
+            intervalosExercicio: [
+              { openedAt: '2023-02-02T00:00:00.000Z', closedAt: null },
+            ],
+            datasInicioLegislatura: [],
+          }),
+        }),
+      );
+
+      // Act
+      const result = await service.ceap(220593, 2025);
+
+      // Assert
+      expect(result).toMatchObject({
+        sigepaDataStatus: 'incompleto',
+        totalAmountUsedCents: -500,
+        categories: [
+          {
+            externalNumSubCota: 1,
+            description: 'Combustíveis',
+            amountUsedCents: 2000,
+          },
+          {
+            externalNumSubCota: 998,
+            description: 'PASSAGEM AÉREA - SIGEPA',
+            amountUsedCents: -2500,
+          },
+        ],
+      });
+    });
+  });
+
   describe('quando o deputado exerceu parte do ano carregado', () => {
     it('informa o período exercido sem publicar a mediana', async () => {
       // Arrange
@@ -334,11 +563,19 @@ describe('DeputadosService gastos da cota', () => {
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource: async () => ({
-            coberturas: [{ year: 2024, coveredThroughMonth: 12 }],
+            coberturas: [
+              {
+                year: 2024,
+                coveredThroughMonth: 12,
+                sigepaReposto: false,
+                sigepaCoveredThroughMonth: null,
+              },
+            ],
             gasto: {
               siglaUf: 'MG',
               gastosJson: { '8': { '1': 10000 } },
             },
+            gastosSigepaJson: null,
             categorias: [
               { externalNumSubCota: 1, description: 'Combustíveis' },
             ],
@@ -390,7 +627,14 @@ describe('DeputadosService gastos da cota', () => {
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource: async () => ({
-            coberturas: [{ year: 2024, coveredThroughMonth: 12 }],
+            coberturas: [
+              {
+                year: 2024,
+                coveredThroughMonth: 12,
+                sigepaReposto: false,
+                sigepaCoveredThroughMonth: null,
+              },
+            ],
             gasto: {
               siglaUf: 'MG',
               gastosJson: {
@@ -399,6 +643,7 @@ describe('DeputadosService gastos da cota', () => {
                 ),
               },
             },
+            gastosSigepaJson: null,
             categorias,
             medianaUf: { amountUsedCents: 9500, deputadoCount: 53 },
             intervalosExercicio: [

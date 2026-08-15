@@ -46,11 +46,16 @@ export type DeputadoCeapSource = {
   coberturas: readonly {
     year: number;
     coveredThroughMonth: number;
+    sigepaReposto: boolean;
+    sigepaCoveredThroughMonth: number | null;
   }[];
   gasto: {
     siglaUf: string;
     gastosJson: Record<string, Record<string, number>>;
   } | null;
+  // Espelho do dump e reposição chegam separados: quem mescla é o módulo da
+  // janela, na leitura (ADR 022).
+  gastosSigepaJson: Record<string, number> | null;
   categorias: readonly {
     externalNumSubCota: number;
     description: string;

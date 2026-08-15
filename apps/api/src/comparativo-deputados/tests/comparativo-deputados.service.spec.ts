@@ -80,6 +80,7 @@ function createRepository(
     loadDeputadoCeapSource: async () => ({
       coberturas: [],
       gasto: null,
+      gastosSigepaJson: null,
       categorias: [],
       medianaUf: null,
       intervalosExercicio: [],

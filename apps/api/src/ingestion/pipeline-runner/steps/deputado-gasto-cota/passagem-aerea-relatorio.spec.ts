@@ -1,8 +1,11 @@
-import type { IngestionReporter } from '../../types/ingestion-pipeline-runner.types';
-
 import {
   CATEGORIA_PASSAGEM_AEREA_RPA,
   CATEGORIA_PASSAGEM_AEREA_SIGEPA,
+} from '@/shared/cota/categorias-passagem-aerea';
+
+import type { IngestionReporter } from '../../types/ingestion-pipeline-runner.types';
+
+import {
   derivePassagemAereaPorMes,
   logPassagemAereaPorMes,
 } from './passagem-aerea-relatorio';

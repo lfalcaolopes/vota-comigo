@@ -97,6 +97,24 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).not.toContain('role="alert"');
     });
 
+    it("deixa de notar as passagens ausentes quando o ano da janela foi reposto", () => {
+      // Arrange
+      const response = loadedResponse({
+        year: 2025,
+        sigepaDataStatus: "completo",
+      });
+
+      // Act
+      const html = render(response);
+
+      // Assert
+      expect(html).not.toContain("Nota sobre os dados:");
+      expect(html).not.toContain(
+        "passagens emitidas pelo SIGEPA não constam nesta fonte a partir de agosto de 2025",
+      );
+      expect(html).toContain("Total utilizado em 2025");
+    });
+
     it("sem exercício anual completo, não mostra card de total nem mediana redundante", () => {
       // Arrange
       const response = loadedResponse({
@@ -104,18 +122,14 @@ describe("seção de gastos da cota parlamentar", () => {
         sigepaDataStatus: "incompleto",
         medianaUf: null,
         exercicioAnoCompleto: false,
-        periodosExercicio: [
-          { startDate: "2025-08-01", endDate: "2025-12-31" },
-        ],
+        periodosExercicio: [{ startDate: "2025-08-01", endDate: "2025-12-31" }],
       });
 
       // Act
       const html = render(response);
 
       // Assert
-      expect(html).toContain(
-        "Total registrado em 2025: R$ 427.123,45.",
-      );
+      expect(html).toContain("Total registrado em 2025: R$ 427.123,45.");
       expect(html).not.toContain("Dados disponíveis:");
       expect(html).not.toContain("Mediana em");
     });

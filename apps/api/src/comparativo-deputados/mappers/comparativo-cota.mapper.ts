@@ -3,16 +3,14 @@ import type {
   ComparativoCotaAno,
 } from '@vota-comigo/shared-types';
 
-import {
-  deriveSigepaDataStatus,
-  somarGastosAteMes,
-} from '@/deputados/mappers/deputado-ceap.mapper';
+import { somarGastosAteMes } from '@/deputados/mappers/deputado-ceap.mapper';
 import type { DeputadoCotaJanelaSource } from '@/deputados/types/deputados.types';
 import {
   deriveJanelaExercicioAno,
   somarDiasEmExercicio,
 } from '@/exercicio/rules/exercicio-ano';
 import { toEpochMillis } from '@/exercicio/rules/instante';
+import { deriveSigepaDataStatus } from '@/shared/cota/reposicao-sigepa';
 
 const DIA_EM_MILLIS = 24 * 60 * 60 * 1000;
 
@@ -128,9 +126,14 @@ function toAnoComSomas(
       diasEmExercicio,
       diasNoAno,
       medianaUfDeputadoCount: medianaUf?.deputadoCount ?? null,
+      // O comparativo ainda lê o dump puro: declarar aqui um ano como reposto
+      // sem mesclar também os valores diria completo sobre um gasto incompleto.
       dadoIncompleto:
-        deriveSigepaDataStatus(ano.year, ano.coveredThroughMonth ?? 0) ===
-        'incompleto',
+        deriveSigepaDataStatus({
+          year: ano.year,
+          coveredThroughMonth: ano.coveredThroughMonth ?? 0,
+          anoReposto: false,
+        }) === 'incompleto',
     },
     gastoCents,
     medianaCents,

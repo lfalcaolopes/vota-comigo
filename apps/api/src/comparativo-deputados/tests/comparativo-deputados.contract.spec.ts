@@ -104,8 +104,16 @@ function createRepository(): DeputadosRepository {
       ausenciasSemMotivoConhecido: 10,
     }),
     loadDeputadoCeapSource: async () => ({
-      coberturas: [{ year: 2024, coveredThroughMonth: 12 }],
+      coberturas: [
+        {
+          year: 2024,
+          coveredThroughMonth: 12,
+          sigepaReposto: false,
+          sigepaCoveredThroughMonth: null,
+        },
+      ],
       gasto: { siglaUf: 'MG', gastosJson: { '1': { '1': 100_000 } } },
+      gastosSigepaJson: null,
       categorias: [{ externalNumSubCota: 1, description: 'PASSAGENS AÉREAS' }],
       medianaUf: { amountUsedCents: 200_000, deputadoCount: 53 },
       intervalosExercicio: [
