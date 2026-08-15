@@ -134,6 +134,13 @@
       "when": 1786800044347,
       "tag": "0018_smooth_tattoo",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1786828420442,
+      "tag": "0019_giant_hellion",
+      "breakpoints": true
     }
   ]
 }
