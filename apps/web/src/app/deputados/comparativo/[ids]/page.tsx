@@ -30,12 +30,6 @@ export default async function ComparativoDeputadosPage({ params }: PageProps) {
     <main className="min-h-screen w-full min-w-0 overflow-x-hidden bg-bg text-ink">
       <div className="mx-auto box-border grid w-full min-w-0 max-w-5xl gap-8 px-4 pt-8 pb-16 md:pt-12">
         <header className="grid max-w-[68ch] gap-3">
-          <Link
-            className="text-sm font-[650] text-muted underline decoration-border underline-offset-2 transition-colors duration-[140ms] ease-standard hover:text-ink hover:decoration-current"
-            href="/deputados"
-          >
-            Voltar aos deputados
-          </Link>
           <h1 className="text-3xl leading-tight font-[720] text-balance text-ink">
             Comparar deputados
           </h1>

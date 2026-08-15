@@ -140,7 +140,7 @@ export function AtuacaoResumo({
         />
       </dl>
       {coberturaEmAberto !== null ? (
-        <p className="text-sm text-muted">
+        <p className="text-sm text-muted justify-self-end">
           Última atualização: {formatCobertura(coberturaEmAberto)}.
         </p>
       ) : null}

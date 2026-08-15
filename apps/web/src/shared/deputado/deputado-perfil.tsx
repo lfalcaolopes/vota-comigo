@@ -69,7 +69,7 @@ function Identity({ perfil }: { perfil: DeputadoPerfilData }) {
   return (
     <header
       className={joinClassNames(
-        "grid gap-5 border-b border-border pb-8 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-start sm:gap-6 md:pb-10",
+        "grid gap-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-start sm:gap-6",
         hasPublicDetails
           ? "lg:grid-cols-[auto_minmax(0,1fr)_minmax(16rem,0.75fr)] lg:gap-8"
           : "lg:grid-cols-[auto_minmax(0,1fr)]",
@@ -219,7 +219,7 @@ function ProfileNavigation({ hasAnnualData }: { hasAnnualData: boolean }) {
   return (
     <nav
       aria-label="Seções do perfil"
-      className="-mx-4 -mt-6 -mb-2 overflow-x-auto px-4 sm:mx-0 sm:px-0 md:-mt-8"
+      className="overflow-x-auto px-4 border-t border-border -mx-4 sm:mx-0 sm:px-0"
     >
       <ul className="flex min-w-max items-center gap-1 border-b border-border py-2">
         <NavigationItem href="#visao-geral">Visão geral</NavigationItem>
@@ -309,8 +309,7 @@ function Overview({ perfil }: { perfil: DeputadoPerfilData }) {
                 </p>
               ) : null}
               <p className="max-w-[65ch] text-sm leading-normal text-muted">
-                {RECORTE_BASE_PRESENCA} O percentual descreve participação, não
-                avalia desempenho parlamentar.
+                {RECORTE_BASE_PRESENCA}
               </p>
             </div>
           ) : (

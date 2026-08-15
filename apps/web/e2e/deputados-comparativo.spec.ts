@@ -211,18 +211,6 @@ test.describe("comparativo de deputados a partir da listagem", () => {
     await expect(ajuda).toBeFocused();
   });
 
-  test("leva de volta à listagem de deputados", async ({ page }) => {
-    // Arrange
-    await routeComparativo(page);
-    await page.goto("/deputados/comparativo/20,10");
-
-    // Act
-    const voltar = page.getByRole("link", { name: "Voltar aos deputados" });
-
-    // Assert
-    await expect(voltar).toHaveAttribute("href", "/deputados");
-  });
-
   test("recusa um endereço com deputados repetidos", async ({ page }) => {
     // Arrange
     await routeComparativo(page);

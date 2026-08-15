@@ -76,7 +76,9 @@ export function ComparativoDeputadosView({
       </div>
 
       {notaCobertura !== null ? (
-        <p className="text-xs leading-normal text-muted">{notaCobertura}</p>
+        <p className="text-xs leading-normal text-muted justify-self-end">
+          {notaCobertura}
+        </p>
       ) : null}
     </div>
   );
