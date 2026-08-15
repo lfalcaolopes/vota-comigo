@@ -20,6 +20,7 @@ function fakeRepository(
     loadPartidosDisponiveis: async () => [],
     loadDeputadoPerfil: async () => null,
     loadResumoPresenca: async () => null,
+    loadResumoPresencaDaLegislatura: async () => null,
     loadDeputadoCeapSource: async () => ({
       coberturas: [],
       gasto: null,

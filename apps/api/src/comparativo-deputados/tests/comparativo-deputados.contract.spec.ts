@@ -99,6 +99,10 @@ function createRepository(): DeputadosRepository {
       presencas: 90,
       ausenciasSemMotivoConhecido: 10,
     }),
+    loadResumoPresencaDaLegislatura: async () => ({
+      presencas: 90,
+      ausenciasSemMotivoConhecido: 10,
+    }),
     loadDeputadoCeapSource: async () => ({
       coberturas: [{ year: 2024, coveredThroughMonth: 12 }],
       gasto: { siglaUf: 'MG', gastosJson: { '1': { '1': 100_000 } } },

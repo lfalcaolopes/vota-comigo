@@ -305,11 +305,12 @@ export const comparativoDeputadoSchema = z
     }
 
     const semMetricasDaJanela = [
+      item.resumoPresenca,
       item.proposicoesAssinadas,
       item.orgaos,
       item.cota,
     ].filter((metrica) => metrica === null).length;
-    if (semMetricasDaJanela !== 0 && semMetricasDaJanela !== 3) {
+    if (semMetricasDaJanela !== 0 && semMetricasDaJanela !== 4) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["cota"],

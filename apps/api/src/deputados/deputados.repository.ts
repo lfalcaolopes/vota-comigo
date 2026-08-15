@@ -14,7 +14,7 @@ import {
   sql,
   type SQL,
 } from 'drizzle-orm';
-import { alias } from 'drizzle-orm/pg-core';
+import { alias, type PgColumn } from 'drizzle-orm/pg-core';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
@@ -70,6 +70,10 @@ export interface DeputadosRepository {
   ): Promise<DeputadoPerfilSource | null>;
   loadResumoPresenca(
     deputadoId: string,
+  ): Promise<DeputadoResumoPresencaRow | null>;
+  loadResumoPresencaDaLegislatura(
+    deputadoId: string,
+    externalIdLegislatura: number,
   ): Promise<DeputadoResumoPresencaRow | null>;
   loadDeputadoCeapSource(
     deputadoId: string,
@@ -158,6 +162,23 @@ export function createDeputadosRepository(
     );
   }
 
+  // Um deputado pode ter presença registrada em mais de uma legislatura;
+  // um innerJoin multiplicaria linhas (cards duplicados, count inflado),
+  // então a elegibilidade usa exists em vez de join.
+  function presencaRegistrada(deputadoIdColumn: PgColumn) {
+    return exists(
+      db
+        .select({ one: sql`1` })
+        .from(deputadoPresenca)
+        .where(
+          and(
+            eq(deputadoPresenca.deputadoId, deputadoIdColumn),
+            gt(deputadoPresenca.presencas, 0),
+          ),
+        ),
+    );
+  }
+
   function loadIntervalosExercicioRows(deputadoId: string) {
     return db
       .select({
@@ -238,16 +259,11 @@ export function createDeputadosRepository(
           total: sql<string>`count(*) over ()`,
         })
         .from(deputado)
-        .innerJoin(
-          deputadoPresenca,
-          and(
-            eq(deputadoPresenca.deputadoId, deputado.id),
-            gt(deputadoPresenca.presencas, 0),
-          ),
-        )
         .leftJoin(snapshot, eq(snapshot.deputadoId, deputado.id))
         .leftJoin(partido, eq(partido.id, snapshot.partidoId))
-        .where(conditions.length === 0 ? undefined : and(...conditions))
+        .where(
+          and(presencaRegistrada(deputado.id), ...conditions),
+        )
         .orderBy(sql`${ordenacao} asc nulls last`, deputado.externalIdDeputado)
         .limit(pagination.limit)
         .offset(pagination.offset);
@@ -271,14 +287,12 @@ export function createDeputadosRepository(
       const rows = await db
         .selectDistinct({ siglaUf: snapshot.siglaUf })
         .from(snapshot)
-        .innerJoin(
-          deputadoPresenca,
+        .where(
           and(
-            eq(deputadoPresenca.deputadoId, snapshot.deputadoId),
-            gt(deputadoPresenca.presencas, 0),
+            presencaRegistrada(snapshot.deputadoId),
+            isNotNull(snapshot.siglaUf),
           ),
-        )
-        .where(isNotNull(snapshot.siglaUf));
+        );
 
       return rows.flatMap((row) => (row.siglaUf === null ? [] : [row.siglaUf]));
     },
@@ -289,15 +303,13 @@ export function createDeputadosRepository(
       const rows = await db
         .selectDistinct({ sigla: partido.sigla })
         .from(snapshot)
-        .innerJoin(
-          deputadoPresenca,
-          and(
-            eq(deputadoPresenca.deputadoId, snapshot.deputadoId),
-            gt(deputadoPresenca.presencas, 0),
-          ),
-        )
         .innerJoin(partido, eq(partido.id, snapshot.partidoId))
-        .where(isNotNull(partido.sigla));
+        .where(
+          and(
+            presencaRegistrada(snapshot.deputadoId),
+            isNotNull(partido.sigla),
+          ),
+        );
 
       return rows.flatMap((row) => (row.sigla === null ? [] : [row.sigla]));
     },
@@ -364,6 +376,28 @@ export function createDeputadosRepository(
     },
 
     async loadResumoPresenca(deputadoId) {
+      // O perfil soma todas as legislaturas do deputado: a leitura por
+      // legislatura é o recorte novo, o perfil continua sendo o agregado.
+      const [row] = await db
+        .select({
+          presencas: sql<number>`coalesce(sum(${deputadoPresenca.presencas}), 0)`,
+          ausenciasSemMotivoConhecido: sql<number>`coalesce(sum(${deputadoPresenca.ausenciasSemMotivoConhecido}), 0)`,
+          linhas: sql<number>`count(*)`,
+        })
+        .from(deputadoPresenca)
+        .where(eq(deputadoPresenca.deputadoId, deputadoId));
+
+      if (row === undefined || Number(row.linhas) === 0) {
+        return null;
+      }
+
+      return {
+        presencas: Number(row.presencas),
+        ausenciasSemMotivoConhecido: Number(row.ausenciasSemMotivoConhecido),
+      };
+    },
+
+    async loadResumoPresencaDaLegislatura(deputadoId, externalIdLegislatura) {
       const [row] = await db
         .select({
           presencas: deputadoPresenca.presencas,
@@ -371,7 +405,16 @@ export function createDeputadosRepository(
             deputadoPresenca.ausenciasSemMotivoConhecido,
         })
         .from(deputadoPresenca)
-        .where(eq(deputadoPresenca.deputadoId, deputadoId))
+        .innerJoin(
+          legislatura,
+          eq(legislatura.id, deputadoPresenca.legislaturaId),
+        )
+        .where(
+          and(
+            eq(deputadoPresenca.deputadoId, deputadoId),
+            eq(legislatura.externalIdLegislatura, externalIdLegislatura),
+          ),
+        )
         .limit(1);
 
       return row ?? null;

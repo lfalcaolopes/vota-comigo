@@ -267,10 +267,10 @@ O MVP-4 implementa apenas a entrada contextual pós-matcher. O comparativo geral
 - As linhas de proposições seguem a ordem da execução atual do matcher.
 - O comparativo deve reaproveitar a semântica do matcher sempre que possível, mantendo o menor número de regras próprias.
 - A implementação do MVP-4 pode montar o comparativo chamando o detalhe do matcher para cada deputado selecionado, sem criar endpoint agregado próprio de comparativo.
-- O **Resumo de presença do deputado** no comparativo pode vir da mesma rota pública do perfil (`GET /deputados/{externalIdDeputado}`), enquanto votos e indicadores de concordância vêm do detalhe do matcher.
+- O **Resumo de presença do deputado** no comparativo é calculado sobre a janela por legislatura do próprio comparativo, não sobre a mesma rota pública do perfil (`GET /deputados/{externalIdDeputado}`, que soma todas as legislaturas); votos e indicadores de concordância vêm do detalhe do matcher.
 - Se qualquer chamada necessária para montar o comparativo falhar, a tela exibe erro global com ação "Tentar novamente", sem renderizar comparação parcial.
 - Por depender da execução efêmera do matcher no MVP-4, a UI do comparativo pode ser implementada dentro de `features/matcher`; uma feature independente `comparativo` fica para quando houver entrada geral ou rota própria.
-- Abaixo das linhas de votos, o comparativo exibe apenas o **Resumo de presença do deputado** como informação consolidada adicional por deputado, usando o mesmo recorte do perfil. As demais informações do perfil ficam fora do comparativo.
+- Abaixo das linhas de votos, o comparativo exibe apenas o **Resumo de presença do deputado** como informação consolidada adicional por deputado, recortada pela janela por legislatura do comparativo (não pelo recorte agregado do perfil). As demais informações do perfil ficam fora do comparativo.
 - Quando o **Resumo de presença do deputado** estiver indisponível, o comparativo segue o perfil: mostra estado indisponível e não exibe `0%`.
 - O comparativo não exibe métricas do matcher como compatibilidade bruta, score Wilson ou amostra comparável; essas métricas permanecem nos resultados e no detalhe do matcher.
 

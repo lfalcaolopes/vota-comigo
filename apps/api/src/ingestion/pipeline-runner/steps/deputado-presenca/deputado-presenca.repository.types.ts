@@ -16,11 +16,18 @@ export type ComputableVotacaoRow = {
 
 export type DeputadoPresencaRow = {
   deputadoId: string;
+  legislaturaId: string;
   presencas: number;
   ausenciasSemMotivoConhecido: number;
   foraDeExercicio: number;
   lacunaDeDados: number;
   ruleVersion: number;
+};
+
+export type LegislaturaPeriodoRow = {
+  legislaturaId: string;
+  dataInicio: string;
+  dataFim: string;
 };
 
 export type DeputadoPresencaRefreshResult = {
@@ -30,6 +37,7 @@ export type DeputadoPresencaRefreshResult = {
 export type DeputadoPresencaRepository = {
   loadDeputadosComHistorico(): Promise<readonly DeputadoComHistoricoRow[]>;
   loadComputableVotacoes(): Promise<readonly ComputableVotacaoRow[]>;
+  loadLegislaturas(): Promise<readonly LegislaturaPeriodoRow[]>;
   fullReplace(
     rows: readonly DeputadoPresencaRow[],
   ): Promise<DeputadoPresencaRefreshResult>;

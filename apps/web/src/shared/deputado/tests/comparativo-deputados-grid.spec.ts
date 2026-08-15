@@ -450,6 +450,8 @@ describe("grade do comparativo de deputados", () => {
       // Arrange
       const semJanela = {
         janela: JANELA_INDISPONIVEL,
+        resumoPresencaDisponivel: false,
+        resumoPresenca: null,
         proposicoesAssinadas: null,
         orgaos: null,
         cota: null,
@@ -553,6 +555,8 @@ describe("aviso do topo do comparativo de deputados", () => {
           deputado(1, {
             nomePublico: "Fulano de Tal",
             janela: JANELA_INDISPONIVEL,
+            resumoPresencaDisponivel: false,
+            resumoPresenca: null,
           }),
           deputado(2, { nomePublico: "Erika Kokay", janela: JANELA_57 }),
         ],

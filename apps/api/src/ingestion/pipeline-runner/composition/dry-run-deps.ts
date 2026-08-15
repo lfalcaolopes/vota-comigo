@@ -119,6 +119,7 @@ export const dryRunLegislaturaLookup: LegislaturaLookup = {
 export const dryRunDeputadoPresencaRepository: DeputadoPresencaRepository = {
   loadDeputadosComHistorico: () => Promise.resolve([]),
   loadComputableVotacoes: () => Promise.resolve([]),
+  loadLegislaturas: () => Promise.resolve([]),
   fullReplace: dryRunWriteGuard,
 };
 

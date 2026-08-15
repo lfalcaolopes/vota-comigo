@@ -5,11 +5,13 @@ import type {
   ComparativoOrgaos,
   ComparativoProposicoesAssinadas,
   DeputadoPerfil,
+  DeputadoResumoPresenca,
 } from '@vota-comigo/shared-types';
 
 type ComparativoDeputadoInput = {
   perfil: DeputadoPerfil;
   janela: ComparativoJanela;
+  resumoPresenca: DeputadoResumoPresenca | null;
   proposicoesAssinadas: ComparativoProposicoesAssinadas | null;
   orgaos: ComparativoOrgaos | null;
   cota: ComparativoCota | null;
@@ -29,8 +31,8 @@ export function toComparativoDeputado(
     snapshotPublicoDisponivel: perfil.snapshotPublicoDisponivel,
     snapshotPublico: perfil.snapshotPublico,
     janela: input.janela,
-    resumoPresencaDisponivel: perfil.resumoPresencaDisponivel,
-    resumoPresenca: perfil.resumoPresenca,
+    resumoPresencaDisponivel: input.resumoPresenca !== null,
+    resumoPresenca: input.resumoPresenca,
     proposicoesAssinadas: input.proposicoesAssinadas,
     orgaos: input.orgaos,
     cota: input.cota,

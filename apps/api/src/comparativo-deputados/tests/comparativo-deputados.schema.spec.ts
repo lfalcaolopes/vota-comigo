@@ -57,13 +57,15 @@ function deputado(
       urlFoto: null,
     },
     janela,
-    resumoPresencaDisponivel: true,
-    resumoPresenca: {
-      percentualPresenca: 90,
-      presencas: 90,
-      totalVotacoesEmExercicio: 100,
-      ausenciasSemMotivoConhecido: 10,
-    },
+    resumoPresencaDisponivel: disponivel,
+    resumoPresenca: !disponivel
+      ? null
+      : {
+          percentualPresenca: 90,
+          presencas: 90,
+          totalVotacoesEmExercicio: 100,
+          ausenciasSemMotivoConhecido: 10,
+        },
     proposicoesAssinadas: !disponivel
       ? null
       : {
@@ -183,7 +185,7 @@ describe('contrato do comparativo de deputados', () => {
   });
 
   describe('quando a janela está indisponível', () => {
-    it('aceita identidade e presença sem nenhuma métrica da janela', () => {
+    it('aceita identidade sem nenhuma métrica da janela, incluindo presença', () => {
       // Arrange
       const response = {
         janelasCoincidem: true,

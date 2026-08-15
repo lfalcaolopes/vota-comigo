@@ -127,6 +127,13 @@
       "when": 1786734217604,
       "tag": "0017_spotty_corsair",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1786800044347,
+      "tag": "0018_smooth_tattoo",
+      "breakpoints": true
     }
   ]
 }

@@ -224,6 +224,8 @@ describe("ComparativoDeputadosView", () => {
       // Arrange
       const semJanela = {
         janela: JANELA_INDISPONIVEL,
+        resumoPresencaDisponivel: false,
+        resumoPresenca: null,
         proposicoesAssinadas: null,
         orgaos: null,
         cota: null,

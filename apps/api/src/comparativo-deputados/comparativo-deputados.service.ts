@@ -12,6 +12,7 @@ import {
   type DeputadosRepository,
 } from '@/deputados/deputados.repository';
 import { toDeputadoPerfil } from '@/deputados/mappers/deputado-perfil.mapper';
+import { toResumoPresenca } from '@/deputados/rules/resumo-presenca';
 import type {
   DeputadoPerfilSource,
   LegislaturaSource,
@@ -115,14 +116,13 @@ export class ComparativoDeputadosService {
       throw new NotFoundException('deputado nao encontrado');
     }
 
-    const [resumoPresenca, intervalosExercicio] = await Promise.all([
-      this.repository.loadResumoPresenca(source.id),
-      this.repository.loadIntervalosExercicio(source.id),
-    ]);
+    const intervalosExercicio = await this.repository.loadIntervalosExercicio(
+      source.id,
+    );
 
     return {
       source,
-      perfil: toDeputadoPerfil(source, resumoPresenca),
+      perfil: toDeputadoPerfil(source, null),
       intervalosExercicio,
     };
   }
@@ -146,6 +146,7 @@ export class ComparativoDeputadosService {
       return toComparativoDeputado({
         perfil,
         janela,
+        resumoPresenca: null,
         proposicoesAssinadas: null,
         orgaos: null,
         cota: null,
@@ -154,15 +155,23 @@ export class ComparativoDeputadosService {
 
     const years = toAnosDaJanela(janela.dataInicio, janela.dataFim);
 
-    const [proposicoesSource, orgaosSource, cotaSource] = await Promise.all([
-      this.repository.loadDeputadoProposicoesAssinadasJanela(source.id, years),
-      this.repository.loadDeputadoOrgaosNaJanela(
-        source.id,
-        janela.dataInicio.slice(0, 10),
-        janela.dataFim.slice(0, 10),
-      ),
-      this.repository.loadDeputadoCotaJanelaSource(source.id, years),
-    ]);
+    const [proposicoesSource, orgaosSource, cotaSource, resumoPresencaRow] =
+      await Promise.all([
+        this.repository.loadDeputadoProposicoesAssinadasJanela(
+          source.id,
+          years,
+        ),
+        this.repository.loadDeputadoOrgaosNaJanela(
+          source.id,
+          janela.dataInicio.slice(0, 10),
+          janela.dataFim.slice(0, 10),
+        ),
+        this.repository.loadDeputadoCotaJanelaSource(source.id, years),
+        this.repository.loadResumoPresencaDaLegislatura(
+          source.id,
+          janela.legislatura,
+        ),
+      ]);
 
     // A cobertura vem antes da cota: os dias de cada ano param onde a fonte
     // para, e é a cobertura que sabe onde isso é.
@@ -181,6 +190,8 @@ export class ComparativoDeputadosService {
     return toComparativoDeputado({
       perfil,
       janela: janelaComCobertura,
+      resumoPresenca:
+        resumoPresencaRow === null ? null : toResumoPresenca(resumoPresencaRow),
       proposicoesAssinadas:
         toComparativoProposicoesAssinadas(proposicoesSource),
       orgaos: toComparativoOrgaos(orgaosSource),

@@ -64,6 +64,10 @@ function createRepository(
       presencas: 90,
       ausenciasSemMotivoConhecido: 10,
     }),
+    loadResumoPresencaDaLegislatura: async () => ({
+      presencas: 90,
+      ausenciasSemMotivoConhecido: 10,
+    }),
     loadDeputadoCeapSource: async () => ({
       coberturas: [],
       gasto: null,
@@ -220,7 +224,7 @@ describe('comparativo de deputados', () => {
   });
 
   describe('quando o deputado está abaixo do piso da 55ª legislatura', () => {
-    it('mantém identidade e presença sem nenhuma métrica da janela', async () => {
+    it('mantém identidade sem nenhuma métrica da janela, incluindo presença', async () => {
       // Arrange
       const service = new ComparativoDeputadosService(
         createRepository(
@@ -257,7 +261,7 @@ describe('comparativo de deputados', () => {
         proposicoesAssinadas: null,
         orgaos: null,
         cota: null,
-        resumoPresencaDisponivel: true,
+        resumoPresencaDisponivel: false,
       });
     });
   });

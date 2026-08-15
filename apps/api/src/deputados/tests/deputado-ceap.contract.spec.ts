@@ -30,6 +30,7 @@ describe('GET /deputados/:externalIdDeputado/ceap', () => {
         loadUfsDisponiveis: async () => [],
         loadPartidosDisponiveis: async () => [],
         loadResumoPresenca: async () => null,
+        loadResumoPresencaDaLegislatura: async () => null,
         loadDeputadoPerfil: async () => ({
           id: 'deputado-id',
           externalIdDeputado: 220593,

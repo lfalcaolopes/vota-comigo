@@ -132,6 +132,7 @@ function fakeRepository(
       byExternalId.get(externalIdDeputado) ?? null,
     loadResumoPresenca: async (deputadoId) =>
       resumoById.get(deputadoId) ?? null,
+    loadResumoPresencaDaLegislatura: async () => null,
     loadDeputadoCeapSource: async () => ({
       coberturas: [],
       gasto: null,
