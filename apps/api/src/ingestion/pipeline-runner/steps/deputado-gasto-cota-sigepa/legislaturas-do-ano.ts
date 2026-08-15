@@ -1,6 +1,8 @@
 import { toEpochMillis } from '@/exercicio/rules/instante';
 import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
 
+import { exercicioNoAno, intersect, type Periodo } from './exercicio-no-ano';
+
 const DIA_EM_MILLIS = 24 * 60 * 60 * 1000;
 
 export type LegislaturaPeriodo = {
@@ -8,8 +10,6 @@ export type LegislaturaPeriodo = {
   dataInicio: string | null;
   dataFim: string | null;
 };
-
-type Periodo = { inicio: number; fim: number };
 
 // Sem idLegislatura a API de despesas responde {"dados":[]} com HTTP 200, e
 // uma constante perderia janeiro inteiro no ano de troca de legislatura
@@ -19,18 +19,11 @@ export function deriveLegislaturasNoAno(
   year: number,
   legislaturas: readonly LegislaturaPeriodo[],
 ): readonly number[] {
-  const ano: Periodo = {
-    inicio: Date.UTC(year, 0, 1),
-    fim: Date.UTC(year + 1, 0, 1),
-  };
-
-  const exercicioNoAno = intervalos
-    .flatMap((intervalo) => toPeriodo(intervalo))
-    .flatMap((periodo) => intersect(periodo, ano));
+  const periodos = exercicioNoAno(intervalos, year);
 
   const derived = legislaturas
     .filter((legislatura) =>
-      exercicioNoAno.some(
+      periodos.some(
         (periodo) =>
           intersect(periodo, toPeriodoLegislatura(legislatura)).length > 0,
       ),
@@ -38,18 +31,6 @@ export function deriveLegislaturasNoAno(
     .map((legislatura) => legislatura.externalIdLegislatura);
 
   return [...new Set(derived)].sort((a, b) => a - b);
-}
-
-function toPeriodo(intervalo: IntervaloExercicio): Periodo[] {
-  const inicio = toEpochMillis(intervalo.openedAt);
-  const fim =
-    intervalo.closedAt === null
-      ? Number.POSITIVE_INFINITY
-      : toEpochMillis(intervalo.closedAt);
-
-  // um limite ilegível não vira intervalo em aberto: sem instante confiável,
-  // o intervalo simplesmente não cobre nada
-  return inicio === null || fim === null ? [] : [{ inicio, fim }];
 }
 
 function toPeriodoLegislatura(legislatura: LegislaturaPeriodo): Periodo {
@@ -65,11 +46,4 @@ function toPeriodoLegislatura(legislatura: LegislaturaPeriodo): Periodo {
     // dataFim é o último dia da legislatura, não o instante em que ela acaba
     fim: fim === null ? Number.POSITIVE_INFINITY : fim + DIA_EM_MILLIS,
   };
-}
-
-function intersect(a: Periodo, b: Periodo): Periodo[] {
-  const inicio = Math.max(a.inicio, b.inicio);
-  const fim = Math.min(a.fim, b.fim);
-
-  return fim > inicio ? [{ inicio, fim }] : [];
 }

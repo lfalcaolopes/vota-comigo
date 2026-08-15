@@ -125,6 +125,55 @@ describe('ingestion step executor', () => {
     );
   });
 
+  describe('when executing an annual API step', () => {
+    it('carries the planned year into the step context', async () => {
+      // Arrange
+      const seen: (number | undefined)[] = [];
+      const step: IngestionStep = {
+        name: 'deputado_gasto_cota_sigepa',
+        scope: 'annual',
+        source: 'api',
+        async run(context: IngestionStepContext) {
+          seen.push(context.year);
+
+          return emptyResult();
+        },
+      };
+      const executor = createIngestionStepExecutor(createDeps());
+
+      // Act
+      await executor.execute(
+        { stepName: step.name, scope: 'annual', year: 2025 },
+        step,
+      );
+
+      // Assert
+      expect(seen).toEqual([2025]);
+    });
+
+    it('leaves the year undefined for a single-scope API step', async () => {
+      // Arrange
+      const seen: (number | undefined)[] = [];
+      const step: IngestionStep = {
+        name: 'deputado_historico',
+        scope: 'single',
+        source: 'api',
+        async run(context: IngestionStepContext) {
+          seen.push(context.year);
+
+          return emptyResult();
+        },
+      };
+      const executor = createIngestionStepExecutor(createDeps());
+
+      // Act
+      await executor.execute({ stepName: step.name, scope: 'single' }, step);
+
+      // Assert
+      expect(seen).toEqual([undefined]);
+    });
+  });
+
   describe('when executing derived steps', () => {
     it('provides scoped years and opens arbitrary annual datasets', async () => {
       // Arrange

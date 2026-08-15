@@ -29,6 +29,13 @@ export const ingestionStepDescriptors: readonly IngestionStepDescriptor[] = [
     scope: 'single',
     source: 'derived',
   },
+  // Depois dos intervalos: os elegíveis do ano saem do exercício, não do dump.
+  {
+    name: 'deputado_gasto_cota_sigepa',
+    scope: 'annual',
+    source: 'api',
+    manual: true,
+  },
   // Depois dos intervalos: a mediana só considera quem exerceu o ano inteiro.
   { name: 'cota_mediana_uf', scope: 'single', source: 'derived' },
   { name: 'sanity', scope: 'single', source: 'db' },

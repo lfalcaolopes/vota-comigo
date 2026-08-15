@@ -148,6 +148,7 @@ function createStepContext(
     return {
       ...base,
       sourceFile: step.name,
+      year: entry.year,
       readRecords: apiReadGuard,
     };
   }

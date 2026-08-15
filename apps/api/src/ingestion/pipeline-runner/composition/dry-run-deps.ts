@@ -1,4 +1,5 @@
 import type { DatasetDownloader } from '../shared/dataset-downloader';
+import type { DeputadoGastoCotaSigepaStepDeps } from '../steps/deputado-gasto-cota-sigepa/deputado-gasto-cota-sigepa.step';
 import type { DeputadoHistoricoStepDeps } from '../steps/deputado-historico/deputado-historico.step';
 import type {
   DeputadoRepository,
@@ -144,6 +145,15 @@ export const dryRunCotaMedianaUfRepository: CotaMedianaUfRepository = {
 
 export const dryRunSanityRepository: SanityRepository = {
   loadPlacares: dryRunReadGuard,
+};
+
+export const dryRunGastoCotaSigepaDeps: DeputadoGastoCotaSigepaStepDeps = {
+  repository: {
+    loadDeputadosSemReposicao: dryRunReadGuard,
+    loadLegislaturas: dryRunReadGuard,
+    upsert: dryRunWriteGuard,
+  },
+  despesasClient: { fetch: dryRunReadGuard },
 };
 
 export const dryRunHistoricoDeps: DeputadoHistoricoStepDeps = {

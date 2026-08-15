@@ -72,6 +72,38 @@ describe('ingestion plan', () => {
     });
   });
 
+  describe('when a manual step is annual', () => {
+    it('stays out of the default run', () => {
+      // Arrange
+      const runnerConfig = config();
+
+      // Act
+      const plan = buildIngestionPlan(runnerConfig, ingestionStepDescriptors);
+
+      // Assert
+      expect(plan.map((entry) => entry.stepName)).not.toContain(
+        'deputado_gasto_cota_sigepa',
+      );
+    });
+
+    it('plans one entry per year of the window when named in --only', () => {
+      // Arrange
+      const runnerConfig = config({
+        only: ['deputado_gasto_cota_sigepa'],
+        years: [2025, 2026],
+      });
+
+      // Act
+      const plan = buildIngestionPlan(runnerConfig, ingestionStepDescriptors);
+
+      // Assert
+      expect(plan).toEqual([
+        { stepName: 'deputado_gasto_cota_sigepa', scope: 'annual', year: 2025 },
+        { stepName: 'deputado_gasto_cota_sigepa', scope: 'annual', year: 2026 },
+      ]);
+    });
+  });
+
   describe('when --only selects a subset of steps', () => {
     it('plans only the selected steps', () => {
       // Arrange

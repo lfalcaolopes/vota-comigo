@@ -55,6 +55,9 @@ import { createTemaStep } from '../steps/tema/tema.step';
 import { createSanityRepository } from '../steps/sanity/sanity.repository';
 import { createSanityStep } from '../steps/sanity/sanity.step';
 import { createDeputadoHistoricoClient } from '../shared/camara-historico-client';
+import { createDeputadoDespesasClient } from '../shared/camara-despesas-client';
+import { createDeputadoGastoCotaSigepaRepository } from '../steps/deputado-gasto-cota-sigepa/deputado-gasto-cota-sigepa.repository';
+import { createDeputadoGastoCotaSigepaStep } from '../steps/deputado-gasto-cota-sigepa/deputado-gasto-cota-sigepa.step';
 import { fetchCamaraJson } from '../shared/camara-api-transport';
 import {
   dryRunDeputadoLookup,
@@ -72,6 +75,7 @@ import {
   dryRunDeputadoExercicioIntervaloRepository,
   dryRunCotaMedianaUfRepository,
   dryRunDeputadoGastoCotaRepository,
+  dryRunGastoCotaSigepaDeps,
   dryRunProposicaoLookup,
   dryRunProposicaoRepository,
   dryRunSanityRepository,
@@ -140,6 +144,7 @@ export function createIngestionSteps(
         createDeputadoExercicioIntervaloStep(
           dryRunDeputadoExercicioIntervaloRepository,
         ),
+        createDeputadoGastoCotaSigepaStep(dryRunGastoCotaSigepaDeps),
         createCotaMedianaUfStep(dryRunCotaMedianaUfRepository),
         createSanityStep(dryRunSanityRepository),
       ],
@@ -206,6 +211,12 @@ export function createIngestionSteps(
     createDeputadoExercicioIntervaloStep(
       createDeputadoExercicioIntervaloRepository(db),
     ),
+    createDeputadoGastoCotaSigepaStep({
+      repository: createDeputadoGastoCotaSigepaRepository(db),
+      despesasClient: createDeputadoDespesasClient({
+        transport: fetchCamaraJson,
+      }),
+    }),
     createCotaMedianaUfStep(createCotaMedianaUfRepository(db)),
     createSanityStep(createSanityRepository(db)),
   ];
