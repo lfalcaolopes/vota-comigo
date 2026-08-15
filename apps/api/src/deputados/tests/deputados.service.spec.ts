@@ -288,7 +288,7 @@ describe('DeputadosService discursos', () => {
           pages: 2,
           receivedItems: 1,
           transformedItems: 1,
-          externalResponseBytes: expect.any(Number),
+          externalResponseBytes: expect.any(Number) as number,
           missingSummaryItems: 1,
           missingAssuntosItems: 1,
           missingLinksItems: 1,

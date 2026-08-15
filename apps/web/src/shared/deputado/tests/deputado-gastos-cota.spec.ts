@@ -1,4 +1,7 @@
-import type { DeputadoCeapResponse } from "@vota-comigo/shared-types";
+import type {
+  DeputadoCeapLoadedResponse,
+  DeputadoCeapResponse,
+} from "@vota-comigo/shared-types";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
@@ -6,8 +9,8 @@ import { describe, expect, it } from "vitest";
 import { DeputadoGastosCotaSection } from "../deputado-gastos-cota";
 
 function loadedResponse(
-  overrides: Partial<Extract<DeputadoCeapResponse, { status: "ok" }>> = {},
-): Extract<DeputadoCeapResponse, { status: "ok" }> {
+  overrides: Partial<DeputadoCeapLoadedResponse> = {},
+): DeputadoCeapLoadedResponse {
   return {
     year: 2024,
     availableYears: [2024, 2023],

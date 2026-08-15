@@ -134,6 +134,8 @@ function perfil(
       dataFim: "2023-01-31",
     },
     legislaturaFinalPeriodo: null,
+    defaultYear: null,
+    validYearRange: null,
     resumoPresencaDisponivel: true,
     resumoPresenca: {
       percentualPresenca: 82.4,

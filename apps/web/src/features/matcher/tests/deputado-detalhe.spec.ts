@@ -82,6 +82,8 @@ function perfil(
     externalIdLegislaturaFinal: null,
     legislaturaInicialPeriodo: null,
     legislaturaFinalPeriodo: null,
+    defaultYear: null,
+    validYearRange: null,
     resumoPresencaDisponivel: false,
     resumoPresenca: null,
     historicoPartidarioDisponivel: false,

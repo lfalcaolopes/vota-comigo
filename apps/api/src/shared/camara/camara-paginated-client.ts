@@ -17,7 +17,7 @@ export type CamaraPaginatedResult =
     };
 
 export interface CamaraPaginatedClient {
-  fetchAll(initialUrl: string): Promise<CamaraPaginatedResult>;
+  fetchAll: (initialUrl: string) => Promise<CamaraPaginatedResult>;
 }
 
 export function createCamaraPaginatedClient({

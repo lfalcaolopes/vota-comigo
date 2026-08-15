@@ -435,6 +435,9 @@ export type DeputadoCeapPeriodoExercicio = z.infer<
 >;
 export type DeputadoCeapMedianaUf = z.infer<typeof deputadoCeapMedianaUfSchema>;
 export type DeputadoCeapResponse = z.infer<typeof deputadoCeapResponseSchema>;
+export type DeputadoCeapLoadedResponse = z.infer<
+  typeof deputadoCeapLoadedResponseSchema
+>;
 export type DeputadoOrgao = z.infer<typeof deputadoOrgaoSchema>;
 export type DeputadoOrgaosResponse = z.infer<
   typeof deputadoOrgaosResponseSchema

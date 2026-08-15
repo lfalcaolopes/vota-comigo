@@ -207,18 +207,16 @@ describe('GET /comparativo-deputados', () => {
         .expect(200);
 
       // Assert
-      expect(
-        comparativoDeputadosResponseSchema.safeParse(response.body).success,
-      ).toBe(true);
-      expect(response.body.items[0].cota).toMatchObject({
+      const body = comparativoDeputadosResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.items[0].cota).toMatchObject({
         status: 'comparavel',
         percentualSobreMedianaUf: 50,
         gastoNaComparacaoCents: 200_000,
         siglaUf: 'MG',
       });
-      expect(JSON.stringify(response.body.items[0].cota.anos)).not.toContain(
-        '100000',
-      );
+      expect(JSON.stringify(body.items[0].cota?.anos)).not.toContain('100000');
       await app.close();
     });
 
@@ -232,14 +230,15 @@ describe('GET /comparativo-deputados', () => {
         .expect(200);
 
       // Assert
-      expect(response.body.items[0].cota).toMatchObject({
+      const body = comparativoDeputadosResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.items[0].cota).toMatchObject({
         anosNaComparacao: 2,
       });
-      expect(
-        response.body.items[0].cota.anos.map(
-          (ano: { year: number }) => ano.year,
-        ),
-      ).toEqual([2023, 2024]);
+      expect(body.items[0].cota?.anos.map((ano) => ano.year)).toEqual([
+        2023, 2024,
+      ]);
       await app.close();
     });
 
@@ -253,10 +252,13 @@ describe('GET /comparativo-deputados', () => {
         .expect(200);
 
       // Assert
+      const body = comparativoDeputadosResponseSchema.parse(
+        response.body as unknown,
+      );
       expect({
-        janela: response.body.items[1].janela,
-        proposicoesAssinadas: response.body.items[1].proposicoesAssinadas,
-        orgaos: response.body.items[1].orgaos.total,
+        janela: body.items[1].janela,
+        proposicoesAssinadas: body.items[1].proposicoesAssinadas,
+        orgaos: body.items[1].orgaos?.total,
       }).toEqual({
         janela: {
           status: 'disponivel',
@@ -265,9 +267,9 @@ describe('GET /comparativo-deputados', () => {
           dataFim: '2024-06-15T00:00:00.000Z',
           encerrada: true,
           diasEmExercicioDisponivel: true,
-          diasEmExercicio: expect.any(Number),
+          diasEmExercicio: expect.any(Number) as number,
           coberturaAte: '2024-08-14',
-          divisorAnosEfetivos: expect.any(Number),
+          divisorAnosEfetivos: expect.any(Number) as number,
         },
         proposicoesAssinadas: {
           disponivel: true,
@@ -308,10 +310,10 @@ describe('GET /comparativo-deputados', () => {
         .expect(200);
 
       // Assert
-      expect(
-        comparativoDeputadosResponseSchema.safeParse(response.body).success,
-      ).toBe(true);
-      expect(response.body.items[1]).toMatchObject({
+      const body = comparativoDeputadosResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.items[1]).toMatchObject({
         janela: {
           status: 'indisponivel',
           motivo: 'legislatura-anterior-a-cobertura',

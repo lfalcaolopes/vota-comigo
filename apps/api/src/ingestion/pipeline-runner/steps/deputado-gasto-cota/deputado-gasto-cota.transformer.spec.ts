@@ -90,7 +90,7 @@ describe('agregacao dos gastos da cota', () => {
       ['numMes', { numMes: '13' }],
       ['numSubCota', { numSubCota: '' }],
       ['vlrLiquido', { vlrLiquido: '1,50' }],
-    ])('rejects it when %s is invalid', async (field, overrides) => {
+    ])('rejects it when %s is invalid', async (_field, overrides) => {
       // Arrange
       const rows = [line(7, overrides)];
 
@@ -107,7 +107,6 @@ describe('agregacao dos gastos da cota', () => {
       expect(result.rejected).toMatchObject([
         { file: 'Ano-2024.csv', line: 7, fields: overrides },
       ]);
-      expect(result.rejected[0].fields[field]).toBe(overrides[field]);
     });
   });
 
