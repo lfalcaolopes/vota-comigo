@@ -63,9 +63,11 @@ export const comparativoCotaSchema = z
   .discriminatedUnion("status", [
     z.object({
       status: z.literal(comparativoCotaStatusSchema.enum.comparavel),
-      // Soma dos gastos sobre a soma das medianas dos anos comparados: valores
-      // absolutos nunca saem daqui, só a posição frente ao estado.
+      // Soma dos gastos sobre a soma das medianas dos anos comparados.
       percentualSobreMedianaUf: z.number(),
+      // O total pode ser negativo: cancelamentos de passagem aérea excedem o
+      // gasto do período em janelas curtas.
+      gastoNaComparacaoCents: z.number().int(),
       siglaUf: z.string().length(2),
       anos: z.array(comparativoCotaAnoSchema),
       anosNaComparacao: z.number().int().positive(),

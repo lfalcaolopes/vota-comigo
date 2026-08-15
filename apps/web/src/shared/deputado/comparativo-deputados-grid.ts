@@ -1,6 +1,5 @@
 import type {
   ComparativoCota,
-  ComparativoCotaAno,
   ComparativoDeputado,
   ComparativoDeputadosResponse,
   ComparativoJanela,
@@ -9,9 +8,12 @@ import type {
   DeputadoResumoPresenca,
 } from "@vota-comigo/shared-types";
 
+import { formatGastoCotaCompacto } from "./gasto-cota-presentation";
 import {
   formatPercentual,
+  mostrarCoberturaJanela,
   nomePublicoLabel,
+  toCoberturaAteLabel,
   toPresencaAmostrasLabel,
   toUltimaLegislaturaLabel,
 } from "./presentation";
@@ -20,8 +22,6 @@ export const RECORTE_PRESENCA_COMPARATIVO =
   "Considera as votações de plenário da legislatura mostrada na coluna.";
 
 const ORGAOS_VISIVEIS = 2;
-
-const diasFormatter = new Intl.NumberFormat("pt-BR");
 
 export type ComparativoDeputadosColumn = {
   externalIdDeputado: number;
@@ -34,11 +34,16 @@ export type ComparativoDeputadosColumn = {
   janela: ComparativoJanela;
 };
 
+export type ComparativoDeputadosCellLink = {
+  href: string;
+  label: string;
+};
+
 export type ComparativoDeputadosCell = {
   externalIdDeputado: number;
   value: string;
   detail: string | null;
-  breakdown: readonly string[] | null;
+  link: ComparativoDeputadosCellLink | null;
   lacuna: boolean;
 };
 
@@ -96,14 +101,31 @@ export function buildComparativoDeputadosGrid(
       },
       {
         id: "cota",
-        label: "Cota parlamentar",
-        hint: "Posição frente à mediana do estado, porque o teto da cota varia por estado.",
+        label: "Gasto da cota parlamentar",
+        hint: null,
         cells: response.items.map((item) =>
-          toRowCell(item, () => toCotaCell(item.cota)),
+          toRowCell(item, () => toCotaCell(item.cota, item.externalIdDeputado)),
         ),
       },
     ],
   };
+}
+
+// A cobertura é a mesma para todos os deputados, então vira nota de rodapé da
+// comparação em vez de repetir sob cada coluna.
+export function toComparativoNotaCobertura(
+  response: ComparativoDeputadosResponse,
+): string | null {
+  const coberturas = response.items
+    .flatMap((item) =>
+      item.janela.status === "disponivel" ? [item.janela] : [],
+    )
+    .filter(mostrarCoberturaJanela)
+    .map((janela) => janela.coberturaAte)
+    .sort();
+
+  const ultima = coberturas.at(-1);
+  return ultima === undefined ? null : toCoberturaAteLabel(ultima);
 }
 
 export function toComparativoAviso(
@@ -199,8 +221,8 @@ function toColumn(item: ComparativoDeputado): ComparativoDeputadosColumn {
 
 type CellContent = Omit<
   ComparativoDeputadosCell,
-  "externalIdDeputado" | "breakdown"
-> & { breakdown?: readonly string[] };
+  "externalIdDeputado" | "link"
+> & { link?: ComparativoDeputadosCellLink };
 
 function toRowCell(
   item: ComparativoDeputado,
@@ -220,7 +242,7 @@ function toCell(
   return {
     externalIdDeputado: item.externalIdDeputado,
     ...content,
-    breakdown: content.breakdown ?? null,
+    link: content.link ?? null,
   };
 }
 
@@ -294,7 +316,7 @@ function toProposicoesCell(
       proposicoesAssinadas.total,
       janela.divisorAnosEfetivos,
     ),
-    detail: `${proposicoesAssinadas.total} no total · ${proposicoesAssinadas.totalPrimeiroSignatario} como primeiro signatário`,
+    detail: `${proposicoesAssinadas.total} no total · ${proposicoesAssinadas.totalPrimeiroSignatario} como autor principal`,
     lacuna: false,
   };
 }
@@ -328,53 +350,50 @@ function toOrgaosCell(
   };
 }
 
-function toCotaCell(cota: ComparativoCota | null): CellContent {
+function toCotaCell(
+  cota: ComparativoCota | null,
+  externalIdDeputado: number,
+): CellContent {
   if (cota === null) {
     return { value: "Sem dados comparáveis", detail: null, lacuna: true };
   }
 
-  const breakdown = cota.anos.map(toCotaAnoLabel);
+  const link = toCotaPerfilLink(cota, externalIdDeputado);
 
   if (cota.status === "sem-comparacao") {
     return {
       value: toCotaSemComparacaoLabel(cota.motivo),
       detail: null,
-      breakdown: breakdown.length > 0 ? breakdown : undefined,
+      ...(link !== null ? { link } : {}),
       lacuna: true,
     };
   }
 
   return {
-    value: toCotaPosicaoLabel(cota.percentualSobreMedianaUf),
-    detail: toCotaExposicaoLabel(cota),
-    breakdown,
+    value: `${formatGastoCotaCompacto(
+      cota.gastoNaComparacaoCents / cota.anosNaComparacao,
+    )}/ano`,
+    detail: `${formatGastoCotaCompacto(cota.gastoNaComparacaoCents)} no total · ${toCotaPosicaoLabel(
+      cota.percentualSobreMedianaUf,
+    )} do ${cota.siglaUf}`,
+    ...(link !== null ? { link } : {}),
     lacuna: false,
   };
 }
 
-// A posição agregada favorece quem esteve menos tempo em exercício, então a
-// exposição que produziu o número entra na célula junto com ele.
-function toCotaExposicaoLabel(
-  cota: Extract<ComparativoCota, { status: "comparavel" }>,
-): string {
-  const anos = `${cota.anosNaComparacao} ${
-    cota.anosNaComparacao === 1 ? "ano comparado" : "anos comparados"
-  }`;
+// O ano a ano vive no perfil, que mostra valores, categorias e as notas da
+// fonte; o comparativo aponta para o último ano da janela.
+function toCotaPerfilLink(
+  cota: ComparativoCota,
+  externalIdDeputado: number,
+): ComparativoDeputadosCellLink | null {
+  const ultimoAno = cota.anos.at(-1);
+  if (ultimoAno === undefined) return null;
 
-  return `${diasFormatter.format(cota.diasEmExercicio)} de ${diasFormatter.format(
-    cota.diasNaComparacao,
-  )} dias em exercício · ${anos}`;
-}
-
-function toCotaAnoLabel(ano: ComparativoCotaAno): string {
-  if (ano.diasEmExercicio === 0) return `${ano.year} · sem exercício`;
-
-  if (!ano.naComparacao || ano.percentualSobreMedianaUf === null) {
-    return `${ano.year} · sem mediana`;
-  }
-
-  const posicao = `${ano.year} · ${Math.round(ano.percentualSobreMedianaUf)}%`;
-  return ano.dadoIncompleto ? `${posicao} (dado incompleto)` : posicao;
+  return {
+    href: `/deputados/${externalIdDeputado}?year=${ultimoAno.year}#gastos`,
+    label: "Ver mais detalhes no perfil",
+  };
 }
 
 function toCotaSemComparacaoLabel(

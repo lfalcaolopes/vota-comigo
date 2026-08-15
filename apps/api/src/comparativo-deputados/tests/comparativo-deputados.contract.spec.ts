@@ -186,7 +186,7 @@ async function createApp(): Promise<INestApplication> {
 
 describe('GET /comparativo-deputados', () => {
   describe('quando dois deputados são comparados na mesma janela', () => {
-    it('responde pelo contrato público sem o valor absoluto da cota', async () => {
+    it('responde pelo contrato público com o total gasto e a posição da cota', async () => {
       // Arrange
       const app = await createApp();
 
@@ -202,9 +202,12 @@ describe('GET /comparativo-deputados', () => {
       expect(response.body.items[0].cota).toMatchObject({
         status: 'comparavel',
         percentualSobreMedianaUf: 50,
+        gastoNaComparacaoCents: 200_000,
         siglaUf: 'MG',
       });
-      expect(JSON.stringify(response.body)).not.toContain('100000');
+      expect(JSON.stringify(response.body.items[0].cota.anos)).not.toContain(
+        '100000',
+      );
       await app.close();
     });
 

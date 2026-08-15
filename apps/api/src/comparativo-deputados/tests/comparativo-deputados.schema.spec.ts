@@ -80,6 +80,7 @@ function deputado(
       : {
           status: 'comparavel',
           percentualSobreMedianaUf: 88.5,
+          gastoNaComparacaoCents: 88_500,
           siglaUf: 'MG',
           anos: [cotaAno(2023), cotaAno(2024)],
           anosNaComparacao: 2,
@@ -330,6 +331,7 @@ describe('contrato do comparativo de deputados', () => {
             cota: {
               status: 'comparavel',
               percentualSobreMedianaUf: 88.5,
+              gastoNaComparacaoCents: 88_500,
               siglaUf: 'MG',
               anos: [
                 cotaAno(2023, { percentualSobreMedianaUf: null }),
@@ -362,6 +364,7 @@ describe('contrato do comparativo de deputados', () => {
             cota: {
               status: 'comparavel',
               percentualSobreMedianaUf: 88.5,
+              gastoNaComparacaoCents: 88_500,
               siglaUf: 'MG',
               anos: [
                 cotaAno(2023),
@@ -398,6 +401,7 @@ describe('contrato do comparativo de deputados', () => {
             cota: {
               status: 'comparavel',
               percentualSobreMedianaUf: 88.5,
+              gastoNaComparacaoCents: 88_500,
               siglaUf: 'MG',
               anos: [cotaAno(2023), cotaAno(2024)],
               anosNaComparacao: 2,

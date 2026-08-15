@@ -102,10 +102,6 @@ export function toLegislaturaPeriodoLabel(
 export const DIAS_EM_EXERCICIO_INDISPONIVEL = "Dias em exercício indisponíveis";
 export const JANELA_FORA_DA_BASE_COMPARAVEL = "Fora da base comparável";
 
-export function toJanelaLegislaturaLabel(legislatura: number): string {
-  return `${legislatura}ª legislatura`;
-}
-
 // Precisão de mês, não de ano: toLegislaturaPeriodoLabel apagaria o
 // truncamento de quem saiu no meio da legislatura.
 export function toJanelaPeriodoLabel(janela: {

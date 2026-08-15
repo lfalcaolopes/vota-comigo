@@ -30,7 +30,7 @@ function render(
 
 describe("resumo de atuação", () => {
   describe("quando o ano tem assinaturas carregadas", () => {
-    it("exibe o total e o contador de primeiro signatário", () => {
+    it("exibe o total e o contador de autor principal", () => {
       // Arrange
       const response: DeputadoProposicoesAssinadasResponse = {
         year: 2024,
@@ -45,7 +45,7 @@ describe("resumo de atuação", () => {
 
       // Assert
       expect(html).toContain("12");
-      expect(html).toContain("3 como primeiro signatário");
+      expect(html).toContain("3 como autor principal");
       expect(html).not.toContain("Ano não carregado");
     });
   });
@@ -122,7 +122,7 @@ describe("resumo de atuação", () => {
       const html = render({ status: "success", response });
 
       // Assert
-      expect(html).toContain("0 como primeiro signatário");
+      expect(html).toContain("0 como autor principal");
       expect(html).not.toContain("Ano não carregado");
     });
   });

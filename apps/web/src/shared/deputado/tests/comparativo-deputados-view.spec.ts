@@ -70,6 +70,7 @@ function deputado(
     cota: {
       status: "comparavel",
       percentualSobreMedianaUf: 112,
+      gastoNaComparacaoCents: 110_000_000,
       siglaUf: "MG",
       anos: [
         {
@@ -118,12 +119,12 @@ describe("ComparativoDeputadosView", () => {
       expect(html).toContain("Presença registrada");
       expect(html).toContain("Proposições assinadas");
       expect(html).toContain("Órgãos distintos");
-      expect(html).toContain("Cota parlamentar");
+      expect(html).toContain("Gasto da cota parlamentar");
       expect(html).toContain('href="/deputados/1"');
       expect(html).toContain('target="_blank"');
     });
 
-    it("mostra a posição na cota sem o valor gasto", () => {
+    it("mostra o gasto por ano com o total e a posição frente à mediana", () => {
       // Arrange / Act
       const html = render({
         janelasCoincidem: true,
@@ -131,14 +132,11 @@ describe("ComparativoDeputadosView", () => {
       });
 
       // Assert
-      expect(html).toContain("12% acima da mediana");
-      expect(html).toContain(
-        "700 de 700 dias em exercício · 2 anos comparados",
-      );
-      expect(html).not.toContain("R$");
+      expect(html).toContain("R$ 550 mil/ano");
+      expect(html).toContain("R$ 1,1 mi no total · 12% acima da mediana do MG");
     });
 
-    it("mostra a posição de cada ano da janela sob a célula da cota", () => {
+    it("leva ao ano a ano no perfil em vez de detalhar os anos na célula", () => {
       // Arrange / Act
       const html = render({
         janelasCoincidem: true,
@@ -146,11 +144,12 @@ describe("ComparativoDeputadosView", () => {
       });
 
       // Assert
-      expect(html).toContain("2023 · 110%");
-      expect(html).toContain("2024 · 114%");
+      expect(html).toContain('href="/deputados/1?year=2024#gastos"');
+      expect(html).toContain("Ver mais detalhes no perfil");
+      expect(html).not.toContain("2023 · 110%");
     });
 
-    it("mostra o cabeçalho de janela com legislatura, período e dias em exercício", () => {
+    it("mostra o cabeçalho de janela com período e dias em exercício, sem o número da legislatura", () => {
       // Arrange / Act
       const html = render({
         janelasCoincidem: true,
@@ -158,12 +157,12 @@ describe("ComparativoDeputadosView", () => {
       });
 
       // Assert
-      expect(html).toContain("57ª legislatura");
       expect(html).toContain("fev/2023");
       expect(html).toContain("800 dias em exercício");
+      expect(html).not.toContain("57ª legislatura");
     });
 
-    it("não mostra a linha de cobertura quando a janela está totalmente coberta", () => {
+    it("não mostra a nota de cobertura quando a janela está totalmente coberta", () => {
       // Arrange / Act
       const html = render({
         janelasCoincidem: true,
@@ -174,7 +173,7 @@ describe("ComparativoDeputadosView", () => {
       expect(html).not.toContain("Dados cobertos até");
     });
 
-    it("mostra a linha de cobertura quando a janela ainda está em curso", () => {
+    it("mostra a cobertura uma única vez, como nota da comparação", () => {
       // Arrange / Act
       const html = render({
         janelasCoincidem: true,
@@ -185,7 +184,7 @@ describe("ComparativoDeputadosView", () => {
       });
 
       // Assert
-      expect(html).toContain("Dados cobertos até jun/2026");
+      expect(html.split("Dados cobertos até jun/2026")).toHaveLength(2);
     });
 
     it("não mostra nenhum aviso no topo", () => {

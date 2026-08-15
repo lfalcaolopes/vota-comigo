@@ -9,6 +9,7 @@ import { Badge, InlineMessage } from "@/shared/ui";
 import {
   buildComparativoDeputadosGrid,
   toComparativoAviso,
+  toComparativoNotaCobertura,
   type ComparativoDeputadosCell,
   type ComparativoDeputadosColumn,
   type ComparativoDeputadosRow,
@@ -17,12 +18,9 @@ import { DeputadoAvatar } from "./deputado-avatar";
 import {
   DIAS_EM_EXERCICIO_INDISPONIVEL,
   JANELA_FORA_DA_BASE_COMPARAVEL,
-  mostrarCoberturaJanela,
   toAtividadeAriaLabel,
   toAtividadeLabel,
-  toCoberturaAteLabel,
   toDiasEmExercicioLabel,
-  toJanelaLegislaturaLabel,
   toJanelaPeriodoLabel,
 } from "./presentation";
 
@@ -40,6 +38,7 @@ export function ComparativoDeputadosView({
   );
   const gridTemplateColumns = `minmax(9rem,0.6fr) repeat(${grid.columns.length}, minmax(13rem,1fr))`;
   const aviso = toComparativoAviso(response);
+  const notaCobertura = toComparativoNotaCobertura(response);
 
   return (
     <div className="grid gap-5">
@@ -75,6 +74,10 @@ export function ComparativoDeputadosView({
           ))}
         </div>
       </div>
+
+      {notaCobertura !== null ? (
+        <p className="text-xs leading-normal text-muted">{notaCobertura}</p>
+      ) : null}
     </div>
   );
 }
@@ -128,16 +131,12 @@ function ComparativoJanelaBloco({
         <p>{JANELA_FORA_DA_BASE_COMPARAVEL}</p>
       ) : (
         <>
-          <p>{toJanelaLegislaturaLabel(janela.legislatura)}</p>
           <p>{toJanelaPeriodoLabel(janela)}</p>
           <p>
             {janela.diasEmExercicio !== null
               ? toDiasEmExercicioLabel(janela.diasEmExercicio)
               : DIAS_EM_EXERCICIO_INDISPONIVEL}
           </p>
-          {mostrarCoberturaJanela(janela) && (
-            <p>{toCoberturaAteLabel(janela.coberturaAte)}</p>
-          )}
         </>
       )}
     </div>
@@ -221,12 +220,15 @@ function ComparativoValor({ cell }: { cell: ComparativoDeputadosCell }) {
       {cell.detail !== null ? (
         <p className="text-xs leading-normal text-muted">{cell.detail}</p>
       ) : null}
-      {cell.breakdown !== null ? (
-        <ul className="grid gap-0.5 text-xs leading-normal text-muted">
-          {cell.breakdown.map((linha) => (
-            <li key={linha}>{linha}</li>
-          ))}
-        </ul>
+      {cell.link !== null ? (
+        <Link
+          className="text-xs font-[650] leading-normal text-info underline decoration-info/35 underline-offset-[0.18em]"
+          href={cell.link.href}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {cell.link.label} <span aria-hidden="true">→</span>
+        </Link>
       ) : null}
     </div>
   );

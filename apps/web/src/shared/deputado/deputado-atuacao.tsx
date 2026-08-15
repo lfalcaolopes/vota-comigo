@@ -149,7 +149,7 @@ export function AtuacaoResumo({
 }
 
 function primeiroSignatarioLabel(totalPrimeiroSignatario: number): string {
-  return `${totalPrimeiroSignatario} como primeiro signatário`;
+  return `${totalPrimeiroSignatario} como autor principal`;
 }
 
 const coberturaFormatter = new Intl.DateTimeFormat("pt-BR", {

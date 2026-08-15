@@ -60,6 +60,7 @@ export function toComparativoCota(
   return {
     status: 'comparavel',
     percentualSobreMedianaUf: (somaGastoCents / somaMedianaCents) * 100,
+    gastoNaComparacaoCents: somaGastoCents,
     siglaUf: input.source.siglaUf,
     anos,
     anosNaComparacao: naComparacao.length,

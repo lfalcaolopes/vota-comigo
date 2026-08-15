@@ -8,6 +8,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildComparativoDeputadosGrid,
   toComparativoAviso,
+  toComparativoNotaCobertura,
 } from "../comparativo-deputados-grid";
 
 const JANELA_57 = {
@@ -23,6 +24,13 @@ const JANELA_57 = {
 };
 
 const JANELA_56 = { ...JANELA_57, legislatura: 56, dataInicio: "2019-02-01" };
+
+const JANELA_EM_CURSO = {
+  ...JANELA_57,
+  dataFim: "2027-01-31",
+  encerrada: false,
+  coberturaAte: "2026-06-30",
+};
 
 const JANELA_INDISPONIVEL = {
   status: "indisponivel" as const,
@@ -82,6 +90,7 @@ function deputado(
     cota: {
       status: "comparavel",
       percentualSobreMedianaUf: 112,
+      gastoNaComparacaoCents: 110_000_000,
       siglaUf: "MG",
       anos: [cotaAno(2023, 110), cotaAno(2024, 114)],
       anosNaComparacao: 2,
@@ -173,7 +182,7 @@ describe("grade do comparativo de deputados", () => {
   });
 
   describe("quando a cota tem comparação", () => {
-    it("publica a posição frente à mediana, não o valor gasto", () => {
+    it("publica o gasto por ano, o total e a posição frente à mediana", () => {
       // Arrange
       const data = response([deputado(1), deputado(2)]);
 
@@ -183,9 +192,12 @@ describe("grade do comparativo de deputados", () => {
       // Assert
       expect(rowById(grid, "cota").cells[0]).toEqual({
         externalIdDeputado: 1,
-        value: "12% acima da mediana",
-        detail: "700 de 700 dias em exercício · 2 anos comparados",
-        breakdown: ["2023 · 110%", "2024 · 114%"],
+        value: "R$ 550 mil/ano",
+        detail: "R$ 1,1 mi no total · 12% acima da mediana do MG",
+        link: {
+          href: "/deputados/1?year=2024#gastos",
+          label: "Ver mais detalhes no perfil",
+        },
         lacuna: false,
       });
     });
@@ -197,6 +209,7 @@ describe("grade do comparativo de deputados", () => {
           cota: {
             status: "comparavel",
             percentualSobreMedianaUf: 100,
+            gastoNaComparacaoCents: 40_000_000,
             siglaUf: "MG",
             anos: [cotaAno(2023, 100)],
             anosNaComparacao: 1,
@@ -211,8 +224,8 @@ describe("grade do comparativo de deputados", () => {
       const grid = buildComparativoDeputadosGrid(data);
 
       // Assert
-      expect(rowById(grid, "cota").cells[0].value).toBe(
-        "Mesmo valor da mediana",
+      expect(rowById(grid, "cota").cells[0].detail).toContain(
+        "Mesmo valor da mediana do MG",
       );
     });
 
@@ -223,6 +236,7 @@ describe("grade do comparativo de deputados", () => {
           cota: {
             status: "comparavel",
             percentualSobreMedianaUf: 70.4,
+            gastoNaComparacaoCents: 28_000_000,
             siglaUf: "MG",
             anos: [cotaAno(2023, 70.4)],
             anosNaComparacao: 1,
@@ -237,8 +251,35 @@ describe("grade do comparativo de deputados", () => {
       const grid = buildComparativoDeputadosGrid(data);
 
       // Assert
-      expect(rowById(grid, "cota").cells[0].value).toBe(
-        "30% abaixo da mediana",
+      expect(rowById(grid, "cota").cells[0].detail).toContain(
+        "30% abaixo da mediana do MG",
+      );
+    });
+
+    it("aponta o link para o último ano da janela", () => {
+      // Arrange
+      const data = response([
+        deputado(1, {
+          cota: {
+            status: "comparavel",
+            percentualSobreMedianaUf: 105,
+            gastoNaComparacaoCents: 42_000_000,
+            siglaUf: "MG",
+            anos: [cotaAno(2026, 105, { dadoIncompleto: true })],
+            anosNaComparacao: 1,
+            diasEmExercicio: 350,
+            diasNaComparacao: 350,
+          },
+        }),
+        deputado(2),
+      ]);
+
+      // Act
+      const grid = buildComparativoDeputadosGrid(data);
+
+      // Assert
+      expect(rowById(grid, "cota").cells[0].link?.href).toBe(
+        "/deputados/1?year=2026#gastos",
       );
     });
   });
@@ -267,7 +308,7 @@ describe("grade do comparativo de deputados", () => {
       });
     });
 
-    it("mantém os anos visíveis mesmo sem posição agregada", () => {
+    it("leva ao perfil mesmo sem posição agregada", () => {
       // Arrange
       const data = response([
         deputado(1, {
@@ -289,34 +330,11 @@ describe("grade do comparativo de deputados", () => {
       // Assert
       expect(rowById(grid, "cota").cells[0]).toMatchObject({
         value: "Sem gastos na janela",
-        breakdown: ["2023 · sem exercício", "2024 · sem mediana"],
+        link: {
+          href: "/deputados/1?year=2024#gastos",
+          label: "Ver mais detalhes no perfil",
+        },
       });
-    });
-
-    it("marca na célula o ano com dado incompleto", () => {
-      // Arrange
-      const data = response([
-        deputado(1, {
-          cota: {
-            status: "comparavel",
-            percentualSobreMedianaUf: 105,
-            siglaUf: "MG",
-            anos: [cotaAno(2026, 105, { dadoIncompleto: true })],
-            anosNaComparacao: 1,
-            diasEmExercicio: 350,
-            diasNaComparacao: 350,
-          },
-        }),
-        deputado(2),
-      ]);
-
-      // Act
-      const grid = buildComparativoDeputadosGrid(data);
-
-      // Assert
-      expect(rowById(grid, "cota").cells[0].breakdown).toEqual([
-        "2026 · 105% (dado incompleto)",
-      ]);
     });
   });
 
@@ -384,7 +402,7 @@ describe("grade do comparativo de deputados", () => {
       // Assert
       expect(rowById(grid, "proposicoes-assinadas").cells[0]).toMatchObject({
         value: "113/ano",
-        detail: "340 no total · 41 como primeiro signatário",
+        detail: "340 no total · 41 como autor principal",
       });
     });
 
@@ -402,7 +420,7 @@ describe("grade do comparativo de deputados", () => {
       // Assert
       expect(rowById(grid, "proposicoes-assinadas").cells[0]).toMatchObject({
         value: "12",
-        detail: "12 no total · 3 como primeiro signatário",
+        detail: "12 no total · 3 como autor principal",
       });
     });
 
@@ -471,17 +489,17 @@ describe("grade do comparativo de deputados", () => {
           externalIdDeputado: 1,
           value: "Sem dados comparáveis",
           detail: "Última atuação na 54ª legislatura",
-          breakdown: null,
+          link: null,
           lacuna: true,
         },
         presenca: {
           externalIdDeputado: 1,
           value: "Sem dados comparáveis",
           detail: "Última atuação na 54ª legislatura",
-          breakdown: null,
+          link: null,
           lacuna: true,
         },
-        label: "Cota parlamentar",
+        label: "Gasto da cota parlamentar",
       });
     });
   });
@@ -592,6 +610,41 @@ describe("aviso do topo do comparativo de deputados", () => {
       expect(aviso?.body).toContain(
         "Os demais deputados continuam comparáveis.",
       );
+    });
+  });
+});
+
+describe("nota de cobertura do comparativo de deputados", () => {
+  describe("quando todas as janelas estão totalmente cobertas", () => {
+    it("não produz nota", () => {
+      // Arrange
+      const data = response([deputado(1), deputado(2)]);
+
+      // Act
+      const nota = toComparativoNotaCobertura(data);
+
+      // Assert
+      expect(nota).toBeNull();
+    });
+  });
+
+  describe("quando as janelas em curso têm coberturas diferentes", () => {
+    it("produz uma nota única com a cobertura mais recente", () => {
+      // Arrange
+      const data = response([
+        deputado(1, {
+          janela: { ...JANELA_EM_CURSO, coberturaAte: "2026-06-30" },
+        }),
+        deputado(2, {
+          janela: { ...JANELA_EM_CURSO, coberturaAte: "2026-08-31" },
+        }),
+      ]);
+
+      // Act
+      const nota = toComparativoNotaCobertura(data);
+
+      // Assert
+      expect(nota).toBe("Dados cobertos até ago/2026");
     });
   });
 });

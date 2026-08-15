@@ -55,7 +55,18 @@ describe('projeção da cota para o comparativo', () => {
       });
     });
 
-    it('detalha cada ano da janela, em ordem, sem o valor gasto', () => {
+    it('publica o total gasto nos anos comparados', () => {
+      // Arrange
+      const source = cotaSource();
+
+      // Act
+      const cota = toComparativoCota({ ...JANELA_57, source });
+
+      // Assert
+      expect(cota).toMatchObject({ gastoNaComparacaoCents: 200_000 });
+    });
+
+    it('detalha cada ano da janela, em ordem, sem o valor gasto do ano', () => {
       // Arrange
       const source = cotaSource();
 
@@ -70,7 +81,7 @@ describe('projeção da cota para o comparativo', () => {
         medianaUfDeputadoCount: 53,
         dadoIncompleto: false,
       });
-      expect(JSON.stringify(cota)).not.toContain('100000');
+      expect(JSON.stringify(cota.anos)).not.toContain('100000');
     });
 
     it('declara a exposição em dias dos anos comparados', () => {

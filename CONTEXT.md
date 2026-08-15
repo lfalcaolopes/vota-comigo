@@ -303,11 +303,11 @@ _Avoid_: Mês zerado como sinônimo de mês sem dado.
 - O **Comparativo de deputados** tem duas entradas: a seleção de **Deputados** no resultado do **Matcher** e a seleção na listagem pública de **Deputados**; a segunda não tem **Posição do usuário** e por isso compara apenas dados consolidados.
 - Aberto pelo **Matcher**, o **Comparativo de deputados** oferece a grade de votos e a comparação de dados consolidados como visualizações da mesma tela, não como endereços diferentes.
 - Cada **Deputado** no **Comparativo de deputados** tem sua própria **Janela do comparativo**; as métricas de presença, proposições assinadas, órgãos e cota são calculadas sobre a janela inteira, com as contagens absolutas normalizadas por ano efetivo e a cota como posição sobre o período.
-- Na **Janela do comparativo**, os **Gastos da cota do deputado** somam todos os anos da janela — inclusive os de exercício parcial — e declaram os dias em exercício e a posição de cada ano; excluir os anos parciais deixaria sem linha justamente quem esteve pouco tempo em exercício.
+- Na **Janela do comparativo**, os **Gastos da cota do deputado** somam todos os anos da janela — inclusive os de exercício parcial —, porque excluir os anos parciais deixaria sem linha justamente quem esteve pouco tempo em exercício; os dias em exercício que qualificam a soma são declarados no cabeçalho da coluna, e o detalhamento ano a ano fica no **Perfil do deputado**, para onde a célula aponta.
 - Um ano da **Janela do comparativo** sem cobertura da fonte de proposições assinadas torna a métrica indisponível para o deputado inteiro, em vez de publicar um total menor que o real.
 - Um **Deputado** cuja última legislatura em atividade é anterior à 55ª fica fora da base comparável no **Comparativo de deputados**: identidade permanece na coluna, mas nenhuma métrica, inclusive o **Resumo de presença do deputado**, é publicada para ele.
 - Quando as **Janelas do comparativo** dos **Deputados** comparados divergem, o **Comparativo de deputados** avisa antes de qualquer número.
-- No **Comparativo de deputados**, os **Gastos da cota do deputado** aparecem como posição frente à mediana do estado, sem valor absoluto, porque dois totais lado a lado seriam confronto nominal de gastos.
+- No **Comparativo de deputados**, os **Gastos da cota do deputado** aparecem como valor gasto — média por ano e total da janela — sempre acompanhados da posição frente à mediana do estado e da UF do **Deputado**: omitir o valor absoluto escondia do usuário o dado que ele veio buscar, e o contexto que evita a leitura como confronto nominal — UF, dias em exercício e aviso de legislaturas divergentes — já está na mesma tela.
 - Um **Perfil do deputado** pertence a exatamente um **Deputado**.
 - O **Perfil do deputado** usa dados cadastrais estáveis do **Deputado** e o **Snapshot público do deputado** para partido, UF representada, foto e outros dados públicos atuais.
 - O **Perfil do deputado** e os cards de resultado do **Matcher** usam a mesma regra de **Nome público do deputado**.
@@ -339,7 +339,7 @@ _Avoid_: Mês zerado como sinônimo de mês sem dado.
 - A mediana do estado considera apenas **Deputados** que exerceram o ano inteiro; um **Deputado** com exercício parcial não recebe comparação, e seu gasto nunca é extrapolado por pró-rata.
 - A mediana do estado é sempre exibida com o número de **Deputados** que entraram no cálculo, sem piso de amostra: o denominador é o que calibra a confiança, e suprimi-la tiraria a referência das bancadas pequenas, que têm menos referência própria.
 - Um **Gasto da cota do deputado** agregado pode ser negativo, porque compensações e cancelamentos de passagem aérea excedem o gasto do período; o valor negativo é preservado e nunca apresentado em forma que o exiba como despesa positiva.
-- Comparar um **Deputado** contra a distribuição do seu estado é permitido; confronto nominal de gastos entre **Deputados** não entra no MVP.
+- Comparar um **Deputado** contra a distribuição do seu estado é permitido, e valores de **Deputados** diferentes podem aparecer lado a lado desde que cada um venha com a sua posição frente à mediana do próprio estado, que é o que impede a leitura de um teto de cota maior como gasto maior.
 - Uma **Bancada** emite **Orientação** para uma **Votação**.
 - Um **Partido** pertence a zero ou uma **Federação** e a zero ou um **Bloco** em uma dada **Legislatura**.
 - Quando uma **Federação** orienta, os **Partidos** membros não orientam separadamente naquela **Votação**.
