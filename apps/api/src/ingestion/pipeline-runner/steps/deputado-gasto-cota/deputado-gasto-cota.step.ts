@@ -9,6 +9,7 @@ import type {
 import { aggregateDeputadoGastoCota } from './deputado-gasto-cota.transformer';
 import { checkGastoCotaInvariantes } from './gasto-cota-invariantes';
 import { toDeputadoGastoCotaAnoRows } from './gasto-cota-ano';
+import { logPassagemAereaPorMes } from './passagem-aerea-relatorio';
 import type { DeputadoGastoCotaRepository } from './deputado-gasto-cota.repository.types';
 
 export function createDeputadoGastoCotaStep(
@@ -42,6 +43,12 @@ export function createDeputadoGastoCotaStep(
       if (aggregated.fatal !== null) {
         throw new StrictModeError(aggregated.fatal);
       }
+
+      logPassagemAereaPorMes(
+        context.reporter,
+        stepLabel('deputado_gasto_cota', year),
+        aggregated.rows,
+      );
 
       const invariantes = checkGastoCotaInvariantes({
         rows: aggregated.rows,

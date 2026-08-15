@@ -1,6 +1,9 @@
 import type { CsvRow } from '../../sources/csv-reader';
 import { StrictModeError } from '../../errors/strict-mode-error';
-import type { IngestionStepContext } from '../../types/ingestion-pipeline-runner.types';
+import type {
+  IngestionReporter,
+  IngestionStepContext,
+} from '../../types/ingestion-pipeline-runner.types';
 
 import { createDeputadoGastoCotaStep } from './deputado-gasto-cota.step';
 import type {
@@ -40,6 +43,17 @@ function createRepository(): DeputadoGastoCotaRepository & {
     replaceAno(input) {
       replacements.push(input);
       return Promise.resolve({ inserted: input.rows.length });
+    },
+  };
+}
+
+function createReporter(): IngestionReporter & { readonly lines: string[] } {
+  const lines: string[] = [];
+
+  return {
+    lines,
+    log(message) {
+      lines.push(message);
     },
   };
 }
@@ -200,6 +214,43 @@ describe('passo de ingestao dos gastos da cota', () => {
       // Assert
       expect(repository.replacements).toEqual([]);
       expect(result.externalGaps).toMatchObject([{ type: 'fonte_vazia' }]);
+    });
+  });
+
+  describe('when a reporter is configured', () => {
+    it('reports the SIGEPA and RPA totals per month without changing what gets persisted', async () => {
+      // Arrange
+      const repository = createRepository();
+      const step = createDeputadoGastoCotaStep(repository);
+      const reporter = createReporter();
+      const context = createContext(
+        [
+          line(2, { numSubCota: '998', numMes: '1', vlrLiquido: '100.00' }),
+          line(3, { numSubCota: '999', numMes: '2', vlrLiquido: '50.00' }),
+        ],
+        { reporter },
+      );
+
+      // Act
+      const result = await step.run(context);
+
+      // Assert
+      expect(reporter.lines).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('SIGEPA (998)'),
+          expect.stringContaining('RPA (999)'),
+        ]),
+      );
+      const sigepaLine = reporter.lines.find((line) =>
+        line.includes('SIGEPA (998)'),
+      );
+      expect(sigepaLine).toContain('jan=R$ 100.00');
+      expect(sigepaLine).toContain('fev=sem registro');
+      expect(repository.replacements[0].rows[0].gastosJson).toEqual({
+        '1': { '998': 10000 },
+        '2': { '999': 5000 },
+      });
+      expect(result.inserted).toBe(1);
     });
   });
 });
