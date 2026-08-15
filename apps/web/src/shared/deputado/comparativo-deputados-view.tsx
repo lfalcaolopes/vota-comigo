@@ -1,16 +1,28 @@
-import type { ComparativoDeputadosResponse } from "@vota-comigo/shared-types";
+import type {
+  ComparativoDeputadosResponse,
+  ComparativoJanela,
+} from "@vota-comigo/shared-types";
 import Link from "next/link";
 
-import { Badge } from "@/shared/ui";
+import { Badge, InlineMessage } from "@/shared/ui";
 
 import {
   buildComparativoDeputadosGrid,
+  toComparativoAviso,
   type ComparativoDeputadosCell,
   type ComparativoDeputadosColumn,
   type ComparativoDeputadosRow,
 } from "./comparativo-deputados-grid";
 import { DeputadoAvatar } from "./deputado-avatar";
-import { toAtividadeAriaLabel, toAtividadeLabel } from "./presentation";
+import {
+  DIAS_EM_EXERCICIO_INDISPONIVEL,
+  JANELA_FORA_DA_BASE_COMPARAVEL,
+  toAtividadeAriaLabel,
+  toAtividadeLabel,
+  toDiasEmExercicioLabel,
+  toJanelaLegislaturaLabel,
+  toJanelaPeriodoLabel,
+} from "./presentation";
 
 const labelColumnClassName =
   "sticky left-0 z-10 border-r border-b border-border bg-bg p-3";
@@ -25,17 +37,20 @@ export function ComparativoDeputadosView({
     grid.columns.map((column) => [column.externalIdDeputado, column]),
   );
   const gridTemplateColumns = `minmax(9rem,0.6fr) repeat(${grid.columns.length}, minmax(13rem,1fr))`;
+  const aviso = toComparativoAviso(response);
 
   return (
     <div className="grid gap-5">
-      {response.year === null ? (
-        <p className="text-sm text-muted">
-          Os mandatos comparados não têm nenhum ano em comum, então só a
-          identidade e a presença aparecem lado a lado.
-        </p>
+      {aviso !== null ? (
+        <InlineMessage
+          body={aviso.body}
+          title={aviso.title}
+          tone={aviso.tone}
+        />
       ) : null}
 
-      <div className="lg:hidden">
+      <div className="grid gap-6 lg:hidden">
+        <ComparativoPeriodoComparado columns={grid.columns} />
         <ComparativoMobile columnsById={columnsById} rows={grid.rows} />
       </div>
 
@@ -62,6 +77,93 @@ export function ComparativoDeputadosView({
   );
 }
 
+function ComparativoIdentidade({
+  column,
+}: {
+  column: ComparativoDeputadosColumn;
+}) {
+  return (
+    <div className="flex items-start gap-3">
+      <DeputadoAvatar nome={column.nome} urlFoto={column.urlFoto} />
+      <div className="min-w-0 flex-1">
+        <Link
+          className="block line-clamp-2 break-words text-sm font-[650] text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+          href={column.perfilHref}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {column.nome}
+        </Link>
+        <p className="mt-1 text-xs text-muted">
+          {column.siglaPartido} · {column.siglaUf}
+        </p>
+        <Badge
+          aria-label={toAtividadeAriaLabel(column.emAtividade)}
+          className="mt-1.5"
+          tone={column.emAtividade ? "success" : "neutral"}
+        >
+          {toAtividadeLabel(column.emAtividade)}
+        </Badge>
+      </div>
+    </div>
+  );
+}
+
+function ComparativoJanelaBloco({
+  janela,
+  nome,
+}: {
+  janela: ComparativoJanela;
+  nome: string;
+}) {
+  return (
+    <div
+      aria-label={`Período comparado de ${nome}`}
+      className="mt-2 border-t border-border pt-2 text-xs leading-normal text-muted"
+      role="group"
+    >
+      {janela.status === "indisponivel" ? (
+        <p>{JANELA_FORA_DA_BASE_COMPARAVEL}</p>
+      ) : (
+        <>
+          <p>{toJanelaLegislaturaLabel(janela.legislatura)}</p>
+          <p>{toJanelaPeriodoLabel(janela)}</p>
+          <p>
+            {janela.diasEmExercicio !== null
+              ? toDiasEmExercicioLabel(janela.diasEmExercicio)
+              : DIAS_EM_EXERCICIO_INDISPONIVEL}
+          </p>
+        </>
+      )}
+    </div>
+  );
+}
+
+function ComparativoPeriodoComparado({
+  columns,
+}: {
+  columns: readonly ComparativoDeputadosColumn[];
+}) {
+  return (
+    <section className="grid gap-3">
+      <h3 className="text-base font-[680] leading-snug text-ink">
+        Período comparado
+      </h3>
+      <ul className="grid gap-2">
+        {columns.map((column) => (
+          <li
+            className="rounded-lg border border-border bg-bg p-3"
+            key={column.externalIdDeputado}
+          >
+            <ComparativoIdentidade column={column} />
+            <ComparativoJanelaBloco janela={column.janela} nome={column.nome} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function ComparativoDeputadoHeader({
   column,
 }: {
@@ -69,29 +171,8 @@ function ComparativoDeputadoHeader({
 }) {
   return (
     <div className="border-b border-border p-3">
-      <div className="flex items-start gap-3">
-        <DeputadoAvatar nome={column.nome} urlFoto={column.urlFoto} />
-        <div className="min-w-0">
-          <Link
-            className="block line-clamp-2 break-words text-sm font-[650] text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
-            href={column.perfilHref}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            {column.nome}
-          </Link>
-          <p className="mt-1 text-xs text-muted">
-            {column.siglaPartido} · {column.siglaUf}
-          </p>
-          <Badge
-            aria-label={toAtividadeAriaLabel(column.emAtividade)}
-            className="mt-1.5"
-            tone={column.emAtividade ? "success" : "neutral"}
-          >
-            {toAtividadeLabel(column.emAtividade)}
-          </Badge>
-        </div>
-      </div>
+      <ComparativoIdentidade column={column} />
+      <ComparativoJanelaBloco janela={column.janela} nome={column.nome} />
     </div>
   );
 }

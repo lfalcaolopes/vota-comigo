@@ -17,18 +17,10 @@ export const metadata: Metadata = {
 
 type PageProps = {
   params: Promise<{ ids: string }>;
-  searchParams: Promise<{ year?: string | string[] }>;
 };
 
-function parseYear(raw: string | string[] | undefined): number | null {
-  return typeof raw === "string" && /^\d{4}$/.test(raw) ? Number(raw) : null;
-}
-
-export default async function ComparativoDeputadosPage({
-  params,
-  searchParams,
-}: PageProps) {
-  const [{ ids }, { year }] = await Promise.all([params, searchParams]);
+export default async function ComparativoDeputadosPage({ params }: PageProps) {
+  const { ids } = await params;
   const externalIdsDeputado = parseComparativoDeputadosIds(ids);
   if (externalIdsDeputado === null) {
     notFound();
@@ -48,15 +40,13 @@ export default async function ComparativoDeputadosPage({
             Comparar deputados
           </h1>
           <p className="text-sm leading-normal text-muted">
-            Dados consolidados pela Câmara dos Deputados. As métricas do ano
-            usam o ano selecionado; a presença considera toda a base.
+            Dados consolidados pela Câmara dos Deputados. Cada deputado aparece
+            na última legislatura em que atuou, e é esse o período de todas as
+            métricas da coluna.
           </p>
         </header>
 
-        <ComparativoDeputados
-          externalIdsDeputado={externalIdsDeputado}
-          initialYear={parseYear(year)}
-        />
+        <ComparativoDeputados externalIdsDeputado={externalIdsDeputado} />
       </div>
     </main>
   );

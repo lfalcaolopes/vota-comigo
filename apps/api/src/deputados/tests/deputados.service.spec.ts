@@ -34,6 +34,8 @@ function fakeRepository(
       assinaturasJson: null,
       coveredThroughDate: null,
     }),
+    loadLegislaturas: async () => [],
+    loadIntervalosExercicio: async () => [],
     ...overrides,
   };
 }

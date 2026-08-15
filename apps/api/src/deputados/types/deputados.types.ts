@@ -15,6 +15,12 @@ export type DeputadoLegislaturaPeriodoSource = {
   dataFim: string;
 };
 
+export type LegislaturaSource = {
+  externalIdLegislatura: number;
+  dataInicio: string;
+  dataFim: string;
+};
+
 export type DeputadoPerfilSource = {
   id: string;
   externalIdDeputado: number;

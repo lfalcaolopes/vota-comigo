@@ -37,6 +37,8 @@ import {
   normalizedColumn,
   toLikePattern,
 } from './rules/texto-normalizado';
+import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
+
 import type {
   DeputadoCardRow,
   DeputadoCeapSource,
@@ -48,6 +50,7 @@ import type {
   DeputadoPerfilSource,
   DeputadoProposicoesAssinadasSource,
   DeputadoResumoPresencaRow,
+  LegislaturaSource,
 } from './types/deputados.types';
 
 export const DEPUTADOS_REPOSITORY = Symbol('DEPUTADOS_REPOSITORY');
@@ -77,6 +80,10 @@ export interface DeputadosRepository {
     deputadoId: string,
     year: number,
   ): Promise<DeputadoProposicoesAssinadasSource>;
+  loadLegislaturas(): Promise<readonly LegislaturaSource[]>;
+  loadIntervalosExercicio(
+    deputadoId: string,
+  ): Promise<readonly IntervaloExercicio[]>;
 }
 
 function toLegislaturaPeriodoSource(
@@ -108,6 +115,41 @@ export function createDeputadosRepository(
       .from(deputadoHistorico)
       .orderBy(deputadoHistorico.deputadoId, desc(deputadoHistorico.dataHora))
       .as('snapshot');
+  }
+
+  async function loadLegislaturasRows(): Promise<readonly LegislaturaSource[]> {
+    const rows = await db
+      .select({
+        externalIdLegislatura: legislatura.externalIdLegislatura,
+        dataInicio: legislatura.dataInicio,
+        dataFim: legislatura.dataFim,
+      })
+      .from(legislatura)
+      .where(
+        and(isNotNull(legislatura.dataInicio), isNotNull(legislatura.dataFim)),
+      );
+
+    return rows.flatMap((row) =>
+      row.dataInicio === null || row.dataFim === null
+        ? []
+        : [
+            {
+              externalIdLegislatura: row.externalIdLegislatura,
+              dataInicio: row.dataInicio,
+              dataFim: row.dataFim,
+            },
+          ],
+    );
+  }
+
+  function loadIntervalosExercicioRows(deputadoId: string) {
+    return db
+      .select({
+        openedAt: deputadoExercicioIntervalo.openedAt,
+        closedAt: deputadoExercicioIntervalo.closedAt,
+      })
+      .from(deputadoExercicioIntervalo)
+      .where(eq(deputadoExercicioIntervalo.deputadoId, deputadoId));
   }
 
   async function loadEventosByDeputadoId(deputadoId: string) {
@@ -320,47 +362,43 @@ export function createDeputadosRepository(
     },
 
     async loadDeputadoCeapSource(deputadoId, year) {
-      const [coberturas, gastoRows, categorias, intervalosExercicio, datas] =
-        await Promise.all([
-          db
-            .select({
-              year: cotaCobertura.year,
-              coveredThroughMonth: cotaCobertura.coveredThroughMonth,
-            })
-            .from(cotaCobertura)
-            .orderBy(asc(cotaCobertura.year)),
-          db
-            .select({
-              siglaUf: deputadoGastoCota.siglaUf,
-              gastosJson: deputadoGastoCota.gastosJson,
-            })
-            .from(deputadoGastoCota)
-            .where(
-              and(
-                eq(deputadoGastoCota.deputadoId, deputadoId),
-                eq(deputadoGastoCota.year, year),
-              ),
-            )
-            .limit(1),
-          db
-            .select({
-              externalNumSubCota: cotaCategoria.externalNumSubCota,
-              description: cotaCategoria.descricao,
-            })
-            .from(cotaCategoria)
-            .orderBy(asc(cotaCategoria.externalNumSubCota)),
-          db
-            .select({
-              openedAt: deputadoExercicioIntervalo.openedAt,
-              closedAt: deputadoExercicioIntervalo.closedAt,
-            })
-            .from(deputadoExercicioIntervalo)
-            .where(eq(deputadoExercicioIntervalo.deputadoId, deputadoId)),
-          db
-            .select({ dataInicio: legislatura.dataInicio })
-            .from(legislatura)
-            .where(isNotNull(legislatura.dataInicio)),
-        ]);
+      const [
+        coberturas,
+        gastoRows,
+        categorias,
+        intervalosExercicio,
+        legislaturas,
+      ] = await Promise.all([
+        db
+          .select({
+            year: cotaCobertura.year,
+            coveredThroughMonth: cotaCobertura.coveredThroughMonth,
+          })
+          .from(cotaCobertura)
+          .orderBy(asc(cotaCobertura.year)),
+        db
+          .select({
+            siglaUf: deputadoGastoCota.siglaUf,
+            gastosJson: deputadoGastoCota.gastosJson,
+          })
+          .from(deputadoGastoCota)
+          .where(
+            and(
+              eq(deputadoGastoCota.deputadoId, deputadoId),
+              eq(deputadoGastoCota.year, year),
+            ),
+          )
+          .limit(1),
+        db
+          .select({
+            externalNumSubCota: cotaCategoria.externalNumSubCota,
+            description: cotaCategoria.descricao,
+          })
+          .from(cotaCategoria)
+          .orderBy(asc(cotaCategoria.externalNumSubCota)),
+        loadIntervalosExercicioRows(deputadoId),
+        loadLegislaturasRows(),
+      ]);
 
       const gastoRow = gastoRows[0];
       const medianaRows =
@@ -395,8 +433,8 @@ export function createDeputadosRepository(
         categorias,
         medianaUf: medianaRows[0] ?? null,
         intervalosExercicio,
-        datasInicioLegislatura: datas.flatMap((row) =>
-          row.dataInicio === null ? [] : [row.dataInicio],
+        datasInicioLegislatura: legislaturas.map(
+          (legislaturaRow) => legislaturaRow.dataInicio,
         ),
       };
     },
@@ -477,6 +515,14 @@ export function createDeputadosRepository(
           null,
         coveredThroughDate: fronteiraRows[0]?.coveredThroughDate ?? null,
       };
+    },
+
+    async loadLegislaturas() {
+      return loadLegislaturasRows();
+    },
+
+    async loadIntervalosExercicio(deputadoId) {
+      return loadIntervalosExercicioRows(deputadoId);
     },
   };
 }

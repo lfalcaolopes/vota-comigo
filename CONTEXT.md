@@ -192,6 +192,9 @@ _Avoid_: Comparativo de políticos.
 
 **Concordância no comparativo**: Indicador de uma célula do Comparativo de deputados que reutiliza a mesma semântica de concordância, discordância e fora do denominador do Matcher.
 
+**Janela do comparativo**: Recorte próprio de cada deputado no Comparativo de deputados, correspondente à última Legislatura em que ele esteve em atividade, truncado no seu último dia de exercício quando ele saiu no meio da legislatura corrente. Deputados cuja última legislatura em atividade é anterior à 55ª ficam fora da base comparável.
+_Avoid_: Ano do comparativo, ano selecionado.
+
 **Perfil do deputado**: Página pública que reúne dados básicos, presença e histórico partidário de um deputado federal coberto pelo produto.
 _Avoid_: Perfil do político.
 
@@ -299,8 +302,9 @@ _Avoid_: Mês zerado como sinônimo de mês sem dado.
 - O **Resumo de presença do deputado** exibido no **Comparativo de deputados** usa o mesmo recorte do **Perfil do deputado**, não apenas as proposições comparadas.
 - O **Comparativo de deputados** tem duas entradas: a seleção de **Deputados** no resultado do **Matcher** e a seleção na listagem pública de **Deputados**; a segunda não tem **Posição do usuário** e por isso compara apenas dados consolidados.
 - Aberto pelo **Matcher**, o **Comparativo de deputados** oferece a grade de votos e a comparação de dados consolidados como visualizações da mesma tela, não como endereços diferentes.
-- As métricas anuais do **Comparativo de deputados** usam o ano coberto mais recente comum aos **Deputados** comparados, o mesmo recorte de ano do **Perfil do deputado**.
-- Mandatos sem nenhum ano em comum não impedem o **Comparativo de deputados**: identidade e **Resumo de presença do deputado** continuam, e as métricas anuais aparecem como **Lacuna de dados**.
+- Cada **Deputado** no **Comparativo de deputados** tem sua própria **Janela do comparativo**; as métricas de proposições assinadas, órgãos e cota são calculadas sobre o último ano civil dessa janela.
+- Um **Deputado** cuja última legislatura em atividade é anterior à 55ª fica fora da base comparável no **Comparativo de deputados**: identidade permanece na coluna, mas nenhuma métrica, inclusive o **Resumo de presença do deputado**, é publicada para ele.
+- Quando as **Janelas do comparativo** dos **Deputados** comparados divergem, o **Comparativo de deputados** avisa antes de qualquer número.
 - No **Comparativo de deputados**, os **Gastos da cota do deputado** aparecem como posição frente à mediana do estado, sem valor absoluto, porque dois totais lado a lado seriam confronto nominal de gastos.
 - Um **Perfil do deputado** pertence a exatamente um **Deputado**.
 - O **Perfil do deputado** usa dados cadastrais estáveis do **Deputado** e o **Snapshot público do deputado** para partido, UF representada, foto e outros dados públicos atuais.

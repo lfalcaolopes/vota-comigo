@@ -12,10 +12,11 @@ export type ComparativoDeputadosState =
 
 export function useComparativoDeputados(
   externalIdsDeputado: readonly number[],
-  year: number | null,
-): { state: ComparativoDeputadosState; retry: () => void } {
+): {
+  state: ComparativoDeputadosState;
+  retry: () => void;
+} {
   const idsKey = externalIdsDeputado.join(",");
-  const cacheKey = `${idsKey}:${year ?? ""}`;
   const ids = useMemo(() => idsKey.split(",").map(Number), [idsKey]);
   const [cache, setCache] = useState<Record<string, ComparativoDeputadosState>>(
     {},
@@ -23,29 +24,29 @@ export function useComparativoDeputados(
   const requestedKeys = useRef(new Set<string>());
 
   const load = useCallback(() => {
-    requestedKeys.current.add(cacheKey);
-    setCache((current) => ({ ...current, [cacheKey]: { status: "loading" } }));
+    requestedKeys.current.add(idsKey);
+    setCache((current) => ({ ...current, [idsKey]: { status: "loading" } }));
 
-    void comparativoDeputados(ids, year ?? undefined).then(
+    void comparativoDeputados(ids).then(
       (response) => {
         setCache((current) => ({
           ...current,
-          [cacheKey]: { status: "success", response },
+          [idsKey]: { status: "success", response },
         }));
       },
       () => {
         setCache((current) => ({
           ...current,
-          [cacheKey]: { status: "error" },
+          [idsKey]: { status: "error" },
         }));
       },
     );
-  }, [cacheKey, ids, year]);
+  }, [idsKey, ids]);
 
   useEffect(() => {
-    if (requestedKeys.current.has(cacheKey)) return;
+    if (requestedKeys.current.has(idsKey)) return;
     load();
-  }, [cacheKey, load]);
+  }, [idsKey, load]);
 
-  return { state: cache[cacheKey] ?? { status: "loading" }, retry: load };
+  return { state: cache[idsKey] ?? { status: "loading" }, retry: load };
 }

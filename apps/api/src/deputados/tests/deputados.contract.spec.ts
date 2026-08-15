@@ -142,6 +142,8 @@ function fakeRepository(
     }),
     loadDeputadoOrgaos: async () => [],
     loadDeputadoProposicoesAssinadasSource: proposicoesAssinadasSource,
+    loadLegislaturas: async () => [],
+    loadIntervalosExercicio: async () => [],
   };
 }
 

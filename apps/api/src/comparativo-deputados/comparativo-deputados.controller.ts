@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  ParseIntPipe,
-  Query,
-} from '@nestjs/common';
+import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
 
 import {
   MAX_COMPARATIVO_DEPUTADOS,
@@ -45,8 +39,7 @@ export class ComparativoDeputadosController {
   @CacheControl(CACHE_LISTING)
   async comparativo(
     @Query('ids') idsParam?: string,
-    @Query('year', new ParseIntPipe({ optional: true })) year?: number,
   ): Promise<ComparativoDeputadosResponse> {
-    return this.service.comparativo(parseExternalIdsDeputado(idsParam), year);
+    return this.service.comparativo(parseExternalIdsDeputado(idsParam));
   }
 }

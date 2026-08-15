@@ -103,7 +103,6 @@ export function StepComparativo({
           externalIdsDeputado={deputados.map(
             (deputado) => deputado.externalIdDeputado,
           )}
-          showYearSelector={false}
         />
       ) : null}
 

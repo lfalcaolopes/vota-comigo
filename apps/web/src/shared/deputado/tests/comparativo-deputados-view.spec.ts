@@ -8,6 +8,24 @@ import { describe, expect, it } from "vitest";
 
 import { ComparativoDeputadosView } from "../comparativo-deputados-view";
 
+const JANELA_57 = {
+  status: "disponivel" as const,
+  legislatura: 57,
+  dataInicio: "2023-02-01",
+  dataFim: "2025-04-10T00:00:00.000Z",
+  encerrada: true,
+  diasEmExercicioDisponivel: true,
+  diasEmExercicio: 800,
+};
+
+const JANELA_56 = { ...JANELA_57, legislatura: 56, dataInicio: "2019-02-01" };
+
+const JANELA_INDISPONIVEL = {
+  status: "indisponivel" as const,
+  motivo: "legislatura-anterior-a-cobertura" as const,
+  ultimaLegislatura: 54,
+};
+
 function deputado(
   externalIdDeputado: number,
   overrides: Partial<ComparativoDeputado> = {},
@@ -25,8 +43,7 @@ function deputado(
       siglaUf: "MG",
       urlFoto: null,
     },
-    legislaturaInicialPeriodo: null,
-    legislaturaFinalPeriodo: null,
+    janela: JANELA_57,
     resumoPresencaDisponivel: true,
     resumoPresenca: {
       percentualPresenca: 92,
@@ -35,13 +52,12 @@ function deputado(
       ausenciasSemMotivoConhecido: 8,
     },
     proposicoesAssinadas: {
-      year: 2025,
       disponivel: true,
       total: 12,
       totalPrimeiroSignatario: 3,
       coveredThroughDate: "2025-08-14",
     },
-    orgaos: { year: 2025, items: [], total: 0 },
+    orgaos: { items: [], total: 0 },
     cota: {
       status: "comparavel",
       percentualSobreMedianaUf: 112,
@@ -58,20 +74,19 @@ function render(response: ComparativoDeputadosResponse): string {
 }
 
 describe("ComparativoDeputadosView", () => {
-  describe("quando dois deputados são comparados em um ano", () => {
+  describe("quando dois deputados são comparados na mesma janela", () => {
     it("mostra cada métrica e leva ao perfil em nova aba", () => {
       // Arrange / Act
       const html = render({
-        year: 2025,
-        comparableYears: [2025],
+        janelasCoincidem: true,
         items: [deputado(1), deputado(2)],
       });
 
       // Assert
       expect(html).toContain("Presença registrada");
-      expect(html).toContain("Proposições assinadas em 2025");
-      expect(html).toContain("Comissões e outros órgãos em 2025");
-      expect(html).toContain("Cota parlamentar em 2025");
+      expect(html).toContain("Proposições assinadas");
+      expect(html).toContain("Comissões e outros órgãos");
+      expect(html).toContain("Cota parlamentar");
       expect(html).toContain('href="/deputados/1"');
       expect(html).toContain('target="_blank"');
     });
@@ -79,8 +94,7 @@ describe("ComparativoDeputadosView", () => {
     it("mostra a posição na cota sem o valor gasto", () => {
       // Arrange / Act
       const html = render({
-        year: 2025,
-        comparableYears: [2025],
+        janelasCoincidem: true,
         items: [deputado(1), deputado(2)],
       });
 
@@ -89,23 +103,72 @@ describe("ComparativoDeputadosView", () => {
       expect(html).toContain("Comparação com 53 deputados de MG");
       expect(html).not.toContain("R$");
     });
-  });
 
-  describe("quando não há ano comparável", () => {
-    it("explica que só identidade e presença aparecem", () => {
-      // Arrange
-      const semAno = { proposicoesAssinadas: null, orgaos: null, cota: null };
-
-      // Act
+    it("mostra o cabeçalho de janela com legislatura, período e dias em exercício", () => {
+      // Arrange / Act
       const html = render({
-        year: null,
-        comparableYears: [],
-        items: [deputado(1, semAno), deputado(2, semAno)],
+        janelasCoincidem: true,
+        items: [deputado(1), deputado(2)],
       });
 
       // Assert
-      expect(html).toContain("não têm nenhum ano em comum");
-      expect(html).toContain("Sem ano comparável");
+      expect(html).toContain("57ª legislatura");
+      expect(html).toContain("fev/2023");
+      expect(html).toContain("800 dias em exercício");
+    });
+
+    it("não mostra nenhum aviso no topo", () => {
+      // Arrange / Act
+      const html = render({
+        janelasCoincidem: true,
+        items: [deputado(1), deputado(2)],
+      });
+
+      // Assert
+      expect(html).not.toContain("Legislaturas diferentes");
+      expect(html).not.toContain("fora da base comparável");
+    });
+  });
+
+  describe("quando as legislaturas dos deputados divergem", () => {
+    it("mostra o aviso de divergência acima da grade", () => {
+      // Arrange / Act
+      const html = render({
+        janelasCoincidem: false,
+        items: [
+          deputado(1, { nomePublico: "Erika Kokay", janela: JANELA_57 }),
+          deputado(2, { nomePublico: "Kim Kataguiri", janela: JANELA_56 }),
+        ],
+      });
+
+      // Assert
+      expect(html).toContain("Legislaturas diferentes");
+      expect(html).toContain("57ª (Erika Kokay)");
+      expect(html).toContain("56ª (Kim Kataguiri)");
+    });
+  });
+
+  describe("quando um deputado está abaixo do piso da 55ª legislatura", () => {
+    it("mostra a recusa e não a divergência", () => {
+      // Arrange
+      const semJanela = {
+        janela: JANELA_INDISPONIVEL,
+        proposicoesAssinadas: null,
+        orgaos: null,
+        cota: null,
+      };
+
+      // Act
+      const html = render({
+        janelasCoincidem: false,
+        items: [deputado(1, semJanela), deputado(2)],
+      });
+
+      // Assert
+      expect(html).toContain("Um dos deputados está fora da base comparável");
+      expect(html).toContain("Fora da base comparável");
+      expect(html).toContain("Sem dados comparáveis");
+      expect(html).not.toContain("Legislaturas diferentes");
     });
   });
 });

@@ -4,7 +4,28 @@ import type {
 } from "@vota-comigo/shared-types";
 import { describe, expect, it } from "vitest";
 
-import { buildComparativoDeputadosGrid } from "../comparativo-deputados-grid";
+import {
+  buildComparativoDeputadosGrid,
+  toComparativoAviso,
+} from "../comparativo-deputados-grid";
+
+const JANELA_57 = {
+  status: "disponivel" as const,
+  legislatura: 57,
+  dataInicio: "2023-02-01",
+  dataFim: "2025-04-10T00:00:00.000Z",
+  encerrada: true,
+  diasEmExercicioDisponivel: true,
+  diasEmExercicio: 800,
+};
+
+const JANELA_56 = { ...JANELA_57, legislatura: 56, dataInicio: "2019-02-01" };
+
+const JANELA_INDISPONIVEL = {
+  status: "indisponivel" as const,
+  motivo: "legislatura-anterior-a-cobertura" as const,
+  ultimaLegislatura: 54,
+};
 
 function deputado(
   externalIdDeputado: number,
@@ -23,8 +44,7 @@ function deputado(
       siglaUf: "MG",
       urlFoto: null,
     },
-    legislaturaInicialPeriodo: null,
-    legislaturaFinalPeriodo: null,
+    janela: JANELA_57,
     resumoPresencaDisponivel: true,
     resumoPresenca: {
       percentualPresenca: 92,
@@ -33,13 +53,12 @@ function deputado(
       ausenciasSemMotivoConhecido: 8,
     },
     proposicoesAssinadas: {
-      year: 2025,
       disponivel: true,
       total: 12,
       totalPrimeiroSignatario: 3,
       coveredThroughDate: "2025-08-14",
     },
-    orgaos: { year: 2025, items: [], total: 0 },
+    orgaos: { items: [], total: 0 },
     cota: {
       status: "comparavel",
       percentualSobreMedianaUf: 112,
@@ -51,13 +70,9 @@ function deputado(
 
 function response(
   items: readonly ComparativoDeputado[],
-  year: number | null = 2025,
+  janelasCoincidem = true,
 ): ComparativoDeputadosResponse {
-  return {
-    year,
-    comparableYears: year === null ? [] : [year],
-    items: [...items],
-  };
+  return { janelasCoincidem, items: [...items] };
 }
 
 function rowById(
@@ -95,7 +110,7 @@ describe("grade do comparativo de deputados", () => {
       expect(grid.columns[0].perfilHref).toBe("/deputados/2");
     });
 
-    it("nomeia o ano aplicado nas métricas anuais", () => {
+    it("rotula as métricas da janela sem sufixo de ano", () => {
       // Arrange
       const data = response([deputado(1), deputado(2)]);
 
@@ -104,11 +119,11 @@ describe("grade do comparativo de deputados", () => {
 
       // Assert
       expect(rowById(grid, "proposicoes-assinadas").label).toBe(
-        "Proposições assinadas em 2025",
+        "Proposições assinadas",
       );
     });
 
-    it("avisa que a presença usa toda a base, não o ano", () => {
+    it("avisa que a presença usa a legislatura da coluna", () => {
       // Arrange
       const data = response([deputado(1), deputado(2)]);
 
@@ -116,7 +131,20 @@ describe("grade do comparativo de deputados", () => {
       const grid = buildComparativoDeputadosGrid(data);
 
       // Assert
-      expect(rowById(grid, "presenca").hint).toContain("não apenas o ano");
+      expect(rowById(grid, "presenca").hint).toContain(
+        "legislatura mostrada na coluna",
+      );
+    });
+
+    it("carrega a janela de cada deputado na coluna", () => {
+      // Arrange
+      const data = response([deputado(1)]);
+
+      // Act
+      const grid = buildComparativoDeputadosGrid(data);
+
+      // Assert
+      expect(grid.columns[0].janela).toEqual(JANELA_57);
     });
   });
 
@@ -204,7 +232,7 @@ describe("grade do comparativo de deputados", () => {
     });
   });
 
-  describe("quando os órgãos do ano existem", () => {
+  describe("quando os órgãos do período existem", () => {
     it("resume os primeiros nomes ao lado do total", () => {
       // Arrange
       const orgao = (externalIdOrgao: number, siglaOrgao: string) => ({
@@ -218,7 +246,6 @@ describe("grade do comparativo de deputados", () => {
       const data = response([
         deputado(1, {
           orgaos: {
-            year: 2025,
             items: [orgao(1, "CCJC"), orgao(2, "CFT"), orgao(3, "CE")],
             total: 3,
           },
@@ -237,15 +264,16 @@ describe("grade do comparativo de deputados", () => {
     });
   });
 
-  describe("quando não há ano comparável", () => {
-    it("marca as métricas anuais como lacuna e mantém a presença", () => {
+  describe("quando a janela do deputado está indisponível", () => {
+    it("marca todas as métricas, inclusive a presença, como recusadas", () => {
       // Arrange
-      const semAno = {
+      const semJanela = {
+        janela: JANELA_INDISPONIVEL,
         proposicoesAssinadas: null,
         orgaos: null,
         cota: null,
       };
-      const data = response([deputado(1, semAno), deputado(2, semAno)], null);
+      const data = response([deputado(1, semJanela), deputado(2, semJanela)]);
 
       // Act
       const grid = buildComparativoDeputadosGrid(data);
@@ -253,16 +281,21 @@ describe("grade do comparativo de deputados", () => {
       // Assert
       expect({
         proposicoes: rowById(grid, "proposicoes-assinadas").cells[0],
-        presenca: rowById(grid, "presenca").cells[0].value,
+        presenca: rowById(grid, "presenca").cells[0],
         label: rowById(grid, "cota").label,
       }).toEqual({
         proposicoes: {
           externalIdDeputado: 1,
-          value: "Sem ano comparável",
-          detail: null,
+          value: "Sem dados comparáveis",
+          detail: "Última atuação na 54ª legislatura",
           lacuna: true,
         },
-        presenca: "92%",
+        presenca: {
+          externalIdDeputado: 1,
+          value: "Sem dados comparáveis",
+          detail: "Última atuação na 54ª legislatura",
+          lacuna: true,
+        },
         label: "Cota parlamentar",
       });
     });
@@ -287,6 +320,91 @@ describe("grade do comparativo de deputados", () => {
         value: "Sem dados de presença",
         lacuna: true,
       });
+    });
+  });
+});
+
+describe("aviso do topo do comparativo de deputados", () => {
+  describe("quando não há divergência nem recusa", () => {
+    it("não produz aviso", () => {
+      // Arrange
+      const data = response([deputado(1), deputado(2)]);
+
+      // Act
+      const aviso = toComparativoAviso(data);
+
+      // Assert
+      expect(aviso).toBeNull();
+    });
+  });
+
+  describe("quando as legislaturas divergem", () => {
+    it("agrupa os nomes por legislatura", () => {
+      // Arrange
+      const data = response(
+        [
+          deputado(1, { nomePublico: "Erika Kokay", janela: JANELA_57 }),
+          deputado(2, { nomePublico: "Kim Kataguiri", janela: JANELA_57 }),
+          deputado(3, { nomePublico: "Fulano de Tal", janela: JANELA_56 }),
+        ],
+        false,
+      );
+
+      // Act
+      const aviso = toComparativoAviso(data);
+
+      // Assert
+      expect(aviso).toEqual({
+        tone: "warning",
+        title: "Legislaturas diferentes",
+        body: "Cada deputado aparece na última legislatura em que atuou: 57ª (Erika Kokay e Kim Kataguiri) e 56ª (Fulano de Tal). Os números de cada coluna são do período dela, não de um período comum.",
+      });
+    });
+  });
+
+  describe("quando um deputado está abaixo do piso da 55ª legislatura", () => {
+    it("prioriza a recusa sobre o aviso de divergência", () => {
+      // Arrange
+      const data = response(
+        [
+          deputado(1, {
+            nomePublico: "Fulano de Tal",
+            janela: JANELA_INDISPONIVEL,
+          }),
+          deputado(2, { nomePublico: "Erika Kokay", janela: JANELA_57 }),
+        ],
+        false,
+      );
+
+      // Act
+      const aviso = toComparativoAviso(data);
+
+      // Assert
+      expect(aviso).toEqual({
+        tone: "neutral",
+        title: "Um dos deputados está fora da base comparável",
+        body: "Fulano de Tal atuou pela última vez na 54ª legislatura. O Vota Comigo cobre votações, cota parlamentar e mediana de gastos a partir de 2015, início da 55ª legislatura, então não há dados desse mandato para comparar.",
+      });
+    });
+
+    it("mantém os demais comparáveis na copy quando sobram dois ou mais", () => {
+      // Arrange
+      const data = response([
+        deputado(1, {
+          nomePublico: "Fulano de Tal",
+          janela: JANELA_INDISPONIVEL,
+        }),
+        deputado(2, { nomePublico: "Erika Kokay", janela: JANELA_57 }),
+        deputado(3, { nomePublico: "Kim Kataguiri", janela: JANELA_57 }),
+      ]);
+
+      // Act
+      const aviso = toComparativoAviso(data);
+
+      // Assert
+      expect(aviso?.body).toContain(
+        "Os demais deputados continuam comparáveis.",
+      );
     });
   });
 });

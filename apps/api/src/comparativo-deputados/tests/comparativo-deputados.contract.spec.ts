@@ -7,7 +7,10 @@ import {
   DEPUTADOS_REPOSITORY,
   type DeputadosRepository,
 } from '@/deputados/deputados.repository';
-import type { DeputadoPerfilSource } from '@/deputados/types/deputados.types';
+import type {
+  DeputadoPerfilSource,
+  LegislaturaSource,
+} from '@/deputados/types/deputados.types';
 
 import { ComparativoDeputadosController } from '../comparativo-deputados.controller';
 import { ComparativoDeputadosService } from '../comparativo-deputados.service';
@@ -19,7 +22,25 @@ function getTestServer(app: INestApplication): TestServer {
   return server as TestServer;
 }
 
-function perfilSource(externalIdDeputado: number): DeputadoPerfilSource {
+const LEGISLATURAS: readonly LegislaturaSource[] = [
+  {
+    externalIdLegislatura: 54,
+    dataInicio: '2011-02-01',
+    dataFim: '2015-01-31',
+  },
+  {
+    externalIdLegislatura: 57,
+    dataInicio: '2023-02-01',
+    dataFim: '2027-01-31',
+  },
+];
+
+const DEPUTADO_ABAIXO_DO_PISO = 999998;
+
+function perfilSource(
+  externalIdDeputado: number,
+  overrides: Partial<DeputadoPerfilSource> = {},
+): DeputadoPerfilSource {
   return {
     id: `deputado-${externalIdDeputado}`,
     externalIdDeputado,
@@ -50,6 +71,7 @@ function perfilSource(externalIdDeputado: number): DeputadoPerfilSource {
         urlFoto: null,
       },
     ],
+    ...overrides,
   };
 }
 
@@ -58,10 +80,21 @@ function createRepository(): DeputadosRepository {
     loadDeputadosFeed: async () => ({ items: [], total: 0 }),
     loadUfsDisponiveis: async () => [],
     loadPartidosDisponiveis: async () => [],
-    loadDeputadoPerfil: async (externalIdDeputado) =>
-      externalIdDeputado === 220593 || externalIdDeputado === 204554
-        ? perfilSource(externalIdDeputado)
-        : null,
+    loadDeputadoPerfil: async (externalIdDeputado) => {
+      if (externalIdDeputado === 220593 || externalIdDeputado === 204554) {
+        return perfilSource(externalIdDeputado);
+      }
+      if (externalIdDeputado === DEPUTADO_ABAIXO_DO_PISO) {
+        return perfilSource(externalIdDeputado, {
+          externalIdLegislaturaFinal: 54,
+          legislaturaFinalPeriodo: {
+            dataInicio: '2011-02-01',
+            dataFim: '2015-01-31',
+          },
+        });
+      }
+      return null;
+    },
     loadResumoPresenca: async () => ({
       presencas: 90,
       ausenciasSemMotivoConhecido: 10,
@@ -91,6 +124,16 @@ function createRepository(): DeputadosRepository {
       assinaturasJson: { '2024-03-04': [4, 1] },
       coveredThroughDate: '2025-08-14',
     }),
+    loadLegislaturas: async () => LEGISLATURAS,
+    loadIntervalosExercicio: async (deputadoId) =>
+      deputadoId === `deputado-${DEPUTADO_ABAIXO_DO_PISO}`
+        ? []
+        : [
+            {
+              openedAt: '2023-02-01T00:00:00.000Z',
+              closedAt: '2024-06-15T00:00:00.000Z',
+            },
+          ],
   };
 }
 
@@ -108,14 +151,14 @@ async function createApp(): Promise<INestApplication> {
 }
 
 describe('GET /comparativo-deputados', () => {
-  describe('quando dois deputados são comparados em um ano coberto', () => {
+  describe('quando dois deputados são comparados na mesma janela', () => {
     it('responde pelo contrato público sem o valor absoluto da cota', async () => {
       // Arrange
       const app = await createApp();
 
       // Act
       const response = await request(getTestServer(app))
-        .get('/comparativo-deputados?ids=220593,204554&year=2024')
+        .get('/comparativo-deputados?ids=220593,204554')
         .expect(200);
 
       // Assert
@@ -130,28 +173,81 @@ describe('GET /comparativo-deputados', () => {
       await app.close();
     });
 
-    it('responde as mesmas contagens do perfil para o ano', async () => {
+    it('responde a janela e as mesmas contagens do perfil para o item', async () => {
       // Arrange
       const app = await createApp();
 
       // Act
       const response = await request(getTestServer(app))
-        .get('/comparativo-deputados?ids=220593,204554&year=2024')
+        .get('/comparativo-deputados?ids=220593,204554')
         .expect(200);
 
       // Assert
       expect({
+        janela: response.body.items[1].janela,
         proposicoesAssinadas: response.body.items[1].proposicoesAssinadas,
         orgaos: response.body.items[1].orgaos.total,
       }).toEqual({
+        janela: {
+          status: 'disponivel',
+          legislatura: 57,
+          dataInicio: '2023-02-01',
+          dataFim: '2024-06-15T00:00:00.000Z',
+          encerrada: true,
+          diasEmExercicioDisponivel: true,
+          diasEmExercicio: expect.any(Number),
+        },
         proposicoesAssinadas: {
-          year: 2024,
           disponivel: true,
           total: 4,
           totalPrimeiroSignatario: 1,
           coveredThroughDate: '2025-08-14',
         },
         orgaos: 1,
+      });
+      await app.close();
+    });
+
+    it('ignora o parâmetro year legado sem falhar', async () => {
+      // Arrange
+      const app = await createApp();
+
+      // Act
+      const response = await request(getTestServer(app))
+        .get('/comparativo-deputados?ids=220593,204554&year=2020')
+        .expect(200);
+
+      // Assert
+      expect(
+        comparativoDeputadosResponseSchema.safeParse(response.body).success,
+      ).toBe(true);
+      await app.close();
+    });
+  });
+
+  describe('quando um deputado está abaixo do piso da 55ª legislatura', () => {
+    it('devolve a coluna recusada em vez de falhar a comparação inteira', async () => {
+      // Arrange
+      const app = await createApp();
+
+      // Act
+      const response = await request(getTestServer(app))
+        .get(`/comparativo-deputados?ids=220593,${DEPUTADO_ABAIXO_DO_PISO}`)
+        .expect(200);
+
+      // Assert
+      expect(
+        comparativoDeputadosResponseSchema.safeParse(response.body).success,
+      ).toBe(true);
+      expect(response.body.items[1]).toMatchObject({
+        janela: {
+          status: 'indisponivel',
+          motivo: 'legislatura-anterior-a-cobertura',
+          ultimaLegislatura: 54,
+        },
+        proposicoesAssinadas: null,
+        orgaos: null,
+        cota: null,
       });
       await app.close();
     });

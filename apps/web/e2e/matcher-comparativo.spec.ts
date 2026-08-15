@@ -108,6 +108,16 @@ const resultado = {
   semBomMatch: false,
 };
 
+const JANELA_57 = {
+  status: "disponivel" as const,
+  legislatura: 57,
+  dataInicio: "2023-02-01",
+  dataFim: "2025-04-10T00:00:00.000Z",
+  encerrada: true,
+  diasEmExercicioDisponivel: true,
+  diasEmExercicio: 800,
+};
+
 function comparativoDeputado(externalIdDeputado: number) {
   return {
     externalIdDeputado,
@@ -122,8 +132,7 @@ function comparativoDeputado(externalIdDeputado: number) {
       siglaUf: "SP",
       urlFoto: null,
     },
-    legislaturaInicialPeriodo: null,
-    legislaturaFinalPeriodo: null,
+    janela: JANELA_57,
     resumoPresencaDisponivel: true,
     resumoPresenca: {
       percentualPresenca: 92,
@@ -132,20 +141,18 @@ function comparativoDeputado(externalIdDeputado: number) {
       ausenciasSemMotivoConhecido: 8,
     },
     proposicoesAssinadas: {
-      year: 2025,
       disponivel: true,
       total: 12,
       totalPrimeiroSignatario: 3,
       coveredThroughDate: "2025-08-14",
     },
-    orgaos: { year: 2025, items: [], total: 0 },
+    orgaos: { items: [], total: 0 },
     cota: { status: "ano-nao-carregado" },
   };
 }
 
 const comparativoGeral = {
-  year: 2025,
-  comparableYears: [2025],
+  janelasCoincidem: true,
   items: [comparativoDeputado(20), comparativoDeputado(10)],
 };
 
@@ -301,10 +308,7 @@ test.describe("comparativo de deputados do matcher", () => {
       page.getByText("Presença registrada").filter({ visible: true }).first(),
     ).toBeVisible();
     await expect(
-      page
-        .getByText("Proposições assinadas em 2025")
-        .filter({ visible: true })
-        .first(),
+      page.getByText("Proposições assinadas").filter({ visible: true }).first(),
     ).toBeVisible();
     expect(comparativoRequests).toBe(1);
 

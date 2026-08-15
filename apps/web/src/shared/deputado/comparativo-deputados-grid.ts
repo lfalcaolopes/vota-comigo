@@ -2,8 +2,9 @@ import type {
   ComparativoCota,
   ComparativoDeputado,
   ComparativoDeputadosResponse,
-  DeputadoOrgaosResponse,
-  DeputadoProposicoesAssinadasResponse,
+  ComparativoJanela,
+  ComparativoOrgaos,
+  ComparativoProposicoesAssinadas,
   DeputadoResumoPresenca,
 } from "@vota-comigo/shared-types";
 
@@ -11,10 +12,11 @@ import {
   formatPercentual,
   nomePublicoLabel,
   toPresencaAmostrasLabel,
+  toUltimaLegislaturaLabel,
 } from "./presentation";
 
 export const RECORTE_PRESENCA_COMPARATIVO =
-  "Considera toda a base de votações do deputado, não apenas o ano selecionado.";
+  "Considera as votações de plenário da legislatura mostrada na coluna.";
 
 const ORGAOS_VISIVEIS = 2;
 
@@ -26,6 +28,7 @@ export type ComparativoDeputadosColumn = {
   siglaUf: string;
   urlFoto: string | null;
   emAtividade: boolean;
+  janela: ComparativoJanela;
 };
 
 export type ComparativoDeputadosCell = {
@@ -47,11 +50,17 @@ export type ComparativoDeputadosGrid = {
   rows: readonly ComparativoDeputadosRow[];
 };
 
+export type ComparativoAvisoTone = "neutral" | "warning";
+
+export type ComparativoAviso = {
+  tone: ComparativoAvisoTone;
+  title: string;
+  body: string;
+};
+
 export function buildComparativoDeputadosGrid(
   response: ComparativoDeputadosResponse,
 ): ComparativoDeputadosGrid {
-  const anoLabel = response.year === null ? "" : ` em ${response.year}`;
-
   return {
     columns: response.items.map(toColumn),
     rows: [
@@ -60,35 +69,113 @@ export function buildComparativoDeputadosGrid(
         label: "Presença registrada",
         hint: RECORTE_PRESENCA_COMPARATIVO,
         cells: response.items.map((item) =>
-          toCell(item, toPresencaCell(item.resumoPresenca)),
+          toRowCell(item, () => toPresencaCell(item.resumoPresenca)),
         ),
       },
       {
         id: "proposicoes-assinadas",
-        label: `Proposições assinadas${anoLabel}`,
+        label: "Proposições assinadas",
         hint: null,
         cells: response.items.map((item) =>
-          toCell(item, toProposicoesCell(item.proposicoesAssinadas)),
+          toRowCell(item, () => toProposicoesCell(item.proposicoesAssinadas)),
         ),
       },
       {
         id: "orgaos",
-        label: `Comissões e outros órgãos${anoLabel}`,
+        label: "Comissões e outros órgãos",
         hint: null,
         cells: response.items.map((item) =>
-          toCell(item, toOrgaosCell(item.orgaos)),
+          toRowCell(item, () => toOrgaosCell(item.orgaos)),
         ),
       },
       {
         id: "cota",
-        label: `Cota parlamentar${anoLabel}`,
+        label: "Cota parlamentar",
         hint: "Posição frente à mediana do estado, porque o teto da cota varia por estado.",
         cells: response.items.map((item) =>
-          toCell(item, toCotaCell(item.cota)),
+          toRowCell(item, () => toCotaCell(item.cota)),
         ),
       },
     ],
   };
+}
+
+export function toComparativoAviso(
+  response: ComparativoDeputadosResponse,
+): ComparativoAviso | null {
+  const recusados = response.items.filter(
+    (item) => item.janela.status === "indisponivel",
+  );
+
+  if (recusados.length > 0) {
+    return toRecusaAviso(recusados, response.items.length);
+  }
+
+  if (!response.janelasCoincidem) {
+    return toDivergenciaAviso(response.items);
+  }
+
+  return null;
+}
+
+function toRecusaAviso(
+  recusados: readonly ComparativoDeputado[],
+  totalItems: number,
+): ComparativoAviso {
+  const remaining = totalItems - recusados.length;
+  const title =
+    recusados.length === 1
+      ? "Um dos deputados está fora da base comparável"
+      : recusados.length === 2
+        ? "Dois dos deputados estão fora da base comparável"
+        : "Todos os deputados estão fora da base comparável";
+
+  const frases = recusados.map((item) => {
+    const janela = item.janela;
+    const nome = nomePublicoLabel(item);
+    return janela.status === "indisponivel" && janela.ultimaLegislatura !== null
+      ? `${nome} atuou pela última vez na ${janela.ultimaLegislatura}ª legislatura`
+      : `${nome} não tem legislatura registrada`;
+  });
+
+  const cobertura =
+    "O Vota Comigo cobre votações, cota parlamentar e mediana de gastos a partir de 2015, início da 55ª legislatura, então não há dados desse mandato para comparar.";
+  const demais =
+    remaining >= 2 ? " Os demais deputados continuam comparáveis." : "";
+
+  return {
+    tone: "neutral",
+    title,
+    body: `${frases.join(". ")}. ${cobertura}${demais}`,
+  };
+}
+
+function toDivergenciaAviso(
+  items: readonly ComparativoDeputado[],
+): ComparativoAviso {
+  const grupos = new Map<number, string[]>();
+  for (const item of items) {
+    if (item.janela.status !== "disponivel") continue;
+    const nomes = grupos.get(item.janela.legislatura) ?? [];
+    nomes.push(nomePublicoLabel(item));
+    grupos.set(item.janela.legislatura, nomes);
+  }
+
+  const entradas = [...grupos.entries()].map(
+    ([legislatura, nomes]) => `${legislatura}ª (${toEnumeracao(nomes)})`,
+  );
+
+  return {
+    tone: "warning",
+    title: "Legislaturas diferentes",
+    body: `Cada deputado aparece na última legislatura em que atuou: ${toEnumeracao(entradas)}. Os números de cada coluna são do período dela, não de um período comum.`,
+  };
+}
+
+function toEnumeracao(items: readonly string[]): string {
+  if (items.length <= 1) return items.join("");
+  if (items.length === 2) return `${items[0]} e ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")} e ${items[items.length - 1]}`;
 }
 
 function toColumn(item: ComparativoDeputado): ComparativoDeputadosColumn {
@@ -100,16 +187,41 @@ function toColumn(item: ComparativoDeputado): ComparativoDeputadosColumn {
     siglaUf: item.snapshotPublico?.siglaUf ?? "—",
     urlFoto: item.snapshotPublico?.urlFoto ?? null,
     emAtividade: item.emAtividade,
+    janela: item.janela,
   };
 }
 
 type CellContent = Omit<ComparativoDeputadosCell, "externalIdDeputado">;
+
+function toRowCell(
+  item: ComparativoDeputado,
+  content: () => CellContent,
+): ComparativoDeputadosCell {
+  if (item.janela.status === "indisponivel") {
+    return toCell(item, toRecusaCell(item.janela));
+  }
+
+  return toCell(item, content());
+}
 
 function toCell(
   item: ComparativoDeputado,
   content: CellContent,
 ): ComparativoDeputadosCell {
   return { externalIdDeputado: item.externalIdDeputado, ...content };
+}
+
+function toRecusaCell(
+  janela: Extract<ComparativoJanela, { status: "indisponivel" }>,
+): CellContent {
+  return {
+    value: "Sem dados comparáveis",
+    detail:
+      janela.ultimaLegislatura === null
+        ? null
+        : toUltimaLegislaturaLabel(janela.ultimaLegislatura),
+    lacuna: true,
+  };
 }
 
 function toPresencaCell(
@@ -130,10 +242,10 @@ function toPresencaCell(
 }
 
 function toProposicoesCell(
-  proposicoesAssinadas: DeputadoProposicoesAssinadasResponse | null,
+  proposicoesAssinadas: ComparativoProposicoesAssinadas | null,
 ): CellContent {
   if (proposicoesAssinadas === null) {
-    return { value: "Sem ano comparável", detail: null, lacuna: true };
+    return { value: "Sem dados comparáveis", detail: null, lacuna: true };
   }
 
   if (!proposicoesAssinadas.disponivel) {
@@ -147,9 +259,9 @@ function toProposicoesCell(
   };
 }
 
-function toOrgaosCell(orgaos: DeputadoOrgaosResponse | null): CellContent {
+function toOrgaosCell(orgaos: ComparativoOrgaos | null): CellContent {
   if (orgaos === null) {
-    return { value: "Sem ano comparável", detail: null, lacuna: true };
+    return { value: "Sem dados comparáveis", detail: null, lacuna: true };
   }
 
   if (orgaos.total === 0) {
@@ -174,7 +286,7 @@ function toOrgaosCell(orgaos: DeputadoOrgaosResponse | null): CellContent {
 
 function toCotaCell(cota: ComparativoCota | null): CellContent {
   if (cota === null) {
-    return { value: "Sem ano comparável", detail: null, lacuna: true };
+    return { value: "Sem dados comparáveis", detail: null, lacuna: true };
   }
 
   if (cota.status === "ano-nao-carregado") {

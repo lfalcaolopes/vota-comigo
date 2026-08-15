@@ -1,5 +1,15 @@
 import { expect, test, type Page } from "@playwright/test";
 
+const JANELA_57 = {
+  status: "disponivel" as const,
+  legislatura: 57,
+  dataInicio: "2023-02-01",
+  dataFim: "2025-04-10T00:00:00.000Z",
+  encerrada: true,
+  diasEmExercicioDisponivel: true,
+  diasEmExercicio: 800,
+};
+
 function deputado(externalIdDeputado: number, percentual: number) {
   return {
     externalIdDeputado,
@@ -14,8 +24,7 @@ function deputado(externalIdDeputado: number, percentual: number) {
       siglaUf: "SP",
       urlFoto: null,
     },
-    legislaturaInicialPeriodo: null,
-    legislaturaFinalPeriodo: null,
+    janela: JANELA_57,
     resumoPresencaDisponivel: true,
     resumoPresenca: {
       percentualPresenca: 92,
@@ -24,13 +33,12 @@ function deputado(externalIdDeputado: number, percentual: number) {
       ausenciasSemMotivoConhecido: 8,
     },
     proposicoesAssinadas: {
-      year: 2025,
       disponivel: true,
       total: 12,
       totalPrimeiroSignatario: 3,
       coveredThroughDate: "2025-08-14",
     },
-    orgaos: { year: 2025, items: [], total: 0 },
+    orgaos: { items: [], total: 0 },
     cota: {
       status: "comparavel",
       percentualSobreMedianaUf: percentual,
@@ -40,8 +48,7 @@ function deputado(externalIdDeputado: number, percentual: number) {
 }
 
 const comparativo = {
-  year: 2025,
-  comparableYears: [2025],
+  janelasCoincidem: true,
   items: [deputado(20, 112), deputado(10, 88)],
 };
 
@@ -71,12 +78,9 @@ test.describe("comparativo de deputados a partir da listagem", () => {
       page.getByRole("heading", { name: "Comparar deputados" }),
     ).toBeVisible({ timeout: 15_000 });
     await expect(visibleText(page, "Presença registrada")).toBeVisible();
-    await expect(
-      visibleText(page, "Proposições assinadas em 2025"),
-    ).toBeVisible();
-    await expect(
-      visibleText(page, "Comissões e outros órgãos em 2025"),
-    ).toBeVisible();
+    await expect(visibleText(page, "Proposições assinadas")).toBeVisible();
+    await expect(visibleText(page, "Comissões e outros órgãos")).toBeVisible();
+    await expect(visibleText(page, "57ª legislatura")).toBeVisible();
     await expect(visibleText(page, "12% acima da mediana")).toBeVisible();
     await expect(visibleText(page, "12% abaixo da mediana")).toBeVisible();
     await expect(page.getByText("R$")).toHaveCount(0);

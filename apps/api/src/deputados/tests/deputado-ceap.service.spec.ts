@@ -48,6 +48,13 @@ function fakeRepository(
       datasInicioLegislatura: [],
     }),
     loadDeputadoOrgaos: async () => [],
+    loadDeputadoProposicoesAssinadasSource: async () => ({
+      anoCoberto: false,
+      assinaturasJson: null,
+      coveredThroughDate: null,
+    }),
+    loadLegislaturas: async () => [],
+    loadIntervalosExercicio: async () => [],
     ...overrides,
   };
 }

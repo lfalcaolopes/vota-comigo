@@ -82,11 +82,8 @@ export function discursos(
 
 export function comparativoDeputados(
   externalIdsDeputado: readonly number[],
-  year?: number,
 ): Promise<ComparativoDeputadosResponse> {
-  const yearParam = year !== undefined ? `&year=${year}` : "";
-
   return apiGet<ComparativoDeputadosResponse>(
-    `/comparativo-deputados?ids=${externalIdsDeputado.join(",")}${yearParam}`,
+    `/comparativo-deputados?ids=${externalIdsDeputado.join(",")}`,
   );
 }

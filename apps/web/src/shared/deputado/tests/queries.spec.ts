@@ -271,11 +271,10 @@ describe("partidosDisponiveis", () => {
 
 describe("comparativoDeputados", () => {
   describe("when the request succeeds", () => {
-    it("fetches the compared deputados and year through the product API", async () => {
+    it("fetches the compared deputados through the product API", async () => {
       // Arrange
       const comparativoResponse = {
-        year: 2025,
-        comparableYears: [2025],
+        janelasCoincidem: true,
         items: [],
       };
       const fetchSpy = vi.fn().mockResolvedValue({
@@ -286,31 +285,13 @@ describe("comparativoDeputados", () => {
       vi.stubGlobal("fetch", fetchSpy);
 
       // Act
-      const result = await comparativoDeputados([74646, 220593], 2025);
-
-      // Assert
-      expect(fetchSpy).toHaveBeenCalledWith(
-        "http://localhost:3001/comparativo-deputados?ids=74646,220593&year=2025",
-      );
-      expect(result).toEqual(comparativoResponse);
-    });
-
-    it("omits the year when the API should pick it", async () => {
-      // Arrange
-      const fetchSpy = vi.fn().mockResolvedValue({
-        ok: true,
-        status: 200,
-        json: () => ({ year: null, comparableYears: [], items: [] }),
-      });
-      vi.stubGlobal("fetch", fetchSpy);
-
-      // Act
-      await comparativoDeputados([74646, 220593]);
+      const result = await comparativoDeputados([74646, 220593]);
 
       // Assert
       expect(fetchSpy).toHaveBeenCalledWith(
         "http://localhost:3001/comparativo-deputados?ids=74646,220593",
       );
+      expect(result).toEqual(comparativoResponse);
     });
   });
 });

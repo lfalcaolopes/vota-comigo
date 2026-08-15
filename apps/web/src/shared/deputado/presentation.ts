@@ -99,6 +99,36 @@ export function toLegislaturaPeriodoLabel(
   return `${toYearLabel(periodo.dataInicio)} – ${toYearLabel(periodo.dataFim)}`;
 }
 
+export const DIAS_EM_EXERCICIO_INDISPONIVEL = "Dias em exercício indisponíveis";
+export const JANELA_FORA_DA_BASE_COMPARAVEL = "Fora da base comparável";
+
+export function toJanelaLegislaturaLabel(legislatura: number): string {
+  return `${legislatura}ª legislatura`;
+}
+
+// Precisão de mês, não de ano: toLegislaturaPeriodoLabel apagaria o
+// truncamento de quem saiu no meio da legislatura.
+export function toJanelaPeriodoLabel(janela: {
+  dataInicio: string;
+  dataFim: string;
+  encerrada: boolean;
+}): string {
+  const inicio = formatMesAno(janela.dataInicio);
+  if (!janela.encerrada) return `${inicio} – atual`;
+  return `${inicio} – ${formatMesAno(janela.dataFim)}`;
+}
+
+const diasFormatter = new Intl.NumberFormat("pt-BR");
+
+export function toDiasEmExercicioLabel(diasEmExercicio: number): string {
+  const unidade = diasEmExercicio === 1 ? "dia" : "dias";
+  return `${diasFormatter.format(diasEmExercicio)} ${unidade} em exercício`;
+}
+
+export function toUltimaLegislaturaLabel(legislatura: number): string {
+  return `Última atuação na ${legislatura}ª legislatura`;
+}
+
 export function nomePublicoLabel(deputado: {
   nomePublico: string | null;
 }): string {
