@@ -14,8 +14,9 @@ export type LegislaturaJanelaPresenca = {
   dataFim: string;
 };
 
-export type ResumoPresencaDaLegislatura = { legislaturaId: string } &
-  ResumoPresencaResult;
+export type ResumoPresencaDaLegislatura = {
+  legislaturaId: string;
+} & ResumoPresencaResult;
 
 export type DeriveResumoPresencaPorLegislaturaInput = {
   eventos: readonly EventoExercicio[];

@@ -1,7 +1,12 @@
 import { eq } from 'drizzle-orm';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
-import { deputado, deputadoOrgao, legislatura, orgao } from '@/shared/database/schema';
+import {
+  deputado,
+  deputadoOrgao,
+  legislatura,
+  orgao,
+} from '@/shared/database/schema';
 
 import type {
   DeputadoOrgaoRepository,

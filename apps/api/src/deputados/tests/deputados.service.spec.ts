@@ -81,8 +81,10 @@ describe('DeputadosService availability lists', () => {
   describe('when deriving available UFs', () => {
     it('uses the dedicated distinct-uf source, not the full feed payload', async () => {
       // Arrange
+      const client: CamaraPaginatedClient = { fetchAll: jest.fn() };
       const service = new DeputadosService(
         fakeRepository({ loadUfsDisponiveis: async () => ['SP', 'RJ'] }),
+        client,
       );
 
       // Act
@@ -96,10 +98,12 @@ describe('DeputadosService availability lists', () => {
   describe('when deriving available partidos', () => {
     it('uses the dedicated distinct-partido source, not the full feed payload', async () => {
       // Arrange
+      const client: CamaraPaginatedClient = { fetchAll: jest.fn() };
       const service = new DeputadosService(
         fakeRepository({
           loadPartidosDisponiveis: async () => ['PT', 'PSOL'],
         }),
+        client,
       );
 
       // Act

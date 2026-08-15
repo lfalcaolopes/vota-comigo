@@ -1,5 +1,3 @@
-import { describe, expect, it } from '@jest/globals';
-
 import { deriveDeputadoPerfilYear } from '../rules/deputado-perfil-year';
 
 describe('deriveDeputadoPerfilYear', () => {

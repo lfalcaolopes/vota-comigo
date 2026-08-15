@@ -1,6 +1,7 @@
 import type { DeputadosRepository } from '../deputados.repository';
 import { DeputadosService } from '../deputados.service';
 import type { DeputadoPerfilSource } from '../types/deputados.types';
+import type { CamaraPaginatedClient } from '../../shared/camara/camara-paginated-client';
 
 afterEach(() => {
   jest.useRealTimers();
@@ -72,11 +73,16 @@ function fakeRepository(
   };
 }
 
+function createService(repository: DeputadosRepository): DeputadosService {
+  const client: CamaraPaginatedClient = { fetchAll: jest.fn() };
+  return new DeputadosService(repository, client);
+}
+
 describe('DeputadosService gastos da cota', () => {
   describe('quando o deputado não existe', () => {
     it('responde que o deputado não foi encontrado', async () => {
       // Arrange
-      const service = new DeputadosService(fakeRepository());
+      const service = createService(fakeRepository());
 
       // Act
       const result = service.ceap(999999, 2024);
@@ -89,7 +95,7 @@ describe('DeputadosService gastos da cota', () => {
   describe('quando o ano está fora da faixa do deputado', () => {
     it('responde erro de entrada', async () => {
       // Arrange
-      const service = new DeputadosService(
+      const service = createService(
         fakeRepository({ loadDeputadoPerfil: async () => perfilSource() }),
       );
 
@@ -114,7 +120,7 @@ describe('DeputadosService gastos da cota', () => {
         intervalosExercicio: [],
         datasInicioLegislatura: [],
       });
-      const service = new DeputadosService(
+      const service = createService(
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource,
@@ -137,7 +143,7 @@ describe('DeputadosService gastos da cota', () => {
   describe('quando o ano foi carregado sem gastos do deputado', () => {
     it('responde zero nos meses cobertos e lacuna nos demais', async () => {
       // Arrange
-      const service = new DeputadosService(
+      const service = createService(
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource: async () => ({
@@ -194,7 +200,7 @@ describe('DeputadosService gastos da cota', () => {
   describe('quando o ano foi carregado com gastos do deputado', () => {
     it('responde todos os agregados oficiais em centavos', async () => {
       // Arrange
-      const service = new DeputadosService(
+      const service = createService(
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource: async () => ({
@@ -280,7 +286,7 @@ describe('DeputadosService gastos da cota', () => {
   describe('quando a fonte não contém todos os gastos do SIGEPA', () => {
     it('marca 2025 a partir de agosto sem deixar de publicar a mediana', async () => {
       // Arrange
-      const service = new DeputadosService(
+      const service = createService(
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource: async () => ({
@@ -321,7 +327,7 @@ describe('DeputadosService gastos da cota', () => {
 
     it('mantém julho de 2025 como completo', async () => {
       // Arrange
-      const service = new DeputadosService(
+      const service = createService(
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource: async () => ({
@@ -364,7 +370,7 @@ describe('DeputadosService gastos da cota', () => {
   describe('quando o ano da janela está reposto', () => {
     it('substitui a categoria 998 do dump pela reposição, mês a mês e no total', async () => {
       // Arrange
-      const service = new DeputadosService(
+      const service = createService(
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource: async () => ({
@@ -449,7 +455,7 @@ describe('DeputadosService gastos da cota', () => {
 
     it('publica o gasto do deputado que só aparece na reposição', async () => {
       // Arrange
-      const service = new DeputadosService(
+      const service = createService(
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource: async () => ({
@@ -500,7 +506,7 @@ describe('DeputadosService gastos da cota', () => {
   describe('quando o ano da janela ainda não está reposto', () => {
     it('lê o dump puro, com os estornos negativos da categoria 998', async () => {
       // Arrange
-      const service = new DeputadosService(
+      const service = createService(
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource: async () => ({
@@ -559,7 +565,7 @@ describe('DeputadosService gastos da cota', () => {
   describe('quando o deputado exerceu parte do ano carregado', () => {
     it('informa o período exercido sem publicar a mediana', async () => {
       // Arrange
-      const service = new DeputadosService(
+      const service = createService(
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource: async () => ({
@@ -623,7 +629,7 @@ describe('DeputadosService gastos da cota', () => {
         externalNumSubCota: index + 1,
         description: `Categoria ${index + 1}`,
       }));
-      const service = new DeputadosService(
+      const service = createService(
         fakeRepository({
           loadDeputadoPerfil: async () => perfilSource(),
           loadDeputadoCeapSource: async () => ({

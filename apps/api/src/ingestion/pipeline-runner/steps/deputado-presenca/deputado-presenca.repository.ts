@@ -105,7 +105,10 @@ export function createDeputadoPresencaRepository(
         })
         .from(legislatura)
         .where(
-          and(isNotNull(legislatura.dataInicio), isNotNull(legislatura.dataFim)),
+          and(
+            isNotNull(legislatura.dataInicio),
+            isNotNull(legislatura.dataFim),
+          ),
         );
 
       return rows.flatMap((row): LegislaturaPeriodoRow[] =>

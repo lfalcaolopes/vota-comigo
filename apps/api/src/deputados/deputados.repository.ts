@@ -262,9 +262,7 @@ export function createDeputadosRepository(
         .from(deputado)
         .leftJoin(snapshot, eq(snapshot.deputadoId, deputado.id))
         .leftJoin(partido, eq(partido.id, snapshot.partidoId))
-        .where(
-          and(presencaRegistrada(deputado.id), ...conditions),
-        )
+        .where(and(presencaRegistrada(deputado.id), ...conditions))
         .orderBy(sql`${ordenacao} asc nulls last`, deputado.externalIdDeputado)
         .limit(pagination.limit)
         .offset(pagination.offset);

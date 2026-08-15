@@ -43,7 +43,8 @@ export function createOrgaoRepository(db: DrizzleDatabase): OrgaoRepository {
             .returning({ inserted: sql<boolean>`xmax = 0` });
 
           inserted += result.filter((row) => row.inserted).length;
-          updated += result.length - result.filter((row) => row.inserted).length;
+          updated +=
+            result.length - result.filter((row) => row.inserted).length;
         }
 
         return { inserted, updated };

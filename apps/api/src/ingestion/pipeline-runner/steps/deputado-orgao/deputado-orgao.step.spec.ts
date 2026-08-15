@@ -329,9 +329,7 @@ describe('deputado_orgao step', () => {
       const ctx = context({
         years: [2023],
         readLegislaturaDataset: () => () =>
-          rows([
-            { lineNumber: 2, record: vinculoRecord({ dataFim: '' }) },
-          ]),
+          rows([{ lineNumber: 2, record: vinculoRecord({ dataFim: '' }) }]),
       });
 
       // Act

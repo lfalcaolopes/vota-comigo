@@ -1,9 +1,7 @@
 import type { EventoExercicio } from '@/exercicio/types/exercicio.types';
 
 import { deriveResumoPresencaPorLegislatura } from '../rules/resumo-presenca-por-legislatura';
-import type {
-  LegislaturaJanelaPresenca,
-} from '../rules/resumo-presenca-por-legislatura';
+import type { LegislaturaJanelaPresenca } from '../rules/resumo-presenca-por-legislatura';
 import type { VotacaoParaPresenca } from '../rules/resumo-presenca';
 
 const EVENTO_EXERCICIO: EventoExercicio = {
@@ -46,15 +44,24 @@ describe('deriveResumoPresencaPorLegislatura', () => {
         eventos: [EVENTO_EXERCICIO],
         votacoes: [
           votacao({
-            votacao: { dataHoraRegistro: '2020-06-01T10:00:00+00:00', data: '2020-06-01' },
+            votacao: {
+              dataHoraRegistro: '2020-06-01T10:00:00+00:00',
+              data: '2020-06-01',
+            },
             voto: 'sim',
           }),
           votacao({
-            votacao: { dataHoraRegistro: '2020-07-01T10:00:00+00:00', data: '2020-07-01' },
+            votacao: {
+              dataHoraRegistro: '2020-07-01T10:00:00+00:00',
+              data: '2020-07-01',
+            },
             voto: null,
           }),
           votacao({
-            votacao: { dataHoraRegistro: '2024-06-01T10:00:00+00:00', data: '2024-06-01' },
+            votacao: {
+              dataHoraRegistro: '2024-06-01T10:00:00+00:00',
+              data: '2024-06-01',
+            },
             voto: 'sim',
           }),
         ],
