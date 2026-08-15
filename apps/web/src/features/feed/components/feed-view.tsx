@@ -11,12 +11,11 @@ import { useState } from "react";
 import {
   buildFeedHref,
   buildFeedSearchParams,
-  FeedOrdenacaoControl,
-  FeedSearch,
-  FeedTemaControl,
+  FILTROS_PADRAO,
+  ProposicaoFiltrosBar,
   useFeedState,
+  type ProposicaoFeedFiltros,
 } from "@/shared/proposicao";
-import { Button } from "@/shared/ui";
 
 import { FeedList } from "./feed-list";
 
@@ -45,142 +44,102 @@ export function FeedView({
     total,
     status,
     query,
-    ordenacao,
-    tema,
+    filtros,
     display,
     canLoadMore,
     submitSearch,
     clearSearch,
+    applyFiltros,
+    clearTudo,
     loadMore,
-    changeOrdenacao,
-    changeTema,
-    clearTema,
-    clearFilters,
-  } = useFeedState(
-    initialItems,
-    initialTotal,
-    initialOrdenacao,
-    initialTema,
-    initialQuery ?? "",
-  );
+  } = useFeedState({
+    items: initialItems,
+    total: initialTotal,
+    query: initialQuery ?? "",
+    filtros: { ordenacao: initialOrdenacao, tema: initialTema },
+  });
 
   const [draft, setDraft] = useState(initialQuery ?? "");
   const activeQuery = query || null;
   const itemSearchParams = buildFeedSearchParams({
-    ordenacao,
+    ordenacao: filtros.ordenacao,
     query: activeQuery,
-    tema,
+    tema: filtros.tema,
   }).toString();
 
-  async function handleClear() {
+  function replaceHref(next: {
+    query: string | null;
+    filtros: ProposicaoFeedFiltros;
+  }) {
+    router.replace(
+      buildFeedHref(pathname, {
+        ordenacao: next.filtros.ordenacao,
+        query: next.query,
+        tema: next.filtros.tema,
+      }),
+    );
+  }
+
+  async function handleClearSearch() {
     setDraft("");
-    router.replace(buildFeedHref(pathname, { ordenacao, query: null, tema }));
+    replaceHref({ query: null, filtros });
     await clearSearch();
   }
 
   async function handleSearch() {
     const term = draft.trim();
     if (term.length === 0) {
-      await handleClear();
+      await handleClearSearch();
       return;
     }
 
-    router.replace(buildFeedHref(pathname, { ordenacao, query: term, tema }));
+    replaceHref({ query: term, filtros });
     await submitSearch(term);
   }
 
-  async function handleOrdenacao(value: FeedOrdenacao) {
-    router.replace(
-      buildFeedHref(pathname, { ordenacao: value, query: activeQuery, tema }),
-    );
-    await changeOrdenacao(value);
+  async function handleApplyFiltros(next: ProposicaoFeedFiltros) {
+    replaceHref({ query: activeQuery, filtros: next });
+    await applyFiltros(next);
   }
 
-  async function handleTema(cod: number) {
-    const next = tema === cod ? null : cod;
-    router.replace(
-      buildFeedHref(pathname, { ordenacao, query: activeQuery, tema: next }),
-    );
-    if (next === null) {
-      await clearTema();
-    } else {
-      await changeTema(next);
-    }
-  }
-
-  async function handleClearTema() {
-    router.replace(
-      buildFeedHref(pathname, { ordenacao, query: activeQuery, tema: null }),
-    );
-    await clearTema();
-  }
-
-  async function handleClearFilters() {
+  async function handleClearTudo() {
     setDraft("");
-    router.replace(
-      buildFeedHref(pathname, { ordenacao, query: null, tema: null }),
-    );
-    await clearFilters();
+    replaceHref({ query: null, filtros: FILTROS_PADRAO });
+    await clearTudo();
   }
 
-  const filterPanelClassName = "order-last sm:basis-full sm:shrink-0";
-  const filterTriggerClassName =
-    "w-full [&>button]:w-full [&>button]:justify-center [&>span]:w-full sm:w-auto sm:[&>button]:w-auto sm:[&>span]:w-auto";
+  const announcement =
+    display === "loading"
+      ? "Atualizando lista de proposições."
+      : display === "error"
+        ? "Não foi possível atualizar a lista de proposições."
+        : total === 1
+          ? "Lista atualizada: 1 proposição encontrada."
+          : `Lista atualizada: ${total} proposições encontradas.`;
 
   return (
     <div className="grid min-w-0 gap-7">
-      <div className="grid min-w-0 gap-4 sm:flex sm:flex-wrap sm:items-start sm:gap-2">
-        <FeedSearch
-          className="w-full sm:min-w-0 sm:flex-1"
-          disabled={status === "loading"}
-          isSearching={query !== ""}
-          onChange={setDraft}
-          onClear={handleClear}
-          onSubmit={handleSearch}
-          query={query}
-          value={draft}
-        />
+      <p aria-atomic="true" className="sr-only" role="status">
+        {announcement}
+      </p>
 
-        <div className="grid min-w-0 gap-2 sm:contents">
-          <p className="text-sm font-[650] text-muted sm:hidden">Filtros</p>
-          <div className="grid min-w-0 grid-cols-2 gap-2 sm:contents">
-            <FeedOrdenacaoControl
-              className="col-span-full w-full sm:w-auto sm:shrink-0"
-              itemClassName="flex-1 sm:flex-none"
-              value={ordenacao}
-              onChange={handleOrdenacao}
-            />
-
-            {temas.length > 0 && (
-              <FeedTemaControl
-                activeTema={tema}
-                onClear={handleClearTema}
-                onSelect={handleTema}
-                panelClassName={filterPanelClassName}
-                spanToolbar
-                temas={temas}
-                triggerClassName={filterTriggerClassName}
-              />
-            )}
-
-            <Button
-              className="h-11 min-w-0 sm:hidden"
-              disabled={status === "loading"}
-              onClick={handleClearFilters}
-              variant="secondary"
-            >
-              Limpar
-            </Button>
-          </div>
-        </div>
-      </div>
+      <ProposicaoFiltrosBar
+        draft={draft}
+        filtros={filtros}
+        onApplyFiltros={handleApplyFiltros}
+        onClearSearch={handleClearSearch}
+        onDraftChange={setDraft}
+        onSearch={handleSearch}
+        query={query}
+        temas={temas}
+      />
 
       <FeedList
         canLoadMore={canLoadMore}
         display={display}
         items={items}
         itemSearchParams={itemSearchParams}
-        onClearFilters={handleClearFilters}
+        onClearTudo={handleClearTudo}
         onLoadMore={loadMore}
         status={status}
         total={total}

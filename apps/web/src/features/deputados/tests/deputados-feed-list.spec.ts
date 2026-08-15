@@ -27,7 +27,7 @@ function render(
       canLoadMore: false,
       display: "results",
       items,
-      onClearFilters: () => {},
+      onClearTudo: () => {},
       onLoadMore: () => {},
       selection,
       status: "idle",

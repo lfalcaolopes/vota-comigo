@@ -12,7 +12,11 @@ const JANELA_57 = {
   divisorAnosEfetivos: 2,
 };
 
-function deputado(externalIdDeputado: number, percentual: number) {
+function deputado(
+  externalIdDeputado: number,
+  percentual: number,
+  gastoNaComparacaoCents: number,
+) {
   return {
     externalIdDeputado,
     nomePublico: `Deputado ${externalIdDeputado}`,
@@ -44,6 +48,7 @@ function deputado(externalIdDeputado: number, percentual: number) {
     cota: {
       status: "comparavel",
       percentualSobreMedianaUf: percentual,
+      gastoNaComparacaoCents,
       siglaUf: "SP",
       anos: [
         {
@@ -74,7 +79,7 @@ function deputado(externalIdDeputado: number, percentual: number) {
 
 const comparativo = {
   janelasCoincidem: true,
-  items: [deputado(20, 112), deputado(10, 88)],
+  items: [deputado(20, 112, 160_000_000), deputado(10, 88, 90_000_000)],
 };
 
 function visibleText(page: Page, text: string) {
@@ -105,13 +110,18 @@ test.describe("comparativo de deputados a partir da listagem", () => {
     await expect(visibleText(page, "Presença registrada")).toBeVisible();
     await expect(visibleText(page, "Proposições assinadas")).toBeVisible();
     await expect(visibleText(page, "Órgãos distintos")).toBeVisible();
-    await expect(visibleText(page, "57ª legislatura")).toBeVisible();
-    await expect(visibleText(page, "12% acima da mediana")).toBeVisible();
-    await expect(visibleText(page, "12% abaixo da mediana")).toBeVisible();
+    await expect(page.getByText("Legislaturas diferentes")).toHaveCount(0);
     await expect(
       visibleText(page, "Dados cobertos até dez/2024"),
     ).toBeVisible();
-    await expect(page.getByText("R$")).toHaveCount(0);
+    await expect(visibleText(page, "R$ 800 mil/ano")).toBeVisible();
+    await expect(
+      visibleText(page, "R$ 1,6 mi no total · 12% acima da mediana do SP"),
+    ).toBeVisible();
+    await expect(visibleText(page, "R$ 450 mil/ano")).toBeVisible();
+    await expect(
+      visibleText(page, "R$ 900 mil no total · 12% abaixo da mediana do SP"),
+    ).toBeVisible();
   });
 
   test("explica a cota parlamentar em um popover ancorado", async ({
@@ -209,6 +219,33 @@ test.describe("comparativo de deputados a partir da listagem", () => {
     // Assert
     await expect(popover).toBeHidden();
     await expect(ajuda).toBeFocused();
+  });
+
+  test("prende o foco dentro do popover enquanto ele está aberto", async ({
+    page,
+  }) => {
+    // Arrange
+    await routeComparativo(page);
+    await page.goto("/deputados/comparativo/20,10");
+    const ajuda = page
+      .getByRole("button", {
+        name: "Mais informações sobre Gasto da cota parlamentar",
+      })
+      .filter({ visible: true })
+      .first();
+    await expect(ajuda).toBeVisible({ timeout: 15_000 });
+
+    // Act
+    await ajuda.click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Shift+Tab");
+
+    // Assert
+    const focado = page.locator(":focus");
+    await expect(focado).toBeVisible();
+    await expect(page.getByRole("dialog").locator(":focus")).toHaveCount(1);
   });
 
   test("recusa um endereço com deputados repetidos", async ({ page }) => {

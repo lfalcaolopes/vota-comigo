@@ -21,7 +21,7 @@ type DeputadosFeedListProps = {
   display: DeputadoFeedDisplay;
   canLoadMore: boolean;
   onLoadMore: () => void;
-  onClearFilters: () => void;
+  onClearTudo: () => void;
   selection?: DeputadosFeedListSelection;
 };
 
@@ -32,7 +32,7 @@ export function DeputadosFeedList({
   display,
   canLoadMore,
   onLoadMore,
-  onClearFilters,
+  onClearTudo,
   selection,
 }: DeputadosFeedListProps) {
   if (display === "loading") {
@@ -52,8 +52,8 @@ export function DeputadosFeedList({
     return (
       <EmptyState
         action={
-          <Button onClick={onClearFilters} variant="secondary">
-            Limpar filtros
+          <Button onClick={onClearTudo} variant="secondary">
+            Limpar busca e filtros
           </Button>
         }
         body="Nenhum deputado foi encontrado com a busca e os filtros utilizados."

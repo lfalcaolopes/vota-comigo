@@ -18,6 +18,7 @@ import {
   saveRascunho,
 } from "../lib/matcher-rascunho-storage";
 import { hasRascunhoEntries } from "../lib/matcher-rascunho";
+import type { ResultadoFiltros } from "../lib/resultado-filtros";
 import {
   activeResultado,
   canAdvanceSelecao,
@@ -30,6 +31,10 @@ import {
 } from "../lib/matcher-state";
 
 const PAGE_SIZE = 20;
+
+// O escopo e a atividade vêm da URL; a concordância vem do rascunho, por
+// decisão do ADR 021. A execução precisa das duas fontes juntas.
+export type ResultadoExecucaoFiltros = ResultadoUrlState & ResultadoFiltros;
 
 export function useMatcherState() {
   const [state, dispatch] = useReducer(matcherReducer, [], initMatcherState);
@@ -126,9 +131,15 @@ export function useMatcherState() {
     return runFetch(state.escopo, 0, false);
   }
 
-  async function executeResultado(filters: ResultadoUrlState) {
+  async function executeResultado(filters: ResultadoExecucaoFiltros) {
     dispatch({ type: "setResultadoFilters", ...filters });
-    return runFetch(filters.escopo, 0, false, filters.apenasEmAtividade);
+    return runFetch(
+      filters.escopo,
+      0,
+      false,
+      filters.apenasEmAtividade,
+      filters.externalIdProposicoesFiltroConcordancia,
+    );
   }
 
   async function setEscopo(escopo: EscopoMatcher) {
@@ -143,11 +154,6 @@ export function useMatcherState() {
     const r = activeResultado(state);
     if (!r || r.deputados.length >= r.total) return;
     await runFetch(state.escopo, r.deputados.length, true);
-  }
-
-  async function setApenasEmAtividade(value: boolean) {
-    dispatch({ type: "setApenasEmAtividade", value });
-    await runFetch(state.escopo, 0, false, value);
   }
 
   async function toggleFiltroConcordancia(externalIdProposicao: number) {
@@ -165,12 +171,6 @@ export function useMatcherState() {
         ];
     dispatch({ type: "toggleFiltroConcordancia", externalIdProposicao });
     await runFetch(state.escopo, 0, false, state.apenasEmAtividade, next);
-  }
-
-  async function clearFiltroConcordancia() {
-    if (state.externalIdProposicoesFiltroConcordancia.length === 0) return;
-    dispatch({ type: "clearFiltroConcordancia" });
-    await runFetch(state.escopo, 0, false, state.apenasEmAtividade, []);
   }
 
   function startComparativoSelection() {
@@ -215,9 +215,7 @@ export function useMatcherState() {
     execute,
     executeResultado,
     setEscopo,
-    setApenasEmAtividade,
     toggleFiltroConcordancia,
-    clearFiltroConcordancia,
     loadMore,
     startComparativoSelection,
     toggleComparativoDeputado,

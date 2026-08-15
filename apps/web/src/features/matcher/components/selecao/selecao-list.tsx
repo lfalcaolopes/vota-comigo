@@ -20,7 +20,7 @@ type SelecaoListProps = {
   atLimit: boolean;
   onToggle: (proposicao: ProposicaoCard) => void;
   onLoadMore: () => Promise<void>;
-  onClearFilters: () => Promise<void>;
+  onClearTudo: () => Promise<void>;
 };
 
 export function SelecaoList({
@@ -33,7 +33,7 @@ export function SelecaoList({
   atLimit,
   onToggle,
   onLoadMore,
-  onClearFilters,
+  onClearTudo,
 }: SelecaoListProps) {
   if (display === "loading") {
     return <SkeletonRows count={4} />;
@@ -52,8 +52,8 @@ export function SelecaoList({
     return (
       <EmptyState
         action={
-          <Button onClick={() => void onClearFilters()} variant="secondary">
-            Limpar filtros
+          <Button onClick={() => void onClearTudo()} variant="secondary">
+            Limpar busca e filtros
           </Button>
         }
         body="Nenhuma proposição foi encontrada com a busca e os filtros utilizados."

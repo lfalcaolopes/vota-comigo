@@ -1,8 +1,9 @@
 "use client";
 
-import type { FeedOrdenacao, ProposicaoCard } from "@vota-comigo/shared-types";
-import { useReducer } from "react";
+import type { ProposicaoCard } from "@vota-comigo/shared-types";
+import { useReducer, useRef } from "react";
 
+import { FILTROS_PADRAO, type ProposicaoFeedFiltros } from "./feed-filtros";
 import { feed as fetchFeed } from "./queries";
 
 import {
@@ -13,46 +14,71 @@ import {
   nextOffset,
   type FeedDisplay,
   type FeedStatus,
-  type FeedState,
 } from "./feed-state";
 
 const PAGE_SIZE = 20;
+
+type Recorte = {
+  query: string;
+  filtros: ProposicaoFeedFiltros;
+};
 
 export type UseFeedState = {
   items: ProposicaoCard[];
   total: number;
   status: FeedStatus;
   query: string;
-  ordenacao: FeedOrdenacao;
-  tema: FeedState["tema"];
+  filtros: ProposicaoFeedFiltros;
   display: FeedDisplay;
   canLoadMore: boolean;
   submitSearch: (raw: string) => Promise<void>;
   clearSearch: () => Promise<void>;
+  applyFiltros: (filtros: ProposicaoFeedFiltros) => Promise<void>;
+  clearTudo: () => Promise<void>;
   loadMore: () => Promise<void>;
-  changeOrdenacao: (value: FeedOrdenacao) => Promise<void>;
-  changeTema: (tema: number) => Promise<void>;
-  clearTema: () => Promise<void>;
-  clearFilters: () => Promise<void>;
 };
 
-export function useFeedState(
-  initialItems: ProposicaoCard[],
-  initialTotal: number,
-  initialOrdenacao: FeedOrdenacao = "mais-votadas",
-  initialTema: number | null = null,
-  initialQuery = "",
-): UseFeedState {
+type UseFeedStateInput = {
+  items: ProposicaoCard[];
+  total: number;
+  query?: string;
+  filtros?: ProposicaoFeedFiltros;
+};
+
+export function useFeedState({
+  items,
+  total,
+  query = "",
+  filtros = FILTROS_PADRAO,
+}: UseFeedStateInput): UseFeedState {
   const [state, dispatch] = useReducer(
     feedReducer,
-    initFeedState(
-      initialItems,
-      initialTotal,
-      initialOrdenacao,
-      initialTema,
-      initialQuery,
-    ),
+    { items, total, query, filtros },
+    initFeedState,
   );
+  // Só a resposta do último recorte pedido pode escrever no estado: busca e
+  // filtros disparam pelo mesmo caminho e podem voltar fora de ordem.
+  const requestIdRef = useRef(0);
+
+  async function reload(recorte: Recorte) {
+    const requestId = ++requestIdRef.current;
+
+    try {
+      const page = await fetchFeed(
+        PAGE_SIZE,
+        0,
+        recorte.filtros.ordenacao,
+        recorte.filtros.tema ?? undefined,
+        recorte.query || undefined,
+      );
+      if (requestIdRef.current !== requestId) return;
+      dispatch({ type: "feedSuccess", items: page.items, total: page.total });
+    } catch (error) {
+      if (requestIdRef.current !== requestId) return;
+      console.error("feed reload failed", error);
+      dispatch({ type: "loadError" });
+    }
+  }
 
   async function submitSearch(raw: string) {
     const term = raw.trim();
@@ -60,146 +86,49 @@ export function useFeedState(
       await clearSearch();
       return;
     }
-    if (state.status === "loading") return;
 
     dispatch({ type: "changeQuery", query: term });
-
-    try {
-      const page = await fetchFeed(
-        PAGE_SIZE,
-        0,
-        state.ordenacao,
-        state.tema ?? undefined,
-        term,
-      );
-      dispatch({ type: "feedSuccess", items: page.items, total: page.total });
-    } catch (error) {
-      console.error("feed search failed", error);
-      dispatch({ type: "loadError" });
-    }
+    await reload({ query: term, filtros: state.filtros });
   }
 
   async function clearSearch() {
-    if (state.status === "loading") return;
-
     dispatch({ type: "clearSearch" });
+    await reload({ query: "", filtros: state.filtros });
+  }
 
-    try {
-      const page = await fetchFeed(
-        PAGE_SIZE,
-        0,
-        state.ordenacao,
-        state.tema ?? undefined,
-        undefined,
-      );
-      dispatch({ type: "feedSuccess", items: page.items, total: page.total });
-    } catch (error) {
-      console.error("feed clear search failed", error);
-      dispatch({ type: "loadError" });
-    }
+  async function applyFiltros(filtros: ProposicaoFeedFiltros) {
+    dispatch({ type: "applyFiltros", filtros });
+    await reload({ query: state.query, filtros });
+  }
+
+  async function clearTudo() {
+    dispatch({ type: "clearTudo" });
+    await reload({ query: "", filtros: FILTROS_PADRAO });
   }
 
   async function loadMore() {
     if (state.status === "loading") return;
 
+    const requestId = ++requestIdRef.current;
     dispatch({ type: "loadMoreStart" });
 
     try {
-      const offset = nextOffset(state);
       const page = await fetchFeed(
         PAGE_SIZE,
-        offset,
-        state.ordenacao,
-        state.tema ?? undefined,
+        nextOffset(state),
+        state.filtros.ordenacao,
+        state.filtros.tema ?? undefined,
         state.query || undefined,
       );
+      if (requestIdRef.current !== requestId) return;
       dispatch({
         type: "loadMoreSuccess",
         items: page.items,
         total: page.total,
       });
     } catch (error) {
+      if (requestIdRef.current !== requestId) return;
       console.error("feed load more failed", error);
-      dispatch({ type: "loadError" });
-    }
-  }
-
-  async function changeOrdenacao(value: FeedOrdenacao) {
-    if (state.status === "loading") return;
-
-    dispatch({ type: "changeOrdenacao", ordenacao: value });
-
-    try {
-      const page = await fetchFeed(
-        PAGE_SIZE,
-        0,
-        value,
-        state.tema ?? undefined,
-        state.query || undefined,
-      );
-      dispatch({ type: "feedSuccess", items: page.items, total: page.total });
-    } catch (error) {
-      console.error("feed change ordenacao failed", error);
-      dispatch({ type: "loadError" });
-    }
-  }
-
-  async function changeTema(tema: number) {
-    if (state.status === "loading") return;
-
-    dispatch({ type: "changeTema", tema });
-
-    try {
-      const page = await fetchFeed(
-        PAGE_SIZE,
-        0,
-        state.ordenacao,
-        tema,
-        state.query || undefined,
-      );
-      dispatch({ type: "feedSuccess", items: page.items, total: page.total });
-    } catch (error) {
-      console.error("feed change tema failed", error);
-      dispatch({ type: "loadError" });
-    }
-  }
-
-  async function clearTema() {
-    if (state.status === "loading") return;
-
-    dispatch({ type: "clearTema" });
-
-    try {
-      const page = await fetchFeed(
-        PAGE_SIZE,
-        0,
-        state.ordenacao,
-        undefined,
-        state.query || undefined,
-      );
-      dispatch({ type: "feedSuccess", items: page.items, total: page.total });
-    } catch (error) {
-      console.error("feed clear tema failed", error);
-      dispatch({ type: "loadError" });
-    }
-  }
-
-  async function clearFilters() {
-    if (state.status === "loading") return;
-
-    dispatch({ type: "clearFilters" });
-
-    try {
-      const page = await fetchFeed(
-        PAGE_SIZE,
-        0,
-        state.ordenacao,
-        undefined,
-        undefined,
-      );
-      dispatch({ type: "feedSuccess", items: page.items, total: page.total });
-    } catch (error) {
-      console.error("feed clear filters failed", error);
       dispatch({ type: "loadError" });
     }
   }
@@ -209,16 +138,13 @@ export function useFeedState(
     total: state.feed.total,
     status: state.status,
     query: state.query,
-    ordenacao: state.ordenacao,
-    tema: state.tema,
+    filtros: state.filtros,
     display: feedDisplay(state),
     canLoadMore: hasMore(state),
     submitSearch,
     clearSearch,
+    applyFiltros,
+    clearTudo,
     loadMore,
-    changeOrdenacao,
-    changeTema,
-    clearTema,
-    clearFilters,
   };
 }

@@ -110,7 +110,7 @@ export function AppHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-border bg-white text-ink">
+      <header className="sticky top-0 z-header border-b border-border bg-white text-ink">
         <div className="mx-auto grid w-full max-w-295 gap-3 px-4 py-1 md:grid-cols-[auto_1fr_auto] md:items-center md:gap-6 md:py-2">
           <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 md:block">
             <Brand />

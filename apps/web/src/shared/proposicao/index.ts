@@ -3,6 +3,20 @@ export { FeedSearch } from "./feed-search";
 export { FeedTemaControl } from "./feed-tema";
 export { FeedOrdenacaoControl } from "./feed-ordenacao";
 export {
+  contarFiltrosAtivos,
+  descreverFiltrosAtivos,
+  FILTROS_PADRAO,
+  ORDENACAO_LABEL,
+  removerFiltro,
+  saoFiltrosIguais,
+  toTemaLabel,
+  type ProposicaoFeedFiltros,
+  type ProposicaoFiltroAtivo,
+  type ProposicaoFiltroId,
+} from "./feed-filtros";
+export { ProposicaoFiltrosBar } from "./proposicao-filtros-bar";
+export { ProposicaoFiltrosPanel } from "./proposicao-filtros-panel";
+export {
   buildFeedHref,
   buildFeedSearchParams,
   parseFeedUrlState,

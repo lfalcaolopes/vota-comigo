@@ -8,13 +8,19 @@ import {
   buildComparativoHref,
   buildResultadoHref,
   parseResultadoUrlState,
+  type ResultadoUrlState,
 } from "../../lib/matcher-route";
+import type { ResultadoFiltros } from "../../lib/resultado-filtros";
 import { MatcherRouteGate } from "../flow/matcher-route-gate";
 import { MatcherStepFrame } from "../flow/matcher-step-frame";
 import { useMatcher } from "../matcher-provider";
 import { StepResultado } from "./step-resultado";
 
 const ROUTE = "/matcher/resultado" as const;
+
+function toRequestedFiltersKey(state: ResultadoUrlState): string {
+  return `${state.escopo}:${state.apenasEmAtividade}`;
+}
 
 export function MatcherResultado() {
   const matcher = useMatcher();
@@ -24,17 +30,29 @@ export function MatcherResultado() {
     escopo: searchParams.get("escopo") ?? undefined,
     atividade: searchParams.get("atividade") ?? undefined,
   });
-  const requestedFiltersKey = `${requestedFilters.escopo}:${requestedFilters.apenasEmAtividade}`;
+  const requestedFiltersKey = toRequestedFiltersKey(requestedFilters);
   const requestedFiltersRef = useRef<string | null>(null);
+  // A aplicação em bloco executa o recorte e só então navega, então o efeito da
+  // URL fica suspenso até o endereço alcançar a chave que ela já executou.
+  const pendingFiltersRef = useRef<string | null>(null);
   const { state } = matcher;
+  // O recorte aplicado é sempre a combinação das duas fontes: a URL carrega
+  // atividade, o rascunho carrega a concordância (ADR 021).
+  const filtros: ResultadoFiltros = {
+    apenasEmAtividade: requestedFilters.apenasEmAtividade,
+    externalIdProposicoesFiltroConcordancia:
+      matcher.externalIdProposicoesFiltroConcordancia,
+  };
 
   useEffect(() => {
-    if (
-      !matcher.isHydrated ||
-      requestedFiltersRef.current === requestedFiltersKey
-    ) {
+    if (!matcher.isHydrated) return;
+    if (pendingFiltersRef.current !== null) {
+      if (pendingFiltersRef.current !== requestedFiltersKey) return;
+      pendingFiltersRef.current = null;
+      requestedFiltersRef.current = requestedFiltersKey;
       return;
     }
+    if (requestedFiltersRef.current === requestedFiltersKey) return;
     requestedFiltersRef.current = requestedFiltersKey;
     if (
       matcher.resultado !== null &&
@@ -43,7 +61,11 @@ export function MatcherResultado() {
     ) {
       return;
     }
-    void matcher.executeResultado(requestedFilters);
+    void matcher.executeResultado({
+      ...requestedFilters,
+      externalIdProposicoesFiltroConcordancia:
+        matcher.externalIdProposicoesFiltroConcordancia,
+    });
   }, [matcher, requestedFilters, requestedFiltersKey]);
 
   const areRequestedFiltersActive =
@@ -67,29 +89,29 @@ export function MatcherResultado() {
       }
     : state;
 
+  function applyFiltros(next: ResultadoFiltros) {
+    const url = {
+      escopo: requestedFilters.escopo,
+      apenasEmAtividade: next.apenasEmAtividade,
+    };
+    if (next.apenasEmAtividade !== requestedFilters.apenasEmAtividade) {
+      pendingFiltersRef.current = toRequestedFiltersKey(url);
+      navigate(buildResultadoHref(url), "filter");
+    }
+    void matcher.executeResultado({ ...url, ...next });
+  }
+
   return (
     <MatcherRouteGate route={ROUTE}>
       <MatcherStepFrame route={ROUTE}>
         <div className="mx-auto w-full max-w-6xl">
           <div className="w-full max-w-4xl">
             <StepResultado
-              apenasEmAtividade={requestedFilters.apenasEmAtividade}
-              externalIdProposicoesFiltroConcordancia={
-                matcher.externalIdProposicoesFiltroConcordancia
-              }
               escopo={requestedFilters.escopo}
+              filtros={filtros}
               hasMore={matcher.hasMore}
-              onApenasEmAtividadeChange={(apenasEmAtividade) =>
-                navigate(
-                  buildResultadoHref({
-                    ...requestedFilters,
-                    apenasEmAtividade,
-                  }),
-                  "filter",
-                )
-              }
+              onApplyFiltros={applyFiltros}
               onCancelComparativoSelection={matcher.cancelComparativoSelection}
-              onClearFiltroConcordancia={matcher.clearFiltroConcordancia}
               onEscopoChange={(escopo) =>
                 navigate(
                   buildResultadoHref({ ...requestedFilters, escopo }),
@@ -107,7 +129,9 @@ export function MatcherResultado() {
                 matcher.cancelComparativoSelection();
                 navigate(href);
               }}
-              onRetry={() => matcher.executeResultado(requestedFilters)}
+              onRetry={() =>
+                matcher.executeResultado({ ...requestedFilters, ...filtros })
+              }
               onStartComparativoSelection={matcher.startComparativoSelection}
               onToggleComparativoDeputado={matcher.toggleComparativoDeputado}
               resultado={isWaitingForResultado ? null : matcher.resultado}

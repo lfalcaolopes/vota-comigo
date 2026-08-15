@@ -4,49 +4,57 @@ import { describe, expect, it } from "vitest";
 
 import { DeputadoUfControl } from "../deputado-uf-control";
 
-function render(activeUf: string | null, open = false): string {
+function render(activeUf: string | null, ufs = [{ siglaUf: "SP" }]): string {
   return renderToStaticMarkup(
     createElement(DeputadoUfControl, {
       activeUf,
-      onSelect: () => {},
-      open,
-      ufs: [{ siglaUf: "SP" }, { siglaUf: "RJ" }],
+      onChange: () => {},
+      ufs,
     }),
   );
 }
 
 describe("DeputadoUfControl", () => {
-  describe("when no estado is selected", () => {
-    it("renders the filter trigger as estado", () => {
+  describe("when listing the available estados", () => {
+    it("names each estado instead of its UF code", () => {
+      // Act
+      const html = render(null, [{ siglaUf: "SP" }, { siglaUf: "RJ" }]);
+
+      // Assert
+      expect(html).toContain("São Paulo");
+      expect(html).toContain("Rio de Janeiro");
+      expect(html).not.toContain(">SP<");
+    });
+
+    it("groups the options under a labelled group", () => {
       // Act
       const html = render(null);
 
       // Assert
-      expect(html).toContain("Estado");
+      expect(html).toContain("Filtrar por estado");
+      expect(html).toContain('role="group"');
     });
   });
 
   describe("when an estado is selected", () => {
-    it("shows the estado name instead of the UF code", () => {
+    it("marks only that option as pressed", () => {
       // Act
-      const html = render("SP");
+      const html = render("SP", [{ siglaUf: "SP" }, { siglaUf: "RJ" }]);
 
       // Assert
-      expect(html).toContain("São Paulo");
-      expect(html).toContain("Limpar filtro de estado São Paulo");
-      expect(html).not.toContain(">SP<");
+      const pressed = html.match(/aria-pressed="true"/g) ?? [];
+      expect(pressed).toHaveLength(1);
+      expect(html).toMatch(/aria-pressed="true"[^>]*>São Paulo</);
     });
   });
 
-  describe("when controlled open", () => {
-    it("renders the estado options", () => {
+  describe("when no estado is available", () => {
+    it("renders nothing", () => {
       // Act
-      const html = render(null, true);
+      const html = render(null, []);
 
       // Assert
-      expect(html).toContain("Filtrar por estado");
-      expect(html).toContain("São Paulo");
-      expect(html).toContain("Rio de Janeiro");
+      expect(html).toBe("");
     });
   });
 });

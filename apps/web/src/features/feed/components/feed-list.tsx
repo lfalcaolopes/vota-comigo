@@ -12,7 +12,7 @@ type FeedListProps = {
   display: FeedDisplay;
   canLoadMore: boolean;
   onLoadMore: () => void;
-  onClearFilters: () => void;
+  onClearTudo: () => void;
   itemSearchParams?: string;
 };
 
@@ -23,7 +23,7 @@ export function FeedList({
   display,
   canLoadMore,
   onLoadMore,
-  onClearFilters,
+  onClearTudo,
   itemSearchParams = "",
 }: FeedListProps) {
   const itemSearchSuffix = itemSearchParams ? `?${itemSearchParams}` : "";
@@ -45,8 +45,8 @@ export function FeedList({
     return (
       <EmptyState
         action={
-          <Button onClick={onClearFilters} variant="secondary">
-            Limpar filtros
+          <Button onClick={onClearTudo} variant="secondary">
+            Limpar busca e filtros
           </Button>
         }
         body="Nenhuma proposição foi encontrada com a busca e os filtros utilizados."

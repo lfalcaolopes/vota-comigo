@@ -23,7 +23,10 @@ export function MatcherProposicoes({
 }) {
   const matcher = useMatcher();
   const navigate = useMatcherNavigation();
-  const feed = useFeedState(initialProposicoes, initialTotal);
+  const feed = useFeedState({
+    items: initialProposicoes,
+    total: initialTotal,
+  });
 
   return (
     <MatcherRouteGate route={ROUTE}>
@@ -38,24 +41,16 @@ export function MatcherProposicoes({
               if (matcher.canAdvanceSelecao) navigate("/matcher/posicoes/1");
             }}
             onBack={() => navigate("/matcher/local")}
-            onChangeOrdenacao={feed.changeOrdenacao}
-            onChangeTema={(cod) => {
-              if (feed.tema === cod) {
-                void feed.clearTema();
-              } else {
-                void feed.changeTema(cod);
-              }
-            }}
-            onClearFilters={feed.clearFilters}
+            onApplyFiltros={feed.applyFiltros}
             onClearSearch={feed.clearSearch}
+            onClearTudo={feed.clearTudo}
             onLoadMore={feed.loadMore}
             onSubmitSearch={feed.submitSearch}
+            filtros={feed.filtros}
             onToggle={matcher.toggleProposicao}
-            ordenacao={feed.ordenacao}
             query={feed.query}
             selected={matcher.state.selected}
             status={feed.status}
-            tema={feed.tema}
             temas={temas}
             total={feed.total}
             totalSelecionadas={matcher.validation.totalSelecionadas}

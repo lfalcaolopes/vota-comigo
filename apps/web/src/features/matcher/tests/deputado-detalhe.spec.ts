@@ -220,12 +220,13 @@ describe("StepResultado", () => {
       // Act
       const html = renderToStaticMarkup(
         createElement(StepResultado, {
-          apenasEmAtividade: false,
-          externalIdProposicoesFiltroConcordancia: [],
           escopo: "estadual",
+          filtros: {
+            apenasEmAtividade: false,
+            externalIdProposicoesFiltroConcordancia: [],
+          },
           hasMore: false,
-          onApenasEmAtividadeChange: () => {},
-          onClearFiltroConcordancia: () => {},
+          onApplyFiltros: () => {},
           onToggleFiltroConcordancia: () => {},
           onCancelComparativoSelection: () => {},
           onEscopoChange: () => {},
@@ -242,17 +243,12 @@ describe("StepResultado", () => {
 
       // Assert
       expect(html).toContain("Filtros");
-      expect(html).toContain("Exigir concordância");
-      expect(html).toContain(
-        "Marque as proposições em que o deputado precisa ter votado de acordo com você.",
-      );
+      expect(html).toContain("Escopo dos resultados");
       expect(html).toContain("Comparar deputados");
       expect(html.indexOf("Comparar deputados")).toBeLessThan(
         html.indexOf("Filtros"),
       );
-      expect(html.indexOf("Filtros")).toBeLessThan(
-        html.indexOf("Apenas em atividade"),
-      );
+      expect(html).not.toContain("Apenas em atividade");
       expect(html).not.toContain("Selecionar Maria da Silva para comparação");
       expect(html).not.toContain(">Voltar<");
     });
@@ -282,12 +278,13 @@ describe("StepResultado", () => {
       // Act
       const html = renderToStaticMarkup(
         createElement(StepResultado, {
-          apenasEmAtividade: false,
-          externalIdProposicoesFiltroConcordancia: [],
           escopo: "estadual",
+          filtros: {
+            apenasEmAtividade: false,
+            externalIdProposicoesFiltroConcordancia: [],
+          },
           hasMore: false,
-          onApenasEmAtividadeChange: () => {},
-          onClearFiltroConcordancia: () => {},
+          onApplyFiltros: () => {},
           onToggleFiltroConcordancia: () => {},
           onCancelComparativoSelection: () => {},
           onEscopoChange: () => {},

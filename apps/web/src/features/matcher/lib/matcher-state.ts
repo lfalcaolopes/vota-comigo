@@ -23,6 +23,7 @@ import {
 } from "./matcher-validation";
 import { shouldClearFiltroConcordancia } from "./filtro-concordancia-reset";
 import type { MatcherRascunho } from "./matcher-rascunho";
+import { saoResultadoFiltrosIguais } from "./resultado-filtros";
 
 export type MatcherStatus = "idle" | "loading" | "error";
 
@@ -59,13 +60,12 @@ export type MatcherAction =
       type: "setResultadoFilters";
       escopo: EscopoMatcher;
       apenasEmAtividade: boolean;
+      externalIdProposicoesFiltroConcordancia: readonly number[];
     }
-  | { type: "setApenasEmAtividade"; value: boolean }
   | {
       type: "toggleFiltroConcordancia";
       externalIdProposicao: number;
     }
-  | { type: "clearFiltroConcordancia" }
   | { type: "loadMoreOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
   | { type: "startComparativoSelection" }
   | { type: "toggleComparativoDeputado"; deputado: MatcherDeputadoResumo }
@@ -170,22 +170,22 @@ export function matcherReducer(
       return { ...state, status: "error" };
     case "setEscopo":
       return { ...state, escopo: action.escopo };
-    case "setResultadoFilters":
+    case "setResultadoFilters": {
+      // Atividade e concordância valem para os dois escopos, então mudá-las
+      // invalida também o resultado que está apenas em cache.
+      const mudouRecorte = !saoResultadoFiltrosIguais(action, state);
       return {
         ...state,
         escopo: action.escopo,
         apenasEmAtividade: action.apenasEmAtividade,
-        resultados: {
-          ...state.resultados,
-          [action.escopo]: null,
-        },
+        externalIdProposicoesFiltroConcordancia: [
+          ...action.externalIdProposicoesFiltroConcordancia,
+        ],
+        resultados: mudouRecorte
+          ? { estadual: null, nacional: null }
+          : { ...state.resultados, [action.escopo]: null },
       };
-    case "setApenasEmAtividade":
-      return {
-        ...state,
-        apenasEmAtividade: action.value,
-        resultados: { estadual: null, nacional: null },
-      };
+    }
     case "toggleFiltroConcordancia": {
       const isMarked = state.externalIdProposicoesFiltroConcordancia.includes(
         action.externalIdProposicao,
@@ -204,12 +204,6 @@ export function matcherReducer(
         resultados: { estadual: null, nacional: null },
       };
     }
-    case "clearFiltroConcordancia":
-      return {
-        ...state,
-        externalIdProposicoesFiltroConcordancia: [],
-        resultados: { estadual: null, nacional: null },
-      };
     case "loadMoreOk": {
       const existing = state.resultados[action.escopo];
       if (existing === null) return state;

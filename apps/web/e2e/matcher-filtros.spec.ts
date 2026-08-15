@@ -1,5 +1,23 @@
 import { expect, test, type Page } from "@playwright/test";
 
+function abrirFiltros(page: Page) {
+  return page.getByRole("button", { name: /^Filtros/ });
+}
+
+function painel(page: Page) {
+  return page.getByRole("dialog");
+}
+
+function concordancia(page: Page, identificador: string) {
+  return painel(page).getByLabel(`Exigir concordância em ${identificador}`, {
+    exact: true,
+  });
+}
+
+function aplicar(page: Page) {
+  return painel(page).getByRole("button", { name: "Aplicar" });
+}
+
 const selected = [
   {
     externalIdProposicao: 1,
@@ -104,9 +122,44 @@ async function storeRascunho(page: Page, value = rascunho) {
   }, value);
 }
 
-test.describe("filtro de concordância no resultado do matcher", () => {
-  test.describe("acessibilidade do painel", () => {
-    test("mantém o foco no filtro depois de limpar as marcações por teclado", async ({
+test.describe("filtros do resultado do matcher", () => {
+  test.describe("aplicação em bloco", () => {
+    test("aplica atividade e concordância com uma única execução", async ({
+      page,
+    }) => {
+      // Arrange
+      const requests: Array<{
+        apenasEmAtividade: boolean;
+        externalIdProposicoesFiltroConcordancia: number[];
+      }> = [];
+      await page.route("http://localhost:3001/matcher?**", async (route) => {
+        requests.push(route.request().postDataJSON());
+        await route.fulfill({ json: resultado });
+      });
+      await storeRascunho(page);
+      await page.goto("/matcher/resultado");
+      await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+      const executadasAntes = requests.length;
+
+      // Act
+      await abrirFiltros(page).click();
+      await painel(page).getByText("Apenas em atividade").click();
+      await concordancia(page, "PL 2630/2020").press("Space");
+      await aplicar(page).click();
+
+      // Assert
+      await expect(painel(page)).toBeHidden();
+      await expect
+        .poll(() => requests.at(-1))
+        .toMatchObject({
+          apenasEmAtividade: true,
+          externalIdProposicoesFiltroConcordancia: [1],
+        });
+      expect(requests).toHaveLength(executadasAntes + 1);
+      await expect(page).toHaveURL("/matcher/resultado?atividade=1");
+    });
+
+    test("mantém Aplicar desabilitado enquanto o rascunho não muda", async ({
       page,
     }) => {
       // Arrange
@@ -118,25 +171,233 @@ test.describe("filtro de concordância no resultado do matcher", () => {
         externalIdProposicoesFiltroConcordancia: [1],
       });
       await page.goto("/matcher/resultado");
-      const trigger = page.getByRole("button", {
-        name: "Exigir concordância, 1 proposição marcada",
-      });
-      await trigger.click();
-      const clear = page.getByRole("button", { name: "Limpar seleção" });
-      await clear.focus();
+      await expect(page.getByText("Deputada Exemplo")).toBeVisible();
 
       // Act
+      await abrirFiltros(page).click();
+
+      // Assert
+      await expect(aplicar(page)).toBeDisabled();
+
+      // Act
+      await concordancia(page, "PL 1904/2024").press("Space");
+
+      // Assert
+      await expect(aplicar(page)).toBeEnabled();
+    });
+
+    test("descarta o rascunho ao fechar sem aplicar", async ({ page }) => {
+      // Arrange
+      const requests: Array<{
+        externalIdProposicoesFiltroConcordancia: number[];
+      }> = [];
+      await page.route("http://localhost:3001/matcher?**", async (route) => {
+        requests.push(route.request().postDataJSON());
+        await route.fulfill({ json: resultado });
+      });
+      await storeRascunho(page, {
+        ...rascunho,
+        externalIdProposicoesFiltroConcordancia: [1],
+      });
+      await page.goto("/matcher/resultado");
+      await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+      const executadasAntes = requests.length;
+
+      // Act
+      await abrirFiltros(page).click();
+      await concordancia(page, "PL 1904/2024").press("Space");
+      await page.keyboard.press("Escape");
+      await expect(painel(page)).toBeHidden();
+      await abrirFiltros(page).click();
+
+      // Assert
+      await expect(concordancia(page, "PL 2630/2020")).toBeChecked();
+      await expect(concordancia(page, "PL 1904/2024")).not.toBeChecked();
+      expect(requests).toHaveLength(executadasAntes);
+    });
+
+    test("limpa a seleção do rascunho sem executar antes do Aplicar", async ({
+      page,
+    }) => {
+      // Arrange
+      const requests: Array<{
+        externalIdProposicoesFiltroConcordancia: number[];
+      }> = [];
+      await page.route("http://localhost:3001/matcher?**", async (route) => {
+        requests.push(route.request().postDataJSON());
+        await route.fulfill({ json: resultado });
+      });
+      await storeRascunho(page, {
+        ...rascunho,
+        externalIdProposicoesFiltroConcordancia: [1],
+      });
+      await page.goto("/matcher/resultado");
+      await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+      const executadasAntes = requests.length;
+      await abrirFiltros(page).click();
+
+      // Act
+      await painel(page)
+        .getByRole("button", { name: "Limpar seleção" })
+        .click();
+
+      // Assert
+      await expect(concordancia(page, "PL 2630/2020")).not.toBeChecked();
+      expect(requests).toHaveLength(executadasAntes);
+
+      // Act
+      await aplicar(page).click();
+
+      // Assert
+      await expect
+        .poll(() => requests.at(-1)?.externalIdProposicoesFiltroConcordancia)
+        .toEqual([]);
+    });
+  });
+
+  test.describe("recorte visível fora do painel", () => {
+    test("conta apenas os filtros fora do padrão", async ({ page }) => {
+      // Arrange
+      await page.route("http://localhost:3001/matcher?**", async (route) => {
+        await route.fulfill({ json: resultado });
+      });
+      await storeRascunho(page);
+
+      // Act
+      await page.goto("/matcher/resultado");
+
+      // Assert
+      await expect(abrirFiltros(page)).toHaveText("Filtros");
+
+      // Act
+      await abrirFiltros(page).click();
+      await concordancia(page, "PL 2630/2020").press("Space");
+      await aplicar(page).click();
+
+      // Assert
+      await expect(abrirFiltros(page)).toContainText("1");
+      await expect(
+        page.getByRole("button", {
+          name: "Remover filtro Concordância: 1 proposição",
+        }),
+      ).toBeVisible();
+    });
+
+    test("remove as marcações pelo chip, sem abrir o painel", async ({
+      page,
+    }) => {
+      // Arrange
+      const requests: Array<{
+        externalIdProposicoesFiltroConcordancia: number[];
+      }> = [];
+      await page.route("http://localhost:3001/matcher?**", async (route) => {
+        requests.push(route.request().postDataJSON());
+        await route.fulfill({ json: resultado });
+      });
+      await storeRascunho(page, {
+        ...rascunho,
+        externalIdProposicoesFiltroConcordancia: [1, 2],
+      });
+      await page.goto("/matcher/resultado");
+      await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+
+      // Act
+      await page
+        .getByRole("button", {
+          name: "Remover filtro Concordância: 2 proposições",
+        })
+        .click();
+
+      // Assert
+      await expect(painel(page)).toBeHidden();
+      await expect
+        .poll(() => requests.at(-1)?.externalIdProposicoesFiltroConcordancia)
+        .toEqual([]);
+      await expect(abrirFiltros(page)).toHaveText("Filtros");
+    });
+
+    test("limpa os filtros preservando o escopo", async ({ page }) => {
+      // Arrange
+      const requests: Array<{
+        escopo: string;
+        apenasEmAtividade: boolean;
+        externalIdProposicoesFiltroConcordancia: number[];
+      }> = [];
+      await page.route("http://localhost:3001/matcher?**", async (route) => {
+        requests.push(route.request().postDataJSON());
+        await route.fulfill({ json: { ...resultado, escopo: "nacional" } });
+      });
+      await storeRascunho(page, {
+        ...rascunho,
+        externalIdProposicoesFiltroConcordancia: [1],
+      });
+      await page.goto("/matcher/resultado?escopo=nacional&atividade=1");
+      await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+
+      // Act
+      await page.getByRole("button", { name: "Limpar filtros" }).click();
+
+      // Assert
+      await expect
+        .poll(() => requests.at(-1))
+        .toMatchObject({
+          escopo: "nacional",
+          apenasEmAtividade: false,
+          externalIdProposicoesFiltroConcordancia: [],
+        });
+      await expect(page).toHaveURL("/matcher/resultado?escopo=nacional");
+    });
+  });
+
+  test.describe("acessibilidade do painel", () => {
+    test("devolve o foco ao gatilho ao fechar o painel", async ({ page }) => {
+      // Arrange
+      await page.route("http://localhost:3001/matcher?**", async (route) => {
+        await route.fulfill({ json: resultado });
+      });
+      await storeRascunho(page);
+      await page.goto("/matcher/resultado");
+      await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+      const trigger = abrirFiltros(page);
+      await trigger.click();
+
+      // Act
+      await painel(page)
+        .getByRole("button", { name: "Fechar filtros" })
+        .click();
+
+      // Assert
+      await expect(trigger).toHaveAttribute("aria-expanded", "false");
+      await expect(trigger).toBeFocused();
+    });
+
+    test("mantém o foco no gatilho depois de aplicar por teclado", async ({
+      page,
+    }) => {
+      // Arrange
+      await page.route("http://localhost:3001/matcher?**", async (route) => {
+        await route.fulfill({ json: resultado });
+      });
+      await storeRascunho(page, {
+        ...rascunho,
+        externalIdProposicoesFiltroConcordancia: [1],
+      });
+      await page.goto("/matcher/resultado");
+      await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+      const trigger = abrirFiltros(page);
+      await trigger.click();
+      await concordancia(page, "PL 2630/2020").press("Space");
+
+      // Act
+      await aplicar(page).focus();
       await page.keyboard.press("Enter");
 
       // Assert
-      const updatedTrigger = page.getByRole("button", {
-        name: "Exigir concordância, 0 proposições marcadas",
-      });
-      await expect(updatedTrigger).toBeFocused();
-      await expect(updatedTrigger).toHaveAttribute("aria-expanded", "false");
+      await expect(trigger).toHaveAttribute("aria-expanded", "false");
+      await expect(trigger).toBeFocused();
     });
 
-    test("anuncia o total do recorte depois de marcar uma proposição", async ({
+    test("anuncia o total do recorte depois de aplicar uma marcação", async ({
       page,
     }) => {
       // Arrange
@@ -163,16 +424,11 @@ test.describe("filtro de concordância no resultado do matcher", () => {
       });
       await storeRascunho(page);
       await page.goto("/matcher/resultado");
-      await page
-        .getByRole("button", {
-          name: "Exigir concordância, 0 proposições marcadas",
-        })
-        .click();
+      await abrirFiltros(page).click();
 
       // Act
-      await page
-        .getByLabel("Exigir concordância em PL 2630/2020", { exact: true })
-        .press("Space");
+      await concordancia(page, "PL 2630/2020").press("Space");
+      await aplicar(page).click();
 
       // Assert
       await expect(
@@ -182,9 +438,7 @@ test.describe("filtro de concordância no resultado do matcher", () => {
       ).toBeAttached();
     });
 
-    test("anuncia o resultado vazio sem descartar o foco da proposição marcada", async ({
-      page,
-    }) => {
+    test("anuncia o resultado vazio deixado pelo recorte", async ({ page }) => {
       // Arrange
       await page.route("http://localhost:3001/matcher?**", async (route) => {
         const request = route.request().postDataJSON();
@@ -198,18 +452,11 @@ test.describe("filtro de concordância no resultado do matcher", () => {
       await storeRascunho(page);
       await page.goto("/matcher/resultado");
       await expect(page.getByText("Deputada Exemplo")).toBeVisible();
-      await page
-        .getByRole("button", {
-          name: "Exigir concordância, 0 proposições marcadas",
-        })
-        .click();
-      const proposicao = page.getByLabel(
-        "Exigir concordância em PL 2630/2020",
-        { exact: true },
-      );
+      await abrirFiltros(page).click();
 
       // Act
-      await proposicao.press("Space");
+      await concordancia(page, "PL 2630/2020").press("Space");
+      await aplicar(page).click();
 
       // Assert
       await expect(
@@ -218,53 +465,7 @@ test.describe("filtro de concordância no resultado do matcher", () => {
             "Resultado atualizado: nenhum deputado votou com você em todas as proposições marcadas.",
         }),
       ).toBeAttached();
-      await expect(proposicao).toBeFocused();
-    });
-
-    test("comunica o estado e a quantidade de proposições marcadas no gatilho", async ({
-      page,
-    }) => {
-      // Arrange
-      await page.route("http://localhost:3001/matcher?**", async (route) => {
-        await route.fulfill({ json: resultado });
-      });
-      await storeRascunho(page, {
-        ...rascunho,
-        externalIdProposicoesFiltroConcordancia: [1],
-      });
-      await page.goto("/matcher/resultado");
-      const trigger = page.getByRole("button", {
-        name: "Exigir concordância, 1 proposição marcada",
-      });
-
-      // Act
-      await trigger.click();
-
-      // Assert
-      await expect(trigger).toHaveAttribute("aria-expanded", "true");
-      await trigger.click();
-      await expect(trigger).toHaveAttribute("aria-expanded", "false");
-    });
-
-    test("devolve o foco ao gatilho ao fechar o painel", async ({ page }) => {
-      // Arrange
-      await page.route("http://localhost:3001/matcher?**", async (route) => {
-        await route.fulfill({ json: resultado });
-      });
-      await storeRascunho(page);
-      await page.goto("/matcher/resultado");
-      await expect(page.getByText("Deputada Exemplo")).toBeVisible();
-      const trigger = page.getByRole("button", {
-        name: "Exigir concordância, 0 proposições marcadas",
-      });
-      await trigger.click();
-
-      // Act
-      await page.getByRole("button", { name: "Fechar filtro" }).click();
-
-      // Assert
-      await expect(trigger).toHaveAttribute("aria-expanded", "false");
-      await expect(trigger).toBeFocused();
+      await expect(abrirFiltros(page)).toBeFocused();
     });
   });
 
@@ -302,9 +503,7 @@ test.describe("filtro de concordância no resultado do matcher", () => {
       ).toHaveCount(0);
     });
 
-    test("permite afrouxar o filtro sem recomeçar o matcher", async ({
-      page,
-    }) => {
+    test("permite afrouxar o filtro sem abrir o painel", async ({ page }) => {
       // Arrange
       const requests: Array<{
         externalIdProposicoesFiltroConcordancia: number[];
@@ -336,6 +535,7 @@ test.describe("filtro de concordância no resultado do matcher", () => {
         .press("Space");
 
       // Assert
+      await expect(painel(page)).toBeHidden();
       await expect
         .poll(() => requests.at(-1)?.externalIdProposicoesFiltroConcordancia)
         .toEqual([2]);
@@ -476,14 +676,8 @@ test.describe("filtro de concordância no resultado do matcher", () => {
         externalIdProposicoesFiltroConcordancia: [1],
       });
       await expect(page).toHaveURL(/\/matcher\/resultado$/);
-      await page
-        .getByRole("button", {
-          name: "Exigir concordância, 1 proposição marcada",
-        })
-        .click();
-      await expect(
-        page.getByLabel("Exigir concordância em PL 2630/2020"),
-      ).toBeChecked();
+      await abrirFiltros(page).click();
+      await expect(concordancia(page, "PL 2630/2020")).toBeChecked();
     });
 
     test("preserva as proposições marcadas ao ampliar o escopo", async ({
@@ -517,41 +711,9 @@ test.describe("filtro de concordância no resultado do matcher", () => {
         });
       await expect(page).toHaveURL("/matcher/resultado?escopo=nacional");
     });
-
-    test("preserva as proposições marcadas ao filtrar por atividade", async ({
-      page,
-    }) => {
-      // Arrange
-      const requests: Array<{
-        apenasEmAtividade: boolean;
-        externalIdProposicoesFiltroConcordancia: number[];
-      }> = [];
-      await page.route("http://localhost:3001/matcher?**", async (route) => {
-        requests.push(route.request().postDataJSON());
-        await route.fulfill({ json: resultado });
-      });
-      await storeRascunho(page, {
-        ...rascunho,
-        externalIdProposicoesFiltroConcordancia: [1],
-      });
-      await page.goto("/matcher/resultado");
-      await expect(page.getByText("Deputada Exemplo")).toBeVisible();
-
-      // Act
-      await page.getByText("Apenas em atividade", { exact: true }).click();
-
-      // Assert
-      await expect
-        .poll(() => requests.at(-1))
-        .toMatchObject({
-          apenasEmAtividade: true,
-          externalIdProposicoesFiltroConcordancia: [1],
-        });
-      await expect(page).toHaveURL("/matcher/resultado?atividade=1");
-    });
   });
 
-  test.describe("contexto e recorte do resultado", () => {
+  test.describe("contexto do painel", () => {
     test("oferece contexto apenas para posições computáveis sem buscar novos dados", async ({
       page,
     }) => {
@@ -567,78 +729,54 @@ test.describe("filtro de concordância no resultado do matcher", () => {
       const requestsBeforeOpening = matcherRequests;
 
       // Act
-      await page.getByText("Exigir concordância", { exact: true }).click();
+      await abrirFiltros(page).click();
 
       // Assert
       await expect(
-        page.getByText("PL 2630/2020", { exact: true }),
+        painel(page).getByText("PL 2630/2020", { exact: true }),
       ).toBeVisible();
       await expect(
-        page.getByText("Estabelece regras para plataformas digitais."),
+        painel(page).getByText("Estabelece regras para plataformas digitais."),
       ).toBeVisible();
       await expect(
-        page.getByText("Deveria ser aprovada", { exact: true }),
+        painel(page).getByText("Deveria ser aprovada", { exact: true }),
       ).toHaveCount(2);
       await expect(
-        page.getByText("Não deveria ser aprovada", { exact: true }),
+        painel(page).getByText("Não deveria ser aprovada", { exact: true }),
       ).toBeVisible();
-      await expect(page.getByText("PL 4/2025")).toHaveCount(0);
+      await expect(painel(page).getByText("PL 4/2025")).toHaveCount(0);
       expect(matcherRequests).toBe(requestsBeforeOpening);
     });
 
-    test("explicita o recorte aplicado e permite limpar todas as marcações", async ({
-      page,
-    }) => {
+    test("explicita o recorte aplicado acima da lista", async ({ page }) => {
       // Arrange
-      const requests: Array<{
-        externalIdProposicoesFiltroConcordancia: number[];
-      }> = [];
       await page.route("http://localhost:3001/matcher?**", async (route) => {
-        requests.push(route.request().postDataJSON());
         await route.fulfill({ json: resultado });
       });
       await storeRascunho(page);
       await page.goto("/matcher/resultado");
       await expect(page.getByText("Deputada Exemplo")).toBeVisible();
-      await page.getByText("Exigir concordância", { exact: true }).click();
 
       // Act
-      await page
-        .getByLabel("Exigir concordância em PL 2630/2020")
-        .press("Space");
+      await abrirFiltros(page).click();
+      await concordancia(page, "PL 2630/2020").press("Space");
+      await aplicar(page).click();
 
       // Assert
-      await expect
-        .poll(() => requests.at(-1)?.externalIdProposicoesFiltroConcordancia)
-        .toEqual([1]);
-      await expect(
-        page.getByLabel("Exigir concordância em PL 2630/2020"),
-      ).toBeChecked();
       await expect(
         page.getByRole("heading", {
           name: "Deputados que votaram com você nas proposições marcadas",
         }),
       ).toBeVisible();
-      const trigger = page.getByRole("button", {
-        name: "Exigir concordância, 1 proposição marcada",
-      });
-      if ((await trigger.getAttribute("aria-expanded")) === "true") {
-        await trigger.click();
-      }
-      await expect(trigger).toHaveAttribute("aria-expanded", "false");
-      await expect(trigger).toBeVisible();
 
       // Act
-      await trigger.click();
-      await page.getByRole("button", { name: "Limpar seleção" }).click();
+      await page
+        .getByRole("button", {
+          name: "Remover filtro Concordância: 1 proposição",
+        })
+        .click();
 
       // Assert
-      await expect
-        .poll(() => requests.at(-1)?.externalIdProposicoesFiltroConcordancia)
-        .toEqual([]);
-      await expect(
-        page.getByText("Exigir concordância", { exact: true }),
-      ).toBeVisible();
       await expect(
         page.getByRole("heading", {
           name: "Deputados que votaram com você nas proposições marcadas",

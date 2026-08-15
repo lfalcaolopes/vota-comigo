@@ -2,10 +2,12 @@ import type { FeedOrdenacao } from "@vota-comigo/shared-types";
 import { SegmentedControl } from "@/shared/ui";
 import { joinClassNames } from "@/shared/ui/utils";
 
-const ITEMS = [
-  { id: "mais-votadas", label: "Mais votadas" },
-  { id: "mais-recentes", label: "Mais recentes" },
-];
+import { ORDENACAO_LABEL } from "./feed-filtros";
+
+const ITEMS = Object.entries(ORDENACAO_LABEL).map(([id, label]) => ({
+  id,
+  label,
+}));
 
 type FeedOrdenacaoControlProps = {
   className?: string;

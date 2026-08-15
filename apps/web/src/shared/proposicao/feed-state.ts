@@ -1,5 +1,7 @@
 import type { FeedOrdenacao, ProposicaoCard } from "@vota-comigo/shared-types";
 
+import { FILTROS_PADRAO, type ProposicaoFeedFiltros } from "./feed-filtros";
+
 export type { FeedOrdenacao };
 
 export type FeedStatus = "idle" | "loading" | "error";
@@ -11,8 +13,7 @@ type Page = {
 
 export type FeedState = {
   query: string;
-  ordenacao: FeedOrdenacao;
-  tema: number | null;
+  filtros: ProposicaoFeedFiltros;
   feed: Page;
   status: FeedStatus;
 };
@@ -20,10 +21,8 @@ export type FeedState = {
 export type FeedAction =
   | { type: "changeQuery"; query: string }
   | { type: "clearSearch" }
-  | { type: "changeOrdenacao"; ordenacao: FeedOrdenacao }
-  | { type: "changeTema"; tema: number }
-  | { type: "clearTema" }
-  | { type: "clearFilters" }
+  | { type: "applyFiltros"; filtros: ProposicaoFeedFiltros }
+  | { type: "clearTudo" }
   | { type: "loadMoreStart" }
   | { type: "loadMoreSuccess"; items: ProposicaoCard[]; total: number }
   | { type: "feedSuccess"; items: ProposicaoCard[]; total: number }
@@ -31,17 +30,22 @@ export type FeedAction =
 
 const emptyPage: Page = { items: [], total: 0 };
 
-export function initFeedState(
-  items: ProposicaoCard[],
-  total: number,
-  ordenacao: FeedOrdenacao = "mais-votadas",
-  tema: number | null = null,
+type InitFeedState = {
+  items: ProposicaoCard[];
+  total: number;
+  query?: string;
+  filtros?: ProposicaoFeedFiltros;
+};
+
+export function initFeedState({
+  items,
+  total,
   query = "",
-): FeedState {
+  filtros = FILTROS_PADRAO,
+}: InitFeedState): FeedState {
   return {
     query: query.trim(),
-    ordenacao,
-    tema,
+    filtros,
     feed: { items, total },
     status: "idle",
   };
@@ -63,32 +67,18 @@ export function feedReducer(state: FeedState, action: FeedAction): FeedState {
         feed: emptyPage,
         status: "loading",
       };
-    case "changeOrdenacao":
+    case "applyFiltros":
       return {
         ...state,
-        ordenacao: action.ordenacao,
+        filtros: action.filtros,
         feed: emptyPage,
         status: "loading",
       };
-    case "changeTema":
-      return {
-        ...state,
-        tema: action.tema,
-        feed: emptyPage,
-        status: "loading",
-      };
-    case "clearTema":
-      return {
-        ...state,
-        tema: null,
-        feed: emptyPage,
-        status: "loading",
-      };
-    case "clearFilters":
+    case "clearTudo":
       return {
         ...state,
         query: "",
-        tema: null,
+        filtros: FILTROS_PADRAO,
         feed: emptyPage,
         status: "loading",
       };
@@ -125,7 +115,9 @@ export function feedDisplay(state: FeedState): FeedDisplay {
   if (state.feed.items.length > 0) return "results";
   if (state.status === "error") return "error";
   if (state.status === "loading") return "loading";
-  if (state.query !== "" || state.tema !== null) return "empty-filtered";
+  // A ordenação não restringe o conjunto, então só busca e tema explicam vazio.
+  if (state.query !== "" || state.filtros.tema !== null)
+    return "empty-filtered";
   return "empty-default";
 }
 

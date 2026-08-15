@@ -10,7 +10,6 @@ type FeedSearchProps = {
   onClear: () => void;
   isSearching: boolean;
   query: string;
-  disabled: boolean;
   className?: string;
 };
 
@@ -22,7 +21,6 @@ export function FeedSearch({
   onClear,
   isSearching,
   query,
-  disabled,
 }: FeedSearchProps) {
   return (
     <div className={joinClassNames("grid min-w-0 max-w-full gap-3", className)}>
@@ -44,12 +42,7 @@ export function FeedSearch({
             value={value}
           />
         </div>
-        <Button
-          className="h-11 sm:shrink-0"
-          disabled={disabled}
-          type="submit"
-          variant="primary"
-        >
+        <Button className="h-11 sm:shrink-0" type="submit" variant="primary">
           Buscar
         </Button>
       </form>

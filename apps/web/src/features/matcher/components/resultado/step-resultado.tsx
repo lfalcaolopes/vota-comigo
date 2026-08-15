@@ -4,18 +4,13 @@ import type {
   EscopoMatcher,
   MatcherResultado,
 } from "@vota-comigo/shared-types";
-import { useId, useRef, useState } from "react";
-
 import {
   Button,
-  Checkbox,
-  ChevronDownIcon,
   ErrorState,
+  FiltrosAtivos,
   SegmentedControl,
   SkeletonRows,
-  Switch,
 } from "@/shared/ui";
-import { ProposicoesSelecionadasList } from "@/shared/proposicao";
 
 import type { MatcherState, MatcherStatus } from "../../lib/matcher-state";
 import {
@@ -25,7 +20,15 @@ import {
   isSemBomMatch,
   resultadoDisplay,
 } from "../../lib/matcher-state";
+import {
+  descreverResultadoFiltrosAtivos,
+  removerResultadoFiltro,
+  RESULTADO_FILTROS_PADRAO,
+  type ResultadoFiltroId,
+  type ResultadoFiltros,
+} from "../../lib/resultado-filtros";
 import { DeputadoCard } from "./deputado-card";
+import { ResultadoFiltrosPanel } from "./resultado-filtros-panel";
 import { OrdenacaoDisclosure } from "./ordenacao-disclosure";
 import { ResultadoFiltroConcordanciaVazio } from "./resultado-filtro-concordancia-vazio";
 import { ResultadoVazio } from "./resultado-vazio";
@@ -41,13 +44,11 @@ type StepResultadoProps = {
   status: MatcherStatus;
   resultado: MatcherResultado | null;
   escopo: EscopoMatcher;
-  apenasEmAtividade: boolean;
-  externalIdProposicoesFiltroConcordancia: readonly number[];
+  filtros: ResultadoFiltros;
   hasMore: boolean;
   onRetry: () => void;
   onEscopoChange: (escopo: EscopoMatcher) => void;
-  onApenasEmAtividadeChange: (value: boolean) => void;
-  onClearFiltroConcordancia: () => void;
+  onApplyFiltros: (filtros: ResultadoFiltros) => void;
   onToggleFiltroConcordancia: (externalIdProposicao: number) => void;
   onLoadMore: () => void;
   onStartComparativoSelection: () => void;
@@ -61,13 +62,11 @@ export function StepResultado({
   status,
   resultado,
   escopo,
-  apenasEmAtividade,
-  externalIdProposicoesFiltroConcordancia,
+  filtros,
   hasMore,
   onRetry,
   onEscopoChange,
-  onApenasEmAtividadeChange,
-  onClearFiltroConcordancia,
+  onApplyFiltros,
   onToggleFiltroConcordancia,
   onLoadMore,
   onStartComparativoSelection,
@@ -75,9 +74,6 @@ export function StepResultado({
   onCancelComparativoSelection,
   onOpenComparativo,
 }: StepResultadoProps) {
-  const filtroPanelId = useId();
-  const filtroTriggerRef = useRef<HTMLButtonElement>(null);
-  const [isFiltroOpen, setIsFiltroOpen] = useState(false);
   const isSelectingComparativo = isComparativoSelectionMode(state);
   const canCompare = canOpenComparativo(state);
   const hasDeputadoLimit = hasComparativoDeputadoLimit(state);
@@ -86,13 +82,13 @@ export function StepResultado({
     return posicao === "aprovar" || posicao === "rejeitar";
   });
   const proposicoesMarcadas = proposicoesElegiveis.filter((card) =>
-    externalIdProposicoesFiltroConcordancia.includes(card.externalIdProposicao),
+    filtros.externalIdProposicoesFiltroConcordancia.includes(
+      card.externalIdProposicao,
+    ),
   );
+  const hasFiltroConcordancia =
+    filtros.externalIdProposicoesFiltroConcordancia.length > 0;
   const display = resultadoDisplay(state);
-  const filtroCountLabel =
-    externalIdProposicoesFiltroConcordancia.length === 1
-      ? "1 proposição marcada"
-      : `${externalIdProposicoesFiltroConcordancia.length} proposições marcadas`;
   const compareAction = isSelectingComparativo ? (
     <div className="grid grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
       <Button
@@ -120,117 +116,39 @@ export function StepResultado({
       Comparar deputados
     </Button>
   );
-  const renderFilterControls = () => (
+  const filterControls = (
     <div className="grid min-w-0 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2">
-      <p className="text-sm font-[650] text-muted sm:hidden">Filtros</p>
-      <div className="grid min-w-0 grid-cols-2 gap-2 sm:contents">
-        <SegmentedControl
-          activeId={escopo}
-          className="order-1 col-span-full w-full sm:w-auto"
-          itemClassName="flex-1 sm:flex-none"
-          items={ESCOPO_ITEMS}
-          label="Escopo dos resultados"
-          onSelect={(id) => onEscopoChange(id as EscopoMatcher)}
-        />
-        <div className="order-2 col-span-full min-w-0 sm:relative">
-          <button
-            aria-controls={filtroPanelId}
-            aria-expanded={isFiltroOpen}
-            aria-label={`Exigir concordância, ${filtroCountLabel}`}
-            className={`inline-flex h-11 w-full min-w-0 cursor-pointer items-center justify-between gap-2 rounded-md border px-3 py-2.5 text-sm font-[650] leading-[1.2] text-ink transition-[background-color,border-color] duration-[180ms] ease-standard hover:border-border-strong hover:bg-surface-muted sm:w-auto ${
-              externalIdProposicoesFiltroConcordancia.length > 0
-                ? "border-primary bg-primary-soft"
-                : "border-border bg-white"
-            }`}
-            onClick={() => setIsFiltroOpen((isOpen) => !isOpen)}
-            ref={filtroTriggerRef}
-            type="button"
-          >
-            <span>Exigir concordância</span>
-            {externalIdProposicoesFiltroConcordancia.length > 0 ? (
-              <span
-                aria-hidden="true"
-                className="inline-flex min-w-6 items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-white"
-              >
-                {externalIdProposicoesFiltroConcordancia.length}
-              </span>
-            ) : null}
-            <ChevronDownIcon
-              aria-hidden="true"
-              className={`shrink-0 text-muted transition-transform duration-[180ms] ease-standard ${
-                isFiltroOpen ? "rotate-180" : ""
-              }`}
-            />
-          </button>
-          <div
-            className="mt-2 grid w-full gap-3 rounded-md border border-border bg-white p-3 sm:absolute sm:top-full sm:left-0 sm:z-popover sm:w-96 sm:shadow-popover"
-            hidden={!isFiltroOpen}
-            id={filtroPanelId}
-          >
-            <p className="text-sm leading-normal text-muted">
-              Marque as proposições em que o deputado precisa ter votado de
-              acordo com você.
-            </p>
-            <ProposicoesSelecionadasList
-              ariaLabel="Proposições do filtro de concordância"
-              className="max-h-[min(55vh,24rem)] overflow-y-auto pr-1"
-              posicoes={state.posicoes}
-              proposicoes={proposicoesElegiveis}
-              renderAction={(proposicao, _index, identificador) => (
-                <Checkbox
-                  checked={externalIdProposicoesFiltroConcordancia.includes(
-                    proposicao.externalIdProposicao,
-                  )}
-                  className="size-11 justify-center"
-                  hideLabel
-                  label={`Exigir concordância em ${identificador}`}
-                  onChange={() =>
-                    onToggleFiltroConcordancia(proposicao.externalIdProposicao)
-                  }
-                />
-              )}
-            />
-            <div className="flex items-center justify-between gap-2 border-t border-border pt-3">
-              <Button
-                disabled={
-                  externalIdProposicoesFiltroConcordancia.length === 0
-                }
-                onClick={() => {
-                  onClearFiltroConcordancia();
-                  setIsFiltroOpen(false);
-                  filtroTriggerRef.current?.focus();
-                }}
-                variant="ghost"
-              >
-                Limpar seleção
-              </Button>
-              <Button
-                onClick={() => {
-                  setIsFiltroOpen(false);
-                  filtroTriggerRef.current?.focus();
-                }}
-                variant="secondary"
-              >
-                Fechar filtro
-              </Button>
-            </div>
-          </div>
-        </div>
-        <Switch
-          checked={apenasEmAtividade}
-          className="order-3 col-span-full h-11 min-w-0 justify-start rounded-md border border-border bg-white px-3 py-2.5 sm:h-auto sm:border-0 sm:bg-transparent sm:px-0 sm:py-0"
-          label="Apenas em atividade"
-          onChange={(e) => onApenasEmAtividadeChange(e.target.checked)}
-        />
-      </div>
+      <SegmentedControl
+        activeId={escopo}
+        className="w-full sm:w-auto"
+        itemClassName="flex-1 sm:flex-none"
+        items={ESCOPO_ITEMS}
+        label="Escopo dos resultados"
+        onSelect={(id) => onEscopoChange(id as EscopoMatcher)}
+      />
+      <ResultadoFiltrosPanel
+        filtros={filtros}
+        onApply={onApplyFiltros}
+        posicoes={state.posicoes}
+        proposicoesElegiveis={proposicoesElegiveis}
+      />
     </div>
   );
   const resultadoControls = (
-    <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-4">
-      <div className="order-1 sm:order-2 sm:ml-auto">
-        {display === "results" ? compareAction : null}
+    <div className="grid min-w-0 gap-3">
+      <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-4">
+        <div className="order-1 sm:order-2 sm:ml-auto">
+          {display === "results" ? compareAction : null}
+        </div>
+        <div className="order-2 sm:order-1">{filterControls}</div>
       </div>
-      <div className="order-2 sm:order-1">{renderFilterControls()}</div>
+      <FiltrosAtivos
+        ativos={descreverResultadoFiltrosAtivos(filtros)}
+        onClear={() => onApplyFiltros(RESULTADO_FILTROS_PADRAO)}
+        onRemove={(id: ResultadoFiltroId) =>
+          onApplyFiltros(removerResultadoFiltro(filtros, id))
+        }
+      />
     </div>
   );
 
@@ -239,8 +157,7 @@ export function StepResultado({
       ? "Atualizando lista de deputados."
       : display === "error"
         ? "Não foi possível atualizar a lista de deputados."
-        : display === "empty" &&
-            externalIdProposicoesFiltroConcordancia.length > 0
+        : display === "empty" && hasFiltroConcordancia
           ? "Resultado atualizado: nenhum deputado votou com você em todas as proposições marcadas."
           : display === "empty"
             ? "Resultado atualizado: nenhum deputado encontrado."
@@ -278,7 +195,7 @@ export function StepResultado({
       <div className="grid gap-4">
         {resultadoStatus}
         {resultadoControls}
-        {externalIdProposicoesFiltroConcordancia.length > 0 ? (
+        {hasFiltroConcordancia ? (
           <ResultadoFiltroConcordanciaVazio
             escopo={escopo}
             onEscopoChange={onEscopoChange}
@@ -307,7 +224,7 @@ export function StepResultado({
         </div>
       ) : null}
       {isSemBomMatch(resultado) && <SemBomMatchBanner />}
-      {externalIdProposicoesFiltroConcordancia.length > 0 ? (
+      {hasFiltroConcordancia ? (
         <header aria-live="polite" className="grid gap-1">
           <h2 className="text-base font-[680] text-ink">
             Deputados que votaram com você nas proposições marcadas

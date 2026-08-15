@@ -4,19 +4,15 @@ import {
   MAX_POSICOES,
   MIN_POSICOES_COMPUTAVEIS,
 } from "@vota-comigo/shared-types";
-import type {
-  FeedOrdenacao,
-  ProposicaoCard,
-  TemaDisponivel,
-} from "@vota-comigo/shared-types";
+import type { ProposicaoCard, TemaDisponivel } from "@vota-comigo/shared-types";
 import { useState } from "react";
 
-import type { FeedDisplay, FeedStatus } from "@/shared/proposicao";
-import {
-  FeedOrdenacaoControl,
-  FeedSearch,
-  FeedTemaControl,
+import type {
+  FeedDisplay,
+  FeedStatus,
+  ProposicaoFeedFiltros,
 } from "@/shared/proposicao";
+import { ProposicaoFiltrosBar } from "@/shared/proposicao";
 import { Button, InlineMessage } from "@/shared/ui";
 
 import { SelecaoBottomBar } from "./selecao-bottom-bar";
@@ -30,8 +26,7 @@ type StepSelecaoProps = {
   display: FeedDisplay;
   canLoadMore: boolean;
   query: string;
-  ordenacao: FeedOrdenacao;
-  tema: number | null;
+  filtros: ProposicaoFeedFiltros;
   temas: readonly TemaDisponivel[];
   selected: ProposicaoCard[];
   totalSelecionadas: number;
@@ -39,9 +34,8 @@ type StepSelecaoProps = {
   onToggle: (proposicao: ProposicaoCard) => void;
   onSubmitSearch: (raw: string) => Promise<void>;
   onClearSearch: () => void;
-  onChangeOrdenacao: (value: FeedOrdenacao) => Promise<void>;
-  onChangeTema: (cod: number) => void;
-  onClearFilters: () => Promise<void>;
+  onApplyFiltros: (filtros: ProposicaoFeedFiltros) => Promise<void>;
+  onClearTudo: () => Promise<void>;
   onLoadMore: () => Promise<void>;
   onBack: () => void;
   onAdvance: () => void;
@@ -54,8 +48,7 @@ export function StepSelecao({
   display,
   canLoadMore,
   query,
-  ordenacao,
-  tema,
+  filtros,
   temas,
   selected,
   totalSelecionadas,
@@ -63,9 +56,8 @@ export function StepSelecao({
   onToggle,
   onSubmitSearch,
   onClearSearch,
-  onChangeOrdenacao,
-  onChangeTema,
-  onClearFilters,
+  onApplyFiltros,
+  onClearTudo,
   onLoadMore,
   onBack,
   onAdvance,
@@ -95,61 +87,23 @@ export function StepSelecao({
     void onSubmitSearch(term);
   }
 
-  async function handleClearFilters() {
+  async function handleClearTudo() {
     setDraft("");
-    await onClearFilters();
+    await onClearTudo();
   }
-
-  const filterPanelClassName = "order-last sm:basis-full sm:shrink-0";
-  const filterTriggerClassName =
-    "w-full [&>button]:w-full [&>button]:justify-center [&>span]:w-full sm:w-auto sm:[&>button]:w-auto sm:[&>span]:w-auto";
 
   return (
     <div className="grid gap-5 pb-44 lg:pb-0">
-      <div className="grid min-w-0 gap-4 sm:flex sm:flex-wrap sm:items-start sm:gap-2">
-        <FeedSearch
-          className="w-full sm:min-w-0 sm:flex-1"
-          disabled={status === "loading"}
-          isSearching={query !== ""}
-          onChange={setDraft}
-          onClear={handleClear}
-          onSubmit={handleSearchSubmit}
-          query={query}
-          value={draft}
-        />
-
-        <div className="grid min-w-0 gap-2 sm:contents">
-          <p className="text-sm font-[650] text-muted sm:hidden">Filtros</p>
-          <div className="grid min-w-0 grid-cols-2 gap-2 sm:contents">
-            <FeedOrdenacaoControl
-              className="col-span-full w-full sm:w-auto sm:shrink-0"
-              itemClassName="flex-1 sm:flex-none"
-              value={ordenacao}
-              onChange={onChangeOrdenacao}
-            />
-
-            {temas.length > 0 && (
-              <FeedTemaControl
-                activeTema={tema}
-                onSelect={onChangeTema}
-                panelClassName={filterPanelClassName}
-                spanToolbar
-                temas={temas}
-                triggerClassName={filterTriggerClassName}
-              />
-            )}
-
-            <Button
-              className="h-11 min-w-0 sm:hidden"
-              disabled={status === "loading"}
-              onClick={handleClearFilters}
-              variant="secondary"
-            >
-              Limpar
-            </Button>
-          </div>
-        </div>
-      </div>
+      <ProposicaoFiltrosBar
+        draft={draft}
+        filtros={filtros}
+        onApplyFiltros={onApplyFiltros}
+        onClearSearch={handleClear}
+        onDraftChange={setDraft}
+        onSearch={handleSearchSubmit}
+        query={query}
+        temas={temas}
+      />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_21rem] lg:items-start lg:gap-8">
         <aside className="hidden min-w-0 gap-5 rounded-lg border border-border bg-surface p-5 lg:sticky lg:top-24 lg:col-start-2 lg:row-start-1 lg:grid">
@@ -191,7 +145,7 @@ export function StepSelecao({
             canLoadMore={canLoadMore}
             display={display}
             items={items}
-            onClearFilters={onClearFilters}
+            onClearTudo={handleClearTudo}
             onLoadMore={onLoadMore}
             onToggle={onToggle}
             selectedIds={selectedIds}

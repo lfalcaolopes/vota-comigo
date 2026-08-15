@@ -1,6 +1,7 @@
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
 import { describe, expect, it } from "vitest";
 
+import { FILTROS_PADRAO, type ProposicaoFeedFiltros } from "../feed-filtros";
 import {
   feedDisplay,
   feedReducer,
@@ -26,15 +27,21 @@ function card(externalIdProposicao: number): ProposicaoCard {
 
 const firstPage = [card(1), card(2)];
 
+function filtros(
+  overrides: Partial<ProposicaoFeedFiltros> = {},
+): ProposicaoFeedFiltros {
+  return { ...FILTROS_PADRAO, ...overrides };
+}
+
 describe("initFeedState", () => {
   describe("when initialised with no criteria", () => {
     it("starts idle, with the given items and total", () => {
       // Arrange / Act
-      const state = initFeedState(firstPage, 50);
+      const state = initFeedState({ items: firstPage, total: 50 });
 
       // Assert
       expect(state.query).toBe("");
-      expect(state.tema).toBeNull();
+      expect(state.filtros.tema).toBeNull();
       expect(state.feed.items).toEqual(firstPage);
       expect(state.feed.total).toBe(50);
       expect(state.status).toBe("idle");
@@ -42,30 +49,39 @@ describe("initFeedState", () => {
 
     it("starts with ordenacao mais-votadas", () => {
       // Arrange / Act
-      const state = initFeedState(firstPage, 50);
+      const state = initFeedState({ items: firstPage, total: 50 });
 
       // Assert
-      expect(state.ordenacao).toBe("mais-votadas");
+      expect(state.filtros.ordenacao).toBe("mais-votadas");
     });
 
     it("accepts a custom initial ordenacao", () => {
       // Arrange / Act
-      const state = initFeedState(firstPage, 50, "mais-recentes");
+      const state = initFeedState({
+        items: firstPage,
+        total: 50,
+        filtros: filtros({ ordenacao: "mais-recentes" }),
+      });
 
       // Assert
-      expect(state.ordenacao).toBe("mais-recentes");
+      expect(state.filtros.ordenacao).toBe("mais-recentes");
     });
   });
 
   describe("when initialised with a query", () => {
     it("stores the trimmed query and the items as the feed", () => {
       // Arrange / Act
-      const state = initFeedState(firstPage, 2, "mais-recentes", 37, " saúde ");
+      const state = initFeedState({
+        items: firstPage,
+        total: 2,
+        query: " saúde ",
+        filtros: filtros({ ordenacao: "mais-recentes", tema: 37 }),
+      });
 
       // Assert
       expect(state.query).toBe("saúde");
-      expect(state.ordenacao).toBe("mais-recentes");
-      expect(state.tema).toBe(37);
+      expect(state.filtros.ordenacao).toBe("mais-recentes");
+      expect(state.filtros.tema).toBe(37);
       expect(state.feed.items).toEqual(firstPage);
       expect(state.feed.total).toBe(2);
     });
@@ -74,18 +90,22 @@ describe("initFeedState", () => {
   describe("when initialised with a tema", () => {
     it("stores the tema", () => {
       // Arrange / Act
-      const state = initFeedState(firstPage, 50, "mais-votadas", 37);
+      const state = initFeedState({
+        items: firstPage,
+        total: 50,
+        filtros: filtros({ tema: 37 }),
+      });
 
       // Assert
-      expect(state.tema).toBe(37);
+      expect(state.filtros.tema).toBe(37);
     });
 
     it("defaults tema to null when not provided", () => {
       // Arrange / Act
-      const state = initFeedState(firstPage, 50);
+      const state = initFeedState({ items: firstPage, total: 50 });
 
       // Assert
-      expect(state.tema).toBeNull();
+      expect(state.filtros.tema).toBeNull();
     });
   });
 });
@@ -94,7 +114,7 @@ describe("feedReducer", () => {
   describe("when changeQuery is dispatched", () => {
     it("records the new query, clears the feed, and starts loading", () => {
       // Arrange
-      const state = initFeedState(firstPage, 50);
+      const state = initFeedState({ items: firstPage, total: 50 });
 
       // Act
       const next = feedReducer(state, { type: "changeQuery", query: "saúde" });
@@ -107,150 +127,120 @@ describe("feedReducer", () => {
 
     it("preserves tema and ordenacao", () => {
       // Arrange
-      const state = initFeedState(firstPage, 50, "mais-recentes", 37);
+      const state = initFeedState({
+        items: firstPage,
+        total: 50,
+        filtros: filtros({ ordenacao: "mais-recentes", tema: 37 }),
+      });
 
       // Act
       const next = feedReducer(state, { type: "changeQuery", query: "saúde" });
 
       // Assert
-      expect(next.tema).toBe(37);
-      expect(next.ordenacao).toBe("mais-recentes");
+      expect(next.filtros.tema).toBe(37);
+      expect(next.filtros.ordenacao).toBe("mais-recentes");
     });
   });
 
   describe("when clearSearch is dispatched", () => {
     it("clears the query but preserves tema and ordenacao, and resets the feed to loading", () => {
       // Arrange
-      const state = initFeedState(firstPage, 50, "mais-recentes", 37, "saúde");
+      const state = initFeedState({
+        items: firstPage,
+        total: 50,
+        query: "saúde",
+        filtros: filtros({ ordenacao: "mais-recentes", tema: 37 }),
+      });
 
       // Act
       const next = feedReducer(state, { type: "clearSearch" });
 
       // Assert
       expect(next.query).toBe("");
-      expect(next.tema).toBe(37);
-      expect(next.ordenacao).toBe("mais-recentes");
+      expect(next.filtros.tema).toBe(37);
+      expect(next.filtros.ordenacao).toBe("mais-recentes");
       expect(next.feed.items).toEqual([]);
       expect(next.status).toBe("loading");
     });
   });
 
-  describe("when changeOrdenacao is dispatched", () => {
-    it("records the new ordenacao, clears the feed, and starts loading", () => {
+  describe("when applyFiltros is dispatched", () => {
+    it("records the whole set, clears the feed, and starts loading", () => {
       // Arrange
-      const state = initFeedState(firstPage, 50);
+      const state = initFeedState({ items: firstPage, total: 50 });
 
       // Act
       const next = feedReducer(state, {
-        type: "changeOrdenacao",
-        ordenacao: "mais-recentes",
+        type: "applyFiltros",
+        filtros: filtros({ ordenacao: "mais-recentes", tema: 37 }),
       });
 
       // Assert
-      expect(next.ordenacao).toBe("mais-recentes");
+      expect(next.filtros).toEqual(
+        filtros({ ordenacao: "mais-recentes", tema: 37 }),
+      );
       expect(next.feed.items).toEqual([]);
       expect(next.status).toBe("loading");
     });
 
-    it("preserves query and tema", () => {
+    it("preserves the active query", () => {
       // Arrange
-      const state = initFeedState(firstPage, 50, "mais-votadas", 37, "saúde");
+      const state = initFeedState({
+        items: firstPage,
+        total: 50,
+        query: "saúde",
+      });
 
       // Act
       const next = feedReducer(state, {
-        type: "changeOrdenacao",
-        ordenacao: "mais-recentes",
+        type: "applyFiltros",
+        filtros: filtros({ tema: 37 }),
       });
 
       // Assert
       expect(next.query).toBe("saúde");
-      expect(next.tema).toBe(37);
     });
 
-    it("switching ordenacao back leaves no stale items", () => {
+    it("leaves no stale items when a filter goes back to the default", () => {
       // Arrange
-      const withNew = feedReducer(initFeedState(firstPage, 50), {
-        type: "changeOrdenacao",
-        ordenacao: "mais-recentes",
-      });
-
-      // Act
-      const back = feedReducer(withNew, {
-        type: "changeOrdenacao",
-        ordenacao: "mais-votadas",
-      });
-
-      // Assert
-      expect(back.ordenacao).toBe("mais-votadas");
-      expect(back.feed.items).toEqual([]);
-    });
-  });
-
-  describe("when changeTema is dispatched", () => {
-    it("records the tema, clears the feed, and starts loading", () => {
-      // Arrange
-      const state = initFeedState(firstPage, 50);
-
-      // Act
-      const next = feedReducer(state, { type: "changeTema", tema: 37 });
-
-      // Assert
-      expect(next.tema).toBe(37);
-      expect(next.feed.items).toEqual([]);
-      expect(next.status).toBe("loading");
-    });
-
-    it("preserves query and ordenacao", () => {
-      // Arrange
-      const state = initFeedState(
-        firstPage,
-        50,
-        "mais-recentes",
-        null,
-        "saúde",
+      const comTema = feedReducer(
+        initFeedState({ items: firstPage, total: 50 }),
+        { type: "applyFiltros", filtros: filtros({ tema: 37 }) },
       );
+      const carregado = feedReducer(comTema, {
+        type: "feedSuccess",
+        items: [card(9)],
+        total: 1,
+      });
 
       // Act
-      const next = feedReducer(state, { type: "changeTema", tema: 37 });
+      const next = feedReducer(carregado, {
+        type: "applyFiltros",
+        filtros: FILTROS_PADRAO,
+      });
 
       // Assert
-      expect(next.query).toBe("saúde");
-      expect(next.ordenacao).toBe("mais-recentes");
-    });
-  });
-
-  describe("when clearTema is dispatched", () => {
-    it("clears only tema while preserving query and ordenacao, and starts loading", () => {
-      // Arrange
-      const state = initFeedState(firstPage, 50, "mais-recentes", 37, "saúde");
-
-      // Act
-      const next = feedReducer(state, { type: "clearTema" });
-
-      // Assert
-      expect(next.tema).toBeNull();
-      expect(next.query).toBe("saúde");
-      expect(next.ordenacao).toBe("mais-recentes");
+      expect(next.filtros).toEqual(FILTROS_PADRAO);
       expect(next.feed.items).toEqual([]);
-      expect(next.status).toBe("loading");
     });
   });
 
-  describe("when clearFilters is dispatched", () => {
-    it("clears query and tema while preserving ordenacao, and starts loading", () => {
+  describe("when clearTudo is dispatched", () => {
+    it("clears the query and every filter, including the ordenacao", () => {
       // Arrange
-      const state = feedReducer(
-        initFeedState(firstPage, 50, "mais-recentes", null, "saúde"),
-        { type: "changeTema", tema: 37 },
-      );
+      const state = initFeedState({
+        items: firstPage,
+        total: 50,
+        query: "saúde",
+        filtros: filtros({ ordenacao: "mais-recentes", tema: 37 }),
+      });
 
       // Act
-      const next = feedReducer(state, { type: "clearFilters" });
+      const next = feedReducer(state, { type: "clearTudo" });
 
       // Assert
       expect(next.query).toBe("");
-      expect(next.tema).toBeNull();
-      expect(next.ordenacao).toBe("mais-recentes");
+      expect(next.filtros).toEqual(FILTROS_PADRAO);
       expect(next.feed.items).toEqual([]);
       expect(next.status).toBe("loading");
     });
@@ -259,7 +249,7 @@ describe("feedReducer", () => {
   describe("when loadMoreStart is dispatched", () => {
     it("moves to loading without dropping the current items", () => {
       // Arrange
-      const state = initFeedState(firstPage, 50);
+      const state = initFeedState({ items: firstPage, total: 50 });
 
       // Act
       const next = feedReducer(state, { type: "loadMoreStart" });
@@ -273,9 +263,12 @@ describe("feedReducer", () => {
   describe("when loadMoreSuccess is dispatched", () => {
     it("appends the new page to the existing items", () => {
       // Arrange
-      const loading = feedReducer(initFeedState(firstPage, 50), {
-        type: "loadMoreStart",
-      });
+      const loading = feedReducer(
+        initFeedState({ items: firstPage, total: 50 }),
+        {
+          type: "loadMoreStart",
+        },
+      );
       const secondPage = [card(3), card(4)];
 
       // Act
@@ -294,10 +287,13 @@ describe("feedReducer", () => {
   describe("when feedSuccess is dispatched", () => {
     it("replaces the feed with the new items (not appends)", () => {
       // Arrange
-      const loading = feedReducer(initFeedState(firstPage, 50), {
-        type: "changeQuery",
-        query: "saúde",
-      });
+      const loading = feedReducer(
+        initFeedState({ items: firstPage, total: 50 }),
+        {
+          type: "changeQuery",
+          query: "saúde",
+        },
+      );
 
       // Act
       const next = feedReducer(loading, {
@@ -316,9 +312,12 @@ describe("feedReducer", () => {
   describe("when loadError is dispatched", () => {
     it("moves to error while keeping the active items for retry", () => {
       // Arrange
-      const loading = feedReducer(initFeedState(firstPage, 50), {
-        type: "loadMoreStart",
-      });
+      const loading = feedReducer(
+        initFeedState({ items: firstPage, total: 50 }),
+        {
+          type: "loadMoreStart",
+        },
+      );
 
       // Act
       const next = feedReducer(loading, { type: "loadError" });
@@ -333,7 +332,7 @@ describe("feedReducer", () => {
 describe("nextOffset", () => {
   it("reflects the number of loaded items in the feed", () => {
     // Arrange
-    const state = initFeedState(firstPage, 50);
+    const state = initFeedState({ items: firstPage, total: 50 });
 
     // Act / Assert
     expect(nextOffset(state)).toBe(firstPage.length);
@@ -342,7 +341,9 @@ describe("nextOffset", () => {
   it("reflects the feed length after load-more", () => {
     // Arrange
     const state = feedReducer(
-      feedReducer(initFeedState(firstPage, 50), { type: "loadMoreStart" }),
+      feedReducer(initFeedState({ items: firstPage, total: 50 }), {
+        type: "loadMoreStart",
+      }),
       { type: "loadMoreSuccess", items: [card(7)], total: 50 },
     );
 
@@ -355,7 +356,7 @@ describe("hasMore", () => {
   describe("when fewer items than the total are loaded", () => {
     it("is true", () => {
       // Arrange
-      const state = initFeedState(firstPage, 50);
+      const state = initFeedState({ items: firstPage, total: 50 });
 
       // Act / Assert
       expect(hasMore(state)).toBe(true);
@@ -365,7 +366,10 @@ describe("hasMore", () => {
   describe("when every item has been loaded", () => {
     it("is false", () => {
       // Arrange
-      const state = initFeedState(firstPage, firstPage.length);
+      const state = initFeedState({
+        items: firstPage,
+        total: firstPage.length,
+      });
 
       // Act / Assert
       expect(hasMore(state)).toBe(false);
@@ -377,7 +381,7 @@ describe("feedDisplay", () => {
   describe("when there are items", () => {
     it("shows results", () => {
       // Arrange
-      const state = initFeedState(firstPage, 50);
+      const state = initFeedState({ items: firstPage, total: 50 });
 
       // Act / Assert
       expect(feedDisplay(state)).toBe("results");
@@ -385,9 +389,12 @@ describe("feedDisplay", () => {
 
     it("keeps showing results while loading more over existing items", () => {
       // Arrange
-      const state = feedReducer(initFeedState(firstPage, 50), {
-        type: "loadMoreStart",
-      });
+      const state = feedReducer(
+        initFeedState({ items: firstPage, total: 50 }),
+        {
+          type: "loadMoreStart",
+        },
+      );
 
       // Act / Assert
       expect(feedDisplay(state)).toBe("results");
@@ -397,7 +404,7 @@ describe("feedDisplay", () => {
   describe("when empty with no active criteria", () => {
     it("shows empty-default", () => {
       // Arrange
-      const state = initFeedState([], 0);
+      const state = initFeedState({ items: [], total: 0 });
 
       // Act / Assert
       expect(feedDisplay(state)).toBe("empty-default");
@@ -408,7 +415,7 @@ describe("feedDisplay", () => {
     it("shows empty-filtered", () => {
       // Arrange
       const state = feedReducer(
-        feedReducer(initFeedState(firstPage, 50), {
+        feedReducer(initFeedState({ items: firstPage, total: 50 }), {
           type: "changeQuery",
           query: "xyz",
         }),
@@ -424,9 +431,9 @@ describe("feedDisplay", () => {
     it("shows empty-filtered", () => {
       // Arrange
       const state = feedReducer(
-        feedReducer(initFeedState([], 0), {
-          type: "changeTema",
-          tema: 37,
+        feedReducer(initFeedState({ items: [], total: 0 }), {
+          type: "applyFiltros",
+          filtros: filtros({ tema: 37 }),
         }),
         { type: "feedSuccess", items: [], total: 0 },
       );
@@ -439,7 +446,7 @@ describe("feedDisplay", () => {
   describe("when loading with no items", () => {
     it("shows loading", () => {
       // Arrange
-      const state = feedReducer(initFeedState([], 0), {
+      const state = feedReducer(initFeedState({ items: [], total: 0 }), {
         type: "changeQuery",
         query: "saúde",
       });
@@ -453,7 +460,7 @@ describe("feedDisplay", () => {
     it("shows error", () => {
       // Arrange
       const state = feedReducer(
-        feedReducer(initFeedState([], 0), {
+        feedReducer(initFeedState({ items: [], total: 0 }), {
           type: "changeQuery",
           query: "xyz",
         }),
@@ -467,7 +474,9 @@ describe("feedDisplay", () => {
     it("keeps showing results when items remain for inline retry", () => {
       // Arrange
       const state = feedReducer(
-        feedReducer(initFeedState(firstPage, 50), { type: "loadMoreStart" }),
+        feedReducer(initFeedState({ items: firstPage, total: 50 }), {
+          type: "loadMoreStart",
+        }),
         { type: "loadError" },
       );
 

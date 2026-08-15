@@ -16,6 +16,16 @@ export {
   type DeputadosFeedUrlState,
 } from "./feed-url";
 export {
+  contarFiltrosAtivos,
+  descreverFiltrosAtivos,
+  removerFiltro,
+  saoFiltrosIguais,
+  FILTROS_PADRAO,
+  type DeputadoFeedFiltros,
+  type DeputadoFiltroAtivo,
+  type DeputadoFiltroId,
+} from "./feed-filtros";
+export {
   deputadoFeedDisplay,
   deputadoFeedReducer,
   deputadoHasMore,

@@ -538,28 +538,87 @@ describe("matcherReducer", () => {
     });
   });
 
-  describe("when resultado URL filters are applied", () => {
-    it("activates the filters and resets the requested first page", () => {
-      // Arrange
-      const state = {
+  describe("when the resultado filters are applied", () => {
+    function comCache() {
+      return {
         ...initMatcherState(candidates),
         resultados: {
           estadual: resultado("estadual"),
           nacional: resultado("nacional"),
         },
       };
+    }
+
+    it("activates the filters and resets the requested first page", () => {
+      // Arrange
+      const state = comCache();
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setResultadoFilters",
+        escopo: "nacional",
+        apenasEmAtividade: false,
+        externalIdProposicoesFiltroConcordancia: [],
+      });
+
+      // Assert
+      expect(next.escopo).toBe("nacional");
+      expect(next.resultados.nacional).toBeNull();
+      expect(next.resultados.estadual).not.toBeNull();
+    });
+
+    it("discards the cached scope when the atividade cut changes", () => {
+      // Arrange
+      const state = comCache();
 
       // Act
       const next = matcherReducer(state, {
         type: "setResultadoFilters",
         escopo: "nacional",
         apenasEmAtividade: true,
+        externalIdProposicoesFiltroConcordancia: [],
       });
 
       // Assert
-      expect(next.escopo).toBe("nacional");
       expect(next.apenasEmAtividade).toBe(true);
       expect(next.resultados.nacional).toBeNull();
+      expect(next.resultados.estadual).toBeNull();
+    });
+
+    it("discards the cached scope when the concordancia marks change", () => {
+      // Arrange
+      const state = comCache();
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setResultadoFilters",
+        escopo: "nacional",
+        apenasEmAtividade: false,
+        externalIdProposicoesFiltroConcordancia: [1],
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([1]);
+      expect(next.resultados.estadual).toBeNull();
+    });
+
+    it("keeps the concordancia marks that were already applied", () => {
+      // Arrange
+      const state = {
+        ...comCache(),
+        externalIdProposicoesFiltroConcordancia: [1],
+      };
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setResultadoFilters",
+        escopo: "nacional",
+        apenasEmAtividade: false,
+        externalIdProposicoesFiltroConcordancia: [1],
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([1]);
       expect(next.resultados.estadual).not.toBeNull();
     });
   });
@@ -970,93 +1029,6 @@ describe("matcherReducer", () => {
       expect(state.selected.map((c) => c.externalIdProposicao)).toEqual([
         1, 2, 3, 6,
       ]);
-    });
-  });
-
-  describe("setApenasEmAtividade", () => {
-    it("preserves the filtro de concordancia", () => {
-      // Arrange
-      const state = {
-        ...initMatcherState(candidates),
-        externalIdProposicoesFiltroConcordancia: [1],
-      };
-
-      // Act
-      const next = matcherReducer(state, {
-        type: "setApenasEmAtividade",
-        value: true,
-      });
-
-      // Assert
-      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([1]);
-    });
-
-    it("sets apenasEmAtividade to true", () => {
-      // Arrange
-      const state = initMatcherState(candidates);
-
-      // Act
-      const next = matcherReducer(state, {
-        type: "setApenasEmAtividade",
-        value: true,
-      });
-
-      // Assert
-      expect(next.apenasEmAtividade).toBe(true);
-    });
-
-    it("sets apenasEmAtividade to false", () => {
-      // Arrange
-      const state = {
-        ...initMatcherState(candidates),
-        apenasEmAtividade: true,
-      };
-
-      // Act
-      const next = matcherReducer(state, {
-        type: "setApenasEmAtividade",
-        value: false,
-      });
-
-      // Assert
-      expect(next.apenasEmAtividade).toBe(false);
-    });
-
-    it("clears both resultado caches when toggled", () => {
-      // Arrange
-      const r = resultado("estadual");
-      const state = {
-        ...initMatcherState(candidates),
-        resultados: { estadual: r, nacional: r },
-      };
-
-      // Act
-      const next = matcherReducer(state, {
-        type: "setApenasEmAtividade",
-        value: true,
-      });
-
-      // Assert
-      expect(next.resultados.estadual).toBeNull();
-      expect(next.resultados.nacional).toBeNull();
-    });
-
-    it("does not affect other state fields", () => {
-      // Arrange
-      const state = {
-        ...initMatcherState(candidates),
-        escopo: "nacional" as const,
-      };
-
-      // Act
-      const next = matcherReducer(state, {
-        type: "setApenasEmAtividade",
-        value: true,
-      });
-
-      // Assert
-      expect(next.escopo).toBe("nacional");
-      expect(next.selected).toBe(state.selected);
     });
   });
 

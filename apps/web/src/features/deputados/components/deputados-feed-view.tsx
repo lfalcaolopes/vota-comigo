@@ -12,17 +12,19 @@ import {
   buildComparativoDeputadosHref,
   buildDeputadosFeedHref,
   canOpenComparativo,
-  DeputadoPartidoControl,
-  DeputadoUfControl,
+  descreverFiltrosAtivos,
+  FILTROS_PADRAO,
   hasComparativoDeputadoLimit,
+  removerFiltro,
   toggleComparativoDeputado,
   useDeputadoFeedState,
+  type DeputadoFeedFiltros,
+  type DeputadoFiltroId,
 } from "@/shared/deputado";
-import { Button, SearchField, Switch } from "@/shared/ui";
+import { Button, FiltrosAtivos, SearchField } from "@/shared/ui";
 
 import { DeputadosFeedList } from "./deputados-feed-list";
-
-type OpenFilter = "uf" | "partido" | null;
+import { DeputadosFiltrosPanel } from "./deputados-filtros-panel";
 
 type DeputadosFeedViewProps = {
   initialItems: DeputadoCard[];
@@ -52,31 +54,26 @@ export function DeputadosFeedView({
     total,
     status,
     query,
-    emAtividade,
-    uf,
-    partido,
+    filtros,
     display,
     canLoadMore,
     submitSearch,
     clearSearch,
-    toggleEmAtividade,
-    changeUf,
-    clearUf,
-    changePartido,
-    clearPartido,
-    clearFilters,
+    applyFiltros,
+    clearTudo,
     loadMore,
-  } = useDeputadoFeedState(
-    initialItems,
-    initialTotal,
-    initialQuery ?? "",
-    initialEmAtividade,
-    initialUf,
-    initialPartido,
-  );
+  } = useDeputadoFeedState({
+    items: initialItems,
+    total: initialTotal,
+    query: initialQuery ?? "",
+    filtros: {
+      emAtividade: initialEmAtividade,
+      uf: initialUf,
+      partido: initialPartido,
+    },
+  });
 
   const [draft, setDraft] = useState(initialQuery ?? "");
-  const [openFilter, setOpenFilter] = useState<OpenFilter>(null);
   const [isSelectingComparativo, setIsSelectingComparativo] = useState(false);
   const [selectedComparativo, setSelectedComparativo] = useState<
     readonly DeputadoCard[]
@@ -113,119 +110,40 @@ export function DeputadosFeedView({
     );
   }
 
-  async function handleClear() {
+  function replaceHref(next: { query: string | null } & DeputadoFeedFiltros) {
+    router.replace(buildDeputadosFeedHref(pathname, next));
+  }
+
+  async function handleClearSearch() {
     setDraft("");
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: null,
-        emAtividade,
-        uf,
-        partido,
-      }),
-    );
+    replaceHref({ query: null, ...filtros });
     await clearSearch();
   }
 
   async function handleSearch() {
     const term = draft.trim();
     if (term.length === 0) {
-      await handleClear();
+      await handleClearSearch();
       return;
     }
 
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: term,
-        emAtividade,
-        uf,
-        partido,
-      }),
-    );
+    replaceHref({ query: term, ...filtros });
     await submitSearch(term);
   }
 
-  async function handleEmAtividade() {
-    const next = !emAtividade;
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: activeQuery,
-        emAtividade: next,
-        uf,
-        partido,
-      }),
-    );
-    await toggleEmAtividade();
+  async function handleApplyFiltros(next: DeputadoFeedFiltros) {
+    replaceHref({ query: activeQuery, ...next });
+    await applyFiltros(next);
   }
 
-  async function handleUf(value: string) {
-    const next = uf === value ? null : value;
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: activeQuery,
-        emAtividade,
-        uf: next,
-        partido,
-      }),
-    );
-    if (next === null) {
-      await clearUf();
-    } else {
-      await changeUf(next);
-    }
+  async function handleRemoveFiltro(id: DeputadoFiltroId) {
+    await handleApplyFiltros(removerFiltro(filtros, id));
   }
 
-  async function handleClearUf() {
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: activeQuery,
-        emAtividade,
-        uf: null,
-        partido,
-      }),
-    );
-    await clearUf();
-  }
-
-  async function handlePartido(value: string) {
-    const next = partido === value ? null : value;
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: activeQuery,
-        emAtividade,
-        uf,
-        partido: next,
-      }),
-    );
-    if (next === null) {
-      await clearPartido();
-    } else {
-      await changePartido(next);
-    }
-  }
-
-  async function handleClearPartido() {
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: activeQuery,
-        emAtividade,
-        uf,
-        partido: null,
-      }),
-    );
-    await clearPartido();
-  }
-
-  async function handleClearFilters() {
+  async function handleClearTudo() {
     setDraft("");
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: null,
-        emAtividade: false,
-        uf: null,
-        partido: null,
-      }),
-    );
-    await clearFilters();
+    replaceHref({ query: null, ...FILTROS_PADRAO });
+    await clearTudo();
   }
 
   const compareAction = isSelectingComparativo ? (
@@ -256,14 +174,23 @@ export function DeputadosFeedView({
     </Button>
   );
 
-  const filterPanelClassName = "order-last";
-  const filterTriggerClassName =
-    "w-full [&>button]:w-full [&>button]:justify-center [&>span]:w-full sm:w-auto sm:[&>button]:w-auto sm:[&>span]:w-auto";
+  const announcement =
+    display === "loading"
+      ? "Atualizando lista de deputados."
+      : display === "error"
+        ? "Não foi possível atualizar a lista de deputados."
+        : total === 1
+          ? "Lista atualizada: 1 deputado encontrado."
+          : `Lista atualizada: ${total} deputados encontrados.`;
 
   return (
     <div className="grid min-w-0 gap-7">
-      <div className="grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto_auto] lg:items-start">
-        <div className="grid min-w-0 max-w-full gap-3">
+      <p aria-atomic="true" className="sr-only" role="status">
+        {announcement}
+      </p>
+
+      <div className="grid min-w-0 gap-3">
+        <div className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
           <form
             className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
             onSubmit={(event) => {
@@ -284,7 +211,6 @@ export function DeputadosFeedView({
             </div>
             <Button
               className="h-11 sm:shrink-0"
-              disabled={status === "loading"}
               type="submit"
               variant="primary"
             >
@@ -292,66 +218,35 @@ export function DeputadosFeedView({
             </Button>
           </form>
 
-          {query !== "" ? (
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-              <p className="text-muted">
-                Resultados para{" "}
-                <span className="font-[650] text-ink">&quot;{query}&quot;</span>
-              </p>
-              <button
-                className="font-[650] text-muted underline decoration-border underline-offset-2 transition-colors duration-[140ms] ease-standard hover:text-ink hover:decoration-current"
-                onClick={handleClear}
-                type="button"
-              >
-                Limpar busca
-              </button>
-            </div>
-          ) : null}
+          <DeputadosFiltrosPanel
+            filtros={filtros}
+            onApply={handleApplyFiltros}
+            partidos={partidos}
+            ufs={ufs}
+          />
         </div>
 
-        <div className="grid min-w-0 gap-2 sm:contents">
-          <p className="text-sm font-[650] text-muted sm:hidden">Filtros</p>
-          <div className="grid min-w-0 grid-cols-2 gap-2 sm:contents">
-            <Switch
-              checked={emAtividade}
-              className="h-11 min-w-0 justify-start rounded-md border border-border bg-white px-3 py-2.5 sm:px-4"
-              disabled={status === "loading"}
-              label="Em atividade"
-              onChange={handleEmAtividade}
-            />
-
-            <DeputadoUfControl
-              activeUf={uf}
-              onClear={handleClearUf}
-              onOpenChange={(open) => setOpenFilter(open ? "uf" : null)}
-              onSelect={handleUf}
-              open={openFilter === "uf"}
-              panelClassName={filterPanelClassName}
-              triggerClassName={filterTriggerClassName}
-              ufs={ufs}
-            />
-
-            <DeputadoPartidoControl
-              activePartido={partido}
-              onClear={handleClearPartido}
-              onOpenChange={(open) => setOpenFilter(open ? "partido" : null)}
-              onSelect={handlePartido}
-              open={openFilter === "partido"}
-              panelClassName={filterPanelClassName}
-              triggerClassName={filterTriggerClassName}
-              partidos={partidos}
-            />
-
-            <Button
-              className="h-11 min-w-0 sm:hidden"
-              disabled={status === "loading"}
-              onClick={handleClearFilters}
-              variant="secondary"
+        {query !== "" ? (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+            <p className="text-muted">
+              Resultados para{" "}
+              <span className="font-[650] text-ink">&quot;{query}&quot;</span>
+            </p>
+            <button
+              className="cursor-pointer font-[650] text-muted underline decoration-border underline-offset-2 transition-colors duration-[140ms] ease-standard hover:text-ink hover:decoration-current"
+              onClick={handleClearSearch}
+              type="button"
             >
-              Limpar
-            </Button>
+              Limpar busca
+            </button>
           </div>
-        </div>
+        ) : null}
+
+        <FiltrosAtivos
+          ativos={descreverFiltrosAtivos(filtros)}
+          onClear={() => handleApplyFiltros(FILTROS_PADRAO)}
+          onRemove={handleRemoveFiltro}
+        />
       </div>
 
       <div className="grid min-w-0 gap-3">
@@ -369,7 +264,7 @@ export function DeputadosFeedView({
         canLoadMore={canLoadMore}
         display={display}
         items={items}
-        onClearFilters={handleClearFilters}
+        onClearTudo={handleClearTudo}
         onLoadMore={loadMore}
         selection={
           isSelectingComparativo
