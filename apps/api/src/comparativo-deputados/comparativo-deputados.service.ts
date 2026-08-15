@@ -49,12 +49,16 @@ function getYear(date: string): number {
   return Number(date.slice(0, 4));
 }
 
+// A janela de quem segue em exercício vai até o fim da legislatura, que ainda
+// não aconteceu; perguntar pela cobertura de um ano futuro só produziria um
+// buraco falso. O dado parcial do ano corrente é da alçada da coberturaAte.
 function toAnosDaJanela(
   dataInicio: string,
   dataFim: string,
+  referencia: string,
 ): readonly number[] {
   const anoInicio = getYear(dataInicio);
-  const anoFim = getYear(dataFim);
+  const anoFim = Math.min(getYear(dataFim), getYear(referencia));
 
   return Array.from(
     { length: Math.max(0, anoFim - anoInicio + 1) },
@@ -153,7 +157,11 @@ export class ComparativoDeputadosService {
       });
     }
 
-    const years = toAnosDaJanela(janela.dataInicio, janela.dataFim);
+    const years = toAnosDaJanela(
+      janela.dataInicio,
+      janela.dataFim,
+      referencia.toISOString(),
+    );
 
     const [proposicoesSource, orgaosSource, cotaSource, resumoPresencaRow] =
       await Promise.all([

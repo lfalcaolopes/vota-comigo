@@ -26,6 +26,15 @@ const INTERVALO_57_ENCERRADO: IntervaloExercicio = {
   closedAt: '2025-04-10T00:00:00Z',
 };
 
+const INTERVALO_57_EM_EXERCICIO: IntervaloExercicio = {
+  openedAt: '2023-02-01T12:00:01Z',
+  closedAt: null,
+};
+
+afterEach(() => {
+  jest.useRealTimers();
+});
+
 function perfilSource(
   externalIdDeputado: number,
   overrides: Partial<DeputadoPerfilSource> = {},
@@ -219,6 +228,64 @@ describe('comparativo de deputados', () => {
       expect(periodos[0]).toEqual({
         dataInicio: '2023-02-01',
         dataFim: '2025-04-10',
+      });
+    });
+  });
+
+  describe('quando o deputado ainda está em exercício', () => {
+    it('consulta as métricas só até o ano corrente, não até o fim da legislatura', async () => {
+      // Arrange
+      jest.useFakeTimers().setSystemTime(new Date('2026-08-15T12:00:00Z'));
+      const anosConsultados: number[][] = [];
+      const service = new ComparativoDeputadosService(
+        createRepository([perfilSource(1), perfilSource(2)], {
+          loadIntervalosExercicio: async () => [INTERVALO_57_EM_EXERCICIO],
+          loadDeputadoProposicoesAssinadasJanela: async (
+            _deputadoId,
+            years,
+          ) => {
+            anosConsultados.push([...years]);
+            return { anos: [], coveredThroughDate: null };
+          },
+        }),
+      );
+
+      // Act
+      await service.comparativo([1, 2]);
+
+      // Assert
+      expect(anosConsultados[0]).toEqual([2023, 2024, 2025, 2026]);
+    });
+
+    it('mantém as proposições assinadas disponíveis quando os anos já vividos estão carregados', async () => {
+      // Arrange
+      jest.useFakeTimers().setSystemTime(new Date('2026-08-15T12:00:00Z'));
+      const service = new ComparativoDeputadosService(
+        createRepository([perfilSource(1), perfilSource(2)], {
+          loadIntervalosExercicio: async () => [INTERVALO_57_EM_EXERCICIO],
+          loadDeputadoProposicoesAssinadasJanela: async (
+            _deputadoId,
+            years,
+          ) => ({
+            anos: years.map((year) => ({
+              year,
+              coberto: year <= 2026,
+              assinaturasJson: { [`${year}-03-04`]: [4, 1] as const },
+            })),
+            coveredThroughDate: '2026-08-10',
+          }),
+        }),
+      );
+
+      // Act
+      const response = await service.comparativo([1, 2]);
+
+      // Assert
+      expect(response.items[0].proposicoesAssinadas).toEqual({
+        disponivel: true,
+        total: 16,
+        totalPrimeiroSignatario: 4,
+        coveredThroughDate: '2026-08-10',
       });
     });
   });
