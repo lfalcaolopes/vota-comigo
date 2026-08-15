@@ -6,6 +6,8 @@ import {
 import type { FeedOrdenacao } from '@vota-comigo/shared-types';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
+import { toSearchCondition } from './repository/proposicoes-search.condition';
+import type { ProposicoesSearchPlan } from './rules/proposicoes-search';
 import type {
   ProposicaoTemaRow,
   ProposicaoResumoIaProjection,
@@ -137,8 +139,8 @@ function toProposicaoResumoIaProjection(row: {
 export type ProposicoesFeedQuery = {
   readonly ordenacao: FeedOrdenacao;
   readonly tema?: number;
-  // Ausente quando a busca textual roda em memoria e precisa do conjunto todo.
-  readonly pagination?: { readonly limit: number; readonly offset: number };
+  readonly busca?: ProposicoesSearchPlan;
+  readonly pagination: { readonly limit: number; readonly offset: number };
 };
 
 export type ProposicoesFeedPage = {
@@ -190,7 +192,10 @@ export function createProposicoesRepository(
             )
           : undefined;
 
-      const base = db
+      const buscaCondition =
+        query.busca === undefined ? undefined : toSearchCondition(query.busca);
+
+      const rows = await db
         .select({
           externalIdProposicao: proposicao.externalIdProposicao,
           siglaTipo: proposicao.siglaTipo,
@@ -214,15 +219,10 @@ export function createProposicoesRepository(
           proposicaoResumoIa,
           eq(proposicaoResumoIa.proposicaoId, proposicao.id),
         )
-        .where(temaCondition)
-        .orderBy(ordenacaoSql(query.ordenacao));
-
-      const rows =
-        query.pagination === undefined
-          ? await base
-          : await base
-              .limit(query.pagination.limit)
-              .offset(query.pagination.offset);
+        .where(and(temaCondition, buscaCondition))
+        .orderBy(ordenacaoSql(query.ordenacao))
+        .limit(query.pagination.limit)
+        .offset(query.pagination.offset);
 
       const items = rows.map((row) => ({
         proposicao: {

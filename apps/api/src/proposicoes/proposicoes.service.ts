@@ -14,7 +14,7 @@ import {
   type ProposicoesRepository,
 } from './proposicoes.repository';
 import { toTemasDisponiveis } from './rules/temas-disponiveis';
-import { filterProposicoesByQuery } from './rules/proposicoes-search';
+import { toSearchPlan } from './rules/proposicoes-search';
 
 @Injectable()
 export class ProposicoesService {
@@ -30,30 +30,18 @@ export class ProposicoesService {
     tema?: number,
     q?: string,
   ): Promise<ProposicoesFeedResponse> {
-    const termo = q?.trim();
-    const busca = termo !== undefined && termo.length > 0;
+    const busca = q === undefined ? null : toSearchPlan(q);
 
-    // A busca textual tem parser de citacao e casamento por token, que seguem
-    // em JS; por isso ela precisa do conjunto inteiro antes de paginar.
     const page = await this.repository.loadProposicoesComputaveis({
       ordenacao,
       tema,
-      pagination: busca ? undefined : { limit, offset },
+      busca: busca ?? undefined,
+      pagination: { limit, offset },
     });
 
-    if (!busca) {
-      return {
-        items: page.items.map(toProposicaoCard),
-        total: page.total,
-        limit,
-        offset,
-      };
-    }
-
-    const filtered = filterProposicoesByQuery(page.items, termo);
     return {
-      items: filtered.slice(offset, offset + limit).map(toProposicaoCard),
-      total: filtered.length,
+      items: page.items.map(toProposicaoCard),
+      total: page.total,
       limit,
       offset,
     };

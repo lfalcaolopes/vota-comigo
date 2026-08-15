@@ -1,25 +1,23 @@
-import type {
-  ProposicaoCardResumo,
-  ProposicaoFeedItem,
-} from '../types/proposicoes.types';
+export type Citation = {
+  siglaTipo?: string;
+  numero: string;
+  ano?: string;
+};
 
-export function filterProposicoesByQuery(
-  computaveis: readonly ProposicaoFeedItem[],
-  q: string,
-): readonly ProposicaoFeedItem[] {
-  const tokens = tokenizeQuery(q);
-  if (tokens.length === 0) return computaveis;
+export type ProposicoesSearchPlan =
+  | { readonly kind: 'citation'; readonly citation: Citation }
+  | { readonly kind: 'tokens'; readonly tokens: readonly string[] };
 
-  const citation = parseCitation(q);
-  if (citation !== null) {
-    return computaveis.filter((r) =>
-      matchesCitation(toSearchableProposicao(r.proposicao), citation),
-    );
+export function toSearchPlan(query: string): ProposicoesSearchPlan | null {
+  const tokens = tokenizeQuery(query);
+  if (tokens.length === 0) {
+    return null;
   }
 
-  return computaveis.filter((r) =>
-    matchesAllTokens(toSearchableProposicao(r.proposicao), tokens),
-  );
+  const citation = parseCitation(query);
+  return citation === null
+    ? { kind: 'tokens', tokens }
+    : { kind: 'citation', citation };
 }
 
 export function normalizeText(value: string): string {
@@ -31,49 +29,6 @@ export function tokenizeQuery(query: string): readonly string[] {
     .split(/[\s/]+/)
     .filter((token) => token.length > 0);
 }
-
-export type SearchableProposicao = {
-  ementa: string;
-  siglaTipo: string;
-  numero: string;
-  ano: string;
-};
-
-export function toSearchableProposicao(
-  proposicao: ProposicaoCardResumo,
-): SearchableProposicao {
-  return {
-    ementa: normalizeText(proposicao.ementa ?? ''),
-    siglaTipo: normalizeText(proposicao.siglaTipo ?? ''),
-    numero: proposicao.numero === null ? '' : String(proposicao.numero),
-    ano: proposicao.ano === null ? '' : String(proposicao.ano),
-  };
-}
-
-function tokenMatchesField(
-  fields: SearchableProposicao,
-  token: string,
-): boolean {
-  return (
-    token === fields.siglaTipo ||
-    token === fields.numero ||
-    token === fields.ano ||
-    fields.ementa.includes(token)
-  );
-}
-
-export function matchesAllTokens(
-  fields: SearchableProposicao,
-  tokens: readonly string[],
-): boolean {
-  return tokens.every((token) => tokenMatchesField(fields, token));
-}
-
-export type Citation = {
-  siglaTipo?: string;
-  numero: string;
-  ano?: string;
-};
 
 export function parseCitation(query: string): Citation | null {
   const tokens = tokenizeQuery(query);
@@ -107,18 +62,4 @@ export function parseCitation(query: string): Citation | null {
   }
 
   return null;
-}
-
-export function matchesCitation(
-  fields: SearchableProposicao,
-  citation: Citation,
-): boolean {
-  if (fields.numero !== citation.numero) return false;
-  if (
-    citation.siglaTipo !== undefined &&
-    fields.siglaTipo !== citation.siglaTipo
-  )
-    return false;
-  if (citation.ano !== undefined && fields.ano !== citation.ano) return false;
-  return true;
 }

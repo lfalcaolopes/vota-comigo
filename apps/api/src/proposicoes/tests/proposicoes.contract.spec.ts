@@ -13,6 +13,7 @@ import type {
   ProposicaoDetalheResult,
   ProposicaoTemaRow,
   ProposicaoVotacaoJoinRow,
+  ProposicoesFeedQuery,
   ProposicoesRepository,
   VotacaoDetalheRow,
 } from '../proposicoes.repository';
@@ -117,11 +118,17 @@ type FakeData = {
   temas?: readonly ProposicaoTemaRow[];
 };
 
+const feedQueries: ProposicoesFeedQuery[] = [];
+
 function fakeRepository(data: FakeData): ProposicoesRepository {
   return {
     // O filtro de tema e a paginacao rodam no SQL; o fake os reproduz apenas
-    // para os testes de contrato exercitarem o formato da resposta.
-    loadProposicoesComputaveis: async ({ tema, pagination }) => {
+    // para os testes de contrato exercitarem o formato da resposta. A busca
+    // nao e reproduzida: o contrato so verifica o plano que chega ao
+    // repositorio, e o casamento em si e coberto pelo E2E.
+    loadProposicoesComputaveis: async (query) => {
+      feedQueries.push(query);
+      const { tema, pagination } = query;
       const computaveis = toProposicoesComputaveis(data.lista ?? []);
       const matchingIds = new Set(
         (data.temas ?? [])
@@ -134,13 +141,10 @@ function fakeRepository(data: FakeData): ProposicoesRepository {
           : computaveis.filter((row) =>
               matchingIds.has(row.proposicao.externalIdProposicao),
             );
-      const items =
-        pagination === undefined
-          ? filtrados
-          : filtrados.slice(
-              pagination.offset,
-              pagination.offset + pagination.limit,
-            );
+      const items = filtrados.slice(
+        pagination.offset,
+        pagination.offset + pagination.limit,
+      );
       return { items, total: filtrados.length };
     },
     loadComputableExternalIds: async () =>
@@ -440,6 +444,7 @@ describe('GET /proposicoes/feed with q param', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
+    feedQueries.length = 0;
     app = await buildApp({
       lista: [
         joinRow({ externalIdProposicao: 1, ementa: 'Dispõe sobre saúde' }),
@@ -456,8 +461,8 @@ describe('GET /proposicoes/feed with q param', () => {
     await app.close();
   });
 
-  describe('when q matches computavel proposicoes', () => {
-    it('returns a valid feed contract with only the matching items', async () => {
+  describe('when q carries a term', () => {
+    it('returns a valid feed contract and hands the term to the repository as a token search', async () => {
       // Act
       const response = await request(getTestServer(app))
         .get('/proposicoes/feed')
@@ -465,10 +470,11 @@ describe('GET /proposicoes/feed with q param', () => {
 
       // Assert
       expect(response.status).toBe(200);
-      const body = proposicoesFeedResponseSchema.parse(
-        response.body as unknown,
-      );
-      expect(body.items.map((item) => item.externalIdProposicao)).toEqual([1]);
+      proposicoesFeedResponseSchema.parse(response.body as unknown);
+      expect(feedQueries.at(-1)?.busca).toEqual({
+        kind: 'tokens',
+        tokens: ['saude'],
+      });
     });
 
     it('caps limit at 100 and honours the offset query param', async () => {
@@ -483,6 +489,7 @@ describe('GET /proposicoes/feed with q param', () => {
       );
       expect(body.limit).toBe(100);
       expect(body.offset).toBe(1);
+      expect(feedQueries.at(-1)?.pagination).toEqual({ limit: 100, offset: 1 });
     });
   });
 
@@ -503,67 +510,48 @@ describe('GET /proposicoes/feed with q param', () => {
         response.body as unknown,
       );
       expect(body.total).toBe(2);
+      expect(feedQueries.at(-1)?.busca).toBeUndefined();
     });
   });
 
-  describe('when q matches nothing', () => {
-    it('returns an empty page, not an error', async () => {
+  describe('when q is a citation', () => {
+    it('hands the repository an identifier lookup instead of a token search', async () => {
       // Act
       const response = await request(getTestServer(app))
         .get('/proposicoes/feed')
-        .query({ q: 'zzz' });
+        .query({ q: 'pec 3/2021' });
 
       // Assert
       expect(response.status).toBe(200);
-      const body = proposicoesFeedResponseSchema.parse(
-        response.body as unknown,
-      );
-      expect(body).toMatchObject({ items: [], total: 0 });
+      expect(feedQueries.at(-1)?.busca).toEqual({
+        kind: 'citation',
+        citation: { siglaTipo: 'pec', numero: '3', ano: '2021' },
+      });
     });
   });
 });
 
-describe('GET /proposicoes/feed with citation q', () => {
+describe('GET /proposicoes/feed when the search matches nothing', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    app = await buildApp({
-      lista: [
-        joinRow({
-          externalIdProposicao: 42,
-          siglaTipo: 'PEC',
-          numero: 3,
-          ano: 2021,
-          ementa: 'Altera a Constituição Federal',
-          externalIdVotacao: '42-1',
-        }),
-        joinRow({
-          externalIdProposicao: 99,
-          siglaTipo: 'PL',
-          numero: 100,
-          ano: 2020,
-          ementa: 'Texto com 3 itens publicado em 2021 sobre pec',
-          externalIdVotacao: '99-1',
-        }),
-      ],
-    });
+    app = await buildApp({ lista: [] });
   });
 
   afterAll(async () => {
     await app.close();
   });
 
-  it('returns only the exact proposicao for "pec 3/2021", ignoring ementa coincidences', async () => {
+  it('returns an empty page, not an error', async () => {
     // Act
     const response = await request(getTestServer(app))
       .get('/proposicoes/feed')
-      .query({ q: 'pec 3/2021' });
+      .query({ q: 'zzz' });
 
     // Assert
     expect(response.status).toBe(200);
     const body = proposicoesFeedResponseSchema.parse(response.body as unknown);
-    expect(body.total).toBe(1);
-    expect(body.items.map((item) => item.externalIdProposicao)).toEqual([42]);
+    expect(body).toMatchObject({ items: [], total: 0 });
   });
 });
 

@@ -1,63 +1,10 @@
 import {
-  filterProposicoesByQuery,
-  matchesCitation,
-  matchesAllTokens,
   parseCitation,
+  toSearchPlan,
   tokenizeQuery,
   type Citation,
-  type SearchableProposicao,
+  type ProposicoesSearchPlan,
 } from '../rules/proposicoes-search';
-import { toProposicoesComputaveis } from '../rules/proposicoes-computaveis';
-import type { ProposicaoVotacaoJoinRow } from '../proposicoes.repository';
-
-function joinRow(
-  overrides: Partial<ProposicaoVotacaoJoinRow> = {},
-): ProposicaoVotacaoJoinRow {
-  return {
-    externalIdProposicao: 1,
-    siglaTipo: 'PL',
-    numero: 100,
-    ano: 2024,
-    ementa: 'Dispõe sobre saúde pública',
-    descricaoTipo: 'Projeto de Lei',
-    ementaDetalhada: 'Detalha regras de saúde pública.',
-    keywords: 'Saúde pública.',
-    urlInteiroTeor: null,
-    dataApresentacao: '2024-04-15T10:00:00Z',
-    ultimoStatusSiglaOrgao: 'PLEN',
-    ultimoStatusDescricaoSituacao: 'Aprovada',
-    ultimoStatusRegime: 'Urgência',
-    ultimoStatusDataHora: '2024-06-01T10:00:00Z',
-    externalIdVotacao: '1-1',
-    data: '2024-05-01',
-    dataHoraRegistro: '2024-05-01T12:00:00Z',
-    descricao: 'Aprovado o Projeto de Lei',
-    ultimaAberturaVotacaoDescricao: null,
-    ultimaApresentacaoProposicaoDescricao: null,
-    votosSim: 300,
-    votosNao: 100,
-    votosOutros: 5,
-    aprovacao: 1,
-    resumoIa: null,
-    ...overrides,
-  };
-}
-
-function computaveis(...rows: ProposicaoVotacaoJoinRow[]) {
-  return toProposicoesComputaveis(rows);
-}
-
-function searchable(
-  overrides: Partial<SearchableProposicao> = {},
-): SearchableProposicao {
-  return {
-    ementa: 'dispoe sobre saude publica',
-    siglaTipo: 'pl',
-    numero: '1234',
-    ano: '2024',
-    ...overrides,
-  };
-}
 
 describe('tokenizeQuery', () => {
   describe('when the query has words separated by whitespace', () => {
@@ -83,36 +30,6 @@ describe('tokenizeQuery', () => {
 
       // Assert
       expect(tokens).toEqual(['pec', '3', '2021']);
-    });
-  });
-});
-
-describe('matchesAllTokens', () => {
-  describe('when every token is found across the searchable fields', () => {
-    it('matches with tokens spread over ementa, siglaTipo and ano', () => {
-      // Arrange
-      const fields = searchable();
-      const tokens = tokenizeQuery('saude pl 2024');
-
-      // Act
-      const matched = matchesAllTokens(fields, tokens);
-
-      // Assert
-      expect(matched).toBe(true);
-    });
-  });
-
-  describe('when at least one token is missing from every field', () => {
-    it('does not match (AND semantics)', () => {
-      // Arrange
-      const fields = searchable();
-      const tokens = tokenizeQuery('saude educacao');
-
-      // Act
-      const matched = matchesAllTokens(fields, tokens);
-
-      // Assert
-      expect(matched).toBe(false);
     });
   });
 });
@@ -181,185 +98,55 @@ describe('parseCitation', () => {
   });
 });
 
-describe('matchesCitation', () => {
-  function citationSearchable(
-    overrides: Partial<SearchableProposicao> = {},
-  ): SearchableProposicao {
-    return {
-      ementa: 'texto qualquer',
-      siglaTipo: 'pec',
-      numero: '3',
-      ano: '2021',
-      ...overrides,
-    };
-  }
-
-  describe('when all citation fields are present', () => {
-    it('matches when siglaTipo, numero and ano all agree', () => {
-      // Arrange
-      const fields = citationSearchable();
-      const citation: Citation = { siglaTipo: 'pec', numero: '3', ano: '2021' };
-
-      // Act & Assert
-      expect(matchesCitation(fields, citation)).toBe(true);
-    });
-
-    it('does not match when siglaTipo differs', () => {
-      // Arrange
-      const fields = citationSearchable({ siglaTipo: 'pl' });
-      const citation: Citation = { siglaTipo: 'pec', numero: '3', ano: '2021' };
-
-      // Act & Assert
-      expect(matchesCitation(fields, citation)).toBe(false);
-    });
-
-    it('does not match when numero differs', () => {
-      // Arrange
-      const fields = citationSearchable({ numero: '5' });
-      const citation: Citation = { siglaTipo: 'pec', numero: '3', ano: '2021' };
-
-      // Act & Assert
-      expect(matchesCitation(fields, citation)).toBe(false);
-    });
-
-    it('does not match when ano differs', () => {
-      // Arrange
-      const fields = citationSearchable({ ano: '2022' });
-      const citation: Citation = { siglaTipo: 'pec', numero: '3', ano: '2021' };
-
-      // Act & Assert
-      expect(matchesCitation(fields, citation)).toBe(false);
-    });
-  });
-
-  describe('when siglaTipo is absent from the citation', () => {
-    it('matches any siglaTipo when numero and ano agree', () => {
-      // Arrange
-      const fields = citationSearchable({ siglaTipo: 'pl' });
-      const citation: Citation = { numero: '3', ano: '2021' };
-
-      // Act & Assert
-      expect(matchesCitation(fields, citation)).toBe(true);
-    });
-  });
-
-  describe('when ano is absent from the citation', () => {
-    it('matches any ano when siglaTipo and numero agree', () => {
-      // Arrange
-      const fields = citationSearchable({ ano: '2023' });
-      const citation: Citation = { siglaTipo: 'pec', numero: '3' };
-
-      // Act & Assert
-      expect(matchesCitation(fields, citation)).toBe(true);
-    });
-  });
-});
-
-describe('filterProposicoesByQuery', () => {
-  describe('when the query is a citation', () => {
-    it('returns only the exact match, excluding ementa coincidences', () => {
-      // Arrange
-      const target = joinRow({
-        externalIdProposicao: 10,
-        siglaTipo: 'PEC',
-        numero: 3,
-        ano: 2021,
-        ementa: 'Altera a Constituição',
-        externalIdVotacao: '10-1',
-      });
-      const ementaCoincidence = joinRow({
-        externalIdProposicao: 11,
-        siglaTipo: 'PL',
-        numero: 100,
-        ano: 2020,
-        ementa: 'Texto sobre 3 itens publicado em 2021',
-        externalIdVotacao: '11-1',
-      });
-      const items = computaveis(target, ementaCoincidence);
-
-      // Act
-      const result = filterProposicoesByQuery(items, 'pec 3/2021');
+describe('toSearchPlan', () => {
+  describe('when the query reads as a legislative citation', () => {
+    it('plans an exact lookup by identifier, not a text match', () => {
+      // Arrange & Act
+      const plan = toSearchPlan('PEC 3/2021');
 
       // Assert
-      expect(result.map((r) => r.proposicao.externalIdProposicao)).toEqual([
-        10,
-      ]);
+      expect(plan).toEqual<ProposicoesSearchPlan>({
+        kind: 'citation',
+        citation: { siglaTipo: 'pec', numero: '3', ano: '2021' },
+      });
     });
   });
 
-  describe('when the query is a plain text term', () => {
-    it('returns items where every token matches ementa or identifier (AND)', () => {
-      // Arrange
-      const saude = joinRow({
-        externalIdProposicao: 1,
-        ementa: 'Dispõe sobre saúde pública',
-        externalIdVotacao: '1-1',
-      });
-      const educacao = joinRow({
-        externalIdProposicao: 2,
-        ementa: 'Dispõe sobre educação',
-        externalIdVotacao: '2-1',
-      });
-      const items = computaveis(saude, educacao);
-
-      // Act
-      const result = filterProposicoesByQuery(items, 'saúde');
+  describe('when the query is free text', () => {
+    it('plans a token match with the normalized tokens', () => {
+      // Arrange & Act
+      const plan = toSearchPlan('Saúde Pública');
 
       // Assert
-      expect(result.map((r) => r.proposicao.externalIdProposicao)).toEqual([1]);
+      expect(plan).toEqual<ProposicoesSearchPlan>({
+        kind: 'tokens',
+        tokens: ['saude', 'publica'],
+      });
     });
 
-    it('does not match a theme name that only appears as a category, not in the ementa or identifier', () => {
-      // Arrange
-      const row = joinRow({
-        externalIdProposicao: 1,
-        siglaTipo: 'PL',
-        numero: 100,
-        ano: 2024,
-        ementa: 'Dispõe sobre finanças municipais',
-        externalIdVotacao: '1-1',
-      });
-      const items = computaveis(row);
-
-      // Act — "saúde" is a tema category name, not in this proposicao's identifier or ementa
-      const result = filterProposicoesByQuery(items, 'saúde');
+    it('keeps a lone number as a token match, since it is not a citation', () => {
+      // Arrange & Act
+      const plan = toSearchPlan('1234');
 
       // Assert
-      expect(result).toHaveLength(0);
-    });
-
-    it('requires every token to match (AND semantics)', () => {
-      // Arrange
-      const row = joinRow({
-        externalIdProposicao: 1,
-        ementa: 'Dispõe sobre saúde pública',
-        externalIdVotacao: '1-1',
+      expect(plan).toEqual<ProposicoesSearchPlan>({
+        kind: 'tokens',
+        tokens: ['1234'],
       });
-      const items = computaveis(row);
-
-      // Act
-      const result = filterProposicoesByQuery(items, 'saúde educação');
-
-      // Assert
-      expect(result).toHaveLength(0);
     });
   });
 
-  describe('when the query is empty or contains only separators', () => {
+  describe('when the query has no usable term', () => {
     it.each([
       ['empty string', ''],
       ['whitespace only', '   '],
       ['separator only', '/'],
-    ])('returns all items unchanged for %s', (_label, q) => {
-      // Arrange
-      const row = joinRow({ externalIdVotacao: '1-1' });
-      const items = computaveis(row);
-
-      // Act
-      const result = filterProposicoesByQuery(items, q);
+    ])('plans no search for %s', (_label, query) => {
+      // Arrange & Act
+      const plan = toSearchPlan(query);
 
       // Assert
-      expect(result).toHaveLength(items.length);
+      expect(plan).toBeNull();
     });
   });
 });
