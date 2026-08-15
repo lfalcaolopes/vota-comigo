@@ -222,11 +222,17 @@ _Avoid_: Proposição relatada como sinônimo de Proposição assinada pelo depu
 **Cota parlamentar**: Cota para o Exercício da Atividade Parlamentar (CEAP), limite mensal de reembolso de despesas ligadas à atividade parlamentar, cujo teto varia por estado de origem do deputado porque embute o preço da passagem aérea até a capital.
 _Avoid_: Verba indenizatória, Salário do deputado, Auxílio.
 
-**Gasto da cota do deputado**: Valor debitado da cota parlamentar por um deputado em um mês e uma categoria oficial, calculado como o valor líquido menos a restituição posterior.
+**Gasto da cota do deputado**: Valor debitado da cota parlamentar por um deputado em um mês e uma categoria oficial. No dump anual da CEAP é o valor líquido menos a restituição posterior; nos períodos cobertos pela reposição de passagem aérea SIGEPA é o valor líquido, porque a fonte não publica restituição.
 _Avoid_: Despesa do deputado, Gasto pessoal do deputado.
 
 **Cobertura do dado da cota**: Último mês de um ano que o arquivo oficial da CEAP efetivamente cobria quando foi carregado, usado para distinguir um mês sem gasto de um mês ainda não carregado.
 _Avoid_: Mês zerado como sinônimo de mês sem dado.
+
+**Reposição de passagem aérea SIGEPA**: Preenchimento, a partir da API da Câmara, dos gastos da categoria passagem aérea SIGEPA que o dump anual da CEAP deixou de publicar de agosto de 2025 em diante. Vale por ano inteiro: enquanto a reposição de um ano não cobre todos os deputados com exercício naquele ano, nenhum deputado é exibido com o valor reposto.
+_Avoid_: Passagem aérea como sinônimo da categoria SIGEPA — a categoria RPA é distinta e continua vindo do dump.
+
+**Ano reposto**: Ano cuja reposição de passagem aérea SIGEPA cobre todos os deputados elegíveis e foi apurada contra a cobertura do dado da cota vigente. Um dump posterior que avance a cobertura devolve o ano à condição de não reposto.
+_Avoid_: Ano completo como sinônimo, já que a completude do dump e a da reposição são condições separadas.
 
 ## Relationships
 
@@ -336,6 +342,7 @@ _Avoid_: Mês zerado como sinônimo de mês sem dado.
 - Um mês além da **Cobertura do dado da cota** é **Lacuna de dados**, não gasto zero; os dois nunca são apresentados da mesma forma.
 - Um ano ainda não carregado é **Lacuna de dados**, não ausência de gasto; o **Perfil do deputado** só oferece anos carregados e distingue os dois vazios por texto próprio.
 - O total anual de **Gastos da cota do deputado** é acompanhado da mediana do estado no mesmo ano, porque o teto da **Cota parlamentar** varia por estado e um valor absoluto isolado mede geografia antes de comportamento.
+- A mediana do estado só acompanha o total quando a fonte do ano está completa. Um ano dentro da janela da **Reposição de passagem aérea SIGEPA** que ainda não seja **Ano reposto** exibe o total sem comparação, porque a lacuna encolhe o gasto de cada **Deputado** em proporção diferente — muito para quem voa, pouco para quem não voa — e uma mediana igualmente encolhida faria quem mais voa parecer quem menos gasta.
 - A mediana do estado considera apenas **Deputados** que exerceram o ano inteiro; um **Deputado** com exercício parcial não recebe comparação, e seu gasto nunca é extrapolado por pró-rata.
 - A mediana do estado é sempre exibida com o número de **Deputados** que entraram no cálculo, sem piso de amostra: o denominador é o que calibra a confiança, e suprimi-la tiraria a referência das bancadas pequenas, que têm menos referência própria.
 - Um **Gasto da cota do deputado** agregado pode ser negativo, porque compensações e cancelamentos de passagem aérea excedem o gasto do período; o valor negativo é preservado e nunca apresentado em forma que o exiba como despesa positiva.
