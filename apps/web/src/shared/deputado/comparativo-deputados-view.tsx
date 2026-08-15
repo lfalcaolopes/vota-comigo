@@ -4,7 +4,7 @@ import type {
 } from "@vota-comigo/shared-types";
 import Link from "next/link";
 
-import { Badge, InlineMessage } from "@/shared/ui";
+import { Badge, HelpPopover, InlineMessage } from "@/shared/ui";
 
 import {
   buildComparativoDeputadosGrid,
@@ -185,8 +185,13 @@ function ComparativoLinha({ row }: { row: ComparativoDeputadosRow }) {
   return (
     <>
       <div className={labelColumnClassName}>
-        <p className="text-sm font-[650] leading-normal text-ink">
+        <p className="flex items-center gap-2 text-sm font-[650] leading-normal text-ink">
           {row.label}
+          {row.help !== null ? (
+            <HelpPopover align="start" title={row.label}>
+              {row.help}
+            </HelpPopover>
+          ) : null}
         </p>
         {row.hint !== null ? (
           <p className="mt-1 text-xs leading-normal text-muted">{row.hint}</p>
@@ -246,8 +251,11 @@ function ComparativoMobile({
       {rows.map((row) => (
         <section className="grid gap-3" key={row.id}>
           <header className="grid gap-1">
-            <h3 className="text-base font-[680] leading-snug text-ink">
+            <h3 className="flex items-center gap-2 text-base font-[680] leading-snug text-ink">
               {row.label}
+              {row.help !== null ? (
+                <HelpPopover title={row.label}>{row.help}</HelpPopover>
+              ) : null}
             </h3>
             {row.hint !== null ? (
               <p className="text-xs leading-normal text-muted">{row.hint}</p>

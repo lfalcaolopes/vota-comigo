@@ -1,6 +1,7 @@
 export { ArrowLeftIcon } from "./arrow-left-icon";
 export { Button, ButtonLink, IconButton } from "./button";
 export { ChevronDownIcon } from "./chevron-down-icon";
+export { HelpPopover } from "./help-popover";
 export { SparklesIcon } from "./sparkles-icon";
 export { SearchField, TextField } from "./field";
 export type { BadgeTone } from "./selection";

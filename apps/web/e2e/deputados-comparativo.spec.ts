@@ -114,6 +114,103 @@ test.describe("comparativo de deputados a partir da listagem", () => {
     await expect(page.getByText("R$")).toHaveCount(0);
   });
 
+  test("explica a cota parlamentar em um popover ancorado", async ({
+    page,
+  }) => {
+    // Arrange
+    await routeComparativo(page);
+    await page.goto("/deputados/comparativo/20,10");
+    const ajuda = page
+      .getByRole("button", {
+        name: "Mais informações sobre Gasto da cota parlamentar",
+      })
+      .filter({ visible: true })
+      .first();
+    await expect(ajuda).toBeVisible({ timeout: 15_000 });
+
+    // Act
+    await ajuda.click();
+
+    // Assert
+    const popover = page.getByRole("dialog");
+    await expect(popover).toBeVisible();
+    await expect(popover).toContainText(
+      "custeia as despesas do mandato, como passagens aéreas",
+    );
+  });
+
+  test("mantém o popover dentro da janela quando o gatilho está no rodapé", async ({
+    page,
+  }) => {
+    // Arrange
+    await routeComparativo(page);
+    await page.goto("/deputados/comparativo/20,10");
+    const ajuda = page
+      .getByRole("button", {
+        name: "Mais informações sobre Gasto da cota parlamentar",
+      })
+      .filter({ visible: true })
+      .first();
+    await expect(ajuda).toBeVisible({ timeout: 15_000 });
+    const viewport = page.viewportSize();
+    if (viewport === null) throw new Error("viewport indisponível");
+    const gatilho = await ajuda.boundingBox();
+    if (gatilho === null) throw new Error("gatilho sem posição");
+    await page.mouse.wheel(0, gatilho.y - viewport.height + gatilho.height + 8);
+    await page.waitForTimeout(200);
+
+    // Act
+    await ajuda.click();
+
+    // Assert
+    const caixa = await page.getByRole("dialog").boundingBox();
+    if (caixa === null) throw new Error("popover sem posição");
+    expect(caixa.y).toBeGreaterThanOrEqual(0);
+    expect(caixa.y + caixa.height).toBeLessThanOrEqual(viewport.height);
+  });
+
+  test("fecha o popover da cota pelo X, por fora e pelo Escape", async ({
+    page,
+  }) => {
+    // Arrange
+    await page.setViewportSize({ width: 390, height: 780 });
+    await routeComparativo(page);
+    await page.goto("/deputados/comparativo/20,10");
+    const ajuda = page
+      .getByRole("button", {
+        name: "Mais informações sobre Gasto da cota parlamentar",
+      })
+      .filter({ visible: true })
+      .first();
+    await expect(ajuda).toBeVisible({ timeout: 15_000 });
+    const popover = page.getByRole("dialog");
+
+    // Act
+    await ajuda.click();
+    await expect(popover).toBeVisible();
+    await page.getByRole("button", { name: "Fechar" }).click();
+
+    // Assert
+    await expect(popover).toBeHidden();
+
+    // Act
+    await ajuda.click();
+    await expect(popover).toBeVisible();
+    await page.mouse.click(5, 5);
+
+    // Assert
+    await expect(popover).toBeHidden();
+
+    // Act
+    await ajuda.click();
+    await expect(popover).toBeVisible();
+    await page.keyboard.press("Escape");
+
+    // Assert
+    await expect(popover).toBeHidden();
+    await expect(ajuda).toBeFocused();
+  });
+
   test("leva de volta à listagem de deputados", async ({ page }) => {
     // Arrange
     await routeComparativo(page);

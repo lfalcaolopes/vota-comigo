@@ -8,7 +8,10 @@ import type {
   DeputadoResumoPresenca,
 } from "@vota-comigo/shared-types";
 
-import { formatGastoCotaCompacto } from "./gasto-cota-presentation";
+import {
+  COTA_PARLAMENTAR_HELP,
+  formatGastoCotaCompacto,
+} from "./gasto-cota-presentation";
 import {
   formatPercentual,
   mostrarCoberturaJanela,
@@ -51,6 +54,7 @@ export type ComparativoDeputadosRow = {
   id: string;
   label: string;
   hint: string | null;
+  help: string | null;
   cells: readonly ComparativoDeputadosCell[];
 };
 
@@ -77,6 +81,7 @@ export function buildComparativoDeputadosGrid(
         id: "presenca",
         label: "Presença registrada",
         hint: RECORTE_PRESENCA_COMPARATIVO,
+        help: null,
         cells: response.items.map((item) =>
           toRowCell(item, () => toPresencaCell(item.resumoPresenca)),
         ),
@@ -85,6 +90,7 @@ export function buildComparativoDeputadosGrid(
         id: "proposicoes-assinadas",
         label: "Proposições assinadas",
         hint: null,
+        help: null,
         cells: response.items.map((item) =>
           toRowCell(item, () =>
             toProposicoesCell(item.proposicoesAssinadas, item.janela),
@@ -95,6 +101,7 @@ export function buildComparativoDeputadosGrid(
         id: "orgaos",
         label: "Órgãos distintos",
         hint: null,
+        help: null,
         cells: response.items.map((item) =>
           toRowCell(item, () => toOrgaosCell(item.orgaos, item.janela)),
         ),
@@ -103,6 +110,7 @@ export function buildComparativoDeputadosGrid(
         id: "cota",
         label: "Gasto da cota parlamentar",
         hint: null,
+        help: COTA_PARLAMENTAR_HELP,
         cells: response.items.map((item) =>
           toRowCell(item, () => toCotaCell(item.cota, item.externalIdDeputado)),
         ),

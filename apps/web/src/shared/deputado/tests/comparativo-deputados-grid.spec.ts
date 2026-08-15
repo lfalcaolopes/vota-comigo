@@ -10,6 +10,7 @@ import {
   toComparativoAviso,
   toComparativoNotaCobertura,
 } from "../comparativo-deputados-grid";
+import { COTA_PARLAMENTAR_HELP } from "../gasto-cota-presentation";
 
 const JANELA_57 = {
   status: "disponivel" as const,
@@ -167,6 +168,18 @@ describe("grade do comparativo de deputados", () => {
       expect(rowById(grid, "presenca").hint).toContain(
         "legislatura mostrada na coluna",
       );
+    });
+
+    it("explica o que é a cota parlamentar apenas na linha da cota", () => {
+      // Arrange
+      const data = response([deputado(1), deputado(2)]);
+
+      // Act
+      const grid = buildComparativoDeputadosGrid(data);
+
+      // Assert
+      expect(rowById(grid, "cota").help).toBe(COTA_PARLAMENTAR_HELP);
+      expect(rowById(grid, "presenca").help).toBeNull();
     });
 
     it("carrega a janela de cada deputado na coluna", () => {
