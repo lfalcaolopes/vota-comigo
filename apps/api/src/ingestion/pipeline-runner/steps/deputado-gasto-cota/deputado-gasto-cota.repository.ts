@@ -53,6 +53,11 @@ export function createDeputadoGastoCotaRepository(
             });
         }
 
+        // O set mexe só na cobertura do dump: sigepa_reposto e
+        // sigepa_covered_through_month são estado do passo de reposição, e
+        // reingerir o ano não pode apagá-los. Um dump que avance a cobertura
+        // devolve o ano a não reposto pela comparação dos dois meses na
+        // leitura, sem escrita aqui (ADR 022).
         await tx
           .insert(cotaCobertura)
           .values({ year, coveredThroughMonth })

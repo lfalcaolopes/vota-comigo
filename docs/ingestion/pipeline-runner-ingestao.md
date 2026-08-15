@@ -141,6 +141,8 @@ pnpm ingest -- --only=deputado_gasto_cota_sigepa --from=2025 --to=2025 --limit=1
 
 O `--limit` vale por ano planejado, então mantenha `--from`/`--to` no mesmo ano para conduzir o orçamento de requisições. Deputado que esgota as tentativas vira lacuna no gap log e permanece pendente para a execução seguinte.
 
+Ao fim de cada execução o passo apura a completude do ano: se todos os elegíveis já têm linha, o ano é registrado como **reposto** em `cota_cobertura`, junto com o mês de cobertura do dump contra o qual a apuração foi feita. Guardar o mês é o que evita um estado silenciosamente errado — se um dump posterior avançar a cobertura do ano, passam a existir meses de SIGEPA que ninguém buscou, e a leitura devolve o ano à condição de não reposto sem intervenção. A apuração não roda em ano cujo dump ainda não foi ingerido, porque não há cobertura contra a qual apurar.
+
 ### `--from={ano}` e `--to={ano}`
 
 Restringe a janela temporal por ano. Aplica-se só aos passos anuais; passos de escopo único e derivados não são filtrados pela janela (os derivados a usam para descobrir os anos necessários). Anos no formato `YYYY`, dentro de `[2001, ano atual]`, com `--from <= --to`. Sem as flags, a janela default é de 2001 ao ano corrente.
@@ -190,6 +192,16 @@ Por padrão, `deputado_historico` processa apenas deputados pendentes (sem linha
 ```bash
 pnpm ingest -- --only=deputado_historico --refetch-historico
 ```
+
+### `--refetch-sigepa`
+
+Por padrão, `deputado_gasto_cota_sigepa` só consulta deputados-ano sem linha em `deputado_gasto_cota_sigepa` — um deputado-ano gravado nunca é reconsultado. `--refetch-sigepa` força a rebusca de todos os elegíveis do ano, inclusive os já gravados, e reapura a completude ao fim. É a resposta à retroatividade de três meses da CEAP ([ADR-0022](../adr/022-reposicao-passagem-aerea-sigepa-modulo-a-parte.md)): sem a flag, o ano corrente fica congelado no dia da consulta.
+
+```bash
+pnpm ingest -- --only=deputado_gasto_cota_sigepa --from=2026 --to=2026 --refetch-sigepa
+```
+
+A recarga **não é retomável**: o conjunto é sempre o de todos os elegíveis do ano, então combinar com `--limit` reconsulta sempre os mesmos primeiros N deputados, sem avançar entre execuções (o passo avisa quando as duas flags aparecem juntas). Rode a recarga de uma vez, aceitando o atraso de ~75s por requisição depois que o balde de tokens esvazia.
 
 ### `--retry-gaps={arquivo}`
 

@@ -5,6 +5,8 @@ import { createDeputadoGastoCotaSigepaStep } from './deputado-gasto-cota-sigepa.
 import { DESCRICAO_PASSAGEM_AEREA_SIGEPA } from './gasto-sigepa';
 import type { LegislaturaPeriodo } from './legislaturas-do-ano';
 import type {
+  AnoRepostoRegistro,
+  CoberturaAno,
   DeputadoDespesasClient,
   DeputadoDespesasFetchResult,
   DeputadoDespesasQuery,
@@ -57,20 +59,49 @@ function despesa(overrides: Partial<DespesaCota> = {}): DespesaCota {
 
 type FakeRepository = DeputadoGastoCotaSigepaRepository & {
   readonly upserted: GastoCotaSigepaRow[];
+  readonly completude: AnoRepostoRegistro[];
+};
+
+type RepositoryOverrides = {
+  legislaturas?: readonly LegislaturaPeriodo[];
+  cobertura?: CoberturaAno | null;
+  reposicaoGravada?: readonly string[];
 };
 
 function repositoryOf(
   deputados: readonly DeputadoSemReposicao[],
-  legislaturas: readonly LegislaturaPeriodo[] = LEGISLATURAS,
+  overrides: RepositoryOverrides = {},
 ): FakeRepository {
-  const stored = new Set<string>();
+  const legislaturas = overrides.legislaturas ?? LEGISLATURAS;
+  const cobertura =
+    overrides.cobertura === undefined
+      ? { coveredThroughMonth: 7, sigepaReposto: false }
+      : overrides.cobertura;
+  const stored = new Set<string>(
+    (overrides.reposicaoGravada ?? []).map(
+      (deputadoId) => `${deputadoId}|2025`,
+    ),
+  );
   const upserted: GastoCotaSigepaRow[] = [];
-  let pendentes = [...deputados];
+  const completude: AnoRepostoRegistro[] = [];
 
   return {
     upserted,
-    loadDeputadosSemReposicao: () => Promise.resolve(pendentes),
+    completude,
+    loadDeputadosSemReposicao: (year) =>
+      Promise.resolve(
+        deputados.filter(
+          (candidato) => !stored.has(`${candidato.deputadoId}|${year}`),
+        ),
+      ),
+    loadDeputadosElegiveis: () => Promise.resolve(deputados),
     loadLegislaturas: () => Promise.resolve(legislaturas),
+    loadCobertura: () => Promise.resolve(cobertura),
+    saveAnoReposto(registro) {
+      completude.push(registro);
+
+      return Promise.resolve();
+    },
     upsert(rows) {
       let inserted = 0;
       let updated = 0;
@@ -87,10 +118,6 @@ function repositoryOf(
 
         stored.add(key);
       }
-
-      pendentes = pendentes.filter(
-        (pendente) => !stored.has(`${pendente.deputadoId}|2025`),
-      );
 
       return Promise.resolve({ inserted, updated });
     },
@@ -140,6 +167,7 @@ type StepOverrides = {
   repository?: FakeRepository;
   despesasClient?: DeputadoDespesasClient;
   chunkSize?: number;
+  refetch?: boolean;
 };
 
 function stepWith(overrides: StepOverrides = {}) {
@@ -149,6 +177,7 @@ function stepWith(overrides: StepOverrides = {}) {
     repository,
     despesasClient,
     chunkSize: overrides.chunkSize,
+    refetch: overrides.refetch,
   });
 
   return { step, repository, despesasClient };
@@ -445,7 +474,10 @@ describe('deputado_gasto_cota_sigepa step', () => {
       const step = createDeputadoGastoCotaSigepaStep({
         repository: {
           loadDeputadosSemReposicao: fail('loadDeputadosSemReposicao'),
+          loadDeputadosElegiveis: fail('loadDeputadosElegiveis'),
           loadLegislaturas: fail('loadLegislaturas'),
+          loadCobertura: fail('loadCobertura'),
+          saveAnoReposto: fail('saveAnoReposto'),
           upsert: fail('upsert'),
         },
         despesasClient: { fetch: fail('despesasClient') },
@@ -495,6 +527,175 @@ describe('deputado_gasto_cota_sigepa step', () => {
       expect(result).toMatchObject({ read: 2, ignored: 1 });
       expect(repository.upserted).toEqual([
         { deputadoId: 'dep-1', year: 2025, gastosJson: { '6': 10000 } },
+      ]);
+    });
+  });
+
+  describe('when the run closes every eligible deputado of the year', () => {
+    it('registers the year as reposto against the dump coverage month it was apurado on', async () => {
+      // Arrange
+      const repository = repositoryOf(
+        [
+          deputado({ deputadoId: 'dep-1', externalIdDeputado: 220593 }),
+          deputado({ deputadoId: 'dep-2', externalIdDeputado: 111111 }),
+        ],
+        { cobertura: { coveredThroughMonth: 7, sigepaReposto: false } },
+      );
+      const { step } = stepWith({ repository });
+
+      // Act
+      await step.run(context());
+
+      // Assert
+      expect(repository.completude).toEqual([
+        { year: 2025, reposto: true, coveredThroughMonth: 7 },
+      ]);
+    });
+
+    it('announces the registered year', async () => {
+      // Arrange
+      const { step } = stepWith({ repository: repositoryOf([deputado()]) });
+      const logged: string[] = [];
+
+      // Act
+      await step.run(
+        context({ reporter: { log: (line) => logged.push(line) } }),
+      );
+
+      // Assert
+      expect(logged).toContainEqual(
+        expect.stringContaining(
+          '[deputado_gasto_cota_sigepa 2025] ano reposto: todos os elegíveis cobertos, apurado com o dump até o mês 7',
+        ),
+      );
+    });
+  });
+
+  describe('when any eligible deputado is still pending after the run', () => {
+    it('does not register the year as reposto', async () => {
+      // Arrange
+      const repository = repositoryOf([
+        deputado({ deputadoId: 'dep-1', externalIdDeputado: 220593 }),
+        deputado({ deputadoId: 'dep-2', externalIdDeputado: 111111 }),
+      ]);
+      const { step } = stepWith({ repository });
+
+      // Act
+      await step.run(context({ limit: 1 }));
+
+      // Assert
+      expect(repository.completude).toEqual([
+        { year: 2025, reposto: false, coveredThroughMonth: null },
+      ]);
+    });
+
+    it('does not count deputados outside the exercicio of the year as pending', async () => {
+      // Arrange
+      const repository = repositoryOf([
+        deputado({ deputadoId: 'dep-1', externalIdDeputado: 220593 }),
+        deputado({
+          deputadoId: 'dep-2',
+          externalIdDeputado: 111111,
+          intervalos: [
+            intervalo('2019-02-01T12:00:00Z', '2023-01-31T00:00:00Z'),
+          ],
+        }),
+      ]);
+      const { step } = stepWith({ repository });
+
+      // Act
+      await step.run(context());
+
+      // Assert
+      expect(repository.completude).toEqual([
+        { year: 2025, reposto: true, coveredThroughMonth: 7 },
+      ]);
+    });
+  });
+
+  describe('when the dump of the year was never ingested', () => {
+    it('registers nothing, because there is no coverage month to apurar against', async () => {
+      // Arrange
+      const repository = repositoryOf([deputado()], { cobertura: null });
+      const { step } = stepWith({ repository });
+
+      // Act
+      await step.run(context());
+
+      // Assert
+      expect(repository.completude).toEqual([]);
+    });
+  });
+
+  describe('when a deputado-ano is already written', () => {
+    it('makes no request for it without the refetch flag', async () => {
+      // Arrange
+      const repository = repositoryOf([deputado()], {
+        reposicaoGravada: ['dep-1'],
+      });
+      const { step, despesasClient } = stepWith({ repository });
+
+      // Act
+      await step.run(context());
+
+      // Assert
+      expect((despesasClient as FakeClient).calls).toEqual([]);
+      expect(repository.upserted).toEqual([]);
+    });
+
+    it('warns that a limited refetch never advances between runs', async () => {
+      // Arrange
+      const repository = repositoryOf(
+        Array.from({ length: 3 }, (_, index) =>
+          deputado({
+            deputadoId: `dep-${index}`,
+            externalIdDeputado: 200000 + index,
+          }),
+        ),
+      );
+      const { step } = stepWith({ repository, refetch: true });
+      const logged: string[] = [];
+
+      // Act
+      await step.run(
+        context({ limit: 1, reporter: { log: (line) => logged.push(line) } }),
+      );
+
+      // Assert
+      expect(logged).toContainEqual(
+        expect.stringContaining(
+          'a recarga não é retomável: --limit reconsulta sempre os mesmos deputados',
+        ),
+      );
+    });
+
+    it('fetches it again under the refetch flag and reapura the completude', async () => {
+      // Arrange
+      const repository = repositoryOf([deputado()], {
+        reposicaoGravada: ['dep-1'],
+        cobertura: { coveredThroughMonth: 9, sigepaReposto: true },
+      });
+      const { step, despesasClient } = stepWith({
+        repository,
+        refetch: true,
+        despesasClient: clientOf(
+          new Map<number, DeputadoDespesasFetchResult>([
+            [220593, { ok: true, despesas: [despesa({ mes: 8 })] }],
+          ]),
+        ),
+      });
+
+      // Act
+      const result = await step.run(context());
+
+      // Assert
+      expect((despesasClient as FakeClient).calls).toHaveLength(1);
+      expect(repository.upserted).toEqual([
+        { deputadoId: 'dep-1', year: 2025, gastosJson: { '8': 123456 } },
+      ]);
+      expect(result).toMatchObject({ inserted: 0, updated: 1 });
+      expect(repository.completude).toEqual([
+        { year: 2025, reposto: true, coveredThroughMonth: 9 },
       ]);
     });
   });

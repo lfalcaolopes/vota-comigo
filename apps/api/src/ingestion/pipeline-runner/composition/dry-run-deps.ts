@@ -150,7 +150,10 @@ export const dryRunSanityRepository: SanityRepository = {
 export const dryRunGastoCotaSigepaDeps: DeputadoGastoCotaSigepaStepDeps = {
   repository: {
     loadDeputadosSemReposicao: dryRunReadGuard,
+    loadDeputadosElegiveis: dryRunReadGuard,
     loadLegislaturas: dryRunReadGuard,
+    loadCobertura: dryRunReadGuard,
+    saveAnoReposto: dryRunWriteGuard,
     upsert: dryRunWriteGuard,
   },
   despesasClient: { fetch: dryRunReadGuard },

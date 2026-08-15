@@ -216,6 +216,7 @@ export function createIngestionSteps(
       despesasClient: createDeputadoDespesasClient({
         transport: fetchCamaraJson,
       }),
+      refetch: input.refetchSigepa,
     }),
     createCotaMedianaUfStep(createCotaMedianaUfRepository(db)),
     createSanityStep(createSanityRepository(db)),

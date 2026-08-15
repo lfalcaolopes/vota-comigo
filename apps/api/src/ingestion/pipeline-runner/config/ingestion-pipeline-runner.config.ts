@@ -15,6 +15,7 @@ export function resolveIngestionPipelineRunnerConfig(
   const strict = args.includes('--strict');
   const debug = args.includes('--debug');
   const refetchHistorico = args.includes('--refetch-historico');
+  const refetchSigepa = args.includes('--refetch-sigepa');
   const only = parseOnly(args);
   const retryGapsPath = getStringArg(args, '--retry-gaps');
 
@@ -89,6 +90,7 @@ export function resolveIngestionPipelineRunnerConfig(
       strict,
       debug,
       refetchHistorico,
+      refetchSigepa,
       limit: limit.value,
       retryGapsPath,
     },

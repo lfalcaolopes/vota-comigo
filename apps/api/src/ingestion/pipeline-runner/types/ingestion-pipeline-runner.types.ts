@@ -7,6 +7,7 @@ export type IngestionPipelineRunnerConfig = {
   strict: boolean;
   debug: boolean;
   refetchHistorico: boolean;
+  refetchSigepa: boolean;
   limit?: number;
   retryGapsPath?: string;
 };
@@ -171,6 +172,7 @@ export type CreateStepsInput = {
   dryRun: boolean;
   retryExternalIds?: readonly number[];
   refetchHistorico?: boolean;
+  refetchSigepa?: boolean;
 };
 
 export type CreateStepsResult = {

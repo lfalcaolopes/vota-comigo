@@ -63,13 +63,33 @@ export type GastoCotaSigepaUpsertResult = {
   updated: number;
 };
 
+export type CoberturaAno = {
+  coveredThroughMonth: number;
+  sigepaReposto: boolean;
+};
+
+export type AnoRepostoRegistro = {
+  year: number;
+  reposto: boolean;
+  // Mês de cobertura do dump contra o qual a completude foi apurada; null
+  // enquanto o ano não está reposto.
+  coveredThroughMonth: number | null;
+};
+
 export type DeputadoGastoCotaSigepaRepository = {
   // Sem linha em deputado_gasto_cota_sigepa para o ano: o pendente é derivado
   // do banco, sem estado novo (ADR 022).
   loadDeputadosSemReposicao(
     year: number,
   ): Promise<readonly DeputadoSemReposicao[]>;
+  // Todos os deputados com intervalo de exercício, ignorando o que já foi
+  // gravado: o conjunto da recarga deliberada.
+  loadDeputadosElegiveis(
+    year: number,
+  ): Promise<readonly DeputadoSemReposicao[]>;
   loadLegislaturas(): Promise<readonly LegislaturaPeriodo[]>;
+  loadCobertura(year: number): Promise<CoberturaAno | null>;
+  saveAnoReposto(registro: AnoRepostoRegistro): Promise<void>;
   upsert(
     rows: readonly GastoCotaSigepaRow[],
   ): Promise<GastoCotaSigepaUpsertResult>;

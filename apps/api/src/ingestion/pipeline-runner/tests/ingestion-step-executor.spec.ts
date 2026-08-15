@@ -36,6 +36,7 @@ function baseConfig(overrides: Partial<IngestionPipelineRunnerConfig> = {}) {
     strict: false,
     debug: false,
     refetchHistorico: false,
+    refetchSigepa: false,
     ...overrides,
   };
 }

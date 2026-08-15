@@ -116,6 +116,7 @@ export async function executeIngestionPipelineRunner(
     dryRun: config.dryRun,
     retryExternalIds,
     refetchHistorico: config.refetchHistorico,
+    refetchSigepa: config.refetchSigepa,
   });
   const stepsByName = new Map(steps.map((step) => [step.name, step]));
   const executor = createIngestionStepExecutor({

@@ -17,6 +17,7 @@ function config(
     strict: false,
     debug: false,
     refetchHistorico: false,
+    refetchSigepa: false,
     ...overrides,
   };
 }

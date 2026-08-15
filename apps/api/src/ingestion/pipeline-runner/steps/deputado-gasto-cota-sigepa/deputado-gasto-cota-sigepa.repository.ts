@@ -3,6 +3,7 @@ import { and, asc, eq, notExists, sql } from 'drizzle-orm';
 import type { DrizzleDatabase } from '@/shared/database/client';
 import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
 import {
+  cotaCobertura,
   deputado,
   deputadoExercicioIntervalo,
   deputadoGastoCotaSigepa,
@@ -19,20 +20,23 @@ import type {
 export function createDeputadoGastoCotaSigepaRepository(
   db: DrizzleDatabase,
 ): DeputadoGastoCotaSigepaRepository {
+  const selectDeputadosComIntervalo = () =>
+    db
+      .select({
+        deputadoId: deputado.id,
+        externalIdDeputado: deputado.externalIdDeputado,
+        openedAt: deputadoExercicioIntervalo.openedAt,
+        closedAt: deputadoExercicioIntervalo.closedAt,
+      })
+      .from(deputado)
+      .innerJoin(
+        deputadoExercicioIntervalo,
+        eq(deputadoExercicioIntervalo.deputadoId, deputado.id),
+      );
+
   return {
     async loadDeputadosSemReposicao(year) {
-      const rows = await db
-        .select({
-          deputadoId: deputado.id,
-          externalIdDeputado: deputado.externalIdDeputado,
-          openedAt: deputadoExercicioIntervalo.openedAt,
-          closedAt: deputadoExercicioIntervalo.closedAt,
-        })
-        .from(deputado)
-        .innerJoin(
-          deputadoExercicioIntervalo,
-          eq(deputadoExercicioIntervalo.deputadoId, deputado.id),
-        )
+      const rows = await selectDeputadosComIntervalo()
         // A linha (deputado_id, year) é o sinal de já consultado, então o
         // pendente sai do anti-join, sem estado novo (ADR 022).
         .where(
@@ -50,31 +54,38 @@ export function createDeputadoGastoCotaSigepaRepository(
         )
         .orderBy(asc(deputado.externalIdDeputado));
 
-      const byDeputadoId = new Map<string, DeputadoSemReposicao>();
+      return groupIntervalosByDeputado(rows);
+    },
 
-      for (const row of rows) {
-        const intervalo: IntervaloExercicio = {
-          openedAt: row.openedAt,
-          closedAt: row.closedAt,
-        };
-        const existing = byDeputadoId.get(row.deputadoId);
+    async loadDeputadosElegiveis() {
+      const rows = await selectDeputadosComIntervalo().orderBy(
+        asc(deputado.externalIdDeputado),
+      );
 
-        if (existing === undefined) {
-          byDeputadoId.set(row.deputadoId, {
-            deputadoId: row.deputadoId,
-            externalIdDeputado: row.externalIdDeputado,
-            intervalos: [intervalo],
-          });
-          continue;
-        }
+      return groupIntervalosByDeputado(rows);
+    },
 
-        byDeputadoId.set(row.deputadoId, {
-          ...existing,
-          intervalos: [...existing.intervalos, intervalo],
-        });
-      }
+    async loadCobertura(year) {
+      const [row] = await db
+        .select({
+          coveredThroughMonth: cotaCobertura.coveredThroughMonth,
+          sigepaReposto: cotaCobertura.sigepaReposto,
+        })
+        .from(cotaCobertura)
+        .where(eq(cotaCobertura.year, year))
+        .limit(1);
 
-      return [...byDeputadoId.values()];
+      return row ?? null;
+    },
+
+    async saveAnoReposto({ year, reposto, coveredThroughMonth }) {
+      await db
+        .update(cotaCobertura)
+        .set({
+          sigepaReposto: reposto,
+          sigepaCoveredThroughMonth: coveredThroughMonth,
+        })
+        .where(eq(cotaCobertura.year, year));
     },
 
     async loadLegislaturas() {
@@ -114,6 +125,43 @@ export function createDeputadoGastoCotaSigepaRepository(
       });
     },
   };
+}
+
+type IntervaloRow = {
+  deputadoId: string;
+  externalIdDeputado: number;
+  openedAt: string;
+  closedAt: string | null;
+};
+
+function groupIntervalosByDeputado(
+  rows: readonly IntervaloRow[],
+): readonly DeputadoSemReposicao[] {
+  const byDeputadoId = new Map<string, DeputadoSemReposicao>();
+
+  for (const row of rows) {
+    const intervalo: IntervaloExercicio = {
+      openedAt: row.openedAt,
+      closedAt: row.closedAt,
+    };
+    const existing = byDeputadoId.get(row.deputadoId);
+
+    if (existing === undefined) {
+      byDeputadoId.set(row.deputadoId, {
+        deputadoId: row.deputadoId,
+        externalIdDeputado: row.externalIdDeputado,
+        intervalos: [intervalo],
+      });
+      continue;
+    }
+
+    byDeputadoId.set(row.deputadoId, {
+      ...existing,
+      intervalos: [...existing.intervalos, intervalo],
+    });
+  }
+
+  return [...byDeputadoId.values()];
 }
 
 function toValues(

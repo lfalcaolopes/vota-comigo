@@ -30,6 +30,7 @@ describe('ingestion pipeline-runner config', () => {
           strict: true,
           debug: true,
           refetchHistorico: false,
+          refetchSigepa: false,
           limit: 5,
         },
       });
@@ -57,6 +58,7 @@ describe('ingestion pipeline-runner config', () => {
           strict: false,
           debug: false,
           refetchHistorico: false,
+          refetchSigepa: false,
           limit: undefined,
         },
       });
@@ -136,6 +138,44 @@ describe('ingestion pipeline-runner config', () => {
         throw new Error('expected a valid resolution');
       }
       expect(resolution.config.refetchHistorico).toBe(false);
+    });
+  });
+
+  describe('when --refetch-sigepa is provided', () => {
+    it('flags a full re-fetch of the reposicao instead of resuming only pending deputados', () => {
+      // Arrange
+      const args = ['--refetch-sigepa'];
+
+      // Act
+      const resolution = resolveIngestionPipelineRunnerConfig(args, {
+        currentYear: 2026,
+        stepNames: ['deputado_gasto_cota_sigepa'],
+      });
+
+      // Assert
+      expect(resolution.ok).toBe(true);
+      if (!resolution.ok) {
+        throw new Error('expected a valid resolution');
+      }
+      expect(resolution.config.refetchSigepa).toBe(true);
+    });
+
+    it('defaults to resuming only pending deputados when absent', () => {
+      // Arrange
+      const args: string[] = [];
+
+      // Act
+      const resolution = resolveIngestionPipelineRunnerConfig(args, {
+        currentYear: 2026,
+        stepNames: ['deputado_gasto_cota_sigepa'],
+      });
+
+      // Assert
+      expect(resolution.ok).toBe(true);
+      if (!resolution.ok) {
+        throw new Error('expected a valid resolution');
+      }
+      expect(resolution.config.refetchSigepa).toBe(false);
     });
   });
 

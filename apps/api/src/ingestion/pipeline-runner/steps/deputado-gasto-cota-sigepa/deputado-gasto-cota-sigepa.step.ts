@@ -17,6 +17,7 @@ import { isEmExercicioNoAno } from './exercicio-no-ano';
 import { aggregateGastosSigepa } from './gasto-sigepa';
 import { deriveLegislaturasNoAno } from './legislaturas-do-ano';
 import type {
+  CoberturaAno,
   DeputadoDespesasClient,
   DeputadoDespesasFetchEvent,
   DeputadoDespesasFetchResult,
@@ -35,6 +36,9 @@ export type DeputadoGastoCotaSigepaStepDeps = {
   repository: DeputadoGastoCotaSigepaRepository;
   despesasClient: DeputadoDespesasClient;
   chunkSize?: number;
+  // Recarga deliberada: um deputado-ano gravado não é reconsultado por conta
+  // própria, e a CEAP é retroativa por três meses no ano corrente (ADR 022).
+  refetch?: boolean;
 };
 
 export function createDeputadoGastoCotaSigepaStep(
@@ -56,13 +60,22 @@ export function createDeputadoGastoCotaSigepaStep(
         stepLabel(STEP_NAME, year),
       );
 
-      const semReposicao =
-        await deps.repository.loadDeputadosSemReposicao(year);
+      // A recarga não tem sinal de progresso: o conjunto é sempre o de todos
+      // os elegíveis, então uma janela recortada refaz a mesma fatia.
+      if (deps.refetch && context.limit !== undefined) {
+        context.reporter?.log(
+          `[${stepLabel(STEP_NAME, year)}] a recarga não é retomável: --limit reconsulta sempre os mesmos deputados.`,
+        );
+      }
+
+      const candidatos = deps.refetch
+        ? await deps.repository.loadDeputadosElegiveis(year)
+        : await deps.repository.loadDeputadosSemReposicao(year);
       const legislaturas = await deps.repository.loadLegislaturas();
 
       // Elegível é quem exerceu mandato no ano, não quem aparece no dump: um
       // deputado cuja única despesa foi passagem aérea não está no arquivo.
-      const pendentes = semReposicao.filter((deputado) =>
+      const pendentes = candidatos.filter((deputado) =>
         isEmExercicioNoAno(deputado.intervalos, year),
       );
       const batch =
@@ -135,6 +148,8 @@ export function createDeputadoGastoCotaSigepaStep(
         progress.processed - progress.failures,
       );
 
+      await recordAnoReposto({ deps, context, year });
+
       return {
         read: tally.read,
         inserted: tally.inserted,
@@ -145,6 +160,68 @@ export function createDeputadoGastoCotaSigepaStep(
       };
     },
   };
+}
+
+type RecordAnoRepostoInput = {
+  deps: DeputadoGastoCotaSigepaStepDeps;
+  context: IngestionStepContext;
+  year: number;
+};
+
+// A completude é apurada contra o dump vigente, e o mês apurado vai junto: um
+// dump posterior que avance a cobertura devolve o ano a não reposto na leitura,
+// sem que ninguém precise reagir (ADR 022).
+async function recordAnoReposto(input: RecordAnoRepostoInput): Promise<void> {
+  const { deps, context, year } = input;
+  const cobertura = await deps.repository.loadCobertura(year);
+
+  if (cobertura === null) {
+    return;
+  }
+
+  const semReposicao = await deps.repository.loadDeputadosSemReposicao(year);
+  const pendentes = semReposicao.filter((deputado) =>
+    isEmExercicioNoAno(deputado.intervalos, year),
+  );
+  const reposto = pendentes.length === 0;
+
+  await deps.repository.saveAnoReposto({
+    year,
+    reposto,
+    coveredThroughMonth: reposto ? cobertura.coveredThroughMonth : null,
+  });
+
+  reportCompletude({ context, year, cobertura, pendentes: pendentes.length });
+}
+
+type ReportCompletudeInput = {
+  context: IngestionStepContext;
+  year: number;
+  cobertura: CoberturaAno;
+  pendentes: number;
+};
+
+function reportCompletude(input: ReportCompletudeInput): void {
+  const reporter = input.context.reporter;
+
+  if (reporter === undefined) {
+    return;
+  }
+
+  const label = stepLabel(STEP_NAME, input.year);
+
+  if (input.pendentes === 0) {
+    reporter.log(
+      `[${label}] ano reposto: todos os elegíveis cobertos, apurado com o dump até o mês ${input.cobertura.coveredThroughMonth}`,
+    );
+    return;
+  }
+
+  if (input.cobertura.sigepaReposto) {
+    reporter.log(
+      `[${label}] ano deixou de estar reposto: ${input.pendentes} elegíveis sem reposição`,
+    );
+  }
 }
 
 function chunksOf<T>(items: readonly T[], size: number): T[][] {
