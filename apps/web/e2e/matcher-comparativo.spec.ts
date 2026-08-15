@@ -116,6 +116,8 @@ const JANELA_57 = {
   encerrada: true,
   diasEmExercicioDisponivel: true,
   diasEmExercicio: 800,
+  coberturaAte: "2024-12-31",
+  divisorAnosEfetivos: 2,
 };
 
 function comparativoDeputado(externalIdDeputado: number) {
@@ -147,7 +149,11 @@ function comparativoDeputado(externalIdDeputado: number) {
       coveredThroughDate: "2025-08-14",
     },
     orgaos: { items: [], total: 0 },
-    cota: { status: "ano-nao-carregado" },
+    cota: {
+      status: "sem-comparacao",
+      motivo: "sem-mediana-na-janela",
+      anos: [],
+    },
   };
 }
 

@@ -1,5 +1,6 @@
 import type {
   ComparativoCota,
+  ComparativoCotaAno,
   ComparativoDeputado,
   ComparativoDeputadosResponse,
   ComparativoJanela,
@@ -20,6 +21,8 @@ export const RECORTE_PRESENCA_COMPARATIVO =
 
 const ORGAOS_VISIVEIS = 2;
 
+const diasFormatter = new Intl.NumberFormat("pt-BR");
+
 export type ComparativoDeputadosColumn = {
   externalIdDeputado: number;
   nome: string;
@@ -35,6 +38,7 @@ export type ComparativoDeputadosCell = {
   externalIdDeputado: number;
   value: string;
   detail: string | null;
+  breakdown: readonly string[] | null;
   lacuna: boolean;
 };
 
@@ -77,15 +81,17 @@ export function buildComparativoDeputadosGrid(
         label: "Proposições assinadas",
         hint: null,
         cells: response.items.map((item) =>
-          toRowCell(item, () => toProposicoesCell(item.proposicoesAssinadas)),
+          toRowCell(item, () =>
+            toProposicoesCell(item.proposicoesAssinadas, item.janela),
+          ),
         ),
       },
       {
         id: "orgaos",
-        label: "Comissões e outros órgãos",
+        label: "Órgãos distintos",
         hint: null,
         cells: response.items.map((item) =>
-          toRowCell(item, () => toOrgaosCell(item.orgaos)),
+          toRowCell(item, () => toOrgaosCell(item.orgaos, item.janela)),
         ),
       },
       {
@@ -191,7 +197,10 @@ function toColumn(item: ComparativoDeputado): ComparativoDeputadosColumn {
   };
 }
 
-type CellContent = Omit<ComparativoDeputadosCell, "externalIdDeputado">;
+type CellContent = Omit<
+  ComparativoDeputadosCell,
+  "externalIdDeputado" | "breakdown"
+> & { breakdown?: readonly string[] };
 
 function toRowCell(
   item: ComparativoDeputado,
@@ -208,7 +217,11 @@ function toCell(
   item: ComparativoDeputado,
   content: CellContent,
 ): ComparativoDeputadosCell {
-  return { externalIdDeputado: item.externalIdDeputado, ...content };
+  return {
+    externalIdDeputado: item.externalIdDeputado,
+    ...content,
+    breakdown: content.breakdown ?? null,
+  };
 }
 
 function toRecusaCell(
@@ -241,31 +254,61 @@ function toPresencaCell(
   };
 }
 
+// A manchete é a média por ano da janela; o total absoluto abre o detalhe,
+// para que a contagem continue conferível contra o portal da Câmara.
+function toMediaAnualLabel(total: number, divisorAnosEfetivos: number): string {
+  if (divisorAnosEfetivos <= 0) return String(total);
+
+  const media = total / divisorAnosEfetivos;
+  const formatado =
+    media < 10
+      ? media.toLocaleString("pt-BR", {
+          minimumFractionDigits: 1,
+          maximumFractionDigits: 1,
+        })
+      : String(Math.round(media));
+
+  return `${formatado}/ano`;
+}
+
 function toProposicoesCell(
   proposicoesAssinadas: ComparativoProposicoesAssinadas | null,
+  janela: ComparativoJanela,
 ): CellContent {
-  if (proposicoesAssinadas === null) {
+  if (proposicoesAssinadas === null || janela.status === "indisponivel") {
     return { value: "Sem dados comparáveis", detail: null, lacuna: true };
   }
 
   if (!proposicoesAssinadas.disponivel) {
-    return { value: "Ano não carregado", detail: null, lacuna: true };
+    return {
+      value: "Sem dados na janela",
+      detail: `Anos não carregados: ${toEnumeracao(
+        proposicoesAssinadas.anosDescobertos.map(String),
+      )}`,
+      lacuna: true,
+    };
   }
 
   return {
-    value: String(proposicoesAssinadas.total),
-    detail: `${proposicoesAssinadas.totalPrimeiroSignatario} como primeiro signatário`,
+    value: toMediaAnualLabel(
+      proposicoesAssinadas.total,
+      janela.divisorAnosEfetivos,
+    ),
+    detail: `${proposicoesAssinadas.total} no total · ${proposicoesAssinadas.totalPrimeiroSignatario} como primeiro signatário`,
     lacuna: false,
   };
 }
 
-function toOrgaosCell(orgaos: ComparativoOrgaos | null): CellContent {
-  if (orgaos === null) {
+function toOrgaosCell(
+  orgaos: ComparativoOrgaos | null,
+  janela: ComparativoJanela,
+): CellContent {
+  if (orgaos === null || janela.status === "indisponivel") {
     return { value: "Sem dados comparáveis", detail: null, lacuna: true };
   }
 
   if (orgaos.total === 0) {
-    return { value: "0", detail: "Nenhum vínculo no ano", lacuna: false };
+    return { value: "0", detail: "Nenhum órgão na janela", lacuna: false };
   }
 
   const nomes = [
@@ -273,13 +316,14 @@ function toOrgaosCell(orgaos: ComparativoOrgaos | null): CellContent {
   ];
   const visiveis = nomes.slice(0, ORGAOS_VISIVEIS);
   const restantes = nomes.length - visiveis.length;
+  const lista =
+    restantes > 0
+      ? `${visiveis.join(", ")} e mais ${restantes}`
+      : visiveis.join(", ");
 
   return {
-    value: String(orgaos.total),
-    detail:
-      restantes > 0
-        ? `${visiveis.join(", ")} e mais ${restantes}`
-        : visiveis.join(", "),
+    value: toMediaAnualLabel(orgaos.total, janela.divisorAnosEfetivos),
+    detail: `${orgaos.total} no total · ${lista}`,
     lacuna: false,
   };
 }
@@ -289,33 +333,55 @@ function toCotaCell(cota: ComparativoCota | null): CellContent {
     return { value: "Sem dados comparáveis", detail: null, lacuna: true };
   }
 
-  if (cota.status === "ano-nao-carregado") {
-    return { value: "Ano não carregado", detail: null, lacuna: true };
-  }
+  const breakdown = cota.anos.map(toCotaAnoLabel);
 
   if (cota.status === "sem-comparacao") {
     return {
       value: toCotaSemComparacaoLabel(cota.motivo),
       detail: null,
+      breakdown: breakdown.length > 0 ? breakdown : undefined,
       lacuna: true,
     };
   }
 
   return {
     value: toCotaPosicaoLabel(cota.percentualSobreMedianaUf),
-    detail: `Comparação com ${cota.medianaUf.deputadoCount} ${
-      cota.medianaUf.deputadoCount === 1 ? "deputado" : "deputados"
-    } de ${cota.medianaUf.siglaUf} em exercício durante todo o ano`,
+    detail: toCotaExposicaoLabel(cota),
+    breakdown,
     lacuna: false,
   };
+}
+
+// A posição agregada favorece quem esteve menos tempo em exercício, então a
+// exposição que produziu o número entra na célula junto com ele.
+function toCotaExposicaoLabel(
+  cota: Extract<ComparativoCota, { status: "comparavel" }>,
+): string {
+  const anos = `${cota.anosNaComparacao} ${
+    cota.anosNaComparacao === 1 ? "ano comparado" : "anos comparados"
+  }`;
+
+  return `${diasFormatter.format(cota.diasEmExercicio)} de ${diasFormatter.format(
+    cota.diasNaComparacao,
+  )} dias em exercício · ${anos}`;
+}
+
+function toCotaAnoLabel(ano: ComparativoCotaAno): string {
+  if (ano.diasEmExercicio === 0) return `${ano.year} · sem exercício`;
+
+  if (!ano.naComparacao || ano.percentualSobreMedianaUf === null) {
+    return `${ano.year} · sem mediana`;
+  }
+
+  const posicao = `${ano.year} · ${Math.round(ano.percentualSobreMedianaUf)}%`;
+  return ano.dadoIncompleto ? `${posicao} (dado incompleto)` : posicao;
 }
 
 function toCotaSemComparacaoLabel(
   motivo: Extract<ComparativoCota, { status: "sem-comparacao" }>["motivo"],
 ): string {
-  if (motivo === "exercicio-parcial") return "Exercício parcial no ano";
-  if (motivo === "sem-gastos") return "Sem gastos no ano";
-  return "Dado do ano incompleto";
+  if (motivo === "sem-gastos") return "Sem gastos na janela";
+  return "Sem mediana na janela";
 }
 
 function toCotaPosicaoLabel(percentualSobreMedianaUf: number): string {

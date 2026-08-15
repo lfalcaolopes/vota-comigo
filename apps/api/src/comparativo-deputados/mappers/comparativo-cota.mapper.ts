@@ -1,85 +1,137 @@
 import type {
   ComparativoCota,
-  DeputadoCeapResponse,
-  DeputadoPerfilValidYearRange,
+  ComparativoCotaAno,
 } from '@vota-comigo/shared-types';
 
-import { toDeputadoCeapLoadedResponse } from '@/deputados/mappers/deputado-ceap.mapper';
-import { deriveDeputadoCeapState } from '@/deputados/rules/deputado-ceap-state';
-import type { DeputadoCeapSource } from '@/deputados/types/deputados.types';
+import {
+  deriveSigepaDataStatus,
+  somarGastosAteMes,
+} from '@/deputados/mappers/deputado-ceap.mapper';
+import type { DeputadoCotaJanelaSource } from '@/deputados/types/deputados.types';
+import {
+  deriveJanelaExercicioAno,
+  somarDiasEmExercicio,
+} from '@/exercicio/rules/exercicio-ano';
+import { toEpochMillis } from '@/exercicio/rules/instante';
+
+const DIA_EM_MILLIS = 24 * 60 * 60 * 1000;
 
 type ComparativoCotaInput = {
-  year: number;
-  validYearRange: DeputadoPerfilValidYearRange;
-  source: DeputadoCeapSource;
+  dataInicioJanela: string;
+  dataFimJanela: string;
+  coberturaAte: string;
+  source: DeputadoCotaJanelaSource;
 };
 
-type DeputadoCeapLoadedResponse = Extract<
-  DeputadoCeapResponse,
-  { coveredThroughMonth: number }
->;
+type AnoComSomas = {
+  ano: ComparativoCotaAno;
+  gastoCents: number;
+  medianaCents: number;
+};
 
 export function toComparativoCota(
   input: ComparativoCotaInput,
 ): ComparativoCota {
-  const state = deriveDeputadoCeapState({
-    year: input.year,
-    validYearRange: input.validYearRange,
-    ingestedYears: input.source.coberturas.map((item) => item.year),
-    hasGastos: input.source.gasto !== null,
-  });
-  const cobertura = input.source.coberturas.find(
-    (item) => item.year === input.year,
+  const anosComSomas = input.source.anos
+    .filter((ano) => ano.year <= Number(input.coberturaAte.slice(0, 4)))
+    .map((ano) => toAnoComSomas(ano, input))
+    .sort((a, b) => a.ano.year - b.ano.year);
+  const anos = anosComSomas.map((item) => item.ano);
+
+  if (input.source.siglaUf === null) {
+    return { status: 'sem-comparacao', motivo: 'sem-gastos', anos };
+  }
+
+  const naComparacao = anosComSomas.filter((item) => item.ano.naComparacao);
+  const somaMedianaCents = naComparacao.reduce(
+    (total, item) => total + item.medianaCents,
+    0,
   );
-  if (
-    state.status === null ||
-    state.status === 'ano-nao-carregado' ||
-    cobertura === undefined
-  ) {
-    return { status: 'ano-nao-carregado' };
+
+  if (naComparacao.length === 0 || somaMedianaCents <= 0) {
+    return { status: 'sem-comparacao', motivo: 'sem-mediana-na-janela', anos };
   }
 
-  // Passar pelo mapper do perfil garante que o comparativo projete exatamente
-  // o mesmo agregado exibido lá antes de descartar o valor absoluto.
-  const response = toDeputadoCeapLoadedResponse({
-    year: input.year,
-    availableYears: state.availableYears,
-    status: state.status,
-    coveredThroughMonth: cobertura.coveredThroughMonth,
-    source: input.source,
-  });
-
-  return toComparativoCotaFromResponse(response);
-}
-
-function toComparativoCotaFromResponse(
-  response: DeputadoCeapLoadedResponse,
-): ComparativoCota {
-  if (response.status === 'sem-gastos') {
-    return { status: 'sem-comparacao', motivo: 'sem-gastos' };
-  }
-
-  if (!response.exercicioAnoCompleto) {
-    return { status: 'sem-comparacao', motivo: 'exercicio-parcial' };
-  }
-
-  if (
-    response.sigepaDataStatus === 'incompleto' ||
-    response.siglaUf === null ||
-    response.medianaUf === null ||
-    response.medianaUf.amountUsedCents <= 0
-  ) {
-    return { status: 'sem-comparacao', motivo: 'dado-incompleto' };
-  }
+  const somaGastoCents = naComparacao.reduce(
+    (total, item) => total + item.gastoCents,
+    0,
+  );
 
   return {
     status: 'comparavel',
-    percentualSobreMedianaUf:
-      (response.totalAmountUsedCents / response.medianaUf.amountUsedCents) *
-      100,
-    medianaUf: {
-      siglaUf: response.siglaUf,
-      deputadoCount: response.medianaUf.deputadoCount,
+    percentualSobreMedianaUf: (somaGastoCents / somaMedianaCents) * 100,
+    siglaUf: input.source.siglaUf,
+    anos,
+    anosNaComparacao: naComparacao.length,
+    diasEmExercicio: naComparacao.reduce(
+      (total, item) => total + item.ano.diasEmExercicio,
+      0,
+    ),
+    diasNaComparacao: naComparacao.reduce(
+      (total, item) => total + item.ano.diasNoAno,
+      0,
+    ),
+  };
+}
+
+function toAnoComSomas(
+  ano: DeputadoCotaJanelaSource['anos'][number],
+  input: ComparativoCotaInput,
+): AnoComSomas {
+  const janelaAno = deriveJanelaExercicioAno(
+    ano.year,
+    input.source.datasInicioLegislatura,
+  );
+  const inicioEpoch = Math.max(
+    toEpochMillis(janelaAno.inicio) ?? 0,
+    toEpochMillis(input.dataInicioJanela) ?? 0,
+  );
+  const fimEpoch = Math.min(
+    toEpochMillis(janelaAno.fim) ?? 0,
+    toEpochMillis(input.dataFimJanela) ?? 0,
+    // coberturaAte é o último dia coberto, inclusive.
+    (toEpochMillis(input.coberturaAte) ?? 0) + DIA_EM_MILLIS,
+  );
+
+  const diasNoAno = Math.max(
+    0,
+    Math.round((fimEpoch - inicioEpoch) / DIA_EM_MILLIS),
+  );
+  const diasEmExercicio = somarDiasEmExercicio(
+    input.source.intervalosExercicio,
+    inicioEpoch,
+    fimEpoch,
+  );
+
+  // Sem mediana o ano não tem contra o que ser comparado; um ano sem gasto
+  // nenhum entra com numerador zero, e diasEmExercicio explica o porquê.
+  const medianaUf =
+    ano.medianaUf !== null &&
+    ano.medianaUf.amountUsedCents > 0 &&
+    ano.medianaUf.deputadoCount > 0
+      ? ano.medianaUf
+      : null;
+  const naComparacao = medianaUf !== null;
+  const gastoCents = somarGastosAteMes(
+    ano.gastosJson ?? {},
+    ano.coveredThroughMonth ?? 0,
+  );
+  const medianaCents = medianaUf?.amountUsedCents ?? 0;
+
+  return {
+    ano: {
+      year: ano.year,
+      naComparacao,
+      percentualSobreMedianaUf:
+        medianaUf === null ? null : (gastoCents / medianaCents) * 100,
+      diasEmExercicio,
+      diasNoAno,
+      medianaUfDeputadoCount: medianaUf?.deputadoCount ?? null,
+      dadoIncompleto:
+        deriveSigepaDataStatus(ano.year, ano.coveredThroughMonth ?? 0) ===
+        'incompleto',
     },
+    gastoCents,
+    medianaCents,
   };
 }

@@ -2,9 +2,9 @@ import type { ComparativoJanela } from '@vota-comigo/shared-types';
 
 import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
 
+import { somarDiasEmExercicio } from '../../exercicio/rules/exercicio-ano';
 import { toEpochMillis } from '../../exercicio/rules/instante';
 
-const DIA_EM_MILLIS = 24 * 60 * 60 * 1000;
 const LEGISLATURA_MINIMA_COMPARATIVO = 55;
 
 // A cobertura de dados (coberturaAte/divisorAnosEfetivos) só é conhecida
@@ -88,39 +88,6 @@ function findLegislaturaEm(
       .filter((legislatura) => legislatura.inicioEpoch <= epoch)
       .at(-1) ?? null
   );
-}
-
-function somarDiasEmExercicio(
-  intervalos: readonly IntervaloUsavel[],
-  inicioEpoch: number,
-  fimEpoch: number,
-): number {
-  const clipados = intervalos
-    .map((intervalo) => ({
-      abertura: Math.max(intervalo.abertura, inicioEpoch),
-      fechamento: Math.min(intervalo.fechamento, fimEpoch),
-    }))
-    .filter((intervalo) => intervalo.fechamento > intervalo.abertura)
-    .sort((a, b) => a.abertura - b.abertura);
-
-  let totalMillis = 0;
-  let mescladoFim = Number.NEGATIVE_INFINITY;
-  let mescladoInicio = Number.NEGATIVE_INFINITY;
-
-  for (const { abertura, fechamento } of clipados) {
-    if (abertura > mescladoFim) {
-      totalMillis +=
-        mescladoFim - mescladoInicio > 0 ? mescladoFim - mescladoInicio : 0;
-      mescladoInicio = abertura;
-      mescladoFim = fechamento;
-    } else {
-      mescladoFim = Math.max(mescladoFim, fechamento);
-    }
-  }
-  totalMillis +=
-    mescladoFim - mescladoInicio > 0 ? mescladoFim - mescladoInicio : 0;
-
-  return Math.round(totalMillis / DIA_EM_MILLIS);
 }
 
 function janelaIndisponivelSemLegislatura(): JanelaComparativoSemCobertura {
@@ -216,7 +183,7 @@ export function deriveJanelaComparativo(
     encerrada: !abertoNoFim,
     diasEmExercicioDisponivel: true,
     diasEmExercicio: somarDiasEmExercicio(
-      intervalosUsaveis,
+      input.intervalosExercicio,
       legislaturaEncontrada.inicioEpoch,
       Math.min(fimJanelaEpoch, referenciaEpoch),
     ),

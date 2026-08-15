@@ -109,7 +109,29 @@ function createRepository(): DeputadosRepository {
       ],
       datasInicioLegislatura: ['2023-02-01T00:00:00.000Z'],
     }),
-    loadDeputadoOrgaos: async () => [
+    loadDeputadoCotaJanelaSource: async (_deputadoId, years) => ({
+      siglaUf: 'MG',
+      anos: years.map((year) => ({
+        year,
+        coveredThroughMonth: 12,
+        gastosJson: { '1': { '1': 100_000 } },
+        medianaUf: { amountUsedCents: 200_000, deputadoCount: 53 },
+      })),
+      intervalosExercicio: [
+        { openedAt: '2023-02-01T00:00:00.000Z', closedAt: null },
+      ],
+      datasInicioLegislatura: ['2023-02-01T00:00:00.000Z'],
+    }),
+    loadDeputadoOrgaos: async () => [],
+    loadDeputadoOrgaosNaJanela: async () => [
+      {
+        externalIdOrgao: 2001,
+        siglaOrgao: 'CCJC',
+        nome: 'Comissão de Constituição e Justiça e de Cidadania',
+        titulo: 'Suplente',
+        dataInicio: '2023-03-01',
+        dataFim: '2023-12-31',
+      },
       {
         externalIdOrgao: 2001,
         siglaOrgao: 'CCJC',
@@ -123,6 +145,14 @@ function createRepository(): DeputadosRepository {
       anoCoberto: true,
       assinaturasJson: { '2024-03-04': [4, 1] },
       coveredThroughDate: '2025-08-14',
+    }),
+    loadDeputadoProposicoesAssinadasJanela: async (_deputadoId, years) => ({
+      anos: years.map((year) => ({
+        year,
+        coberto: true,
+        assinaturasJson: { [`${year}-03-04`]: [4, 1] as const },
+      })),
+      coveredThroughDate: '2024-08-14',
     }),
     loadLegislaturas: async () => LEGISLATURAS,
     loadIntervalosExercicio: async (deputadoId) =>
@@ -165,11 +195,33 @@ describe('GET /comparativo-deputados', () => {
       expect(
         comparativoDeputadosResponseSchema.safeParse(response.body).success,
       ).toBe(true);
-      expect(response.body.items[0].cota).toEqual({
+      expect(response.body.items[0].cota).toMatchObject({
         status: 'comparavel',
         percentualSobreMedianaUf: 50,
-        medianaUf: { siglaUf: 'MG', deputadoCount: 53 },
+        siglaUf: 'MG',
       });
+      expect(JSON.stringify(response.body)).not.toContain('100000');
+      await app.close();
+    });
+
+    it('soma a cota sobre todos os anos da janela, não sobre um ano', async () => {
+      // Arrange
+      const app = await createApp();
+
+      // Act
+      const response = await request(getTestServer(app))
+        .get('/comparativo-deputados?ids=220593,204554')
+        .expect(200);
+
+      // Assert
+      expect(response.body.items[0].cota).toMatchObject({
+        anosNaComparacao: 2,
+      });
+      expect(
+        response.body.items[0].cota.anos.map(
+          (ano: { year: number }) => ano.year,
+        ),
+      ).toEqual([2023, 2024]);
       await app.close();
     });
 
@@ -196,14 +248,14 @@ describe('GET /comparativo-deputados', () => {
           encerrada: true,
           diasEmExercicioDisponivel: true,
           diasEmExercicio: expect.any(Number),
-          coberturaAte: '2022-12-31',
-          divisorAnosEfetivos: 0,
+          coberturaAte: '2024-08-14',
+          divisorAnosEfetivos: expect.any(Number),
         },
         proposicoesAssinadas: {
           disponivel: true,
-          total: 4,
-          totalPrimeiroSignatario: 1,
-          coveredThroughDate: '2025-08-14',
+          total: 8,
+          totalPrimeiroSignatario: 2,
+          coveredThroughDate: '2024-08-14',
         },
         orgaos: 1,
       });

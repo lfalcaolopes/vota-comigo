@@ -1,6 +1,9 @@
 import type { DeputadoOrgao } from '@vota-comigo/shared-types';
 
-import { sortDeputadoOrgaos } from '../rules/deputado-orgaos';
+import {
+  dedupOrgaosDaJanela,
+  sortDeputadoOrgaos,
+} from '../rules/deputado-orgaos';
 
 function orgao(overrides: Partial<DeputadoOrgao> = {}): DeputadoOrgao {
   return {
@@ -111,6 +114,110 @@ describe('ordenação dos vínculos do deputado com órgãos', () => {
 
       // Assert
       expect(items).toEqual(original);
+    });
+  });
+});
+
+describe('deduplicação dos órgãos da janela', () => {
+  describe('quando o mesmo órgão aparece em vários períodos', () => {
+    it('publica um único órgão do início mais antigo ao fim mais recente', () => {
+      // Arrange
+      const items = [
+        orgao({ dataInicio: '2023-02-01', dataFim: '2023-12-31' }),
+        orgao({ dataInicio: '2024-03-01', dataFim: '2024-12-31' }),
+      ];
+
+      // Act
+      const result = dedupOrgaosDaJanela(items);
+
+      // Assert
+      expect(result).toEqual([
+        expect.objectContaining({
+          externalIdOrgao: 2004,
+          dataInicio: '2023-02-01',
+          dataFim: '2024-12-31',
+        }),
+      ]);
+    });
+  });
+
+  describe('quando o mesmo órgão aparece com cargos diferentes', () => {
+    it('mantém o cargo de maior relevância', () => {
+      // Arrange
+      const items = [
+        orgao({ titulo: 'Suplente', dataInicio: '2023-02-01' }),
+        orgao({ titulo: 'Presidente', dataInicio: '2024-03-01' }),
+        orgao({ titulo: 'Titular', dataInicio: '2025-03-01' }),
+      ];
+
+      // Act
+      const result = dedupOrgaosDaJanela(items);
+
+      // Assert
+      expect(result.map((item) => item.titulo)).toEqual(['Presidente']);
+    });
+  });
+
+  describe('quando os órgãos são distintos', () => {
+    it('preserva um item por órgão', () => {
+      // Arrange
+      const items = [
+        orgao({ externalIdOrgao: 1, nome: 'Comissão Alfa' }),
+        orgao({ externalIdOrgao: 2, nome: 'Comissão Beta' }),
+      ];
+
+      // Act
+      const result = dedupOrgaosDaJanela(items);
+
+      // Assert
+      expect(result.map((item) => item.externalIdOrgao)).toEqual([1, 2]);
+    });
+  });
+
+  describe('quando um vínculo atravessa a fronteira da janela', () => {
+    it('preserva a data original em vez de recortá-la', () => {
+      // Arrange
+      const items = [
+        orgao({ dataInicio: '2021-01-01', dataFim: '2024-06-30' }),
+      ];
+
+      // Act
+      const result = dedupOrgaosDaJanela(items);
+
+      // Assert
+      expect(result[0]).toMatchObject({
+        dataInicio: '2021-01-01',
+        dataFim: '2024-06-30',
+      });
+    });
+  });
+
+  describe('quando um dos vínculos do órgão continua aberto', () => {
+    it('publica o vínculo sem data de fim', () => {
+      // Arrange
+      const items = [
+        orgao({ dataInicio: '2023-02-01', dataFim: null }),
+        orgao({ dataInicio: '2024-03-01', dataFim: '2024-12-31' }),
+      ];
+
+      // Act
+      const result = dedupOrgaosDaJanela(items);
+
+      // Assert
+      expect(result[0]).toMatchObject({
+        dataInicio: '2023-02-01',
+        dataFim: null,
+      });
+    });
+  });
+
+  describe('quando não há vínculos', () => {
+    it('devolve uma lista vazia', () => {
+      // Act
+      const result = dedupOrgaosDaJanela([]);
+
+      // Assert
+      expect(result).toEqual([]);
     });
   });
 });

@@ -48,6 +48,19 @@ function getYear(date: string): number {
   return Number(date.slice(0, 4));
 }
 
+function toAnosDaJanela(
+  dataInicio: string,
+  dataFim: string,
+): readonly number[] {
+  const anoInicio = getYear(dataInicio);
+  const anoFim = getYear(dataFim);
+
+  return Array.from(
+    { length: Math.max(0, anoFim - anoInicio + 1) },
+    (_, index) => anoInicio + index,
+  );
+}
+
 @Injectable()
 export class ComparativoDeputadosService {
   private readonly logger = new Logger(ComparativoDeputadosService.name);
@@ -139,18 +152,28 @@ export class ComparativoDeputadosService {
       });
     }
 
-    const year = Math.min(getYear(janela.dataFim), referencia.getUTCFullYear());
+    const years = toAnosDaJanela(janela.dataInicio, janela.dataFim);
 
-    const [proposicoesSource, orgaosSource, ceapSource] = await Promise.all([
-      this.repository.loadDeputadoProposicoesAssinadasSource(source.id, year),
-      this.repository.loadDeputadoOrgaos(source.id, year),
-      this.repository.loadDeputadoCeapSource(source.id, year),
+    const [proposicoesSource, orgaosSource, cotaSource] = await Promise.all([
+      this.repository.loadDeputadoProposicoesAssinadasJanela(source.id, years),
+      this.repository.loadDeputadoOrgaosNaJanela(
+        source.id,
+        janela.dataInicio.slice(0, 10),
+        janela.dataFim.slice(0, 10),
+      ),
+      this.repository.loadDeputadoCotaJanelaSource(source.id, years),
     ]);
 
+    // A cobertura vem antes da cota: os dias de cada ano param onde a fonte
+    // para, e é a cobertura que sabe onde isso é.
     const cobertura = deriveCoberturaJanela({
       dataInicioJanela: janela.dataInicio,
       dataFimJanela: janela.dataFim,
-      coberturaCotaMensal: ceapSource.coberturas,
+      coberturaCotaMensal: cotaSource.anos.flatMap((ano) =>
+        ano.coveredThroughMonth === null
+          ? []
+          : [{ year: ano.year, coveredThroughMonth: ano.coveredThroughMonth }],
+      ),
       coveredThroughDateAssinaturas: proposicoesSource.coveredThroughDate,
     });
     const janelaComCobertura: ComparativoJanela = { ...janela, ...cobertura };
@@ -161,14 +184,12 @@ export class ComparativoDeputadosService {
       proposicoesAssinadas:
         toComparativoProposicoesAssinadas(proposicoesSource),
       orgaos: toComparativoOrgaos(orgaosSource),
-      cota:
-        perfil.validYearRange === null
-          ? { status: 'ano-nao-carregado' }
-          : toComparativoCota({
-              year,
-              validYearRange: perfil.validYearRange,
-              source: ceapSource,
-            }),
+      cota: toComparativoCota({
+        dataInicioJanela: janela.dataInicio,
+        dataFimJanela: janela.dataFim,
+        coberturaAte: cobertura.coberturaAte,
+        source: cotaSource,
+      }),
     });
   }
 

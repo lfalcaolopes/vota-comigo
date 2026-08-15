@@ -221,6 +221,13 @@ function ComparativoValor({ cell }: { cell: ComparativoDeputadosCell }) {
       {cell.detail !== null ? (
         <p className="text-xs leading-normal text-muted">{cell.detail}</p>
       ) : null}
+      {cell.breakdown !== null ? (
+        <ul className="grid gap-0.5 text-xs leading-normal text-muted">
+          {cell.breakdown.map((linha) => (
+            <li key={linha}>{linha}</li>
+          ))}
+        </ul>
+      ) : null}
     </div>
   );
 }

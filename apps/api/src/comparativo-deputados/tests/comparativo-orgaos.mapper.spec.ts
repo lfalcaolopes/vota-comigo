@@ -57,6 +57,36 @@ describe('mapper de órgãos do comparativo', () => {
     });
   });
 
+  describe('quando o mesmo órgão aparece em vínculos diferentes da janela', () => {
+    it('conta órgãos distintos, não vínculos', () => {
+      // Arrange
+      const vinculo = (titulo: string, dataInicio: string) => ({
+        externalIdOrgao: 2001,
+        siglaOrgao: 'CCJC',
+        nome: 'Comissão de Constituição e Justiça e de Cidadania',
+        titulo,
+        dataInicio,
+        dataFim: null,
+      });
+      const source = [
+        vinculo('Suplente', '2023-02-01'),
+        vinculo('Titular', '2024-03-01'),
+      ];
+
+      // Act
+      const result = toComparativoOrgaos(source);
+
+      // Assert
+      expect(result.total).toBe(1);
+      expect(result.items).toEqual([
+        expect.objectContaining({
+          titulo: 'Titular',
+          dataInicio: '2023-02-01',
+        }),
+      ]);
+    });
+  });
+
   describe('quando não há vínculos', () => {
     it('devolve total zero', () => {
       // Act

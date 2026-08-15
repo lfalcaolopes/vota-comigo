@@ -70,7 +70,30 @@ function deputado(
     cota: {
       status: "comparavel",
       percentualSobreMedianaUf: 112,
-      medianaUf: { siglaUf: "MG", deputadoCount: 53 },
+      siglaUf: "MG",
+      anos: [
+        {
+          year: 2023,
+          naComparacao: true,
+          percentualSobreMedianaUf: 110,
+          diasEmExercicio: 334,
+          diasNoAno: 334,
+          medianaUfDeputadoCount: 53,
+          dadoIncompleto: false,
+        },
+        {
+          year: 2024,
+          naComparacao: true,
+          percentualSobreMedianaUf: 114,
+          diasEmExercicio: 366,
+          diasNoAno: 366,
+          medianaUfDeputadoCount: 53,
+          dadoIncompleto: false,
+        },
+      ],
+      anosNaComparacao: 2,
+      diasEmExercicio: 700,
+      diasNaComparacao: 700,
     },
     ...overrides,
   };
@@ -94,7 +117,7 @@ describe("ComparativoDeputadosView", () => {
       // Assert
       expect(html).toContain("Presença registrada");
       expect(html).toContain("Proposições assinadas");
-      expect(html).toContain("Comissões e outros órgãos");
+      expect(html).toContain("Órgãos distintos");
       expect(html).toContain("Cota parlamentar");
       expect(html).toContain('href="/deputados/1"');
       expect(html).toContain('target="_blank"');
@@ -109,8 +132,22 @@ describe("ComparativoDeputadosView", () => {
 
       // Assert
       expect(html).toContain("12% acima da mediana");
-      expect(html).toContain("Comparação com 53 deputados de MG");
+      expect(html).toContain(
+        "700 de 700 dias em exercício · 2 anos comparados",
+      );
       expect(html).not.toContain("R$");
+    });
+
+    it("mostra a posição de cada ano da janela sob a célula da cota", () => {
+      // Arrange / Act
+      const html = render({
+        janelasCoincidem: true,
+        items: [deputado(1), deputado(2)],
+      });
+
+      // Assert
+      expect(html).toContain("2023 · 110%");
+      expect(html).toContain("2024 · 114%");
     });
 
     it("mostra o cabeçalho de janela com legislatura, período e dias em exercício", () => {

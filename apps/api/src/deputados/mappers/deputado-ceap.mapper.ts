@@ -66,7 +66,26 @@ export function toDeputadoCeapLoadedResponse(
   };
 }
 
-function deriveSigepaDataStatus(
+// O total do comparativo é o mesmo total do perfil: uma segunda soma dos
+// mesmos meses divergiria em silêncio no dia em que uma das duas mudasse.
+export function somarGastosAteMes(
+  gastosJson: Record<string, Record<string, number>>,
+  coveredThroughMonth: number,
+): number {
+  let total = 0;
+
+  for (let month = 1; month <= coveredThroughMonth; month += 1) {
+    for (const amountUsedCents of Object.values(
+      gastosJson[String(month)] ?? {},
+    )) {
+      total += amountUsedCents;
+    }
+  }
+
+  return total;
+}
+
+export function deriveSigepaDataStatus(
   year: number,
   coveredThroughMonth: number,
 ): DeputadoCeapLoadedResponse['sigepaDataStatus'] {
@@ -129,10 +148,7 @@ function deriveAggregates(
     });
 
   return {
-    totalAmountUsedCents: categories.reduce(
-      (total, category) => total + category.amountUsedCents,
-      0,
-    ),
+    totalAmountUsedCents: somarGastosAteMes(gastosJson, coveredThroughMonth),
     categories,
     months,
   };

@@ -1,4 +1,5 @@
 import type {
+  ComparativoCotaAno,
   ComparativoDeputado,
   ComparativoDeputadosResponse,
 } from "@vota-comigo/shared-types";
@@ -28,6 +29,23 @@ const JANELA_INDISPONIVEL = {
   motivo: "legislatura-anterior-a-cobertura" as const,
   ultimaLegislatura: 54,
 };
+
+function cotaAno(
+  year: number,
+  percentualSobreMedianaUf: number | null,
+  overrides: Partial<ComparativoCotaAno> = {},
+): ComparativoCotaAno {
+  return {
+    year,
+    naComparacao: percentualSobreMedianaUf !== null,
+    percentualSobreMedianaUf,
+    diasEmExercicio: 350,
+    diasNoAno: 350,
+    medianaUfDeputadoCount: percentualSobreMedianaUf === null ? null : 53,
+    dadoIncompleto: false,
+    ...overrides,
+  };
+}
 
 function deputado(
   externalIdDeputado: number,
@@ -64,7 +82,11 @@ function deputado(
     cota: {
       status: "comparavel",
       percentualSobreMedianaUf: 112,
-      medianaUf: { siglaUf: "MG", deputadoCount: 53 },
+      siglaUf: "MG",
+      anos: [cotaAno(2023, 110), cotaAno(2024, 114)],
+      anosNaComparacao: 2,
+      diasEmExercicio: 700,
+      diasNaComparacao: 700,
     },
     ...overrides,
   };
@@ -162,8 +184,8 @@ describe("grade do comparativo de deputados", () => {
       expect(rowById(grid, "cota").cells[0]).toEqual({
         externalIdDeputado: 1,
         value: "12% acima da mediana",
-        detail:
-          "Comparação com 53 deputados de MG em exercício durante todo o ano",
+        detail: "700 de 700 dias em exercício · 2 anos comparados",
+        breakdown: ["2023 · 110%", "2024 · 114%"],
         lacuna: false,
       });
     });
@@ -175,7 +197,11 @@ describe("grade do comparativo de deputados", () => {
           cota: {
             status: "comparavel",
             percentualSobreMedianaUf: 100,
-            medianaUf: { siglaUf: "MG", deputadoCount: 53 },
+            siglaUf: "MG",
+            anos: [cotaAno(2023, 100)],
+            anosNaComparacao: 1,
+            diasEmExercicio: 350,
+            diasNaComparacao: 350,
           },
         }),
         deputado(2),
@@ -197,7 +223,11 @@ describe("grade do comparativo de deputados", () => {
           cota: {
             status: "comparavel",
             percentualSobreMedianaUf: 70.4,
-            medianaUf: { siglaUf: "MG", deputadoCount: 53 },
+            siglaUf: "MG",
+            anos: [cotaAno(2023, 70.4)],
+            anosNaComparacao: 1,
+            diasEmExercicio: 350,
+            diasNaComparacao: 350,
           },
         }),
         deputado(2),
@@ -218,7 +248,11 @@ describe("grade do comparativo de deputados", () => {
       // Arrange
       const data = response([
         deputado(1, {
-          cota: { status: "sem-comparacao", motivo: "exercicio-parcial" },
+          cota: {
+            status: "sem-comparacao",
+            motivo: "sem-mediana-na-janela",
+            anos: [cotaAno(2023, null)],
+          },
         }),
         deputado(2),
       ]);
@@ -228,9 +262,61 @@ describe("grade do comparativo de deputados", () => {
 
       // Assert
       expect(rowById(grid, "cota").cells[0]).toMatchObject({
-        value: "Exercício parcial no ano",
+        value: "Sem mediana na janela",
         lacuna: true,
       });
+    });
+
+    it("mantém os anos visíveis mesmo sem posição agregada", () => {
+      // Arrange
+      const data = response([
+        deputado(1, {
+          cota: {
+            status: "sem-comparacao",
+            motivo: "sem-gastos",
+            anos: [
+              cotaAno(2023, null, { diasEmExercicio: 0 }),
+              cotaAno(2024, null),
+            ],
+          },
+        }),
+        deputado(2),
+      ]);
+
+      // Act
+      const grid = buildComparativoDeputadosGrid(data);
+
+      // Assert
+      expect(rowById(grid, "cota").cells[0]).toMatchObject({
+        value: "Sem gastos na janela",
+        breakdown: ["2023 · sem exercício", "2024 · sem mediana"],
+      });
+    });
+
+    it("marca na célula o ano com dado incompleto", () => {
+      // Arrange
+      const data = response([
+        deputado(1, {
+          cota: {
+            status: "comparavel",
+            percentualSobreMedianaUf: 105,
+            siglaUf: "MG",
+            anos: [cotaAno(2026, 105, { dadoIncompleto: true })],
+            anosNaComparacao: 1,
+            diasEmExercicio: 350,
+            diasNaComparacao: 350,
+          },
+        }),
+        deputado(2),
+      ]);
+
+      // Act
+      const grid = buildComparativoDeputadosGrid(data);
+
+      // Assert
+      expect(rowById(grid, "cota").cells[0].breakdown).toEqual([
+        "2026 · 105% (dado incompleto)",
+      ]);
     });
   });
 
@@ -260,8 +346,101 @@ describe("grade do comparativo de deputados", () => {
 
       // Assert
       expect(rowById(grid, "orgaos").cells[0]).toMatchObject({
-        value: "3",
-        detail: "CCJC, CFT e mais 1",
+        value: "1,0/ano",
+        detail: "3 no total · CCJC, CFT e mais 1",
+      });
+    });
+
+    it("chama a linha de órgãos distintos, não de vínculos", () => {
+      // Arrange
+      const data = response([deputado(1), deputado(2)]);
+
+      // Act
+      const grid = buildComparativoDeputadosGrid(data);
+
+      // Assert
+      expect(rowById(grid, "orgaos").label).toBe("Órgãos distintos");
+    });
+  });
+
+  describe("quando as contagens absolutas são normalizadas por ano", () => {
+    it("divide o total pelos anos efetivos e abre o detalhe com o total", () => {
+      // Arrange
+      const data = response([
+        deputado(1, {
+          proposicoesAssinadas: {
+            disponivel: true,
+            total: 340,
+            totalPrimeiroSignatario: 41,
+            coveredThroughDate: "2026-06-30",
+          },
+        }),
+        deputado(2),
+      ]);
+
+      // Act
+      const grid = buildComparativoDeputadosGrid(data);
+
+      // Assert
+      expect(rowById(grid, "proposicoes-assinadas").cells[0]).toMatchObject({
+        value: "113/ano",
+        detail: "340 no total · 41 como primeiro signatário",
+      });
+    });
+
+    it("cai para o total absoluto quando não há ano efetivo na janela", () => {
+      // Arrange
+      const janelaSemCobertura = { ...JANELA_57, divisorAnosEfetivos: 0 };
+      const data = response([
+        deputado(1, { janela: janelaSemCobertura }),
+        deputado(2, { janela: janelaSemCobertura }),
+      ]);
+
+      // Act
+      const grid = buildComparativoDeputadosGrid(data);
+
+      // Assert
+      expect(rowById(grid, "proposicoes-assinadas").cells[0]).toMatchObject({
+        value: "12",
+        detail: "12 no total · 3 como primeiro signatário",
+      });
+    });
+
+    it("declara os anos que faltam quando a janela tem ano descoberto", () => {
+      // Arrange
+      const data = response([
+        deputado(1, {
+          proposicoesAssinadas: {
+            disponivel: false,
+            motivo: "anos-descobertos",
+            anosDescobertos: [2025, 2026],
+          },
+        }),
+        deputado(2),
+      ]);
+
+      // Act
+      const grid = buildComparativoDeputadosGrid(data);
+
+      // Assert
+      expect(rowById(grid, "proposicoes-assinadas").cells[0]).toMatchObject({
+        value: "Sem dados na janela",
+        detail: "Anos não carregados: 2025 e 2026",
+        lacuna: true,
+      });
+    });
+
+    it("nomeia a janela sem nenhum órgão", () => {
+      // Arrange
+      const data = response([deputado(1), deputado(2)]);
+
+      // Act
+      const grid = buildComparativoDeputadosGrid(data);
+
+      // Assert
+      expect(rowById(grid, "orgaos").cells[0]).toMatchObject({
+        value: "0",
+        detail: "Nenhum órgão na janela",
       });
     });
   });
@@ -290,12 +469,14 @@ describe("grade do comparativo de deputados", () => {
           externalIdDeputado: 1,
           value: "Sem dados comparáveis",
           detail: "Última atuação na 54ª legislatura",
+          breakdown: null,
           lacuna: true,
         },
         presenca: {
           externalIdDeputado: 1,
           value: "Sem dados comparáveis",
           detail: "Última atuação na 54ª legislatura",
+          breakdown: null,
           lacuna: true,
         },
         label: "Cota parlamentar",

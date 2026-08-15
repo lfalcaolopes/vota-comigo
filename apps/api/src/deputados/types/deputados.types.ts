@@ -74,6 +74,33 @@ export type DeputadoProposicoesAssinadasSource = {
   coveredThroughDate: string | null;
 };
 
+export type DeputadoProposicoesAssinadasJanelaSource = {
+  anos: readonly {
+    year: number;
+    coberto: boolean;
+    assinaturasJson: Record<string, ContadorAssinaturas> | null;
+  }[];
+  coveredThroughDate: string | null;
+};
+
+// A UF é uma só para a janela inteira — a do ano mais recente com linha de
+// gasto —, porque a comparação contra a mediana precisa de um estado, e o
+// deputado que mudou de UF não tem duas medianas somáveis.
+export type DeputadoCotaJanelaSource = {
+  siglaUf: string | null;
+  anos: readonly {
+    year: number;
+    coveredThroughMonth: number | null;
+    gastosJson: Record<string, Record<string, number>> | null;
+    medianaUf: {
+      amountUsedCents: number;
+      deputadoCount: number;
+    } | null;
+  }[];
+  intervalosExercicio: readonly IntervaloExercicio[];
+  datasInicioLegislatura: readonly string[];
+};
+
 export type DeputadoOrgaoSource = {
   externalIdOrgao: number;
   siglaOrgao: string | null;

@@ -72,10 +72,25 @@ function createRepository(
       intervalosExercicio: [],
       datasInicioLegislatura: [],
     }),
+    loadDeputadoCotaJanelaSource: async () => ({
+      siglaUf: null,
+      anos: [],
+      intervalosExercicio: [],
+      datasInicioLegislatura: [],
+    }),
     loadDeputadoOrgaos: async () => [],
+    loadDeputadoOrgaosNaJanela: async () => [],
     loadDeputadoProposicoesAssinadasSource: async () => ({
       anoCoberto: false,
       assinaturasJson: null,
+      coveredThroughDate: null,
+    }),
+    loadDeputadoProposicoesAssinadasJanela: async (_deputadoId, years) => ({
+      anos: years.map((year) => ({
+        year,
+        coberto: true,
+        assinaturasJson: null,
+      })),
       coveredThroughDate: null,
     }),
     loadLegislaturas: async () => LEGISLATURAS,
@@ -86,7 +101,7 @@ function createRepository(
 
 describe('comparativo de deputados', () => {
   describe('quando a janela do deputado está disponível', () => {
-    it('aplica o último ano da janela para cada deputado', async () => {
+    it('recorta a janela na última legislatura em que cada deputado atuou', async () => {
       // Arrange
       const service = new ComparativoDeputadosService(
         createRepository([perfilSource(1), perfilSource(2)]),
@@ -125,13 +140,41 @@ describe('comparativo de deputados', () => {
       ]);
     });
 
-    it('publica as métricas do último ano da janela para cada deputado', async () => {
+    it('consulta as métricas sobre todos os anos civis da janela', async () => {
+      // Arrange
+      const anosConsultados: number[][] = [];
+      const service = new ComparativoDeputadosService(
+        createRepository([perfilSource(1), perfilSource(2)], {
+          loadDeputadoProposicoesAssinadasJanela: async (
+            _deputadoId,
+            years,
+          ) => {
+            anosConsultados.push([...years]);
+            return { anos: [], coveredThroughDate: null };
+          },
+        }),
+      );
+
+      // Act
+      await service.comparativo([1, 2]);
+
+      // Assert
+      expect(anosConsultados[0]).toEqual([2023, 2024, 2025]);
+    });
+
+    it('soma as métricas de todos os anos da janela, não de um ano só', async () => {
       // Arrange
       const service = new ComparativoDeputadosService(
         createRepository([perfilSource(1), perfilSource(2)], {
-          loadDeputadoProposicoesAssinadasSource: async () => ({
-            anoCoberto: true,
-            assinaturasJson: { '2025-03-04': [4, 1] },
+          loadDeputadoProposicoesAssinadasJanela: async (
+            _deputadoId,
+            years,
+          ) => ({
+            anos: years.map((year) => ({
+              year,
+              coberto: true,
+              assinaturasJson: { [`${year}-03-04`]: [4, 1] as const },
+            })),
             coveredThroughDate: '2025-08-14',
           }),
         }),
@@ -143,9 +186,35 @@ describe('comparativo de deputados', () => {
       // Assert
       expect(response.items[0].proposicoesAssinadas).toEqual({
         disponivel: true,
-        total: 4,
-        totalPrimeiroSignatario: 1,
+        total: 12,
+        totalPrimeiroSignatario: 3,
         coveredThroughDate: '2025-08-14',
+      });
+    });
+
+    it('consulta os órgãos pelo período da janela, não por um ano civil', async () => {
+      // Arrange
+      const periodos: { dataInicio: string; dataFim: string }[] = [];
+      const service = new ComparativoDeputadosService(
+        createRepository([perfilSource(1), perfilSource(2)], {
+          loadDeputadoOrgaosNaJanela: async (
+            _deputadoId,
+            dataInicio,
+            dataFim,
+          ) => {
+            periodos.push({ dataInicio, dataFim });
+            return [];
+          },
+        }),
+      );
+
+      // Act
+      await service.comparativo([1, 2]);
+
+      // Assert
+      expect(periodos[0]).toEqual({
+        dataInicio: '2023-02-01',
+        dataFim: '2025-04-10',
       });
     });
   });

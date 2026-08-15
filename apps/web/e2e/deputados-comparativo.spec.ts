@@ -8,6 +8,8 @@ const JANELA_57 = {
   encerrada: true,
   diasEmExercicioDisponivel: true,
   diasEmExercicio: 800,
+  coberturaAte: "2024-12-31",
+  divisorAnosEfetivos: 2,
 };
 
 function deputado(externalIdDeputado: number, percentual: number) {
@@ -42,7 +44,30 @@ function deputado(externalIdDeputado: number, percentual: number) {
     cota: {
       status: "comparavel",
       percentualSobreMedianaUf: percentual,
-      medianaUf: { siglaUf: "SP", deputadoCount: 70 },
+      siglaUf: "SP",
+      anos: [
+        {
+          year: 2023,
+          naComparacao: true,
+          percentualSobreMedianaUf: percentual,
+          diasEmExercicio: 334,
+          diasNoAno: 334,
+          medianaUfDeputadoCount: 70,
+          dadoIncompleto: false,
+        },
+        {
+          year: 2024,
+          naComparacao: true,
+          percentualSobreMedianaUf: percentual,
+          diasEmExercicio: 366,
+          diasNoAno: 366,
+          medianaUfDeputadoCount: 70,
+          dadoIncompleto: false,
+        },
+      ],
+      anosNaComparacao: 2,
+      diasEmExercicio: 700,
+      diasNaComparacao: 700,
     },
   };
 }
@@ -79,10 +104,13 @@ test.describe("comparativo de deputados a partir da listagem", () => {
     ).toBeVisible({ timeout: 15_000 });
     await expect(visibleText(page, "Presença registrada")).toBeVisible();
     await expect(visibleText(page, "Proposições assinadas")).toBeVisible();
-    await expect(visibleText(page, "Comissões e outros órgãos")).toBeVisible();
+    await expect(visibleText(page, "Órgãos distintos")).toBeVisible();
     await expect(visibleText(page, "57ª legislatura")).toBeVisible();
     await expect(visibleText(page, "12% acima da mediana")).toBeVisible();
     await expect(visibleText(page, "12% abaixo da mediana")).toBeVisible();
+    await expect(
+      visibleText(page, "Dados cobertos até dez/2024"),
+    ).toBeVisible();
     await expect(page.getByText("R$")).toHaveCount(0);
   });
 

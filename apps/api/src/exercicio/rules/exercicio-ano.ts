@@ -32,18 +32,12 @@ export function deriveJanelaExercicioAno(
   };
 }
 
-export function exerceuAnoInteiro(
+type IntervaloEpoch = { abertura: number; fechamento: number };
+
+function toIntervalosEpoch(
   intervalos: readonly IntervaloExercicio[],
-  janela: JanelaExercicioAno,
-): boolean {
-  const inicio = toEpochMillis(janela.inicio);
-  const fim = toEpochMillis(janela.fim);
-
-  if (inicio === null || fim === null) {
-    return false;
-  }
-
-  const ordenados = intervalos
+): readonly IntervaloEpoch[] {
+  return intervalos
     .flatMap((intervalo) => {
       const abertura = toEpochMillis(intervalo.openedAt);
       const fechamento =
@@ -58,6 +52,53 @@ export function exerceuAnoInteiro(
         : [{ abertura, fechamento }];
     })
     .sort((a, b) => a.abertura - b.abertura);
+}
+
+export function somarDiasEmExercicio(
+  intervalos: readonly IntervaloExercicio[],
+  inicioEpoch: number,
+  fimEpoch: number,
+): number {
+  const clipados = toIntervalosEpoch(intervalos)
+    .map((intervalo) => ({
+      abertura: Math.max(intervalo.abertura, inicioEpoch),
+      fechamento: Math.min(intervalo.fechamento, fimEpoch),
+    }))
+    .filter((intervalo) => intervalo.fechamento > intervalo.abertura)
+    .sort((a, b) => a.abertura - b.abertura);
+
+  let totalMillis = 0;
+  let mescladoFim = Number.NEGATIVE_INFINITY;
+  let mescladoInicio = Number.NEGATIVE_INFINITY;
+
+  for (const { abertura, fechamento } of clipados) {
+    if (abertura > mescladoFim) {
+      totalMillis +=
+        mescladoFim - mescladoInicio > 0 ? mescladoFim - mescladoInicio : 0;
+      mescladoInicio = abertura;
+      mescladoFim = fechamento;
+    } else {
+      mescladoFim = Math.max(mescladoFim, fechamento);
+    }
+  }
+  totalMillis +=
+    mescladoFim - mescladoInicio > 0 ? mescladoFim - mescladoInicio : 0;
+
+  return Math.round(totalMillis / DIA_EM_MILLIS);
+}
+
+export function exerceuAnoInteiro(
+  intervalos: readonly IntervaloExercicio[],
+  janela: JanelaExercicioAno,
+): boolean {
+  const inicio = toEpochMillis(janela.inicio);
+  const fim = toEpochMillis(janela.fim);
+
+  if (inicio === null || fim === null) {
+    return false;
+  }
+
+  const ordenados = toIntervalosEpoch(intervalos);
 
   let coberturaAte = inicio;
 

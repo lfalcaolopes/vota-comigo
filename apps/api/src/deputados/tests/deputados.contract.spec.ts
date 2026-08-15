@@ -142,6 +142,17 @@ function fakeRepository(
     }),
     loadDeputadoOrgaos: async () => [],
     loadDeputadoProposicoesAssinadasSource: proposicoesAssinadasSource,
+    loadDeputadoCotaJanelaSource: async () => ({
+      siglaUf: null,
+      anos: [],
+      intervalosExercicio: [],
+      datasInicioLegislatura: [],
+    }),
+    loadDeputadoOrgaosNaJanela: async () => [],
+    loadDeputadoProposicoesAssinadasJanela: async () => ({
+      anos: [],
+      coveredThroughDate: null,
+    }),
     loadLegislaturas: async () => [],
     loadIntervalosExercicio: async () => [],
   };

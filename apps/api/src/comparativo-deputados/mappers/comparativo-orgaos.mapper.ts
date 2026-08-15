@@ -3,7 +3,10 @@ import type {
   ComparativoOrgaos,
 } from '@vota-comigo/shared-types';
 
-import { sortDeputadoOrgaos } from '@/deputados/rules/deputado-orgaos';
+import {
+  dedupOrgaosDaJanela,
+  sortDeputadoOrgaos,
+} from '@/deputados/rules/deputado-orgaos';
 import type { DeputadoOrgaoSource } from '@/deputados/types/deputados.types';
 
 export function toComparativoOrgaos(
@@ -23,7 +26,7 @@ export function toComparativoOrgaos(
           },
         ],
   );
-  const sorted = sortDeputadoOrgaos(items);
+  const sorted = sortDeputadoOrgaos(dedupOrgaosDaJanela(items));
 
   return { items: [...sorted], total: sorted.length };
 }

@@ -6,6 +6,7 @@ import {
   exists,
   gt,
   gte,
+  inArray,
   isNotNull,
   isNull,
   lte,
@@ -42,6 +43,8 @@ import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
 import type {
   DeputadoCardRow,
   DeputadoCeapSource,
+  DeputadoCotaJanelaSource,
+  DeputadoProposicoesAssinadasJanelaSource,
   DeputadoLegislaturaPeriodoSource,
   DeputadosFeedFilters,
   DeputadosFeedPage,
@@ -72,14 +75,27 @@ export interface DeputadosRepository {
     deputadoId: string,
     year: number,
   ): Promise<DeputadoCeapSource>;
+  loadDeputadoCotaJanelaSource(
+    deputadoId: string,
+    years: readonly number[],
+  ): Promise<DeputadoCotaJanelaSource>;
   loadDeputadoOrgaos(
     deputadoId: string,
     year: number,
+  ): Promise<readonly DeputadoOrgaoSource[]>;
+  loadDeputadoOrgaosNaJanela(
+    deputadoId: string,
+    dataInicio: string,
+    dataFim: string,
   ): Promise<readonly DeputadoOrgaoSource[]>;
   loadDeputadoProposicoesAssinadasSource(
     deputadoId: string,
     year: number,
   ): Promise<DeputadoProposicoesAssinadasSource>;
+  loadDeputadoProposicoesAssinadasJanela(
+    deputadoId: string,
+    years: readonly number[],
+  ): Promise<DeputadoProposicoesAssinadasJanelaSource>;
   loadLegislaturas(): Promise<readonly LegislaturaSource[]>;
   loadIntervalosExercicio(
     deputadoId: string,
@@ -436,6 +452,158 @@ export function createDeputadosRepository(
         datasInicioLegislatura: legislaturas.map(
           (legislaturaRow) => legislaturaRow.dataInicio,
         ),
+      };
+    },
+
+    async loadDeputadoCotaJanelaSource(deputadoId, years) {
+      const [coberturas, gastoRows, intervalosExercicio, legislaturas] =
+        await Promise.all([
+          db
+            .select({
+              year: cotaCobertura.year,
+              coveredThroughMonth: cotaCobertura.coveredThroughMonth,
+            })
+            .from(cotaCobertura)
+            .where(inArray(cotaCobertura.year, [...years])),
+          db
+            .select({
+              year: deputadoGastoCota.year,
+              siglaUf: deputadoGastoCota.siglaUf,
+              gastosJson: deputadoGastoCota.gastosJson,
+            })
+            .from(deputadoGastoCota)
+            .where(
+              and(
+                eq(deputadoGastoCota.deputadoId, deputadoId),
+                inArray(deputadoGastoCota.year, [...years]),
+              ),
+            ),
+          loadIntervalosExercicioRows(deputadoId),
+          loadLegislaturasRows(),
+        ]);
+
+      const siglaUf =
+        [...gastoRows].sort((a, b) => b.year - a.year)[0]?.siglaUf ?? null;
+      const medianaRows =
+        siglaUf === null
+          ? []
+          : await db
+              .select({
+                year: cotaMedianaUf.year,
+                amountUsedCents: cotaMedianaUf.valorUtilizadoMediana,
+                deputadoCount: cotaMedianaUf.deputadoCount,
+              })
+              .from(cotaMedianaUf)
+              .where(
+                and(
+                  eq(cotaMedianaUf.siglaUf, siglaUf),
+                  inArray(cotaMedianaUf.year, [...years]),
+                ),
+              );
+
+      return {
+        siglaUf,
+        anos: years.map((year) => {
+          const mediana = medianaRows.find((row) => row.year === year);
+          return {
+            year,
+            coveredThroughMonth:
+              coberturas.find((row) => row.year === year)
+                ?.coveredThroughMonth ?? null,
+            gastosJson:
+              (gastoRows.find((row) => row.year === year)?.gastosJson as
+                | Record<string, Record<string, number>>
+                | undefined) ?? null,
+            medianaUf:
+              mediana === undefined
+                ? null
+                : {
+                    amountUsedCents: mediana.amountUsedCents,
+                    deputadoCount: mediana.deputadoCount,
+                  },
+          };
+        }),
+        intervalosExercicio,
+        datasInicioLegislatura: legislaturas.map(
+          (legislaturaRow) => legislaturaRow.dataInicio,
+        ),
+      };
+    },
+
+    async loadDeputadoOrgaosNaJanela(deputadoId, dataInicio, dataFim) {
+      const rows = await db
+        .select({
+          externalIdOrgao: orgao.externalIdOrgao,
+          siglaOrgao: orgao.sigla,
+          nomePublicacao: orgao.nomePublicacao,
+          nome: orgao.nome,
+          titulo: deputadoOrgao.cargo,
+          dataInicio: deputadoOrgao.dataInicio,
+          dataFim: deputadoOrgao.dataFim,
+        })
+        .from(deputadoOrgao)
+        .innerJoin(orgao, eq(orgao.id, deputadoOrgao.orgaoId))
+        .where(
+          and(
+            eq(deputadoOrgao.deputadoId, deputadoId),
+            lte(deputadoOrgao.dataInicio, dataFim),
+            or(
+              isNull(deputadoOrgao.dataFim),
+              gte(deputadoOrgao.dataFim, dataInicio),
+            ),
+          ),
+        );
+
+      return rows.map((row) => ({
+        externalIdOrgao: row.externalIdOrgao,
+        siglaOrgao: row.siglaOrgao,
+        nome: row.nomePublicacao?.trim() || row.nome,
+        titulo: row.titulo,
+        dataInicio: row.dataInicio,
+        dataFim: row.dataFim,
+      }));
+    },
+
+    async loadDeputadoProposicoesAssinadasJanela(deputadoId, years) {
+      const [coberturaRows, deputadoRows, fronteiraRows] = await Promise.all([
+        db
+          .selectDistinct({ year: deputadoProposicaoAssinada.year })
+          .from(deputadoProposicaoAssinada)
+          .where(inArray(deputadoProposicaoAssinada.year, [...years])),
+        db
+          .select({
+            year: deputadoProposicaoAssinada.year,
+            assinaturasJson: deputadoProposicaoAssinada.assinaturasJson,
+          })
+          .from(deputadoProposicaoAssinada)
+          .where(
+            and(
+              eq(deputadoProposicaoAssinada.deputadoId, deputadoId),
+              inArray(deputadoProposicaoAssinada.year, [...years]),
+            ),
+          ),
+        // A fronteira da fonte é o dia mais recente varrido pela ingestão, e
+        // ele vive no ano mais recente carregado — não nos anos da janela.
+        db.execute<{ coveredThroughDate: string | null }>(sql`
+          select max(assinatura.key) as "coveredThroughDate"
+          from ${deputadoProposicaoAssinada} as assinada,
+               jsonb_each(assinada.assinaturas_json) as assinatura
+          where assinada.year = (
+            select max(year) from ${deputadoProposicaoAssinada}
+          )
+        `),
+      ]);
+
+      return {
+        anos: years.map((year) => ({
+          year,
+          coberto: coberturaRows.some((row) => row.year === year),
+          assinaturasJson:
+            (deputadoRows.find((row) => row.year === year)
+              ?.assinaturasJson as DeputadoProposicoesAssinadasSource['assinaturasJson']) ??
+            null,
+        })),
+        coveredThroughDate: fronteiraRows[0]?.coveredThroughDate ?? null,
       };
     },
 

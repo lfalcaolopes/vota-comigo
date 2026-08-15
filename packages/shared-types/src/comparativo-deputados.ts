@@ -11,36 +11,132 @@ export const MAX_COMPARATIVO_DEPUTADOS = 3;
 export const comparativoCotaStatusSchema = z.enum([
   "comparavel",
   "sem-comparacao",
-  "ano-nao-carregado",
 ]);
 
 export const comparativoCotaSemComparacaoMotivoSchema = z.enum([
-  "exercicio-parcial",
-  "dado-incompleto",
+  "sem-mediana-na-janela",
   "sem-gastos",
 ]);
 
-// A mediana chega sem o valor absoluto: com ele, o percentual de cada deputado
-// devolveria o gasto nominal de todos os comparados da mesma UF.
-export const comparativoCotaMedianaUfSchema = z.object({
-  siglaUf: z.string().length(2),
-  deputadoCount: z.number().int().positive(),
-});
+// O ano não é mais o recorte da cota, e sim o detalhamento dela: a comparação
+// soma todos os anos da janela e usa estes campos para divulgar o que a soma
+// esconde — quem esteve pouco tempo em exercício e onde a fonte trunca.
+export const comparativoCotaAnoSchema = z
+  .object({
+    year: z.number().int().positive(),
+    naComparacao: z.boolean(),
+    percentualSobreMedianaUf: z.number().nullable(),
+    diasEmExercicio: z.number().int().nonnegative(),
+    diasNoAno: z.number().int().nonnegative(),
+    medianaUfDeputadoCount: z.number().int().positive().nullable(),
+    dadoIncompleto: z.boolean(),
+  })
+  .superRefine((ano, ctx) => {
+    if (ano.naComparacao === (ano.percentualSobreMedianaUf === null)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["percentualSobreMedianaUf"],
+        message:
+          "naComparacao deve coincidir com a presença de percentualSobreMedianaUf",
+      });
+    }
 
-export const comparativoCotaSchema = z.discriminatedUnion("status", [
-  z.object({
-    status: z.literal(comparativoCotaStatusSchema.enum.comparavel),
-    percentualSobreMedianaUf: z.number(),
-    medianaUf: comparativoCotaMedianaUfSchema,
-  }),
-  z.object({
-    status: z.literal(comparativoCotaStatusSchema.enum["sem-comparacao"]),
-    motivo: comparativoCotaSemComparacaoMotivoSchema,
-  }),
-  z.object({
-    status: z.literal(comparativoCotaStatusSchema.enum["ano-nao-carregado"]),
-  }),
-]);
+    if (ano.naComparacao === (ano.medianaUfDeputadoCount === null)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["medianaUfDeputadoCount"],
+        message:
+          "naComparacao deve coincidir com a presença de medianaUfDeputadoCount",
+      });
+    }
+
+    if (ano.diasEmExercicio > ano.diasNoAno) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["diasEmExercicio"],
+        message: "diasEmExercicio não pode exceder os dias do ano na janela",
+      });
+    }
+  });
+
+export const comparativoCotaSchema = z
+  .discriminatedUnion("status", [
+    z.object({
+      status: z.literal(comparativoCotaStatusSchema.enum.comparavel),
+      // Soma dos gastos sobre a soma das medianas dos anos comparados: valores
+      // absolutos nunca saem daqui, só a posição frente ao estado.
+      percentualSobreMedianaUf: z.number(),
+      siglaUf: z.string().length(2),
+      anos: z.array(comparativoCotaAnoSchema),
+      anosNaComparacao: z.number().int().positive(),
+      diasEmExercicio: z.number().int().nonnegative(),
+      diasNaComparacao: z.number().int().nonnegative(),
+    }),
+    z.object({
+      status: z.literal(comparativoCotaStatusSchema.enum["sem-comparacao"]),
+      motivo: comparativoCotaSemComparacaoMotivoSchema,
+      anos: z.array(comparativoCotaAnoSchema),
+    }),
+  ])
+  .superRefine((cota, ctx) => {
+    const years = cota.anos.map((ano) => ano.year);
+    const ordenados = [...years].sort((a, b) => a - b);
+    if (
+      new Set(years).size !== years.length ||
+      years.some((year, index) => year !== ordenados[index])
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["anos"],
+        message: "anos deve listar cada ano uma vez, em ordem crescente",
+      });
+    }
+
+    const naComparacao = cota.anos.filter((ano) => ano.naComparacao);
+
+    if (cota.status === comparativoCotaStatusSchema.enum["sem-comparacao"]) {
+      if (naComparacao.length > 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["anos"],
+          message: "nenhum ano entra na comparação quando não há comparação",
+        });
+      }
+      return;
+    }
+
+    if (naComparacao.length !== cota.anosNaComparacao) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["anosNaComparacao"],
+        message: "anosNaComparacao deve contar os anos marcados em anos",
+      });
+    }
+
+    const somaDiasEmExercicio = naComparacao.reduce(
+      (total, ano) => total + ano.diasEmExercicio,
+      0,
+    );
+    if (somaDiasEmExercicio !== cota.diasEmExercicio) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["diasEmExercicio"],
+        message: "diasEmExercicio deve somar os anos em comparação",
+      });
+    }
+
+    const somaDiasNaComparacao = naComparacao.reduce(
+      (total, ano) => total + ano.diasNoAno,
+      0,
+    );
+    if (somaDiasNaComparacao !== cota.diasNaComparacao) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["diasNaComparacao"],
+        message: "diasNaComparacao deve somar os anos em comparação",
+      });
+    }
+  });
 
 export const comparativoJanelaStatusSchema = z.enum([
   "disponivel",
@@ -122,6 +218,10 @@ export const comparativoJanelaSchema = z
     }
   });
 
+export const comparativoProposicoesAssinadasIndisponivelMotivoSchema = z.enum([
+  "anos-descobertos",
+]);
+
 // Forma própria do comparativo: sem `year`, porque a janela do comparativo
 // não é mais um ano civil. O perfil mantém sua própria forma anual.
 export const comparativoProposicoesAssinadasSchema = z
@@ -132,8 +232,12 @@ export const comparativoProposicoesAssinadasSchema = z
       totalPrimeiroSignatario: z.number().int().nonnegative(),
       coveredThroughDate: z.iso.date().nullable(),
     }),
+    // Disponibilidade é tudo-ou-nada: um ano descoberto no meio da janela
+    // produziria um total menor que o real, sem nada na tela que explicasse.
     z.object({
       disponivel: z.literal(false),
+      motivo: comparativoProposicoesAssinadasIndisponivelMotivoSchema,
+      anosDescobertos: z.array(z.number().int().positive()).min(1),
     }),
   ])
   .superRefine((response, ctx) => {
@@ -298,9 +402,7 @@ export type ComparativoCotaStatus = z.infer<typeof comparativoCotaStatusSchema>;
 export type ComparativoCotaSemComparacaoMotivo = z.infer<
   typeof comparativoCotaSemComparacaoMotivoSchema
 >;
-export type ComparativoCotaMedianaUf = z.infer<
-  typeof comparativoCotaMedianaUfSchema
->;
+export type ComparativoCotaAno = z.infer<typeof comparativoCotaAnoSchema>;
 export type ComparativoCota = z.infer<typeof comparativoCotaSchema>;
 export type ComparativoJanelaStatus = z.infer<
   typeof comparativoJanelaStatusSchema
@@ -309,6 +411,9 @@ export type ComparativoJanelaIndisponivelMotivo = z.infer<
   typeof comparativoJanelaIndisponivelMotivoSchema
 >;
 export type ComparativoJanela = z.infer<typeof comparativoJanelaSchema>;
+export type ComparativoProposicoesAssinadasIndisponivelMotivo = z.infer<
+  typeof comparativoProposicoesAssinadasIndisponivelMotivoSchema
+>;
 export type ComparativoProposicoesAssinadas = z.infer<
   typeof comparativoProposicoesAssinadasSchema
 >;
