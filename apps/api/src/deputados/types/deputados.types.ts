@@ -97,6 +97,11 @@ export type DeputadoCotaJanelaSource = {
     year: number;
     coveredThroughMonth: number | null;
     gastosJson: Record<string, Record<string, number>> | null;
+    sigepaReposto: boolean;
+    sigepaCoveredThroughMonth: number | null;
+    // Espelho do dump e reposição chegam separados: quem mescla é o módulo da
+    // janela, na leitura (ADR 022).
+    gastosSigepaJson: Record<string, number> | null;
     medianaUf: {
       amountUsedCents: number;
       deputadoCount: number;

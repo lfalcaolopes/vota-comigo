@@ -1,4 +1,6 @@
+import { toDeputadoCeapLoadedResponse } from '@/deputados/mappers/deputado-ceap.mapper';
 import type { DeputadoCotaJanelaSource } from '@/deputados/types/deputados.types';
+import { applyReposicaoSigepa } from '@/shared/cota/reposicao-sigepa';
 
 import { toComparativoCota } from '../mappers/comparativo-cota.mapper';
 
@@ -10,6 +12,22 @@ const JANELA_57 = {
   coberturaAte: '2024-12-31',
 };
 
+// Julho está fora da janela da reposição, agosto e setembro dentro; o dump
+// publica na janela só os estornos negativos da categoria 998.
+const ANO_2025_REPOSTO: Partial<AnoSource> = {
+  coveredThroughMonth: 9,
+  gastosJson: {
+    '7': { '1': 1_000, '998': 40_000 },
+    '8': { '1': 2_000, '998': -2_500 },
+    '9': { '998': -1_000 },
+  },
+  sigepaReposto: true,
+  sigepaCoveredThroughMonth: 9,
+  gastosSigepaJson: { '7': 999_999, '8': 700_000, '9': 120_000 },
+};
+
+const GASTO_2025_REPOSTO_CENTS = 1_000 + 40_000 + 2_000 + 700_000 + 120_000;
+
 function anoSource(
   year: number,
   overrides: Partial<AnoSource> = {},
@@ -18,6 +36,9 @@ function anoSource(
     year,
     coveredThroughMonth: 12,
     gastosJson: { '1': { '1': 100_000 } },
+    sigepaReposto: false,
+    sigepaCoveredThroughMonth: null,
+    gastosSigepaJson: null,
     medianaUf: { amountUsedCents: 200_000, deputadoCount: 53 },
     ...overrides,
   };
@@ -264,6 +285,167 @@ describe('projeção da cota para o comparativo', () => {
 
       // Assert
       expect(cota.anos.map((ano) => ano.year)).toEqual([2023]);
+    });
+  });
+
+  describe('quando a janela atravessa um ano reposto', () => {
+    it('soma o valor reposto no lugar da categoria 998 do dump', () => {
+      // Arrange
+      const source = cotaSource({
+        anos: [anoSource(2024), anoSource(2025, { ...ANO_2025_REPOSTO })],
+      });
+
+      // Act
+      const cota = toComparativoCota({
+        ...JANELA_57,
+        coberturaAte: '2025-09-30',
+        source,
+      });
+
+      // Assert
+      expect(cota).toMatchObject({
+        status: 'comparavel',
+        gastoNaComparacaoCents: 100_000 + GASTO_2025_REPOSTO_CENTS,
+      });
+    });
+
+    it('mantém fora da janela o mês que o dump ainda publica', () => {
+      // Arrange
+      const source = cotaSource({
+        anos: [
+          anoSource(2025, {
+            ...ANO_2025_REPOSTO,
+            gastosJson: { '7': { '998': 40_000 } },
+            gastosSigepaJson: { '7': 999_999 },
+          }),
+        ],
+      });
+
+      // Act
+      const cota = toComparativoCota({
+        ...JANELA_57,
+        coberturaAte: '2025-09-30',
+        source,
+      });
+
+      // Assert
+      expect(cota).toMatchObject({ gastoNaComparacaoCents: 40_000 });
+    });
+
+    it('declara o ano reposto como dado completo', () => {
+      // Arrange
+      const source = cotaSource({
+        anos: [anoSource(2025, { ...ANO_2025_REPOSTO })],
+      });
+
+      // Act
+      const cota = toComparativoCota({
+        ...JANELA_57,
+        coberturaAte: '2025-09-30',
+        source,
+      });
+
+      // Assert
+      expect(cota.anos[0]).toMatchObject({
+        year: 2025,
+        dadoIncompleto: false,
+      });
+    });
+  });
+
+  describe('quando a janela atravessa um ano da janela ainda não reposto', () => {
+    it('soma o dump puro, com os estornos negativos que ele publica', () => {
+      // Arrange
+      const source = cotaSource({
+        anos: [
+          anoSource(2025, {
+            ...ANO_2025_REPOSTO,
+            sigepaReposto: false,
+            sigepaCoveredThroughMonth: null,
+          }),
+        ],
+      });
+
+      // Act
+      const cota = toComparativoCota({
+        ...JANELA_57,
+        coberturaAte: '2025-09-30',
+        source,
+      });
+
+      // Assert
+      expect(cota).toMatchObject({
+        gastoNaComparacaoCents: 1_000 + 40_000 + 2_000 - 2_500 - 1_000,
+      });
+      expect(cota.anos[0]).toMatchObject({ dadoIncompleto: true });
+    });
+
+    it('soma o dump puro quando a cobertura do dump passa da reposição', () => {
+      // Arrange
+      const source = cotaSource({
+        anos: [
+          anoSource(2025, { ...ANO_2025_REPOSTO, coveredThroughMonth: 10 }),
+        ],
+      });
+
+      // Act
+      const cota = toComparativoCota({
+        ...JANELA_57,
+        coberturaAte: '2025-10-31',
+        source,
+      });
+
+      // Assert
+      expect(cota).toMatchObject({
+        gastoNaComparacaoCents: 1_000 + 40_000 + 2_000 - 2_500 - 1_000,
+      });
+      expect(cota.anos[0]).toMatchObject({ dadoIncompleto: true });
+    });
+  });
+
+  describe('quando o mesmo ano reposto é lido pelo perfil e pelo comparativo', () => {
+    it('publica o mesmo total nos dois lugares', () => {
+      // Arrange
+      const ano = anoSource(2025, { ...ANO_2025_REPOSTO });
+      const source = cotaSource({ anos: [ano] });
+
+      // Act
+      const cota = toComparativoCota({
+        ...JANELA_57,
+        coberturaAte: '2025-09-30',
+        source,
+      });
+      const perfil = toDeputadoCeapLoadedResponse({
+        year: ano.year,
+        availableYears: [ano.year],
+        status: 'ok',
+        coveredThroughMonth: ano.coveredThroughMonth ?? 0,
+        anoReposto: true,
+        gastosJson:
+          applyReposicaoSigepa({
+            year: ano.year,
+            anoReposto: true,
+            gastosJson: ano.gastosJson,
+            gastosSigepaJson: ano.gastosSigepaJson,
+          }) ?? {},
+        source: {
+          coberturas: [],
+          gasto: null,
+          gastosSigepaJson: ano.gastosSigepaJson,
+          categorias: [
+            { externalNumSubCota: 1, description: 'Combustíveis' },
+            { externalNumSubCota: 998, description: 'PASSAGEM AÉREA - SIGEPA' },
+          ],
+          medianaUf: null,
+          intervalosExercicio: source.intervalosExercicio,
+          datasInicioLegislatura: source.datasInicioLegislatura,
+        },
+      });
+
+      // Assert
+      expect(
+        cota.status === 'comparavel' ? cota.gastoNaComparacaoCents : null,
+      ).toBe(perfil.totalAmountUsedCents);
     });
   });
 });

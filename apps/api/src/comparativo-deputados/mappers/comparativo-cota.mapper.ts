@@ -10,7 +10,11 @@ import {
   somarDiasEmExercicio,
 } from '@/exercicio/rules/exercicio-ano';
 import { toEpochMillis } from '@/exercicio/rules/instante';
-import { deriveSigepaDataStatus } from '@/shared/cota/reposicao-sigepa';
+import { isAnoReposto } from '@/shared/cota/ano-reposto';
+import {
+  applyReposicaoSigepa,
+  deriveSigepaDataStatus,
+} from '@/shared/cota/reposicao-sigepa';
 
 const DIA_EM_MILLIS = 24 * 60 * 60 * 1000;
 
@@ -111,8 +115,21 @@ function toAnoComSomas(
       ? ano.medianaUf
       : null;
   const naComparacao = medianaUf !== null;
+  const anoReposto =
+    ano.coveredThroughMonth !== null &&
+    isAnoReposto({
+      sigepaReposto: ano.sigepaReposto,
+      sigepaCoveredThroughMonth: ano.sigepaCoveredThroughMonth,
+      coveredThroughMonth: ano.coveredThroughMonth,
+    });
+  const gastosJson = applyReposicaoSigepa({
+    year: ano.year,
+    anoReposto,
+    gastosJson: ano.gastosJson,
+    gastosSigepaJson: ano.gastosSigepaJson,
+  });
   const gastoCents = somarGastosAteMes(
-    ano.gastosJson ?? {},
+    gastosJson ?? {},
     ano.coveredThroughMonth ?? 0,
   );
   const medianaCents = medianaUf?.amountUsedCents ?? 0;
@@ -126,13 +143,11 @@ function toAnoComSomas(
       diasEmExercicio,
       diasNoAno,
       medianaUfDeputadoCount: medianaUf?.deputadoCount ?? null,
-      // O comparativo ainda lê o dump puro: declarar aqui um ano como reposto
-      // sem mesclar também os valores diria completo sobre um gasto incompleto.
       dadoIncompleto:
         deriveSigepaDataStatus({
           year: ano.year,
           coveredThroughMonth: ano.coveredThroughMonth ?? 0,
-          anoReposto: false,
+          anoReposto,
         }) === 'incompleto',
     },
     gastoCents,

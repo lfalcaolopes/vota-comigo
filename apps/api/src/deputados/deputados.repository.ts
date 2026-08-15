@@ -517,31 +517,50 @@ export function createDeputadosRepository(
     },
 
     async loadDeputadoCotaJanelaSource(deputadoId, years) {
-      const [coberturas, gastoRows, intervalosExercicio, legislaturas] =
-        await Promise.all([
-          db
-            .select({
-              year: cotaCobertura.year,
-              coveredThroughMonth: cotaCobertura.coveredThroughMonth,
-            })
-            .from(cotaCobertura)
-            .where(inArray(cotaCobertura.year, [...years])),
-          db
-            .select({
-              year: deputadoGastoCota.year,
-              siglaUf: deputadoGastoCota.siglaUf,
-              gastosJson: deputadoGastoCota.gastosJson,
-            })
-            .from(deputadoGastoCota)
-            .where(
-              and(
-                eq(deputadoGastoCota.deputadoId, deputadoId),
-                inArray(deputadoGastoCota.year, [...years]),
-              ),
+      const [
+        coberturas,
+        gastoRows,
+        gastoSigepaRows,
+        intervalosExercicio,
+        legislaturas,
+      ] = await Promise.all([
+        db
+          .select({
+            year: cotaCobertura.year,
+            coveredThroughMonth: cotaCobertura.coveredThroughMonth,
+            sigepaReposto: cotaCobertura.sigepaReposto,
+            sigepaCoveredThroughMonth: cotaCobertura.sigepaCoveredThroughMonth,
+          })
+          .from(cotaCobertura)
+          .where(inArray(cotaCobertura.year, [...years])),
+        db
+          .select({
+            year: deputadoGastoCota.year,
+            siglaUf: deputadoGastoCota.siglaUf,
+            gastosJson: deputadoGastoCota.gastosJson,
+          })
+          .from(deputadoGastoCota)
+          .where(
+            and(
+              eq(deputadoGastoCota.deputadoId, deputadoId),
+              inArray(deputadoGastoCota.year, [...years]),
             ),
-          loadIntervalosExercicioRows(deputadoId),
-          loadLegislaturasRows(),
-        ]);
+          ),
+        db
+          .select({
+            year: deputadoGastoCotaSigepa.year,
+            gastosJson: deputadoGastoCotaSigepa.gastosJson,
+          })
+          .from(deputadoGastoCotaSigepa)
+          .where(
+            and(
+              eq(deputadoGastoCotaSigepa.deputadoId, deputadoId),
+              inArray(deputadoGastoCotaSigepa.year, [...years]),
+            ),
+          ),
+        loadIntervalosExercicioRows(deputadoId),
+        loadLegislaturasRows(),
+      ]);
 
       const siglaUf =
         [...gastoRows].sort((a, b) => b.year - a.year)[0]?.siglaUf ?? null;
@@ -566,14 +585,20 @@ export function createDeputadosRepository(
         siglaUf,
         anos: years.map((year) => {
           const mediana = medianaRows.find((row) => row.year === year);
+          const cobertura = coberturas.find((row) => row.year === year);
           return {
             year,
-            coveredThroughMonth:
-              coberturas.find((row) => row.year === year)
-                ?.coveredThroughMonth ?? null,
+            coveredThroughMonth: cobertura?.coveredThroughMonth ?? null,
             gastosJson:
               (gastoRows.find((row) => row.year === year)?.gastosJson as
                 | Record<string, Record<string, number>>
+                | undefined) ?? null,
+            sigepaReposto: cobertura?.sigepaReposto ?? false,
+            sigepaCoveredThroughMonth:
+              cobertura?.sigepaCoveredThroughMonth ?? null,
+            gastosSigepaJson:
+              (gastoSigepaRows.find((row) => row.year === year)?.gastosJson as
+                | Record<string, number>
                 | undefined) ?? null,
             medianaUf:
               mediana === undefined

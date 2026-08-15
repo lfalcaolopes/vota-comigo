@@ -127,6 +127,9 @@ function createRepository(): DeputadosRepository {
         year,
         coveredThroughMonth: 12,
         gastosJson: { '1': { '1': 100_000 } },
+        sigepaReposto: false,
+        sigepaCoveredThroughMonth: null,
+        gastosSigepaJson: null,
         medianaUf: { amountUsedCents: 200_000, deputadoCount: 53 },
       })),
       intervalosExercicio: [
