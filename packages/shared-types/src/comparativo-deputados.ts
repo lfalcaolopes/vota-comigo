@@ -62,6 +62,8 @@ export const comparativoJanelaSchema = z
       encerrada: z.boolean(),
       diasEmExercicioDisponivel: z.boolean(),
       diasEmExercicio: z.number().int().nonnegative().nullable(),
+      coberturaAte: z.iso.date(),
+      divisorAnosEfetivos: z.number().nonnegative(),
     }),
     z.object({
       status: z.literal(comparativoJanelaStatusSchema.enum.indisponivel),
@@ -88,6 +90,18 @@ export const comparativoJanelaSchema = z
           code: z.ZodIssueCode.custom,
           path: ["dataFim"],
           message: "dataFim não pode ser anterior a dataInicio",
+        });
+      }
+
+      // Sem limite inferior: um buraco de cobertura desde o primeiro ano da
+      // janela produz coberturaAte anterior ao próprio início da janela —
+      // é assim que divisorAnosEfetivos chega a zero sem ficar negativo.
+      const anoFimJanela = janela.dataFim.slice(0, 4);
+      if (janela.coberturaAte > `${anoFimJanela}-12-31`) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["coberturaAte"],
+          message: "coberturaAte não pode passar do fim do ano civil da janela",
         });
       }
       return;

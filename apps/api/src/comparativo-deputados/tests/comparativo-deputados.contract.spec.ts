@@ -196,6 +196,8 @@ describe('GET /comparativo-deputados', () => {
           encerrada: true,
           diasEmExercicioDisponivel: true,
           diasEmExercicio: expect.any(Number),
+          coberturaAte: '2022-12-31',
+          divisorAnosEfetivos: 0,
         },
         proposicoesAssinadas: {
           disponivel: true,

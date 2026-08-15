@@ -17,8 +17,10 @@ import { DeputadoAvatar } from "./deputado-avatar";
 import {
   DIAS_EM_EXERCICIO_INDISPONIVEL,
   JANELA_FORA_DA_BASE_COMPARAVEL,
+  mostrarCoberturaJanela,
   toAtividadeAriaLabel,
   toAtividadeLabel,
+  toCoberturaAteLabel,
   toDiasEmExercicioLabel,
   toJanelaLegislaturaLabel,
   toJanelaPeriodoLabel,
@@ -133,6 +135,9 @@ function ComparativoJanelaBloco({
               ? toDiasEmExercicioLabel(janela.diasEmExercicio)
               : DIAS_EM_EXERCICIO_INDISPONIVEL}
           </p>
+          {mostrarCoberturaJanela(janela) && (
+            <p>{toCoberturaAteLabel(janela.coberturaAte)}</p>
+          )}
         </>
       )}
     </div>

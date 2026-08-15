@@ -8,6 +8,8 @@ const JANELA_57_DISPONIVEL = {
   encerrada: true,
   diasEmExercicioDisponivel: true,
   diasEmExercicio: 500,
+  coberturaAte: '2024-06-15',
+  divisorAnosEfetivos: 1.5,
 };
 
 const JANELA_56_DISPONIVEL = {

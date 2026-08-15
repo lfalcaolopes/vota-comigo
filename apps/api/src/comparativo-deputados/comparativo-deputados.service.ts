@@ -3,6 +3,7 @@ import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import type {
   ComparativoDeputado,
   ComparativoDeputadosResponse,
+  ComparativoJanela,
   DeputadoPerfil,
 } from '@vota-comigo/shared-types';
 
@@ -21,6 +22,7 @@ import { toComparativoCota } from './mappers/comparativo-cota.mapper';
 import { toComparativoDeputado } from './mappers/comparativo-deputado.mapper';
 import { toComparativoOrgaos } from './mappers/comparativo-orgaos.mapper';
 import { toComparativoProposicoesAssinadas } from './mappers/comparativo-proposicoes-assinadas.mapper';
+import { deriveCoberturaJanela } from './rules/cobertura-janela';
 import {
   deriveJanelaComparativo,
   type LegislaturaPeriodo,
@@ -145,9 +147,17 @@ export class ComparativoDeputadosService {
       this.repository.loadDeputadoCeapSource(source.id, year),
     ]);
 
+    const cobertura = deriveCoberturaJanela({
+      dataInicioJanela: janela.dataInicio,
+      dataFimJanela: janela.dataFim,
+      coberturaCotaMensal: ceapSource.coberturas,
+      coveredThroughDateAssinaturas: proposicoesSource.coveredThroughDate,
+    });
+    const janelaComCobertura: ComparativoJanela = { ...janela, ...cobertura };
+
     return toComparativoDeputado({
       perfil,
-      janela,
+      janela: janelaComCobertura,
       proposicoesAssinadas:
         toComparativoProposicoesAssinadas(proposicoesSource),
       orgaos: toComparativoOrgaos(orgaosSource),

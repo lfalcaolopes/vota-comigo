@@ -7,6 +7,17 @@ import { toEpochMillis } from '../../exercicio/rules/instante';
 const DIA_EM_MILLIS = 24 * 60 * 60 * 1000;
 const LEGISLATURA_MINIMA_COMPARATIVO = 55;
 
+// A cobertura de dados (coberturaAte/divisorAnosEfetivos) só é conhecida
+// depois de consultar os sinais de ingestão, então esta regra — que não faz
+// I/O — devolve a janela sem esses dois campos; o serviço completa com
+// deriveCoberturaJanela antes de expor o contrato.
+export type JanelaComparativoSemCobertura =
+  | Omit<
+      Extract<ComparativoJanela, { status: 'disponivel' }>,
+      'coberturaAte' | 'divisorAnosEfetivos'
+    >
+  | Extract<ComparativoJanela, { status: 'indisponivel' }>;
+
 export type LegislaturaPeriodo = {
   legislatura: number;
   dataInicio: string;
@@ -112,7 +123,7 @@ function somarDiasEmExercicio(
   return Math.round(totalMillis / DIA_EM_MILLIS);
 }
 
-function janelaIndisponivelSemLegislatura(): ComparativoJanela {
+function janelaIndisponivelSemLegislatura(): JanelaComparativoSemCobertura {
   return {
     status: 'indisponivel',
     motivo: 'sem-legislatura-registrada',
@@ -122,7 +133,7 @@ function janelaIndisponivelSemLegislatura(): ComparativoJanela {
 
 function janelaIndisponivelAbaixoDoPiso(
   legislatura: number,
-): ComparativoJanela {
+): JanelaComparativoSemCobertura {
   return {
     status: 'indisponivel',
     motivo: 'legislatura-anterior-a-cobertura',
@@ -133,7 +144,7 @@ function janelaIndisponivelAbaixoDoPiso(
 function deriveJanelaFallback(
   legislaturaFinal: LegislaturaFinalDeputado,
   referenciaEpoch: number,
-): ComparativoJanela {
+): JanelaComparativoSemCobertura {
   const { legislatura, periodo } = legislaturaFinal;
   if (legislatura === null || periodo === null) {
     return janelaIndisponivelSemLegislatura();
@@ -158,7 +169,7 @@ function deriveJanelaFallback(
 
 export function deriveJanelaComparativo(
   input: DeriveJanelaComparativoInput,
-): ComparativoJanela {
+): JanelaComparativoSemCobertura {
   const referenciaEpoch = toEpochMillis(input.referencia);
   const intervalosUsaveis = toIntervalosUsaveis(input.intervalosExercicio);
 

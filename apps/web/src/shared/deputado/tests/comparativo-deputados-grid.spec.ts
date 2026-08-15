@@ -17,6 +17,8 @@ const JANELA_57 = {
   encerrada: true,
   diasEmExercicioDisponivel: true,
   diasEmExercicio: 800,
+  coberturaAte: "2025-12-31",
+  divisorAnosEfetivos: 3,
 };
 
 const JANELA_56 = { ...JANELA_57, legislatura: 56, dataInicio: "2019-02-01" };

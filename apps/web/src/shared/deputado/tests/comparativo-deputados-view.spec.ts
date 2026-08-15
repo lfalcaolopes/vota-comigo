@@ -16,9 +16,18 @@ const JANELA_57 = {
   encerrada: true,
   diasEmExercicioDisponivel: true,
   diasEmExercicio: 800,
+  coberturaAte: "2025-12-31",
+  divisorAnosEfetivos: 3,
 };
 
 const JANELA_56 = { ...JANELA_57, legislatura: 56, dataInicio: "2019-02-01" };
+
+const JANELA_57_COBERTURA_PARCIAL = {
+  ...JANELA_57,
+  dataFim: "2027-01-31",
+  encerrada: false,
+  coberturaAte: "2026-06-30",
+};
 
 const JANELA_INDISPONIVEL = {
   status: "indisponivel" as const,
@@ -115,6 +124,31 @@ describe("ComparativoDeputadosView", () => {
       expect(html).toContain("57ª legislatura");
       expect(html).toContain("fev/2023");
       expect(html).toContain("800 dias em exercício");
+    });
+
+    it("não mostra a linha de cobertura quando a janela está totalmente coberta", () => {
+      // Arrange / Act
+      const html = render({
+        janelasCoincidem: true,
+        items: [deputado(1), deputado(2)],
+      });
+
+      // Assert
+      expect(html).not.toContain("Dados cobertos até");
+    });
+
+    it("mostra a linha de cobertura quando a janela ainda está em curso", () => {
+      // Arrange / Act
+      const html = render({
+        janelasCoincidem: true,
+        items: [
+          deputado(1, { janela: JANELA_57_COBERTURA_PARCIAL }),
+          deputado(2, { janela: JANELA_57_COBERTURA_PARCIAL }),
+        ],
+      });
+
+      // Assert
+      expect(html).toContain("Dados cobertos até jun/2026");
     });
 
     it("não mostra nenhum aviso no topo", () => {

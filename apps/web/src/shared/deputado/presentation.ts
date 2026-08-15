@@ -129,6 +129,21 @@ export function toUltimaLegislaturaLabel(legislatura: number): string {
   return `Última atuação na ${legislatura}ª legislatura`;
 }
 
+// Só faz sentido mostrar quando a cobertura ainda não alcançou o fim do ano
+// civil final da janela — numa janela encerrada e totalmente coberta, a
+// linha repetiria o período já exibido acima.
+export function mostrarCoberturaJanela(janela: {
+  dataFim: string;
+  coberturaAte: string;
+}): boolean {
+  const anoFimJanela = janela.dataFim.slice(0, 4);
+  return janela.coberturaAte < `${anoFimJanela}-12-31`;
+}
+
+export function toCoberturaAteLabel(coberturaAte: string): string {
+  return `Dados cobertos até ${formatMesAno(coberturaAte)}`;
+}
+
 export function nomePublicoLabel(deputado: {
   nomePublico: string | null;
 }): string {
