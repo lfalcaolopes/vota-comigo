@@ -190,40 +190,43 @@ export function DeputadosFeedView({
       </p>
 
       <div className="grid min-w-0 gap-3">
-        <div className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
-          <form
-            className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
-            onSubmit={(event) => {
-              event.preventDefault();
-              handleSearch();
-            }}
-          >
-            <div className="min-w-0 flex-1">
-              <SearchField
-                className="h-11"
-                hideLabel
-                id="deputado-feed-search"
-                label="Buscar por nome"
-                onChange={(event) => setDraft(event.target.value)}
-                placeholder="Buscar por nome"
-                value={draft}
-              />
-            </div>
-            <Button
-              className="h-11 sm:shrink-0"
-              type="submit"
-              variant="primary"
+        <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-4">
+          <div className="order-1 sm:order-2 sm:ml-auto">{compareAction}</div>
+          <div className="order-2 grid min-w-0 gap-2 sm:order-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+            <form
+              className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
+              onSubmit={(event) => {
+                event.preventDefault();
+                handleSearch();
+              }}
             >
-              Buscar
-            </Button>
-          </form>
+              <div className="min-w-0 flex-1">
+                <SearchField
+                  className="h-11"
+                  hideLabel
+                  id="deputado-feed-search"
+                  label="Buscar por nome"
+                  onChange={(event) => setDraft(event.target.value)}
+                  placeholder="Buscar por nome"
+                  value={draft}
+                />
+              </div>
+              <Button
+                className="h-11 sm:shrink-0"
+                type="submit"
+                variant="primary"
+              >
+                Buscar
+              </Button>
+            </form>
 
-          <DeputadosFiltrosPanel
-            filtros={filtros}
-            onApply={handleApplyFiltros}
-            partidos={partidos}
-            ufs={ufs}
-          />
+            <DeputadosFiltrosPanel
+              filtros={filtros}
+              onApply={handleApplyFiltros}
+              partidos={partidos}
+              ufs={ufs}
+            />
+          </div>
         </div>
 
         {query !== "" ? (
@@ -249,16 +252,15 @@ export function DeputadosFeedView({
         />
       </div>
 
-      <div className="grid min-w-0 gap-3">
-        <div className="sm:flex sm:justify-end">{compareAction}</div>
-        {isSelectingComparativo ? (
-          <p className="text-sm text-muted">
-            {hasDeputadoLimit
-              ? "Você pode comparar até 3 deputados."
-              : "Selecione 2 ou 3 deputados para comparar."}
-          </p>
-        ) : null}
-      </div>
+      {isSelectingComparativo ? (
+        <div className="text-sm text-muted">
+          {hasDeputadoLimit ? (
+            <p>Você pode comparar até 3 deputados.</p>
+          ) : (
+            <p>Selecione 2 ou 3 deputados para comparar.</p>
+          )}
+        </div>
+      ) : null}
 
       <DeputadosFeedList
         canLoadMore={canLoadMore}
