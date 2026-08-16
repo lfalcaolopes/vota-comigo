@@ -187,6 +187,7 @@ describe('DeputadosService gastos da cota', () => {
           },
         ],
         medianaUf: null,
+        tetoUf: null,
         categories: [],
         months: Array.from({ length: 12 }, (_, index) => ({
           month: index + 1,
@@ -280,6 +281,78 @@ describe('DeputadosService gastos da cota', () => {
           categories: [],
         })),
       ]);
+    });
+  });
+
+  describe('quando o teto da cota entra na comparação', () => {
+    const ceapSource = (
+      intervalosExercicio: readonly {
+        openedAt: string;
+        closedAt: string | null;
+      }[],
+    ) => ({
+      coberturas: [
+        {
+          year: 2024,
+          coveredThroughMonth: 3,
+          sigepaReposto: false,
+          sigepaCoveredThroughMonth: null,
+        },
+      ],
+      gasto: { siglaUf: 'MG', gastosJson: { '1': { '1': 10000 } } },
+      gastosSigepaJson: null,
+      categorias: [{ externalNumSubCota: 1, description: 'Combustíveis' }],
+      medianaUf: { amountUsedCents: 9500, deputadoCount: 53 },
+      intervalosExercicio,
+      datasInicioLegislatura: [],
+    });
+
+    it('soma os doze tetos mensais da UF no exercício anual completo', async () => {
+      // Arrange
+      const service = createService(
+        fakeRepository({
+          loadDeputadoPerfil: async () => perfilSource(),
+          loadDeputadoCeapSource: async () =>
+            ceapSource([
+              { openedAt: '2023-02-02T00:00:00.000Z', closedAt: null },
+            ]),
+        }),
+      );
+
+      // Act
+      const result = await service.ceap(220593, 2024);
+
+      // Assert
+      expect(result).toMatchObject({
+        siglaUf: 'MG',
+        tetoUf: { amountCents: 4188651 * 12, monthCount: 12 },
+      });
+    });
+
+    it('proporciona o teto aos meses exercidos, onde não há mediana', async () => {
+      // Arrange
+      const service = createService(
+        fakeRepository({
+          loadDeputadoPerfil: async () => perfilSource(),
+          loadDeputadoCeapSource: async () =>
+            ceapSource([
+              {
+                openedAt: '2024-03-20T00:00:00.000Z',
+                closedAt: '2024-07-05T00:00:00.000Z',
+              },
+            ]),
+        }),
+      );
+
+      // Act
+      const result = await service.ceap(220593, 2024);
+
+      // Assert
+      expect(result).toMatchObject({
+        exercicioAnoCompleto: false,
+        medianaUf: null,
+        tetoUf: { amountCents: 4188651 * 5, monthCount: 5 },
+      });
     });
   });
 

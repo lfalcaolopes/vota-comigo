@@ -4,6 +4,7 @@ import type {
   DeputadoCeapCategory,
   DeputadoCeapMedianaUf,
   DeputadoCeapSigepaDataStatus,
+  DeputadoCeapTetoUf,
 } from "@vota-comigo/shared-types";
 import {
   Bar,
@@ -18,6 +19,11 @@ import {
 } from "recharts";
 
 import { GastoCotaComposicao } from "./gasto-cota-composicao";
+import {
+  deriveGastoCotaComparacaoEscala,
+  formatGastoCotaComparacao,
+  formatGastoCotaTeto,
+} from "./gasto-cota-comparacao";
 import { deriveGastoCotaDistribuicao } from "./gasto-cota-distribuicao";
 import { GastoCotaDistribuicaoAnualBarras } from "./gasto-cota-distribuicao-anual-barras";
 import { deriveGastoCotaDistribuicaoMode } from "./gasto-cota-distribuicao-mode";
@@ -27,17 +33,21 @@ import { formatGastoCotaAmount } from "./gasto-cota-presentation";
 export function GastoCotaDistribuicaoAnual({
   categories,
   coverageLabel,
+  coveredThroughMonth,
   medianaUf,
   sigepaDataStatus,
   siglaUf,
+  tetoUf,
   totalAmountUsedCents,
   year,
 }: {
   categories: readonly DeputadoCeapCategory[];
   coverageLabel: string;
+  coveredThroughMonth: number;
   medianaUf: DeputadoCeapMedianaUf | null;
   sigepaDataStatus: DeputadoCeapSigepaDataStatus;
   siglaUf: string | null;
+  tetoUf: DeputadoCeapTetoUf | null;
   totalAmountUsedCents: number;
   year: number;
 }) {
@@ -45,15 +55,18 @@ export function GastoCotaDistribuicaoAnual({
   const mode = deriveGastoCotaDistribuicaoMode(series, totalAmountUsedCents);
   const totalLabel =
     sigepaDataStatus === "incompleto" ? "Total registrado" : "Total utilizado";
-  const hasMediana = medianaUf !== null && siglaUf !== null;
+  const hasComparacao =
+    siglaUf !== null && (medianaUf !== null || tetoUf !== null);
 
   if (mode === "barras") {
     return (
       <div className="grid gap-4">
         <GastoCotaComparacao
           coverageLabel={coverageLabel}
+          coveredThroughMonth={coveredThroughMonth}
           medianaUf={medianaUf}
           siglaUf={siglaUf}
+          tetoUf={tetoUf}
           totalLabel={totalLabel}
           totalAmountUsedCents={totalAmountUsedCents}
           year={year}
@@ -145,11 +158,13 @@ export function GastoCotaDistribuicaoAnual({
           ))}
         </ol>
       </figure>
-      {hasMediana ? (
+      {hasComparacao ? (
         <GastoCotaComparacao
           coverageLabel={coverageLabel}
+          coveredThroughMonth={coveredThroughMonth}
           medianaUf={medianaUf}
           siglaUf={siglaUf}
+          tetoUf={tetoUf}
           totalLabel={totalLabel}
           totalAmountUsedCents={totalAmountUsedCents}
           year={year}
@@ -161,40 +176,71 @@ export function GastoCotaDistribuicaoAnual({
 
 function GastoCotaComparacao({
   coverageLabel,
+  coveredThroughMonth,
   medianaUf,
   siglaUf,
+  tetoUf,
   totalLabel,
   totalAmountUsedCents,
   year,
 }: {
   coverageLabel: string;
+  coveredThroughMonth: number;
   medianaUf: DeputadoCeapMedianaUf | null;
   siglaUf: string | null;
+  tetoUf: DeputadoCeapTetoUf | null;
   totalLabel: string;
   totalAmountUsedCents: number;
   year: number;
 }) {
   const hasMediana = medianaUf !== null && siglaUf !== null;
-  const chartDomain = getGastoCotaComparacaoDomain(
+  const hasTeto = tetoUf !== null && siglaUf !== null;
+  const escala = deriveGastoCotaComparacaoEscala(
     totalAmountUsedCents,
     medianaUf?.amountUsedCents ?? null,
+    tetoUf?.amountCents ?? null,
   );
+  const leituras = [
+    hasTeto
+      ? formatGastoCotaTeto(totalAmountUsedCents, tetoUf, coveredThroughMonth)
+      : null,
+    hasMediana
+      ? formatGastoCotaComparacao(
+          totalAmountUsedCents,
+          medianaUf.amountUsedCents,
+        )
+      : null,
+  ].filter((leitura): leitura is string => leitura !== null);
 
   return (
     <figure
-      aria-label={
-        hasMediana
-          ? `Comparação visual entre o total utilizado e a mediana em ${siglaUf}`
-          : `${totalLabel} em ${year}`
-      }
+      aria-label={comparacaoLabel({
+        hasMediana,
+        hasTeto,
+        siglaUf,
+        totalLabel,
+        year,
+      })}
       className="grid gap-3 rounded-md bg-surface-muted px-4 py-4"
     >
-      <div className={`grid gap-4 ${hasMediana ? "grid-cols-2" : ""}`}>
+      <div
+        className={`grid gap-4 ${hasTeto || hasMediana ? "grid-cols-2" : ""}`}
+      >
         <GastoCotaValor
           label={`${totalLabel} em ${year}`}
           value={totalAmountUsedCents}
         />
-        {hasMediana ? (
+        {hasTeto ? (
+          <GastoCotaValor
+            align="right"
+            label={
+              tetoUf.monthCount === 12
+                ? `Teto do ano em ${siglaUf}`
+                : `Teto de ${tetoUf.monthCount} meses em ${siglaUf}`
+            }
+            value={tetoUf.amountCents}
+          />
+        ) : hasMediana ? (
           <GastoCotaValor
             align="right"
             label={`Mediana em ${siglaUf}`}
@@ -203,7 +249,7 @@ function GastoCotaComparacao({
         ) : null}
       </div>
 
-      {hasMediana ? (
+      {leituras.length > 0 ? (
         <>
           <div aria-hidden="true" className="h-12 min-w-0 w-full">
             <ResponsiveContainer height="100%" minWidth={0} width="100%">
@@ -215,7 +261,7 @@ function GastoCotaComparacao({
                 layout="vertical"
                 margin={{ top: 2, right: 2, bottom: 2, left: 2 }}
               >
-                <XAxis domain={chartDomain} hide type="number" />
+                <XAxis domain={escala.domain} hide type="number" />
                 <YAxis dataKey="label" hide type="category" />
                 <Bar
                   background={{ fill: "var(--color-border)" }}
@@ -224,20 +270,49 @@ function GastoCotaComparacao({
                   isAnimationActive={false}
                   radius={[0, 4, 4, 0]}
                 />
-                <ReferenceLine
-                  stroke="var(--color-primary)"
-                  strokeWidth={3}
-                  x={medianaUf.amountUsedCents}
-                />
+                {hasTeto && escala.tetoExcedido ? (
+                  <ReferenceLine
+                    stroke="var(--color-bg)"
+                    strokeDasharray="4 3"
+                    strokeWidth={2}
+                    x={tetoUf.amountCents}
+                  />
+                ) : null}
+                {hasMediana ? (
+                  <ReferenceLine
+                    stroke="var(--color-primary)"
+                    strokeWidth={3}
+                    x={medianaUf.amountUsedCents}
+                  />
+                ) : null}
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <strong className="text-sm font-[680] text-ink">
-            {formatGastoCotaComparacao(
-              totalAmountUsedCents,
-              medianaUf.amountUsedCents,
-            )}
-          </strong>
+          <div className="flex flex-col gap-y-1 text-sm font-[680] text-ink sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-2">
+            {leituras.map((leitura, index) => (
+              <span className="contents" key={leitura}>
+                {index > 0 ? (
+                  <span
+                    aria-hidden="true"
+                    className="hidden text-subtle sm:inline"
+                  >
+                    ·
+                  </span>
+                ) : null}
+                <p>{leitura}</p>
+              </span>
+            ))}
+          </div>
+          {hasTeto && hasMediana ? (
+            <p className="flex items-center gap-2 text-xs text-muted">
+              <span
+                aria-hidden="true"
+                className="h-3 w-[3px] shrink-0 rounded-full bg-primary"
+              />
+              Mediana em {siglaUf}:{" "}
+              {formatGastoCotaAmount(medianaUf.amountUsedCents)}
+            </p>
+          ) : null}
         </>
       ) : null}
 
@@ -251,12 +326,44 @@ function GastoCotaComparacao({
         ) : (
           <span />
         )}
-        <span className="ml-auto text-right">
+        <span className="sm:ml-auto sm:text-right">
           Dados disponíveis: {coverageLabel}.
         </span>
       </div>
+      {hasTeto ? (
+        <figcaption className="text-xs leading-normal text-muted">
+          O teto vem da tabela por UF do Ato da Mesa em vigor e não inclui os
+          adicionais mensais por cargo, como liderança, presidência de comissão
+          e suplência na Mesa.
+        </figcaption>
+      ) : null}
     </figure>
   );
+}
+
+function comparacaoLabel({
+  hasMediana,
+  hasTeto,
+  siglaUf,
+  totalLabel,
+  year,
+}: {
+  hasMediana: boolean;
+  hasTeto: boolean;
+  siglaUf: string | null;
+  totalLabel: string;
+  year: number;
+}): string {
+  if (hasTeto && hasMediana) {
+    return `Comparação visual entre o total utilizado, o teto da cota e a mediana em ${siglaUf}`;
+  }
+  if (hasTeto) {
+    return `Comparação visual entre o total utilizado e o teto da cota em ${siglaUf}`;
+  }
+  if (hasMediana) {
+    return `Comparação visual entre o total utilizado e a mediana em ${siglaUf}`;
+  }
+  return `${totalLabel} em ${year}`;
 }
 
 function GastoCotaValor({
@@ -276,34 +383,4 @@ function GastoCotaValor({
       </strong>
     </div>
   );
-}
-
-function getGastoCotaComparacaoDomain(
-  totalAmountUsedCents: number,
-  medianaAmountUsedCents: number | null,
-): [number, number] {
-  const mediana = medianaAmountUsedCents ?? 0;
-  const minValue = Math.min(0, totalAmountUsedCents, mediana);
-  const maxValue = Math.max(0, totalAmountUsedCents, mediana);
-  const padding = Math.max((maxValue - minValue) * 0.08, 1);
-
-  return [minValue < 0 ? minValue - padding : 0, maxValue + padding];
-}
-
-function formatGastoCotaComparacao(
-  totalAmountUsedCents: number,
-  medianaAmountUsedCents: number,
-): string {
-  const difference = totalAmountUsedCents - medianaAmountUsedCents;
-
-  if (difference === 0) return "Mesmo valor da mediana";
-  if (medianaAmountUsedCents <= 0 || totalAmountUsedCents < 0) {
-    return `${formatGastoCotaAmount(Math.abs(difference))} ${difference < 0 ? "abaixo" : "acima"} da mediana`;
-  }
-
-  const percentage = Math.round(
-    (Math.abs(difference) / medianaAmountUsedCents) * 100,
-  );
-
-  return `${percentage}% ${difference < 0 ? "abaixo" : "acima"} da mediana`;
 }

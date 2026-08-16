@@ -9,6 +9,7 @@ import {
   deriveSigepaDataStatus,
   type GastosCotaJson,
 } from '@/shared/cota/reposicao-sigepa';
+import { tetoAnualCota } from '@/shared/cota/teto-anual-cota';
 
 import type { DeputadoCeapSource } from '../types/deputados.types';
 
@@ -66,6 +67,8 @@ export function toDeputadoCeapLoadedResponse(
     throw new Error('mediana da UF não encontrada para exercício completo');
   }
 
+  const siglaUf = input.source.gasto?.siglaUf ?? null;
+
   return {
     year: input.year,
     availableYears: [...input.availableYears],
@@ -73,10 +76,15 @@ export function toDeputadoCeapLoadedResponse(
     sigepaDataStatus,
     coveredThroughMonth: input.coveredThroughMonth,
     totalAmountUsedCents: aggregates.totalAmountUsedCents,
-    siglaUf: input.source.gasto?.siglaUf ?? null,
+    siglaUf,
     exercicioAnoCompleto,
     periodosExercicio: clipIntervalos(input.source.intervalosExercicio, janela),
     medianaUf: exercicioAnoCompleto ? medianaUf : null,
+    tetoUf: tetoAnualCota(
+      siglaUf,
+      input.year,
+      input.source.intervalosExercicio,
+    ),
     categories: aggregates.categories,
     months: aggregates.months,
   };

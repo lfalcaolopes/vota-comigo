@@ -12,6 +12,7 @@ function loadedResponse() {
     exercicioAnoCompleto: true,
     periodosExercicio: [],
     medianaUf: { amountUsedCents: 90, deputadoCount: 4 },
+    tetoUf: { amountCents: 500, monthCount: 12 },
     categories: [],
     months: Array.from({ length: 12 }, (_, index) => ({
       month: index + 1,
@@ -44,6 +45,7 @@ describe('contrato dos gastos da cota do deputado', () => {
           amountUsedCents: 39120400,
           deputadoCount: 53,
         },
+        tetoUf: { amountCents: 50252784, monthCount: 12 },
         categories: [
           {
             externalNumSubCota: 1,
@@ -104,6 +106,7 @@ describe('contrato dos gastos da cota do deputado', () => {
           },
         ],
         medianaUf: { amountUsedCents: 39120400, deputadoCount: 53 },
+        tetoUf: { amountCents: 20938255, monthCount: 5 },
         categories: [],
         months: Array.from({ length: 12 }, (_, index) => ({
           month: index + 1,
@@ -143,6 +146,7 @@ describe('contrato dos gastos da cota do deputado', () => {
         totalAmountUsedCents: 1,
         siglaUf: null,
         medianaUf: null,
+        tetoUf: null,
       };
 
       // Act
@@ -197,6 +201,44 @@ describe('contrato dos gastos da cota do deputado', () => {
 
       // Assert
       expect(result.success).toBe(false);
+    });
+  });
+
+  describe('quando o teto do ano acompanha a resposta', () => {
+    it('rejeita o teto sem a UF que o define', () => {
+      // Arrange
+      const response = { ...loadedResponse(), siglaUf: null };
+
+      // Act
+      const result = deputadoCeapResponseSchema.safeParse(response);
+
+      // Assert
+      expect(result.success).toBe(false);
+    });
+
+    it('aceita a ausência de teto em ano sem tabela publicada', () => {
+      // Arrange
+      const response = { ...loadedResponse(), tetoUf: null };
+
+      // Act
+      const result = deputadoCeapResponseSchema.safeParse(response);
+
+      // Assert
+      expect(result.success).toBe(true);
+    });
+
+    it('aceita o teto proporcional a um exercício parcial', () => {
+      // Arrange
+      const response = {
+        ...loadedResponse(),
+        tetoUf: { amountCents: 20938255, monthCount: 5 },
+      };
+
+      // Act
+      const result = deputadoCeapResponseSchema.safeParse(response);
+
+      // Assert
+      expect(result.success).toBe(true);
     });
   });
 

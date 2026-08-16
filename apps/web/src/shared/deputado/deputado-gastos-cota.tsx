@@ -70,10 +70,12 @@ export function DeputadoGastosCotaSection({
               response.coveredThroughMonth,
               response.year,
             )}
+            coveredThroughMonth={response.coveredThroughMonth}
             key={response.year}
             medianaUf={response.medianaUf}
             sigepaDataStatus={response.sigepaDataStatus}
             siglaUf={response.siglaUf}
+            tetoUf={response.tetoUf}
             totalAmountUsedCents={response.totalAmountUsedCents}
             year={response.year}
           />

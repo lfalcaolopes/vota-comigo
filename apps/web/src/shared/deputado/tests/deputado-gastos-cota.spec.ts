@@ -22,6 +22,7 @@ function loadedResponse(
     exercicioAnoCompleto: true,
     periodosExercicio: [{ startDate: "2024-01-01", endDate: "2024-12-31" }],
     medianaUf: { amountUsedCents: 39_800_000, deputadoCount: 63 },
+    tetoUf: { amountCents: 51_404_796, monthCount: 12 },
     categories: [],
     months: Array.from({ length: 12 }, (_, index) => ({
       month: index + 1,
@@ -66,9 +67,13 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).toContain(
         "Comparação com 63 deputados de SP em exercício durante todo o ano",
       );
+      expect(html).toContain("Teto do ano em SP");
+      expect(html).toContain("R$ 514.047,96");
+      expect(html).toContain("83% do teto do ano (dados até outubro)");
       expect(html).toContain(
-        'aria-label="Comparação visual entre o total utilizado e a mediana em SP"',
+        'aria-label="Comparação visual entre o total utilizado, o teto da cota e a mediana em SP"',
       );
+      expect(html).toContain("não inclui os adicionais mensais por cargo");
       expect(html).toContain("Dados disponíveis: janeiro a outubro de 2024");
       expect(html).toContain("outubro de 2024");
       expect(html).not.toContain("Fonte: Câmara dos Deputados");
@@ -120,12 +125,13 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).toContain("Total utilizado em 2025");
     });
 
-    it("sem exercício anual completo, não mostra card de total nem mediana redundante", () => {
+    it("sem exercício anual completo, compara com o teto proporcional em vez da mediana", () => {
       // Arrange
       const response = loadedResponse({
         year: 2025,
         sigepaDataStatus: "incompleto",
         medianaUf: null,
+        tetoUf: { amountCents: 21_418_665, monthCount: 5 },
         exercicioAnoCompleto: false,
         periodosExercicio: [{ startDate: "2025-08-01", endDate: "2025-12-31" }],
       });
@@ -135,8 +141,28 @@ describe("seção de gastos da cota parlamentar", () => {
 
       // Assert
       expect(html).toContain("Total registrado em 2025: R$ 427.123,45.");
+      expect(html).toContain("Teto de 5 meses em SP");
+      expect(html).toContain("R$ 214.186,65");
+      expect(html).toContain("R$ 212.936,80 acima do teto do período");
+      expect(html).not.toContain("Mediana em");
+      expect(html).not.toContain("da mediana");
+    });
+
+    it("sem UF conhecida, não inventa régua de comparação", () => {
+      // Arrange
+      const response = loadedResponse({
+        siglaUf: null,
+        medianaUf: null,
+        tetoUf: null,
+      });
+
+      // Act
+      const html = render(response);
+
+      // Assert
       expect(html).not.toContain("Dados disponíveis:");
       expect(html).not.toContain("Mediana em");
+      expect(html).not.toContain("teto do ano");
     });
 
     it("preserva compensações negativas em vez de apresentá-las como despesa positiva", () => {

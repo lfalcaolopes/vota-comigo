@@ -82,6 +82,11 @@ export const deputadoCeapMedianaUfSchema = z.object({
   deputadoCount: z.number().int().positive(),
 });
 
+export const deputadoCeapTetoUfSchema = z.object({
+  amountCents: z.number().int().positive(),
+  monthCount: z.number().int().min(1).max(12),
+});
+
 const deputadoCeapResponseBaseShape = {
   year: z.number().int(),
   availableYears: z.array(z.number().int()),
@@ -100,6 +105,7 @@ const deputadoCeapLoadedResponseSchema = z.object({
   exercicioAnoCompleto: z.boolean(),
   periodosExercicio: z.array(deputadoCeapPeriodoExercicioSchema),
   medianaUf: deputadoCeapMedianaUfSchema.nullable(),
+  tetoUf: deputadoCeapTetoUfSchema.nullable(),
   categories: z.array(deputadoCeapCategorySchema),
   months: z.array(deputadoCeapMonthSchema).length(12),
 });
@@ -181,10 +187,23 @@ export const deputadoCeapResponseSchema = z
     }
 
     if (
+      response.status !== deputadoCeapStatusSchema.enum["ano-nao-carregado"] &&
+      response.tetoUf !== null &&
+      response.siglaUf === null
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["tetoUf"],
+        message: "tetoUf depende da UF de eleição do deputado",
+      });
+    }
+
+    if (
       response.status === deputadoCeapStatusSchema.enum["sem-gastos"] &&
       (response.totalAmountUsedCents !== 0 ||
         response.siglaUf !== null ||
         response.medianaUf !== null ||
+        response.tetoUf !== null ||
         response.categories.length > 0 ||
         response.months.some(
           (item) =>
@@ -449,6 +468,7 @@ export type DeputadoCeapPeriodoExercicio = z.infer<
   typeof deputadoCeapPeriodoExercicioSchema
 >;
 export type DeputadoCeapMedianaUf = z.infer<typeof deputadoCeapMedianaUfSchema>;
+export type DeputadoCeapTetoUf = z.infer<typeof deputadoCeapTetoUfSchema>;
 export type DeputadoCeapResponse = z.infer<typeof deputadoCeapResponseSchema>;
 export type DeputadoCeapLoadedResponse = z.infer<
   typeof deputadoCeapLoadedResponseSchema
