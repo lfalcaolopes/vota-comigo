@@ -46,14 +46,18 @@ describe("initDeputadoFeedState", () => {
       // Act
       const state = init({
         query: " maria ",
-        filtros: { emAtividade: true, ufs: ["SP"], partidos: ["PT"] },
+        filtros: {
+          incluirForaDeExercicio: true,
+          ufs: ["SP"],
+          partidos: ["PT"],
+        },
       });
 
       // Assert
       expect(state.query).toBe("maria");
       expect(state.filtros).toEqual({
         ...FILTROS_PADRAO,
-        emAtividade: true,
+        incluirForaDeExercicio: true,
         ufs: ["SP"],
         partidos: ["PT"],
       });
@@ -103,13 +107,17 @@ describe("deputadoFeedReducer", () => {
       // Act
       const next = deputadoFeedReducer(state, {
         type: "applyFiltros",
-        filtros: { ...FILTROS_PADRAO, emAtividade: true, ufs: ["RJ"] },
+        filtros: {
+          ...FILTROS_PADRAO,
+          incluirForaDeExercicio: true,
+          ufs: ["RJ"],
+        },
       });
 
       // Assert
       expect(next.filtros).toEqual({
         ...FILTROS_PADRAO,
-        emAtividade: true,
+        incluirForaDeExercicio: true,
         ufs: ["RJ"],
       });
       expect(next.feed.items).toEqual([]);
@@ -151,7 +159,11 @@ describe("deputadoFeedReducer", () => {
       // Arrange
       const state = init({
         query: "maria",
-        filtros: { emAtividade: true, ufs: ["SP"], partidos: ["PT"] },
+        filtros: {
+          incluirForaDeExercicio: true,
+          ufs: ["SP"],
+          partidos: ["PT"],
+        },
       });
 
       // Act

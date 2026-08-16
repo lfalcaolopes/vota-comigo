@@ -19,8 +19,11 @@ function card(externalIdDeputado: number, nomePublico: string): DeputadoCard {
 
 const items = [card(220593, "Maria da Silva"), card(204554, "João de Souza")];
 
+type Props = Parameters<typeof DeputadosFeedList>[0];
+
 function render(
-  selection?: Parameters<typeof DeputadosFeedList>[0]["selection"],
+  selection?: Props["selection"],
+  overrides: Partial<Props> = {},
 ): string {
   return renderToStaticMarkup(
     createElement(DeputadosFeedList, {
@@ -32,6 +35,7 @@ function render(
       selection,
       status: "idle",
       total: items.length,
+      ...overrides,
     }),
   );
 }
@@ -74,6 +78,36 @@ describe("listagem de deputados", () => {
 
       // Assert
       expect(html.split("João de Souza")[0]).toContain('aria-disabled="true"');
+    });
+  });
+
+  describe("quando nada é encontrado sob o recorte de exercício", () => {
+    it("oferece ampliar a busca para fora de exercício", () => {
+      // Arrange / Act
+      const html = render(undefined, {
+        display: "empty-filtered",
+        items: [],
+        onIncluirForaDeExercicio: () => {},
+        total: 0,
+      });
+
+      // Assert
+      expect(html).toContain("em exercício");
+      expect(html).toContain("Buscar também fora de exercício");
+      expect(html).toContain("Limpar busca e filtros");
+    });
+
+    it("mantém o estado vazio simples quando o recorte já foi ampliado", () => {
+      // Arrange / Act
+      const html = render(undefined, {
+        display: "empty-filtered",
+        items: [],
+        total: 0,
+      });
+
+      // Assert
+      expect(html).not.toContain("Buscar também fora de exercício");
+      expect(html).toContain("Limpar busca e filtros");
     });
   });
 });

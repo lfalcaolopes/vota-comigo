@@ -11,7 +11,7 @@ type SearchParamValue = string | string[] | undefined;
 
 export type DeputadosFeedSearchParams = {
   q?: string;
-  emAtividade?: string;
+  incluirForaDeExercicio?: string;
   uf?: SearchParamValue;
   partido?: SearchParamValue;
   sexo?: string;
@@ -27,7 +27,7 @@ export function parseDeputadosFeedUrlState(
 ): DeputadosFeedUrlState {
   return {
     query: parseQueryParam(params.q),
-    emAtividade: params.emAtividade === "true",
+    incluirForaDeExercicio: params.incluirForaDeExercicio === "true",
     ufs: parseLista(params.uf, parseUfParam),
     partidos: parseLista(params.partido, parsePartidoParam),
     sexo: parseSexoParam(params.sexo),
@@ -37,7 +37,7 @@ export function parseDeputadosFeedUrlState(
 
 export function buildDeputadosFeedSearchParams({
   query,
-  emAtividade,
+  incluirForaDeExercicio,
   ufs,
   partidos,
   sexo,
@@ -47,7 +47,7 @@ export function buildDeputadosFeedSearchParams({
   const term = parseQueryParam(query ?? undefined);
 
   if (term !== null) params.set("q", term);
-  if (emAtividade) params.set("emAtividade", "true");
+  if (incluirForaDeExercicio) params.set("incluirForaDeExercicio", "true");
   for (const uf of ufs) params.append("uf", uf);
   for (const partido of partidos) params.append("partido", partido);
   if (sexo !== null) params.set("sexo", sexo);

@@ -22,6 +22,7 @@ type DeputadosFeedListProps = {
   canLoadMore: boolean;
   onLoadMore: () => void;
   onClearTudo: () => void;
+  onIncluirForaDeExercicio?: () => void;
   selection?: DeputadosFeedListSelection;
 };
 
@@ -33,6 +34,7 @@ export function DeputadosFeedList({
   canLoadMore,
   onLoadMore,
   onClearTudo,
+  onIncluirForaDeExercicio,
   selection,
 }: DeputadosFeedListProps) {
   if (display === "loading") {
@@ -49,7 +51,22 @@ export function DeputadosFeedList({
   }
 
   if (display === "empty-filtered") {
-    return (
+    return onIncluirForaDeExercicio ? (
+      <EmptyState
+        action={
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={onIncluirForaDeExercicio} variant="primary">
+              Buscar também fora de exercício
+            </Button>
+            <Button onClick={onClearTudo} variant="secondary">
+              Limpar busca e filtros
+            </Button>
+          </div>
+        }
+        body="Nenhum deputado em exercício foi encontrado com a busca e os filtros utilizados."
+        title="Nenhum deputado encontrado"
+      />
+    ) : (
       <EmptyState
         action={
           <Button onClick={onClearTudo} variant="secondary">

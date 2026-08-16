@@ -5,15 +5,16 @@ import {
   buildDeputadosFeedHref,
   buildDeputadosFeedSearchParams,
   parseDeputadosFeedUrlState,
+  type DeputadosFeedSearchParams,
 } from "../feed-url";
 
 describe("parseDeputadosFeedUrlState", () => {
   describe("when deputado feed params are present", () => {
-    it("parses query, activity, UF, and partido", () => {
+    it("parses query, exercicio recorte, UF, and partido", () => {
       // Arrange / Act
       const state = parseDeputadosFeedUrlState({
         q: " maria ",
-        emAtividade: "true",
+        incluirForaDeExercicio: "true",
         uf: "sp",
         partido: " PTdoB ",
       });
@@ -22,7 +23,7 @@ describe("parseDeputadosFeedUrlState", () => {
       expect(state).toEqual({
         ...FILTROS_PADRAO,
         query: "maria",
-        emAtividade: true,
+        incluirForaDeExercicio: true,
         ufs: ["SP"],
         partidos: ["PTdoB"],
       });
@@ -70,7 +71,7 @@ describe("parseDeputadosFeedUrlState", () => {
       // Arrange / Act
       const state = parseDeputadosFeedUrlState({
         q: " /// ",
-        emAtividade: "sim",
+        incluirForaDeExercicio: "sim",
         uf: "SPP",
         partido: "PT-SP",
         sexo: "X",
@@ -79,6 +80,19 @@ describe("parseDeputadosFeedUrlState", () => {
 
       // Assert
       expect(state).toEqual({ ...FILTROS_PADRAO, query: null });
+    });
+
+    // Endereços compartilhados antes do recorte padrão traziam emAtividade=true;
+    // o param sumiu e o padrão devolve exatamente a mesma lista.
+    it("ignores the legacy emAtividade param", () => {
+      // Arrange / Act
+      const state = parseDeputadosFeedUrlState({
+        emAtividade: "true",
+      } as DeputadosFeedSearchParams);
+
+      // Assert
+      expect(state).toEqual({ ...FILTROS_PADRAO, query: null });
+      expect(state.incluirForaDeExercicio).toBe(false);
     });
 
     // Um endereço editado à mão não pode derrubar a página inteira por causa
@@ -99,14 +113,14 @@ describe("buildDeputadosFeedSearchParams", () => {
     const params = buildDeputadosFeedSearchParams({
       ...FILTROS_PADRAO,
       query: "maria silva",
-      emAtividade: true,
+      incluirForaDeExercicio: true,
       ufs: ["SP"],
       partidos: ["PT"],
     });
 
     // Assert
     expect(params.toString()).toBe(
-      "q=maria+silva&emAtividade=true&uf=SP&partido=PT",
+      "q=maria+silva&incluirForaDeExercicio=true&uf=SP&partido=PT",
     );
   });
 
@@ -155,13 +169,15 @@ describe("buildDeputadosFeedHref", () => {
     const href = buildDeputadosFeedHref("/deputados", {
       ...FILTROS_PADRAO,
       query: "maria",
-      emAtividade: true,
+      incluirForaDeExercicio: true,
       ufs: ["SP"],
       partidos: ["PT"],
     });
 
     // Assert
-    expect(href).toBe("/deputados?q=maria&emAtividade=true&uf=SP&partido=PT");
+    expect(href).toBe(
+      "/deputados?q=maria&incluirForaDeExercicio=true&uf=SP&partido=PT",
+    );
   });
 
   it("returns the bare pathname when nothing is active", () => {

@@ -16,7 +16,8 @@ import { FILTROS_PADRAO, type DeputadoFeedFiltros } from "./feed-filtros";
 import { buildDeputadosFeedSearchParams } from "./feed-url";
 
 // Os filtros viram query string pelo mesmo construtor que monta o endereço da
-// página, então requisição e URL não podem divergir.
+// página, então requisição e URL não podem divergir. A única tradução é o
+// recorte de exercício: a página o expressa por inclusão, a API por atividade.
 export function feed(
   limit = 20,
   offset = 0,
@@ -24,6 +25,8 @@ export function feed(
   filtros: DeputadoFeedFiltros = FILTROS_PADRAO,
 ): Promise<DeputadosFeedResponse> {
   const params = buildDeputadosFeedSearchParams({ ...filtros, query });
+  params.delete("incluirForaDeExercicio");
+  if (!filtros.incluirForaDeExercicio) params.set("emAtividade", "true");
   params.set("limit", String(limit));
   params.set("offset", String(offset));
 

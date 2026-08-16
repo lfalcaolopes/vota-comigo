@@ -146,7 +146,7 @@ describe("feed", () => {
 
       // Act
       const result = await feed(20, 40, "maria silva", {
-        emAtividade: true,
+        incluirForaDeExercicio: false,
         ufs: ["SP"],
         partidos: ["PT"],
         sexo: null,
@@ -155,7 +155,7 @@ describe("feed", () => {
 
       // Assert
       expect(fetchSpy).toHaveBeenCalledWith(
-        "http://localhost:3001/deputados/feed?q=maria+silva&emAtividade=true&uf=SP&partido=PT&limit=20&offset=40",
+        "http://localhost:3001/deputados/feed?q=maria+silva&uf=SP&partido=PT&emAtividade=true&limit=20&offset=40",
       );
       expect(result.items[0].externalIdDeputado).toBe(220593);
     });
@@ -171,7 +171,7 @@ describe("feed", () => {
 
       // Act
       await feed(20, 0, null, {
-        emAtividade: false,
+        incluirForaDeExercicio: true,
         ufs: ["SP", "RJ"],
         partidos: [],
         sexo: "F",
@@ -181,6 +181,26 @@ describe("feed", () => {
       // Assert
       expect(fetchSpy).toHaveBeenCalledWith(
         "http://localhost:3001/deputados/feed?uf=SP&uf=RJ&sexo=F&faixaEtaria=40-49&limit=20&offset=0",
+      );
+    });
+  });
+
+  describe("when no filter is provided", () => {
+    it("asks the API only for deputados em exercício", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => feedResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      await feed();
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/feed?emAtividade=true&limit=20&offset=0",
       );
     });
   });

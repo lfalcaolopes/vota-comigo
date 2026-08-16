@@ -27,9 +27,11 @@ describe("filtros da listagem de deputados", () => {
       expect(contarFiltrosAtivos(FILTROS_PADRAO)).toBe(0);
     });
 
-    it("does not count em atividade turned off", () => {
+    it("does not count the exercicio recorte left at its default", () => {
       // Act
-      const count = contarFiltrosAtivos(filtros({ emAtividade: false }));
+      const count = contarFiltrosAtivos(
+        filtros({ incluirForaDeExercicio: false }),
+      );
 
       // Assert
       expect(count).toBe(0);
@@ -85,16 +87,18 @@ describe("filtros da listagem de deputados", () => {
       expect(ativos[0].label).toBe("Sexo: Feminino");
     });
 
-    it("names em atividade without a value", () => {
+    it("names the widened recorte without a value", () => {
       // Act
-      const ativos = descreverFiltrosAtivos(filtros({ emAtividade: true }));
+      const ativos = descreverFiltrosAtivos(
+        filtros({ incluirForaDeExercicio: true }),
+      );
 
       // Assert
       expect(ativos).toEqual([
         {
-          id: "emAtividade",
-          label: "Em atividade",
-          removeLabel: "Remover filtro Em atividade",
+          id: "incluirForaDeExercicio",
+          label: "Incluindo fora de exercício",
+          removeLabel: "Remover filtro Incluindo fora de exercício",
         },
       ]);
     });
@@ -144,7 +148,7 @@ describe("filtros da listagem de deputados", () => {
     it("counts exactly the described ones", () => {
       // Arrange
       const ativos = filtros({
-        emAtividade: true,
+        incluirForaDeExercicio: true,
         ufs: ["RJ"],
         partidos: ["PL"],
         sexo: "F",
@@ -156,7 +160,7 @@ describe("filtros da listagem de deputados", () => {
 
       // Assert
       expect(descritos.map((filtro) => filtro.id)).toEqual([
-        "emAtividade",
+        "incluirForaDeExercicio",
         "ufs",
         "partidos",
         "sexo",
@@ -170,7 +174,7 @@ describe("filtros da listagem de deputados", () => {
     it("keeps the other filters untouched", () => {
       // Arrange
       const atuais = filtros({
-        emAtividade: true,
+        incluirForaDeExercicio: true,
         ufs: ["SP"],
         partidos: ["PT"],
       });
@@ -180,7 +184,7 @@ describe("filtros da listagem de deputados", () => {
 
       // Assert
       expect(proximos).toEqual(
-        filtros({ emAtividade: true, ufs: [], partidos: ["PT"] }),
+        filtros({ incluirForaDeExercicio: true, ufs: [], partidos: ["PT"] }),
       );
     });
 
@@ -195,15 +199,15 @@ describe("filtros da listagem de deputados", () => {
       expect(proximos.ufs).toEqual([]);
     });
 
-    it("returns em atividade to its default instead of inverting it", () => {
+    it("returns the exercicio recorte to its default instead of inverting it", () => {
       // Arrange
-      const atuais = filtros({ emAtividade: true });
+      const atuais = filtros({ incluirForaDeExercicio: true });
 
       // Act
-      const proximos = removerFiltro(atuais, "emAtividade");
+      const proximos = removerFiltro(atuais, "incluirForaDeExercicio");
 
       // Assert
-      expect(proximos.emAtividade).toBe(false);
+      expect(proximos.incluirForaDeExercicio).toBe(false);
     });
 
     it("does not mutate the filters it received", () => {
@@ -251,8 +255,8 @@ describe("filtros da listagem de deputados", () => {
     it("treats the same values as equal regardless of object identity", () => {
       // Act
       const iguais = saoFiltrosIguais(
-        filtros({ ufs: ["SP"], emAtividade: true }),
-        filtros({ ufs: ["SP"], emAtividade: true }),
+        filtros({ ufs: ["SP"], incluirForaDeExercicio: true }),
+        filtros({ ufs: ["SP"], incluirForaDeExercicio: true }),
       );
 
       // Assert

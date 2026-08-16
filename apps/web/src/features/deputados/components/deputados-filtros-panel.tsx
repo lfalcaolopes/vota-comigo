@@ -46,13 +46,13 @@ export function DeputadosFiltrosPanel({
       total={contarFiltrosAtivos(filtros)}
     >
       <Switch
-        checked={rascunho.emAtividade}
+        checked={rascunho.incluirForaDeExercicio}
         className="min-h-11 justify-start"
-        label="Em atividade"
+        label="Incluir fora de exercício"
         onChange={(event) =>
           setRascunho((atual) => ({
             ...atual,
-            emAtividade: event.target.checked,
+            incluirForaDeExercicio: event.target.checked,
           }))
         }
       />

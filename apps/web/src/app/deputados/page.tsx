@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Deputados",
   description:
-    "Diretório de deputados federais no Quem Vota Comigo, com busca por nome e filtros por atividade, UF e partido.",
+    "Diretório de deputados federais em exercício no Quem Vota Comigo, com busca por nome e filtros por UF, partido, sexo e idade.",
 };
 
 export default async function DeputadosPage({

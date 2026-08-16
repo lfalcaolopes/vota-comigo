@@ -304,6 +304,7 @@ _Avoid_: Ano completo como sinônimo, já que a completude do dump e a da reposi
 - Uma célula fora do denominador no **Comparativo de deputados** preserva a classificação do par **Deputado** e **Votação nominal** usada pelo **Matcher**, em vez de colapsar todos os casos em um rótulo único.
 - No MVP-5, o **Comparativo de deputados** contextual é aberto a partir da seleção de dois ou três **Deputados** no resultado do **Matcher**.
 - O **Comparativo de deputados** usa **Em atividade** como status público atual do deputado, não **Em exercício**.
+- A listagem pública de **Deputados** mostra por padrão apenas quem está **Em atividade**; incluir quem está fora de exercício é escolha explícita, oferecida no painel de filtros e em um clique quando o recorte deixa a busca vazia, e apenas essa inclusão aparece no endereço da página.
 - O **Comparativo de deputados** oferece entrada para o **Perfil do deputado** no cabeçalho de cada deputado comparado.
 - O **Resumo de presença do deputado** exibido no **Comparativo de deputados** é calculado sobre a **Janela do comparativo** de cada deputado, como as demais métricas da janela; o **Perfil do deputado** soma o **Resumo de presença do deputado** de todas as legislaturas.
 - O **Comparativo de deputados** tem duas entradas: a seleção de **Deputados** no resultado do **Matcher** e a seleção na listagem pública de **Deputados**; a segunda não tem **Posição do usuário** e por isso compara apenas dados consolidados.

@@ -44,13 +44,63 @@ test.describe("painel de filtros da listagem de deputados", () => {
     await expect(abrirFiltros(page)).toHaveText("Filtros");
 
     // Act
-    await page.goto("/deputados?uf=SP&emAtividade=true");
+    await page.goto("/deputados?uf=SP&incluirForaDeExercicio=true");
 
     // Assert
     await expect(abrirFiltros(page)).toContainText("2");
   });
 
-  test("aplica estado e atividade em bloco, com uma única consulta", async ({
+  test("abre no recorte de exercício, sem chip, e só o recorte ampliado entra no endereço", async ({
+    page,
+  }) => {
+    // Act
+    await page.goto("/deputados");
+
+    // Assert
+    await expect(abrirFiltros(page)).toHaveText("Filtros");
+    await expect(
+      page.getByRole("button", {
+        name: "Remover filtro Incluindo fora de exercício",
+      }),
+    ).toBeHidden();
+
+    // Act
+    await page.goto("/deputados?incluirForaDeExercicio=true");
+
+    // Assert
+    await expect(
+      page.getByRole("button", {
+        name: "Remover filtro Incluindo fora de exercício",
+      }),
+    ).toBeVisible();
+  });
+
+  test("amplia a busca vazia para fora de exercício em um clique", async ({
+    page,
+  }) => {
+    // Arrange
+    await page.goto("/deputados?q=eduardo+cunha");
+
+    // Assert
+    await expect(page.getByText("Nenhum deputado encontrado")).toBeVisible();
+
+    // Act
+    await page
+      .getByRole("button", { name: "Buscar também fora de exercício" })
+      .click();
+
+    // Assert
+    await expect(page).toHaveURL(/incluirForaDeExercicio=true/);
+    await expect(page).toHaveURL(/q=eduardo\+cunha/);
+    await expect(
+      page.getByRole("button", {
+        name: "Remover filtro Incluindo fora de exercício",
+      }),
+    ).toBeVisible();
+    await expect(page.getByText("EDUARDO CUNHA")).toBeVisible();
+  });
+
+  test("aplica estado e recorte de exercício em bloco, com uma única consulta", async ({
     page,
   }) => {
     // Arrange
@@ -65,22 +115,24 @@ test.describe("painel de filtros da listagem de deputados", () => {
     // Act
     await abrirFiltros(page).click();
     await expect(painel(page)).toBeVisible();
-    await painel(page).getByText("Em atividade").click();
+    await painel(page).getByText("Incluir fora de exercício").click();
     await expect(
-      painel(page).getByRole("checkbox", { name: "Em atividade" }),
+      painel(page).getByRole("checkbox", { name: "Incluir fora de exercício" }),
     ).toBeChecked();
     await estado(page, "São Paulo").click();
     await painel(page).getByRole("button", { name: "Aplicar" }).click();
 
     // Assert
     await expect(painel(page)).toBeHidden();
-    await expect(page).toHaveURL(/emAtividade=true/);
+    await expect(page).toHaveURL(/incluirForaDeExercicio=true/);
     await expect(page).toHaveURL(/uf=SP/);
     await expect(
       page.getByRole("button", { name: "Remover filtro Estado: São Paulo" }),
     ).toBeVisible();
     await expect(
-      page.getByRole("button", { name: "Remover filtro Em atividade" }),
+      page.getByRole("button", {
+        name: "Remover filtro Incluindo fora de exercício",
+      }),
     ).toBeVisible();
     expect(consultas).toHaveLength(1);
   });
@@ -129,7 +181,7 @@ test.describe("painel de filtros da listagem de deputados", () => {
 
   test("remove um filtro pelo chip, sem abrir o painel", async ({ page }) => {
     // Arrange
-    await page.goto("/deputados?uf=SP&emAtividade=true");
+    await page.goto("/deputados?uf=SP&incluirForaDeExercicio=true");
 
     // Act
     await page
@@ -139,7 +191,7 @@ test.describe("painel de filtros da listagem de deputados", () => {
     // Assert
     await expect(painel(page)).toBeHidden();
     await expect(page).not.toHaveURL(/uf=SP/);
-    await expect(page).toHaveURL(/emAtividade=true/);
+    await expect(page).toHaveURL(/incluirForaDeExercicio=true/);
     await expect(abrirFiltros(page)).toContainText("1");
   });
 

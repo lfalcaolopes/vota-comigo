@@ -132,6 +132,10 @@ export function DeputadosFeedView({
     await handleApplyFiltros(removerFiltro(filtros, id));
   }
 
+  async function handleIncluirForaDeExercicio() {
+    await handleApplyFiltros({ ...filtros, incluirForaDeExercicio: true });
+  }
+
   async function handleClearTudo() {
     setDraft("");
     replaceHref({ query: null, ...FILTROS_PADRAO });
@@ -259,6 +263,11 @@ export function DeputadosFeedView({
         display={display}
         items={items}
         onClearTudo={handleClearTudo}
+        onIncluirForaDeExercicio={
+          filtros.incluirForaDeExercicio
+            ? undefined
+            : handleIncluirForaDeExercicio
+        }
         onLoadMore={loadMore}
         selection={
           isSelectingComparativo

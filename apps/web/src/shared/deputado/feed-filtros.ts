@@ -8,7 +8,7 @@ import { toFiltroAtivo, type FiltroAtivo } from "@/shared/ui";
 import { toEstadoLabel, toFaixaEtariaLabel, toSexoLabel } from "./presentation";
 
 export type DeputadoFeedFiltros = {
-  emAtividade: boolean;
+  incluirForaDeExercicio: boolean;
   ufs: readonly string[];
   partidos: readonly string[];
   sexo: DeputadoSexo | null;
@@ -20,7 +20,7 @@ export type DeputadoFiltroId = keyof DeputadoFeedFiltros;
 export type DeputadoFiltroAtivo = FiltroAtivo<DeputadoFiltroId>;
 
 export const FILTROS_PADRAO: DeputadoFeedFiltros = {
-  emAtividade: false,
+  incluirForaDeExercicio: false,
   ufs: [],
   partidos: [],
   sexo: null,
@@ -32,8 +32,13 @@ export function descreverFiltrosAtivos(
 ): readonly DeputadoFiltroAtivo[] {
   const ativos: DeputadoFiltroAtivo[] = [];
 
-  if (filtros.emAtividade) {
-    ativos.push(toFiltroAtivo("emAtividade", FILTRO_NOME.emAtividade));
+  if (filtros.incluirForaDeExercicio) {
+    ativos.push(
+      toFiltroAtivo(
+        "incluirForaDeExercicio",
+        FILTRO_NOME.incluirForaDeExercicio,
+      ),
+    );
   }
   if (filtros.ufs.length > 0) {
     ativos.push(
@@ -101,7 +106,7 @@ export function saoFiltrosIguais(
   b: DeputadoFeedFiltros,
 ): boolean {
   return (
-    a.emAtividade === b.emAtividade &&
+    a.incluirForaDeExercicio === b.incluirForaDeExercicio &&
     a.sexo === b.sexo &&
     saoSelecoesIguais(a.ufs, b.ufs) &&
     saoSelecoesIguais(a.partidos, b.partidos) &&
@@ -129,7 +134,7 @@ function descreverSelecao<Valor extends string>(
 }
 
 const FILTRO_NOME: Record<DeputadoFiltroId, string> = {
-  emAtividade: "Em atividade",
+  incluirForaDeExercicio: "Incluindo fora de exercício",
   ufs: "Estado",
   partidos: "Partido",
   sexo: "Sexo",
