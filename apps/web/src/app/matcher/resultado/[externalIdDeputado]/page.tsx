@@ -10,8 +10,6 @@ export default async function MatcherResultadoDetalhePage({
   const { externalIdDeputado } = await params;
 
   return (
-    <MatcherResultadoDetalhe
-      externalIdDeputado={Number(externalIdDeputado)}
-    />
+    <MatcherResultadoDetalhe externalIdDeputado={Number(externalIdDeputado)} />
   );
 }

@@ -145,13 +145,43 @@ describe("feed", () => {
       vi.stubGlobal("fetch", fetchSpy);
 
       // Act
-      const result = await feed(20, 40, "maria silva", true, "SP", "PT");
+      const result = await feed(20, 40, "maria silva", {
+        emAtividade: true,
+        ufs: ["SP"],
+        partidos: ["PT"],
+        sexo: null,
+        faixasEtarias: [],
+      });
 
       // Assert
       expect(fetchSpy).toHaveBeenCalledWith(
-        "http://localhost:3001/deputados/feed?limit=20&offset=40&q=maria%20silva&emAtividade=true&uf=SP&partido=PT",
+        "http://localhost:3001/deputados/feed?q=maria+silva&emAtividade=true&uf=SP&partido=PT&limit=20&offset=40",
       );
       expect(result.items[0].externalIdDeputado).toBe(220593);
+    });
+
+    it("repeats the key once per value of a multiple filter", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => feedResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      await feed(20, 0, null, {
+        emAtividade: false,
+        ufs: ["SP", "RJ"],
+        partidos: [],
+        sexo: "F",
+        faixasEtarias: ["40-49"],
+      });
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/feed?uf=SP&uf=RJ&sexo=F&faixaEtaria=40-49&limit=20&offset=0",
+      );
     });
   });
 });

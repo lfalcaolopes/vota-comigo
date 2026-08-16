@@ -1,15 +1,25 @@
+import {
+  deputadoFaixaEtariaSchema,
+  deputadoSexoSchema,
+  type DeputadoFaixaEtaria,
+  type DeputadoSexo,
+} from "@vota-comigo/shared-types";
+
+import { FILTROS_PADRAO, type DeputadoFeedFiltros } from "./feed-filtros";
+
+type SearchParamValue = string | string[] | undefined;
+
 export type DeputadosFeedSearchParams = {
   q?: string;
   emAtividade?: string;
-  uf?: string;
-  partido?: string;
+  uf?: SearchParamValue;
+  partido?: SearchParamValue;
+  sexo?: string;
+  faixaEtaria?: SearchParamValue;
 };
 
-export type DeputadosFeedUrlState = {
+export type DeputadosFeedUrlState = DeputadoFeedFiltros & {
   query: string | null;
-  emAtividade: boolean;
-  uf: string | null;
-  partido: string | null;
 };
 
 export function parseDeputadosFeedUrlState(
@@ -18,24 +28,30 @@ export function parseDeputadosFeedUrlState(
   return {
     query: parseQueryParam(params.q),
     emAtividade: params.emAtividade === "true",
-    uf: parseUfParam(params.uf),
-    partido: parsePartidoParam(params.partido),
+    ufs: parseLista(params.uf, parseUfParam),
+    partidos: parseLista(params.partido, parsePartidoParam),
+    sexo: parseSexoParam(params.sexo),
+    faixasEtarias: parseLista(params.faixaEtaria, parseFaixaEtariaParam),
   };
 }
 
 export function buildDeputadosFeedSearchParams({
   query,
   emAtividade,
-  uf,
-  partido,
+  ufs,
+  partidos,
+  sexo,
+  faixasEtarias,
 }: DeputadosFeedUrlState): URLSearchParams {
   const params = new URLSearchParams();
   const term = parseQueryParam(query ?? undefined);
 
   if (term !== null) params.set("q", term);
   if (emAtividade) params.set("emAtividade", "true");
-  if (uf !== null) params.set("uf", uf);
-  if (partido !== null) params.set("partido", partido);
+  for (const uf of ufs) params.append("uf", uf);
+  for (const partido of partidos) params.append("partido", partido);
+  if (sexo !== null) params.set("sexo", sexo);
+  for (const faixa of faixasEtarias) params.append("faixaEtaria", faixa);
 
   return params;
 }
@@ -49,20 +65,45 @@ export function buildDeputadosFeedHref(
   return search ? `${pathname}?${search}` : pathname;
 }
 
+// Um endereço editado à mão não derruba a página: o valor ilegível some e os
+// demais continuam valendo.
+function parseLista<Valor extends string>(
+  raw: SearchParamValue,
+  parseValor: (value: string) => Valor | null,
+): readonly Valor[] {
+  if (raw === undefined) return [];
+
+  const valores = (Array.isArray(raw) ? raw : [raw]).flatMap((value) => {
+    const parsed = parseValor(value);
+    return parsed === null ? [] : [parsed];
+  });
+
+  return [...new Set(valores)];
+}
+
 function parseQueryParam(raw: string | undefined): string | null {
   const term = raw?.trim();
   if (!term || !/[\p{L}\p{N}]/u.test(term)) return null;
   return term;
 }
 
-function parseUfParam(raw: string | undefined): string | null {
-  if (raw === undefined) return null;
+function parseUfParam(raw: string): string | null {
   const uf = raw.trim().toUpperCase();
   return /^[A-Z]{2}$/.test(uf) ? uf : null;
 }
 
-function parsePartidoParam(raw: string | undefined): string | null {
-  if (raw === undefined) return null;
+function parsePartidoParam(raw: string): string | null {
   const partido = raw.trim();
   return /^[\p{L}\p{N}.*]{1,24}$/u.test(partido) ? partido : null;
+}
+
+function parseSexoParam(raw: string | undefined): DeputadoSexo | null {
+  if (raw === undefined) return FILTROS_PADRAO.sexo;
+  const parsed = deputadoSexoSchema.safeParse(raw.trim().toUpperCase());
+  return parsed.success ? parsed.data : FILTROS_PADRAO.sexo;
+}
+
+function parseFaixaEtariaParam(raw: string): DeputadoFaixaEtaria | null {
+  const parsed = deputadoFaixaEtariaSchema.safeParse(raw.trim());
+  return parsed.success ? parsed.data : null;
 }

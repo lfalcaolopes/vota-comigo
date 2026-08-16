@@ -20,6 +20,7 @@ export {
   descreverFiltrosAtivos,
   removerFiltro,
   saoFiltrosIguais,
+  toggleValor,
   FILTROS_PADRAO,
   type DeputadoFeedFiltros,
   type DeputadoFiltroAtivo,
@@ -69,10 +70,14 @@ export { DeputadoPerfilLink } from "./deputado-perfil-link";
 export { DeputadoRow } from "./deputado-row";
 export { DeputadoPartidoControl } from "./deputado-partido-control";
 export { DeputadoUfControl } from "./deputado-uf-control";
+export { DeputadoSexoControl } from "./deputado-sexo-control";
+export { DeputadoFaixaEtariaControl } from "./deputado-faixa-etaria-control";
 export {
   CARGO_DEPUTADO,
   nomePublicoLabel,
   toAtividadeLabel,
   toAtividadeTone,
+  toFaixaEtariaLabel,
+  toSexoLabel,
   getInitials,
 } from "./presentation";

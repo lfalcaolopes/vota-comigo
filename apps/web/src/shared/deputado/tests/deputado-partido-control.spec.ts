@@ -5,14 +5,14 @@ import { describe, expect, it } from "vitest";
 import { DeputadoPartidoControl } from "../deputado-partido-control";
 
 function render(
-  activePartido: string | null,
+  selecionados: readonly string[],
   partidos = [{ siglaPartido: "PT" }],
 ): string {
   return renderToStaticMarkup(
     createElement(DeputadoPartidoControl, {
-      activePartido,
-      onChange: () => {},
+      onToggle: () => {},
       partidos,
+      selecionados,
     }),
   );
 }
@@ -21,10 +21,10 @@ describe("DeputadoPartidoControl", () => {
   describe("when listing the available partidos", () => {
     it("shows every sigla under a labelled group", () => {
       // Act
-      const html = render(null, [
-        { siglaPartido: "PT" },
-        { siglaPartido: "PSOL" },
-      ]);
+      const html = render(
+        [],
+        [{ siglaPartido: "PT" }, { siglaPartido: "PSOL" }],
+      );
 
       // Assert
       expect(html).toContain("PT");
@@ -34,13 +34,13 @@ describe("DeputadoPartidoControl", () => {
     });
   });
 
-  describe("when a partido is selected", () => {
+  describe("when one partido is selected", () => {
     it("marks only that option as pressed", () => {
       // Act
-      const html = render("PT", [
-        { siglaPartido: "PT" },
-        { siglaPartido: "PSOL" },
-      ]);
+      const html = render(
+        ["PT"],
+        [{ siglaPartido: "PT" }, { siglaPartido: "PSOL" }],
+      );
 
       // Assert
       const pressed = html.match(/aria-pressed="true"/g) ?? [];
@@ -49,10 +49,28 @@ describe("DeputadoPartidoControl", () => {
     });
   });
 
+  describe("when several partidos are selected", () => {
+    it("marks every selected option as pressed", () => {
+      // Act
+      const html = render(
+        ["PT", "PSOL"],
+        [
+          { siglaPartido: "PT" },
+          { siglaPartido: "PSOL" },
+          { siglaPartido: "PL" },
+        ],
+      );
+
+      // Assert
+      const pressed = html.match(/aria-pressed="true"/g) ?? [];
+      expect(pressed).toHaveLength(2);
+    });
+  });
+
   describe("when no partido is available", () => {
     it("renders nothing", () => {
       // Act
-      const html = render(null, []);
+      const html = render([], []);
 
       // Assert
       expect(html).toBe("");

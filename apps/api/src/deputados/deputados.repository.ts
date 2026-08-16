@@ -34,6 +34,9 @@ import {
   partido,
 } from '@/shared/database/schema';
 
+import type { DeputadoFaixaEtaria } from '@vota-comigo/shared-types';
+
+import { deriveIntervaloNascimento } from './rules/faixa-etaria';
 import {
   normalizeSearchText,
   normalizedColumn,
@@ -105,6 +108,28 @@ export interface DeputadosRepository {
   loadIntervalosExercicio(
     deputadoId: string,
   ): Promise<readonly IntervaloExercicio[]>;
+}
+
+// Um deputado falecido não tem idade hoje, e derivar uma da data de nascimento
+// anunciaria uma idade que ele nunca alcançou.
+function faixasEtariasCondition(
+  faixas: readonly DeputadoFaixaEtaria[],
+  referencia: string,
+): SQL {
+  const porFaixa = faixas.map((faixa) => {
+    const intervalo = deriveIntervaloNascimento(faixa, referencia);
+
+    return and(
+      ...(intervalo.nascidoApos === null
+        ? []
+        : [gt(deputado.dataNascimento, intervalo.nascidoApos)]),
+      ...(intervalo.nascidoAte === null
+        ? []
+        : [lte(deputado.dataNascimento, intervalo.nascidoAte)]),
+    )!;
+  });
+
+  return and(isNull(deputado.dataFalecimento), or(...porFaixa))!;
 }
 
 function toLegislaturaPeriodoSource(
@@ -232,12 +257,29 @@ export function createDeputadosRepository(
       if (filters.emAtividade === true) {
         conditions.push(emAtividade);
       }
-      if (filters.uf !== undefined) {
-        conditions.push(eq(snapshot.siglaUf, filters.uf));
+      if (filters.ufs !== undefined && filters.ufs.length > 0) {
+        conditions.push(inArray(snapshot.siglaUf, [...filters.ufs]));
       }
-      if (filters.partido !== undefined) {
+      if (filters.partidos !== undefined && filters.partidos.length > 0) {
         conditions.push(
-          sql`${normalizedColumn(sql`trim(${partido.sigla})`)} = ${normalizeSearchText(filters.partido.trim())}`,
+          inArray(
+            normalizedColumn(sql`trim(${partido.sigla})`),
+            filters.partidos.map((sigla) => normalizeSearchText(sigla.trim())),
+          ),
+        );
+      }
+      if (filters.sexo !== undefined) {
+        conditions.push(eq(deputado.siglaSexo, filters.sexo));
+      }
+      if (
+        filters.faixasEtarias !== undefined &&
+        filters.faixasEtarias.length > 0
+      ) {
+        conditions.push(
+          faixasEtariasCondition(
+            filters.faixasEtarias,
+            new Date().toISOString().slice(0, 10),
+          ),
         );
       }
       if (filters.q !== undefined && filters.q.trim().length > 0) {

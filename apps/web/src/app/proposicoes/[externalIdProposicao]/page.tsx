@@ -39,9 +39,7 @@ export async function generateMetadata({
   const inicioEmenta = proposicao.ementa?.slice(0, 80).trim();
 
   return {
-    title: inicioEmenta
-      ? `${identificador} — ${inicioEmenta}`
-      : identificador,
+    title: inicioEmenta ? `${identificador} — ${inicioEmenta}` : identificador,
     description: proposicao.ementa ?? undefined,
   };
 }

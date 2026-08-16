@@ -12,24 +12,22 @@ import type {
 
 import { apiGet } from "@/shared/lib/api-client";
 
+import { FILTROS_PADRAO, type DeputadoFeedFiltros } from "./feed-filtros";
+import { buildDeputadosFeedSearchParams } from "./feed-url";
+
+// Os filtros viram query string pelo mesmo construtor que monta o endereço da
+// página, então requisição e URL não podem divergir.
 export function feed(
   limit = 20,
   offset = 0,
-  q?: string,
-  emAtividade?: boolean,
-  uf?: string,
-  partido?: string,
+  query: string | null = null,
+  filtros: DeputadoFeedFiltros = FILTROS_PADRAO,
 ): Promise<DeputadosFeedResponse> {
-  const qParam = q !== undefined ? `&q=${encodeURIComponent(q)}` : "";
-  const atividadeParam =
-    emAtividade !== undefined ? `&emAtividade=${emAtividade}` : "";
-  const ufParam = uf !== undefined ? `&uf=${encodeURIComponent(uf)}` : "";
-  const partidoParam =
-    partido !== undefined ? `&partido=${encodeURIComponent(partido)}` : "";
+  const params = buildDeputadosFeedSearchParams({ ...filtros, query });
+  params.set("limit", String(limit));
+  params.set("offset", String(offset));
 
-  return apiGet<DeputadosFeedResponse>(
-    `/deputados/feed?limit=${limit}&offset=${offset}${qParam}${atividadeParam}${ufParam}${partidoParam}`,
-  );
+  return apiGet<DeputadosFeedResponse>(`/deputados/feed?${params.toString()}`);
 }
 
 export function ufsDisponiveis(): Promise<UfsDisponiveisResponse> {

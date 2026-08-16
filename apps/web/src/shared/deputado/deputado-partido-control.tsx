@@ -2,43 +2,31 @@
 
 import type { PartidoDisponivel } from "@vota-comigo/shared-types";
 
-import { Chip } from "@/shared/ui";
-import { joinClassNames } from "@/shared/ui/utils";
+import { ChipGroup } from "@/shared/ui";
 
 type DeputadoPartidoControlProps = {
   partidos: readonly PartidoDisponivel[];
-  activePartido: string | null;
-  onChange: (partido: string | null) => void;
+  selecionados: readonly string[];
+  onToggle: (siglaPartido: string) => void;
   className?: string;
 };
 
 export function DeputadoPartidoControl({
   partidos,
-  activePartido,
-  onChange,
+  selecionados,
+  onToggle,
   className,
 }: DeputadoPartidoControlProps) {
-  if (partidos.length === 0) return null;
-
   return (
-    <div
-      aria-label="Filtrar por partido"
-      className={joinClassNames("flex flex-wrap gap-2", className)}
-      role="group"
-    >
-      {partidos.map((partido) => {
-        const selected = activePartido === partido.siglaPartido;
-
-        return (
-          <Chip
-            key={partido.siglaPartido}
-            onClick={() => onChange(selected ? null : partido.siglaPartido)}
-            selected={selected}
-          >
-            {partido.siglaPartido}
-          </Chip>
-        );
-      })}
-    </div>
+    <ChipGroup
+      className={className}
+      label="Filtrar por partido"
+      onToggle={onToggle}
+      options={partidos.map((partido) => ({
+        valor: partido.siglaPartido,
+        label: partido.siglaPartido,
+      }))}
+      selecionados={selecionados}
+    />
   );
 }

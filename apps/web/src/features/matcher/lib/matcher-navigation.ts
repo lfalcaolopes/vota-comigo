@@ -1,8 +1,4 @@
-export type MatcherNavigationIntent =
-  | "step"
-  | "guard"
-  | "position"
-  | "filter";
+export type MatcherNavigationIntent = "step" | "guard" | "position" | "filter";
 export type MatcherNavigationMethod = "push" | "replace";
 
 export function getMatcherNavigationMethod(

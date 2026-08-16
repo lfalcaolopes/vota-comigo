@@ -12,9 +12,7 @@ export type RascunhoStorage = {
 
 const STORAGE_KEY = "vota-comigo:matcher-rascunho";
 
-export function loadRascunho(
-  storage: RascunhoStorage,
-): MatcherRascunho | null {
+export function loadRascunho(storage: RascunhoStorage): MatcherRascunho | null {
   try {
     const raw = storage.getItem(STORAGE_KEY);
     if (raw === null) return null;

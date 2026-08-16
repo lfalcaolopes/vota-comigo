@@ -56,12 +56,11 @@ describe("buildCompletionEvent", () => {
     it("reports the selected count and the answered count", () => {
       // Arrange
       const state = stateWith((s) =>
-        [card(1), card(2), card(3)]
-          .reduce(
-            (acc, proposicao) =>
-              matcherReducer(acc, { type: "toggleProposicao", proposicao }),
-            s,
-          ),
+        [card(1), card(2), card(3)].reduce(
+          (acc, proposicao) =>
+            matcherReducer(acc, { type: "toggleProposicao", proposicao }),
+          s,
+        ),
       );
       const answered = matcherReducer(
         matcherReducer(state, {

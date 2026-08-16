@@ -407,6 +407,18 @@ export const deputadoPerfilSchema = z
     }
   });
 
+export const deputadoSexoSchema = z.enum(["F", "M"]);
+
+// Décadas fechadas nas pontas abertas: nenhuma faixa deixa deputado de fora
+// por idade, só por data de nascimento ausente.
+export const deputadoFaixaEtariaSchema = z.enum([
+  "ate-39",
+  "40-49",
+  "50-59",
+  "60-69",
+  "70-mais",
+]);
+
 export const deputadoCardSchema = z.object({
   externalIdDeputado: z.number(),
   nomePublico: z.string().nullable(),
@@ -489,6 +501,8 @@ export type DeputadoDiscursosResponse = z.infer<
   typeof deputadoDiscursosResponseSchema
 >;
 export type DeputadoPerfil = z.infer<typeof deputadoPerfilSchema>;
+export type DeputadoSexo = z.infer<typeof deputadoSexoSchema>;
+export type DeputadoFaixaEtaria = z.infer<typeof deputadoFaixaEtariaSchema>;
 export type DeputadoCard = z.infer<typeof deputadoCardSchema>;
 export type DeputadosFeedResponse = z.infer<typeof deputadoFeedResponseSchema>;
 export type UfDisponivel = z.infer<typeof ufDisponivelSchema>;

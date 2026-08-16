@@ -18,8 +18,8 @@ export function shouldClearFiltroConcordancia(
 
   const hasSelectionChanged =
     previousIds.length !== nextIds.length ||
-    previousIds.some((externalIdProposicao) =>
-      !nextIds.includes(externalIdProposicao),
+    previousIds.some(
+      (externalIdProposicao) => !nextIds.includes(externalIdProposicao),
     );
   const hasPosicaoChanged =
     previous.posicoes.size !== next.posicoes.size ||

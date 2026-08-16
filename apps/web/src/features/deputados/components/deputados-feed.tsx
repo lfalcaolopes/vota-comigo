@@ -4,15 +4,15 @@ import type {
   UfDisponivel,
 } from "@vota-comigo/shared-types";
 
+import type { DeputadoFeedFiltros } from "@/shared/deputado";
+
 import { DeputadosFeedView } from "./deputados-feed-view";
 
 type DeputadosFeedProps = {
   initialItems: DeputadoCard[];
   total: number;
   initialQuery?: string | null;
-  initialEmAtividade?: boolean;
-  initialUf?: string | null;
-  initialPartido?: string | null;
+  initialFiltros?: DeputadoFeedFiltros;
   ufs?: readonly UfDisponivel[];
   partidos?: readonly PartidoDisponivel[];
 };
@@ -21,9 +21,7 @@ export function DeputadosFeed({
   initialItems,
   total,
   initialQuery,
-  initialEmAtividade,
-  initialUf,
-  initialPartido,
+  initialFiltros,
   ufs,
   partidos,
 }: DeputadosFeedProps) {
@@ -37,12 +35,10 @@ export function DeputadosFeed({
       </header>
 
       <DeputadosFeedView
-        initialEmAtividade={initialEmAtividade}
+        initialFiltros={initialFiltros}
         initialItems={initialItems}
         initialQuery={initialQuery}
         initialTotal={total}
-        initialUf={initialUf}
-        initialPartido={initialPartido}
         ufs={ufs}
         partidos={partidos}
       />

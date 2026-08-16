@@ -30,9 +30,7 @@ type DeputadosFeedViewProps = {
   initialItems: DeputadoCard[];
   initialTotal: number;
   initialQuery?: string | null;
-  initialEmAtividade?: boolean;
-  initialUf?: string | null;
-  initialPartido?: string | null;
+  initialFiltros?: DeputadoFeedFiltros;
   ufs?: readonly UfDisponivel[];
   partidos?: readonly PartidoDisponivel[];
 };
@@ -41,9 +39,7 @@ export function DeputadosFeedView({
   initialItems,
   initialTotal,
   initialQuery = null,
-  initialEmAtividade = false,
-  initialUf = null,
-  initialPartido = null,
+  initialFiltros = FILTROS_PADRAO,
   ufs = [],
   partidos = [],
 }: DeputadosFeedViewProps) {
@@ -66,11 +62,7 @@ export function DeputadosFeedView({
     items: initialItems,
     total: initialTotal,
     query: initialQuery ?? "",
-    filtros: {
-      emAtividade: initialEmAtividade,
-      uf: initialUf,
-      partido: initialPartido,
-    },
+    filtros: initialFiltros,
   });
 
   const [draft, setDraft] = useState(initialQuery ?? "");

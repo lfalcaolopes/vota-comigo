@@ -1,3 +1,8 @@
+import type {
+  DeputadoFaixaEtaria,
+  DeputadoSexo,
+} from '@vota-comigo/shared-types';
+
 import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
 
 export type DeputadoHistoricoEventoSource = {
@@ -133,8 +138,10 @@ export type DeputadoCardRow = {
 export type DeputadosFeedFilters = {
   readonly q?: string;
   readonly emAtividade?: boolean;
-  readonly uf?: string;
-  readonly partido?: string;
+  readonly ufs?: readonly string[];
+  readonly partidos?: readonly string[];
+  readonly sexo?: DeputadoSexo;
+  readonly faixasEtarias?: readonly DeputadoFaixaEtaria[];
 };
 
 export type DeputadosFeedPagination = {

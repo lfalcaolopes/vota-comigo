@@ -136,7 +136,8 @@ describe("ProposicaoDetalhe", () => {
       const proposicao = makeProposicao({
         resumoIaDisponivel: true,
         resumoIaCard: "Resumo curto aprovado.",
-        resumoIaDetalhe: "- altera a regra de aposentadoria.\n- reduz o teto de gastos.",
+        resumoIaDetalhe:
+          "- altera a regra de aposentadoria.\n- reduz o teto de gastos.",
       });
 
       // Act

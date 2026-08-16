@@ -487,8 +487,10 @@ describe('GET /deputados/feed query string translation', () => {
           filters: {
             q: undefined,
             emAtividade: undefined,
-            uf: undefined,
-            partido: undefined,
+            ufs: undefined,
+            partidos: undefined,
+            sexo: undefined,
+            faixasEtarias: undefined,
           },
           pagination: { limit: 20, offset: 0 },
         },
@@ -542,7 +544,7 @@ describe('GET /deputados/feed query string translation', () => {
       await request(getTestServer(app)).get('/deputados/feed?uf=sp');
 
       // Assert
-      expect(feedCalls[0].filters.uf).toBe('SP');
+      expect(feedCalls[0].filters.ufs).toEqual(['SP']);
     });
   });
 
@@ -552,7 +554,98 @@ describe('GET /deputados/feed query string translation', () => {
       await request(getTestServer(app)).get('/deputados/feed?partido=pl*');
 
       // Assert
-      expect(feedCalls[0].filters.partido).toBe('pl*');
+      expect(feedCalls[0].filters.partidos).toEqual(['pl*']);
+    });
+  });
+
+  describe('when uf and partido are repeated', () => {
+    it('forwards every value as a list', async () => {
+      // Act
+      await request(getTestServer(app)).get(
+        '/deputados/feed?uf=SP&uf=rj&partido=PT&partido=PL',
+      );
+
+      // Assert
+      expect(feedCalls[0].filters.ufs).toEqual(['SP', 'RJ']);
+      expect(feedCalls[0].filters.partidos).toEqual(['PT', 'PL']);
+    });
+
+    it('collapses repeated values so the same filter is not sent twice', async () => {
+      // Act
+      await request(getTestServer(app)).get('/deputados/feed?uf=SP&uf=sp');
+
+      // Assert
+      expect(feedCalls[0].filters.ufs).toEqual(['SP']);
+    });
+  });
+
+  describe('when sexo is given', () => {
+    it('forwards the parsed sigla to the repository', async () => {
+      // Act
+      await request(getTestServer(app)).get('/deputados/feed?sexo=f');
+
+      // Assert
+      expect(feedCalls[0].filters.sexo).toBe('F');
+    });
+  });
+
+  describe('when faixaEtaria is repeated', () => {
+    it('forwards every parsed faixa to the repository', async () => {
+      // Act
+      await request(getTestServer(app)).get(
+        '/deputados/feed?faixaEtaria=40-49&faixaEtaria=70-mais',
+      );
+
+      // Assert
+      expect(feedCalls[0].filters.faixasEtarias).toEqual(['40-49', '70-mais']);
+    });
+  });
+});
+
+describe('GET /deputados/feed with invalid filters', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    app = await buildApp(new Map([[220593, source()]]));
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('when sexo is not a known sigla', () => {
+    it('returns 400', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/feed?sexo=X',
+      );
+
+      // Assert
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe('when faixaEtaria is not a known range', () => {
+    it('returns 400', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/feed?faixaEtaria=30-39',
+      );
+
+      // Assert
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe('when one repeated uf is invalid', () => {
+    it('returns 400 instead of silently dropping it', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/feed?uf=SP&uf=BRASIL',
+      );
+
+      // Assert
+      expect(response.status).toBe(400);
     });
   });
 });

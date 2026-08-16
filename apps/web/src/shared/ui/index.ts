@@ -1,6 +1,8 @@
 export { ArrowLeftIcon } from "./arrow-left-icon";
 export { Button, ButtonLink, IconButton } from "./button";
 export { ChevronDownIcon } from "./chevron-down-icon";
+export { ChipGroup } from "./chip-group";
+export type { ChipGroupOption } from "./chip-group";
 export { toFiltroAtivo } from "./filtro-descritor";
 export type { FiltroAtivo } from "./filtro-descritor";
 export { FiltrosAtivos } from "./filtros-ativos";

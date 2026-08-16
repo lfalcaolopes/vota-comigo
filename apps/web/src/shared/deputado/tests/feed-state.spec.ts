@@ -46,15 +46,16 @@ describe("initDeputadoFeedState", () => {
       // Act
       const state = init({
         query: " maria ",
-        filtros: { emAtividade: true, uf: "SP", partido: "PT" },
+        filtros: { emAtividade: true, ufs: ["SP"], partidos: ["PT"] },
       });
 
       // Assert
       expect(state.query).toBe("maria");
       expect(state.filtros).toEqual({
+        ...FILTROS_PADRAO,
         emAtividade: true,
-        uf: "SP",
-        partido: "PT",
+        ufs: ["SP"],
+        partidos: ["PT"],
       });
       expect(state.feed.items).toEqual(firstPage);
       expect(state.feed.total).toBe(50);
@@ -83,33 +84,33 @@ describe("deputadoFeedReducer", () => {
 
     it("keeps the applied filters when the search is cleared", () => {
       // Arrange
-      const state = init({ query: "maria", filtros: { uf: "SP" } });
+      const state = init({ query: "maria", filtros: { ufs: ["SP"] } });
 
       // Act
       const next = deputadoFeedReducer(state, { type: "clearSearch" });
 
       // Assert
       expect(next.query).toBe("");
-      expect(next.filtros.uf).toBe("SP");
+      expect(next.filtros.ufs).toEqual(["SP"]);
     });
   });
 
   describe("when a filter set is applied", () => {
     it("replaces every filter at once and starts loading", () => {
       // Arrange
-      const state = init({ filtros: { uf: "SP", partido: "PT" } });
+      const state = init({ filtros: { ufs: ["SP"], partidos: ["PT"] } });
 
       // Act
       const next = deputadoFeedReducer(state, {
         type: "applyFiltros",
-        filtros: { emAtividade: true, uf: "RJ", partido: null },
+        filtros: { ...FILTROS_PADRAO, emAtividade: true, ufs: ["RJ"] },
       });
 
       // Assert
       expect(next.filtros).toEqual({
+        ...FILTROS_PADRAO,
         emAtividade: true,
-        uf: "RJ",
-        partido: null,
+        ufs: ["RJ"],
       });
       expect(next.feed.items).toEqual([]);
       expect(next.status).toBe("loading");
@@ -131,17 +132,17 @@ describe("deputadoFeedReducer", () => {
 
     it("clears a filter that the applied set leaves at its default", () => {
       // Arrange
-      const state = init({ filtros: { uf: "SP", partido: "PT" } });
+      const state = init({ filtros: { ufs: ["SP"], partidos: ["PT"] } });
 
       // Act
       const next = deputadoFeedReducer(state, {
         type: "applyFiltros",
-        filtros: { ...FILTROS_PADRAO, partido: "PT" },
+        filtros: { ...FILTROS_PADRAO, partidos: ["PT"] },
       });
 
       // Assert
-      expect(next.filtros.uf).toBeNull();
-      expect(next.filtros.partido).toBe("PT");
+      expect(next.filtros.ufs).toEqual([]);
+      expect(next.filtros.partidos).toEqual(["PT"]);
     });
   });
 
@@ -150,7 +151,7 @@ describe("deputadoFeedReducer", () => {
       // Arrange
       const state = init({
         query: "maria",
-        filtros: { emAtividade: true, uf: "SP", partido: "PT" },
+        filtros: { emAtividade: true, ufs: ["SP"], partidos: ["PT"] },
       });
 
       // Act
@@ -185,7 +186,7 @@ describe("deputadoFeedReducer", () => {
 describe("deputadoFeedDisplay", () => {
   it("uses empty-filtered when filters are active and no items are loaded", () => {
     // Arrange
-    const state = init({ items: [], total: 0, filtros: { partido: "PT" } });
+    const state = init({ items: [], total: 0, filtros: { partidos: ["PT"] } });
 
     // Act / Assert
     expect(deputadoFeedDisplay(state)).toBe("empty-filtered");

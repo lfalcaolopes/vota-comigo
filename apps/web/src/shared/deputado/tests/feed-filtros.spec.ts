@@ -6,6 +6,7 @@ import {
   FILTROS_PADRAO,
   removerFiltro,
   saoFiltrosIguais,
+  toggleValor,
   type DeputadoFeedFiltros,
 } from "../feed-filtros";
 
@@ -33,17 +34,25 @@ describe("filtros da listagem de deputados", () => {
       // Assert
       expect(count).toBe(0);
     });
+
+    it("does not count an empty multiple selection", () => {
+      // Act
+      const count = contarFiltrosAtivos(filtros({ ufs: [], partidos: [] }));
+
+      // Assert
+      expect(count).toBe(0);
+    });
   });
 
-  describe("when describing an active filter", () => {
+  describe("when a single value is selected", () => {
     it("names the estado instead of the UF code", () => {
       // Act
-      const ativos = descreverFiltrosAtivos(filtros({ uf: "SP" }));
+      const ativos = descreverFiltrosAtivos(filtros({ ufs: ["SP"] }));
 
       // Assert
       expect(ativos).toEqual([
         {
-          id: "uf",
+          id: "ufs",
           label: "Estado: São Paulo",
           removeLabel: "Remover filtro Estado: São Paulo",
         },
@@ -52,16 +61,28 @@ describe("filtros da listagem de deputados", () => {
 
     it("names the partido by its sigla", () => {
       // Act
-      const ativos = descreverFiltrosAtivos(filtros({ partido: "PT" }));
+      const ativos = descreverFiltrosAtivos(filtros({ partidos: ["PT"] }));
 
       // Assert
-      expect(ativos).toEqual([
-        {
-          id: "partido",
-          label: "Partido: PT",
-          removeLabel: "Remover filtro Partido: PT",
-        },
-      ]);
+      expect(ativos[0].label).toBe("Partido: PT");
+    });
+
+    it("names the faixa etaria by its range", () => {
+      // Act
+      const ativos = descreverFiltrosAtivos(
+        filtros({ faixasEtarias: ["40-49"] }),
+      );
+
+      // Assert
+      expect(ativos[0].label).toBe("Idade: 40 a 49 anos");
+    });
+
+    it("names the sexo in full", () => {
+      // Act
+      const ativos = descreverFiltrosAtivos(filtros({ sexo: "F" }));
+
+      // Assert
+      expect(ativos[0].label).toBe("Sexo: Feminino");
     });
 
     it("names em atividade without a value", () => {
@@ -79,10 +100,56 @@ describe("filtros da listagem de deputados", () => {
     });
   });
 
+  describe("when several values are selected in the same filter", () => {
+    it("counts them instead of listing every name", () => {
+      // Act
+      const ativos = descreverFiltrosAtivos(
+        filtros({ ufs: ["SP", "RJ", "MG"] }),
+      );
+
+      // Assert
+      expect(ativos[0].label).toBe("Estado: 3 estados");
+    });
+
+    it("counts partidos with their own plural", () => {
+      // Act
+      const ativos = descreverFiltrosAtivos(
+        filtros({ partidos: ["PT", "PL"] }),
+      );
+
+      // Assert
+      expect(ativos[0].label).toBe("Partido: 2 partidos");
+    });
+
+    it("counts faixas etarias with their own plural", () => {
+      // Act
+      const ativos = descreverFiltrosAtivos(
+        filtros({ faixasEtarias: ["40-49", "70-mais"] }),
+      );
+
+      // Assert
+      expect(ativos[0].label).toBe("Idade: 2 faixas");
+    });
+
+    it("stays a single chip no matter how many values", () => {
+      // Act
+      const count = contarFiltrosAtivos(filtros({ ufs: ["SP", "RJ", "MG"] }));
+
+      // Assert
+      expect(count).toBe(1);
+    });
+  });
+
   describe("when several filters are active", () => {
     it("counts exactly the described ones", () => {
       // Arrange
-      const ativos = filtros({ emAtividade: true, uf: "RJ", partido: "PL" });
+      const ativos = filtros({
+        emAtividade: true,
+        ufs: ["RJ"],
+        partidos: ["PL"],
+        sexo: "F",
+        faixasEtarias: ["50-59"],
+      });
 
       // Act
       const descritos = descreverFiltrosAtivos(ativos);
@@ -90,8 +157,10 @@ describe("filtros da listagem de deputados", () => {
       // Assert
       expect(descritos.map((filtro) => filtro.id)).toEqual([
         "emAtividade",
-        "uf",
-        "partido",
+        "ufs",
+        "partidos",
+        "sexo",
+        "faixasEtarias",
       ]);
       expect(contarFiltrosAtivos(ativos)).toBe(descritos.length);
     });
@@ -100,15 +169,30 @@ describe("filtros da listagem de deputados", () => {
   describe("when removing a single filter", () => {
     it("keeps the other filters untouched", () => {
       // Arrange
-      const atuais = filtros({ emAtividade: true, uf: "SP", partido: "PT" });
+      const atuais = filtros({
+        emAtividade: true,
+        ufs: ["SP"],
+        partidos: ["PT"],
+      });
 
       // Act
-      const proximos = removerFiltro(atuais, "uf");
+      const proximos = removerFiltro(atuais, "ufs");
 
       // Assert
       expect(proximos).toEqual(
-        filtros({ emAtividade: true, uf: null, partido: "PT" }),
+        filtros({ emAtividade: true, ufs: [], partidos: ["PT"] }),
       );
+    });
+
+    it("clears every value of a multiple filter at once", () => {
+      // Arrange
+      const atuais = filtros({ ufs: ["SP", "RJ", "MG"] });
+
+      // Act
+      const proximos = removerFiltro(atuais, "ufs");
+
+      // Assert
+      expect(proximos.ufs).toEqual([]);
     });
 
     it("returns em atividade to its default instead of inverting it", () => {
@@ -124,13 +208,42 @@ describe("filtros da listagem de deputados", () => {
 
     it("does not mutate the filters it received", () => {
       // Arrange
-      const atuais = filtros({ uf: "SP" });
+      const atuais = filtros({ ufs: ["SP"] });
 
       // Act
-      removerFiltro(atuais, "uf");
+      removerFiltro(atuais, "ufs");
 
       // Assert
-      expect(atuais.uf).toBe("SP");
+      expect(atuais.ufs).toEqual(["SP"]);
+    });
+  });
+
+  describe("when toggling one value of a multiple filter", () => {
+    it("adds a value that was not selected", () => {
+      // Act
+      const proximos = toggleValor(["SP"], "RJ");
+
+      // Assert
+      expect(proximos).toEqual(["SP", "RJ"]);
+    });
+
+    it("removes a value that was already selected", () => {
+      // Act
+      const proximos = toggleValor(["SP", "RJ"], "SP");
+
+      // Assert
+      expect(proximos).toEqual(["RJ"]);
+    });
+
+    it("does not mutate the list it received", () => {
+      // Arrange
+      const atuais = ["SP"];
+
+      // Act
+      toggleValor(atuais, "RJ");
+
+      // Assert
+      expect(atuais).toEqual(["SP"]);
     });
   });
 
@@ -138,8 +251,8 @@ describe("filtros da listagem de deputados", () => {
     it("treats the same values as equal regardless of object identity", () => {
       // Act
       const iguais = saoFiltrosIguais(
-        filtros({ uf: "SP", emAtividade: true }),
-        filtros({ uf: "SP", emAtividade: true }),
+        filtros({ ufs: ["SP"], emAtividade: true }),
+        filtros({ ufs: ["SP"], emAtividade: true }),
       );
 
       // Assert
@@ -149,12 +262,35 @@ describe("filtros da listagem de deputados", () => {
     it("detects a single changed field", () => {
       // Act
       const iguais = saoFiltrosIguais(
-        filtros({ uf: "SP" }),
-        filtros({ uf: "RJ" }),
+        filtros({ ufs: ["SP"] }),
+        filtros({ ufs: ["RJ"] }),
       );
 
       // Assert
       expect(iguais).toBe(false);
+    });
+
+    it("detects a value added to a multiple filter", () => {
+      // Act
+      const iguais = saoFiltrosIguais(
+        filtros({ ufs: ["SP"] }),
+        filtros({ ufs: ["SP", "RJ"] }),
+      );
+
+      // Assert
+      expect(iguais).toBe(false);
+    });
+
+    // A ordem em que o usuário clicou nos chips não é filtro diferente.
+    it("ignores the order values were selected in", () => {
+      // Act
+      const iguais = saoFiltrosIguais(
+        filtros({ ufs: ["SP", "RJ"] }),
+        filtros({ ufs: ["RJ", "SP"] }),
+      );
+
+      // Assert
+      expect(iguais).toBe(true);
     });
   });
 });

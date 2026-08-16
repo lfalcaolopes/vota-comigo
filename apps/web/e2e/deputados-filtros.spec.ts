@@ -143,6 +143,46 @@ test.describe("painel de filtros da listagem de deputados", () => {
     await expect(abrirFiltros(page)).toContainText("1");
   });
 
+  test("acumula estados em um único chip contado", async ({ page }) => {
+    // Arrange
+    await page.goto("/deputados?uf=SP");
+
+    // Act
+    await abrirFiltros(page).click();
+    await estado(page, "Rio de Janeiro").click();
+    await painel(page).getByRole("button", { name: "Aplicar" }).click();
+
+    // Assert
+    await expect(page).toHaveURL(/uf=SP/);
+    await expect(page).toHaveURL(/uf=RJ/);
+    await expect(
+      page.getByRole("button", { name: "Remover filtro Estado: 2 estados" }),
+    ).toBeVisible();
+    await expect(abrirFiltros(page)).toContainText("1");
+  });
+
+  test("filtra por sexo e faixa etária", async ({ page }) => {
+    // Arrange
+    await page.goto("/deputados");
+
+    // Act
+    await abrirFiltros(page).click();
+    await painel(page)
+      .getByRole("group", { name: "Filtrar por sexo" })
+      .getByRole("button", { name: "Feminino", exact: true })
+      .click();
+    await painel(page)
+      .getByRole("group", { name: "Filtrar por faixa etária" })
+      .getByRole("button", { name: "40 a 49 anos", exact: true })
+      .click();
+    await painel(page).getByRole("button", { name: "Aplicar" }).click();
+
+    // Assert
+    await expect(page).toHaveURL(/sexo=F/);
+    await expect(page).toHaveURL(/faixaEtaria=40-49/);
+    await expect(abrirFiltros(page)).toContainText("2");
+  });
+
   test("limpa os filtros preservando a busca", async ({ page }) => {
     // Arrange
     await page.goto("/deputados?q=maria&uf=SP");

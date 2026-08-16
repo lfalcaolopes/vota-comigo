@@ -21,9 +21,7 @@ export function DeputadoDetalhe({
   onRetry,
 }: DeputadoDetalheProps) {
   if (status === "loading") {
-    return (
-      <SkeletonRows count={6} />
-    );
+    return <SkeletonRows count={6} />;
   }
 
   if (status === "error") {

@@ -84,13 +84,7 @@ describe("matcher route", () => {
   describe("when comparison ids are invalid", () => {
     it("rejects invalid arity, repeated ids and non-numeric segments", () => {
       // Arrange
-      const invalidSegments = [
-        "7",
-        "7,5,9,11",
-        "7,7",
-        "7,maria",
-        "%E0%A4%A",
-      ];
+      const invalidSegments = ["7", "7,5,9,11", "7,7", "7,maria", "%E0%A4%A"];
 
       // Act
       const parsedIds = invalidSegments.map(parseComparativoIds);
@@ -158,9 +152,7 @@ describe("matcher route", () => {
       });
 
       // Assert
-      expect(href).toBe(
-        "/matcher/resultado?escopo=nacional&atividade=1",
-      );
+      expect(href).toBe("/matcher/resultado?escopo=nacional&atividade=1");
     });
   });
 
@@ -287,10 +279,7 @@ describe("matcher route", () => {
       const rascunho = emptyRascunho();
 
       // Act
-      const destination = resolveMatcherRoute(
-        "/matcher/resultado",
-        rascunho,
-      );
+      const destination = resolveMatcherRoute("/matcher/resultado", rascunho);
 
       // Assert
       expect(destination).toBe("/matcher/local");
@@ -303,10 +292,7 @@ describe("matcher route", () => {
       const rascunho = { ...emptyRascunho(), siglaUf: "SP" as const };
 
       // Act
-      const destination = resolveMatcherRoute(
-        "/matcher/resultado",
-        rascunho,
-      );
+      const destination = resolveMatcherRoute("/matcher/resultado", rascunho);
 
       // Assert
       expect(destination).toBe("/matcher/proposicoes");

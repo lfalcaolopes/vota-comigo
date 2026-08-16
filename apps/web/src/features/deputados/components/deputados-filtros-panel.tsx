@@ -8,10 +8,13 @@ import { useState } from "react";
 
 import {
   contarFiltrosAtivos,
+  DeputadoFaixaEtariaControl,
   DeputadoPartidoControl,
+  DeputadoSexoControl,
   DeputadoUfControl,
   FILTROS_PADRAO,
   saoFiltrosIguais,
+  toggleValor,
   type DeputadoFeedFiltros,
 } from "@/shared/deputado";
 import { FiltroSecao, FiltrosPanel, Switch } from "@/shared/ui";
@@ -54,11 +57,35 @@ export function DeputadosFiltrosPanel({
         }
       />
 
+      <FiltroSecao titulo="Sexo">
+        <DeputadoSexoControl
+          onChange={(sexo) => setRascunho((atual) => ({ ...atual, sexo }))}
+          sexo={rascunho.sexo}
+        />
+      </FiltroSecao>
+
+      <FiltroSecao titulo="Idade">
+        <DeputadoFaixaEtariaControl
+          onToggle={(faixa) =>
+            setRascunho((atual) => ({
+              ...atual,
+              faixasEtarias: toggleValor(atual.faixasEtarias, faixa),
+            }))
+          }
+          selecionadas={rascunho.faixasEtarias}
+        />
+      </FiltroSecao>
+
       {ufs.length > 0 ? (
         <FiltroSecao titulo="Estado">
           <DeputadoUfControl
-            activeUf={rascunho.uf}
-            onChange={(uf) => setRascunho((atual) => ({ ...atual, uf }))}
+            onToggle={(siglaUf) =>
+              setRascunho((atual) => ({
+                ...atual,
+                ufs: toggleValor(atual.ufs, siglaUf),
+              }))
+            }
+            selecionados={rascunho.ufs}
             ufs={ufs}
           />
         </FiltroSecao>
@@ -67,11 +94,14 @@ export function DeputadosFiltrosPanel({
       {partidos.length > 0 ? (
         <FiltroSecao titulo="Partido">
           <DeputadoPartidoControl
-            activePartido={rascunho.partido}
-            onChange={(partido) =>
-              setRascunho((atual) => ({ ...atual, partido }))
+            onToggle={(siglaPartido) =>
+              setRascunho((atual) => ({
+                ...atual,
+                partidos: toggleValor(atual.partidos, siglaPartido),
+              }))
             }
             partidos={partidos}
+            selecionados={rascunho.partidos}
           />
         </FiltroSecao>
       ) : null}

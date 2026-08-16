@@ -8,15 +8,19 @@ import {
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 
-import type {
-  DeputadoDiscursosResponse,
-  DeputadoCeapResponse,
-  DeputadoPerfil,
-  DeputadoOrgaosResponse,
-  DeputadoProposicoesAssinadasResponse,
-  DeputadosFeedResponse,
-  PartidosDisponiveisResponse,
-  UfsDisponiveisResponse,
+import {
+  deputadoFaixaEtariaSchema,
+  deputadoSexoSchema,
+  type DeputadoDiscursosResponse,
+  type DeputadoCeapResponse,
+  type DeputadoFaixaEtaria,
+  type DeputadoPerfil,
+  type DeputadoOrgaosResponse,
+  type DeputadoProposicoesAssinadasResponse,
+  type DeputadoSexo,
+  type DeputadosFeedResponse,
+  type PartidosDisponiveisResponse,
+  type UfsDisponiveisResponse,
 } from '@vota-comigo/shared-types';
 
 import { DeputadosService } from './deputados.service';
@@ -30,6 +34,9 @@ import { CacheControl } from '../shared/http/cache-control.decorator';
 const LIMIT_DEFAULT = 20;
 const LIMIT_MAX = 100;
 const OFFSET_DEFAULT = 0;
+const MAX_VALORES_POR_FILTRO = 40;
+
+type QueryParam = string | readonly string[] | undefined;
 
 type DeputadosFeedPagination = {
   limit: number;
@@ -65,22 +72,67 @@ function parseEmAtividade(raw: string | undefined): boolean | undefined {
   throw new BadRequestException('emAtividade must be true or false');
 }
 
-function parseUf(raw: string | undefined): string | undefined {
+// Um valor repetido na query string chega como array; um só, como string. As
+// duas formas viram a mesma lista, então ?uf=SP continua valendo.
+function toList(raw: QueryParam): readonly string[] | undefined {
   if (raw === undefined) return undefined;
-  const uf = raw.trim().toUpperCase();
-  if (!/^[A-Z]{2}$/.test(uf)) {
-    throw new BadRequestException('uf must have two letters');
+  const values = (Array.isArray(raw) ? raw : [raw]).filter(
+    (value) => typeof value === 'string',
+  );
+  if (values.length > MAX_VALORES_POR_FILTRO) {
+    throw new BadRequestException(
+      `each filter accepts at most ${MAX_VALORES_POR_FILTRO} values`,
+    );
   }
-  return uf;
+  return values;
 }
 
-function parsePartido(raw: string | undefined): string | undefined {
-  if (raw === undefined) return undefined;
-  const partido = raw.trim();
-  if (!/^[\p{L}\p{N}.*]{1,24}$/u.test(partido)) {
+function parseUfs(raw: QueryParam): readonly string[] | undefined {
+  const values = toList(raw);
+  if (values === undefined) return undefined;
+
+  const ufs = values.map((value) => value.trim().toUpperCase());
+  if (ufs.some((uf) => !/^[A-Z]{2}$/.test(uf))) {
+    throw new BadRequestException('uf must have two letters');
+  }
+  return [...new Set(ufs)];
+}
+
+function parsePartidos(raw: QueryParam): readonly string[] | undefined {
+  const values = toList(raw);
+  if (values === undefined) return undefined;
+
+  const partidos = values.map((value) => value.trim());
+  if (partidos.some((partido) => !/^[\p{L}\p{N}.*]{1,24}$/u.test(partido))) {
     throw new BadRequestException('partido must have a valid sigla');
   }
-  return partido;
+  return [...new Set(partidos)];
+}
+
+function parseSexo(raw: string | undefined): DeputadoSexo | undefined {
+  if (raw === undefined) return undefined;
+
+  const parsed = deputadoSexoSchema.safeParse(raw.trim().toUpperCase());
+  if (!parsed.success) {
+    throw new BadRequestException('sexo must be F or M');
+  }
+  return parsed.data;
+}
+
+function parseFaixasEtarias(
+  raw: QueryParam,
+): readonly DeputadoFaixaEtaria[] | undefined {
+  const values = toList(raw);
+  if (values === undefined) return undefined;
+
+  const faixas = values.map((value) => {
+    const parsed = deputadoFaixaEtariaSchema.safeParse(value.trim());
+    if (!parsed.success) {
+      throw new BadRequestException('faixaEtaria must be a known range');
+    }
+    return parsed.data;
+  });
+  return [...new Set(faixas)];
 }
 
 @Controller('deputados')
@@ -106,21 +158,21 @@ export class DeputadosController {
     @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
     @Query('q') qParam?: string,
     @Query('emAtividade') emAtividadeParam?: string,
-    @Query('uf') ufParam?: string,
-    @Query('partido') partidoParam?: string,
+    @Query('uf') ufParam?: QueryParam,
+    @Query('partido') partidoParam?: QueryParam,
+    @Query('sexo') sexoParam?: string,
+    @Query('faixaEtaria') faixaEtariaParam?: QueryParam,
   ): Promise<DeputadosFeedResponse> {
-    const pagination = parsePagination(limit, offset);
-    const q = (qParam ?? '').trim() || undefined;
-    const emAtividade = parseEmAtividade(emAtividadeParam);
-    const uf = parseUf(ufParam);
-    const partido = parsePartido(partidoParam);
     return this.service.feed(
-      pagination.limit,
-      pagination.offset,
-      q,
-      emAtividade,
-      uf,
-      partido,
+      {
+        q: (qParam ?? '').trim() || undefined,
+        emAtividade: parseEmAtividade(emAtividadeParam),
+        ufs: parseUfs(ufParam),
+        partidos: parsePartidos(partidoParam),
+        sexo: parseSexo(sexoParam),
+        faixasEtarias: parseFaixasEtarias(faixaEtariaParam),
+      },
+      parsePagination(limit, offset),
     );
   }
 

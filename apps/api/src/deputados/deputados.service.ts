@@ -34,6 +34,10 @@ import {
   DEPUTADOS_REPOSITORY,
   type DeputadosRepository,
 } from './deputados.repository';
+import type {
+  DeputadosFeedFilters,
+  DeputadosFeedPagination,
+} from './types/deputados.types';
 import {
   CAMARA_PAGINATED_CLIENT,
   type CamaraPaginatedClient,
@@ -53,23 +57,16 @@ export class DeputadosService {
   ) {}
 
   async feed(
-    limit: number,
-    offset: number,
-    q?: string,
-    emAtividade?: boolean,
-    uf?: string,
-    partido?: string,
+    filters: DeputadosFeedFilters,
+    pagination: DeputadosFeedPagination,
   ): Promise<DeputadosFeedResponse> {
-    const page = await this.repository.loadDeputadosFeed(
-      { q, emAtividade, uf, partido },
-      { limit, offset },
-    );
+    const page = await this.repository.loadDeputadosFeed(filters, pagination);
 
     return {
       items: page.items.map(toDeputadoCard),
       total: page.total,
-      limit,
-      offset,
+      limit: pagination.limit,
+      offset: pagination.offset,
     };
   }
 

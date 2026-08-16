@@ -52,7 +52,9 @@ export function VotoDetalheItem({ voto }: VotoDetalheItemProps) {
       ) : null}
 
       <dl className="mt-1 flex flex-wrap gap-x-5 gap-y-2 text-xs">
-        <MetaItem label="Sua posição">{toPosicaoLabel(posicaoUsuario)}</MetaItem>
+        <MetaItem label="Sua posição">
+          {toPosicaoLabel(posicaoUsuario)}
+        </MetaItem>
         <MetaItem label="Deputado votou">
           {toSituacaoLabel(situacaoDeputadoVotacao)}
         </MetaItem>

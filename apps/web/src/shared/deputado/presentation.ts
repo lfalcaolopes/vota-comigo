@@ -1,6 +1,8 @@
 import type {
+  DeputadoFaixaEtaria,
   DeputadoLegislaturaPeriodo,
   DeputadoPeriodoPartidario,
+  DeputadoSexo,
 } from "@vota-comigo/shared-types";
 
 import type { BadgeTone } from "@/shared/ui";
@@ -161,6 +163,33 @@ export function toAtividadeAriaLabel(emAtividade: boolean): string {
 export function toEstadoLabel(siglaUf: string): string {
   return ESTADO_LABEL_BY_SIGLA_UF[siglaUf] ?? siglaUf;
 }
+
+const SEXO_LABEL: Record<DeputadoSexo, string> = {
+  F: "Feminino",
+  M: "Masculino",
+};
+
+export function toSexoLabel(sexo: DeputadoSexo): string {
+  return SEXO_LABEL[sexo];
+}
+
+const FAIXA_ETARIA_LABEL: Record<DeputadoFaixaEtaria, string> = {
+  "ate-39": "Até 39 anos",
+  "40-49": "40 a 49 anos",
+  "50-59": "50 a 59 anos",
+  "60-69": "60 a 69 anos",
+  "70-mais": "70 anos ou mais",
+};
+
+export function toFaixaEtariaLabel(faixa: DeputadoFaixaEtaria): string {
+  return FAIXA_ETARIA_LABEL[faixa];
+}
+
+export const SEXO_OPCOES = Object.keys(SEXO_LABEL) as readonly DeputadoSexo[];
+
+export const FAIXA_ETARIA_OPCOES = Object.keys(
+  FAIXA_ETARIA_LABEL,
+) as readonly DeputadoFaixaEtaria[];
 
 export function formatPercentual(value: number): string {
   return `${Math.round(value)}%`;

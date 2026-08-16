@@ -53,9 +53,7 @@ describe("ProposicaoResumo", () => {
       const html = render({ texto: TEXTO_LONGO, identificador: "PEC 6/2019" });
 
       // Assert
-      expect(html).toContain(
-        'aria-label="Ver mais do resumo de PEC 6/2019"',
-      );
+      expect(html).toContain('aria-label="Ver mais do resumo de PEC 6/2019"');
     });
 
     it("leaves the end of the clamped line free so the browser draws its own ellipsis", () => {

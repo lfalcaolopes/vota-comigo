@@ -255,13 +255,19 @@ export function PosicaoConteudo({
         />
 
         {faltamRespostas > 0 ? (
-          <p className="text-xs leading-snug text-muted lg:hidden" role="status">
+          <p
+            className="text-xs leading-snug text-muted lg:hidden"
+            role="status"
+          >
             Faltam{" "}
             <strong className="font-[720] text-ink">{faltamRespostas}</strong>{" "}
             respostas para ver o resultado.
           </p>
         ) : faltamComputaveis > 0 ? (
-          <p className="text-xs leading-snug text-muted lg:hidden" role="status">
+          <p
+            className="text-xs leading-snug text-muted lg:hidden"
+            role="status"
+          >
             Faltam{" "}
             <strong className="font-[720] text-ink">{faltamComputaveis}</strong>{" "}
             respostas Sim ou Não para ver o resultado.

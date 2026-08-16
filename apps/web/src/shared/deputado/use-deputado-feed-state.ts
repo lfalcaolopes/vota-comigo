@@ -63,10 +63,8 @@ export function useDeputadoFeedState(
       const page = await fetchFeed(
         PAGE_SIZE,
         0,
-        recorte.query || undefined,
-        recorte.filtros.emAtividade || undefined,
-        recorte.filtros.uf ?? undefined,
-        recorte.filtros.partido ?? undefined,
+        recorte.query || null,
+        recorte.filtros,
       );
       if (requestIdRef.current !== requestId) return;
       dispatch({ type: "feedSuccess", items: page.items, total: page.total });
@@ -113,10 +111,8 @@ export function useDeputadoFeedState(
       const page = await fetchFeed(
         PAGE_SIZE,
         deputadoNextOffset(state),
-        state.query || undefined,
-        state.filtros.emAtividade || undefined,
-        state.filtros.uf ?? undefined,
-        state.filtros.partido ?? undefined,
+        state.query || null,
+        state.filtros,
       );
       if (requestIdRef.current !== requestId) return;
       dispatch({
