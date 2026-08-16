@@ -1,0 +1,27 @@
+{
+  "ano": 2008,
+  "items": {
+    "388449": {
+      "sourceHash": "413dc65a65d2ffcc46909c656d40d2946ecadfc99b5e45a24dd21d675c4a0ebc",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aumenta a pena quando o crime for cometido por ou contra agente do Estado por causa do exercício do cargo ou função.",
+      "resumoDetalhe": "- Cria uma circunstância que agrava a pena quando o crime é cometido com violência ou grave ameaça, por ou contra agente do Estado, em razão do exercício do cargo ou função.\n- Torna o homicídio qualificado, ou seja, mais grave, e aumenta as penas de lesão corporal e de ameaça quando o crime for praticado por ou contra agente do Estado em razão do cargo ou função.\n- Aplica aumento de pena também aos crimes listados como hediondos quando forem praticados por ou contra agente do Estado no exercício do cargo ou função, exceto quando essa mesma situação já for tratada pela lei como qualificadora do crime (isto é, quando ela já torna o crime mais grave por si só).",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:30:16.198Z",
+      "reviewedAt": "2026-08-16T18:00:00Z"
+    },
+    "412728": {
+      "sourceHash": "8db3a456b853ad90b102c3cfd942e7a576415fab5f3bee66b79254c3d35b3224",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Obriga o rótulo a avisar quando o alimento tiver mais de 1% de organismos geneticamente modificados, os transgênicos, na composição.",
+      "resumoDetalhe": "- Exige rótulo em destaque nos alimentos embalados e nos recipientes vendidos a granel ou in natura quando os organismos geneticamente modificados passarem de uma pequena parcela da composição final, medida em análise específica, usando a expressão “(nome do produto) transgênico” ou “contém (nome do ingrediente) transgênico”, conforme o caso.\n- Permite a rotulagem opcional “livre de transgênicos” para produtos que comprovadamente não contenham organismos geneticamente modificados, desde que existam produtos similares transgênicos no mercado e a ausência seja demonstrada por análise específica.\n- Estabelece que o direito à informação sobre alimentos com organismos geneticamente modificados é regulado exclusivamente por esta regra e determina a aplicação das penalidades previstas no Código de Defesa do Consumidor e em outras normas aplicáveis em caso de descumprimento.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:30:16.198Z",
+      "reviewedAt": "2026-08-16T18:00:00Z"
+    }
+  }
+}
