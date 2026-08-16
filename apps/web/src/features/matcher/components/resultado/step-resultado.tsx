@@ -252,11 +252,6 @@ export function StepResultado({
           </p>
         </header>
       ) : null}
-      <p className="text-sm leading-normal text-muted">
-        Um bom começo de conversa, não um veredito. Abra um deputado para ver
-        voto a voto.
-      </p>
-
       <OrdenacaoDisclosure />
 
       <ul className="grid">

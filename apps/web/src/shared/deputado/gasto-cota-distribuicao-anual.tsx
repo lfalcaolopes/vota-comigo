@@ -195,6 +195,9 @@ function GastoCotaComparacao({
 }) {
   const hasMediana = medianaUf !== null && siglaUf !== null;
   const hasTeto = tetoUf !== null && siglaUf !== null;
+  // A escala estende o trilho quando qualquer referência passa do teto, a
+  // mediana inclusive; a ressalva só cabe quando é este deputado que passou.
+  const tetoUltrapassado = hasTeto && totalAmountUsedCents > tetoUf.amountCents;
   const escala = deriveGastoCotaComparacaoEscala(
     totalAmountUsedCents,
     medianaUf?.amountUsedCents ?? null,
@@ -330,11 +333,10 @@ function GastoCotaComparacao({
           Dados disponíveis: {coverageLabel}.
         </span>
       </div>
-      {hasTeto ? (
+      {tetoUltrapassado ? (
         <figcaption className="text-xs leading-normal text-muted">
-          O teto vem da tabela por UF do Ato da Mesa em vigor e não inclui os
-          adicionais mensais por cargo, como liderança, presidência de comissão
-          e suplência na Mesa.
+          O teto não inclui os adicionais mensais por cargo, então passar de
+          100% não indica irregularidade.
         </figcaption>
       ) : null}
     </figure>

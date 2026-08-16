@@ -624,9 +624,9 @@ describe("DeputadoPerfil", () => {
         expect(html).toContain("25");
         expect(html).toContain("sem motivo conhecido");
         expect(html).toContain(
-          "votações de plenário em que o voto de cada deputado fica registrado",
+          "Votações de plenário com voto registrado, entre as propostas que acompanhamos.",
         );
-        expect(html).toContain("não avalia desempenho parlamentar");
+        expect(html).toContain("Participação, não desempenho.");
       });
 
       it("shows the correct percentage without the unavailable message", () => {

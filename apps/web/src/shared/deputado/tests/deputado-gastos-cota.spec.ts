@@ -73,7 +73,7 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).toContain(
         'aria-label="Comparação visual entre o total utilizado, o teto da cota e a mediana em SP"',
       );
-      expect(html).toContain("não inclui os adicionais mensais por cargo");
+      expect(html).not.toContain("não inclui os adicionais mensais por cargo");
       expect(html).toContain("Dados disponíveis: janeiro a outubro de 2024");
       expect(html).toContain("outubro de 2024");
       expect(html).not.toContain("Fonte: Câmara dos Deputados");
@@ -146,6 +146,23 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).toContain("R$ 212.936,80 acima do teto do período");
       expect(html).not.toContain("Mediana em");
       expect(html).not.toContain("da mediana");
+    });
+
+    it("ao passar do teto, ressalva os adicionais por cargo junto do excedente", () => {
+      // Arrange
+      const response = loadedResponse({
+        totalAmountUsedCents: 55_000_000,
+        coveredThroughMonth: 12,
+      });
+
+      // Act
+      const html = render(response);
+
+      // Assert
+      expect(html).toContain("R$ 35.952,04 acima do teto do ano");
+      expect(html).toContain(
+        "O teto não inclui os adicionais mensais por cargo, então passar de 100% não indica irregularidade.",
+      );
     });
 
     it("sem UF conhecida, não inventa régua de comparação", () => {

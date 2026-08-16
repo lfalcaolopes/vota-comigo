@@ -328,8 +328,7 @@ function Overview({ perfil }: { perfil: DeputadoPerfilData }) {
                 </p>
               ) : null}
               <p className="max-w-[65ch] text-sm leading-normal text-muted">
-                {RECORTE_BASE_PRESENCA} O percentual descreve participação, não
-                avalia desempenho parlamentar.
+                {RECORTE_BASE_PRESENCA}
               </p>
             </div>
           ) : (

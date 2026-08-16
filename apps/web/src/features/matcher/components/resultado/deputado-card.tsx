@@ -62,7 +62,9 @@ export function DeputadoCard({
             <span className="sr-only">Concordância </span>
             {percentualLabel}
           </p>
-          <p className="mt-1 text-xs text-muted">{amostraLabel}</p>
+          <p className="mt-1 hidden text-xs text-muted sm:block">
+            {amostraLabel}
+          </p>
         </div>
         {!comparativoSelection ? (
           <svg
@@ -83,6 +85,8 @@ export function DeputadoCard({
           </svg>
         ) : null}
       </div>
+
+      <p className="text-xs text-muted sm:hidden">{amostraLabel}</p>
 
       <div className="flex flex-wrap gap-2">
         <Badge tone={atividadeTone}>
