@@ -1,6 +1,17 @@
 {
   "ano": 2011,
   "items": {
+    "500843": {
+      "sourceHash": "8c43c2b019f14838c370e1ee9c1ab78436add7c044a80d3a83f243007b821049",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Determina que a União pague e financie os salários, benefícios e proteção previdenciária dos agentes comunitários de saúde e dos agentes de combate às endemias.",
+      "resumoDetalhe": "- Define a União como responsável pelo pagamento dos salários desses agentes e exige que os recursos tenham dotação própria e exclusiva no Orçamento da União.\n- Exige que Estados, Distrito Federal e Municípios concedam, além de outros benefícios, incentivos, auxílios, gratificações e indenizações para valorizar o trabalho desses profissionais.\n- Estabelece um piso salarial expresso em salário mínimo para esses agentes, com repasse da União aos entes federativos.\n- Determina pagamento de adicional de insalubridade (pagamento extra por risco no trabalho) e garante aposentadoria especial por exposição a riscos; e dispõe que os repasses da União para esses pagamentos não entrem no cálculo do limite de gasto com pessoal.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:01:17.719Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
     "508965": {
       "sourceHash": "b7c03f77dc0bda8cab9f9df5dee5e09658979db7fa3d3b7db7f2ad2875c5adb5",
       "generationStatus": "generated",
@@ -11,6 +22,28 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:23:14.848Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "516111": {
+      "sourceHash": "2924c7f03e8863235daac51be479732856042dd04280b5998f3d8c35d483cb64",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Muda o procedimento com que o Congresso analisa as medidas provisórias, regras editadas pelo presidente que já valem como lei, fixando prazos, exame prévio de constitucionalidade e o que acontece quando elas não são aprovadas.",
+      "resumoDetalhe": "- Estabelece prazos para cada etapa de análise das medidas provisórias e determina que, se elas forem consideradas inadmissíveis ou não forem aprovadas, perdem eficácia desde a edição, cabendo ao Congresso disciplinar as relações jurídicas decorrentes por decreto legislativo (ato do Congresso que organiza efeitos legais).\n- Exige exame prévio de admissibilidade por comissão responsável pela constitucionalidade: a comissão tem prazo curto para se manifestar; decisão de inadmissibilidade dispensa ida ao plenário salvo recurso apresentado por um grupo de parlamentares; e, se a comissão não se manifestar, a decisão passa a ser tomada pelo plenário.\n- Determina efeitos processuais e limites sobre o conteúdo: prevê que medida provisória não admitida seja transformada em projeto de lei em regime de urgência com início de tramitação na Câmara; prevê regime de urgência que sobrestará outras deliberações se as Casas não se manifestarem em prazo; veda reeditar na mesma sessão matéria de medida provisória que tenha sido rejeitada ou perdido eficácia; e proíbe incluir matéria estranha ao objeto nas medidas provisórias e nos projetos de conversão.\n- Suspende a contagem dos prazos de análise durante o recesso do Congresso e aplica as novas regras apenas às medidas provisórias editadas dali em diante.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:30:16.198Z",
+      "reviewedAt": "2026-08-16T18:00:00Z"
+    },
+    "524870": {
+      "sourceHash": "f060e8bd2828f78f316d4c619dfc4ec18687dfb2688ecb70c47147e1b98cb3f9",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza que cooperativas de crédito (instituições financeiras locais sem fins lucrativos) administrem recursos de caixa dos municípios, ao mesmo tempo em que limita captação e empréstimos aos seus associados, com algumas exceções.",
+      "resumoDetalhe": "- Restringe a captação de recursos e a concessão de créditos e garantias às pessoas associadas das cooperativas de crédito (instituições financeiras locais sem fins lucrativos).\n- Autoriza as cooperativas a receber e a administrar as disponibilidades de caixa dos municípios, de seus órgãos e entidades e das empresas por eles controladas.\n- Permite que as cooperativas realizem operações com outras instituições financeiras, recebam recursos de pessoas jurídicas em caráter eventual e tratem taxas com condições favorecidas ou sem cobrança de remuneração.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:30:16.198Z",
+      "reviewedAt": "2026-08-16T18:00:00Z"
     },
     "531331": {
       "sourceHash": "72c50099755e386086e938cf99771d39b70a039fdea082173a5b50ac15429228",

@@ -12,6 +12,17 @@
       "generatedAt": "2026-07-07T19:32:44.100Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "541855": {
+      "sourceHash": "a56c2278d30814a101e32a1e3c1240be7fd449d54bfa27ac4c094c3880f7222c",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exclui do cálculo do limite de gastos com pessoal os encargos e contribuições pagos à previdência.",
+      "resumoDetalhe": "- Exclui do cálculo do limite de despesas com pessoal os encargos sociais e as contribuições que os governos pagam às entidades de previdência.\n- Determina que essas contribuições continuem a ser contadas quando se calcula o valor mínimo que o governo precisa aplicar em saúde e em educação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
+    },
     "542102": {
       "sourceHash": "69c088fea7b9ef94a1c49431e8356673c7acc51a17c7355935ff7112b9238dc0",
       "generationStatus": "generated",
@@ -23,6 +34,28 @@
       "generatedAt": "2026-07-07T17:45:21.754Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "544681": {
+      "sourceHash": "b160810a304fcaaa2dbc422b8cc933e03b021ac1e59fa71fdf777b2c7f080af6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Proíbe que lei transfira tarefas ou serviços a Estados, Distrito Federal ou municípios sem prever repasses de dinheiro para custeá-los.",
+      "resumoDetalhe": "- Proíbe que lei imponha ou transfira tarefas ou a prestação de serviços aos Estados, ao Distrito Federal ou aos municípios sem prever o repasse de dinheiro necessário para pagar por eles.\n- Alcança qualquer tarefa ou serviço criado por lei, tornando a previsão dos recursos condição para que o encargo seja transferido.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:54:43.704Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "544724": {
+      "sourceHash": "81fcdca2f7c28407685f66fc1d05cdc96439124af07dcfee36530859873aec70",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Estabelece regras de transparência, controle e punição para parcerias entre órgãos públicos e ONGs (organizações não governamentais).",
+      "resumoDetalhe": "- Define o que conta como ONG para efeito desta lei e fixa regras mínimas de boa gestão, como dirigentes sem salário, proibição de agentes públicos e de parentes de autoridades na direção, e divulgação dos projetos e dos dirigentes na internet.\n- Exige que a parceria tenha prazo certo e projeto definido, com o dinheiro liberado conforme o plano aprovado e guardado em conta bancária própria, e permite reter ou cobrar de volta os recursos quando houver irregularidade.\n- Obriga a divulgar na internet os acordos firmados e as prestações de contas, cria um cadastro que classifica as ONGs por indicadores e submete as parcerias à fiscalização dos órgãos de controle e dos tribunais de contas.\n- Responsabiliza gestores públicos e dirigentes pela devolução do dinheiro mal aplicado, impede quem cometeu irregularidade de receber novos recursos públicos e transforma em crime o uso indevido desses recursos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
+    },
     "545304": {
       "sourceHash": "e3ef9dc850de8551b007469fd5fba7844748286930361c132a9d8fa9485dcd14",
       "generationStatus": "generated",
@@ -33,6 +66,28 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "551712": {
+      "sourceHash": "766d34043c4ed6cc3dd8289b01d214071145b8f36d855eda90ba16b518d3215c",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Estabelece como o ICMS (imposto estadual sobre mercadorias e serviços) é cobrado quando a venda vai para um consumidor final de outro estado, garantindo ao estado do comprador uma parte do imposto.",
+      "resumoDetalhe": "- Determina que, na venda de mercadorias ou serviços a consumidor final de outro estado, como nas compras feitas pela internet ou por telefone, seja aplicada a alíquota interestadual, o percentual usado nas operações entre estados.\n- Garante ao estado onde está o comprador o imposto correspondente à diferença entre o percentual cobrado dentro do estado e o percentual aplicado entre estados.\n- Define quem recolhe essa diferença: o comprador, quando ele for uma empresa registrada para pagar o imposto; o vendedor, quando o comprador não for.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
+    },
+    "553947": {
+      "sourceHash": "a449a17cda9780324f0e04ec863d0c113c9aa0e839e961562995fdc9de88a29c",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exige que quem recorre ao Superior Tribunal de Justiça demonstre a importância da questão discutida para que o recurso seja analisado, e só permite a recusa por ampla maioria dos julgadores.",
+      "resumoDetalhe": "- Cria uma exigência para o recurso especial, aquele que leva um caso ao Superior Tribunal de Justiça: quem recorre precisa demonstrar a importância das questões de lei federal discutidas no processo, conforme o que a lei definir.\n- Determina que o tribunal só pode recusar a análise do recurso por decisão de ampla maioria dos integrantes do órgão que vai julgar.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
     }
   }
 }

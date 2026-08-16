@@ -136,13 +136,15 @@ O cliente chama `https://openrouter.ai/api/v1/chat/completions` com `response_fo
 
 ### Flags
 
-| Flag                         | Efeito                                                                  |
-| ---------------------------- | ----------------------------------------------------------------------- |
-| `--year=YYYY`                | Restringe a geração a proposições daquele ano.                          |
-| `--limit=n`                  | Processa apenas os primeiros `n` alvos após ordenação e filtros.        |
+| Flag                                | Efeito                                                                                           |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `--year=YYYY[,YYYY...]`             | Restringe a geração a proposições daqueles anos; aceita um ou mais anos separados por vírgula.   |
+| `--limit=n`                         | Processa apenas os primeiros `n` alvos após ordenação e filtros.                                 |
 | `--external-id-proposicao=n[,n...]` | Processa apenas as proposições informadas; aceita um ou mais `externalId` separados por vírgula. |
-| `--regenerate`               | Regera todos os alvos filtrados com ano, inclusive itens já existentes. |
-| `--only-stale`               | Regera apenas itens cujo `reviewStatus` atual é `stale`.                |
+| `--regenerate`                      | Regera todos os alvos filtrados com ano, inclusive itens já existentes.                          |
+| `--only-stale`                      | Regera apenas itens cujo `reviewStatus` atual é `stale`.                                         |
+
+Com mais de um ano em `--year`, os alvos formam um conjunto único ordenado por volume de votações em plenário, não uma fila por ano: `--limit` corta esse conjunto de forma transversal, então pode consumir toda a cota em um só ano. Para garantir cobertura por ano, rode um ano por vez. A saída continua sendo um arquivo por ano em `data/generated/proposicao-resumos/`, e proposições sem `ano` nunca entram quando `--year` está presente.
 
 Sem `--regenerate`, a geração cria itens ausentes e tenta novamente apenas itens com `generationStatus = error`. Itens existentes com `generationStatus` diferente de `error` são preservados, independentemente de `reviewStatus`.
 

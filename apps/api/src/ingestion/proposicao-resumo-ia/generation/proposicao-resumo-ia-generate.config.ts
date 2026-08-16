@@ -1,5 +1,5 @@
 export type ProposicaoResumoIaGenerateConfig = {
-  year?: number;
+  years?: readonly number[];
   limit?: number;
   externalIdsProposicao?: readonly number[];
   regenerate: boolean;
@@ -23,8 +23,8 @@ export function resolveProposicaoResumoIaGenerateConfig(
     };
   }
 
-  const year = parseYear(getStringArg(args, '--year'));
-  if (!year.ok) return year;
+  const years = parseYearList(getStringArg(args, '--year'));
+  if (!years.ok) return years;
 
   const limit = parsePositiveInt(getStringArg(args, '--limit'), '--limit');
   if (!limit.ok) return limit;
@@ -38,7 +38,7 @@ export function resolveProposicaoResumoIaGenerateConfig(
   return {
     ok: true,
     config: {
-      year: year.value,
+      years: years.value,
       limit: limit.value,
       externalIdsProposicao: externalIdsProposicao.value,
       regenerate,
@@ -54,17 +54,12 @@ function getStringArg(
   return args.find((arg) => arg.startsWith(`${name}=`))?.split('=')[1];
 }
 
-function parseYear(
-  value: string | undefined,
-): { ok: true; value: number | undefined } | { ok: false; message: string } {
-  if (value === undefined) return { ok: true, value: undefined };
-  if (!/^\d{4}$/.test(value)) {
-    return {
-      ok: false,
-      message: '--year deve receber um ano no formato YYYY.',
-    };
-  }
-  return { ok: true, value: Number(value) };
+function parseYearList(value: string | undefined): NumberListResolution {
+  return parseNumberList(
+    value,
+    (part) => /^\d{4}$/.test(part),
+    '--year deve receber um ou mais anos no formato YYYY separados por vírgula.',
+  );
 }
 
 function parsePositiveInt(
@@ -81,20 +76,29 @@ function parsePositiveInt(
 function parsePositiveIntList(
   value: string | undefined,
   flag: string,
-):
+): NumberListResolution {
+  return parseNumberList(
+    value,
+    (part) => /^\d+$/.test(part) && Number(part) >= 1,
+    `${flag} deve receber um ou mais inteiros positivos separados por vírgula.`,
+  );
+}
+
+type NumberListResolution =
   | { ok: true; value: readonly number[] | undefined }
-  | { ok: false; message: string } {
+  | { ok: false; message: string };
+
+function parseNumberList(
+  value: string | undefined,
+  isValidPart: (part: string) => boolean,
+  message: string,
+): NumberListResolution {
   if (value === undefined) return { ok: true, value: undefined };
 
   const parts = value.split(',').map((part) => part.trim());
   const parsed: number[] = [];
   for (const part of parts) {
-    if (!/^\d+$/.test(part) || Number(part) < 1) {
-      return {
-        ok: false,
-        message: `${flag} deve receber um ou mais inteiros positivos separados por vírgula.`,
-      };
-    }
+    if (!isValidPart(part)) return { ok: false, message };
     parsed.push(Number(part));
   }
   return { ok: true, value: parsed };

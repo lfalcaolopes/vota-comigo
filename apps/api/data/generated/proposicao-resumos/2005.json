@@ -1,6 +1,17 @@
 {
   "ano": 2005,
   "items": {
+    "274765": {
+      "sourceHash": "5cdd6f54c2a227860f1d2b46c668983c1975964817fbcbf32e5a854d038933f6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reorganiza a estrutura e as regras do Judiciário e do Ministério Público, deixa dois tribunais superiores fixarem entendimentos que barram novos recursos e manda criar órgãos fora da Justiça para conflitos trabalhistas.",
+      "resumoDetalhe": "- Organiza a estrutura e competências do Poder Judiciário, da Justiça do Trabalho, da Justiça Militar e do Ministério Público, definindo composição e administração de tribunais, juizados especiais e órgãos auxiliares, e estabelecendo regras sobre nomeação, promoção e vedações como nepotismo; adapta progressivamente a composição do Superior Tribunal Militar.\n- Define garantias e critérios para ganhar e perder o cargo e para a prerrogativa de foro, o direito de ser julgado por um tribunal determinado em razão do cargo ocupado, dizendo que essa prerrogativa continua valendo mesmo depois de a pessoa deixar o cargo e que as ações por improbidade ligadas a crime de responsabilidade vão para o mesmo tribunal.\n- Autoriza o Superior Tribunal de Justiça e o Tribunal Superior do Trabalho a aprovar, depois de julgarem a mesma questão muitas vezes e por ampla maioria de seus membros, súmulas, que são entendimentos fixados pelo próprio tribunal, capazes de barrar qualquer recurso contra a decisão que as aplicar; permite também revisar ou cancelar essas súmulas.\n- Manda a lei criar órgãos de conciliação, mediação e arbitragem que não julgam, sem custo para o poder público e com participação de trabalhadores e empregadores, para tentar resolver conflitos individuais de trabalho; procurar esses órgãos interrompe a contagem do prazo para entrar com a ação trabalhista.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:30:16.198Z",
+      "reviewedAt": "2026-08-16T18:00:00Z"
+    },
     "298878": {
       "sourceHash": "55b2902651f9a1dfcc55086a5d4bed54943bc520b8c2cd3a08549a954f4a610f",
       "generationStatus": "generated",
@@ -11,6 +22,28 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "298943": {
+      "sourceHash": "7b4e097c915696236ac1034732fa3c9d75b3ba71310df0f9f0e3cdd9b2a2f803",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Declara Tancredo de Almeida Neves Patrono da redemocratização brasileira.",
+      "resumoDetalhe": "- Declara o presidente Tancredo de Almeida Neves Patrono da redemocratização brasileira, um título apenas honorífico.\n- Apresenta como justificativa a trajetória política de Tancredo Neves e a criação de um símbolo em que as futuras gerações possam se inspirar na luta pela democracia; registra que a proposta nasceu de sugestão de uma associação comunitária.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:30:16.198Z",
+      "reviewedAt": "2026-08-16T18:00:00Z"
+    },
+    "304008": {
+      "sourceHash": "f9ebd212f1a65c849b118738a345ef4dea92a6852fb7bb7dabfaabe078c15313",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exige concurso público para ingressar em cartórios e impede que vagas fiquem sem concurso por prazo prolongado, com exceção para atuais responsáveis e substitutos que receberão delegação.",
+      "resumoDetalhe": "- Exige concurso público de provas e títulos para o ingresso na atividade notarial e de registro, ou seja, para assumir um cartório.\n- Proíbe que qualquer cartório fique vago, sem a abertura de concurso para preencher ou remanejar a vaga, por tempo prolongado.\n- Garante que os atuais responsáveis e os substitutos investidos segundo a lei sejam resguardados, atribuindo-lhes a delegação que formaliza sua atuação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:30:16.198Z",
+      "reviewedAt": "2026-08-16T18:00:00Z"
     }
   }
 }

@@ -6,6 +6,22 @@ import type { ProposicaoResumoIaSource } from '../../../proposicoes/rules/propos
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 type FetchFn = NonNullable<CreateOpenrouterResumoIaClientOptions['fetch']>;
+type DownloadPdfFn = NonNullable<
+  CreateOpenrouterResumoIaClientOptions['downloadPdf']
+>;
+
+const PDF_DATA_URI = 'data:application/pdf;base64,JVBERi0x';
+
+function makeDownloadPdf(
+  outcome: Awaited<ReturnType<DownloadPdfFn>> = {
+    ok: true,
+    dataUri: PDF_DATA_URI,
+    bytes: 6,
+  },
+): jest.MockedFunction<DownloadPdfFn> {
+  const downloadMock: DownloadPdfFn = async () => outcome;
+  return jest.fn(downloadMock);
+}
 
 function source(
   overrides: Partial<ProposicaoResumoIaSource> = {},
@@ -209,7 +225,7 @@ describe('createOpenrouterResumoIaClient', () => {
     const teorUrl =
       'https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=1299653';
 
-    it('attaches the PDF by URL and enables the native file parser', async () => {
+    it('downloads the PDF and attaches it inline instead of by URL', async () => {
       // Arrange
       const fetch = makeFetch({
         ok: true,
@@ -219,16 +235,19 @@ describe('createOpenrouterResumoIaClient', () => {
           resumoDetalhe: 'D.',
         }),
       });
+      const downloadPdf = makeDownloadPdf();
       const client = createOpenrouterResumoIaClient({
         apiKey: 'key',
         model: 'model-x',
         fetch,
+        downloadPdf,
       });
 
       // Act
       await client.generate(source({ urlInteiroTeor: teorUrl }));
 
       // Assert
+      expect(downloadPdf).toHaveBeenCalledWith(teorUrl);
       const init = fetch.mock.calls[0]?.[1];
       if (init === undefined) throw new Error('fetch não chamado');
       const body = JSON.parse(init.body as string) as Record<string, unknown>;
@@ -238,7 +257,7 @@ describe('createOpenrouterResumoIaClient', () => {
       >;
       const filePart = content.find((part) => part['type'] === 'file');
       const file = filePart?.['file'] as Record<string, unknown> | undefined;
-      expect(file?.['file_data']).toBe(teorUrl);
+      expect(file?.['file_data']).toBe(PDF_DATA_URI);
       expect(body['plugins']).toEqual([
         { id: 'file-parser', pdf: { engine: 'native' } },
       ]);
@@ -258,6 +277,7 @@ describe('createOpenrouterResumoIaClient', () => {
         apiKey: 'key',
         model: 'model-x',
         fetch,
+        downloadPdf: makeDownloadPdf(),
       });
 
       // Act
@@ -273,6 +293,65 @@ describe('createOpenrouterResumoIaClient', () => {
       >;
       const textPart = content.find((part) => part['type'] === 'text');
       expect(typeof textPart?.['text']).toBe('string');
+    });
+  });
+
+  describe('when the inteiro teor download fails', () => {
+    const teorUrl =
+      'https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=1299653';
+
+    it('returns ok:false without calling OpenRouter', async () => {
+      // Arrange
+      const fetch = makeFetch({ ok: true, body: {} });
+      const client = createOpenrouterResumoIaClient({
+        apiKey: 'key',
+        model: 'model-x',
+        fetch,
+        downloadPdf: makeDownloadPdf({
+          ok: false,
+          reason: 'download do inteiro teor falhou: HTTP 429',
+        }),
+      });
+
+      // Act
+      const outcome = await client.generate(
+        source({ urlInteiroTeor: teorUrl }),
+      );
+
+      // Assert
+      expect(outcome.ok).toBe(false);
+      if (!outcome.ok) {
+        expect(outcome.reason).toContain('HTTP 429');
+        expect(outcome.failureKind).toBeUndefined();
+      }
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
+    it('flags failureKind source_too_large when the PDF is oversized', async () => {
+      // Arrange
+      const fetch = makeFetch({ ok: true, body: {} });
+      const client = createOpenrouterResumoIaClient({
+        apiKey: 'key',
+        model: 'model-x',
+        fetch,
+        downloadPdf: makeDownloadPdf({
+          ok: false,
+          reason: 'inteiro teor tem 124.7 MB, acima do limite de 20.0 MB',
+          tooLarge: true,
+        }),
+      });
+
+      // Act
+      const outcome = await client.generate(
+        source({ urlInteiroTeor: teorUrl }),
+      );
+
+      // Assert
+      expect(outcome.ok).toBe(false);
+      if (!outcome.ok) {
+        expect(outcome.failureKind).toBe('source_too_large');
+      }
+      expect(fetch).not.toHaveBeenCalled();
     });
   });
 
@@ -537,6 +616,73 @@ describe('createOpenrouterResumoIaClient', () => {
       expect(outcome.ok).toBe(false);
       if (!outcome.ok) {
         expect(outcome.failureKind).toBeUndefined();
+      }
+    });
+
+    it('surfaces the upstream cause hidden in error.metadata.raw', async () => {
+      // Arrange
+      const fetch = makeFetch({
+        ok: false,
+        status: 400,
+        body: {
+          error: {
+            message: 'Provider returned error',
+            code: 400,
+            metadata: {
+              raw: JSON.stringify({
+                error: {
+                  message:
+                    'Error while downloading file. Upstream status code: 429.',
+                },
+              }),
+              provider_name: 'OpenAI',
+            },
+          },
+        },
+      });
+      const client = createOpenrouterResumoIaClient({
+        apiKey: 'key',
+        model: 'model-x',
+        fetch,
+      });
+
+      // Act
+      const outcome = await client.generate(source());
+
+      // Assert
+      expect(outcome.ok).toBe(false);
+      if (!outcome.ok) {
+        expect(outcome.reason).toContain('Upstream status code: 429');
+        expect(outcome.failureKind).toBeUndefined();
+      }
+    });
+
+    it('falls back to the truncated raw text when it is not JSON', async () => {
+      // Arrange
+      const fetch = makeFetch({
+        ok: false,
+        status: 400,
+        body: {
+          error: {
+            message: 'Provider returned error',
+            code: 400,
+            metadata: { raw: 'upstream exploded' },
+          },
+        },
+      });
+      const client = createOpenrouterResumoIaClient({
+        apiKey: 'key',
+        model: 'model-x',
+        fetch,
+      });
+
+      // Act
+      const outcome = await client.generate(source());
+
+      // Assert
+      expect(outcome.ok).toBe(false);
+      if (!outcome.ok) {
+        expect(outcome.reason).toContain('upstream exploded');
       }
     });
 

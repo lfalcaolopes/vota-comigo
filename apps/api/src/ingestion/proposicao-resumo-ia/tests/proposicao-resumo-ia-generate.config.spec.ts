@@ -10,7 +10,7 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
       expect(result).toEqual({
         ok: true,
         config: {
-          year: undefined,
+          years: undefined,
           limit: undefined,
           externalIdsProposicao: undefined,
           regenerate: false,
@@ -21,12 +21,38 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
   });
 
   describe('with --year', () => {
-    it('parses a valid four-digit year', () => {
+    it('parses a single four-digit year into a one-element list', () => {
       // Act
       const result = resolveProposicaoResumoIaGenerateConfig(['--year=2023']);
 
       // Assert
-      expect(result).toMatchObject({ ok: true, config: { year: 2023 } });
+      expect(result).toMatchObject({ ok: true, config: { years: [2023] } });
+    });
+
+    it('parses multiple comma-separated years', () => {
+      // Act
+      const result = resolveProposicaoResumoIaGenerateConfig([
+        '--year=2015,2016,2017',
+      ]);
+
+      // Assert
+      expect(result).toMatchObject({
+        ok: true,
+        config: { years: [2015, 2016, 2017] },
+      });
+    });
+
+    it('trims whitespace around comma-separated years', () => {
+      // Act
+      const result = resolveProposicaoResumoIaGenerateConfig([
+        '--year=2015, 2016 , 2017',
+      ]);
+
+      // Assert
+      expect(result).toMatchObject({
+        ok: true,
+        config: { years: [2015, 2016, 2017] },
+      });
     });
 
     it('returns error for non-numeric year', () => {
@@ -40,6 +66,24 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
     it('returns error for a year outside four-digit format', () => {
       // Act
       const result = resolveProposicaoResumoIaGenerateConfig(['--year=99']);
+
+      // Assert
+      expect(result.ok).toBe(false);
+    });
+
+    it('returns error when any year in the list is invalid', () => {
+      // Act
+      const result = resolveProposicaoResumoIaGenerateConfig([
+        '--year=2015,99,2017',
+      ]);
+
+      // Assert
+      expect(result.ok).toBe(false);
+    });
+
+    it('returns error for a trailing comma', () => {
+      // Act
+      const result = resolveProposicaoResumoIaGenerateConfig(['--year=2015,']);
 
       // Assert
       expect(result.ok).toBe(false);
@@ -189,7 +233,7 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
       // Assert
       expect(result).toMatchObject({
         ok: true,
-        config: { year: 2023, externalIdsProposicao: [42], onlyStale: true },
+        config: { years: [2023], externalIdsProposicao: [42], onlyStale: true },
       });
     });
 
@@ -219,7 +263,7 @@ describe('resolveProposicaoResumoIaGenerateConfig', () => {
       expect(result).toEqual({
         ok: true,
         config: {
-          year: 2023,
+          years: [2023],
           limit: 5,
           externalIdsProposicao: [99],
           regenerate: true,

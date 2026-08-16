@@ -39,11 +39,33 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Unifica a lei do ICMS e cria um sistema que integra os principais tributos sobre o consumo, com um novo imposto federal e regras nacionais de cobrança e partilha.",
-      "resumoDetalhe": "- unifica a legislação do ICMS (imposto estadual sobre circulação de mercadorias e serviços) e define regras nacionais sobre alíquotas, cobrança entre estados, concessão de benefícios e punição por retenção de receita\n- integra ICMS, IPI (imposto sobre produtos industrializados), ISS (imposto sobre serviços) e um novo imposto federal no Sistema de Integração Tributária (SIT), permitindo que créditos fiscais de um tributo abatem débitos de outro e criando mecanismos de compensação entre governos\n- institui um imposto federal em substituição ao PIS/PASEP e à COFINS (contribuições sobre faturamento) e transforma a contribuição sobre movimentações financeiras em contribuição permanente com foco em fiscalização, prevendo que parte da arrecadação financie finalidades específicas\n- estabelece partilha de receitas e fundos para Estados e Municípios, regras de transição para incentivos fiscais estaduais e cria órgãos e normas para fortalecer a administração tributária, controlar a carga tributária e incorporar critérios de sustentabilidade ambiental",
+      "resumoDetalhe": "- Unifica a legislação do ICMS (imposto estadual sobre circulação de mercadorias e serviços) e define regras nacionais sobre alíquotas, cobrança entre estados, concessão de benefícios e punição por retenção de receita.\n- Integra ICMS, IPI (imposto sobre produtos industrializados), ISS (imposto sobre serviços) e um novo imposto federal no Sistema de Integração Tributária (SIT), permitindo que créditos fiscais de um tributo abatem débitos de outro e criando mecanismos de compensação entre governos.\n- Institui um imposto federal em substituição ao PIS/PASEP e à COFINS (contribuições sobre faturamento) e transforma a contribuição sobre movimentações financeiras em contribuição permanente com foco em fiscalização, prevendo que parte da arrecadação financie finalidades específicas.\n- Estabelece partilha de receitas e fundos para Estados e Municípios, regras de transição para incentivos fiscais estaduais e cria órgãos e normas para fortalecer a administração tributária, controlar a carga tributária e incorporar critérios de sustentabilidade ambiental.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:23:14.848Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "351362": {
+      "sourceHash": "b2b1327f0ed59d870f81750895ad44475a63fbaaa6ce31407194658e546637c4",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Define quais práticas tradicionais são nocivas às crianças, obriga a comunicação de casos de risco e determina a retirada provisória da criança do grupo quando a prática persistir.",
+      "resumoDetalhe": "- Reafirma o respeito a práticas tradicionais que respeitem direitos humanos e define como nocivas práticas que atentem contra a vida e a integridade física e psicológica de crianças, citando homicídio de recém-nascidos por várias razões, abuso sexual, desnutrição intencional, maus-tratos e outras agressões culturais que violem direitos humanos.\n- Exige que qualquer pessoa que saiba de gravidez de risco ou de criança em risco comunique obrigatoriamente órgãos como FUNAI (proteção a povos indígenas), FUNASA (fundação federal de saúde), o Conselho Tutelar (órgão local de proteção à criança) ou as autoridades policiais e judiciais, sob pena de responsabilização criminal por omissão de socorro (não ajudar alguém em perigo, com detenção ou multa).\n- Determina que, se os genitores ou o grupo insistirem nas práticas nocivas, as autoridades retirem provisoriamente a criança e/ou seus genitores do convívio do grupo, coloquem a criança em abrigos registrados e tentem demovê-los por meio do diálogo; esgotadas as tentativas, encaminhem a criança para adoção pelas vias judiciais para preservar sua vida e integridade.\n- Determina a adoção de medidas educativas e de diálogo sobre direitos humanos entre as comunidades e os profissionais que atuam nelas, podendo contar com o apoio da sociedade civil, para erradicar as práticas tradicionais nocivas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:30:16.198Z",
+      "reviewedAt": "2026-08-16T18:00:00Z"
+    },
+    "356194": {
+      "sourceHash": "c92c44ed0169bfac72d870071dd792ade1a2521947530b32d355539bcb645fe2",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Inclui dezenas de municípios de Minas Gerais na área de atuação da Sudene, a superintendência federal de desenvolvimento do Nordeste.",
+      "resumoDetalhe": "- Inclui dezenas de municípios do Estado de Minas Gerais na área de atuação da Sudene, a superintendência federal de desenvolvimento do Nordeste, ou seja, no território onde esse órgão pode agir.\n- Reescreve a lista inteira dessa área, que passa a reunir os estados nordestinos, os municípios mineiros e municípios do Estado do Espírito Santo.\n- Sustenta, na justificativa, que os municípios mineiros incluídos ficam em área vizinha à que o órgão já atende e enfrentam os mesmos problemas sociais, e que a mudança lhes abriria acesso a linhas de crédito especiais, incentivos fiscais e recursos do fundo de desenvolvimento do Nordeste, além de ampliar opções de financiamento para atividades produtivas locais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:30:16.198Z",
+      "reviewedAt": "2026-08-16T18:00:00Z"
     },
     "373327": {
       "sourceHash": "02fae3f65ac98c8245b138adbf833e4e2ee8cde2533a5e3b24d843dfdb29f100",

@@ -1,6 +1,39 @@
 {
   "ano": 2025,
   "items": {
+    "2481875": {
+      "sourceHash": "8034638c2808e880a540a743c903cfcd4508b3398b50b9075f2f088e91ce0c51",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Transforma cargos vagos na Justiça Federal da primeira região e cria nova Turma Recursal para os Juizados Especiais Federais do Piauí.",
+      "resumoDetalhe": "- Transforma certos cargos vagos de juiz federal substituto em cargos de juiz federal, conforme indicação do Tribunal Regional Federal e estudos internos sobre a demanda processual.\n- Cria uma nova Turma Recursal dos Juizados Especiais Federais do Piauí, com sede em Teresina e atuação em todo o estado; Turma Recursal é o colegiado que julga recursos das varas dos Juizados.\n- Determina que as sobras orçamentárias resultantes das transformações sejam usadas para criar funções comissionadas segundo a organização definida pelo Tribunal Regional Federal, e que a execução seja feita observando disponibilidade orçamentária, financeira e de pessoal, sem aumento de despesas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
+    },
+    "2482078": {
+      "sourceHash": "cb76470109430dd5acba669ba13ad1f3e0146daf964e934e73210d4d8dc683b1",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Susta os efeitos da resolução do Conselho Nacional dos Direitos da Criança e do Adolescente sobre o atendimento a crianças e adolescentes vítimas de violência sexual.",
+      "resumoDetalhe": "- Susta, por inteiro, a resolução do Conselho Nacional dos Direitos da Criança e do Adolescente que trata do atendimento a crianças e adolescentes vítimas de violência sexual.\n- Apresenta como fundamento o argumento de que o conselho extrapolou seu poder de regulamentar ao tratar de matéria criminal e de aborto.\n- Sustenta, na justificativa, que a resolução daria autonomia decisória a crianças e adolescentes sem autorização dos responsáveis, permitiria a realização de aborto sem boletim de ocorrência, sem decisão judicial e sem comunicação aos responsáveis, não fixaria limite de tempo de gestação e restringiria a objeção de consciência dos profissionais de saúde.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:57:06.620Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
+    },
+    "2483447": {
+      "sourceHash": "1cc7c80c509035f473c8a209096c542ade60812ee4ad1ca46f0472814691d966",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Transfere simbolicamente a sede do Governo Federal para Belém durante a Conferência das Nações Unidas sobre Mudança do Clima (COP), permitindo que órgãos do governo atuem na cidade.",
+      "resumoDetalhe": "- Transfere simbolicamente a sede do Governo Federal para Belém durante a Conferência das Nações Unidas sobre Mudança do Clima (COP), enquanto durar o evento.\n- Permite que os Poderes Executivo, Legislativo e Judiciário se instalem em Belém para conduzir suas atividades institucionais e governamentais durante esse período.\n- Fixa que atos e despachos do Presidente da República e dos Ministros assinados nesse período serão datados na cidade de Belém/PA.\n- Autoriza o Poder Executivo a regulamentar as medidas administrativas, operacionais e logísticas necessárias para implementar a transferência temporária.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:31:58.409Z",
+      "reviewedAt": "2026-08-16T19:49:23Z"
+    },
     "2483495": {
       "sourceHash": "ef2af221c1a022a6f04880e2b342c19f8d171d836c45f8787395ec55f56b8f44",
       "generationStatus": "generated",
@@ -11,6 +44,72 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T16:52:37.780Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2485066": {
+      "sourceHash": "6a7892fbc533c6ce7d4518a853b92c8cbfbc885c28183e8b9efaab77dd5481ad",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Prorroga o prazo para liquidar restos a pagar não processados inscritos em exercícios anteriores, revalidando valores cancelados.",
+      "resumoDetalhe": "- Revalida e autoriza a liquidação, por prazo adicional, de restos a pagar não processados inscritos em exercícios anteriores que estavam vigentes em dezembro e foram cancelados.\n- Aplica a prorrogação apenas a despesas cujo processo de compra já foi iniciado ou a convênios e instrumentos semelhantes que estão em fase de resolução de cláusula suspensiva.\n- Exige que os restos a pagar revalidados obedeçam às regras de transparência e rastreabilidade previstas na Lei de Responsabilidade Fiscal, que exige clareza e controle das contas públicas, e em lei complementar posterior.\n- Veda o pagamento de obras e serviços que estejam sob investigação ou tenham indícios de irregularidade, salvo se as apurações concluírem favoravelmente ou se as irregularidades forem sanadas dentro do prazo e conforme a lei.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
+    },
+    "2486199": {
+      "sourceHash": "ee66b20cbffb6938ac8409fe24400d092c8a116514890f4c5ad18ac6a41ef44f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Prorroga o prazo para que Estados, Distrito Federal e Municípios façam a transposição, transferência e reprogramação de saldos financeiros do Fundo Nacional de Saúde.",
+      "resumoDetalhe": "- Prorroga o prazo para que os entes federativos efetuem a transposição, a transferência e a reprogramação de saldos financeiros oriundos de repasses federais destinados à saúde.\n- Dispensa o cumprimento de determinadas regras e compromissos para saldos originados de repasses regulares e automáticos do Fundo Nacional de Saúde aos fundos de saúde locais.\n- Autoriza que transferências feitas pelo Fundo Nacional de Saúde para o enfrentamento da pandemia sejam executadas pelos estados, pelo Distrito Federal e pelos municípios até o novo prazo, para uso em ações e serviços públicos de saúde.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:31:58.409Z",
+      "reviewedAt": "2026-08-16T19:49:23Z"
+    },
+    "2487358": {
+      "sourceHash": "4658a5f04b0f90e0a508c6fde6b5ecb46b88634325f66edbfc63ff2810344c14",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Renomeia a Sala de Reuniões do Colégio de Líderes da Câmara para Sala Miguel Arraes.",
+      "resumoDetalhe": "- Renomeia o espaço atualmente chamado \"Sala de Reuniões do Colégio de Líderes\", no Edifício Principal, térreo, Ala C, para \"Sala Miguel Arraes\".\n- Apresenta justificativa lembrando a trajetória de Miguel Arraes, ex-governador de Pernambuco e ex-deputado federal, preso e exilado durante a ditadura militar e depois incluído no livro dos Heróis da Pátria.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
+    },
+    "2487436": {
+      "sourceHash": "a7bf06b8fb652eaf46a55e3b381ddad8b17a36755cd0488ff51fb9ab05d0809d",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reduz o imposto para quem ganha menos e cria um imposto mínimo para altas rendas sobre rendimentos e lucros/dividendos.",
+      "resumoDetalhe": "- Cria redução do imposto mensal e anual para contribuintes de renda baixa e média, de modo que quem tem rendimentos até um limite não pague imposto e quem está em faixa intermediária tenha redução gradual.\n- Institui retenção na fonte sobre lucros e dividendos pagos por uma mesma empresa a uma mesma pessoa física quando o pagamento mensal ultrapassar um limite, sem permitir deduções, como antecipação do imposto que poderá ser compensada na declaração anual.\n- Institui imposto mínimo sobre pessoas físicas (IRPFM — imposto mínimo para quem tem renda anual elevada) para quem soma rendimentos anuais acima de um limite, com alíquota que cresce até um limite máximo; define o que compõe a base de cálculo, prevê exclusões e deduções, e permite descontar impostos já pagos e um redutor quando a tributação da empresa for considerada suficiente.\n- Estabelece tributação na fonte sobre lucros e dividendos remetidos ao exterior e prevê crédito para beneficiários no exterior; e designa um órgão do governo federal para acompanhar e avaliar a redução do imposto.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:31:58.409Z",
+      "reviewedAt": "2026-08-16T19:49:23Z"
+    },
+    "2490985": {
+      "sourceHash": "0c860753b59528969b778b3d0a77a949d6e3390bc2faba4b52741fbd68dbff5a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza a Caixa a criar a Fundação CAIXA, uma fundação privada sem fins lucrativos para apoiar ações sociais e socioambientais.",
+      "resumoDetalhe": "- Autoriza a Caixa Econômica Federal a constituir a Fundação CAIXA, entidade privada sem fins lucrativos com autonomia administrativa, financeira e patrimonial e sede no Distrito Federal.\n- Define que a Fundação tem por objetivo fomentar a redução das desigualdades e o desenvolvimento sustentável de cidades e biomas, por meio de ações, projetos e apoio a políticas públicas em áreas como educação, assistência social, cultura e esporte.\n- Estabelece que o patrimônio inicial será doado pela Caixa e que a Caixa e suas subsidiárias podem fazer contribuições e transferências para a Fundação, além de prever receitas vindas de convênios, acordos e contratos, doações, legados e subvenções para financiar suas atividades.\n- Determina regras de funcionamento: regime de pessoal pela CLT (leis trabalhistas do setor privado); autorização para cessão de servidores com reembolso à entidade de origem; estatuto que organizará estrutura e funcionamento, com cargos de direção ocupados por empregados ou dirigentes da Caixa; e observância de princípios como legalidade, impessoalidade, moralidade, publicidade e eficiência (ou seja, atuação legal, neutra, ética, transparente e eficiente).",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:31:58.409Z",
+      "reviewedAt": "2026-08-16T19:49:23Z"
+    },
+    "2494408": {
+      "sourceHash": "ae9d1364f51c939e8ce5214f5dc2d4ecb691570946f503140e4b23a289708aa2",
+      "generationStatus": "source_too_large",
+      "reviewStatus": "pending",
+      "resumoCard": null,
+      "resumoDetalhe": null,
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
     },
     "2497816": {
       "sourceHash": "e2e13d75a9e8ea18163001b51fae7694d215a06c66aa21d121c16a4569a3965b",
@@ -23,16 +122,60 @@
       "generatedAt": "2026-07-07T18:14:05.932Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
-    "2500260": {
-      "sourceHash": "ef38d38f833a9317f19b6b00f09567eb537eb35b3cb682cc5545453b500c62bd",
-      "generationStatus": "error",
-      "reviewStatus": "pending",
-      "resumoCard": null,
-      "resumoDetalhe": null,
+    "2497993": {
+      "sourceHash": "a980f0223fbcdc9c0557703af7147087b42cd5100eca8c1885056ee4bee2d59a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza o Banco do Nordeste (BNB) a criar subsidiárias para atuar em atividades financeiras e correlatas.",
+      "resumoDetalhe": "- Autoriza o Banco do Nordeste do Brasil S.A. (BNB) a constituir subsidiárias integrais ou controladas para exercer atividades do banco ou atividades relacionadas; subsidiária integral é empresa totalmente controlada pelo banco e controlada é empresa em que o banco detém o controle majoritário.\n- Permite que essas subsidiárias atuem em ramos como seguros, previdência complementar e títulos de capitalização, além de outras atividades ligadas ao setor financeiro, e admite a criação de subsidiária na forma de sociedade por ações, empresa com capital dividido em ações, para explorar banco de investimento e participações societárias.\n- Permite que a aquisição de ações ou participações para formar ou controlar essas empresas ocorra por qualquer modalidade prevista em lei.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
-      "generatedAt": "2026-07-07T16:52:37.780Z",
-      "reviewedAt": null
+      "generatedAt": "2026-08-16T05:57:06.620Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
+    },
+    "2500080": {
+      "sourceHash": "46c3844eac1cc810ac41c27a8b875e65967428fe9c30c4cce131f5f6827bda32",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Atribui à União a coordenação da segurança pública e do sistema penitenciário, define funções das polícias federais e das guardas municipais e cria fundos para financiar a área.",
+      "resumoDetalhe": "- Cria a política e o plano nacional de segurança pública e defesa social, incluindo o sistema penitenciário, e prevê que o Conselho Nacional de Segurança Pública e Defesa Social seja ouvido.\n- Atribui à União a coordenação do sistema único de segurança pública e do sistema penitenciário, visando integração, cooperação e interoperabilidade entre órgãos da União, Estados, Distrito Federal e Municípios.\n- Define funções para as forças policiais: dá à Polícia Federal competência expressa para investigar organizações criminosas com repercussão interestadual ou internacional e crimes que afetem bens da União; institui a polícia viária federal, formada a partir da carreira da polícia rodoviária federal, para o patrulhamento de rodovias, ferrovias e hidrovias federais, e prevê seu uso emergencial para proteger bens federais, auxiliar estados e atuar em calamidades; inclui as guardas municipais no rol dos órgãos de segurança pública, permitindo policiamento ostensivo urbano e sujeitando-as ao controle externo do Ministério Público.\n- Institui o Fundo Nacional de Segurança Pública e o Fundo Penitenciário Nacional para financiar projetos e ações nessas áreas com vedação ao contingenciamento; cria corregedorias autônomas para apurar responsabilidade funcional e exige ouvidorias autônomas nos entes federativos para receber representações e encaminhamentos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:31:58.409Z",
+      "reviewedAt": "2026-08-16T19:49:23Z"
+    },
+    "2500260": {
+      "sourceHash": "ef38d38f833a9317f19b6b00f09567eb537eb35b3cb682cc5545453b500c62bd",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Dá o nome \"Viaduto Papa Francisco\" ao viaduto na rodovia federal que dá acesso ao Santuário Nacional de Aparecida, em São Paulo.",
+      "resumoDetalhe": "- Denomina o viaduto localizado na rodovia federal de acesso ao Santuário Nacional de Aparecida como \"Viaduto Papa Francisco\".\n- Apresenta justificativa dizendo que a homenagem reconhece a liderança e o legado do Papa Francisco e que atende aos critérios legais para nomeação de vias federais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:57:06.620Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
+    },
+    "2500330": {
+      "sourceHash": "024c34221ab5f0142bcf01815afbeef71c497a89c096fa5890c1acbbe2d5f2ec",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um fundo para financiar e melhorar a atuação e a estrutura do Ministério Público da União.",
+      "resumoDetalhe": "- Cria o Fundo de Fortalecimento da Cidadania e Aperfeiçoamento do Ministério Público da União (FMPU) com o objetivo de dar recursos para a atuação institucional e o atendimento à sociedade.\n- Estrutura a gestão do FMPU com um Conselho Curador presidido pelo Procurador-Geral da República, um Conselho Gestor, um Conselho Fiscal e uma Diretoria Executiva, e determina que o Procurador-Geral regulamente composição e atribuições.\n- Autoriza diversas fontes de receita para o fundo, como dotações orçamentárias, doações, parte de custas e multas, venda ou transferência de bens e equipamentos, valores de inscrições em concursos e transferências de outros fundos; determina que as receitas sejam recolhidas em conta especial e que não fiquem sujeitas a contingenciamento (bloqueio de gastos já previstos no orçamento) nem a retenção administrativa ou judicial.\n- Destina os recursos a programas e projetos para melhorar a atuação institucional e o atendimento à população (com atenção a vítimas), à obra e adaptação de prédios, à compra de veículos, equipamentos e softwares, e à capacitação contínua de membros e servidores; veda o uso das receitas para despesas com pessoal, salvo quando necessárias às ações de programas e de capacitação previstas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:31:58.409Z",
+      "reviewedAt": "2026-08-16T19:49:23Z"
+    },
+    "2503998": {
+      "sourceHash": "12937cdb6f9f9cac1aa74443c2e500a8d682baf867916bf48e2d54a39a23020c",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza a Agência Nacional do Petróleo (ANP), que regula o setor de combustíveis, a acessar informações fiscais eletrônicas das empresas do setor, mantendo o sigilo fiscal.",
+      "resumoDetalhe": "- Autoriza a ANP a obter, junto aos órgãos fazendários, informações baseadas em notas fiscais eletrônicas sobre a produção, a venda, a movimentação, os estoques e os preços de combustíveis.\n- Exige que a ANP preserve o sigilo fiscal (proteção dos dados sobre impostos, rendimentos e operações dos contribuintes).\n- Sustenta, na justificativa, que o cruzamento desses dados permitiria identificar adulteração de combustíveis e sonegação e reduziria os custos de fiscalização de quem já opera dentro das regras.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:31:58.409Z",
+      "reviewedAt": "2026-08-16T19:49:23Z"
     },
     "2515300": {
       "sourceHash": "b51b742f792964071caee6259a2c96690459c204b6d4bb5d731302a27f5f584a",
@@ -45,16 +188,82 @@
       "generatedAt": "2026-07-07T20:09:47.061Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2515648": {
+      "sourceHash": "505f930c8c6df60a3ed8d743f02bb9b32f598884edb870bd525a5cbee116ca13",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Susta os efeitos do decreto do Poder Executivo que aumentou o IOF, o imposto sobre operações de crédito, câmbio e seguro.",
+      "resumoDetalhe": "- Susta os efeitos do decreto do Poder Executivo que elevou as alíquotas do IOF, o imposto sobre operações de crédito, câmbio, seguro e títulos.\n- Apresenta justificativa alegando que o aumento do IOF alcança empresas, operações de câmbio e planos de previdência, e afirma que o IOF é um imposto extrafiscal usado somente como instrumento de política econômica, não para gerar arrecadação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:57:06.620Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
+    },
+    "2517547": {
+      "sourceHash": "d4c437f7ff97a339342dac85487894a08b23363a98202ebedf97c26af0b65540",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova a adesão do Brasil ao convênio do Fundo Multilateral de Investimentos (FUMIN) e fixa que o termo “gênero” nesses convênios deve ser entendido como sexo biológico, masculino e feminino.",
+      "resumoDetalhe": "- Aprova a adesão do Brasil ao Convênio Constitutivo e ao Convênio de Administração do Fundo Multilateral de Investimentos (FUMIN), assinados na República Dominicana.\n- Define que o termo \"gênero\", nas partes indicadas dos convênios, deve ser interpretado como sexo biológico, masculino e feminino.\n- Exige aprovação do Congresso Nacional para atos que possam levar à denúncia (encerramento) ou à revisão dos convênios e para ajustes complementares que gerem encargos ao patrimônio nacional.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:31:58.409Z",
+      "reviewedAt": "2026-08-16T19:49:23Z"
+    },
+    "2519886": {
+      "sourceHash": "aedae24c09aa7b5da4a0e440403ad84b8ba70527af7fa6d1a05b8e28e2b2e42f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria o Programa Agora Tem Especialistas para que hospitais privados prestem atendimentos ao SUS em troca de créditos financeiros usados para abater impostos federais, e institui o Grupo Hospitalar Conceição S.A.",
+      "resumoDetalhe": "- Institui o Programa Agora Tem Especialistas, de adesão de hospitais privados, para ampliar e qualificar atendimentos especializados e reduzir o tempo de espera, com regras, especialidades preferenciais e credenciamento definidos pelo Ministério da Saúde.\n- Autoriza que hospitais participantes recebam créditos financeiros pela prestação de serviços ao SUS e usem esses créditos para abater impostos federais, condicionando o acesso a requisitos como registro eletrônico da oferta, regularidade junto à seguridade social e renúncia a impugnações ou ações sobre créditos tributários.\n- Ratifica e organiza o Grupo Hospitalar Conceição S.A. como entidade federal voltada ao SUS, com atuação em assistência, ensino e pesquisa; aplica regime trabalhista comum, disciplina fontes de recurso, garante que seus bens, serviços e rendas não possam ser penhorados e permite contratação direta em determinadas situações.\n- Altera normas para criar um sistema público de dados sobre tempo de espera, instituir a Rede Tempo é Vida para priorizar tratamento radioterápico a pessoas com câncer e garantir apoio como transporte e hospedagem quando necessário, permitir que ressarcimentos ao SUS sejam convertidos em prestação de serviços, lançar o Projeto Mais Médicos Especialistas para alocar especialistas em áreas prioritárias e ampliar o papel da AGSUS, a agência federal criada para apoiar a atenção especializada à saúde.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:01:17.719Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
+    },
+    "2520670": {
+      "sourceHash": "c5d59e065edfdf575e28d66d8135728323564a9c1dbba0429d9d56e5dd342779",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Determina redução mínima de 10% nos benefícios federais de natureza tributária, financeira e creditícia no período de 2025 a 2026.",
+      "resumoDetalhe": "- Reduz de forma escalonada os benefícios federais de natureza tributária, financeira e creditícia, com parte da redução aplicada em um primeiro período e complemento no período seguinte, até atingir a meta mínima prevista.\n- Autoriza diferenciar a intensidade das reduções por setor econômico, desde que o total das reduções alcance a meta mínima estabelecida pela lei.\n- Afasta da redução um grupo de benefícios já excluído por emenda constitucional anterior, mantendo, porém, a obrigação de atingir a meta mínima.\n- Veda a concessão de novos benefícios federais e a prorrogação dos já existentes, salvo quando a nova medida for acompanhada de redução simultânea e equivalente em outros benefícios da mesma natureza.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:57:06.620Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
+    },
+    "2524984": {
+      "sourceHash": "393c878b85b2342ed4f7d79a53f64279281670e4118806628fd5d5db30bb3380",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reestrutura a carreira e a remuneração dos servidores do Tribunal de Contas da União, cria indenização para funções de confiança e fixa novas exigências de formação.",
+      "resumoDetalhe": "- Altera e organiza a carreira do Tribunal de Contas da União, fixando os nomes dos cargos, a estrutura em classes e padrões e reconhecendo a carreira como típica de Estado (cargo de caráter nacional essencial ao controle externo).\n- Exige nível superior para ingresso no cargo de Técnico Federal de Controle Externo e passa a exigir conclusão de curso de pós-graduação para promoção entre classes, com regras a serem definidas pelo Tribunal.\n- Substitui a gratificação de desempenho por uma Gratificação de Desempenho e Alinhamento Estratégico (GDAE) — gratificação vinculada ao desempenho individual e ao alinhamento com metas institucionais — e uniformiza a gratificação de controle externo, definindo percentuais, periodicidade e critérios a serem regulamentados pelo Tribunal.\n- Cria a Indenização por Regime Especial de Dedicação Gerencial (IREDG) para servidores efetivos em funções de confiança da Secretaria, estabelecendo condições de pagamento, condicionamento à dotação orçamentária, regras sobre não incorporação à aposentadoria e limites sobre sua utilização e tributação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:01:17.719Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
+    },
     "2530336": {
       "sourceHash": "69591b2a835935c31e8dbc854594f42eb9914838dc2261110ae89d04841277ee",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Cria 330 funções comissionadas de nível FC-6 no quadro do Superior Tribunal de Justiça.",
-      "resumoDetalhe": "- cria centenas de funções comissionadas no quadro de pessoal do Superior Tribunal de Justiça\n- destina essas funções principalmente aos gabinetes dos ministros e eleva algumas funções atuais para outras unidades do Tribunal, especialmente às áreas que cuidam da tramitação e julgamento de processos\n- determina que as despesas serão pagas com as dotações orçamentárias do Tribunal, condiciona a implantação à autorização orçamentária",
+      "resumoDetalhe": "- Cria centenas de funções comissionadas no quadro de pessoal do Superior Tribunal de Justiça.\n- Destina essas funções principalmente aos gabinetes dos ministros e eleva algumas funções atuais para outras unidades do Tribunal, especialmente às áreas que cuidam da tramitação e julgamento de processos.\n- Determina que as despesas serão pagas com as dotações orçamentárias do Tribunal, condiciona a implantação à autorização orçamentária.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2533204": {
+      "sourceHash": "350862c8ea0327ed42c330ace33d062fd160cbc3bb6476c688136868035ca6cd",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria cargo de desembargador no Tribunal Regional do Trabalho com sede em Cuiabá (Mato Grosso) e usa cargos vagos e sobras orçamentárias para isso.",
+      "resumoDetalhe": "- Transforma cargos vagos de juiz do trabalho substituto em cargo de desembargador no Tribunal Regional com sede em Cuiabá (Mato Grosso).\n- Utiliza as sobras orçamentárias dessa transformação para criar cargos em comissão e funções comissionadas, sem aumento de despesas.\n- Determina que os cargos criados a partir dessas sobras sejam ocupados por servidores efetivos e que as despesas sejam custeadas com os recursos do orçamento do Tribunal.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:31:58.409Z",
+      "reviewedAt": "2026-08-16T19:49:23Z"
     },
     "2541109": {
       "sourceHash": "d4ac8cc2f3b0ab7362fcec8888a6a8dca83bc814a6d0092017b59fdaea413a20",
@@ -67,16 +276,93 @@
       "generatedAt": "2026-07-07T19:32:44.100Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2554285": {
+      "sourceHash": "c68abe4dc830eeb9ecb821746b001d477068309513f7eb73b3280060155aa634",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria três cargos de desembargador no Tribunal Regional Federal da 5ª Região e amplia a estrutura de pessoal do tribunal.",
+      "resumoDetalhe": "- Cria cargos de Desembargador Federal no Tribunal Regional Federal da 5ª Região e acrescenta a estrutura de pessoal necessária, incluindo cargos de analista e técnico, cargos em comissão e funções comissionadas para formar novos gabinetes e uma turma adicional.\n- Destina as despesas para serem pagas com as dotações orçamentárias do próprio tribunal e condiciona a implantação à autorização prevista na lei de diretrizes orçamentárias, com início a partir do exercício financeiro indicado na proposta.\n- Determina que a implantação observe as regras fiscais e orçamentárias aplicáveis, isto é, que respeite limites de gasto previstos na Constituição e na Lei de Responsabilidade Fiscal.\n- Apresenta como motivação viabilizar a criação de um órgão especial no tribunal, colegiado que assume atribuições administrativas e julgamentos delegados pelo conjunto dos desembargadores, e o compromisso de especializar as turmas por matéria depois de publicada a lei.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:54:43.704Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
+    },
+    "2557414": {
+      "sourceHash": "86de79fd0ce3cda974b968a13533e0dad3c6fa9313125564a3707735eb690ae7",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria o Auxílio Gás do Povo com duas formas de atendimento: pagamento em dinheiro ou entrega gratuita de botijões para famílias de baixa renda.",
+      "resumoDetalhe": "- Institui o Auxílio Gás do Povo em duas modalidades, o pagamento em dinheiro às famílias e a entrega gratuita de botijão nas revendas autorizadas, e determina que cada família receba apenas uma delas.\n- Define a modalidade de pagamento em dinheiro como benefício bimestral cujo valor corresponde a parte do preço médio do botijão de gás de cozinha, com pagamento preferencial à mulher responsável pela família.\n- Cria a modalidade de gratuidade, que disponibiliza o botijão diretamente na revenda varejista credenciada pela Agência Nacional do Petróleo, exige inscrição no Cadastro Único e renda mensal baixa por pessoa da família, com prioridade para quem recebe até meio salário mínimo, cobra dados cadastrais atualizados e limita a quantidade a que cada família tem direito no período previsto em regulamento.\n- Atribui papéis de gestão ao Ministério do Desenvolvimento e ao Ministério de Minas e Energia, prevê que a Caixa e a Dataprev, empresa federal de tecnologia, operem a distribuição por contrato com a União, determina o apoio da Agência Nacional do Petróleo no credenciamento e no fornecimento de preços, cria um comitê gestor e define como fontes de custeio os repasses da União e a adesão de Estados e municípios.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
+    },
+    "2562173": {
+      "sourceHash": "9f576d68e2e76348e3fa87bbd3eb49d2c5a623547464ce41a26db30002d261f7",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Transforma a Autoridade de Proteção de Dados em uma agência reguladora (ANPD) e cria carreira e cargos para sua estrutura.",
+      "resumoDetalhe": "- Cria a Agência Nacional de Proteção de Dados (ANPD) como autarquia especial (órgão público com administração e orçamento próprios) vinculada ao Ministério da Justiça e Segurança Pública, com autonomia técnica, administrativa, decisória e financeira, e transfere para ela os acervos, direitos, receitas, obrigações e processos da Autoridade Nacional de Proteção de Dados.\n- Cria a carreira de Regulação e Fiscalização de Proteção de Dados, com cargos de especialista para exercer regulação, inspeção, fiscalização e estudos, exige concurso público com curso de formação para a carreira, e transforma cargos vagos em cargos da nova carreira e em cargos em comissão e funções de confiança para compor a ANPD, sem aumento de despesa mediante compensação.\n- Define o encarregado como a pessoa indicada por quem trata os dados para servir de canal de comunicação entre a empresa ou o órgão responsável, as pessoas donas dos dados e a ANPD, qualifica a ANPD como autoridade nacional responsável por zelar, implementar e fiscalizar a lei de proteção de dados, mantém mandatos em curso até seu término e exige que a agência divulgue planejamento para adequar sua regulamentação após a definição da nova estrutura.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:31:58.409Z",
+      "reviewedAt": "2026-08-16T19:49:23Z"
+    },
+    "2564274": {
+      "sourceHash": "552e3345a5edf44866772fbfba858471e6cdec253f418a41820d72efc6b64fbf",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reajusta e atualiza as tabelas de vencimentos dos servidores do Poder Judiciário da União.",
+      "resumoDetalhe": "- Reajusta os vencimentos básicos dos cargos efetivos, os valores dos cargos em comissão e das funções comissionadas do Poder Judiciário da União.\n- Atualiza os anexos da lei das carreiras do Judiciário federal com novas tabelas de vencimentos para cargos de carreira, cargos em comissão e funções comissionadas.\n- Revoga anexos específicos da lei anterior que tratavam de parâmetros de carreira e remuneração.\n- Determina que a recomposição será feita em parcelas sucessivas e cumulativas e que a implementação observará a capacidade orçamentária e os limites legais de despesas de pessoal.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
+    },
+    "2576234": {
+      "sourceHash": "f4bc441ca13173434e0d3900dd046d2d7892346b1324d855e65a90d07b07428f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza o Executivo a não computar certas despesas de projetos estratégicos de defesa no cálculo da meta fiscal e do limite de despesas, dentro de limites previstos no orçamento e em lei.",
+      "resumoDetalhe": "- Autoriza o Poder Executivo a descontar despesas com projetos estratégicos em defesa do cálculo da meta de resultado primário e do limite de despesas, respeitando limites previstos no orçamento e por lei.\n- Determina que, em um exercício inicial, parte dessas despesas não será contabilizada na meta fiscal, e que as dotações empenhadas serão compensadas no exercício seguinte.\n- Exige que as despesas não computadas na meta fiscal sejam obrigatoriamente classificadas como despesas de capital.\n- Permite que esses projetos sejam custeados com recursos de fundos públicos vinculados ao Ministério da Defesa, exige que contribuam para o desenvolvimento da Base Industrial de Defesa e estabelece que restos a pagar relacionados não serão contabilizados na meta fiscal.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
+    },
+    "2578879": {
+      "sourceHash": "d4a11f5966c0ca3e61347ab690e4a4031a95d964e0dc5b6216d916e7358f1abb",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria cargos e funções no quadro do Conselho Nacional de Justiça e autoriza o provimento gradual condicionado à previsão orçamentária.",
+      "resumoDetalhe": "- Cria cargos e funções no quadro de pessoal do Conselho Nacional de Justiça, incluindo vagas para analista, técnico, cargos em comissão e funções comissionadas.\n- Implementa o provimento desses cargos de forma gradativa e condiciona cada provimento à autorização específica na lei orçamentária anual.\n- Determina que as despesas serão pagas com as dotações do CNJ, apresenta estimativa de impacto orçamentário e estabelece que a execução deve observar as regras constitucionais e fiscais, podendo ser ajustada se houver limites que restrinjam o crescimento de pessoal.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:33:03.984Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
+    },
     "2579832": {
       "sourceHash": "e8fbebfaa8fc8a25935b9447a639d2a4d1501688e270f25a5ba12147db36bec7",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Cria um regime mais duro para investigar, punir e apreender bens de organizações criminosas que controlam territórios e infiltram o poder público.",
-      "resumoDetalhe": "- Define e pune a organização criminosa qualificada, chamada facção criminosa, com penas mais severas, aumenta a pena para quem comanda e fixa agravantes para casos com violência, armas, participação de menores, infiltração em órgãos públicos ou morte de agentes de segurança\n- Autoriza procedimentos investigativos acelerados e prioritários, prevê infiltração policial e colaboração encoberta em facções, e amplia a cooperação entre órgãos nacionais e internacionais para obter provas\n- Estabelece medidas patrimoniais especiais: apreensão, bloqueio, intervenção judicial em empresas usadas por facções, gestão e alienação de bens e conversão de ativos estrangeiros, além de regras para devolução quando houver absolvição; prevê também a criação de um Banco Nacional de Facções Criminosas\n- Regula o uso de identidades e pessoas jurídicas fictícias para operações de infiltração, amplia o acesso de autoridades a dados cadastrais e de conexão mantidos por empresas, e autoriza o monitoramento audiovisual de comunicações e visitas em presídios vinculados a facções, com salvaguardas para a comunicação entre advogado e cliente",
+      "resumoDetalhe": "- Define e pune a organização criminosa qualificada, chamada facção criminosa, com penas mais severas, aumenta a pena para quem comanda e fixa agravantes para casos com violência, armas, participação de menores, infiltração em órgãos públicos ou morte de agentes de segurança.\n- Autoriza procedimentos investigativos acelerados e prioritários, prevê infiltração policial e colaboração encoberta em facções, e amplia a cooperação entre órgãos nacionais e internacionais para obter provas.\n- Estabelece medidas patrimoniais especiais: apreensão, bloqueio, intervenção judicial em empresas usadas por facções, gestão e alienação de bens e conversão de ativos estrangeiros, além de regras para devolução quando houver absolvição; prevê também a criação de um Banco Nacional de Facções Criminosas.\n- Regula o uso de identidades e pessoas jurídicas fictícias para operações de infiltração, amplia o acesso de autoridades a dados cadastrais e de conexão mantidos por empresas, e autoriza o monitoramento audiovisual de comunicações e visitas em presídios vinculados a facções, com salvaguardas para a comunicação entre advogado e cliente.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T17:45:21.754Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2595984": {
+      "sourceHash": "31292cac36492add14dc57a43e55246ef414f5e010fa59846758bc2d1a50f436",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria varas federais em municípios do Amazonas e de Mato Grosso do Sul e prevê os cargos e a previsão orçamentária para instalá-las.",
+      "resumoDetalhe": "- Cria varas federais para interiorizar a Justiça Federal em cidades do Amazonas e de Mato Grosso do Sul.\n- Acrescenta ao quadro da Justiça Federal de primeiro grau cargos de magistratura, cargos de apoio e funções comissionadas para compor essas varas.\n- Prevê que as despesas serão atendidas por dotações da Justiça Federal e condiciona a implantação à autorização e à disponibilidade orçamentária, observando a Lei de Responsabilidade Fiscal e o arcabouço fiscal, isto é, as regras que limitam gastos públicos.\n- Determina a submissão prévia ao Conselho Nacional de Justiça para análise do impacto financeiro e solicita que o Superior Tribunal de Justiça consolide as informações técnicas antes do envio ao Congresso Nacional.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:54:43.704Z",
+      "reviewedAt": "2026-08-16T14:52:08.000Z"
     }
   }
 }

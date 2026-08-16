@@ -6,11 +6,44 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Reduz tributos federais sobre produtos que comprovem redução da intensidade de carbono.",
-      "resumoDetalhe": "- cria redução de alíquotas do IPI, PIS/Pasep e Cofins sobre a receita de venda de produtos que comprovem redução da intensidade de carbono, com faixas de desconto maiores conforme a redução e aplicadas por períodos progressivamente mais longos\n- define que a intensidade de carbono será medida em quilos de CO2 por quilo de produto a partir de inventários de emissões diretas, feitos segundo critérios do Programa Brasileiro GHG Protocol da FGV e publicados em um registro público mantido pela mesma instituição, com verificação por empresas acreditadas pelo Inmetro em parceria com o Programa; o benefício vale só para a unidade de negócio inventariada, não para o grupo empresarial\n- exige que as reduções sejam alcançadas dentro de prazos fixados após o ano base (reduções menores em prazo mais curto e reduções maiores em prazo mais longo) e condiciona a concessão aos limites das regras de responsabilidade fiscal, ao planejamento e à disponibilidade no orçamento",
+      "resumoDetalhe": "- Cria redução de alíquotas do IPI, PIS/Pasep e Cofins sobre a receita de venda de produtos que comprovem redução da intensidade de carbono, com faixas de desconto maiores conforme a redução e aplicadas por períodos progressivamente mais longos.\n- Define que a intensidade de carbono será medida em quilos de CO2 por quilo de produto a partir de inventários de emissões diretas, feitos segundo critérios do Programa Brasileiro GHG Protocol da FGV e publicados em um registro público mantido pela mesma instituição, com verificação por empresas acreditadas pelo Inmetro em parceria com o Programa; o benefício vale só para a unidade de negócio inventariada, não para o grupo empresarial.\n- Exige que as reduções sejam alcançadas dentro de prazos fixados após o ano base (reduções menores em prazo mais curto e reduções maiores em prazo mais longo) e condiciona a concessão aos limites das regras de responsabilidade fiscal, ao planejamento e à disponibilidade no orçamento.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2416804": {
+      "sourceHash": "ad692cf410f514cead2c388c4b4ee31ac4ffd97230734345861774d3e6b58052",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza depreciação acelerada para máquinas e equipamentos novos usados em determinadas atividades econômicas.",
+      "resumoDetalhe": "- Autoriza o Poder Executivo, por decreto, a conceder depreciação acelerada para máquinas, equipamentos, aparelhos e instrumentos novos adquiridos no período especificado na lei e empregados no ativo imobilizado de determinadas atividades econômicas; depreciação acelerada é quando a empresa abate no imposto uma parte maior do custo do bem mais cedo.\n- Permite que, para cálculo do Imposto de Renda e da Contribuição Social, as empresas antecipem a dedução de parte do valor desses bens no ano em que entram em operação e no ano seguinte, respeitado um teto anual em cada um deles, ficando o saldo restante sujeito à depreciação normal conforme o desgaste, sem que o total ultrapasse o custo de aquisição.\n- Veda o benefício para certos bens, como edifícios, terrenos, obras de arte e alguns bens importados com incentivo fiscal, e exige que só sejam beneficiados bens diretamente ligados à produção ou à venda; permite ainda condicionar o benefício a requisitos de promoção da indústria nacional e de agregação de valor.\n- Fixa um teto para a renúncia fiscal do período, ou seja, para a receita que o governo deixa de arrecadar com o benefício, e exige habilitação prévia das empresas pelo Ministério do Desenvolvimento, Indústria, Comércio e Serviços, ao qual atribui o acompanhamento e a avaliação do benefício; permite ainda que o Executivo defina por decreto as atividades econômicas contempladas e amplie esse teto, observadas as regras orçamentárias e fiscais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:10:38.605Z",
+      "reviewedAt": "2026-08-16T14:47:31.000Z"
+    },
+    "2416826": {
+      "sourceHash": "286320cb8ef1577c9f4b581e7d389c42627a76ba68b4a0dd83ebc31c9f144e1a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria o plano de falência, um roteiro aprovado pelos credores para vender os bens da empresa falida, pagar as dívidas e dar publicidade ao processo.",
+      "resumoDetalhe": "- Cria o plano de falência, documento que organiza a gestão do dinheiro da empresa falida, a venda dos bens, o pagamento das dívidas e o rumo dos processos judiciais em andamento.\n- Atribui à assembleia geral de credores, a reunião de todos a quem a empresa deve, a aprovação do plano de falência e a escolha do gestor fiduciário, profissional eleito pelos credores para conduzir a liquidação.\n- Dá ao Comitê de Credores, grupo menor que fiscaliza o processo, acesso amplo a documentos e informações, e permite que ele tome decisões quando a assembleia autorizar.\n- Define os deveres do gestor fiduciário e do administrador judicial, profissional nomeado pelo juiz: avaliar e vender os bens, publicar as informações do processo em um site aberto ao público, prestar contas e cumprir o plano aprovado pelo juiz sem precisar de nova autorização judicial a cada ato.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:28:03.877Z",
+      "reviewedAt": "2026-08-16T20:45:00.000Z"
+    },
+    "2418774": {
+      "sourceHash": "741b99aed9178ca23a6e1cf9f1734f14caa3683e5891f6a5e7e6f97d4845104b",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um procedimento simplificado para transferir parte do território de um município para outro apenas para resolver conflitos de limites, sem criar município novo.",
+      "resumoDetalhe": "- Disciplina a separação de um pedaço de um município para anexá-lo a outro, com a finalidade única de resolver disputas de limites entre as cidades, e proíbe que o procedimento resulte na criação de um novo município.\n- Exige um estudo simplificado de viabilidade, divulgado à população, que verifique se as áreas são vizinhas, preserve os valores históricos e culturais das comunidades e avalie como estão os serviços públicos essenciais na área envolvida.\n- Exige também um plebiscito, votação em que os moradores das áreas envolvidas decidem diretamente sobre a proposta, atribui o início do processo à Assembleia Legislativa do estado e a organização da votação ao Tribunal Regional Eleitoral, de preferência na data das eleições, e veda nova consulta sobre o mesmo assunto por um período em caso de rejeição.\n- Adia a redivisão do Fundo de Participação dos Municípios, dinheiro que a União repassa às cidades, e das demais transferências até o fim do exercício financeiro seguinte àquele em que a lei estadual for aprovada.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:28:03.877Z",
+      "reviewedAt": "2026-08-16T20:45:00.000Z"
     },
     "2421211": {
       "sourceHash": "1813fedca36f1e64f9a14d39a1483d1e17aa0413ab37171647543d551a2dcda9",
@@ -22,6 +55,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:23:14.848Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2422095": {
+      "sourceHash": "ff301c1ead8d559c875be87cf196458cb970f3a540e64043348d3c4275e60719",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Libera R$ 30,1 milhões em crédito extraordinário para o Ministério da Justiça e Segurança Pública custear ações da Polícia Rodoviária Federal no município do Rio de Janeiro.",
+      "resumoDetalhe": "- Abre um crédito extraordinário para o Ministério da Justiça e Segurança Pública, ou seja, autoriza um gasto fora do orçamento já aprovado para o ano.\n- Destina o dinheiro ao Departamento de Polícia Rodoviária Federal, tanto para a administração do órgão quanto para ações de policiamento, fiscalização e enfrentamento à criminalidade e à corrupção no município do Rio de Janeiro.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:28:03.877Z",
+      "reviewedAt": "2026-08-16T20:45:00.000Z"
     },
     "2422697": {
       "sourceHash": "145a3e5ea34d37e55a4efea5c59ce58f6edcbda29456fedfcb92b38713b54eb4",
@@ -39,7 +83,7 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Cria o novo sistema de tributos sobre o consumo (IBS e CBS) e um Imposto Seletivo para bens nocivos, definindo como serão cobrados, quem paga e como será a transição.",
-      "resumoDetalhe": "- Cria os tributos IBS e CBS para tributar o consumo em todo o País e define princípio de neutralidade e mecanismo de crédito para evitar cobrança em cascata\n- Institui o Imposto Seletivo sobre bens prejudiciais à saúde ou ao meio ambiente, com regras específicas de cobrança segundo o tipo de produto\n- Organiza a operação prática dos tributos: documento fiscal eletrônico unificado, cadastro único, regras de local e fato gerador, tratamento das importações e exportações e responsabilidade de plataformas digitais\n- Estabelece regimes especiais e transição gradual, incluindo regras para combustíveis, serviços financeiros, saúde, incentivos setoriais, zonas especiais, compras governamentais e devolução personalizada de parte do tributo a famílias de baixa renda, além de alíquotas zero para itens da cesta básica",
+      "resumoDetalhe": "- Cria os tributos IBS e CBS para tributar o consumo em todo o País e define princípio de neutralidade e mecanismo de crédito para evitar cobrança em cascata.\n- Institui o Imposto Seletivo sobre bens prejudiciais à saúde ou ao meio ambiente, com regras específicas de cobrança segundo o tipo de produto.\n- Organiza a operação prática dos tributos: documento fiscal eletrônico unificado, cadastro único, regras de local e fato gerador, tratamento das importações e exportações e responsabilidade de plataformas digitais.\n- Estabelece regimes especiais e transição gradual, incluindo regras para combustíveis, serviços financeiros, saúde, incentivos setoriais, zonas especiais, compras governamentais e devolução personalizada de parte do tributo a famílias de baixa renda, além de alíquotas zero para itens da cesta básica.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:12:46.007Z",
@@ -78,6 +122,72 @@
       "generatedAt": "2026-06-26T01:58:05.096Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
     },
+    "2438467": {
+      "sourceHash": "4d87065d2f17efa4c5b2944e866f4dbbff0cdd8c37857d25a7ecf68091cb0327",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui o Dia Nacional para a Ação Climática, a ser realizado anualmente em 27 de abril.",
+      "resumoDetalhe": "- Institui o Dia Nacional para a Ação Climática e atribui sua realização às escolas públicas e privadas, da educação infantil ao ensino médio.\n- Marca a data com ações práticas de prevenção, proteção e resposta a eventos climáticos extremos e desastres naturais.\n- Prevê que as escolas possam realizar treinamentos e simulações, como evacuação, enfrentamento de enchentes e deslizamentos, combate a incêndio e primeiros socorros, além de mapas das áreas de risco, publicações e orientações sobre rotas de fuga e kit de emergência.\n- Exige que todas as atividades garantam acessibilidade às pessoas com deficiência.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:28:03.877Z",
+      "reviewedAt": "2026-08-16T20:45:00.000Z"
+    },
+    "2438687": {
+      "sourceHash": "b0ec00310bb311c9f2324c5a2ca73d6c5fcb2c1f314c50f20382f29f1b95cbe1",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Garante às crianças e adolescentes o direito de acessar, conviver e aprender com a Natureza, com prioridade nas políticas públicas.",
+      "resumoDetalhe": "- Define o direito de crianças e adolescentes à Natureza e fixa sua prioridade absoluta nas decisões de agentes públicos e privados.\n- Exige que os governos garantam acesso regular a áreas naturais próximas e considerem esse direito no planejamento das cidades, com mais praças e parques, rotas seguras e espaços para o brincar ao ar livre.\n- Prevê que as redes de ensino adotem a educação baseada na Natureza, com aprendizagem ao ar livre, requalificação do entorno das escolas e adaptação dos prédios escolares com soluções que usam elementos naturais.\n- Institui o dever compartilhado de defender, conservar e regenerar a Natureza, cria canais de participação e de denúncia, prevê a coleta de dados e sua publicação em relatório anual e assegura o apoio dos órgãos de proteção à criança e o acesso à justiça.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:28:03.877Z",
+      "reviewedAt": "2026-08-16T20:45:00.000Z"
+    },
+    "2439876": {
+      "sourceHash": "91f4ae2b4101f1815b29477a7ed82e96fa888427ae0f519bf17fbd12765e965c",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite que a Mesa Diretora da Câmara suspenda temporariamente o mandato de um deputado que responda a representação por quebra de decoro parlamentar, ou seja, por conduta incompatível com o cargo.",
+      "resumoDetalhe": "- Cria a possibilidade de a Mesa Diretora da Câmara suspender, por precaução, o exercício do mandato de um deputado que responda a representação por quebra de decoro apresentada por ela própria.\n- Fixa um prazo para que a Mesa decida sobre a suspensão, contado de quando ela toma conhecimento do fato que motivou a representação.\n- Determina que a suspensão seja comunicada ao Conselho de Ética e Decoro Parlamentar, que decide sobre ela com prioridade e em votação aberta, e prevê recurso ao conjunto dos deputados, também em votação aberta, exigindo nos dois casos o voto da maioria absoluta, isto é, de mais da metade de todos os deputados, para que a medida seja mantida.\n- Confere aos presidentes das comissões e do Conselho de Ética, dentro de seus colegiados, os mesmos poderes de manter a ordem que o presidente da Câmara tem no plenário.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:28:03.877Z",
+      "reviewedAt": "2026-08-16T20:45:00.000Z"
+    },
+    "2442331": {
+      "sourceHash": "0440e9f096f7c64b16ff4c41a549fa6f900624a01c568c973380248d07b87cfa",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova textos de resoluções internacionais sobre segurança no mar e exige aval do Congresso para atos que gerem encargos ao país.",
+      "resumoDetalhe": "- Aprova textos de resoluções da Organização Marítima Internacional relacionados à Convenção SOLAS (a convenção sobre segurança da vida no mar), com as respectivas emendas.\n- Submete ao Congresso Nacional atos que possam levar à denúncia ou revisão dessas resoluções, ou a ajustes complementares na convenção ou nas resoluções, quando esses atos impliquem encargos ou compromissos gravosos ao patrimônio do país.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T14:47:31.000Z"
+    },
+    "2442848": {
+      "sourceHash": "6d9fec2208e8f4d9ceee4aeeb90093737d94d5d05d63f81eef9e802b8f9c4e39",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova a Convenção entre Brasil e Colômbia para eliminar a dupla tributação sobre a renda e prevenir evasão e elisão fiscais, e seu Protocolo.",
+      "resumoDetalhe": "- Aprova os textos da Convenção entre Brasil e Colômbia e do seu Protocolo que tratam da eliminação da dupla tributação sobre a renda e da prevenção da evasão e da elisão fiscais.\n- Exige aprovação do Congresso Nacional para qualquer ato que possa denunciar ou revisar a Convenção ou o Protocolo, bem como para ajustes complementares que imponham encargos ao patrimônio nacional.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T14:47:31.000Z"
+    },
+    "2447191": {
+      "sourceHash": "3728b62185396ea4903596f9bd0c4a8b931b4e046015ec66b24e0ba0c37571e6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Inclui despesas dos hospitais universitários federais no cálculo do gasto mínimo constitucional em saúde.",
+      "resumoDetalhe": "- Inclui as despesas de custeio e de investimento dos hospitais universitários federais para fins do cálculo do gasto mínimo constitucional em saúde, desde que essas despesas sejam aprovadas pelo Ministério da Saúde e sigam as diretrizes da lei.\n- Inclui a remuneração do pessoal ativo e do pessoal inativo desses hospitais como despesa válida para esses fins.\n- Permite que os repasses de recursos para esses hospitais, inclusive recursos de emendas parlamentares, sejam feitos por transferência de créditos do Fundo Nacional de Saúde para os hospitais ou para a entidade pública que os administra.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:10:38.605Z",
+      "reviewedAt": "2026-08-16T14:47:31.000Z"
+    },
     "2448974": {
       "sourceHash": "d88a7e91bb1518f42d50a73d20c627caa34eccb96257f1c268d8733410032942",
       "generationStatus": "generated",
@@ -100,16 +210,60 @@
       "generatedAt": "2026-07-07T20:08:24.596Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2454257": {
+      "sourceHash": "4d270d5afd6b3f970442e7e13ce02d3cd8049d0beb78fe0cad1b7bbfaed8a625",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exige que uma parte mínima dos recursos do Fundo Penitenciário Nacional e do Fundo Nacional de Segurança Pública vá para ações de prevenção e enfrentamento da violência contra a mulher em estados e municípios.",
+      "resumoDetalhe": "- Destina uma parcela mínima dos recursos do Fundo Penitenciário Nacional, que financia ações ligadas ao sistema prisional, a órgãos e entidades públicas estaduais e municipais que atuam na prevenção e no enfrentamento da violência contra a mulher.\n- Destina uma parcela mínima dos recursos do Fundo Nacional de Segurança Pública, que financia políticas de segurança pública, a ações de enfrentamento da violência contra a mulher, inclusive em órgãos e entidades públicas de estados e municípios.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:28:03.877Z",
+      "reviewedAt": "2026-08-16T20:45:00.000Z"
+    },
+    "2454400": {
+      "sourceHash": "fb6f8ae48b09a23c961503648130129d4b37c36af173a86a26c502fea54ff453",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria o Programa de Pleno Pagamento de Dívidas dos Estados (Propag) para revisar e refinanciar dívidas dos Estados e do Distrito Federal com a União, vinculando benefícios a aportes e investimentos em educação profissional e infraestrutura.",
+      "resumoDetalhe": "- Institui o Propag para promover a revisão das dívidas dos Estados e do Distrito Federal com a União e apoiar a recuperação fiscal e investimentos em produtividade, adaptação às mudanças climáticas, infraestrutura, segurança pública e formação profissional.\n- Autoriza que os Estados paguem ou compensem a dívida com transferência de dinheiro, participações societárias, bens, cessão de créditos ou recebíveis e outras formas de ativo, e prevê o refinanciamento da dívida apurada em parcelas mensais sucessivas, com possibilidade de amortizações extraordinárias e de cláusula de arbitragem, que leva eventuais disputas a um julgador privado em vez do Judiciário; veda contratar novo crédito para pagar essas parcelas.\n- Estabelece encargos e condições vinculadas à realização de aportes anuais e investimentos estaduais em educação profissional técnica e em obras de saneamento, habitação, adaptação às mudanças climáticas, transportes ou segurança; cria o Fundo de Equalização Federativa para financiar essas ações, define critérios de distribuição dos recursos e exige prestação de contas e fiscalização pelos órgãos competentes.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:01:17.719Z",
+      "reviewedAt": "2026-08-16T14:47:31.000Z"
+    },
     "2454704": {
       "sourceHash": "4d4740f50da8c4465a99fe7c2557942a250645fde8a0fa35e46a911aea96e954",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Conjunto de medidas que cria um regime de transição para contribuições e Cofins-Importação, permite atualizar valores de imóveis, abre um programa de regularização de ativos e organiza negociação de dívidas e regras para depósitos.",
-      "resumoDetalhe": "- cria um regime de transição gradual para empresas poderem optar por contribuir sobre a receita em substituição às contribuições previdenciárias e prevê um acréscimo temporário na Cofins-Importação, condicionando a opção à manutenção de um nível mínimo do quadro de empregados\n- permite que pessoas físicas e jurídicas atualizem os valores dos imóveis para o valor de mercado e paguem um imposto definitivo sobre a diferença, e estabelece regra proporcional para calcular o ganho de capital se o bem for vendido antes do prazo previsto\n- institui um programa de regularização voluntária de ativos no Brasil e no exterior, que exige declaração detalhada e pagamento de imposto e multa, com prazo limitado para adesão e regras sobre prova e repatriação via instituição financeira\n- cria centrais e procedimentos para negociar dívidas não tributárias da administração federal, centraliza depósitos judiciais e extrajudiciais na Caixa e na Conta Única, e prevê medidas para evitar fraudes em benefícios, além de exigir informação eletrônica sobre benefícios fiscais e prever penalidades por omissão",
+      "resumoDetalhe": "- Cria um regime de transição gradual para empresas poderem optar por contribuir sobre a receita em substituição às contribuições previdenciárias e prevê um acréscimo temporário na Cofins-Importação, condicionando a opção à manutenção de um nível mínimo do quadro de empregados.\n- Permite que pessoas físicas e jurídicas atualizem os valores dos imóveis para o valor de mercado e paguem um imposto definitivo sobre a diferença, e estabelece regra proporcional para calcular o ganho de capital se o bem for vendido antes do prazo previsto.\n- Institui um programa de regularização voluntária de ativos no Brasil e no exterior, que exige declaração detalhada e pagamento de imposto e multa, com prazo limitado para adesão e regras sobre prova e repatriação via instituição financeira.\n- Cria centrais e procedimentos para negociar dívidas não tributárias da administração federal, centraliza depósitos judiciais e extrajudiciais na Caixa e na Conta Única, e prevê medidas para evitar fraudes em benefícios, além de exigir informação eletrônica sobre benefícios fiscais e prever penalidades por omissão.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:23:14.848Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2456109": {
+      "sourceHash": "7a8b7f354fd92d927963d9ff8ac06afaa7680cf38f2aa6f06208f844965abf5d",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova o protocolo que altera o acordo entre Brasil e China para evitar que a mesma renda seja tributada nos dois países e para combater a sonegação.",
+      "resumoDetalhe": "- Aprova o texto do protocolo assinado por Brasil e China que altera o acordo entre os dois países para evitar a dupla tributação, ou seja, impedir que a mesma renda pague imposto nos dois lugares, e para prevenir a evasão fiscal, a ocultação de renda para escapar de impostos.\n- Determina que qualquer ato que resulte em cancelamento ou revisão do protocolo, assim como acertos complementares que gerem encargos pesados ao patrimônio do país, dependa de nova aprovação do Congresso Nacional.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:28:03.877Z",
+      "reviewedAt": "2026-08-16T20:45:00.000Z"
+    },
+    "2456110": {
+      "sourceHash": "8a32b9235a099d7ac01f13d8efb5421b4ff65a4417e654bd04e81c1dedfeb68d",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova o Acordo entre Brasil e Croácia para cooperação na área de educação.",
+      "resumoDetalhe": "- Aprova o texto do Acordo entre o Brasil e a Croácia sobre cooperação na área de educação.\n- Determina que atos que possam levar à denúncia ou revisão do Acordo, e ajustes que imponham encargos ou compromissos pesados ao patrimônio nacional, dependem de aprovação do Congresso Nacional.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T14:47:31.000Z"
     },
     "2456731": {
       "sourceHash": "484f2a432c6790c6beaee7cd077dbd3c2911c3ce68808f5e496bf220f32878dd",
@@ -122,16 +276,71 @@
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2460010": {
+      "sourceHash": "0d27aac0aad7c8adb1b0675d81c0437d357ba36a668a31f34aa01c26ed1af1f3",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Altera como instituições financeiras podem abater perdas com créditos inadimplidos, fazendo a dedução aos poucos ao longo de vários anos.",
+      "resumoDetalhe": "- Estabelece que as perdas com empréstimos não pagos pelos clientes só poderão ser descontadas do lucro tributável de forma parcelada, com deduções mensais distribuídas ao longo de vários anos, a partir da data fixada na lei.\n- Permite que as instituições financeiras escolham, até uma data limite, uma opção alternativa de parcelamento mais lenta; a escolha é irreversível.\n- Veda que as instituições deduzam, em um mesmo ano, perdas em valor superior ao lucro desse ano antes da dedução; as perdas não deduzidas devem ser somadas ao saldo para dedução futura, respeitando a opção de parcelamento escolhida.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:57:06.620Z",
+      "reviewedAt": "2026-08-16T14:47:31.000Z"
+    },
     "2461207": {
       "sourceHash": "9c4c8b432b21b39a3f1dc1ee541abfab49cbc6f5d128b914190e9185cc52a611",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Autoriza a criação de uma subsidiária da NAV Brasil para explorar atividades e tecnologias aeroespaciais.",
-      "resumoDetalhe": "- Autoriza a NAV Brasil a criar uma subsidiária para explorar economicamente infraestrutura e serviços de navegação aeroespacial, desenvolver projetos e equipamentos aeroespaciais e prestar apoio ao controle do espaço aéreo.\n- Define competências para produzir conhecimento técnico‑científico e prestar consultoria comercial; promover e gerir pesquisa, desenvolvimento, certificação, produção, comercialização, transferência e suporte logístico de tecnologias aeroespaciais; e atuar no registro e proteção da propriedade intelectual gerada, ou seja, cuidar de patentes e direitos sobre invenções.\n- Autoriza regras de implantação e governança da subsidiária: contratação temporária de pessoal técnico e administrativo para a fase inicial, conforme critérios do conselho e regras de contratação temporária; cessão de servidores e colocação de militares à disposição, com reembolso dos custos; autorização para adesão a entidade fechada de previdência complementar já existente; possibilidade de contratação da subsidiária com recursos do Fundo Aeronáutico para projetos do Comando da Aeronáutica; e autorização para que a União assuma diretamente o controle da subsidiária por meio da transferência integral das ações da NAV Brasil, sem custo para a União, com valor contábil correspondente ao balanço.",
+      "resumoDetalhe": "- Autoriza a NAV Brasil a criar uma subsidiária para explorar economicamente infraestrutura e serviços de navegação aeroespacial, desenvolver projetos e equipamentos aeroespaciais e prestar apoio ao controle do espaço aéreo.\n- Define competências para produzir conhecimento técnico-científico e prestar consultoria comercial; promover e gerir pesquisa, desenvolvimento, certificação, produção, comercialização, transferência e suporte logístico de tecnologias aeroespaciais; e atuar no registro e proteção da propriedade intelectual gerada, ou seja, cuidar de patentes e direitos sobre invenções.\n- Autoriza regras de implantação e governança da subsidiária: contratação temporária de pessoal técnico e administrativo para a fase inicial, conforme critérios do conselho e regras de contratação temporária; cessão de servidores e colocação de militares à disposição, com reembolso dos custos; autorização para adesão a entidade fechada de previdência complementar já existente; possibilidade de contratação da subsidiária com recursos do Fundo Aeronáutico para projetos do Comando da Aeronáutica; e autorização para que a União assuma diretamente o controle da subsidiária por meio da transferência integral das ações da NAV Brasil, sem custo para a União, com valor contábil correspondente ao balanço.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T17:19:37.817Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2462730": {
+      "sourceHash": "e32939697f744014f75ad1048ac75f48fff9db4820a899f1b97a9b468ea0c7aa",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova o protocolo entre Brasil e China para o desenvolvimento conjunto do CBERS-6, satélite de observação da Terra construído em parceria pelos dois países.",
+      "resumoDetalhe": "- Aprova o texto do protocolo complementar assinado por Brasil e China para o desenvolvimento conjunto do CBERS-6, satélite de observação da Terra construído em parceria pelos dois países, no âmbito do acordo entre eles sobre cooperação em usos pacíficos da ciência e da tecnologia do espaço.\n- Determina que qualquer ato que resulte em cancelamento ou revisão do protocolo, assim como acertos complementares que gerem encargos pesados ao patrimônio do país, dependa de nova aprovação do Congresso Nacional.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:28:03.877Z",
+      "reviewedAt": "2026-08-16T20:45:00.000Z"
+    },
+    "2463712": {
+      "sourceHash": "c36965b1923ef091a60a0f33194d47b52a1a4346231e121f1c85100936e562b1",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite que micro e pequenas empresas do Simples Nacional apurem crédito para receber de volta o imposto embutido na produção de bens exportados nos exercícios de 2025 e 2026.",
+      "resumoDetalhe": "- Permite que micro e pequenas empresas optantes pelo Simples Nacional, o regime simplificado que reúne vários tributos numa guia só, apurem crédito para receber de volta, no todo ou em parte, o resíduo tributário que sobra na cadeia de produção de bens exportados, ou seja, o imposto que ficou embutido no preço ao longo da fabricação.\n- Abre essa possibilidade como exceção temporária à regra do Simples Nacional, que em geral impede essas empresas de aproveitar créditos de impostos, e a limita a um período determinado.\n- Sustenta, na exposição de motivos, que a exceção seria necessária porque essa regra hoje barra a maior parte das micro e pequenas exportadoras de recuperar o resíduo tributário, e que o uso do crédito ainda dependeria de regulamentação do Poder Executivo.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:28:03.877Z",
+      "reviewedAt": "2026-08-16T20:45:00.000Z"
+    },
+    "2463814": {
+      "sourceHash": "14873dff365569dd829a5775a2f36d8485b928e174e0a393bffb37368eed27b7",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Abre crédito extraordinário para financiar ações emergenciais de combate a queimadas, seca e seus impactos por vários ministérios.",
+      "resumoDetalhe": "- Abre crédito extraordinário (dinheiro extra criado para situações de emergência) em favor de vários ministérios para custear medidas contra queimadas, seca e a crise climática.\n- Destina recursos para operações de segurança pública, incluindo apoio a operações integradas e mobilização da Força Nacional para atuar temporariamente no combate a incêndios e na proteção de pessoas e bens.\n- Financia ações de saúde e vigilância, como atendimento especializado, aquisição de insumos, reforço de vigilância em saúde e medidas para ampliar o acesso à água em comunidades indígenas e rurais.\n- Reforça fiscalização e resposta ambiental, com contratação de equipes, locação de aeronaves, compra de equipamentos e investimentos em tecnologias, e ainda apoia ações de defesa civil, programas sociais de acesso à água e pagamento de auxílio a pescadores artesanais afetados.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:01:17.719Z",
+      "reviewedAt": "2026-08-16T14:47:31.000Z"
+    },
+    "2465140": {
+      "sourceHash": "cd0e8578ae01c0708804551915d490295df068df93ce014f24d27bdeba568970",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria uma rede de cooperação entre União, estados, municípios e Ministério Público para enfrentar o crime organizado que atua em vários países, com novos crimes, regras para operações de inteligência e proteção a denunciantes.",
+      "resumoDetalhe": "- Cria uma associação entre órgãos da União, dos estados e dos municípios e o Ministério Público para planejar em conjunto, trocar informações de inteligência e executar operações contra redes criminosas que atuam em mais de um país.\n- Define novos crimes ligados a essas organizações e às suas lideranças, com penas e instrumentos para a investigação e o processo criminal.\n- Estabelece regras para operações de segurança e de inteligência: exige autorização judicial nos casos previstos, admite interceptações e meios eletrônicos, o uso de informantes e de identidades falsas de cobertura, e cria a Regra de Isenção de Providência Antecipada (Ripa), proteção jurídica que dispensa o agente de agir na hora contra um crime que presencia quando esperar é essencial para a operação.\n- Institui recompensa em dinheiro a quem denunciar e permitir a recuperação de bens, um regime de colaboração por arrependimento, um programa federativo de proteção a pessoas ameaçadas e regras de sigilo, auditoria e financiamento das ações com parte dos bens recuperados.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:28:03.877Z",
+      "reviewedAt": "2026-08-16T20:45:00.000Z"
     },
     "2466104": {
       "sourceHash": "efda02c157746e42d2680a0015dbc697edf95e0d259a9d90bdd19ac0f45ac0c6",
@@ -144,6 +353,28 @@
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2466108": {
+      "sourceHash": "86928578487a39274c86ee97b47b8e9c52e3a45dc2b3d36d07d456297f197116",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui o Dia Nacional da Axé Music, celebrado anualmente no dia 17 de fevereiro.",
+      "resumoDetalhe": "- Cria o Dia Nacional da Axé Music e define que a comemoração ocorra todo ano no dia dezessete de fevereiro.\n- Reconhece a Axé Music como manifestação cultural, destacando sua origem na Bahia e sua importância para a identidade cultural.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T14:47:31.000Z"
+    },
+    "2469569": {
+      "sourceHash": "f5948b8a66201023896d53a820b7feaa3845d85970e9d54504d994d7edff02b8",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Proíbe que as regras internas de um condomínio impeçam a locação de salas ou lojas comerciais para partidos políticos.",
+      "resumoDetalhe": "- Veda que a convenção do condomínio, o conjunto de regras internas que vale para todos os moradores e lojistas, traga qualquer cláusula que restrinja a locação de imóveis comerciais para partidos políticos.\n- Inclui essa mesma proibição no Código Civil e na lei que trata dos condomínios, deixando a regra escrita nas duas leis.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:28:03.877Z",
+      "reviewedAt": "2026-08-16T20:45:00.000Z"
+    },
     "2471177": {
       "sourceHash": "546c1ff4f1055498a94869b5202faf32ba92df0f46c20bb5ff4ebf8fb5c75747",
       "generationStatus": "generated",
@@ -155,6 +386,17 @@
       "generatedAt": "2026-07-07T19:36:40.723Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2473375": {
+      "sourceHash": "f066c2f3f039caa4ee99d588b4525453607d8cda00dfcc209a58262c44071fbc",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exige cadastro biométrico e atualização do Cadastro Único para receber benefícios sociais, amplia checagens com outros bancos de dados e vincula gastos a limites orçamentários.",
+      "resumoDetalhe": "- Exige documento com cadastro biométrico feito pelo Poder Público para concessão, manutenção ou renovação de benefícios da seguridade social e impõe atualização periódica do Cadastro Único para quem recebe programas que usam esse cadastro, com possibilidade de suspensão do benefício se a pessoa não regularizar após notificação.\n- Determina que o CadÚnico passe a coletar informações socioeconômicas e territoriais para checagem em outras bases de dados, e obriga concessionárias de serviços e órgãos federais a fornecerem dados necessários para verificação de requisitos, observando a proteção de dados pessoais.\n- Redefine o cálculo do Benefício de Prestação Continuada, o pagamento mensal devido a idosos e pessoas com deficiência de baixa renda, especificando quem conta como família; determina que a renda familiar seja a soma dos rendimentos brutos mensais, sem descontos não previstos em lei; trata a posse de bens ou de terras acima do limite de isenção do imposto de renda como sinal de que a pessoa consegue se sustentar; e exige o registro do código da Classificação Internacional de Doenças nos sistemas usados para conceder o benefício.\n- Sujeita o custeio dessas medidas à disponibilidade orçamentária, atrela o repasse ao fundo constitucional ao valor do ano anterior corrigido pelo IPCA, o índice oficial de inflação, ou por índice que o substitua, e fixa limites e parâmetros para o Programa Bolsa Família e para o aumento real do salário mínimo, conforme índices previstos em lei complementar.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:57:06.620Z",
+      "reviewedAt": "2026-08-16T14:47:31.000Z"
+    },
     "2473389": {
       "sourceHash": "26ee772121594e08e17497db2c5714e590e53f33c7c18cc95c64206f6ac15b52",
       "generationStatus": "generated",
@@ -165,6 +407,39 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:23:14.848Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2480979": {
+      "sourceHash": "1dd5a50b9866360ba38d374c116f4e9138fdb403fd34591a19daff011a715667",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite abater do imposto de renda o valor doado ou patrocinado a projetos esportivos e paraesportivos aprovados pelo governo federal, dentro de limites anuais.",
+      "resumoDetalhe": "- Cria a dedução no imposto de renda dos valores dados como patrocínio ou doação a projetos esportivos e paraesportivos aprovados pelo governo, com limites diferentes para empresas e para pessoas físicas e limite maior para projetos de inclusão social pelo esporte.\n- Define o que conta como patrocínio e como doação, quais tipos de projeto podem receber o dinheiro, proíbe usar os recursos para pagar salário de atleta profissional e submete cada projeto, com orçamento detalhado, à aprovação de uma comissão técnica ligada ao ministério.\n- Exige prestação de contas, movimentação do dinheiro em conta bancária específica, publicação mensal da origem e do destino dos recursos no site do ministério e menção ao apoio institucional, com a Bandeira Nacional, na divulgação dos projetos.\n- Prevê que a Receita Federal fiscalize o benefício e seja informada dos valores captados, define infrações e punições, como a cobrança do imposto não pago e multa sobre a vantagem obtida indevidamente, deixa ao Poder Executivo fixar todo ano o teto das deduções e revoga a lei que hoje trata do incentivo ao esporte.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:28:03.877Z",
+      "reviewedAt": "2026-08-16T20:45:00.000Z"
+    },
+    "2481257": {
+      "sourceHash": "d6f79e1c2c46ebd6e58f6d7f864056279a37f3677598e716fd8eae6b30357e1a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova o relatório que aprecia a Política Nacional de Defesa, a Estratégia Nacional de Defesa e o Livro Branco de Defesa Nacional — documentos que orientam as prioridades e ações de defesa do país — e encaminha suas recomendações ao Presidente.",
+      "resumoDetalhe": "- Aprova o relatório da comissão do Congresso que acompanha a atividade de inteligência, e com isso o Congresso Nacional conclui a análise das versões atualizadas da Política Nacional de Defesa, da Estratégia Nacional de Defesa e do Livro Branco de Defesa Nacional.\n- Envia o relatório, com as sugestões e recomendações do Congresso Nacional, ao Presidente da República.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T14:47:31.000Z"
+    },
+    "2481721": {
+      "sourceHash": "9f9a6361dc5acfc79aa44f69ffea43369dd42f13ed26b87ff6b71b4c7d099fc7",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Define que o imposto sobre serviços, o ISS, cobrado sobre guincho dentro do município, guindaste e içamento é devido no lugar onde a obra é executada.",
+      "resumoDetalhe": "- Estabelece que o imposto sobre serviços, o ISS, incidente sobre guincho dentro do município, guindaste e içamento é devido no lugar onde a obra é executada.\n- Insere essa regra na lei que trata do imposto sobre serviços, deixando expresso no próprio texto legal qual é o lugar de cobrança nesses casos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:28:03.877Z",
+      "reviewedAt": "2026-08-16T20:45:00.000Z"
     }
   }
 }

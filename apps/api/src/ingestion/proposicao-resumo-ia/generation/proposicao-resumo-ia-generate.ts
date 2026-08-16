@@ -104,7 +104,9 @@ export async function executeProposicaoResumoIaGenerate(
     const allSources = await repository.loadProposicoesComputaveisSources();
 
     let filteredSources = allSources.filter((src) => {
-      if (config.year !== undefined && src.ano !== config.year) return false;
+      if (config.years !== undefined) {
+        if (src.ano === null || !config.years.includes(src.ano)) return false;
+      }
       if (
         config.externalIdsProposicao !== undefined &&
         !config.externalIdsProposicao.includes(src.externalIdProposicao)

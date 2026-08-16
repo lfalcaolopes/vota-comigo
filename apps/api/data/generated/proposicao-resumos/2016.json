@@ -1,6 +1,17 @@
 {
   "ano": 2016,
   "items": {
+    "2078693": {
+      "sourceHash": "72ee24ebbeb531193fc3f176028b0d8ef5b77ae6616f707d5f1f5798e43219be",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite que repasses federais continuem quando forem destinados ao combate à violência contra a mulher, mesmo se o Estado, Município ou Distrito Federal estiver inadimplente.",
+      "resumoDetalhe": "- Inclui as ações de combate à violência contra a mulher entre as exceções que autorizam transferências voluntárias — repasses por convênio, que a União não é obrigada a fazer — a Estados, Municípios e ao Distrito Federal mesmo quando esses entes estiverem inadimplentes.\n- Sustenta, na justificativa, que a inadimplência tem impedido o repasse de recursos para equipamentos como centros de referência e casas-abrigo para mulheres.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
     "2080237": {
       "sourceHash": "80921dc72633977de7cf5c17449f3f61a3cf217fd887308a14df4c20921e94d9",
       "generationStatus": "generated",
@@ -22,6 +33,61 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2080470": {
+      "sourceHash": "fd1a04e43555558e82b93a9a345ba2ffe80701d927800d777eb5edb8b3e090ff",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Dispensa templos de qualquer culto do IPTU (imposto sobre imóveis urbanos), mesmo quando o imóvel é apenas alugado pela entidade religiosa.",
+      "resumoDetalhe": "- Determina que o IPTU (imposto sobre imóveis urbanos) não incida sobre templos de qualquer culto.\n- Estende essa dispensa ao caso em que a entidade religiosa apenas aluga o imóvel, em vez de ser a dona dele.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "2082293": {
+      "sourceHash": "1564c3af4102ce5f3eb96c06a252a6dfa4bf8a1711f199ba739a2a49c4a5cd5f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Dispensa municípios das sanções por ultrapassar o limite de gastos com pessoal quando a receita cai por motivos específicos.",
+      "resumoDetalhe": "- Proíbe a aplicação de sanções ao município que ultrapassar o limite de despesa com pessoal quando houver queda real de receita em relação ao mesmo período do ano anterior.\n- Define como causas dessa queda a redução das transferências do Fundo de Participação dos Municípios provocada por isenções concedidas pela União e a diminuição das receitas de royalties e participações especiais, valores pagos pela exploração de recursos naturais.\n- Estabelece que a exceção só vale se a despesa total com pessoal do período atual estiver dentro do limite percentual previsto na Lei de Responsabilidade Fiscal, calculado com base na receita do mesmo período do ano anterior corrigida monetariamente.\n- Determina que a regra só produza efeitos a partir do ano financeiro seguinte.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "2082483": {
+      "sourceHash": "0468a210716cb5c10f271746f7bbdd0df44ccd0f13f6cdf195c2ffe5ce016e44",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um regime especial para pagamento de precatórios (dívidas do governo por decisões judiciais) com regras sobre depósitos em conta especial, atualização por índice de preços e sanções por atraso.",
+      "resumoDetalhe": "- Cria um regime especial de pagamento de precatórios pelo qual Estados, o Distrito Federal e Municípios podem optar por ato do Poder Executivo, com prazo máximo de duração definido.\n- Determina que o pagamento seja feito por depósitos mensais em conta especial administrada pelo Tribunal de Justiça, com valores calculados sobre a chamada receita corrente líquida e com regras sobre o que compõe e o que se deduz dessa receita.\n- Estabelece que os valores em atraso sejam corrigidos pelo IPCA-E (índice de preços) ou por índice que o substitua e remunerados por juros simples na mesma taxa da caderneta de poupança (conta de rendimento comum).\n- Reserva parcela mínima dos recursos para pagamento na ordem de chegada dos pedidos, permite usar o restante em acordos com desconto limitado e prevê medidas contra a falta de liberação dos recursos, como sequestro, compensação automática, responsabilização de autoridades, restrições a empréstimos e transferências e retenção de repasses pela União.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "2084401": {
+      "sourceHash": "b1fb4e163a06655231670c8750dbd6a3c4758ad29641c5c440b59f7ff2611816",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reorganiza ministérios e órgãos federais: extingue alguns, transforma e cria outros, e transfere competências, cargos, patrimônio e servidores.",
+      "resumoDetalhe": "- Extingue vários órgãos e ministérios e os cargos correspondentes no âmbito do governo federal.\n- Transforma e renomeia diversos ministérios, reorganizando suas estruturas e cargos.\n- Cria órgãos ministeriais voltados à transparência, fiscalização e controle e à segurança institucional.\n- Transfere competências, órgãos, entidades, patrimônio e servidores entre ministérios e determina que a reorganização ocorra por decretos que definem a estrutura e a distribuição de pessoal, desde que não implique aumento de despesa.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "2087377": {
+      "sourceHash": "5f33a381a24cd4cb2cad77eed83d3dc2000fb28c1f0cfb1f4bedcfb22630f989",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui um regime especial para pagamento de precatórios (dívidas do governo reconhecidas pela Justiça), definindo prioridades, formas de pagamento e sanções para os governos em atraso.",
+      "resumoDetalhe": "- Define prioridade de pagamento para dívidas de natureza alimentícia — como salários, pensões e aposentadorias — de pessoas idosas, com doença grave ou com deficiência, garantindo preferência até um limite previsto em lei, permitindo o fracionamento e determinando que o restante seja pago na ordem de chegada dos pedidos.\n- Estabelece que União, Estados, Distrito Federal e Municípios devem aferir periodicamente o comprometimento de suas receitas com o pagamento de precatórios, define o que se considera receita corrente líquida e autoriza o financiamento do excesso de débitos fora dos limites normais de endividamento e de vedação à vinculação de receitas.\n- Institui um regime especial para os entes em atraso, que exige depósitos regulares em conta especial administrada pelo Tribunal de Justiça local, prevê o uso de depósitos judiciais e de um fundo garantidor e permite a contratação de empréstimos fora dos limites usuais para quitar precatórios segundo um plano de pagamento.\n- Dispõe que parte dos recursos será destinada ao pagamento na ordem de chegada dos pedidos, respeitadas as preferências, autoriza acordos diretos com redução do crédito sob condições previstas na regulamentação, prevê medidas em caso de não liberação de recursos — como sequestro de contas, responsabilização do chefe do Executivo, retenção de repasses e restrições a empréstimos e transferências — e permite abater do precatório dívidas que o próprio credor tenha com o governo.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
     },
     "2088351": {
       "sourceHash": "490372eaf5dfda74e7b982a2f8adcc5489f59e74835fa9fbfff918dd8668f5fd",
@@ -67,6 +133,28 @@
       "generatedAt": "2026-07-07T21:23:14.848Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2118402": {
+      "sourceHash": "182b0ee2ac50e9ab6904c2ae9f5aefad4ecc0d36cb6d47c1439acc931b47e6b8",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reabre o prazo do RERCT, programa de regularização de bens mantidos no exterior, amplia quem pode aderir, fixa imposto e multa e prevê o fim da punição criminal para quem cumprir as condições.",
+      "resumoDetalhe": "- Reabre por tempo limitado a adesão ao RERCT (regime de regularização de recursos, bens e direitos no exterior), para declarar o que existia na data de corte, mediante pagamento de imposto e multa.\n- Estende o regime a quem não era residente no país na data de corte, desde que tenha morado aqui em período anterior, e ao espólio, o conjunto de bens deixado por pessoa falecida; afasta a aplicação a ocupantes de cargos públicos em exercício na data fixada.\n- Fixa uma alíquota de imposto específica para essas adesões, determina multa administrativa de valor igual ao imposto apurado e estabelece que parte da arrecadação dessa multa seja repassada a Estados, ao Distrito Federal e a Municípios.\n- Extingue a punição dos crimes relacionados aos recursos regularizados quando o contribuinte cumprir as condições antes de decisão criminal, permite que quem já havia aderido complemente sua declaração pagando imposto e multa sobre o valor adicional e entrega a regulamentação à Receita Federal.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "2118464": {
+      "sourceHash": "e2e73bd609418158f3e96838ceda81c4549da9f24a0ff1d14c43ef877ecd22cd",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Define regras para prorrogar e relicitar contratos de parceria em rodovias, ferrovias e aeroportos incluídos no Programa de Parcerias de Investimentos (PPI).",
+      "resumoDetalhe": "- Estabelece regras para prorrogar contratos de parceria nos setores rodoviário, ferroviário e aeroportuário incluídos no Programa de Parcerias de Investimentos (PPI), permitindo a prorrogação e a prorrogação antecipada (adiantamento da prorrogação antes do fim do contrato) e condicionando-as à apresentação de cronograma de investimentos, mecanismos para desestimular atrasos e estudo técnico que comprove a vantagem sobre fazer nova licitação.\n- Autoriza a relicitação por acordo entre as partes quando o contratado não atende às obrigações ou demonstra incapacidade, exigindo justificativas técnicas, adesão irrevogável do atual contratado, levantamento das indenizações devidas e termo aditivo que organize a suspensão de obrigações e a continuidade do serviço até a contratação do novo parceiro, além de vedar a participação do contratado anterior e de seus principais acionistas no novo certame.\n- Exige consulta pública e envio dos estudos ao Tribunal de Contas, prevê transferência de bens operacionais ao contratado e reversão dos bens à União ao final do contrato prorrogado, permite compensação de créditos e débitos entre a União e concessionários e admite a utilização da arbitragem para resolver disputas patrimoniais relacionadas aos contratos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:51:32.777Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
     "2121839": {
       "sourceHash": "a5f54454cfefc283b25b0a7fab295ef02d46f1f3834c77e076deb8d8715c6a0e",
       "generationStatus": "generated",
@@ -83,7 +171,7 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Altera os limites do Parque Nacional do Jamanxim e da Área de Proteção Ambiental do Tapajós no Pará, reservando áreas para uma ferrovia e uma rodovia e autorizando desapropriações.",
-      "resumoDetalhe": "- altera os limites do Parque Nacional do Jamanxim e da Área de Proteção Ambiental do Tapajós, definindo polígonos que são excluídos ou acrescidos às unidades\n- destina certas áreas aos leitos e às faixas de domínio de uma ferrovia e de uma rodovia, e determina que as partes não efetivamente usadas após a instalação da ferrovia retornem ao parque por ato do governo federal\n- exige que o empreendedor obtenha os licenciamentos ambientais e cumpra obrigações junto ao Sisnama (Sistema Nacional do Meio Ambiente, que reúne órgãos de licenciamento) e a outros órgãos federais para implantar e operar a ferrovia\n- declara de utilidade pública os imóveis rurais privados na área acrescida ao parque para desapropriação pelo Instituto Chico Mendes e autoriza o instituto a promover as desapropriações com caráter de urgência",
+      "resumoDetalhe": "- Altera os limites do Parque Nacional do Jamanxim e da Área de Proteção Ambiental do Tapajós, definindo polígonos que são excluídos ou acrescidos às unidades.\n- Destina certas áreas aos leitos e às faixas de domínio de uma ferrovia e de uma rodovia, e determina que as partes não efetivamente usadas após a instalação da ferrovia retornem ao parque por ato do governo federal.\n- Exige que o empreendedor obtenha os licenciamentos ambientais e cumpra obrigações junto ao Sisnama (Sistema Nacional do Meio Ambiente, que reúne órgãos de licenciamento) e a outros órgãos federais para implantar e operar a ferrovia.\n- Declara de utilidade pública os imóveis rurais privados na área acrescida ao parque para desapropriação pelo Instituto Chico Mendes e autoriza o instituto a promover as desapropriações com caráter de urgência.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:12:46.007Z",
