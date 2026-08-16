@@ -368,6 +368,71 @@ describe('executeProposicaoResumoIaGenerate', () => {
       expect(aiClient.generate).toHaveBeenCalledTimes(1);
       expect(aiClient.generate).toHaveBeenCalledWith(src2024);
     });
+
+    it('generates for sources matching any of the given years', async () => {
+      // Arrange
+      const src2024 = source({ externalIdProposicao: 42, ano: 2024 });
+      const src2025 = source({ externalIdProposicao: 43, ano: 2025 });
+      const src2026 = source({ externalIdProposicao: 44, ano: 2026 });
+      const aiClient = { generate: jest.fn().mockResolvedValue(okOutcome()) };
+      const fs = makeFileSystem();
+
+      // Act
+      await executeProposicaoResumoIaGenerate(['--year=2024,2026'], {
+        repository: fakeRepository([src2024, src2025, src2026]),
+        aiClient,
+        readdir: fs.readdir.bind(fs),
+        readFile: fs.readFile.bind(fs),
+        writeFile: fs.writeFile.bind(fs),
+        mkdir: fs.mkdir.bind(fs),
+      });
+
+      // Assert
+      expect(aiClient.generate).toHaveBeenCalledTimes(2);
+      expect(aiClient.generate).toHaveBeenCalledWith(src2024);
+      expect(aiClient.generate).toHaveBeenCalledWith(src2026);
+    });
+
+    it('skips sources with no ano', async () => {
+      // Arrange
+      const src2024 = source({ externalIdProposicao: 42, ano: 2024 });
+      const srcSemAno = source({ externalIdProposicao: 43, ano: null });
+      const aiClient = { generate: jest.fn().mockResolvedValue(okOutcome()) };
+      const fs = makeFileSystem();
+
+      // Act
+      await executeProposicaoResumoIaGenerate(['--year=2024'], {
+        repository: fakeRepository([src2024, srcSemAno]),
+        aiClient,
+        readdir: fs.readdir.bind(fs),
+        readFile: fs.readFile.bind(fs),
+        writeFile: fs.writeFile.bind(fs),
+        mkdir: fs.mkdir.bind(fs),
+      });
+
+      // Assert
+      expect(aiClient.generate).toHaveBeenCalledTimes(1);
+      expect(aiClient.generate).toHaveBeenCalledWith(src2024);
+    });
+
+    it('writes one file per year when several years are generated', async () => {
+      // Arrange
+      const src2024 = source({ externalIdProposicao: 42, ano: 2024 });
+      const src2026 = source({ externalIdProposicao: 44, ano: 2026 });
+      const fs = makeFileSystem();
+
+      // Act
+      await executeProposicaoResumoIaGenerate(
+        ['--year=2024,2026'],
+        baseOptions([src2024, src2026], okOutcome(), fs),
+      );
+
+      // Assert
+      expect([...fs.written.keys()].sort()).toEqual([
+        path.join(GENERATED_DIR, '2024.json'),
+        path.join(GENERATED_DIR, '2026.json'),
+      ]);
+    });
   });
 
   describe('with --limit filter', () => {
