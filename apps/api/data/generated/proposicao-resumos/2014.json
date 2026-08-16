@@ -1,6 +1,28 @@
 {
   "ano": 2014,
   "items": {
+    "609753": {
+      "sourceHash": "c91761532b0b44b28cde8423af1661d6f1ec469f94c0cb60ad403cda74858daa",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza aumentar o limite de gastos com pessoal para pagar quem trabalha diretamente na execução de políticas de saúde e educação, com regras temporárias para municípios e o Distrito Federal.",
+      "resumoDetalhe": "- Autoriza a ampliação dos limites de gasto com pessoal quando o dinheiro for usado para pagar quem trabalha diretamente na execução de políticas de saúde e de educação, conforme parâmetros a serem definidos por lei complementar, um tipo de lei que detalha regras da Constituição.\n- Permite que, enquanto essa lei complementar não existir, os municípios e o Distrito Federal ampliem o limite global de gasto com pessoal em uma fração a mais da receita corrente líquida, que é o total arrecadado pelo ente já descontadas certas transferências. Exige, para isso, que o gasto com pessoal da saúde e da educação tenha tido peso relevante nos períodos anteriores e que o acréscimo seja aplicado só nessas duas áreas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
+    },
+    "611966": {
+      "sourceHash": "ed12ef50d9f9982549ff763ee2d1e114e2c12d9d2df4e01e4f0b512d8a4166c7",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Garante ensino público gratuito na educação básica e, no ensino superior, apenas nos cursos regulares de graduação, mestrado e doutorado.",
+      "resumoDetalhe": "- Estabelece que a gratuidade do ensino público nos estabelecimentos oficiais vale para a educação básica e, no ensino superior, apenas para os cursos regulares de graduação, mestrado e doutorado, que são os cursos de pós-graduação acadêmica.\n- Apresenta como justificativa a intenção de deixar fora da gratuidade os cursos de extensão, treinamento, aperfeiçoamento e especialização, que segundo o autor atenderiam públicos restritos e seriam fonte de receita própria das instituições públicas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
+    },
     "622019": {
       "sourceHash": "b1f7ff58eb4e0911ad2a73d3897f389c443b8be54a9a43833b6d2c1c2dc94822",
       "generationStatus": "generated",
@@ -11,6 +33,50 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "622070": {
+      "sourceHash": "6097567ff96e02fc8736818fd0a96279a26b2ba819447eaf780b9d288427211b",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria e organiza o plano de carreiras e cargos da Defensoria Pública da União, definindo cargos, ingresso, desenvolvimento na carreira e regras de remuneração.",
+      "resumoDetalhe": "- Cria e estrutura o Plano de Carreiras e Cargos da Defensoria Pública da União, com as carreiras de Analista, de nível superior, e de Técnico, de nível médio, além de um grupo à parte para cargos trazidos de outros órgãos.\n- Organiza o ingresso e a movimentação na carreira por concurso público, com exigência de escolaridade e avanço por progressão e promoção conforme tempo de serviço, avaliações de desempenho e participação em capacitação.\n- Estabelece que a remuneração seja formada pelo salário base, por uma gratificação paga a quem está no efetivo exercício das atribuições do cargo e por um adicional para quem tem diplomas ou cursos reconhecidos, e define quando cada parcela é devida e se ela serve de base para outros benefícios.\n- Prevê a transferência e o enquadramento automático de servidores já em atividade na Defensoria, regula cessões e lotações, proíbe que os integrantes do plano exerçam advocacia e consultoria técnica e determina que as despesas saiam do orçamento da própria Defensoria.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
+    },
+    "622360": {
+      "sourceHash": "3d474322fc047045d0edfc4206f26c8b3e641195fbd1e77609539f45234f3418",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Garante que o MEI (microempreendedor individual) e as empresas do Simples Nacional recebam de volta o ICMS (imposto estadual sobre mercadorias) que outra empresa já recolheu por eles, e permite repassar esse crédito a terceiros.",
+      "resumoDetalhe": "- Garante ao microempreendedor individual e às empresas que optam pelo Simples Nacional a devolução ou o crédito do imposto quando ele já tiver sido recolhido por outra empresa da cadeia, no regime chamado substituição tributária.\n- Permite que esse crédito seja repassado a terceiros, na forma definida pelo conselho que administra o Simples Nacional.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
+    },
+    "796341": {
+      "sourceHash": "a84aa95f2de69858fa18f4c64742bf38ea4de4e2adc3937d66cffb61fdf982bf",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um plano de cargos e define regras de ingresso, remuneração e avaliação para servidores e militares dos antigos territórios federais que passam para um quadro de pessoal da União.",
+      "resumoDetalhe": "- Cria o Plano de Classificação de Cargos dos Ex-Territórios Federais, que reúne os cargos dos antigos territórios de Rondônia, Amapá e Roraima, organiza-os em níveis, classes e padrões e prevê avanço na carreira por progressão e promoção.\n- Fixa as tabelas de salários e soldos, institui uma gratificação de desempenho paga conforme a pontuação obtida em avaliação individual, prevê um valor provisório até sair a primeira avaliação, define como ela pode ser incorporada à aposentadoria e proíbe recebê-la junto com outra gratificação de desempenho.\n- Define quem pode pedir a inclusão nesse quadro da União e como o vínculo de emprego é reconhecido, mantém esses profissionais cedidos aos estados e municípios sem custo para quem os recebe até serem aproveitados pela União, autoriza convênios para delegar atos administrativos e disciplinares a esses entes e determina a apuração imediata de irregularidades no serviço público.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
+    },
+    "860923": {
+      "sourceHash": "a21e4afbe524890dcd68981efd9d9bbc6100d64414dc37c5c51ff4db16341ef1",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza a União a pagar parte dos juros de financiamentos e fixa um teto de R$ 452 bilhões para o total dos empréstimos que podem receber essa ajuda.",
+      "resumoDetalhe": "- Autoriza a União a conceder ajuda financeira, chamada subvenção econômica, na forma de equalização de taxas de juros: o governo cobre parte dos juros para baratear o empréstimo.\n- Fixa um limite para o valor total dos financiamentos que podem receber essa ajuda.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
     },
     "865929": {
       "sourceHash": "013ab0fba9daf9dceb29a86e2af5f3958712c6964b37fcd19cd0d03d8562579a",

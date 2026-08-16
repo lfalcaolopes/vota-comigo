@@ -1,6 +1,61 @@
 {
   "ano": 2013,
   "items": {
+    "575585": {
+      "sourceHash": "6083b7cadf93d8f839f0d068e175bbef3367506328d6f1a6e7eba42f99519256",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza contrato de trabalho por prazo determinado para jovens sem vínculo anterior, com regras sobre duração, registro e indenização.",
+      "resumoDetalhe": "- Cria contrato por prazo determinado para admissão de jovens em faixa etária definida e sem vínculo empregatício anterior, aplicável a qualquer atividade da empresa.\n- Proíbe usar esse contrato para substituir empregados regulares e permanentes.\n- Obriga o empregador a registrar na carteira de trabalho a condição de contratado por prazo determinado e a discriminar esses empregados separadamente na folha de pagamento.\n- Estabelece um prazo máximo de duração, permite prorrogações dentro desse limite e deixa que empregador e empregado combinem a indenização por rescisão antecipada e as multas por descumprimento; se as regras não forem cumpridas, o contrato passa a valer por prazo indeterminado.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
+    },
+    "578047": {
+      "sourceHash": "aa2e5438e517f8106e1b5710b3e10ebd4689991bcdd4e2cbc1d0f4abd0eedea7",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite que o MEI (microempreendedor individual) use a própria residência como sede do negócio quando não for necessário ter um local exclusivo.",
+      "resumoDetalhe": "- Autoriza o MEI (microempreendedor individual) a usar a própria casa como endereço do negócio quando a atividade não exigir um local separado para ser exercida.\n- Sustenta, na justificativa, que muitos empreendedores individuais poderiam trabalhar em casa, mas são impedidos por leis, sobretudo estaduais, que não permitem que o endereço do negócio seja igual ao da residência.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
+    },
+    "587872": {
+      "sourceHash": "0440bbdf2814ec12892b81d190c6f94aee533d1a37796a1ebf7da7395074fe60",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Inclui cinco municípios vizinhos ao Distrito Federal na RIDE (Região Integrada de Desenvolvimento do Distrito Federal e Entorno), a área que reúne o DF e cidades do entorno.",
+      "resumoDetalhe": "- Inclui os municípios de Alto Paraíso de Goiás, Gameleira de Goiás, São João d’Aliança e Flores, no Estado de Goiás, e de Cabeceira Grande, no Estado de Minas Gerais, na RIDE.\n- Vincula esses municípios ao programa especial de desenvolvimento do entorno do Distrito Federal, previsto na lei que a proposição altera.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
+    },
+    "596844": {
+      "sourceHash": "95cae060df3f5c8ee2a51f931fecc39624012a007d22fd3417478747f759168a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Restringe a saída temporária de presos, exigindo que já tenham cumprido parte da pena e não tenham condenação anterior, e limitando quantas vezes por ano e por quanto tempo podem sair.",
+      "resumoDetalhe": "- Passa a exigir, para conceder a saída temporária, que o preso já tenha cumprido uma parte mínima da pena e que seja primário, ou seja, que não tenha condenação anterior.\n- Fixa quantas vezes por ano a autorização pode ser dada e o prazo máximo de cada saída.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
+    },
+    "602633": {
+      "sourceHash": "a09ea6e09ebb2c5b4b5fe25c3b2d8f73a104edf516836fe78a41e1bd222bcb24",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Torna obrigatória a execução da parte do orçamento aprovada por emendas de parlamentares e fixa regras para os casos em que essa execução ficar inviável.",
+      "resumoDetalhe": "- Torna obrigatório executar as programações do orçamento aprovadas por emendas individuais dos parlamentares e reserva parte desse dinheiro para ações e serviços públicos de saúde.\n- Limita o total que as emendas individuais podem alcançar no projeto de orçamento e permite contar despesas de anos anteriores ainda não pagas, os chamados restos a pagar, para cumprir a execução obrigatória.\n- Cria um caminho para quando houver impedimento técnico, isto é, um obstáculo prático que impeça gastar o recurso: exige justificativas, prevê que o Legislativo indique para onde remanejar o dinheiro e permite que o Executivo conclua o remanejamento se o Congresso não decidir a tempo.\n- Regula os repasses obrigatórios da União a estados, Distrito Federal e municípios para executar essas programações, que ocorrem mesmo que o ente esteja em dívida com a União e não entram na conta usada para medir os limites de gasto com pessoal; permite ainda reduzir esses valores quando a revisão da arrecadação ameaçar a meta de resultado das contas públicas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
+    },
     "603566": {
       "sourceHash": "ba1d3334dc20fb99e49f7c46911f6f444895a16c5241399e69112207d81ece6c",
       "generationStatus": "generated",
@@ -11,6 +66,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T05:52:50.835Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "604557": {
+      "sourceHash": "919f1f879bb9ca44d881e672a6a5f01e2261528faca6b6efab4c78bcdc9002bb",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria a Política Nacional para conservar e usar de forma sustentável o Bioma Marinho Brasileiro, com planejamento do uso do mar, regras de pesca, incentivos econômicos e punição para quem destruir áreas costeiras.",
+      "resumoDetalhe": "- Institui a Política Nacional para a Conservação e o Uso Sustentável do Bioma Marinho Brasileiro, define o que é esse bioma e fixa seus objetivos, princípios e diretrizes.\n- Organiza os instrumentos e o comando da política, com planejamento do uso das áreas do mar, indicadores e relatórios de acompanhamento, audiências públicas e tarefas para órgãos federais e para uma comissão entre ministérios, sob coordenação técnica de um instituto federal de pesquisas oceânicas.\n- Regula a pesca e as áreas protegidas: exige que as autorizações de pesca sejam monitoradas, cria estatísticas e controle das capturas, permite fechar áreas à pesca, integra as unidades de conservação do mar ao sistema nacional e proíbe a captura intencional de mamíferos marinhos, aves, tartarugas, tubarões e raias.\n- Cria incentivos econômicos para a conservação, como pagamento por serviços ambientais, crédito e vantagens tributárias, exige compensação ambiental de empreendimentos e pune com detenção e multa quem destruir ou danificar manguezais, praias, ilhas e recifes.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:46:43.938Z",
+      "reviewedAt": "2026-08-16T18:30:00.000Z"
     }
   }
 }
