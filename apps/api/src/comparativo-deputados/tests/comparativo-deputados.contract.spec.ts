@@ -129,6 +129,8 @@ function createRepository(): DeputadosRepository {
         status: 'comparavel',
         percentualSobreMedianaUf: 50,
         gastoNaComparacaoCents: 200_000,
+        medianaNaComparacaoCents: 400_000,
+        tetoNaComparacaoCents: 96_338_973,
         siglaUf: 'MG',
         anos: [2023, 2024].map((year) => ({
           year,

@@ -583,6 +583,9 @@ export function createDeputadosRepository(
           percentualSobreMedianaUf:
             deputadoCotaComparacao.percentualSobreMedianaUf,
           gastoNaComparacaoCents: deputadoCotaComparacao.gastoNaComparacaoCents,
+          medianaNaComparacaoCents:
+            deputadoCotaComparacao.medianaNaComparacaoCents,
+          tetoNaComparacaoCents: deputadoCotaComparacao.tetoNaComparacaoCents,
           siglaUf: deputadoCotaComparacao.siglaUf,
           anosNaComparacao: deputadoCotaComparacao.anosNaComparacao,
           diasEmExercicio: deputadoCotaComparacao.diasEmExercicio,
@@ -604,6 +607,7 @@ export function createDeputadosRepository(
         row.status !== 'comparavel' ||
         row.percentualSobreMedianaUf === null ||
         row.gastoNaComparacaoCents === null ||
+        row.medianaNaComparacaoCents === null ||
         row.siglaUf === null ||
         row.anosNaComparacao === null ||
         row.diasEmExercicio === null ||
@@ -625,6 +629,8 @@ export function createDeputadosRepository(
           status: 'comparavel',
           percentualSobreMedianaUf: row.percentualSobreMedianaUf,
           gastoNaComparacaoCents: row.gastoNaComparacaoCents,
+          medianaNaComparacaoCents: row.medianaNaComparacaoCents,
+          tetoNaComparacaoCents: row.tetoNaComparacaoCents,
           siglaUf: row.siglaUf,
           anos,
           anosNaComparacao: row.anosNaComparacao,

@@ -192,6 +192,8 @@ function toValues(
     motivo: comparavel ? null : cota.motivo,
     percentualSobreMedianaUf: comparavel ? cota.percentualSobreMedianaUf : null,
     gastoNaComparacaoCents: comparavel ? cota.gastoNaComparacaoCents : null,
+    medianaNaComparacaoCents: comparavel ? cota.medianaNaComparacaoCents : null,
+    tetoNaComparacaoCents: comparavel ? cota.tetoNaComparacaoCents : null,
     siglaUf: comparavel ? cota.siglaUf : null,
     anosNaComparacao: comparavel ? cota.anosNaComparacao : null,
     diasEmExercicio: comparavel ? cota.diasEmExercicio : null,

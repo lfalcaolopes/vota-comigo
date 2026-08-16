@@ -14,10 +14,12 @@ import {
   toComparativoAviso,
   toComparativoNotaCobertura,
   type ComparativoDeputadosCell,
+  type ComparativoDeputadosCellBarra,
   type ComparativoDeputadosColumn,
   type ComparativoDeputadosRow,
 } from "./comparativo-deputados-grid";
 import { DeputadoAvatar } from "./deputado-avatar";
+import { deriveGastoCotaComparacaoEscala } from "./gasto-cota-comparacao";
 import {
   DIAS_EM_EXERCICIO_INDISPONIVEL,
   JANELA_FORA_DA_BASE_COMPARAVEL,
@@ -247,8 +249,12 @@ function ComparativoValor({ cell }: { cell: ComparativoDeputadosCell }) {
       >
         {cell.value}
       </p>
+      {cell.barra !== null ? <ComparativoBarra barra={cell.barra} /> : null}
       {cell.detail !== null ? (
         <p className="text-xs leading-normal text-muted">{cell.detail}</p>
+      ) : null}
+      {cell.note !== null ? (
+        <p className="text-xs leading-normal text-subtle">{cell.note}</p>
       ) : null}
       {cell.link !== null ? (
         <Link
@@ -260,6 +266,55 @@ function ComparativoValor({ cell }: { cell: ComparativoDeputadosCell }) {
           {cell.link.label} <span aria-hidden="true">→</span>
         </Link>
       ) : null}
+    </div>
+  );
+}
+
+// Mesma língua visual da barra do perfil, para onde o link da célula manda o
+// usuário: trilho é o teto, preenchimento é o gasto, marca é a mediana.
+function ComparativoBarra({ barra }: { barra: ComparativoDeputadosCellBarra }) {
+  const escala = deriveGastoCotaComparacaoEscala(
+    barra.gastoCents,
+    barra.medianaCents,
+    barra.tetoCents,
+  );
+  const [minValue, maxValue] = escala.domain;
+  const toPercent = (value: number) =>
+    maxValue === minValue
+      ? 0
+      : Math.min(
+          100,
+          Math.max(0, ((value - minValue) / (maxValue - minValue)) * 100),
+        );
+  const zero = toPercent(0);
+  const gasto = toPercent(barra.gastoCents);
+
+  return (
+    <div
+      aria-hidden="true"
+      className="relative h-2 w-full overflow-hidden rounded-full bg-border"
+      data-testid="comparativo-cota-barra"
+    >
+      <div
+        className="absolute inset-y-0 rounded-full bg-muted"
+        data-testid="comparativo-cota-barra-gasto"
+        style={{
+          left: `${Math.min(zero, gasto)}%`,
+          width: `${Math.abs(gasto - zero)}%`,
+        }}
+      />
+      {barra.tetoCents !== null && escala.tetoExcedido ? (
+        <div
+          className="absolute inset-y-0 w-0.5 bg-bg"
+          data-testid="comparativo-cota-barra-teto"
+          style={{ left: `${toPercent(barra.tetoCents)}%` }}
+        />
+      ) : null}
+      <div
+        className="absolute inset-y-0 w-0.5 bg-primary"
+        data-testid="comparativo-cota-barra-mediana"
+        style={{ left: `${toPercent(barra.medianaCents)}%` }}
+      />
     </div>
   );
 }

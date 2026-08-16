@@ -5,21 +5,29 @@ import { toEpochMillis } from '@/exercicio/rules/instante';
 
 import { limiteMensalCota } from './limite-mensal-cota';
 
+// Somar tetos anuais numa janela exige separar os dois motivos de não haver
+// teto: um ano sem exercício não consome direito nenhum e contribui zero,
+// enquanto uma UF sem tabela publicada torna o total indeterminável.
+export type TetoAnualCotaApuracao =
+  | { status: 'apurado'; amountCents: number; monthCount: number }
+  | { status: 'sem-exercicio' }
+  | { status: 'sem-tabela' };
+
 // O teto do ano é o direito acumulado, não a cobertura do dado: o saldo mensal
 // não usado acumula ao longo do exercício, então a régua do total anual é a
 // soma dos tetos dos meses em que o deputado teve direito à cota.
-export function tetoAnualCota(
+export function deriveTetoAnualCota(
   siglaUf: string | null,
   year: number,
   intervalos: readonly IntervaloExercicio[],
-): DeputadoCeapTetoUf | null {
+): TetoAnualCotaApuracao {
   if (siglaUf === null) {
-    return null;
+    return { status: 'sem-tabela' };
   }
 
   const meses = mesesEmExercicio(year, intervalos);
   if (meses.length === 0) {
-    return null;
+    return { status: 'sem-exercicio' };
   }
 
   let amountCents = 0;
@@ -31,12 +39,24 @@ export function tetoAnualCota(
       `${year}-${String(month).padStart(2, '0')}-01`,
     );
     if (limite === null) {
-      return null;
+      return { status: 'sem-tabela' };
     }
     amountCents += limite;
   }
 
-  return { amountCents, monthCount: meses.length };
+  return { status: 'apurado', amountCents, monthCount: meses.length };
+}
+
+export function tetoAnualCota(
+  siglaUf: string | null,
+  year: number,
+  intervalos: readonly IntervaloExercicio[],
+): DeputadoCeapTetoUf | null {
+  const apuracao = deriveTetoAnualCota(siglaUf, year, intervalos);
+
+  return apuracao.status === 'apurado'
+    ? { amountCents: apuracao.amountCents, monthCount: apuracao.monthCount }
+    : null;
 }
 
 function mesesEmExercicio(

@@ -49,6 +49,10 @@ function deputado(
       status: "comparavel",
       percentualSobreMedianaUf: percentual,
       gastoNaComparacaoCents,
+      medianaNaComparacaoCents: Math.round(
+        (gastoNaComparacaoCents / percentual) * 100,
+      ),
+      tetoNaComparacaoCents: 200_000_000,
       siglaUf: "SP",
       anos: [
         {
@@ -116,11 +120,14 @@ test.describe("comparativo de deputados a partir da listagem", () => {
     ).toBeVisible();
     await expect(visibleText(page, "R$ 800 mil/ano")).toBeVisible();
     await expect(
-      visibleText(page, "R$ 1,6 mi no total · 12% acima da mediana do SP"),
+      visibleText(page, "80% do teto · 12% acima da mediana do SP"),
+    ).toBeVisible();
+    await expect(
+      visibleText(page, "R$ 1,6 mi de R$ 2 mi em 2 anos"),
     ).toBeVisible();
     await expect(visibleText(page, "R$ 450 mil/ano")).toBeVisible();
     await expect(
-      visibleText(page, "R$ 900 mil no total · 12% abaixo da mediana do SP"),
+      visibleText(page, "45% do teto · 12% abaixo da mediana do SP"),
     ).toBeVisible();
   });
 

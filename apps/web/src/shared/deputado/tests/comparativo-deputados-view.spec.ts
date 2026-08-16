@@ -71,6 +71,8 @@ function deputado(
       status: "comparavel",
       percentualSobreMedianaUf: 112,
       gastoNaComparacaoCents: 110_000_000,
+      medianaNaComparacaoCents: 98_214_286,
+      tetoNaComparacaoCents: 140_000_000,
       siglaUf: "MG",
       anos: [
         {
@@ -151,7 +153,7 @@ describe("ComparativoDeputadosView", () => {
       expect(html).toContain('target="_blank"');
     });
 
-    it("mostra o gasto por ano com o total e a posição frente à mediana", () => {
+    it("mostra o gasto por ano com as duas réguas e o total", () => {
       // Arrange / Act
       const html = render({
         janelasCoincidem: true,
@@ -160,7 +162,21 @@ describe("ComparativoDeputadosView", () => {
 
       // Assert
       expect(html).toContain("R$ 550 mil/ano");
-      expect(html).toContain("R$ 1,1 mi no total · 12% acima da mediana do MG");
+      expect(html).toContain("79% do teto · 12% acima da mediana do MG");
+      expect(html).toContain("R$ 1,1 mi de R$ 1,4 mi em 2 anos");
+    });
+
+    it("desenha o gasto contra o teto com a mediana marcada no trilho", () => {
+      // Arrange / Act
+      const html = render({
+        janelasCoincidem: true,
+        items: [deputado(1), deputado(2)],
+      });
+
+      // Assert
+      expect(html).toContain('data-testid="comparativo-cota-barra"');
+      expect(html).toContain('data-testid="comparativo-cota-barra-gasto"');
+      expect(html).toContain('data-testid="comparativo-cota-barra-mediana"');
     });
 
     it("leva ao ano a ano no perfil em vez de detalhar os anos na célula", () => {

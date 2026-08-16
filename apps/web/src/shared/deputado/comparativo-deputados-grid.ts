@@ -42,10 +42,20 @@ export type ComparativoDeputadosCellLink = {
   label: string;
 };
 
+// A barra compara o gasto com as duas réguas na própria célula: o trilho é o
+// teto, a marca é a mediana. Formatar continua com a grade; pintar é da view.
+export type ComparativoDeputadosCellBarra = {
+  gastoCents: number;
+  medianaCents: number;
+  tetoCents: number | null;
+};
+
 export type ComparativoDeputadosCell = {
   externalIdDeputado: number;
   value: string;
   detail: string | null;
+  note: string | null;
+  barra: ComparativoDeputadosCellBarra | null;
   link: ComparativoDeputadosCellLink | null;
   lacuna: boolean;
 };
@@ -229,8 +239,12 @@ function toColumn(item: ComparativoDeputado): ComparativoDeputadosColumn {
 
 type CellContent = Omit<
   ComparativoDeputadosCell,
-  "externalIdDeputado" | "link"
-> & { link?: ComparativoDeputadosCellLink };
+  "externalIdDeputado" | "link" | "note" | "barra"
+> & {
+  link?: ComparativoDeputadosCellLink;
+  note?: string;
+  barra?: ComparativoDeputadosCellBarra;
+};
 
 function toRowCell(
   item: ComparativoDeputado,
@@ -250,6 +264,8 @@ function toCell(
   return {
     externalIdDeputado: item.externalIdDeputado,
     ...content,
+    note: content.note ?? null,
+    barra: content.barra ?? null,
     link: content.link ?? null,
   };
 }
@@ -377,16 +393,60 @@ function toCotaCell(
     };
   }
 
+  const posicao = `${toCotaPosicaoLabel(cota.percentualSobreMedianaUf)} do ${cota.siglaUf}`;
+  const teto = cota.tetoNaComparacaoCents;
+
   return {
     value: `${formatGastoCotaCompacto(
       cota.gastoNaComparacaoCents / cota.anosNaComparacao,
     )}/ano`,
-    detail: `${formatGastoCotaCompacto(cota.gastoNaComparacaoCents)} no total · ${toCotaPosicaoLabel(
-      cota.percentualSobreMedianaUf,
-    )} do ${cota.siglaUf}`,
+    detail:
+      teto === null
+        ? posicao
+        : `${toCotaTetoLabel(cota.gastoNaComparacaoCents, teto)} · ${posicao}`,
+    note: toCotaTotalLabel(
+      cota.gastoNaComparacaoCents,
+      teto,
+      cota.anosNaComparacao,
+    ),
+    barra: {
+      gastoCents: cota.gastoNaComparacaoCents,
+      medianaCents: cota.medianaNaComparacaoCents,
+      tetoCents: teto,
+    },
     ...(link !== null ? { link } : {}),
     lacuna: false,
   };
+}
+
+// Passar de 100% é legítimo: a tabela por UF não inclui os adicionais por
+// cargo, e a ressalva vive no HelpPopover da linha.
+function toCotaTetoLabel(
+  gastoNaComparacaoCents: number,
+  tetoNaComparacaoCents: number,
+): string {
+  if (gastoNaComparacaoCents <= 0) return "Nenhum valor consumido do teto";
+
+  const percentual = Math.round(
+    (gastoNaComparacaoCents / tetoNaComparacaoCents) * 100,
+  );
+
+  return `${percentual}% do teto`;
+}
+
+// O absoluto ancora o teto em reais e mantém o total conferível contra o
+// portal da Câmara, que publica ano a ano.
+function toCotaTotalLabel(
+  gastoNaComparacaoCents: number,
+  tetoNaComparacaoCents: number | null,
+  anosNaComparacao: number,
+): string {
+  const janela = `em ${anosNaComparacao} ${anosNaComparacao === 1 ? "ano" : "anos"}`;
+  const gasto = formatGastoCotaCompacto(gastoNaComparacaoCents);
+
+  if (tetoNaComparacaoCents === null) return `${gasto} no total ${janela}`;
+
+  return `${gasto} de ${formatGastoCotaCompacto(tetoNaComparacaoCents)} ${janela}`;
 }
 
 // O ano a ano vive no perfil, que mostra valores, categorias e as notas da

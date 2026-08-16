@@ -115,6 +115,8 @@ const COTA_MATERIALIZADA: ComparativoCota = {
   status: 'comparavel',
   percentualSobreMedianaUf: 72,
   gastoNaComparacaoCents: 720000,
+  medianaNaComparacaoCents: 1_000_000,
+  tetoNaComparacaoCents: 96_338_973,
   siglaUf: 'MG',
   anos: [
     {

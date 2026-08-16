@@ -121,6 +121,88 @@ describe('projeção da cota para o comparativo', () => {
     });
   });
 
+  describe('quando as réguas da comparação são publicadas', () => {
+    const TETO_MENSAL_MG_2023 = 4_188_651;
+    const TETO_MENSAL_MG_2026 = 4_764_591;
+
+    it('publica a soma das medianas usada como denominador', () => {
+      // Arrange
+      const source = cotaSource();
+
+      // Act
+      const cota = toComparativoCota({ ...JANELA_57, source });
+
+      // Assert
+      expect(cota).toMatchObject({ medianaNaComparacaoCents: 400_000 });
+    });
+
+    it('soma o teto dos meses com direito à cota nos anos comparados', () => {
+      // Arrange
+      const source = cotaSource();
+
+      // Act
+      const cota = toComparativoCota({ ...JANELA_57, source });
+
+      // Assert
+      expect(cota).toMatchObject({
+        tetoNaComparacaoCents: TETO_MENSAL_MG_2023 * (11 + 12),
+      });
+    });
+
+    it('corta o teto na cobertura, a mesma régua do gasto', () => {
+      // Arrange
+      const source = cotaSource({
+        anos: [anoSource(2026, { coveredThroughMonth: 6 })],
+      });
+
+      // Act
+      const cota = toComparativoCota({
+        dataInicioJanela: '2023-02-01',
+        dataFimJanela: '2027-01-31',
+        coberturaAte: '2026-06-30',
+        source,
+      });
+
+      // Assert
+      expect(cota).toMatchObject({
+        tetoNaComparacaoCents:
+          TETO_MENSAL_MG_2023 * 2 + TETO_MENSAL_MG_2026 * 4,
+      });
+    });
+
+    it('não deixa o ano sem exercício zerar o teto da janela inteira', () => {
+      // Arrange
+      const source = cotaSource({
+        anos: [anoSource(2023, { gastosJson: null }), anoSource(2024)],
+        intervalosExercicio: [
+          { openedAt: '2024-01-01T00:00:00.000Z', closedAt: null },
+        ],
+      });
+
+      // Act
+      const cota = toComparativoCota({ ...JANELA_57, source });
+
+      // Assert
+      expect(cota).toMatchObject({
+        tetoNaComparacaoCents: TETO_MENSAL_MG_2023 * 12,
+      });
+    });
+
+    it('deixa o teto indeterminável quando a UF não tem tabela publicada', () => {
+      // Arrange
+      const source = cotaSource({ siglaUf: 'XX' });
+
+      // Act
+      const cota = toComparativoCota({ ...JANELA_57, source });
+
+      // Assert
+      expect(cota).toMatchObject({
+        status: 'comparavel',
+        tetoNaComparacaoCents: null,
+      });
+    });
+  });
+
   describe('quando o deputado não esteve na Câmara em um dos anos', () => {
     it('mantém o ano na comparação com numerador zero e sem dias', () => {
       // Arrange

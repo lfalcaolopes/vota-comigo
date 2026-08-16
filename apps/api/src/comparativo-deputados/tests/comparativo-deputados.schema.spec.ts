@@ -37,6 +37,22 @@ function cotaAno(year: number, overrides: Record<string, unknown> = {}) {
   };
 }
 
+function cotaComparavel(overrides: Record<string, unknown> = {}) {
+  return {
+    status: 'comparavel',
+    percentualSobreMedianaUf: 88.5,
+    gastoNaComparacaoCents: 88_500,
+    medianaNaComparacaoCents: 100_000,
+    tetoNaComparacaoCents: 120_000,
+    siglaUf: 'MG',
+    anos: [cotaAno(2023), cotaAno(2024)],
+    anosNaComparacao: 2,
+    diasEmExercicio: 730,
+    diasNaComparacao: 730,
+    ...overrides,
+  };
+}
+
 function deputado(
   externalIdDeputado: number,
   janela: typeof JANELA_57_DISPONIVEL | typeof JANELA_INDISPONIVEL,
@@ -75,18 +91,7 @@ function deputado(
           coveredThroughDate: '2024-08-14',
         },
     orgaos: !disponivel ? null : { items: [], total: 0 },
-    cota: !disponivel
-      ? null
-      : {
-          status: 'comparavel',
-          percentualSobreMedianaUf: 88.5,
-          gastoNaComparacaoCents: 88_500,
-          siglaUf: 'MG',
-          anos: [cotaAno(2023), cotaAno(2024)],
-          anosNaComparacao: 2,
-          diasEmExercicio: 730,
-          diasNaComparacao: 730,
-        },
+    cota: !disponivel ? null : cotaComparavel(),
   };
 }
 
@@ -293,20 +298,95 @@ describe('contrato do comparativo de deputados', () => {
     it('recusa a cota comparável sem a UF da mediana', () => {
       // Arrange
       const item = deputado(220593, JANELA_57_DISPONIVEL);
+      const { siglaUf: _siglaUf, ...semSiglaUf } = cotaComparavel({
+        anos: [cotaAno(2023)],
+        anosNaComparacao: 1,
+        diasEmExercicio: 365,
+        diasNaComparacao: 365,
+      });
+      const response = {
+        janelasCoincidem: true,
+        items: [
+          { ...item, cota: semSiglaUf },
+          deputado(204554, JANELA_57_DISPONIVEL),
+        ],
+      };
+
+      // Act
+      const result = comparativoDeputadosResponseSchema.safeParse(response);
+
+      // Assert
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('quando as réguas da cota comparável são publicadas', () => {
+    it('aceita o teto nulo quando a tabela por UF não cobre a janela', () => {
+      // Arrange
+      const item = deputado(220593, JANELA_57_DISPONIVEL);
+      const response = {
+        janelasCoincidem: true,
+        items: [
+          { ...item, cota: cotaComparavel({ tetoNaComparacaoCents: null }) },
+          deputado(204554, JANELA_57_DISPONIVEL),
+        ],
+      };
+
+      // Act
+      const result = comparativoDeputadosResponseSchema.safeParse(response);
+
+      // Assert
+      expect(result.success).toBe(true);
+    });
+
+    it('recusa a cota comparável sem a soma das medianas', () => {
+      // Arrange
+      const item = deputado(220593, JANELA_57_DISPONIVEL);
+      const { medianaNaComparacaoCents: _mediana, ...semMediana } =
+        cotaComparavel();
+      const response = {
+        janelasCoincidem: true,
+        items: [
+          { ...item, cota: semMediana },
+          deputado(204554, JANELA_57_DISPONIVEL),
+        ],
+      };
+
+      // Act
+      const result = comparativoDeputadosResponseSchema.safeParse(response);
+
+      // Assert
+      expect(result.success).toBe(false);
+    });
+
+    it('recusa um percentual que não corresponde ao gasto sobre a mediana publicados', () => {
+      // Arrange
+      const item = deputado(220593, JANELA_57_DISPONIVEL);
       const response = {
         janelasCoincidem: true,
         items: [
           {
             ...item,
-            cota: {
-              status: 'comparavel',
-              percentualSobreMedianaUf: 88.5,
-              anos: [cotaAno(2023)],
-              anosNaComparacao: 1,
-              diasEmExercicio: 365,
-              diasNaComparacao: 365,
-            },
+            cota: cotaComparavel({ percentualSobreMedianaUf: 42 }),
           },
+          deputado(204554, JANELA_57_DISPONIVEL),
+        ],
+      };
+
+      // Act
+      const result = comparativoDeputadosResponseSchema.safeParse(response);
+
+      // Assert
+      expect(result.success).toBe(false);
+    });
+
+    it('recusa um teto zerado, que não é régua de nenhuma janela em exercício', () => {
+      // Arrange
+      const item = deputado(220593, JANELA_57_DISPONIVEL);
+      const response = {
+        janelasCoincidem: true,
+        items: [
+          { ...item, cota: cotaComparavel({ tetoNaComparacaoCents: 0 }) },
           deputado(204554, JANELA_57_DISPONIVEL),
         ],
       };
@@ -328,19 +408,12 @@ describe('contrato do comparativo de deputados', () => {
         items: [
           {
             ...item,
-            cota: {
-              status: 'comparavel',
-              percentualSobreMedianaUf: 88.5,
-              gastoNaComparacaoCents: 88_500,
-              siglaUf: 'MG',
+            cota: cotaComparavel({
               anos: [
                 cotaAno(2023, { percentualSobreMedianaUf: null }),
                 cotaAno(2024),
               ],
-              anosNaComparacao: 2,
-              diasEmExercicio: 730,
-              diasNaComparacao: 730,
-            },
+            }),
           },
           deputado(204554, JANELA_57_DISPONIVEL),
         ],
@@ -361,11 +434,7 @@ describe('contrato do comparativo de deputados', () => {
         items: [
           {
             ...item,
-            cota: {
-              status: 'comparavel',
-              percentualSobreMedianaUf: 88.5,
-              gastoNaComparacaoCents: 88_500,
-              siglaUf: 'MG',
+            cota: cotaComparavel({
               anos: [
                 cotaAno(2023),
                 cotaAno(2024, {
@@ -374,10 +443,7 @@ describe('contrato do comparativo de deputados', () => {
                   medianaUfDeputadoCount: null,
                 }),
               ],
-              anosNaComparacao: 2,
-              diasEmExercicio: 730,
-              diasNaComparacao: 730,
-            },
+            }),
           },
           deputado(204554, JANELA_57_DISPONIVEL),
         ],
@@ -398,16 +464,7 @@ describe('contrato do comparativo de deputados', () => {
         items: [
           {
             ...item,
-            cota: {
-              status: 'comparavel',
-              percentualSobreMedianaUf: 88.5,
-              gastoNaComparacaoCents: 88_500,
-              siglaUf: 'MG',
-              anos: [cotaAno(2023), cotaAno(2024)],
-              anosNaComparacao: 2,
-              diasEmExercicio: 500,
-              diasNaComparacao: 730,
-            },
+            cota: cotaComparavel({ diasEmExercicio: 500 }),
           },
           deputado(204554, JANELA_57_DISPONIVEL),
         ],

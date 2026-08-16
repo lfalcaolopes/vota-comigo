@@ -152,6 +152,31 @@ describe('passo da comparação de gasto de cota com a mediana da UF', () => {
       expect(result).toMatchObject({ inserted: 1 });
     });
 
+    it('materializa as duas réguas do gasto junto do agregado', async () => {
+      // Arrange
+      const { repository, replacements } = createRepository({
+        gastos: [
+          gasto({ year: 2023 }),
+          gasto({ year: 2024 }),
+          gasto({ year: 2025 }),
+        ],
+      });
+      const step = createDeputadoCotaComparacaoStep(
+        repository,
+        () => REFERENCIA,
+      );
+
+      // Act
+      await step.run(createContext());
+
+      // Assert
+      expect(replacements[0][0].cota).toMatchObject({
+        medianaNaComparacaoCents: 600000,
+        // Fevereiro de 2023 em diante, os três anos comparados ao teto de MG.
+        tetoNaComparacaoCents: 4_188_651 * 35,
+      });
+    });
+
     it('guarda o detalhamento ano a ano junto do agregado', async () => {
       // Arrange
       const { repository, replacements } = createRepository({

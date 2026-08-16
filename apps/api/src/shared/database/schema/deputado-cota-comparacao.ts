@@ -33,6 +33,15 @@ export const deputadoCotaComparacao = pgTable(
     gastoNaComparacaoCents: bigint('gasto_na_comparacao_cents', {
       mode: 'number',
     }),
+    // As duas réguas do gasto, somadas sobre os mesmos anos: a mediana dos
+    // pares e o teto do próprio direito. O teto fica nulo quando algum ano em
+    // comparação não tem tabela publicada para a UF.
+    medianaNaComparacaoCents: bigint('mediana_na_comparacao_cents', {
+      mode: 'number',
+    }),
+    tetoNaComparacaoCents: bigint('teto_na_comparacao_cents', {
+      mode: 'number',
+    }),
     siglaUf: text('sigla_uf'),
     anosNaComparacao: integer('anos_na_comparacao'),
     diasEmExercicio: integer('dias_em_exercicio'),

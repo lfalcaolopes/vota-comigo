@@ -54,6 +54,25 @@ function toIntervalosEpoch(
     .sort((a, b) => a.abertura - b.abertura);
 }
 
+// Recorta os intervalos pela janela para que uma régua derivada deles — o teto
+// da cota, por exemplo — enxergue o mesmo período que o numerador.
+export function clipIntervalosExercicio(
+  intervalos: readonly IntervaloExercicio[],
+  inicioEpoch: number,
+  fimEpoch: number,
+): readonly IntervaloExercicio[] {
+  return toIntervalosEpoch(intervalos)
+    .map((intervalo) => ({
+      abertura: Math.max(intervalo.abertura, inicioEpoch),
+      fechamento: Math.min(intervalo.fechamento, fimEpoch),
+    }))
+    .filter((intervalo) => intervalo.fechamento > intervalo.abertura)
+    .map((intervalo) => ({
+      openedAt: new Date(intervalo.abertura).toISOString(),
+      closedAt: new Date(intervalo.fechamento).toISOString(),
+    }));
+}
+
 export function somarDiasEmExercicio(
   intervalos: readonly IntervaloExercicio[],
   inicioEpoch: number,

@@ -1,6 +1,6 @@
 import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
 
-import { tetoAnualCota } from '../teto-anual-cota';
+import { deriveTetoAnualCota, tetoAnualCota } from '../teto-anual-cota';
 
 const anoInteiro = (year: number): readonly IntervaloExercicio[] => [
   { openedAt: `${year}-01-01T00:00:00.000Z`, closedAt: null },
@@ -201,6 +201,58 @@ describe('teto anual da cota parlamentar', () => {
 
       // Assert
       expect(teto).toBeNull();
+    });
+  });
+
+  describe('quando a apuração distingue os motivos de não haver teto', () => {
+    it('apura o teto do ano exercido', () => {
+      // Arrange
+      const intervalos = anoInteiro(2024);
+
+      // Act
+      const apuracao = deriveTetoAnualCota('SP', 2024, intervalos);
+
+      // Assert
+      expect(apuracao).toEqual({
+        status: 'apurado',
+        amountCents: 4283733 * 12,
+        monthCount: 12,
+      });
+    });
+
+    it('separa o ano sem exercício, que não consome direito nenhum', () => {
+      // Arrange
+      const intervalos: readonly IntervaloExercicio[] = [
+        {
+          openedAt: '2024-02-01T00:00:00.000Z',
+          closedAt: null,
+        },
+      ];
+
+      // Act
+      const apuracao = deriveTetoAnualCota('SP', 2023, intervalos);
+
+      // Assert
+      expect(apuracao).toEqual({ status: 'sem-exercicio' });
+    });
+
+    it('separa a UF sem tabela publicada, que torna o teto indeterminável', () => {
+      // Arrange
+      const intervalos = anoInteiro(2024);
+
+      // Act
+      const semUf = deriveTetoAnualCota(null, 2024, intervalos);
+      const foraDaTabela = deriveTetoAnualCota('XX', 2024, intervalos);
+      const anteriorAsVigencias = deriveTetoAnualCota(
+        'SP',
+        2013,
+        anoInteiro(2013),
+      );
+
+      // Assert
+      expect(semUf).toEqual({ status: 'sem-tabela' });
+      expect(foraDaTabela).toEqual({ status: 'sem-tabela' });
+      expect(anteriorAsVigencias).toEqual({ status: 'sem-tabela' });
     });
   });
 });

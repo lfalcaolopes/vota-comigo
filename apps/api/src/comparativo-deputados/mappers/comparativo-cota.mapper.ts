@@ -6,11 +6,16 @@ import type {
 import { somarGastosAteMes } from '@/deputados/mappers/deputado-ceap.mapper';
 import type { DeputadoCotaJanelaSource } from '@/deputados/types/deputados.types';
 import {
+  clipIntervalosExercicio,
   deriveJanelaExercicioAno,
   somarDiasEmExercicio,
 } from '@/exercicio/rules/exercicio-ano';
 import { toEpochMillis } from '@/exercicio/rules/instante';
 import { isAnoReposto } from '@/shared/cota/ano-reposto';
+import {
+  deriveTetoAnualCota,
+  type TetoAnualCotaApuracao,
+} from '@/shared/cota/teto-anual-cota';
 import {
   applyReposicaoSigepa,
   deriveSigepaDataStatus,
@@ -29,6 +34,7 @@ type AnoComSomas = {
   ano: ComparativoCotaAno;
   gastoCents: number;
   medianaCents: number;
+  teto: TetoAnualCotaApuracao;
 };
 
 export function toComparativoCota(
@@ -63,6 +69,8 @@ export function toComparativoCota(
     status: 'comparavel',
     percentualSobreMedianaUf: (somaGastoCents / somaMedianaCents) * 100,
     gastoNaComparacaoCents: somaGastoCents,
+    medianaNaComparacaoCents: somaMedianaCents,
+    tetoNaComparacaoCents: somarTetoNaComparacao(naComparacao),
     siglaUf: input.source.siglaUf,
     anos,
     anosNaComparacao: naComparacao.length,
@@ -75,6 +83,24 @@ export function toComparativoCota(
       0,
     ),
   };
+}
+
+// Um ano sem exercício contribui zero, mas basta um ano sem tabela publicada
+// para que a régua da janela inteira deixe de ser afirmável.
+function somarTetoNaComparacao(
+  naComparacao: readonly AnoComSomas[],
+): number | null {
+  if (naComparacao.some((item) => item.teto.status === 'sem-tabela')) {
+    return null;
+  }
+
+  const soma = naComparacao.reduce(
+    (total, item) =>
+      total + (item.teto.status === 'apurado' ? item.teto.amountCents : 0),
+    0,
+  );
+
+  return soma > 0 ? soma : null;
 }
 
 function toAnoComSomas(
@@ -134,6 +160,19 @@ function toAnoComSomas(
   );
   const medianaCents = medianaUf?.amountUsedCents ?? 0;
 
+  // O teto acompanha o gasto pela cauda — não conta meses ainda descobertos —,
+  // mas abre no ano civil, e não no início da janela: quem vinha da legislatura
+  // anterior tem direito em janeiro do ano de posse, e o gasto dele entra.
+  const teto = deriveTetoAnualCota(
+    input.source.siglaUf,
+    ano.year,
+    clipIntervalosExercicio(
+      input.source.intervalosExercicio,
+      Date.UTC(ano.year, 0, 1),
+      fimEpoch,
+    ),
+  );
+
   return {
     ano: {
       year: ano.year,
@@ -152,5 +191,6 @@ function toAnoComSomas(
     },
     gastoCents,
     medianaCents,
+    teto,
   };
 }

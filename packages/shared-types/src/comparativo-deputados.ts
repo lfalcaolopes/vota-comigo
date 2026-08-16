@@ -62,6 +62,12 @@ export const comparativoCotaSchema = z
       // O total pode ser negativo: cancelamentos de passagem aérea excedem o
       // gasto do período em janelas curtas.
       gastoNaComparacaoCents: z.number().int(),
+      // As duas réguas da comparação, ambas somadas sobre os mesmos anos do
+      // gasto: a mediana é o denominador do percentual, e o teto é o direito
+      // acumulado nos meses de exercício da janela. O teto é nulo quando algum
+      // ano em comparação não tem tabela publicada para a UF.
+      medianaNaComparacaoCents: z.number().int().positive(),
+      tetoNaComparacaoCents: z.number().int().positive().nullable(),
       siglaUf: z.string().length(2),
       anos: z.array(comparativoCotaAnoSchema),
       anosNaComparacao: z.number().int().positive(),
@@ -118,6 +124,17 @@ export const comparativoCotaSchema = z
         code: z.ZodIssueCode.custom,
         path: ["diasEmExercicio"],
         message: "diasEmExercicio deve somar os anos em comparação",
+      });
+    }
+
+    const percentualPublicado =
+      (cota.gastoNaComparacaoCents / cota.medianaNaComparacaoCents) * 100;
+    if (Math.abs(percentualPublicado - cota.percentualSobreMedianaUf) > 0.01) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["percentualSobreMedianaUf"],
+        message:
+          "percentualSobreMedianaUf deve ser o gasto sobre a mediana publicados",
       });
     }
 

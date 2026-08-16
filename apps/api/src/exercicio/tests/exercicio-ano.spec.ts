@@ -1,4 +1,5 @@
 import {
+  clipIntervalosExercicio,
   deriveJanelaExercicioAno,
   exerceuAnoInteiro,
 } from '../rules/exercicio-ano';
@@ -178,6 +179,98 @@ describe('exercicio de ano inteiro', () => {
 
       // Assert
       expect(inteiro).toBe(false);
+    });
+  });
+});
+
+describe('intervalos de exercicio recortados por uma janela', () => {
+  const inicio2024 = Date.UTC(2024, 0, 1);
+  const fim2024 = Date.UTC(2025, 0, 1);
+
+  describe('when an intervalo runs past the window', () => {
+    it('cuts it at both edges of the window', () => {
+      // Arrange
+      const intervalos = [
+        { openedAt: '2023-05-10T00:00:00.000Z', closedAt: null },
+      ];
+
+      // Act
+      const recortados = clipIntervalosExercicio(
+        intervalos,
+        inicio2024,
+        fim2024,
+      );
+
+      // Assert
+      expect(recortados).toEqual([
+        {
+          openedAt: '2024-01-01T00:00:00.000Z',
+          closedAt: '2025-01-01T00:00:00.000Z',
+        },
+      ]);
+    });
+  });
+
+  describe('when the window ends before the intervalo closes', () => {
+    it('closes the intervalo at the window edge', () => {
+      // Arrange
+      const intervalos = [
+        { openedAt: '2024-03-15T00:00:00.000Z', closedAt: null },
+      ];
+
+      // Act
+      const recortados = clipIntervalosExercicio(
+        intervalos,
+        inicio2024,
+        Date.UTC(2024, 6, 1),
+      );
+
+      // Assert
+      expect(recortados).toEqual([
+        {
+          openedAt: '2024-03-15T00:00:00.000Z',
+          closedAt: '2024-07-01T00:00:00.000Z',
+        },
+      ]);
+    });
+  });
+
+  describe('when an intervalo falls outside the window', () => {
+    it('drops it', () => {
+      // Arrange
+      const intervalos = [
+        {
+          openedAt: '2022-02-01T00:00:00.000Z',
+          closedAt: '2023-02-01T00:00:00.000Z',
+        },
+      ];
+
+      // Act
+      const recortados = clipIntervalosExercicio(
+        intervalos,
+        inicio2024,
+        fim2024,
+      );
+
+      // Assert
+      expect(recortados).toEqual([]);
+    });
+  });
+
+  describe('when an intervalo carries an unreadable instant', () => {
+    it('drops it instead of letting it cover the window', () => {
+      // Arrange
+      const intervalos = [{ openedAt: 'sem data', closedAt: null }];
+
+      // Act
+      const recortados = clipIntervalosExercicio(
+        intervalos,
+        inicio2024,
+        fim2024,
+      );
+
+      // Assert
+      expect(recortados).toEqual([]);
     });
   });
 });
