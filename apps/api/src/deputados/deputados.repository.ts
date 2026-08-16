@@ -22,6 +22,7 @@ import {
   cotaCobertura,
   cotaMedianaUf,
   deputado,
+  deputadoCotaComparacao,
   deputadoExercicioIntervalo,
   deputadoHistorico,
   deputadoOrgao,
@@ -34,7 +35,11 @@ import {
   partido,
 } from '@/shared/database/schema';
 
-import type { DeputadoFaixaEtaria } from '@vota-comigo/shared-types';
+import type {
+  ComparativoCotaAno,
+  CotaSemComparacaoMotivo,
+  DeputadoFaixaEtaria,
+} from '@vota-comigo/shared-types';
 
 import { deriveIntervaloNascimento } from './rules/faixa-etaria';
 import {
@@ -46,8 +51,9 @@ import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
 
 import type {
   DeputadoCardRow,
+  CoberturaCotaMensalRow,
+  CotaComparacaoRow,
   DeputadoCeapSource,
-  DeputadoCotaJanelaSource,
   DeputadoProposicoesAssinadasJanelaSource,
   DeputadoLegislaturaPeriodoSource,
   DeputadosFeedFilters,
@@ -83,10 +89,10 @@ export interface DeputadosRepository {
     deputadoId: string,
     year: number,
   ): Promise<DeputadoCeapSource>;
-  loadDeputadoCotaJanelaSource(
-    deputadoId: string,
+  loadCoberturaCotaMensal(
     years: readonly number[],
-  ): Promise<DeputadoCotaJanelaSource>;
+  ): Promise<readonly CoberturaCotaMensalRow[]>;
+  loadCotaComparacao(deputadoId: string): Promise<CotaComparacaoRow | null>;
   loadDeputadoOrgaos(
     deputadoId: string,
     year: number,
@@ -556,103 +562,75 @@ export function createDeputadosRepository(
       };
     },
 
-    async loadDeputadoCotaJanelaSource(deputadoId, years) {
-      const [
-        coberturas,
-        gastoRows,
-        gastoSigepaRows,
-        intervalosExercicio,
-        legislaturas,
-      ] = await Promise.all([
-        db
-          .select({
-            year: cotaCobertura.year,
-            coveredThroughMonth: cotaCobertura.coveredThroughMonth,
-            sigepaReposto: cotaCobertura.sigepaReposto,
-            sigepaCoveredThroughMonth: cotaCobertura.sigepaCoveredThroughMonth,
-          })
-          .from(cotaCobertura)
-          .where(inArray(cotaCobertura.year, [...years])),
-        db
-          .select({
-            year: deputadoGastoCota.year,
-            siglaUf: deputadoGastoCota.siglaUf,
-            gastosJson: deputadoGastoCota.gastosJson,
-          })
-          .from(deputadoGastoCota)
-          .where(
-            and(
-              eq(deputadoGastoCota.deputadoId, deputadoId),
-              inArray(deputadoGastoCota.year, [...years]),
-            ),
-          ),
-        db
-          .select({
-            year: deputadoGastoCotaSigepa.year,
-            gastosJson: deputadoGastoCotaSigepa.gastosJson,
-          })
-          .from(deputadoGastoCotaSigepa)
-          .where(
-            and(
-              eq(deputadoGastoCotaSigepa.deputadoId, deputadoId),
-              inArray(deputadoGastoCotaSigepa.year, [...years]),
-            ),
-          ),
-        loadIntervalosExercicioRows(deputadoId),
-        loadLegislaturasRows(),
-      ]);
+    async loadCoberturaCotaMensal(years) {
+      const rows = await db
+        .select({
+          year: cotaCobertura.year,
+          coveredThroughMonth: cotaCobertura.coveredThroughMonth,
+        })
+        .from(cotaCobertura)
+        .where(inArray(cotaCobertura.year, [...years]));
 
-      const siglaUf =
-        [...gastoRows].sort((a, b) => b.year - a.year)[0]?.siglaUf ?? null;
-      const medianaRows =
-        siglaUf === null
-          ? []
-          : await db
-              .select({
-                year: cotaMedianaUf.year,
-                amountUsedCents: cotaMedianaUf.valorUtilizadoMediana,
-                deputadoCount: cotaMedianaUf.deputadoCount,
-              })
-              .from(cotaMedianaUf)
-              .where(
-                and(
-                  eq(cotaMedianaUf.siglaUf, siglaUf),
-                  inArray(cotaMedianaUf.year, [...years]),
-                ),
-              );
+      return rows;
+    },
+
+    async loadCotaComparacao(deputadoId) {
+      const rows = await db
+        .select({
+          legislatura: deputadoCotaComparacao.legislatura,
+          status: deputadoCotaComparacao.status,
+          motivo: deputadoCotaComparacao.motivo,
+          percentualSobreMedianaUf:
+            deputadoCotaComparacao.percentualSobreMedianaUf,
+          gastoNaComparacaoCents: deputadoCotaComparacao.gastoNaComparacaoCents,
+          siglaUf: deputadoCotaComparacao.siglaUf,
+          anosNaComparacao: deputadoCotaComparacao.anosNaComparacao,
+          diasEmExercicio: deputadoCotaComparacao.diasEmExercicio,
+          diasNaComparacao: deputadoCotaComparacao.diasNaComparacao,
+          anosJson: deputadoCotaComparacao.anosJson,
+        })
+        .from(deputadoCotaComparacao)
+        .where(eq(deputadoCotaComparacao.deputadoId, deputadoId))
+        .limit(1);
+
+      const row = rows.at(0);
+      if (row === undefined) {
+        return null;
+      }
+
+      const anos = row.anosJson as ComparativoCotaAno[];
+
+      if (
+        row.status !== 'comparavel' ||
+        row.percentualSobreMedianaUf === null ||
+        row.gastoNaComparacaoCents === null ||
+        row.siglaUf === null ||
+        row.anosNaComparacao === null ||
+        row.diasEmExercicio === null ||
+        row.diasNaComparacao === null
+      ) {
+        return {
+          legislatura: row.legislatura,
+          cota: {
+            status: 'sem-comparacao',
+            motivo: (row.motivo ?? 'sem-gastos') as CotaSemComparacaoMotivo,
+            anos,
+          },
+        };
+      }
 
       return {
-        siglaUf,
-        anos: years.map((year) => {
-          const mediana = medianaRows.find((row) => row.year === year);
-          const cobertura = coberturas.find((row) => row.year === year);
-          return {
-            year,
-            coveredThroughMonth: cobertura?.coveredThroughMonth ?? null,
-            gastosJson:
-              (gastoRows.find((row) => row.year === year)?.gastosJson as
-                | Record<string, Record<string, number>>
-                | undefined) ?? null,
-            sigepaReposto: cobertura?.sigepaReposto ?? false,
-            sigepaCoveredThroughMonth:
-              cobertura?.sigepaCoveredThroughMonth ?? null,
-            gastosSigepaJson:
-              (gastoSigepaRows.find((row) => row.year === year)?.gastosJson as
-                | Record<string, number>
-                | undefined) ?? null,
-            medianaUf:
-              mediana === undefined
-                ? null
-                : {
-                    amountUsedCents: mediana.amountUsedCents,
-                    deputadoCount: mediana.deputadoCount,
-                  },
-          };
-        }),
-        intervalosExercicio,
-        datasInicioLegislatura: legislaturas.map(
-          (legislaturaRow) => legislaturaRow.dataInicio,
-        ),
+        legislatura: row.legislatura,
+        cota: {
+          status: 'comparavel',
+          percentualSobreMedianaUf: row.percentualSobreMedianaUf,
+          gastoNaComparacaoCents: row.gastoNaComparacaoCents,
+          siglaUf: row.siglaUf,
+          anos,
+          anosNaComparacao: row.anosNaComparacao,
+          diasEmExercicio: row.diasEmExercicio,
+          diasNaComparacao: row.diasNaComparacao,
+        },
       };
     },
 

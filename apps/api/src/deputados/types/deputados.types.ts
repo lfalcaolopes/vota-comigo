@@ -1,4 +1,5 @@
 import type {
+  ComparativoCota,
   DeputadoFaixaEtaria,
   DeputadoSexo,
 } from '@vota-comigo/shared-types';
@@ -96,6 +97,18 @@ export type DeputadoProposicoesAssinadasJanelaSource = {
 // A UF é uma só para a janela inteira — a do ano mais recente com linha de
 // gasto —, porque a comparação contra a mediana precisa de um estado, e o
 // deputado que mudou de UF não tem duas medianas somáveis.
+export type CoberturaCotaMensalRow = {
+  year: number;
+  coveredThroughMonth: number;
+};
+
+// Materializada por deputado na ingestão: a legislatura acompanha a comparação
+// porque uma janela recalculada em runtime pode já ter virado de legislatura.
+export type CotaComparacaoRow = {
+  legislatura: number;
+  cota: ComparativoCota;
+};
+
 export type DeputadoCotaJanelaSource = {
   siglaUf: string | null;
   anos: readonly {

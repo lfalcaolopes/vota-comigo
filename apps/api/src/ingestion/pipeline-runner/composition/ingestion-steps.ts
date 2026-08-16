@@ -46,6 +46,8 @@ import { createDeputadoGastoCotaRepository } from '../steps/deputado-gasto-cota/
 import { createDeputadoGastoCotaStep } from '../steps/deputado-gasto-cota/deputado-gasto-cota.step';
 import { createCotaMedianaUfRepository } from '../steps/cota-mediana-uf/cota-mediana-uf.repository';
 import { createCotaMedianaUfStep } from '../steps/cota-mediana-uf/cota-mediana-uf.step';
+import { createDeputadoCotaComparacaoRepository } from '../steps/deputado-cota-comparacao/deputado-cota-comparacao.repository';
+import { createDeputadoCotaComparacaoStep } from '../steps/deputado-cota-comparacao/deputado-cota-comparacao.step';
 import { createIngestionStepRunRepository } from '../run-record/ingestion-step-run.repository';
 import { createDeputadoExercicioIntervaloRepository } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.repository';
 import { createDeputadoExercicioIntervaloStep } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.step';
@@ -74,6 +76,7 @@ import {
   dryRunDeputadoPresencaRepository,
   dryRunDeputadoExercicioIntervaloRepository,
   dryRunCotaMedianaUfRepository,
+  dryRunDeputadoCotaComparacaoRepository,
   dryRunDeputadoGastoCotaRepository,
   dryRunGastoCotaSigepaDeps,
   dryRunProposicaoLookup,
@@ -146,6 +149,9 @@ export function createIngestionSteps(
         ),
         createDeputadoGastoCotaSigepaStep(dryRunGastoCotaSigepaDeps),
         createCotaMedianaUfStep(dryRunCotaMedianaUfRepository),
+        createDeputadoCotaComparacaoStep(
+          dryRunDeputadoCotaComparacaoRepository,
+        ),
         createSanityStep(dryRunSanityRepository),
       ],
       close: () => Promise.resolve(),
@@ -219,6 +225,9 @@ export function createIngestionSteps(
       refetch: input.refetchSigepa,
     }),
     createCotaMedianaUfStep(createCotaMedianaUfRepository(db)),
+    createDeputadoCotaComparacaoStep(
+      createDeputadoCotaComparacaoRepository(db),
+    ),
     createSanityStep(createSanityRepository(db)),
   ];
 

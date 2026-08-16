@@ -36,12 +36,8 @@ function fakeRepository(
       assinaturasJson: null,
       coveredThroughDate: null,
     }),
-    loadDeputadoCotaJanelaSource: async () => ({
-      siglaUf: null,
-      anos: [],
-      intervalosExercicio: [],
-      datasInicioLegislatura: [],
-    }),
+    loadCoberturaCotaMensal: async () => [],
+    loadCotaComparacao: async () => null,
     loadDeputadoOrgaosNaJanela: async () => [],
     loadDeputadoProposicoesAssinadasJanela: async () => ({
       anos: [],

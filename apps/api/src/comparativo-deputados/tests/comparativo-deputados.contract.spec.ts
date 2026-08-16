@@ -121,21 +121,28 @@ function createRepository(): DeputadosRepository {
       ],
       datasInicioLegislatura: ['2023-02-01T00:00:00.000Z'],
     }),
-    loadDeputadoCotaJanelaSource: async (_deputadoId, years) => ({
-      siglaUf: 'MG',
-      anos: years.map((year) => ({
-        year,
-        coveredThroughMonth: 12,
-        gastosJson: { '1': { '1': 100_000 } },
-        sigepaReposto: false,
-        sigepaCoveredThroughMonth: null,
-        gastosSigepaJson: null,
-        medianaUf: { amountUsedCents: 200_000, deputadoCount: 53 },
-      })),
-      intervalosExercicio: [
-        { openedAt: '2023-02-01T00:00:00.000Z', closedAt: null },
-      ],
-      datasInicioLegislatura: ['2023-02-01T00:00:00.000Z'],
+    loadCoberturaCotaMensal: async (years) =>
+      years.map((year) => ({ year, coveredThroughMonth: 12 })),
+    loadCotaComparacao: async () => ({
+      legislatura: 57,
+      cota: {
+        status: 'comparavel',
+        percentualSobreMedianaUf: 50,
+        gastoNaComparacaoCents: 200_000,
+        siglaUf: 'MG',
+        anos: [2023, 2024].map((year) => ({
+          year,
+          naComparacao: true,
+          percentualSobreMedianaUf: 50,
+          diasEmExercicio: 300,
+          diasNoAno: 334,
+          medianaUfDeputadoCount: 53,
+          dadoIncompleto: false,
+        })),
+        anosNaComparacao: 2,
+        diasEmExercicio: 600,
+        diasNaComparacao: 668,
+      },
     }),
     loadDeputadoOrgaos: async () => [],
     loadDeputadoOrgaosNaJanela: async () => [

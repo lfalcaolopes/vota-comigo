@@ -38,5 +38,7 @@ export const ingestionStepDescriptors: readonly IngestionStepDescriptor[] = [
   },
   // Depois dos intervalos: a mediana só considera quem exerceu o ano inteiro.
   { name: 'cota_mediana_uf', scope: 'single', source: 'derived' },
+  // Depois da mediana: é ela o denominador da comparação de cada deputado.
+  { name: 'deputado_cota_comparacao', scope: 'single', source: 'derived' },
   { name: 'sanity', scope: 'single', source: 'db' },
 ];

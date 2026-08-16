@@ -4,10 +4,13 @@ const DIA_EM_MILLIS = 24 * 60 * 60 * 1000;
 
 export type CoberturaCotaAno = { year: number; coveredThroughMonth: number };
 
-export type DeriveCoberturaJanelaInput = {
+export type DeriveCoberturaCotaInput = {
   dataInicioJanela: string;
   dataFimJanela: string;
   coberturaCotaMensal: readonly CoberturaCotaAno[];
+};
+
+export type DeriveCoberturaJanelaInput = DeriveCoberturaCotaInput & {
   coveredThroughDateAssinaturas: string | null;
 };
 
@@ -63,6 +66,21 @@ function deriveCotaCoberturaAte(
   }
 
   return coberturaAteEpoch;
+}
+
+// A comparação de gasto de cota só pode ser cortada pelo que a própria fonte da
+// cota cobre: encurtá-la porque outra ingestão ficou para trás moveria o
+// denominador por um motivo sem relação nenhuma com gasto.
+export function deriveCoberturaCotaAte(
+  input: DeriveCoberturaCotaInput,
+): string {
+  return toDateOnly(
+    deriveCotaCoberturaAte(
+      getYear(input.dataInicioJanela),
+      getYear(input.dataFimJanela),
+      input.coberturaCotaMensal,
+    ),
+  );
 }
 
 export function deriveCoberturaJanela(

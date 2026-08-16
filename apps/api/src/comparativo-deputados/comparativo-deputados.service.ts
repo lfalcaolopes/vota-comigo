@@ -19,12 +19,12 @@ import type {
 } from '@/deputados/types/deputados.types';
 import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
 
-import { toComparativoCota } from './mappers/comparativo-cota.mapper';
 import { toComparativoDeputado } from './mappers/comparativo-deputado.mapper';
 import { toComparativoOrgaos } from './mappers/comparativo-orgaos.mapper';
 import { toComparativoProposicoesAssinadas } from './mappers/comparativo-proposicoes-assinadas.mapper';
 import { deriveCoberturaJanela } from './rules/cobertura-janela';
 import {
+  deriveAnosDaJanela,
   deriveJanelaComparativo,
   type LegislaturaPeriodo,
 } from './rules/janela-comparativo';
@@ -43,27 +43,6 @@ function toLegislaturasJanela(
     dataInicio: legislatura.dataInicio,
     dataFim: legislatura.dataFim,
   }));
-}
-
-function getYear(date: string): number {
-  return Number(date.slice(0, 4));
-}
-
-// A janela de quem segue em exercício vai até o fim da legislatura, que ainda
-// não aconteceu; perguntar pela cobertura de um ano futuro só produziria um
-// buraco falso. O dado parcial do ano corrente é da alçada da coberturaAte.
-function toAnosDaJanela(
-  dataInicio: string,
-  dataFim: string,
-  referencia: string,
-): readonly number[] {
-  const anoInicio = getYear(dataInicio);
-  const anoFim = Math.min(getYear(dataFim), getYear(referencia));
-
-  return Array.from(
-    { length: Math.max(0, anoFim - anoInicio + 1) },
-    (_, index) => anoInicio + index,
-  );
 }
 
 @Injectable()
@@ -157,40 +136,37 @@ export class ComparativoDeputadosService {
       });
     }
 
-    const years = toAnosDaJanela(
+    const years = deriveAnosDaJanela(
       janela.dataInicio,
       janela.dataFim,
       referencia.toISOString(),
     );
 
-    const [proposicoesSource, orgaosSource, cotaSource, resumoPresencaRow] =
-      await Promise.all([
-        this.repository.loadDeputadoProposicoesAssinadasJanela(
-          source.id,
-          years,
-        ),
-        this.repository.loadDeputadoOrgaosNaJanela(
-          source.id,
-          janela.dataInicio.slice(0, 10),
-          janela.dataFim.slice(0, 10),
-        ),
-        this.repository.loadDeputadoCotaJanelaSource(source.id, years),
-        this.repository.loadResumoPresencaDaLegislatura(
-          source.id,
-          janela.legislatura,
-        ),
-      ]);
+    const [
+      proposicoesSource,
+      orgaosSource,
+      coberturaCotaMensal,
+      cotaComparacao,
+      resumoPresencaRow,
+    ] = await Promise.all([
+      this.repository.loadDeputadoProposicoesAssinadasJanela(source.id, years),
+      this.repository.loadDeputadoOrgaosNaJanela(
+        source.id,
+        janela.dataInicio.slice(0, 10),
+        janela.dataFim.slice(0, 10),
+      ),
+      this.repository.loadCoberturaCotaMensal(years),
+      this.repository.loadCotaComparacao(source.id),
+      this.repository.loadResumoPresencaDaLegislatura(
+        source.id,
+        janela.legislatura,
+      ),
+    ]);
 
-    // A cobertura vem antes da cota: os dias de cada ano param onde a fonte
-    // para, e é a cobertura que sabe onde isso é.
     const cobertura = deriveCoberturaJanela({
       dataInicioJanela: janela.dataInicio,
       dataFimJanela: janela.dataFim,
-      coberturaCotaMensal: cotaSource.anos.flatMap((ano) =>
-        ano.coveredThroughMonth === null
-          ? []
-          : [{ year: ano.year, coveredThroughMonth: ano.coveredThroughMonth }],
-      ),
+      coberturaCotaMensal,
       coveredThroughDateAssinaturas: proposicoesSource.coveredThroughDate,
     });
     const janelaComCobertura: ComparativoJanela = { ...janela, ...cobertura };
@@ -203,12 +179,13 @@ export class ComparativoDeputadosService {
       proposicoesAssinadas:
         toComparativoProposicoesAssinadas(proposicoesSource),
       orgaos: toComparativoOrgaos(orgaosSource),
-      cota: toComparativoCota({
-        dataInicioJanela: janela.dataInicio,
-        dataFimJanela: janela.dataFim,
-        coberturaAte: cobertura.coberturaAte,
-        source: cotaSource,
-      }),
+      // A comparação de cota é materializada na ingestão; uma linha de outra
+      // legislatura é resto de ingestão anterior e não descreve esta janela.
+      cota:
+        cotaComparacao !== null &&
+        cotaComparacao.legislatura === janela.legislatura
+          ? cotaComparacao.cota
+          : null,
     });
   }
 

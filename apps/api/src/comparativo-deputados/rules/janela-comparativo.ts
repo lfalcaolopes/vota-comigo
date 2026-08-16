@@ -134,6 +134,26 @@ function deriveJanelaFallback(
   };
 }
 
+// A janela de quem segue em exercício vai até o fim da legislatura, que ainda
+// não aconteceu; perguntar pela cobertura de um ano futuro só produziria um
+// buraco falso. O dado parcial do ano corrente é da alçada da coberturaAte.
+export function deriveAnosDaJanela(
+  dataInicio: string,
+  dataFim: string,
+  referencia: string,
+): readonly number[] {
+  const anoInicio = Number(dataInicio.slice(0, 4));
+  const anoFim = Math.min(
+    Number(dataFim.slice(0, 4)),
+    Number(referencia.slice(0, 4)),
+  );
+
+  return Array.from(
+    { length: Math.max(0, anoFim - anoInicio + 1) },
+    (_, index) => anoInicio + index,
+  );
+}
+
 export function deriveJanelaComparativo(
   input: DeriveJanelaComparativoInput,
 ): JanelaComparativoSemCobertura {

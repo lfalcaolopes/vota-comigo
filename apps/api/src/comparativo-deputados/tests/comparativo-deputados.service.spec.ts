@@ -1,5 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 
+import type { ComparativoCota } from '@vota-comigo/shared-types';
+
 import type { DeputadosRepository } from '@/deputados/deputados.repository';
 import type {
   DeputadoPerfilSource,
@@ -86,12 +88,8 @@ function createRepository(
       intervalosExercicio: [],
       datasInicioLegislatura: [],
     }),
-    loadDeputadoCotaJanelaSource: async () => ({
-      siglaUf: null,
-      anos: [],
-      intervalosExercicio: [],
-      datasInicioLegislatura: [],
-    }),
+    loadCoberturaCotaMensal: async () => [],
+    loadCotaComparacao: async () => null,
     loadDeputadoOrgaos: async () => [],
     loadDeputadoOrgaosNaJanela: async () => [],
     loadDeputadoProposicoesAssinadasSource: async () => ({
@@ -113,7 +111,80 @@ function createRepository(
   };
 }
 
+const COTA_MATERIALIZADA: ComparativoCota = {
+  status: 'comparavel',
+  percentualSobreMedianaUf: 72,
+  gastoNaComparacaoCents: 720000,
+  siglaUf: 'MG',
+  anos: [
+    {
+      year: 2023,
+      naComparacao: true,
+      percentualSobreMedianaUf: 72,
+      diasEmExercicio: 100,
+      diasNoAno: 334,
+      medianaUfDeputadoCount: 40,
+      dadoIncompleto: false,
+    },
+  ],
+  anosNaComparacao: 1,
+  diasEmExercicio: 100,
+  diasNaComparacao: 334,
+};
+
 describe('comparativo de deputados', () => {
+  describe('comparação de cota materializada na ingestão', () => {
+    it('publica o valor gravado em vez de recalcular a janela', async () => {
+      // Arrange
+      const service = new ComparativoDeputadosService(
+        createRepository([perfilSource(1), perfilSource(2)], {
+          loadCotaComparacao: async () => ({
+            legislatura: 57,
+            cota: COTA_MATERIALIZADA,
+          }),
+        }),
+      );
+
+      // Act
+      const response = await service.comparativo([1, 2]);
+
+      // Assert
+      expect(response.items[0].cota).toEqual(COTA_MATERIALIZADA);
+    });
+
+    it('descarta a comparação de uma legislatura diferente da janela', async () => {
+      // Arrange
+      const service = new ComparativoDeputadosService(
+        createRepository([perfilSource(1), perfilSource(2)], {
+          loadCotaComparacao: async () => ({
+            legislatura: 56,
+            cota: COTA_MATERIALIZADA,
+          }),
+        }),
+      );
+
+      // Act
+      const response = await service.comparativo([1, 2]);
+
+      // Assert
+      expect(response.items[0].janela).toMatchObject({ legislatura: 57 });
+      expect(response.items[0].cota).toBeNull();
+    });
+
+    it('publica cota nula quando a ingestão ainda não gravou o deputado', async () => {
+      // Arrange
+      const service = new ComparativoDeputadosService(
+        createRepository([perfilSource(1), perfilSource(2)]),
+      );
+
+      // Act
+      const response = await service.comparativo([1, 2]);
+
+      // Assert
+      expect(response.items[0].cota).toBeNull();
+    });
+  });
+
   describe('quando a janela do deputado está disponível', () => {
     it('recorta a janela na última legislatura em que cada deputado atuou', async () => {
       // Arrange

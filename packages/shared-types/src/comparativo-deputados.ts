@@ -1,22 +1,16 @@
 import { z } from "zod";
 
 import {
+  cotaComparacaoStatusSchema,
+  cotaSemComparacaoMotivoSchema,
+} from "./cota";
+import {
   deputadoResumoPresencaSchema,
   deputadoSnapshotPublicoSchema,
 } from "./deputados";
 
 export const MIN_COMPARATIVO_DEPUTADOS = 2;
 export const MAX_COMPARATIVO_DEPUTADOS = 3;
-
-export const comparativoCotaStatusSchema = z.enum([
-  "comparavel",
-  "sem-comparacao",
-]);
-
-export const comparativoCotaSemComparacaoMotivoSchema = z.enum([
-  "sem-mediana-na-janela",
-  "sem-gastos",
-]);
 
 // O ano não é mais o recorte da cota, e sim o detalhamento dela: a comparação
 // soma todos os anos da janela e usa estes campos para divulgar o que a soma
@@ -62,7 +56,7 @@ export const comparativoCotaAnoSchema = z
 export const comparativoCotaSchema = z
   .discriminatedUnion("status", [
     z.object({
-      status: z.literal(comparativoCotaStatusSchema.enum.comparavel),
+      status: z.literal(cotaComparacaoStatusSchema.enum.comparavel),
       // Soma dos gastos sobre a soma das medianas dos anos comparados.
       percentualSobreMedianaUf: z.number(),
       // O total pode ser negativo: cancelamentos de passagem aérea excedem o
@@ -75,8 +69,8 @@ export const comparativoCotaSchema = z
       diasNaComparacao: z.number().int().nonnegative(),
     }),
     z.object({
-      status: z.literal(comparativoCotaStatusSchema.enum["sem-comparacao"]),
-      motivo: comparativoCotaSemComparacaoMotivoSchema,
+      status: z.literal(cotaComparacaoStatusSchema.enum["sem-comparacao"]),
+      motivo: cotaSemComparacaoMotivoSchema,
       anos: z.array(comparativoCotaAnoSchema),
     }),
   ])
@@ -96,7 +90,7 @@ export const comparativoCotaSchema = z
 
     const naComparacao = cota.anos.filter((ano) => ano.naComparacao);
 
-    if (cota.status === comparativoCotaStatusSchema.enum["sem-comparacao"]) {
+    if (cota.status === cotaComparacaoStatusSchema.enum["sem-comparacao"]) {
       if (naComparacao.length > 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -401,10 +395,6 @@ export const comparativoDeputadosResponseSchema = z
     }
   });
 
-export type ComparativoCotaStatus = z.infer<typeof comparativoCotaStatusSchema>;
-export type ComparativoCotaSemComparacaoMotivo = z.infer<
-  typeof comparativoCotaSemComparacaoMotivoSchema
->;
 export type ComparativoCotaAno = z.infer<typeof comparativoCotaAnoSchema>;
 export type ComparativoCota = z.infer<typeof comparativoCotaSchema>;
 export type ComparativoJanelaStatus = z.infer<

@@ -1,4 +1,101 @@
-import { deriveCoberturaJanela } from '../rules/cobertura-janela';
+import {
+  deriveCoberturaCotaAte,
+  deriveCoberturaJanela,
+} from '../rules/cobertura-janela';
+
+describe('cobertura da cota isolada dos demais sinais', () => {
+  describe('janela encerrada, todos os anos plenamente cobertos', () => {
+    it('cobre até o fim do último ano da janela', () => {
+      // Arrange
+      const input = {
+        dataInicioJanela: '2015-02-01T00:00:00Z',
+        dataFimJanela: '2019-01-31T00:00:00Z',
+        coberturaCotaMensal: [
+          { year: 2015, coveredThroughMonth: 12 },
+          { year: 2016, coveredThroughMonth: 12 },
+          { year: 2017, coveredThroughMonth: 12 },
+          { year: 2018, coveredThroughMonth: 12 },
+          { year: 2019, coveredThroughMonth: 12 },
+        ],
+      };
+
+      // Act
+      const coberturaAte = deriveCoberturaCotaAte(input);
+
+      // Assert
+      expect(coberturaAte).toEqual('2019-12-31');
+    });
+  });
+
+  describe('ano corrente parcialmente coberto', () => {
+    it('para no último dia do mês coberto', () => {
+      // Arrange
+      const input = {
+        dataInicioJanela: '2023-02-01T00:00:00Z',
+        dataFimJanela: '2027-01-31T00:00:00Z',
+        coberturaCotaMensal: [
+          { year: 2023, coveredThroughMonth: 12 },
+          { year: 2024, coveredThroughMonth: 12 },
+          { year: 2025, coveredThroughMonth: 12 },
+          { year: 2026, coveredThroughMonth: 6 },
+        ],
+      };
+
+      // Act
+      const coberturaAte = deriveCoberturaCotaAte(input);
+
+      // Assert
+      expect(coberturaAte).toEqual('2026-06-30');
+    });
+  });
+
+  describe('ano da janela sem nenhuma entrada de cobertura', () => {
+    it('para no fim do último ano plenamente coberto', () => {
+      // Arrange
+      const input = {
+        dataInicioJanela: '2023-02-01T00:00:00Z',
+        dataFimJanela: '2027-01-31T00:00:00Z',
+        coberturaCotaMensal: [
+          { year: 2023, coveredThroughMonth: 12 },
+          { year: 2024, coveredThroughMonth: 12 },
+        ],
+      };
+
+      // Act
+      const coberturaAte = deriveCoberturaCotaAte(input);
+
+      // Assert
+      expect(coberturaAte).toEqual('2024-12-31');
+    });
+  });
+
+  describe('atraso da ingestão de assinaturas', () => {
+    it('não encurta a cobertura da cota, ao contrário da janela do comparativo', () => {
+      // Arrange
+      const janela = {
+        dataInicioJanela: '2023-02-01T00:00:00Z',
+        dataFimJanela: '2027-01-31T00:00:00Z',
+        coberturaCotaMensal: [
+          { year: 2023, coveredThroughMonth: 12 },
+          { year: 2024, coveredThroughMonth: 12 },
+          { year: 2025, coveredThroughMonth: 12 },
+          { year: 2026, coveredThroughMonth: 8 },
+        ],
+      };
+
+      // Act
+      const coberturaCota = deriveCoberturaCotaAte(janela);
+      const coberturaJanela = deriveCoberturaJanela({
+        ...janela,
+        coveredThroughDateAssinaturas: '2024-03-15',
+      });
+
+      // Assert
+      expect(coberturaCota).toEqual('2026-08-31');
+      expect(coberturaJanela.coberturaAte).toEqual('2024-03-15');
+    });
+  });
+});
 
 describe('cobertura da janela do comparativo', () => {
   describe('janela encerrada, totalmente coberta pelos dois sinais', () => {

@@ -141,6 +141,13 @@
       "when": 1786828420442,
       "tag": "0019_giant_hellion",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1786849495892,
+      "tag": "0020_salty_starbolt",
+      "breakpoints": true
     }
   ]
 }
