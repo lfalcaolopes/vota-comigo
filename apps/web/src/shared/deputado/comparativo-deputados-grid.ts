@@ -11,6 +11,7 @@ import type {
 import {
   COTA_PARLAMENTAR_HELP,
   formatGastoCotaCompacto,
+  formatGastoCotaCompactoDistinto,
 } from "./gasto-cota-presentation";
 import {
   formatPercentual,
@@ -50,10 +51,23 @@ export type ComparativoDeputadosCellBarra = {
   tetoCents: number | null;
 };
 
+// Cada régua da comparação vira uma linha rotulada com o número alinhado à
+// direita, para varrer de coluna em coluna. `descricao` é a frase inteira que
+// o leitor de tela recebe no lugar do par abreviado.
+export type ComparativoDeputadosCellLeitura = {
+  id: string;
+  label: string;
+  value: string;
+  descricao: string;
+  marcada: boolean;
+};
+
 export type ComparativoDeputadosCell = {
   externalIdDeputado: number;
   value: string;
+  valueUnit: string | null;
   detail: string | null;
+  leituras: readonly ComparativoDeputadosCellLeitura[] | null;
   note: string | null;
   barra: ComparativoDeputadosCellBarra | null;
   link: ComparativoDeputadosCellLink | null;
@@ -239,11 +253,13 @@ function toColumn(item: ComparativoDeputado): ComparativoDeputadosColumn {
 
 type CellContent = Omit<
   ComparativoDeputadosCell,
-  "externalIdDeputado" | "link" | "note" | "barra"
+  "externalIdDeputado" | "link" | "note" | "barra" | "leituras" | "valueUnit"
 > & {
   link?: ComparativoDeputadosCellLink;
   note?: string;
   barra?: ComparativoDeputadosCellBarra;
+  leituras?: readonly ComparativoDeputadosCellLeitura[];
+  valueUnit?: string;
 };
 
 function toRowCell(
@@ -264,6 +280,8 @@ function toCell(
   return {
     externalIdDeputado: item.externalIdDeputado,
     ...content,
+    valueUnit: content.valueUnit ?? null,
+    leituras: content.leituras ?? null,
     note: content.note ?? null,
     barra: content.barra ?? null,
     link: content.link ?? null,
@@ -302,8 +320,11 @@ function toPresencaCell(
 
 // A manchete é a média por ano da janela; o total absoluto abre o detalhe,
 // para que a contagem continue conferível contra o portal da Câmara.
-function toMediaAnualLabel(total: number, divisorAnosEfetivos: number): string {
-  if (divisorAnosEfetivos <= 0) return String(total);
+function toMediaAnual(
+  total: number,
+  divisorAnosEfetivos: number,
+): { value: string; valueUnit?: string } {
+  if (divisorAnosEfetivos <= 0) return { value: String(total) };
 
   const media = total / divisorAnosEfetivos;
   const formatado =
@@ -314,7 +335,7 @@ function toMediaAnualLabel(total: number, divisorAnosEfetivos: number): string {
         })
       : String(Math.round(media));
 
-  return `${formatado}/ano`;
+  return { value: formatado, valueUnit: "/ano" };
 }
 
 function toProposicoesCell(
@@ -336,10 +357,7 @@ function toProposicoesCell(
   }
 
   return {
-    value: toMediaAnualLabel(
-      proposicoesAssinadas.total,
-      janela.divisorAnosEfetivos,
-    ),
+    ...toMediaAnual(proposicoesAssinadas.total, janela.divisorAnosEfetivos),
     detail: `${proposicoesAssinadas.total} no total · ${proposicoesAssinadas.totalPrimeiroSignatario} como autor principal`,
     lacuna: false,
   };
@@ -368,7 +386,7 @@ function toOrgaosCell(
       : visiveis.join(", ");
 
   return {
-    value: toMediaAnualLabel(orgaos.total, janela.divisorAnosEfetivos),
+    ...toMediaAnual(orgaos.total, janela.divisorAnosEfetivos),
     detail: `${orgaos.total} no total · ${lista}`,
     lacuna: false,
   };
@@ -393,17 +411,22 @@ function toCotaCell(
     };
   }
 
-  const posicao = `${toCotaPosicaoLabel(cota.percentualSobreMedianaUf)} do ${cota.siglaUf}`;
   const teto = cota.tetoNaComparacaoCents;
+  const escopo =
+    cota.anosNaComparacao === 1 ? "Teto do ano" : "Teto do período";
 
   return {
-    value: `${formatGastoCotaCompacto(
+    value: formatGastoCotaCompacto(
       cota.gastoNaComparacaoCents / cota.anosNaComparacao,
-    )}/ano`,
-    detail:
-      teto === null
-        ? posicao
-        : `${toCotaTetoLabel(cota.gastoNaComparacaoCents, teto)} · ${posicao}`,
+    ),
+    valueUnit: "/ano",
+    detail: null,
+    leituras: [
+      ...(teto === null
+        ? []
+        : [toCotaTetoLeitura(cota.gastoNaComparacaoCents, teto, escopo)]),
+      toCotaMedianaLeitura(cota.percentualSobreMedianaUf, cota.siglaUf),
+    ],
     note: toCotaTotalLabel(
       cota.gastoNaComparacaoCents,
       teto,
@@ -421,17 +444,64 @@ function toCotaCell(
 
 // Passar de 100% é legítimo: a tabela por UF não inclui os adicionais por
 // cargo, e a ressalva vive no HelpPopover da linha.
-function toCotaTetoLabel(
+function toCotaTetoLeitura(
   gastoNaComparacaoCents: number,
   tetoNaComparacaoCents: number,
-): string {
-  if (gastoNaComparacaoCents <= 0) return "Nenhum valor consumido do teto";
+  escopo: string,
+): ComparativoDeputadosCellLeitura {
+  const alvo = escopo.toLowerCase();
+
+  if (gastoNaComparacaoCents <= 0) {
+    return {
+      id: "teto",
+      label: escopo,
+      value: "0%",
+      descricao: `Nenhum valor consumido do ${alvo}`,
+      marcada: false,
+    };
+  }
 
   const percentual = Math.round(
     (gastoNaComparacaoCents / tetoNaComparacaoCents) * 100,
   );
 
-  return `${percentual}% do teto`;
+  return {
+    id: "teto",
+    label: escopo,
+    value: `${percentual}%`,
+    descricao: `${percentual}% do ${alvo}`,
+    marcada: false,
+  };
+}
+
+// O sinal sozinho basta na coluna alinhada; a frase inteira segue no
+// `descricao` para quem lê por leitor de tela.
+function toCotaMedianaLeitura(
+  percentualSobreMedianaUf: number,
+  siglaUf: string,
+): ComparativoDeputadosCellLeitura {
+  const label = `Mediana em ${siglaUf}`;
+  const diferenca = Math.round(percentualSobreMedianaUf) - 100;
+
+  if (diferenca === 0) {
+    return {
+      id: "mediana",
+      label,
+      value: "Igual",
+      descricao: `Mesmo valor da mediana em ${siglaUf}`,
+      marcada: true,
+    };
+  }
+
+  const modulo = Math.abs(diferenca);
+
+  return {
+    id: "mediana",
+    label,
+    value: `${diferenca < 0 ? "−" : "+"}${modulo}%`,
+    descricao: `${modulo}% ${diferenca < 0 ? "abaixo" : "acima"} da mediana em ${siglaUf}`,
+    marcada: true,
+  };
 }
 
 // O absoluto ancora o teto em reais e mantém o total conferível contra o
@@ -442,11 +512,17 @@ function toCotaTotalLabel(
   anosNaComparacao: number,
 ): string {
   const janela = `em ${anosNaComparacao} ${anosNaComparacao === 1 ? "ano" : "anos"}`;
-  const gasto = formatGastoCotaCompacto(gastoNaComparacaoCents);
 
-  if (tetoNaComparacaoCents === null) return `${gasto} no total ${janela}`;
+  if (tetoNaComparacaoCents === null) {
+    return `${formatGastoCotaCompacto(gastoNaComparacaoCents)} no total ${janela}`;
+  }
 
-  return `${gasto} de ${formatGastoCotaCompacto(tetoNaComparacaoCents)} ${janela}`;
+  const [gasto, teto] = formatGastoCotaCompactoDistinto([
+    gastoNaComparacaoCents,
+    tetoNaComparacaoCents,
+  ]);
+
+  return `${gasto} de ${teto} ${janela}`;
 }
 
 // O ano a ano vive no perfil, que mostra valores, categorias e as notas da
@@ -469,12 +545,4 @@ function toCotaSemComparacaoLabel(
 ): string {
   if (motivo === "sem-gastos") return "Sem gastos na janela";
   return "Sem mediana na janela";
-}
-
-function toCotaPosicaoLabel(percentualSobreMedianaUf: number): string {
-  const diferenca = Math.round(percentualSobreMedianaUf) - 100;
-
-  if (diferenca === 0) return "Mesmo valor da mediana";
-
-  return `${Math.abs(diferenca)}% ${diferenca < 0 ? "abaixo" : "acima"} da mediana`;
 }

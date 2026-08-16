@@ -161,9 +161,23 @@ describe("ComparativoDeputadosView", () => {
       });
 
       // Assert
-      expect(html).toContain("R$ 550 mil/ano");
-      expect(html).toContain("79% do teto · 12% acima da mediana do MG");
+      expect(html).toContain("R$ 550 mil");
+      expect(html).toContain("/ano");
+      expect(html).toContain("Teto do período");
+      expect(html).toContain("Mediana em MG");
       expect(html).toContain("R$ 1,1 mi de R$ 1,4 mi em 2 anos");
+    });
+
+    it("dá ao leitor de tela a frase inteira de cada régua abreviada", () => {
+      // Arrange / Act
+      const html = render({
+        janelasCoincidem: true,
+        items: [deputado(1), deputado(2)],
+      });
+
+      // Assert
+      expect(html).toContain("79% do teto do período");
+      expect(html).toContain("12% acima da mediana em MG");
     });
 
     it("desenha o gasto contra o teto com a mediana marcada no trilho", () => {

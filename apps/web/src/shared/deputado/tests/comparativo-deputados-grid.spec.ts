@@ -215,8 +215,25 @@ describe("grade do comparativo de deputados", () => {
       // Assert
       expect(rowById(grid, "cota").cells[0]).toEqual({
         externalIdDeputado: 1,
-        value: "R$ 550 mil/ano",
-        detail: "79% do teto · 12% acima da mediana do MG",
+        value: "R$ 550 mil",
+        valueUnit: "/ano",
+        detail: null,
+        leituras: [
+          {
+            id: "teto",
+            label: "Teto do período",
+            value: "79%",
+            descricao: "79% do teto do período",
+            marcada: false,
+          },
+          {
+            id: "mediana",
+            label: "Mediana em MG",
+            value: "+12%",
+            descricao: "12% acima da mediana em MG",
+            marcada: true,
+          },
+        ],
         note: "R$ 1,1 mi de R$ 1,4 mi em 2 anos",
         barra: {
           gastoCents: 110_000_000,
@@ -243,7 +260,15 @@ describe("grade do comparativo de deputados", () => {
 
       // Assert
       expect(rowById(grid, "cota").cells[0]).toMatchObject({
-        detail: "12% acima da mediana do MG",
+        leituras: [
+          {
+            id: "mediana",
+            label: "Mediana em MG",
+            value: "+12%",
+            descricao: "12% acima da mediana em MG",
+            marcada: true,
+          },
+        ],
         note: "R$ 1,1 mi no total em 2 anos",
         barra: {
           gastoCents: 110_000_000,
@@ -272,7 +297,10 @@ describe("grade do comparativo de deputados", () => {
 
       // Assert
       expect(rowById(grid, "cota").cells[0]).toMatchObject({
-        detail: "80% do teto · 12% acima da mediana do MG",
+        leituras: [
+          expect.objectContaining({ label: "Teto do ano", value: "80%" }),
+          expect.objectContaining({ label: "Mediana em MG", value: "+12%" }),
+        ],
         note: "R$ 400 mil de R$ 500 mil em 1 ano",
       });
     });
@@ -290,9 +318,10 @@ describe("grade do comparativo de deputados", () => {
       const grid = buildComparativoDeputadosGrid(data);
 
       // Assert
-      expect(rowById(grid, "cota").cells[0].detail).toContain(
-        "Nenhum valor consumido do teto",
-      );
+      expect(rowById(grid, "cota").cells[0].leituras?.[0]).toMatchObject({
+        value: "0%",
+        descricao: "Nenhum valor consumido do teto do período",
+      });
     });
 
     it("nomeia o empate com a mediana", () => {
@@ -316,9 +345,10 @@ describe("grade do comparativo de deputados", () => {
       const grid = buildComparativoDeputadosGrid(data);
 
       // Assert
-      expect(rowById(grid, "cota").cells[0].detail).toContain(
-        "Mesmo valor da mediana do MG",
-      );
+      expect(rowById(grid, "cota").cells[0].leituras?.[1]).toMatchObject({
+        value: "Igual",
+        descricao: "Mesmo valor da mediana em MG",
+      });
     });
 
     it("nomeia a posição abaixo da mediana", () => {
@@ -342,9 +372,10 @@ describe("grade do comparativo de deputados", () => {
       const grid = buildComparativoDeputadosGrid(data);
 
       // Assert
-      expect(rowById(grid, "cota").cells[0].detail).toContain(
-        "30% abaixo da mediana do MG",
-      );
+      expect(rowById(grid, "cota").cells[0].leituras?.[1]).toMatchObject({
+        value: "−30%",
+        descricao: "30% abaixo da mediana em MG",
+      });
     });
 
     it("aponta o link para o último ano da janela", () => {
@@ -454,7 +485,8 @@ describe("grade do comparativo de deputados", () => {
 
       // Assert
       expect(rowById(grid, "orgaos").cells[0]).toMatchObject({
-        value: "1,0/ano",
+        value: "1,0",
+        valueUnit: "/ano",
         detail: "3 no total · CCJC, CFT e mais 1",
       });
     });
@@ -491,7 +523,8 @@ describe("grade do comparativo de deputados", () => {
 
       // Assert
       expect(rowById(grid, "proposicoes-assinadas").cells[0]).toMatchObject({
-        value: "113/ano",
+        value: "113",
+        valueUnit: "/ano",
         detail: "340 no total · 41 como autor principal",
       });
     });
@@ -578,7 +611,9 @@ describe("grade do comparativo de deputados", () => {
         proposicoes: {
           externalIdDeputado: 1,
           value: "Sem dados comparáveis",
+          valueUnit: null,
           detail: "Última atuação na 54ª legislatura",
+          leituras: null,
           note: null,
           barra: null,
           link: null,
@@ -587,7 +622,9 @@ describe("grade do comparativo de deputados", () => {
         presenca: {
           externalIdDeputado: 1,
           value: "Sem dados comparáveis",
+          valueUnit: null,
           detail: "Última atuação na 54ª legislatura",
+          leituras: null,
           note: null,
           barra: null,
           link: null,

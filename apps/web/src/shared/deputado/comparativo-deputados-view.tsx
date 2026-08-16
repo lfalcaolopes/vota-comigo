@@ -15,6 +15,7 @@ import {
   toComparativoNotaCobertura,
   type ComparativoDeputadosCell,
   type ComparativoDeputadosCellBarra,
+  type ComparativoDeputadosCellLeitura,
   type ComparativoDeputadosColumn,
   type ComparativoDeputadosRow,
 } from "./comparativo-deputados-grid";
@@ -239,7 +240,7 @@ function ComparativoLinha({ row }: { row: ComparativoDeputadosRow }) {
 
 function ComparativoValor({ cell }: { cell: ComparativoDeputadosCell }) {
   return (
-    <div className="grid gap-1">
+    <div className="grid gap-2">
       <p
         className={
           cell.lacuna
@@ -248,24 +249,77 @@ function ComparativoValor({ cell }: { cell: ComparativoDeputadosCell }) {
         }
       >
         {cell.value}
+        {cell.valueUnit !== null ? (
+          <span className="ml-0.5 text-sm font-[650] text-muted">
+            {cell.valueUnit}
+          </span>
+        ) : null}
       </p>
-      {cell.barra !== null ? <ComparativoBarra barra={cell.barra} /> : null}
+
+      {cell.barra !== null || cell.leituras !== null ? (
+        <div className="grid gap-1.5">
+          {cell.barra !== null ? <ComparativoBarra barra={cell.barra} /> : null}
+          {cell.leituras !== null ? (
+            <ComparativoLeituras leituras={cell.leituras} />
+          ) : null}
+        </div>
+      ) : null}
+
       {cell.detail !== null ? (
         <p className="text-xs leading-normal text-muted">{cell.detail}</p>
       ) : null}
-      {cell.note !== null ? (
-        <p className="text-xs leading-normal text-subtle">{cell.note}</p>
-      ) : null}
-      {cell.link !== null ? (
-        <Link
-          className="text-xs font-[650] leading-normal text-info underline decoration-info/35 underline-offset-[0.18em]"
-          href={cell.link.href}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          {cell.link.label} <span aria-hidden="true">→</span>
-        </Link>
-      ) : null}
+
+      <div className="grid gap-1">
+        {cell.note !== null ? (
+          <p className="text-xs leading-normal text-subtle">{cell.note}</p>
+        ) : null}
+        {cell.link !== null ? (
+          <Link
+            className="text-xs font-[650] leading-normal text-info underline decoration-info/35 underline-offset-[0.18em] justify-self-start"
+            href={cell.link.href}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {cell.link.label} <span aria-hidden="true">→</span>
+          </Link>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+// A marca da leitura repete a marca da barra: é a legenda que faz o risco âmbar
+// deixar de ser decoração.
+function ComparativoLeituras({
+  leituras,
+}: {
+  leituras: readonly ComparativoDeputadosCellLeitura[];
+}) {
+  return (
+    <div className="grid max-w-[22rem] gap-0.5">
+      {leituras.map((leitura) => (
+        <p className="flex items-baseline gap-2" key={leitura.id}>
+          <span className="sr-only">{leitura.descricao}</span>
+          <span
+            aria-hidden="true"
+            className={`h-3 w-[3px] shrink-0 translate-y-[0.15em] rounded-full ${
+              leitura.marcada ? "bg-primary" : "bg-transparent"
+            }`}
+          />
+          <span
+            aria-hidden="true"
+            className="min-w-0 truncate text-xs text-muted"
+          >
+            {leitura.label}
+          </span>
+          <span
+            aria-hidden="true"
+            className="ml-auto text-xs font-[650] tabular-nums text-ink"
+          >
+            {leitura.value}
+          </span>
+        </p>
+      ))}
     </div>
   );
 }
@@ -307,13 +361,17 @@ function ComparativoBarra({ barra }: { barra: ComparativoDeputadosCellBarra }) {
         <div
           className="absolute inset-y-0 w-0.5 bg-bg"
           data-testid="comparativo-cota-barra-teto"
-          style={{ left: `${toPercent(barra.tetoCents)}%` }}
+          style={{
+            left: `min(${toPercent(barra.tetoCents)}%, calc(100% - 2px))`,
+          }}
         />
       ) : null}
       <div
-        className="absolute inset-y-0 w-0.5 bg-primary"
+        className="absolute inset-y-0 w-[3px] rounded-full bg-primary"
         data-testid="comparativo-cota-barra-mediana"
-        style={{ left: `${toPercent(barra.medianaCents)}%` }}
+        style={{
+          left: `min(${toPercent(barra.medianaCents)}%, calc(100% - 3px))`,
+        }}
       />
     </div>
   );
