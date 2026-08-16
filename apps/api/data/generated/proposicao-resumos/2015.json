@@ -23,6 +23,17 @@
       "generatedAt": "2026-08-16T05:14:27.450Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "946620": {
+      "sourceHash": "e2aaeb175eb09d810c0e061887297d3abbcf02350abadae3ea011eeb6d03306b",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Destina recursos do Fundo Penitenciário Nacional (FUNPEN) para berçário, creche e espaço para mulheres grávidas e que acabaram de dar à luz em penitenciárias.",
+      "resumoDetalhe": "- Destina recursos do Fundo Penitenciário Nacional (FUNPEN) para implantar e manter berçário, creche e uma seção voltada a mulheres grávidas e que acabaram de dar à luz nas penitenciárias.\n- Determina que a aplicação desses recursos siga as regras da Lei de Execução Penal, que trata do cumprimento das penas.\n- Sustenta, na justificativa, que poucos presídios cumprem hoje essa exigência por falta de recursos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
     "946734": {
       "sourceHash": "490e0bcb4ceea8e89ee4bae1315dc4b5098908b5fbaaa90832959fe21c95c1dc",
       "generationStatus": "generated",
@@ -33,6 +44,39 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "949149": {
+      "sourceHash": "bcf619f54766f7a9d7da6ed882b2e3af6ccf45941a8d97d2e3372601bb3eae2a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria uma Secretaria de Comunicação Social na Câmara para coordenar e supervisionar a comunicação e os veículos da Casa.",
+      "resumoDetalhe": "- Cria uma Secretaria de Comunicação Social na Câmara e define suas funções: divulgar os trabalhos parlamentares; estabelecer diretrizes e a política de comunicação; ampliar o alcance dos canais da Casa; supervisionar atividades de imprensa e promover audiências públicas com a sociedade.\n- Estabelece que o Secretário de Comunicação Social será escolhido pelo Presidente da Câmara entre os deputados em exercício, poderá ser substituído a qualquer tempo e terá a supervisão dos veículos de comunicação da Casa.\n- Submete o jornal da Câmara, a TV Câmara, a Rádio Câmara, a Agência Câmara e as unidades administrativas de comunicação às determinações do Secretário, e determina que titulares de unidades e cargos em comissão sejam indicados por ele.\n- Cria uma Diretoria-Executiva de Comunicação Social, transforma a função de Diretor na de Diretor-Executivo mantendo as atuais atribuições, cria um cargo em comissão de assessor de comunicação da TV para assessorar o Secretário e prevê que a criação desse cargo será compensada pela extinção de outros cargos especiais, com as despesas correndo por conta do orçamento da Câmara.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "1050788": {
+      "sourceHash": "d67a004c6f6c5964df8587ec494ae9b05de54b8b61fa7c0ba61a57f6081bd465",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exige que a União faça os aditivos contratuais — as mudanças no contrato — dentro de um prazo contado do pedido do devedor, e permite que o devedor pague o valor devido se a União não cumprir.",
+      "resumoDetalhe": "- Estabelece um prazo para que a União faça os aditivos contratuais, ou seja, as mudanças no contrato, a partir do pedido do devedor protocolado no Ministério da Fazenda, sem depender de regulamentação.\n- Permite que, se a União não cumprir esse prazo, o devedor pague diretamente à União o valor devido segundo a lei, e garante à União o direito de cobrar qualquer diferença que apareça depois.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "1063052": {
+      "sourceHash": "d705a786b85e7146db55fa9f706ac367a6923f18b9c325dcaa7508766e878cc6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Explicita o Tribunal Superior do Trabalho como órgão do Poder Judiciário e fixa sua composição, requisitos para ministros e competência.",
+      "resumoDetalhe": "- Explicita o Tribunal Superior do Trabalho como órgão do Poder Judiciário.\n- Define a composição do Tribunal: um total fixo de Ministros escolhidos entre brasileiros dentro de uma faixa etária, com notável saber jurídico e reputação ilibada, nomeados pelo Presidente após aprovação do Senado.\n- Estabelece a competência do Tribunal para processar e julgar, em caráter originário, reclamação destinada a preservar sua competência e a garantir que suas decisões sejam respeitadas (ou seja, uma ação para proteger o tribunal contra interferências e assegurar a autoridade de suas decisões).",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
     },
     "1150196": {
       "sourceHash": "354511848458bdf27bcea6b6da3118de285d715aab2821c2ce89d26447debb1a",
@@ -56,6 +100,72 @@
       "generatedAt": "2026-08-16T05:52:50.835Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "1228455": {
+      "sourceHash": "544dd48b37f35994d58997e24c3796365821237e1102c546e052993c2d3c4934",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova o Tratado de Marraqueche para facilitar o acesso a obras por pessoas com deficiência visual ou dificuldades com texto impresso.",
+      "resumoDetalhe": "- Aprova o texto do Tratado de Marraqueche que facilita o acesso a obras publicadas por pessoas cegas, com deficiência visual ou com outras dificuldades para ter acesso ao texto impresso.\n- Determina que revisões ou ajustes do tratado que possam gerar encargos ao patrimônio nacional sejam submetidos à consideração do Congresso Nacional.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "1280621": {
+      "sourceHash": "0229131430d85de2b7feac099ea3607485585067d00b0b58c519f819da9ccfda",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Eleva a alíquota da Contribuição Social sobre o Lucro Líquido (CSLL), tributo cobrado sobre o lucro das empresas, para seguradoras, empresas de capitalização e outras previstas em lei complementar.",
+      "resumoDetalhe": "- Eleva a alíquota da Contribuição Social sobre o Lucro Líquido (CSLL), tributo cobrado sobre o lucro das empresas, para empresas de seguros privados, de capitalização e outras previstas em lei complementar.\n- Estabelece que a medida passa a vigorar alguns meses após sua publicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "1301482": {
+      "sourceHash": "080df9bb650dc55fe7397a44a8d25f62b2f40a855ba00f3370f91b867aed0c8a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Inclui crimes de pedofilia na lista de crimes hediondos.",
+      "resumoDetalhe": "- Inclui os crimes de pedofilia na lista de crimes hediondos, ou seja, trata essas condutas como crimes de gravidade máxima.\n- Coloca nessa lista induzir criança ou adolescente abaixo de certa idade a satisfazer o desejo sexual de outra pessoa, praticar ato sexual na presença dele ou induzi-lo a assistir.\n- Inclui também os crimes do Estatuto da Criança e do Adolescente ligados à pornografia infantil e ao aliciamento de crianças por meios de comunicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "1526944": {
+      "sourceHash": "062a47735696d8d7ad7913e48e8df4423140642bf148218a3688ff5609d82bde",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um regime especial que organiza como os governos em atraso devem pagar precatórios — dívidas que a Justiça manda o governo pagar —, definindo o cálculo dos depósitos, as prioridades de pagamento e as opções de financiamento.",
+      "resumoDetalhe": "- Define como calcular e limitar o compromisso das receitas correntes líquidas (o total das receitas correntes com algumas deduções) para o pagamento de precatórios (sentenças judiciais que obrigam o governo a pagar) e permite que a parcela que ultrapassar essa média seja financiada, sem contar para os limites normais de endividamento.\n- Institui um regime especial transitório para entes em mora na data de referência, exigindo depósitos mensais em conta judicial de uma fração calculada sobre a receita corrente líquida para quitar os precatórios vencidos e os que vencerem enquanto o regime estiver em vigor.\n- Determina que uma parte significativa dos recursos para precatórios em mora seja usada para pagamento pela ordem cronológica de apresentação, respeitando preferências por créditos alimentares e por idade/estado de saúde, e permite que os recursos remanescentes sejam usados em acordos diretos com desconto previsto na regulamentação, desde que não haja recurso pendente sobre o crédito.\n- Autoriza medidas para facilitar o pagamento, como abater do precatório dívidas que o próprio credor tenha com o governo, usar depósitos judiciais e administrativos e contratar empréstimos para financiar o excesso, podendo essas operações ficar fora dos limites regulares de endividamento e admitir vinculação de receitas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "1555340": {
+      "sourceHash": "c4e6dbb005958fe5f568000c244ee78a4dd27975db99d52a82ad24c72cbaa8f0",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Torna obrigatória a aposentadoria aos 75 anos, com valor do benefício proporcional ao tempo de contribuição.",
+      "resumoDetalhe": "- Torna obrigatória a aposentadoria ao se atingir certa idade, com valor do benefício proporcional ao tempo de contribuição.\n- Aplica a regra a servidores titulares de cargos efetivos e a membros do Judiciário, do Ministério Público, das Defensorias Públicas e dos tribunais e conselhos de contas, em todos os níveis de governo.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "1570898": {
+      "sourceHash": "f1807d8f88a3825603fcc3bb77ac254b69a33f03535192fff0bb764cd61ad333",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza desconto em folha para pagar empréstimos, cartão e financiamentos, com limites e regras de proteção.",
+      "resumoDetalhe": "- Autoriza o desconto em folha, com autorização irrevogável do trabalhador, para pagamento de empréstimos, financiamentos, cartão de crédito e arrendamento mercantil (aluguel de um bem com opção de compra no fim), inclusive sobre verbas rescisórias quando previsto em contrato.\n- Estabelece um limite para a soma dos descontos sobre a remuneração disponível, com uma parte reservada exclusivamente para quitar despesas do cartão de crédito; exige que o empregador discrimine no demonstrativo o valor descontado de cada operação.\n- Regula relações entre empregador, sindicato e instituições financeiras: permite acordos que definam condições gerais de concessão, obriga a instituição a conceder a operação se o empregado cumprir o acordo, atribui ao empregador responsabilidade por valores que deixou de reter ou repassar por sua culpa e proíbe a inclusão de quem tomou o empréstimo em cadastro de inadimplentes quando o desconto foi efetuado e não repassado.\n- Estende o mesmo tipo de desconto a aposentados e pensionistas da Previdência Social e a servidores públicos federais, com limites equivalentes.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
     "1594437": {
       "sourceHash": "b01e31ba75b90b440e63b9c202bfadc02c45a7ef7da03cee8218550ceb4d6896",
       "generationStatus": "generated",
@@ -66,6 +176,28 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:01:17.719Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "1594917": {
+      "sourceHash": "b9dc1ed7beb4114601583b3d220c200e31a9d16f69f06714d51f17d3025b9b31",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui as federações de partidos, permitindo que partidos se unam e atuem como uma única agremiação após registro no Tribunal Superior Eleitoral (TSE).",
+      "resumoDetalhe": "- Cria as federações de partidos e determina que, após registro no Tribunal Superior Eleitoral (TSE), elas atuem como uma única agremiação partidária.\n- Estabelece regras para formar e registrar federações, exigindo partidos com registro definitivo, duração mínima de filiação à federação, abrangência nacional, apresentação de documentos como resolução interna, programa e estatuto comuns, ata de eleição da direção e observância do prazo final das convenções partidárias; prevê que a federação continue funcionando mesmo se alguns partidos saírem, desde que mantenha múltiplos partidos.\n- Aplica às federações as regras eleitorais e partidárias que valem para os partidos, da escolha e do registro de candidatos até a prestação de contas, prevê punição para quem descumprir as condições da federação e determina a perda do mandato de quem ocupa cargo eletivo majoritário e se desfilia sem justa causa.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "1671673": {
+      "sourceHash": "2eca7cd4c9e084889800b43b3da0b0e00382ad3101fccec28deb9a48661e9ad5",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza o Executivo a atualizar valores de taxas públicas e ajusta as regras da Condecine (contribuição para a indústria do cinema) e das taxas cobradas nos processos do Cade (órgão de defesa da concorrência).",
+      "resumoDetalhe": "- Autoriza o Poder Executivo a atualizar monetariamente os valores da Condecine (contribuição para a indústria cinematográfica) e de outras taxas e preços previstos em lei.\n- Altera regras da Condecine e prevê tratamento diferenciado para obras cinematográficas que já foram exibidas em salas ou em festivais e têm distribuição limitada.\n- Institui taxas processuais de valor fixo para os processos analisados pelo Cade (Conselho Administrativo de Defesa Econômica, órgão que fiscaliza a concorrência) e permite que o Executivo atualize essas taxas monetariamente.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
     },
     "1672065": {
       "sourceHash": "7acfc2448fb557a9732313021b6f3a8355e23a6a4f49792ccebbec5b671ca8b0",
@@ -78,6 +210,28 @@
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "1701050": {
+      "sourceHash": "98ac41bc2d1ba9a7a5b0ebf66845b66391404c12f88d664599eea66d46ff9d8b",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Proíbe que leis transfiram custos de serviços públicos aos governos federal, estaduais e municipais sem garantir a fonte de recursos.",
+      "resumoDetalhe": "- Proíbe que uma lei imponha ou transfira à União, aos Estados, ao Distrito Federal ou aos Municípios qualquer custo decorrente da prestação de um serviço público sem indicar de onde virá o dinheiro ou sem prever o repasse correspondente.\n- Ressalva dessa proibição as obrigações que o próprio ente assumiu por vontade própria e as despesas que decorrem do salário-mínimo (valor mínimo legal pago ao trabalhador).\n- Determina que nenhuma lei, no momento em que for aprovada, possa criar ou aumentar despesa que não esteja na lei orçamentária anual ou no projeto de lei orçamentária anual enviado pelo chefe do Poder Executivo.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "1701755": {
+      "sourceHash": "a79e1d7097b96a6b4c71961eaf5e4297b83b51d2f1797e30d8a814ec9d8de8d5",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Fixa repasses da União aos Estados e Municípios com base nas exportações e importações para compensar perdas de ICMS (imposto estadual sobre circulação de mercadorias).",
+      "resumoDetalhe": "- Define que a União entregue aos Estados e Municípios um montante calculado a partir dos valores das exportações e importações do país e garante que continue valendo o crédito do ICMS, o valor do imposto já pago que a empresa abate do que deve.\n- Estabelece regras de cálculo e distribuição mensais, determina que o Tribunal de Contas da União e o Ministério da Fazenda publiquem os montantes e a memória de cálculo, e exige que os Estados informem como dividir a parcela entre seus Municípios, com suspensão de repasses em caso de atraso na informação.\n- Determina as fontes e a forma de entrega dos recursos: autoriza o Tesouro a emitir títulos ou usar outras fontes, impõe prioridade para pagamento de dívidas vencidas com a União e ressarcimento de garantias honradas, e prevê que os pagamentos possam ser feitos por títulos especiais, por compensação ou por crédito em conta corrente.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
     "1715687": {
       "sourceHash": "e72528e6393d6852408461147e05199f0ba206416c43d00b3eb15b423e48fa52",
       "generationStatus": "generated",
@@ -88,6 +242,28 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:12:46.007Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "1734739": {
+      "sourceHash": "f417a78a58748d35ebd553d636e3fa18cde7d0aaa02667ff35b211d3bc86b22f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Define como calcular o valor da energia de usinas hidrelétricas para repartir o ICMS (imposto estadual sobre circulação de mercadorias) entre os Municípios.",
+      "resumoDetalhe": "- Define que o valor da produção de energia de uma usina hidrelétrica, usado para repartir o ICMS entre os Municípios, corresponde à quantidade de energia produzida multiplicada pelo preço médio da energia hidráulica.\n- Determina que esse preço médio seja o valor pago pelas distribuidoras às geradoras, apurado pela Aneel, a agência que regula o setor elétrico.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "1738686": {
+      "sourceHash": "0b1dad8a74e9c6f8c3fa2bb8d471f4c126a4493cc44c0c05f8c8ca4a576d1ae1",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Tributa o ganho de capital — o lucro obtido na venda de bens e direitos — com alíquotas que crescem conforme o valor do ganho e ajusta as condições de pagamento no Programa de Redução de Litígios Tributários (Prorelit).",
+      "resumoDetalhe": "- Define que o ganho de capital de pessoas físicas na venda de bens e direitos é sujeito a imposto com alíquotas progressivas, cobradas conforme o tamanho do ganho.\n- Aplica regras semelhantes às pessoas jurídicas para ganho na venda de bens do ativo não circulante, com exceção das empresas tributadas pelo lucro real, presumido ou arbitrado (formas diferentes de calcular o imposto das empresas).\n- Passa a exigir que pedidos no Programa de Redução de Litígios Tributários sejam apresentados dentro do prazo previsto, com pagamento em espécie de uma parte mínima do débito — à vista ou parcelado em poucas prestações — e com juros calculados pela taxa Selic acumulada, a taxa básica de juros da economia, mais um acréscimo no mês do pagamento.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
     },
     "1738814": {
       "sourceHash": "e38e5d04bb30345e603996f65f83e86137c5a0d722c2b840191755c7147941c2",
@@ -100,6 +276,17 @@
       "generatedAt": "2026-08-16T06:10:38.605Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "1805641": {
+      "sourceHash": "aa789c6596f0327300fc53b91ff40104c66da646b4caa3f41be54ceab1dc7ff6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza parcelamento mais longo das dívidas tributárias de empresas do Simples Nacional.",
+      "resumoDetalhe": "- Autoriza o parcelamento das dívidas tributárias das empresas optantes pelo Simples Nacional em muitas parcelas mensais, na forma e nas condições definidas pelo CGSN, que é o grupo que organiza as regras do Simples.\n- Obriga o Poder Executivo a estimar o montante da renúncia fiscal decorrente desta lei e a incluir essa estimativa no demonstrativo que acompanha o projeto da lei orçamentária apresentado após a publicação.\n- Determina que os efeitos da lei só comecem no início do ano seguinte àquele em que o Executivo apresentar essa estimativa.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
     "1806553": {
       "sourceHash": "f43256a8a70a81179a7dd9f37cd78ae13bfe6977b10e2d0dcf164bbb6c105492",
       "generationStatus": "generated",
@@ -110,6 +297,61 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T05:52:50.835Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2018368": {
+      "sourceHash": "359d665b85a224703eb81d9695ec1d0ae7e036495dccd13bbfabee86df7b2761",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria cargos de natureza especial e funções comissionadas para a liderança do Partido Rede Sustentabilidade.",
+      "resumoDetalhe": "- Cria cargos de natureza especial e funções comissionadas — postos de confiança preenchidos por indicação — para compor a liderança do Partido Rede Sustentabilidade na Câmara.\n- Cria cargos em comissão de assessor técnico na estrutura da Comissão Mista de Planos, Orçamentos Públicos e Fiscalização.\n- Determina que as despesas decorrentes corram por conta do orçamento da Câmara dos Deputados.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "2025146": {
+      "sourceHash": "96cfe0d38f0a99081f48521980414b997fa57de75800f721e4834101bdda158a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Representação que pede abertura de processo no Conselho de Ética contra o deputado Eduardo Cunha por suspeitas ligadas à Operação Lava Jato.",
+      "resumoDetalhe": "- Apresenta fatos e documentos da Operação Lava Jato e da denúncia do Ministério Público Federal que apontam suspeitas de corrupção e lavagem de dinheiro, além de prestação de informação falsa sobre contas bancárias no exterior declaradas à Câmara.\n- Requer a abertura de processo disciplinar no Conselho de Ética da Câmara para apurar quebra de decoro parlamentar, com designação de relator e notificação do deputado para se defender.\n- Pede a produção de provas documentais e testemunhais, o depoimento do deputado e de outras pessoas citadas e um pedido ao Supremo Tribunal Federal para que compartilhe o conteúdo das colaborações premiadas.\n- Solicita que, se comprovadas condutas incompatíveis com o decoro, a representação seja encaminhada ao Plenário com recomendação de cassação do mandato.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "2054465": {
+      "sourceHash": "a04011f1e51b4d9964b3e7c229b942c7cb2b7e7ce2d9ad7179bf41bd5b97b0ac",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Esclarece que o ISS (Imposto sobre Serviços) incide sobre vigilância, monitoramento e rastreamento, inclusive serviços a distância para veículos e carga.",
+      "resumoDetalhe": "- Define que o ISS (Imposto sobre Serviços) incide sobre vigilância, segurança, monitoramento e rastreamento de bens e pessoas, incluindo serviços feitos a distância para veículos e carga e serviços prestados por empresas de tecnologia da informação veicular.\n- Estabelece quem responde pelo imposto: normalmente a pessoa jurídica que toma ou intermedia o serviço, mas nos serviços de monitoramento ou rastreamento feitos a distância para veículos e carga ou prestados por empresa de tecnologia veicular o imposto é devido pelo prestador do serviço.\n- Esclarece que os serviços de monitoramento ou rastreamento abrangem meios como telefonia móvel, transmissão por satélite, rádio ou qualquer outro meio, valendo mesmo se o prestador não for proprietário da infraestrutura de telecomunicações usada.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "2058404": {
+      "sourceHash": "271a315c8864ead4edbd8f062ed0135454785c9e8cdafda140c9308af4450037",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Regula o uso de seguro e de um fundo público para apoiar e garantir operações de exportação e ajusta regras de contratação, pagamento e cobrança relacionadas.",
+      "resumoDetalhe": "- Permite que o Seguro de Crédito à Exportação seja usado por exportadores e por instituições financeiras, agências de crédito à exportação, seguradoras e organismos internacionais que financiam, refinanciam ou garantem a produção de bens e a prestação de serviços destinados à exportação; aplica subsidiariamente regras do Código Civil.\n- Determina que o Ministério da Fazenda exerça as competências relacionadas ao seguro e que a remuneração das contratadas siga padrões internacionais, podendo incluir parcela variável ligada ao preço de cobertura, à performance do seguro (inclusive no segmento de empresas menores), à sustentabilidade atuarial do Fundo de Garantia à Exportação e ao preço praticado no mercado privado.\n- Autoriza a União, com recursos do Fundo de Garantia à Exportação, a assumir despesas judiciais ou extrajudiciais para evitar ou limitar indenizações do seguro; permite que o prêmio, valor pago pela contratação do seguro, seja pago em momentos variados e que a indenização seja paga conforme o cronograma do crédito ou em parcela única, a critério da União.\n- Permite usar recursos do Fundo de Garantia, em conjunto com o seguro, para cobrir garantias de cumprimento de contratos prestadas por instituições financeiras em exportações dos setores de defesa e de certos produtos agrícolas; dispensa licitação para contratação da ABGF (agência que administra fundos garantidores) por entidades públicas e desobriga a União de cobrar na Justiça créditos cuja recuperação custe mais do que o valor a recuperar.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
+    },
+    "2075925": {
+      "sourceHash": "0e909a91d6078e841e0c10025ba427e9c9cf0ed70b0ea17dd9764f3e775af30c",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Abre um crédito extraordinário de R$ 37,6 bilhões para os Ministérios da Saúde, do Trabalho e das Cidades e para encargos financeiros da União.",
+      "resumoDetalhe": "- Abre um crédito extraordinário, isto é, libera dinheiro que não estava previsto no orçamento do ano, para três ministérios e para encargos financeiros da União.\n- Destina ao Ministério da Saúde recursos para atendimentos de média e alta complexidade, distribuídos entre vários estados e em âmbito nacional.\n- Destina recursos ao Ministério do Trabalho para complementar a correção monetária do FGTS (fundo que guarda depósitos do trabalhador), ao Ministério das Cidades para apoio financeiro a projetos de habitação de interesse social em áreas urbanas e a encargos financeiros da União para subvenção econômica, um apoio do governo, em financiamentos de programas de investimento e de reconstrução de municípios atingidos por desastres.\n- Cancela, em contrapartida, verbas de outras ações do Ministério da Saúde, como saúde mental, saúde bucal, saúde indígena, formação de profissionais e construção de unidades de saúde.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:58:52.310Z",
+      "reviewedAt": "2026-08-16T19:05:00Z"
     }
   }
 }

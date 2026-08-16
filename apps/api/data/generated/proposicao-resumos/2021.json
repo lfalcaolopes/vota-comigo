@@ -12,6 +12,28 @@
       "generatedAt": "2026-06-25T22:22:05.880Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
     },
+    "498347": {
+      "sourceHash": "1a61ad837ac173c58d8f959d2311a0f7c99ccc4db3154a8d515f75b74954ccf2",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Isenta do pagamento de pedágio veículos de quem mora ou trabalha de forma permanente no município onde fica a praça de cobrança.",
+      "resumoDetalhe": "- Concede isenção de tarifa de pedágio a veículos cujos proprietários residam ou exerçam atividade profissional permanentemente no município onde existe a praça de cobrança.\n- Exige que o veículo seja cadastrado e credenciado pela autoridade responsável pela concessão e pela empresa que explora a praça, seguindo procedimentos definidos em regulamento.\n- Permite que a concessionária peça revisão da tarifa para manter o equilíbrio econômico-financeiro do contrato; estabelece que a isenção só vale após decisão da autoridade e que, se houver disputa contratual, o benefício não será suspenso enquanto o conflito for resolvido.\n- Aplica a mesma regra também às rodovias federais que foram delegadas a estados, ao Distrito Federal ou a municípios e que sejam exploradas por meio de concessão privada.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
+    "1301128": {
+      "sourceHash": "c1ef0a6a4a1328c18740c60f9a2a5c229da8090ed45e0371923c24a4a6b9ae6f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria o crime de injúria racial coletiva para ofensas em locais públicos e nas redes sociais, com pena de prisão e multa e processo público (o Estado pode processar sem depender da vítima).",
+      "resumoDetalhe": "- Cria o crime de injúria racial coletiva quando alguém ofende outra pessoa em locais públicos, em locais privados abertos ao público ou nas redes sociais usando referências a raça, cor, etnia, religião, origem ou à condição de pessoa idosa ou com deficiência.\n- Estabelece pena de reclusão e multa para esse crime.\n- Torna a ação penal pública incondicionada para esse crime, ou seja, o Ministério Público pode processar sem precisar da manifestação da vítima.\n- Inclui essa nova forma de injúria na lei que trata do racismo, fazendo com que ela seja tratada no mesmo conjunto legal.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
     "2184458": {
       "sourceHash": "432762ab03c707a241e453f1d3eb4d9dcf2ba927dd6e98e20805df54041043c3",
       "generationStatus": "generated",
@@ -77,6 +99,39 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:16:05.310Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2270325": {
+      "sourceHash": "6d554012e4611646dc1af7debec8e1f2034c87778fc161821a0c62aed089487d",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite que o serviço de resgate pré-hospitalar dos Corpos de Bombeiros Militares receba emendas individuais destinadas às Ações e Serviços Públicos de Saúde (ASPS).",
+      "resumoDetalhe": "- Inclui as ações de resgate pré-hospitalar dos Corpos de Bombeiros Militares no rol de atividades que podem receber emendas individuais destinadas às Ações e Serviços Públicos de Saúde (ASPS), ou seja, permite que esse serviço receba essas verbas.\n- Altera a redação sobre ações de assistência social para deixar claro que a assistência social fica, em regra, excluída, salvo quando estiver relacionada às ações de resgate pré-hospitalar dos Corpos de Bombeiros Militares.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
+    "2270403": {
+      "sourceHash": "065a2d7ffdd72bbcd8bacf2653cb569d06f456e3440bee65ebaf30b8b569330c",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Determina que as regras da lei sobre medidas para a calamidade pública valem enquanto durar o estado de calamidade ou suas consequências, mesmo que o decreto que declarou o estado tenha acabado.",
+      "resumoDetalhe": "- Estabelece que as normas previstas na lei que trata de medidas durante a calamidade pública ficam vigentes enquanto durar o estado de calamidade ou suas consequências, sem depender do decreto que reconheceu esse estado.\n- Apresenta como justificativa dar segurança jurídica às medidas educacionais excepcionais, como a reorganização do calendário escolar, enquanto persistirem os efeitos da calamidade.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
+    "2270642": {
+      "sourceHash": "20dc65965abd154af1690b0c6be857acdd2b8125fbe16f799d4e7ac9ab01eef6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Abre crédito extraordinário de R$ 450 milhões para o Ministério do Desenvolvimento Regional financiar ações de defesa civil e atendimento a vítimas de desastres naturais.",
+      "resumoDetalhe": "- Abre crédito extraordinário em favor do Ministério do Desenvolvimento Regional para despesas relacionadas a riscos e desastres.\n- Aponta, na exposição de motivos, que os recursos atenderão ao socorro e à assistência às vítimas e ao restabelecimento de serviços essenciais após desastres naturais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
     },
     "2270789": {
       "sourceHash": "444417daf6bbc927d63634303362cc5897585cf05e34734cdfa5894f017fcb8d",
@@ -177,6 +232,28 @@
       "generatedAt": "2026-07-07T17:45:21.754Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2275723": {
+      "sourceHash": "4e9f6d494f84c35438e6a2645cb42cc2a8fce00cc6ab6d0bc1d6eb8b55cb8d89",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Isenta do Imposto de Renda despesas e rendas relacionadas a complicações e sequelas da COVID-19 e dispensa a carência previdenciária (o prazo mínimo de contribuição) para obter benefícios.",
+      "resumoDetalhe": "- Cria isenção do Imposto de Renda para aposentadorias ou reformas pagas a pessoas com complicações ou sequelas da COVID-19, quando houver atestado de médico especialista.\n- Cria isenção do Imposto de Renda para valores gastos pela pessoa afetada com tratamentos e exames ligados às sequelas, como sessões de fisioterapia, hemodiálise e exames cardíacos, neurológicos e pulmonares.\n- Cria isenção do Imposto de Renda sobre a contribuição à previdência feita por empregador pessoa física para cuidadores ou enfermeiros que prestem cuidados à pessoa com sequelas da COVID-19.\n- Inclui as complicações e sequelas da COVID-19 entre as condições que dispensam o cumprimento da carência (o tempo mínimo de contribuição) para obter benefícios previdenciários, define quais sequelas são alcançadas e permite que o Ministério da Saúde acrescente outras.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
+    "2275840": {
+      "sourceHash": "54b70ed0e602ba6025f33e0df2bf2d3ce4058c5e98c21d0eef507f724b1bc6fd",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Simplifica a abertura de empresas, amplia a proteção de acionistas minoritários, facilita o comércio exterior e cria um sistema para localizar bens de devedores, entre outras mudanças no ambiente de negócios.",
+      "resumoDetalhe": "- Facilita a abertura e o registro de empresas por meio da Redesim, a rede que integra órgãos, prevendo comitê gestor, serviços eletrônicos, emissão automática de alvarás para atividades classificadas de risco médio e dispensando a coleta de dados já existentes em bases federais.\n- Protege acionistas minoritários e reorganiza a governança das companhias, ampliando deliberações em assembleia, exigindo conselheiros independentes para companhias abertas e vedando a acumulação do cargo de presidente do conselho com o de principal executivo.\n- Facilita o comércio exterior ao instituir um guichê único eletrônico para envio de documentos aos órgãos federais, vedar exigências de comércio sem previsão normativa, promover compartilhamento de dados para operações de serviços e modernizar regras de origem não preferencial, que definem de que país vem uma mercadoria.\n- Institui o Sira, o Sistema Integrado de Recuperação de Ativos, para identificar bens e devedores e apoiar a constrição e a venda de ativos; regula medidas de cobrança aplicadas por conselhos profissionais; cria regras para a profissão de tradutor e intérprete público com requisitos, provas e sanções; agiliza autorizações locais para obras de ligação de eletricidade em áreas urbanas sob condições específicas; e estabelece que a prescrição intercorrente, quando o processo fica parado, acompanha o mesmo prazo da pretensão.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:28:49.882Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
     "2276475": {
       "sourceHash": "773caec9cebd63d3f9968ef70b42015cf53821023656cfa00e5f725488f0c54c",
       "generationStatus": "generated",
@@ -188,6 +265,17 @@
       "generatedAt": "2026-08-16T06:45:23.563Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "2276547": {
+      "sourceHash": "a6651d832cf39dea0b0d67beb282420409609c9de09b75cfff63200a987852ab",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova o acordo entre Brasil e Luxemburgo sobre serviços aéreos.",
+      "resumoDetalhe": "- Aprova o acordo entre Brasil e Luxemburgo que trata de serviços aéreos entre os dois países, assinado em Brasília.\n- Exige que quaisquer revisões ou ajustes do acordo que possam trazer custos pesados para o país sejam aprovados pelo Congresso Nacional.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
     "2278161": {
       "sourceHash": "33a41b3ff4327f8e8e6d8da3943d8a629be57d81227843267c4a960ef42f6377",
       "generationStatus": "generated",
@@ -198,6 +286,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2279127": {
+      "sourceHash": "be4882838602a8b784bdbe048c5509b6b38329500fcde41bae6eb95e0e0c610b",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui a Política Nacional Aldir Blanc, uma política permanente que financia e apoia a produção cultural e subsidia espaços culturais em todo o país.",
+      "resumoDetalhe": "- Institui a Política Nacional Aldir Blanc como política permanente de fomento à cultura, com objetivo de apoiar iniciativas culturais, garantir financiamento e valorizar a diversidade cultural, beneficiando pessoas, organizações e espaços ligados à cultura.\n- Destina repasses da União aos estados, ao Distrito Federal e aos municípios para financiar a política, estabelecendo critérios de divisão entre as unidades federativas e regras para reverter recursos não programados pelos municípios.\n- Prevê a execução dos recursos por meio de instrumentos como editais, chamadas públicas, prêmios, aquisições, bolsas, subsídios e outras formas de apoio, para produção, difusão, formação, preservação de acervos, digitalização, produção audiovisual, intercâmbio e ações de cultura digital e comunitária.\n- Define subsídio específico para manutenção de espaços culturais com pagamento em parcela única mediante inscrição em cadastros públicos; veda o pagamento a espaços criados ou mantidos pela administração pública ou por determinados grupos empresariais e exige prestação de contas pública e simplificada.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:28:49.882Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
     },
     "2279186": {
       "sourceHash": "fc4086815252340eacd938cadc9d30d07d01ca2a95f7147cd1a1cdf88bc367f8",
@@ -232,6 +331,17 @@
       "generatedAt": "2026-07-07T20:05:23.282Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2279750": {
+      "sourceHash": "7684debec9ed54a7980989d1df33236537f37c02d014667a9f3ed88d93ef8005",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza fábricas de produtos veterinários a produzir vacinas contra a covid-19 se cumprirem normas sanitárias e de biossegurança e mantiverem separação física entre produtos.",
+      "resumoDetalhe": "- Autoriza estabelecimentos que fabricam produtos veterinários a produzir vacinas contra a covid-19, desde que cumpram todas as normas sanitárias e exigências de biossegurança aplicáveis à produção de vacinas humanas.\n- Exige que produção, envasamento, etiquetagem, embalagem e armazenamento das vacinas para uso humano ocorram em áreas fisicamente separadas das usadas para produtos veterinários, permitindo armazenamento conjunto apenas mediante avaliação e anuência da autoridade sanitária federal e com método claro de identificação e segregação dos produtos.\n- Submete esses estabelecimentos à autorização, ao controle e à fiscalização da autoridade sanitária federal no que se refere à produção de vacinas humanas, mantendo a fiscalização da autoridade de sanidade animal sobre os produtos veterinários, e prioriza a análise dos pedidos de autorização e do licenciamento das vacinas, com prazo máximo para a decisão.\n- Determina que a autoridade sanitária federal considere a capacidade de produção para evitar desabastecimento de insumos necessários à saúde e prevê que o Poder Executivo possa conceder incentivo fiscal a empresas que adaptem suas estruturas para produzir vacinas contra a covid-19.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
     "2280241": {
       "sourceHash": "45be26fac86a2c61faa3213a00e4f1f687be1b2e513266a5dbf81d378257096d",
       "generationStatus": "generated",
@@ -253,6 +363,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2282791": {
+      "sourceHash": "bcc2cd8cf10dcd8ea7fb3dc0fe587e937c5070ff97f1621f8f838295afd8cebf",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Coloca as áreas de livre comércio, as zonas francas e a política industrial dos setores de tecnologia da informação e de semicondutores na mesma regra constitucional que trata do regime especial da Zona Franca de Manaus.",
+      "resumoDetalhe": "- Estende às áreas de livre comércio e às zonas francas o mesmo tratamento constitucional dado ao regime especial da Zona Franca de Manaus.\n- Determina que a política industrial e os incentivos para o setor de tecnologias da informação e comunicação (TICs, como celulares e computadores) e para o setor de semicondutores sejam tratados na forma da lei.\n- Sustenta, na justificativa, que a redução gradual de incentivos federais aprovada na chamada PEC Emergencial atingiria de forma desproporcional as empresas de eletrônicos instaladas fora da Zona Franca de Manaus, que teriam de se mudar para lá ou encerrar a produção no país.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
     },
     "2283432": {
       "sourceHash": "6f2286245e207febc4c098f4665a1f2ea9d231b396845d1971fdd389dc77ea0e",
@@ -287,6 +408,17 @@
       "generatedAt": "2026-07-07T21:23:14.848Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2284555": {
+      "sourceHash": "424330c7a8a38df35ced4ea8545ac5bb482b5a020352d833564db1c90eff1bff",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um sistema para proteger e valorizar agentes comunitários de saúde e agentes de combate às endemias, definindo concurso público, piso nacional, aposentadoria especial e condicionando repasses federais à regularização do vínculo.",
+      "resumoDetalhe": "- Estabelece o Sistema de Proteção Social e Valorização dos Agentes Comunitários de Saúde e dos Agentes de Combate às Endemias, determinando que lei federal fixe o regime jurídico, diretrizes para planos de carreira, o piso salarial profissional nacional como vencimento inicial da carreira, a qualificação e a regulamentação das atividades.\n- Determina que os gestores locais do SUS admitam esses profissionais por concurso na forma de processo seletivo público (uma forma específica de concurso para a categoria); prevê certificação dos processos seletivos já realizados e comissão para juntar provas quando faltarem documentos, e anula regras de edital que impeçam a admissão efetiva, direta e por tempo indeterminado, salvo seleção emergencial para surtos.\n- Estabelece que a União preste assistência financeira complementar para garantir o piso e fomentar qualificação, que esses recursos não sejam computados nos limites de despesas de pessoal, e que os repasses federais só sejam feitos enquanto for comprovada a regularidade do vínculo efetivo e direto dos agentes, com fiscalização pelo Tribunal de Contas.\n- Garante direito à aposentadoria especial e à pensão, de forma integral e paritária, para os agentes que comprovarem atuação exclusiva por longo período no exercício de suas funções em campo e nas unidades de atenção básica ou de vigilância, inclusive em atividades de coordenação, supervisão ou representação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
     "2285694": {
       "sourceHash": "f11d253a392fce035b4fc723d952592bbc2e9cd55fba78fecc05d12880e5b0de",
       "generationStatus": "generated",
@@ -320,6 +452,17 @@
       "generatedAt": "2026-08-16T06:45:23.563Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "2288318": {
+      "sourceHash": "77023f5b5e52e173d731857f96db37c7d8327496534c8d7854bc355d0c5ba0ac",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Suprime perda automática da nacionalidade por ter outra e só permite perda em casos específicos.",
+      "resumoDetalhe": "- Suprime a perda da nacionalidade brasileira por mera aquisição de outra nacionalidade.\n- Define que a nacionalidade pode ser perdida por cancelamento da naturalização por decisão judicial em caso de fraude ou de atentado contra a ordem constitucional e o Estado Democrático.\n- Permite que a pessoa peça expressamente a perda da própria nacionalidade perante autoridade brasileira, ressalvadas situações que acarretariam apatridia (quando a pessoa fica sem nenhuma nacionalidade).\n- Prevê que a renúncia feita por pedido expresso não impede a pessoa de readquirir a sua nacionalidade brasileira originária, nos termos da lei.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
     "2288387": {
       "sourceHash": "45783dc3bef832d5bf7be9ba82dd6d055de0c37973933bdfef4dda7b1dd49211",
       "generationStatus": "generated",
@@ -352,6 +495,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:33:03.984Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2289616": {
+      "sourceHash": "d7279aa2d74d9f52c184f9e2a39165a975106bf623c5660cac552e2117893306",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Susta os efeitos de um dispositivo de uma portaria do Ministério da Saúde que fixava um limite aos recursos extras do Fundo Nacional de Saúde para transferências a fundos de saúde estaduais e municipais para o enfrentamento da Covid-19.",
+      "resumoDetalhe": "- Susta os efeitos de um dispositivo de portaria que impunha um teto aos recursos adicionais do Fundo Nacional de Saúde destinados a transferências aos fundos de saúde dos estados, do Distrito Federal e dos municípios para o enfrentamento da Covid-19 (doença causada pelo novo coronavírus).\n- Afirma, na justificativa, que a limitação pode inviabilizar o uso de emendas parlamentares de execução obrigatória destinadas à pandemia e pede apoio para derrubar esse teto.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
     },
     "2289980": {
       "sourceHash": "e16c8bdc7c091714c3e7b088851c57233d54eca086b0f9040e70286cb8082af0",
@@ -397,6 +551,28 @@
       "generatedAt": "2026-07-08T00:31:37.208Z",
       "reviewedAt": "2026-07-08T00:35:04.621Z"
     },
+    "2293229": {
+      "sourceHash": "fecd32924c5205f93b48bcff17a467676e2ca492aa81173ab95a45b79d5ebfa4",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Regulamenta a cobrança do ICMS nas vendas e serviços entre estados destinados a consumidor final, definindo quem paga a diferença entre o imposto cobrado no estado de destino e o cobrado entre estados.",
+      "resumoDetalhe": "- Define quem paga a diferença entre o percentual de ICMS cobrado dentro do estado de destino e o percentual cobrado nas vendas entre estados: quem recebe a mercadoria, se já for empresa que paga o imposto; ou quem envia a mercadoria ou presta o serviço, se o destinatário for consumidor comum.\n- Estabelece que, se a mercadoria entra fisicamente em outro estado ou o serviço termina em outro estado, o imposto correspondente a essa diferença é devido ao estado onde ocorre a entrada física ou o fim da prestação.\n- Lista outras situações em que o imposto é devido nas operações entre estados, como o início de um transporte entre estados sem venda ligada a ele, a entrada de bem comprado por uma empresa para uso próprio e a saída de mercadoria para consumidor comum de outro estado.\n- Determina como calcular o valor devido a cada estado e limita o desconto do imposto já pago em etapas anteriores, que só pode ser abatido do imposto devido ao estado de origem.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
+    "2293230": {
+      "sourceHash": "5843ffbee6180ffe07a21c3ef0795058c86717d25722b30618ea987cfe46aebb",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Dá o nome 'Aeroporto Internacional de Campo Grande – Ueze Elias Zahran' ao aeroporto de Campo Grande.",
+      "resumoDetalhe": "- Dá oficialmente o nome “Aeroporto Internacional de Campo Grande – Ueze Elias Zahran” ao aeroporto internacional de Campo Grande, no Mato Grosso do Sul.\n- Muda apenas o nome do aeroporto, atualmente chamado Aeroporto Internacional de Campo Grande.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:28:49.882Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
     "2293428": {
       "sourceHash": "b086a93034d22abb8c86768826478e255759219ba5f3f9f7aae4dc390706218c",
       "generationStatus": "generated",
@@ -430,6 +606,28 @@
       "generatedAt": "2026-07-07T22:12:46.007Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2293710": {
+      "sourceHash": "b0413235bfeee6ecc3de26a243288446521cb351e74b01e5fc4d1189d34d73f8",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Proíbe coligações nas eleições proporcionais e só permite que participem da divisão de vagas os partidos que atinjam o quociente eleitoral (o número mínimo de votos que dá direito a uma vaga).",
+      "resumoDetalhe": "- Proíbe coligações nas eleições proporcionais e autoriza coligações apenas nas eleições majoritárias.\n- Restringe a participação na distribuição de vagas aos partidos que alcançarem o quociente eleitoral, o número mínimo de votos que dá direito a uma vaga, e permite disputar as vagas restantes apenas aos partidos que atinjam uma fração mínima desse quociente.\n- Define que a divisão das vagas entre os partidos será feita por um cálculo por médias e que as vagas de cada partido serão preenchidas pelos seus candidatos mais votados; prevê que, se nenhum partido alcançar o quociente, as vagas serão ocupadas pelos candidatos mais votados individualmente até completar todas as vagas.\n- Regula o registro de candidaturas e a participação em debates, determina como serão registrados candidatos de coligações e revoga dispositivos do Código Eleitoral.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:28:49.882Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
+    "2293712": {
+      "sourceHash": "f70f974f85300db4419557387a11ec5ee0fd7569e0a05319de09e9ff18b183f4",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui o Relp para parcelar e reduzir encargos de dívidas do Simples Nacional para micro e pequenas empresas.",
+      "resumoDetalhe": "- Cria o Relp, programa de parcelamento de dívidas do Simples Nacional para micro e pequenas empresas, incluindo microempreendedores individuais.\n- Exige que quem aderir confesse os débitos, pague a parcela inicial, mantenha em dia os depósitos do FGTS (o fundo que o empregador deposita em nome do trabalhador) e não adira a outros parcelamentos enquanto durar o programa.\n- Define modalidades de pagamento que combinam um pagamento inicial em espécie e o parcelamento do saldo em longo prazo, com redução de juros, multas e outros encargos conforme a modalidade escolhida.\n- Permite incluir dívidas em disputa se o devedor desistir de ações e recursos; prevê exclusão do programa e cobrança imediata do débito em caso de falta de pagamento, manobra para esvaziar o patrimônio, falência ou declaração de inaptidão do registro da empresa (CNPJ); mantém penhora e outras garantias sobre bens durante a adesão.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
     "2294651": {
       "sourceHash": "bcad39ed05cf3372dbad1f94a35df8defb0285298be27400f95dd1d789295a97",
       "generationStatus": "generated",
@@ -440,6 +638,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:33:03.984Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2297512": {
+      "sourceHash": "285a0d01efaff01d0d087df61636ef0632717e068a2d735bd161b570fe2a93b4",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova o acordo de cooperação e facilitação de investimentos entre Brasil e Índia.",
+      "resumoDetalhe": "- Aprova o texto do acordo de cooperação e facilitação de investimentos entre Brasil e Índia, assinado em Nova Delhi.\n- Exige que o Congresso Nacional aprove qualquer revisão do acordo ou ajustes complementares que gerem custos ou obrigações pesadas para o patrimônio do país.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
     },
     "2297579": {
       "sourceHash": "9cabb9e3b61c13bbed7a74a4ff842821f6df481cba27d03d11c45d687129c2a8",
@@ -452,6 +661,17 @@
       "generatedAt": "2026-07-07T22:12:46.007Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2299903": {
+      "sourceHash": "b89ea742463e37ad4febfeb3a43a2ae7f1e91b64067908e898409135c56c15a4",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Declara feriado nacional em 20 de novembro para o Dia Nacional de Zumbi e da Consciência Negra.",
+      "resumoDetalhe": "- Declara feriado nacional o dia vinte de novembro.\n- Destina a data à celebração, em todo o país, do Dia Nacional de Zumbi e da Consciência Negra.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:28:49.882Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
     "2300880": {
       "sourceHash": "30bc4cb560a3a31301d850ae61273100072e049c97e4905f6bc88677fce40382",
       "generationStatus": "generated",
@@ -463,6 +683,28 @@
       "generatedAt": "2026-07-07T19:32:44.100Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2301088": {
+      "sourceHash": "e22a9d1fc66dc12f224ea23e1c584593677a01dcdf9b2c584a2728efe053ba5c",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Eleva para setenta anos a idade máxima para escolha e nomeação de membros de tribunais superiores, regionais e do Tribunal de Contas.",
+      "resumoDetalhe": "- Eleva a idade máxima para a escolha e a nomeação de ministros e juízes dos tribunais superiores, dos tribunais regionais federais e do trabalho e do Tribunal de Contas da União.\n- Fixa também uma idade mínima para essa escolha, menor nos tribunais regionais do que nos tribunais superiores.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
+    "2301321": {
+      "sourceHash": "800a621ba717009a8ff8100c41d0d618abd748ccaddc2cfcb042997c72275dc1",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Altera a cobrança da taxa de fiscalização do mercado de capitais pela Comissão de Valores Mobiliários: quem paga, como se calcula e quando se cobra.",
+      "resumoDetalhe": "- Define quem paga a taxa de fiscalização do mercado de títulos e valores mobiliários, alcançando os diversos tipos de participantes desse mercado, e fixa o valor devido conforme o tipo de contribuinte e o tamanho do seu patrimônio.\n- Estabelece as hipóteses de cobrança, contemplando cobrança anual paga integralmente, cobrança no momento de oferta pública com base no valor da operação e cobrança no pedido de registro inicial como participante; também prevê que fundos paguem a taxa por classe de cotas e define como se calcula o patrimônio usado como base.\n- Define prazos e consequências para o não pagamento, com atualização do débito, aplicação de juros e multa, inscrição em dívida ativa (a lista oficial de quem deve ao poder público) e possibilidade de parcelamento pela Comissão de Valores Mobiliários; prevê ainda regras para evitar dupla cobrança quando duas situações ocorrem ao mesmo tempo.\n- Altera o recurso contra multas por descumprimento de exigências para que o procedimento siga o regimento interno da Comissão de Valores Mobiliários e para que o recurso não suspenda a multa; autoriza a comissão a editar normas sobre a aplicação das taxas e revoga dispositivos legais anteriores relacionados ao tema.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:28:49.882Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
     "2301371": {
       "sourceHash": "9a1e641132bb30feae80731e5dea0c893969ed25a7c0285ab3f86e2a2ab85467",
       "generationStatus": "generated",
@@ -473,6 +715,28 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:01:17.719Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2303528": {
+      "sourceHash": "6af43911a2a438d913aa1ff22a43d15c1694b7ff1ea06398234817878d0c7ca1",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exige transparência sobre como a Petrobras forma os preços dos derivados e define regras para calcular preços e para exportação.",
+      "resumoDetalhe": "- Exige a divulgação mensal, em site da ANP (Agência Nacional do Petróleo), dos valores dos componentes que influenciam o preço dos derivados vendidos pela Petrobras, como custos de extração, custos de refino, a realização da Petrobras (custos de produção mais markup, sendo markup a margem adicionada sobre o custo), tributos e outras informações.\n- Estabelece que os preços de venda praticados pela Petrobras para distribuidoras e comercializadoras considerem os custos de produção e de refino em moeda nacional acrescidos de um markup, cujo percentual máximo será definido pela ANP.\n- Restringe a exportação de petróleo, permitindo somente a saída do país do volume que exceder o necessário para garantir o abastecimento interno.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
+    "2304353": {
+      "sourceHash": "6df5d4d9cd8cfdb94c1007151809d096db511f14151bce620ae8f2b15ec2e79b",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui um estatuto nacional para simplificar obrigações tributárias acessórias e criar a Nota Fiscal Brasil Eletrônica e declarações fiscais digitais.",
+      "resumoDetalhe": "- Institui um Estatuto Nacional de Simplificação de Obrigações Tributárias Acessórias e cria instrumentos eletrônicos como a Nota Fiscal Brasil Eletrônica (NFB-e, um documento fiscal eletrônico com padrão único para todo o país) e a Declaração Fiscal Digital (DFD, que pode vir pré-preenchida com dados fiscais).\n- Cria um Comitê Nacional de Simplificação ligado ao Ministério da Economia para definir padrões nacionais, regulamentar por resoluções as obrigações acessórias, elaborar regimento interno e criar um fórum de diálogo com entidades privadas.\n- Organiza o compartilhamento e o acesso integrado entre União, Estados, Distrito Federal e Municípios às bases de dados fiscais e prevê que a emissão ou recepção eletrônica de documento fiscal sirva como escrituração e para apuração do tributo; preserva tratamento especial para micro e pequenas empresas e para optantes do Simples Nacional (regime simplificado de tributação).",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
     },
     "2306112": {
       "sourceHash": "8c81c4f2f94a62c4e4eb28f8ae0b03567b431132691831d3cf065c06544af630",
@@ -529,6 +793,17 @@
       "generatedAt": "2026-08-16T06:45:23.563Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "2311299": {
+      "sourceHash": "dbcac7bce99f96b4ecb607a691c1cfcfb96f11c9e44f59e2dd450bfb4acdf25a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um Benefício Extraordinário que complementa o Auxílio Brasil para garantir um pagamento de R$ 400 às famílias no fim do ano de 2021.",
+      "resumoDetalhe": "- Institui um Benefício Extraordinário para famílias do Programa Auxílio Brasil, pago uma única vez por família junto com a parcela de final de ano.\n- Determina que o benefício complete o total de recursos que a família recebe até um valor fixo previsto na medida, sem caráter continuado.\n- Autoriza o Poder Executivo a prorrogar o pagamento para meses posteriores se houver disponibilidade orçamentária e financeira, com despesas cobertas pelas dotações do programa.\n- Responsabiliza o Ministério da Cidadania pela implementação e prevê que o pagamento use a mesma estrutura de operação e de pagamento do Programa Auxílio Brasil.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:28:49.882Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
     "2311542": {
       "sourceHash": "b5b1a0fa36930fc099f8477e1e825fdbcc64d994e0d30c1b472e76658485ce94",
       "generationStatus": "generated",
@@ -551,6 +826,17 @@
       "generatedAt": "2026-08-16T06:45:23.563Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "2312515": {
+      "sourceHash": "95d7b54ddcc820767dcf0b822bfd0c3b6bff9f7850b49288a06b420662d97752",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Escolhe Antonio Augusto Junho Anastasia para o cargo de Ministro do Tribunal de Contas da União (TCU).",
+      "resumoDetalhe": "- Escolhe Antonio Augusto Junho Anastasia para o cargo de Ministro do Tribunal de Contas da União (TCU, órgão que fiscaliza como o governo federal gasta e administra dinheiro).\n- Diz que a escolha ocorre em razão da vacância do cargo antes ocupado por Raimundo Carreiro Silva.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
+    },
     "2312948": {
       "sourceHash": "8fec141de290e15504166786bc57c60498d46820c6d7d59bf08773a481fb7799",
       "generationStatus": "generated",
@@ -561,6 +847,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T19:31:12.147Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2313396": {
+      "sourceHash": "e4a9f048f1407a30056bf0b35ac45ce7c7505bcda046403874db44b535a6c75c",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria regras para Associações de Representação de Municípios, definindo objetivos, transparência, poderes e limites.",
+      "resumoDetalhe": "- Define como os Municípios podem se organizar em Associações de Representação de Municípios para defender interesses comuns de caráter político, técnico, científico, educacional, cultural e social.\n- Exige transparência e prestação de contas: divulgação online de relatórios financeiros, receitas, despesas, contratos e valores pagos pelos Municípios, e prestação de contas anual com controle pelos órgãos competentes.\n- Autoriza as associações a representar e apoiar os Municípios em processos legislativos, administrativos e judiciais, a firmar convênios e a criar programas de assessoramento, condicionando a representação judicial à autorização expressa do chefe do Executivo municipal para cada caso.\n- Impõe limites e regras internas: exige que o representante legal seja ou tenha sido chefe do Executivo (por exemplo, prefeito), veda a gestão associada de serviços públicos e a atuação político-partidária ou religiosa, limita formas de remuneração dos dirigentes, estabelece regras para contratação de pessoal e prevê que a filiação e desfiliação sejam decididas pelo chefe do Executivo do Município.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T18:53:49.550Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
     },
     "2313545": {
       "sourceHash": "a6da4f595ef0749ffc5fabd23c56ccb369167bcf4e23a9e0c6791c4d217c4ac7",
@@ -627,6 +924,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2313739": {
+      "sourceHash": "54c0fdaa5ad6b961d51543de34f23924c2b7a2724f5440e1f40cff7b2136921f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reduz o IRRF (imposto sobre a renda retido na fonte) cobrado sobre pagamentos ao exterior por leasing de aeronaves e motores, aplicando um calendário de alíquotas ao longo de alguns anos.",
+      "resumoDetalhe": "- Reduz o IRRF (imposto sobre a renda retido na fonte) incidente sobre pagamentos feitos do Brasil a empresas estrangeiras a título de arrendamento mercantil de aeronaves e de motores para empresas de transporte aéreo regular, fixando um calendário de alíquotas que aumenta gradualmente ao longo de alguns anos.\n- Revoga dispositivos de leis anteriores relativos ao mesmo tema, eliminando normas em vigor que tratavam da tributação dessas operações.\n- Afirma, na exposição de motivos, que a medida visa apoiar a recuperação do transporte aéreo e do turismo e que haverá renúncia de receitas, prevista como compensada por alteração na tributação de produtos destinados à indústria química.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:28:49.882Z",
+      "reviewedAt": "2026-08-16T19:16:38Z"
     },
     "2313740": {
       "sourceHash": "5acbc666040687d679a295cb30649a722479df9b4d172ddaa5232cf9f42e5abd",

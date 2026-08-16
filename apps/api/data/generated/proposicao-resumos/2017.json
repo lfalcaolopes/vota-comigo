@@ -1,6 +1,39 @@
 {
   "ano": 2017,
   "items": {
+    "2122125": {
+      "sourceHash": "8fddc97197383e563c068a92106380c9d509f58c9dcada83953c5ca115737d94",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Formaliza a inclusão de duas procuradorias e das respectivas carreiras na estrutura da Advocacia-Geral da União e organiza cargos e atribuições internas.",
+      "resumoDetalhe": "- Inclui a Procuradoria-Geral Federal (que atua junto a autarquias e fundações públicas) e a Procuradoria-Geral do Banco Central (que atua no Banco Central) como órgãos de direção superior da Advocacia-Geral da União e incorpora as carreiras de Procurador Federal e de Procurador do Banco Central à AGU.\n- Organiza a estrutura interna da AGU, com órgãos de direção, procuradorias regionais e locais, consultorias jurídicas, corregedoria, a secretaria que cuida dos processos no Supremo Tribunal Federal e órgãos de apoio.\n- Define funções do Advogado-Geral da União e do Vice-Advogado-Geral, como representar a União nos tribunais, supervisionar tecnicamente os órgãos, chamar para si qualquer assunto jurídico da instituição e convocar seus integrantes, e prevê que o Vice seja nomeado pelo Presidente da República.\n- Estabelece regras sobre lotação e composição das carreiras, detalha atribuições das consultorias jurídicas (como examinar editais e contratos e orientar os órgãos assessorados), cria uma câmara técnica para resolver controvérsias entre as procuradorias e transforma um cargo de direção em Vice-Advogado-Geral.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
+    "2122682": {
+      "sourceHash": "fd902723ee6dfea9d853065f9a1ab3c6c28558d97f948029556ea2e19f77e046",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Torna os Tribunais de Contas órgãos permanentes e essenciais ao controle externo e proíbe a extinção dos tribunais de contas municipais onde existam.",
+      "resumoDetalhe": "- Declara os Tribunais de Contas instituições permanentes e essenciais ao controle externo da administração pública.\n- Aplica as mesmas regras, quando for o caso, à organização, composição e fiscalização dos Tribunais de Contas dos Estados e do Distrito Federal, e aos Tribunais e Conselhos de Contas dos Municípios.\n- Exige que o controle externo das câmaras municipais seja feito com o auxílio dos Tribunais ou Conselhos de Contas estaduais ou municipais e proíbe a extinção desses órgãos onde já existam.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
+    "2123843": {
+      "sourceHash": "504d612c3b649d27e743b652096468b913ee572d3a552e64a881bce8c3de4503",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Declara que práticas esportivas que usam animais não são cruéis quando forem manifestações culturais registradas como patrimônio cultural brasileiro, e determina que sejam regulamentadas por lei que assegure o bem-estar dos animais.",
+      "resumoDetalhe": "- Define que práticas esportivas que utilizem animais não são consideradas cruéis quando forem manifestações culturais registradas como bem imaterial do patrimônio cultural brasileiro.\n- Exige que essas práticas sejam regulamentadas por uma lei específica que assegure o bem-estar dos animais envolvidos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:09:19.792Z",
+      "reviewedAt": "2026-08-16T19:05:00.000Z"
+    },
     "2124451": {
       "sourceHash": "db218ea1a5fb45a9757ee8a05db7ba806a8b1040424b3113e9a3968a99aaeca7",
       "generationStatus": "generated",
@@ -45,6 +78,17 @@
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2132523": {
+      "sourceHash": "be8d9d8561421249b3d77ed69e9900adf45abdb4ac5fe2b42952c943b665bfae",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exige que os registros de nascimento e de casamento tragam a naturalidade e outros dados pessoais, e que o nascimento seja registrado com o número da Declaração de Nascido Vivo, documento que identifica o recém-nascido.",
+      "resumoDetalhe": "- Exige que as certidões de nascimento tragam a data do registro, a data do nascimento por extenso e a naturalidade, que o registro anote o número da Declaração de Nascido Vivo, salvo em registro feito fora do prazo, e que sejam anotadas as testemunhas quando o parto ocorrer sem assistência médica.\n- Permite escolher como naturalidade o município do nascimento ou o município onde a mãe morava na data do nascimento, desde que no país, ficando a opção com quem faz o registro; na adoção iniciada antes do registro, também vale o município de residência do adotante.\n- Inclui no registro de casamento a anotação de dados pessoais dos cônjuges, como nomes, nacionalidade, naturalidade, data de nascimento, profissão e endereço.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
     "2132524": {
       "sourceHash": "0f72359c8b5cf63e3123e9f4dc4fc8449158a9e01883c6dc652150d43fe9dfe4",
       "generationStatus": "generated",
@@ -55,6 +99,28 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2138678": {
+      "sourceHash": "5f29e5a7926a1120ac154096ac4bed9f31e54fd54ba9073bddb4b80e13069ec1",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza aditivo único para mudar o cronograma de pagamentos das outorgas (as taxas pagas pelas empresas) em contratos de parceria aeroportuária, desde que cumpridas condições específicas.",
+      "resumoDetalhe": "- Autoriza celebrar, uma única vez, aditivo que altera o cronograma de pagamentos das outorgas em contratos de parceria do setor aeroportuário assinados até uma data limite, observada a regulamentação do Ministério dos Transportes, Portos e Aviação Civil.\n- Exige que o interessado se manifeste dentro do prazo fixado, que não haja processo em andamento para cancelar o contrato por descumprimento e que ele esteja em dia com as outorgas vencidas até a assinatura do aditivo.\n- Determina que o contratado antecipe parte das contribuições fixas, que a reprogramação preserve o valor das outorgas originalmente assumidas em termos atuais, que o saldo reprogramado fique limitado ao que foi antecipado e que o aumento de cada parcela respeite um teto.\n- Estabelece que o cumprimento dessas condições não altera as demais cláusulas do contrato de parceria, considerando mantido o seu equilíbrio econômico-financeiro, isto é, a relação entre custos e ganhos combinada no início.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
+    "2138679": {
+      "sourceHash": "450466c1c9c76937690152608102e3f580f4988d291686d20f5046bd19fbf2f2",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um programa para quitar e parcelar débitos não tributários com autarquias e fundações públicas federais e com a Procuradoria-Geral Federal, mediante adesão do devedor.",
+      "resumoDetalhe": "- Institui o Programa de Regularização de Débitos não Tributários (PRD) para autarquias, fundações públicas federais e a Procuradoria-Geral Federal, permitindo a quitação ou o parcelamento de dívidas não tributárias, inclusive as que estão em disputa, mediante requerimento de adesão.\n- Estabelece modalidades de pagamento com entrada e parcelamento, oferecendo descontos nos juros e na multa conforme a opção escolhida, e fixa a existência de valores mínimos para cada prestação distintos para pessoa física e pessoa jurídica.\n- Exige que, para incluir débitos em discussão administrativa ou judicial, o devedor desista dos recursos e das ações relativas a esses débitos e renuncie a alegações; determina a conversão automática de depósitos vinculados em pagamento definitivo ou em renda e mantém as garantias prestadas e as restrições já existentes sobre bens do devedor.\n- Determina a exclusão do devedor do programa e a cobrança imediata do saldo em casos de falta de pagamento ou atos que indiquem fraude patrimonial, e obriga autarquias, fundações e a Procuradoria a adaptar seus sistemas e procedimentos; exige também que o Poder Executivo estime e inclua na lei orçamentária a renúncia fiscal decorrente dos benefícios, ou seja, a receita que o governo deixa de arrecadar.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:09:19.792Z",
+      "reviewedAt": "2026-08-16T19:05:00.000Z"
     },
     "2144465": {
       "sourceHash": "1fd1c5aa1d52545b988437aaa4b8ac805301fc72277db9e66cdb140c02b97c04",
@@ -89,6 +155,28 @@
       "generatedAt": "2026-07-07T22:12:46.007Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2149303": {
+      "sourceHash": "a5aa95e8a58e25a6124b1614db07881811a127884f3f92d25d93b5db2057703a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova o Protocolo de Adesão da Bolívia ao Mercosul e exige aprovação do Congresso para mudanças nesse acordo e para compromissos que pesem no patrimônio do país.",
+      "resumoDetalhe": "- Aprova o texto do Protocolo de Adesão da Bolívia ao Mercosul, celebrado em Brasília.\n- Submete ao Congresso Nacional atos que alterem esse Protocolo e ajustes complementares que tragam custos pesados ao patrimônio do país.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
+    "2149785": {
+      "sourceHash": "591efcdfce24e21ceb6ee3928761e307611b3952a13414e731a4570688b1ad82",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Estabelece a composição do Conselho Nacional de Assistência Social com vinte membros e representação igualitária entre governo, entidades de assistência, trabalhadores e usuários.",
+      "resumoDetalhe": "- Define a composição do Conselho Nacional de Assistência Social em partes iguais entre o governo e três grupos da sociedade civil: usuários, trabalhadores e entidades de assistência social, estes escolhidos em fórum próprio sob fiscalização do Ministério Público Federal.\n- Estabelece que as conferências de assistência social nas esferas municipal, estadual, do Distrito Federal e nacional sejam formadas por delegados com repartição igualitária entre governo, entidades sociais, usuários e trabalhadores.\n- Determina que os Conselhos de Assistência Social nos âmbitos estadual, municipal e do Distrito Federal observem a mesma paridade entre esses segmentos na sua composição.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
     "2157806": {
       "sourceHash": "95b703a27f61e0fd817277fc2e813e00986c1dfed67ae8f084a23ab557efde49",
       "generationStatus": "generated",
@@ -99,6 +187,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:12:46.007Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2158716": {
+      "sourceHash": "773a6ccd7bf12c2da20ebd98f6d6118849d9bfe679660111ec78089750734596",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria as polícias penais federal, estaduais e distrital e define regras básicas sobre sua organização e ingresso.",
+      "resumoDetalhe": "- Cria as polícias penais federal, estaduais e distrital e as reconhece como parte das forças de segurança.\n- Vincula cada polícia penal ao órgão que administra o sistema prisional do respectivo governo e atribui a elas a segurança dos estabelecimentos penais e outras funções a serem definidas por lei específica de iniciativa do Executivo.\n- Determina que o preenchimento das vagas nas polícias penais ocorra apenas por concurso público ou pela transformação dos cargos dos atuais agentes penitenciários ou cargos equivalentes.\n- Estabelece regras específicas para o Distrito Federal: o governo federal organiza e mantém as polícias no Distrito Federal, pode prestar assistência financeira ao Distrito Federal por meio de fundo, e lei federal vai regular a utilização dessas polícias pelo governo do Distrito Federal; além disso, subordina as polícias militares, os corpos de bombeiros militares, as polícias civis e as polícias penais estaduais e distrital aos governadores.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:09:19.792Z",
+      "reviewedAt": "2026-08-16T19:05:00.000Z"
     },
     "2160860": {
       "sourceHash": "9732789fb84ccbfaa1ed8ce06722e8cb3af6281ba002a4a45144b520ab1857d5",
@@ -122,6 +221,39 @@
       "generatedAt": "2026-08-16T06:10:38.605Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "2162802": {
+      "sourceHash": "5e139146ff78da6b359fd91abeee0184c1f82dbe305e556b2b443c020152cfef",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Prevê que instituição de ensino que negar matrícula a alunos, inclusive a alunos com deficiência, tenha suspenso o credenciamento, a autorização para funcionar.",
+      "resumoDetalhe": "- Estabelece que a recusa de matrícula por parte de instituição de ensino, inclusive quando se trata de aluno com deficiência, importará em suspensão do credenciamento (ou seja, perda temporária da autorização para funcionar).\n- Determina que a suspensão será aplicada na forma prevista pelo regulamento do sistema de ensino (ou seja, segundo regras que as autoridades educacionais definirem).",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
+    "2164132": {
+      "sourceHash": "6713817ddc0ed2a33468fbe72b230c34ebb649bb99885c8f1906226c5517fadf",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova o texto da Convenção Interamericana contra o racismo, a discriminação racial e outras formas de intolerância.",
+      "resumoDetalhe": "- Aprova o texto da Convenção Interamericana que trata de racismo, discriminação racial e formas correlatas de intolerância, adotada na Guatemala pela Assembleia Geral da Organização dos Estados Americanos.\n- Submete ao Congresso Nacional qualquer ato que revise a convenção ou qualquer ajuste que crie custos ou obrigações difíceis para o patrimônio do país, exigindo aprovação legislativa.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
+    "2164134": {
+      "sourceHash": "73bdaebd05513589e374fdb7185dafd48354ce545d6c07d1bfe35c7c006ff209",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza o conselho que administra o Fundo de Garantia do Tempo de Serviço (FGTS) a contratar com a Caixa uma dívida sem prazo para vencer, que serve para reforçar o capital do banco.",
+      "resumoDetalhe": "- Autoriza o Conselho Curador do FGTS a, por resolução, contratar dívida subordinada — que só é paga depois das demais dívidas — com caráter perpétuo, sem data para vencer, seguindo regra do Conselho Monetário Nacional, tendo a Caixa como agente financeiro.\n- Destina essa contratação a compor o capital principal do agente financeiro, ou seja, o dinheiro próprio que o banco precisa ter como base de suas operações.\n- Aponta, na justificativa, que esse tipo de título não tem garantias ligadas a ele e que a remuneração deixa de ser devida quando não há lucro nem recursos na reserva de lucros.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
     "2164234": {
       "sourceHash": "8a8cb386688a235fc7fa394b5e54d457150510397b2889790a03d36de2a87e0e",
       "generationStatus": "generated",
@@ -132,6 +264,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-06-26T02:30:38.288Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2164336": {
+      "sourceHash": "cb14e8dcd05c7575b69dfc1ec66fdaa8a10acc437dbf3626e915f233a6738855",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza o Exército a executar preferencialmente obras e serviços de engenharia sem licitação pública (sem concorrência entre empresas) em casos específicos.",
+      "resumoDetalhe": "- Atribui ao Exército preferência para executar obras e serviços de engenharia e autoriza que ele os realize sem licitação pública (ou seja, sem fazer a concorrência entre empresas) em casos específicos.\n- Define os casos que justificam essa preferência: obras paralisadas ou abandonadas, grandes obras de infraestrutura de transporte, obras de geração e transmissão de energia e outras obras públicas de valor elevado.\n- Determina que o Poder Executivo federal destine os recursos financeiros necessários e providencie o treinamento para formar soldados especialistas que executem essas obras.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
     },
     "2165194": {
       "sourceHash": "53d28134979eb591a1be1a001a02da06277aa26d3e65ba7256ea64ab343dd346",
@@ -154,6 +297,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:10:38.605Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2166595": {
+      "sourceHash": "b6eabde2a2e243707aaa56651fe7af2a2260af18c9e212a75b74ebb52ac55e55",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Torna válidos os atos administrativos praticados nos primeiros anos do Estado do Tocantins que geraram efeitos favoráveis, salvo prova de má-fé.",
+      "resumoDetalhe": "- Torna válidos os atos administrativos praticados no Estado do Tocantins no período inicial de sua instalação, mesmo quando tiverem algum defeito jurídico, se deles tiverem surgido efeitos favoráveis para os destinatários.\n- Estabelece que essa validação só ocorre após o decurso de um prazo contado da data do ato, salvo quando ficar comprovada má-fé.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:09:19.792Z",
+      "reviewedAt": "2026-08-16T19:05:00.000Z"
     },
     "2166600": {
       "sourceHash": "e43b9d308aa324d77f8ccb8fe7c67666c8440d13dc1066fc9f65e80b16fde7be",

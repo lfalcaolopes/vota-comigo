@@ -12,6 +12,39 @@
       "generatedAt": "2026-07-07T19:46:33.443Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2314553": {
+      "sourceHash": "ba035a83358b68b367e5741d37371e697f1db5a2a3ead8a2d7fa439c233fcbfb",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Ajusta a forma de cobrança do PIS/Pasep e da Cofins, duas contribuições federais sobre o faturamento, na cadeia do etanol hidratado e define quem pode vender e comprar esse combustível.",
+      "resumoDetalhe": "- Autoriza produtores, comercializadoras e importadores de etanol hidratado a vender o combustível a distribuidores, revendedores e ao mercado externo, e autoriza os revendedores a comprar desses agentes. Equipara as cooperativas a produtor.\n- Define como o PIS/Pasep e a Cofins são cobrados na venda feita direto do produtor ou do importador para o comércio varejista. Na venda por cooperativa, o valor devido soma uma parcela sobre a receita e outra parcela fixa por volume vendido, salvo se a cooperativa optar por um regime especial.\n- Confirma que o transportador-revendedor-retalhista segue as mesmas regras dessas contribuições aplicadas ao comerciante varejista, e revoga uma medida provisória anterior sobre o mesmo tema.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
+    "2314934": {
+      "sourceHash": "889987b4252a2f7702c136e625012fab958b7ea8ce11c73ada43fe8fbceb84fd",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Regula remarcação, crédito e reembolso para serviços, reservas e eventos cancelados ou adiados por causa da pandemia.",
+      "resumoDetalhe": "- Estende a cobertura das regras de emergência para adiamentos e cancelamentos de serviços, reservas e eventos decorrentes da pandemia, incluindo shows e espetáculos.\n- Permite que prestadores de serviço, empresas e profissionais contratados não reembolsem o consumidor de imediato, desde que ofereçam a remarcação do serviço ou um crédito para uso futuro até uma data-limite.\n- Determina que, se a remarcação ou o crédito não puderem ser oferecidos, o valor pago seja restituído ao consumidor dentro de prazos que variam conforme a data do cancelamento.\n- Anula multas por cancelamentos quando estes decorrem de medidas de isolamento adotadas para combater a pandemia. Corrige pelo IPCA-E, índice oficial de inflação, o valor devolvido por artistas e demais profissionais que não prestarem o serviço contratado.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
+    "2314962": {
+      "sourceHash": "e7324bf5fd7dd29aa3e076bb857b7869d7da3bbdf05fd7c1a6525947ef6dca13",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Dá aos Estados, ao Distrito Federal e aos Municípios mais prazo, até o fim de 2022, para remanejar saldos de dinheiro federal já repassado para a saúde e para a assistência social.",
+      "resumoDetalhe": "- Prorroga o prazo em que Estados, Distrito Federal e Municípios podem transpor e transferir saldos de recursos federais da saúde, ou seja, remanejar para outra finalidade o dinheiro que sobrou nos fundos de saúde.\n- Estende pelo mesmo período a possibilidade de remanejar e reaplicar os saldos que sobraram de repasses do fundo federal de assistência social.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
     "2317563": {
       "sourceHash": "09e89b3d2c43782979ee8029f7d6f040bc6080ec195f04b328974dbd49090a48",
       "generationStatus": "generated",
@@ -22,6 +55,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:23:14.848Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2317622": {
+      "sourceHash": "f5568967caaf88439d2bfdef7af7a1e889346e23d5540ba386e163d0a87a2716",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Dispensa a punição por poda ou corte de árvore quando o órgão ambiental não responder a pedido de remoção feito por risco de acidente.",
+      "resumoDetalhe": "- Deixa de tratar como crime a poda ou o corte de árvore em rua, praça ou propriedade privada quando o órgão ambiental não responde ao pedido de remoção.\n- Considera o pedido automaticamente autorizado se o órgão ambiental não se manifestar dentro do prazo fixado, quando o pedido for feito por risco de acidente.\n- Estabelece que o dano a árvore cometido sem intenção é punido com pena curta de prisão ou com multa.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
     },
     "2318022": {
       "sourceHash": "a76ce22a5e7cab0f47728e952292658411099d70bfe1f546275583cfc21bd97e",
@@ -78,6 +122,28 @@
       "generatedAt": "2026-07-07T20:06:20.826Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2319256": {
+      "sourceHash": "cda5c63aebe99b503808a5e1b8199e5588f30fabceb79e4a55e77c6aff327c33",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria códigos oficiais de atividade econômica para serviços de bronzeamento e para design de sobrancelhas, cílios, micropigmentação e depilação.",
+      "resumoDetalhe": "- Cria duas novas subclasses na CNAE, a lista oficial que classifica as atividades econômicas do país, uma para serviços de bronzeamento natural e artificial e outra para design de sobrancelhas, cílios, micropigmentação e depilação.\n- Permite que empresários individuais que atuem nessas novas subclasses, ou que comercializem e processem produtos extrativistas, optem por uma forma simplificada de recolher seus impostos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
+    "2320081": {
+      "sourceHash": "be1fcaf9b42614b2701b295592442962208488a02f0b096e118d991489a0ab6d",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria contas específicas em cada governo para receber transferências destinadas a pagar prestadores privados e hospitais universitários federais.",
+      "resumoDetalhe": "- Cria contas correntes específicas em cada governo (federal, estadual e municipal) para receber transferências regulares, automáticas e obrigatórias destinadas ao custeio de ações e serviços de saúde junto a prestadores privados e hospitais universitários federais.\n- Aplica a obrigação também às emendas (recursos adicionais incluídos por parlamentares) que acrescentarem dinheiro a essas transferências quando forem destinadas a prestadores privados.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
     "2320266": {
       "sourceHash": "db10722ad8d811202501c239457a16c23f5e3736631103caf10b3ab3e22dc80f",
       "generationStatus": "generated",
@@ -100,6 +166,17 @@
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2321689": {
+      "sourceHash": "677ea2b7918715afe2e958b3e425f2b5fd332adaf7abac9742c7fb3b463fe674",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui o Programa Emprega + Mulheres e Jovens com medidas de apoio à parentalidade, flexibilização do trabalho, qualificação de mulheres e incentivos à aprendizagem.",
+      "resumoDetalhe": "- Institui apoio à parentalidade na primeira infância: reembolso de despesas com creche, saque do FGTS, o fundo de garantia do trabalhador, para pagar creche, e manutenção ou subvenção de creches e pré-escolas pelos serviços sociais do setor produtivo.\n- Permite flexibilizar a jornada e o regime de trabalho de mães e pais com filhos pequenos, com prioridade no teletrabalho, jornadas alternativas, antecipação de férias e horários de entrada e saída flexíveis. Autoriza suspender o contrato de trabalho para qualificação ou para acompanhar o desenvolvimento dos filhos após a licença-maternidade.\n- Cria medidas de qualificação profissional de mulheres e de incentivo à contratação de jovens aprendizes. Permite sacar o FGTS e suspender o contrato para estudar, cria um selo que reconhece boas práticas das empresas e um projeto nacional que dá prazo e reduz multas para quem regularizar a cota de aprendizes.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
     "2323322": {
       "sourceHash": "bc146cf8ed279f6a91bfd1f5353e05269694025db828dbd130a35010d877b8f9",
       "generationStatus": "generated",
@@ -111,6 +188,39 @@
       "generatedAt": "2026-08-16T06:01:17.719Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "2323391": {
+      "sourceHash": "87e5999fec2d4607e6d3f8a54010bbbc09f6c98583d676bb8b06ee7635a29209",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Garante que a compra ou a hipoteca de um imóvel continue valendo quando pendências judiciais do antigo dono não estavam anotadas na matrícula.",
+      "resumoDetalhe": "- Torna eficazes, diante de situações jurídicas anteriores, os negócios que criam, transferem ou modificam direitos sobre imóveis quando determinadas anotações não constavam da matrícula do imóvel na data do negócio.\n- Define quais anotações contam para isso: avisos de ações judiciais sobre o imóvel, bloqueios e execuções, restrições administrativas ou combinadas em contrato e decisões judiciais que apontem fraude, hipoteca ou risco de o dono ficar insolvente.\n- Impede que situações não registradas na matrícula sejam usadas contra quem comprou o imóvel ou o recebeu em garantia de boa-fé, ressalvadas as aquisições que não dependem de registro.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
+    "2324721": {
+      "sourceHash": "95e055be68642406632e1b3b85cb9940e7e31dfd979fed8948d6ed0ec825f680",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Tira a silvicultura, o cultivo de florestas plantadas, da lista de atividades consideradas potencialmente poluidoras e que usam recursos ambientais.",
+      "resumoDetalhe": "- Exclui a silvicultura do rol de atividades potencialmente poluidoras e utilizadoras de recursos ambientais.\n- Mantém nesse rol a exploração econômica de florestas nativas, o comércio exterior de fauna e flora brasileiras, a criação e a exploração de animais silvestres e exóticos e a exploração de recursos aquáticos vivos.\n- Só enquadra nesse rol as espécies geneticamente modificadas e o uso da biodiversidade pela biotecnologia quando a CTNBio, comissão federal que avalia riscos de organismos modificados, já os tiver apontado como capazes de degradar muito o meio ambiente.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
+    "2324988": {
+      "sourceHash": "a4153ce383d659feb15cc05595251aa662996eeaacba61464059eb5d76f59103",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova um acordo sobre localidades de fronteira e determina que revisões ou ajustes que tragam custos ao país precisam ser aprovados pelo Congresso.",
+      "resumoDetalhe": "- Aprova o texto do Acordo Sobre Localidades Fronteiriças Vinculadas celebrado em Bento Gonçalves.\n- Determina que revisões do acordo e ajustes subsidiários ou complementares que gerem encargos graves ao patrimônio nacional dependem da aprovação do Congresso.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
     "2326450": {
       "sourceHash": "ac5cc80910e3ef4ed4c8083a03b6da789d71e02424201fa4d0be9ed3612e7e29",
       "generationStatus": "generated",
@@ -121,6 +231,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2326582": {
+      "sourceHash": "85224309662cb0e038882875db0c37f776caab879d3f1e1ad3b37a1805fa2903",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Estende ao farelo e ao óleo de milho o mesmo tratamento no PIS/Pasep e na Cofins, duas contribuições federais sobre o faturamento, já dado à soja.",
+      "resumoDetalhe": "- Suspende a cobrança dessas contribuições sobre a venda de soja, de milho em grão e de alguns produtos derivados deles.\n- Permite que empresas no regime não cumulativo descontem um crédito presumido calculado sobre a receita das vendas internas ou exportações desses produtos e de alguns derivados, como a lecitina de soja.\n- Estabelece uma alíquota específica para a comercialização de óleos e de certos produtos processados e prevê que essa alíquota também se aplique sobre o valor de aquisição quando esses insumos forem usados na produção de outros óleos ou de rações.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
     },
     "2329218": {
       "sourceHash": "ec2cf639f21a4a07d06053159fb3299b85b8926f5016ac7e72504212ca53a4c0",
@@ -144,6 +265,28 @@
       "generatedAt": "2026-08-16T06:01:17.719Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "2331427": {
+      "sourceHash": "a265ec36c7fe90a86b6ce042f9ef6904f602ce30bcef2fd3c3f0f0b028c4ad6d",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite que bancos e instituições autorizadas deduzam, para fins fiscais, perdas com créditos inadimplidos e com devedores em falência ou recuperação, seguindo um método específico.",
+      "resumoDetalhe": "- Define regras tributárias para as perdas no recebimento de créditos das instituições financeiras e de outras autorizadas pelo Banco Central, excluindo administradoras de consórcio e instituições de pagamento.\n- Permite deduzir essas perdas do lucro real e da base da CSLL, a Contribuição Social sobre o Lucro Líquido, um tributo sobre o lucro. A dedução vale para créditos em atraso e para devedores em falência ou recuperação judicial, e só pode ser feita no mesmo período em que a perda é apurada.\n- Estabelece um método de cálculo com dois fatores, um fixo e outro que cresce conforme o tempo de atraso, aplicados sobre o saldo do crédito. Os valores mudam conforme o tipo de garantia, e a dedução é proibida em operações com partes relacionadas ou com residentes no exterior.\n- Manda somar de volta à apuração os créditos que forem recuperados depois e cria regras de transição para as perdas já existentes.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
+    "2333929": {
+      "sourceHash": "c624527ce80e4d2b176c100ef11d00b4c050a23e774dc3651f051a4b6335dd67",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza municípios a comprar usando a ata de registro de preços de outro município, a lista de preços já negociados em licitação.",
+      "resumoDetalhe": "- Autoriza órgãos e entidades municipais a aderir à ata de registro de preços de outro município, documento que registra preços, fornecedores e condições para contratações futuras.\n- Condiciona essa adesão a que o registro de preços tenha sido formalizado por licitação, o que deixa de fora os registros feitos por contratação direta.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
     "2334043": {
       "sourceHash": "7ef21b276dfd5a29758afa4b49f755275d633008cc9e460d9a5f9f22a75232bf",
       "generationStatus": "generated",
@@ -166,6 +309,28 @@
       "generatedAt": "2026-08-16T06:45:23.563Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "2335185": {
+      "sourceHash": "2cd55b624d3026e9fda87a647d492421188ddc79178181bef93d66d55e5f0191",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Determina que uma parcela mínima dos recursos do Funpen, o fundo federal do sistema prisional, seja usada na capacitação continuada de servidores penitenciários e policiais penais.",
+      "resumoDetalhe": "- Inclui a capacitação continuada dos servidores do sistema penitenciário e dos policiais penais entre as finalidades do Fundo Penitenciário Nacional.\n- Estabelece que uma parcela mínima dos recursos do Fundo deve ser aplicada especificamente em atividades de formação, aperfeiçoamento, especialização e capacitação continuada desses servidores.\n- Autoriza também a utilização dessa parcela mínima para pagar uma parcela indenizatória aos servidores que se capacitarem, desde que esse pagamento seja antes definido em lei federal e, depois, regulamentado por cada ente federado dentro dos limites legais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
+    "2335844": {
+      "sourceHash": "e31cfeb8367364ff1cb936e294d355cc50753515bdc97e671d8c5f9dbfaf83e0",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Susta resoluções da ANEEL, a agência reguladora da energia elétrica, que definem como se calculam e se aplicam as tarifas pelo uso da rede de transmissão.",
+      "resumoDetalhe": "- Suspende resoluções da ANEEL que estabelecem a metodologia de cálculo e as regras de aplicação das Tarifas de Uso do Sistema de Transmissão (TUST), ou seja, as regras sobre quanto e como se cobra pelo uso da rede de transmissão.\n- Sustenta, na justificativa, que essas resoluções tornariam as tarifas imprevisíveis a cada ano e encareceriam a energia, sobretudo para novos projetos de geração no Norte e no Nordeste.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
     "2336484": {
       "sourceHash": "68bfd6f9e5c58a6ee15df4c24c7e7d1d5279c72d015485f415001fe3c158192f",
       "generationStatus": "generated",
@@ -177,6 +342,17 @@
       "generatedAt": "2026-07-07T22:12:46.007Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2337246": {
+      "sourceHash": "1221cca59c5542b30fa58bdd468d93ea5fcb8188c148d1e6a9540a1df1fdbe68",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria uma transição gradual que mantém os coeficientes do Fundo de Participação dos Municípios (FPM) para municípios que perderiam repasses após o censo do IBGE (contagem oficial da população).",
+      "resumoDetalhe": "- Mantém os coeficientes do Fundo de Participação dos Municípios (FPM), que é o repasse federal aos municípios, atribuídos no ano anterior para aqueles que tiverem redução por efeito do censo demográfico do IBGE (contagem oficial da população), durante uma transição ao longo de vários anos.\n- Aplica um redutor financeiro crescente sobre os ganhos decorrentes dessa manutenção, e redistribui automaticamente essa parte entre os demais municípios que participam do FPM.\n- Suspende a garantia de manutenção se for publicada a contagem populacional de um novo censo posterior, fazendo com que a transição passe a ser aferida exclusivamente pelo novo censo.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
     "2340532": {
       "sourceHash": "ddbe5e2e2c13747b2b71bedd5dedbaefb897814292cf60746ff30f392818f217",
       "generationStatus": "generated",
@@ -187,6 +363,39 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2345378": {
+      "sourceHash": "be0ce47a27563486de53a6d7baa924e204440ebb5458d01deb96d8454fb7a3d8",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite que concessões em florestas, unidades de conservação e terras públicas incluam a geração e venda de créditos de carbono e outros serviços ambientais, e trata de financiamento e regras para essas concessões.",
+      "resumoDetalhe": "- Autoriza que as concessões de florestas públicas, de unidades de conservação e de terras públicas incluam o direito de desenvolver e vender créditos de carbono e projetos de pagamento por serviços ambientais. Permite ainda atividades como restauração, manejo para conservação, bioprospecção, turismo e exploração de produtos não madeireiros.\n- Reconhece a vegetação nativa como ativo financeiro, permitindo sua valoração, registro digital seguro e uso em operações de financiamento, e autoriza o BNDES a habilitar outros agentes financeiros e fintechs para operar com recursos do Fundo Nacional sobre Mudança do Clima.\n- Estabelece regras para planejar, licitar e administrar essas concessões. Permite estender por vários anos o plano de outorga florestal, que lista as áreas a serem concedidas, e proíbe dispensar a licitação por inexigibilidade. Exige comprovar capacidade técnica e idoneidade, prevê os casos de extinção do contrato, disciplina a desistência do concessionário e autoriza regulamentar garantias e preços.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
+    "2345468": {
+      "sourceHash": "6bd463e77470b4f1f3e414a27f771f518680c47c172ddfa3a86e4f6911f663ce",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um novo sistema de regras de preços de transferência para empresas brasileiras que negociam com partes relacionadas no exterior, baseado nos preços que empresas independentes praticariam entre si.",
+      "resumoDetalhe": "- Aplica o princípio arm's length, segundo o qual as operações dentro de um mesmo grupo devem seguir os preços que empresas independentes praticariam, no cálculo da base do imposto de renda e da contribuição social. Define o que são transações controladas e partes relacionadas.\n- Estabelece como delinear e comparar uma transação com operações entre terceiros e indica os métodos aceitos para fixar preços (por exemplo, comparação de preços, revenda menos lucro, custo mais lucro, margem líquida e divisão do lucro), com regras específicas para commodities.\n- Regula casos complexos como transações com intangíveis (incluindo quando a valoração é incerta), serviços intragrupo, contratos de compartilhamento de custos, reestruturações de negócios e operações financeiras (dívidas, garantias, gestão de caixa e seguros).\n- Exige documentação detalhada sobre as transações e o grupo multinacional, e prevê ajustes na base tributável quando os termos divergirem do que partes independentes acordariam. Limita a dedução de pagamentos que sirvam para deslocar lucro para fora do país e prevê multas por falta ou erro nas informações. Cria também consultas prévias e medidas de simplificação para dar segurança jurídica.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
+    },
+    "2481858": {
+      "sourceHash": "93ab2a20a0dde9645f8a525956ba4a6c8f71c861a12f432c8900ea625e1c8051",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Organiza o processo administrativo tributário, limita multas e incentiva solução consensual como arbitragem e mediação.",
+      "resumoDetalhe": "- Define que consultas sobre a interpretação da legislação tributária e aduaneira serão resolvidas por processo administrativo e terão efeito vinculante para o órgão e para contribuintes em situações iguais.\n- Estabelece regras para aplicar penalidades. Exige razoabilidade e proporcionalidade, fixa tetos conforme a gravidade da conduta, como fraude ou reincidência, e lista circunstâncias que atenuam e reduzem a multa. Afasta a responsabilidade quando o contribuinte confessa a infração e paga, e proíbe multa isolada no indeferimento de pedido de crédito, salvo falsidade.\n- Organiza o processo administrativo fiscal. Garante o devido processo, o contraditório, a ampla defesa e o duplo grau de julgamento. Exige que o auto de infração traga informações claras, disciplina prazos e apresentação de provas, prevê a publicação das decisões e declara nulos os atos sem fundamentação ou comunicação correta.\n- Incentiva métodos consensuais e alternativos: autoriza arbitragem com sentença vinculante, regula mediação e transação, permite suspender processos administrativos quando houver precedente qualificado e determina que os entes atualizem suas leis para adotar esses critérios.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:27.362Z",
+      "reviewedAt": "2026-08-16T19:40:00.000Z"
     },
     "2559194": {
       "sourceHash": "45567bdcb8d33f3c9a649e4f0c2dfdc0579af0baf28f82d3c8aa48f6eba41c35",

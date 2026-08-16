@@ -56,4 +56,4 @@ Conventional Commits: `<type>: <description>`, type one of `feat`, `fix`, `refac
 
 ## Agent skills
 
-Skill details live under `docs/agents/`: issue tracker (`issue-tracker.md` — GitHub Issues at `lfalcaolopes/vota-comigo` via `gh`) and domain docs (`domain.md` — `CONTEXT.md` + `docs/adr/`). Canonical triage labels: needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix (`triage-labels.md`).
+Skill details live under `docs/agents/`: issue tracker (`issue-tracker.md` — GitHub Issues at `lfalcaolopes/vota-comigo` via `gh`) and domain docs (`domain.md` — `CONTEXT.md` + `docs/adr/`). Canonical triage labels: needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix (`triage-labels.md`). Para revisar os resumos de IA em `apps/api/data/generated/proposicao-resumos/`, leia `revisao-resumos-ia.md` antes de tocar nos dados.

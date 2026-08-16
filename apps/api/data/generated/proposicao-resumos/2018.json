@@ -1,6 +1,17 @@
 {
   "ano": 2018,
   "items": {
+    "2167882": {
+      "sourceHash": "e211c999566b737debf3e8e158470549ddf285efe68b4ef65153a3c3bb0f120f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria a Tarifa Social de Água e Esgoto, com desconto na conta de água para famílias de baixa renda inscritas no cadastro federal de programas sociais (CadÚnico).",
+      "resumoDetalhe": "- Cria a Tarifa Social de Água e Esgoto, que dá descontos maiores para quem consome menos e menores para quem consome mais, aplicados de forma cumulativa.\n- Define quem tem direito: famílias de baixa renda inscritas no CadÚnico, o cadastro federal de programas sociais, que devem apresentar documento de identidade ou CPF, além da conta de água, para comprovar; limita o benefício a uma única ligação por família.\n- Obriga o poder público e as empresas de água a informar as famílias elegíveis; exige que o beneficiário comunique mudança de endereço; prevê instalação de medidores individuais em habitações multifamiliares quando tecnicamente possível e regras para os casos em que não for possível.\n- Determina que os custos do benefício sejam rateados entre as classes de consumidores atendidas pela prestadora, proporcionalmente ao consumo de cada um, excluído desse rateio o próprio beneficiário da Tarifa Social.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:02:33.654Z",
+      "reviewedAt": "2026-08-16T19:25:00.000Z"
+    },
     "2168064": {
       "sourceHash": "2da0032783499d24dcee50337f7f81926f2e458a8065916a7ade3a09c4a18f9a",
       "generationStatus": "generated",
@@ -11,6 +22,28 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:33:03.984Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2173680": {
+      "sourceHash": "a531f4cb00ad3ef4b48ee6a1375a23a63ac5cdd4823d651f859f404254ff7409",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite que microempresas e empresas de pequeno porte excluídas do Simples Nacional em 2018 voltem ao regime se aderirem ao PERT-SN, o programa de parcelamento de dívidas desse regime.",
+      "resumoDetalhe": "- Permite nova opção pelo Simples Nacional, o regime tributário simplificado para pequenos negócios, aos microempreendedores individuais, microempresas e empresas de pequeno porte que foram excluídos desse regime e que aderirem ao Programa Especial de Regularização Tributária das Microempresas e Empresas de Pequeno Porte (PERT-SN).\n- Estabelece que a opção será extraordinária, deverá ser feita dentro de um prazo contado a partir da adesão ao PERT-SN e terá efeitos retroativos ao início do ano da exclusão, desde que a empresa não esteja impedida pelas vedações previstas na lei do Simples Nacional.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:02:33.654Z",
+      "reviewedAt": "2026-08-16T19:25:00.000Z"
+    },
+    "2176886": {
+      "sourceHash": "ca26749506c42cf4ef34c61f21e5922484c9104b152a7c67a14f11d789810954",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Anula os efeitos de uma resolução do Ministério do Planejamento que definiu regras sobre como as empresas estatais custeiam os planos de saúde dos empregados.",
+      "resumoDetalhe": "- Revoga os efeitos da resolução do Ministério do Planejamento que estabelecia diretrizes e parâmetros para o custeio de benefícios de assistência à saúde nas empresas estatais federais.\n- Apresenta justificativa alegando que a resolução excedeu a competência administrativa, impôs obrigações a entidades de autogestão (planos administrados pelos próprios empregadores), interferiu em regras reguladas pela Agência Nacional de Saúde Suplementar (ANS) e violou direitos previstos em acordos coletivos, estatutos e leis federais; menciona ainda impactos práticos, como concursos públicos sem previsão de plano de saúde e mudanças nas regras sobre dependentes.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:02:33.654Z",
+      "reviewedAt": "2026-08-16T19:25:00.000Z"
     },
     "2177451": {
       "sourceHash": "98ae27337e4977200e2fb67bbd7ea334e1ffad7cf0332a3553a8a857fd65ccc7",
@@ -56,6 +89,17 @@
       "generatedAt": "2026-08-16T06:10:38.605Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "2182065": {
+      "sourceHash": "77b2435323b8996eddaac432a074f6a63aa843052d1c6dfa6ef0b46c8008499c",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria o Fundo Nacional de Desenvolvimento Ferroviário (FNDF) para financiar o sistema ferroviário federal.",
+      "resumoDetalhe": "- Cria o Fundo Nacional de Desenvolvimento Ferroviário (FNDF), ligado ao Ministério dos Transportes, Portos e Aviação Civil, para reunir recursos e financiar o subsistema ferroviário federal.\n- Define as fontes de receita do fundo, como verbas previstas na lei orçamentária, doações e outros recursos, incluindo valores provenientes de outorga de subconcessão de trecho da Ferrovia Norte-Sul.\n- Destina os recursos ao subsistema ferroviário federal, com prioridade para ligar o Complexo Portuário de Vila do Conde à Ferrovia Norte-Sul, iniciando os investimentos no município de Barcarena (Pará) para garantir essa ligação.\n- Determina que o Poder Executivo regulamente o funcionamento do fundo.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:02:33.654Z",
+      "reviewedAt": "2026-08-16T19:25:00.000Z"
+    },
     "2184326": {
       "sourceHash": "606785ecfc66edd53f5e3c892187997558deabc4ead1da1247415af7a3b7e126",
       "generationStatus": "generated",
@@ -78,6 +122,17 @@
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2186777": {
+      "sourceHash": "0780a6d0cbdb868e72d1357e6b932f7e9d1f9b94fb01d71e537288f1b65222c4",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Mantém para os municípios que perderiam repasse por causa da estimativa populacional do IBGE os coeficientes do Fundo de Participação dos Municípios (FPM) usados em 2018, até que um novo censo os atualize.",
+      "resumoDetalhe": "- Mantém os coeficientes de distribuição do Fundo de Participação dos Municípios (FPM), o índice que define quanto cada município recebe de repasses da União, para os municípios que apresentarem redução por causa da estimativa anual de população do IBGE, até que os coeficientes sejam atualizados por novo censo demográfico.\n- Apresenta justificativa com lista de municípios e estimativas de perdas decorrentes das reduções nas estimativas populacionais divulgadas pelo IBGE.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:02:33.654Z",
+      "reviewedAt": "2026-08-16T19:25:00.000Z"
+    },
     "2188301": {
       "sourceHash": "5c372bcd511377cc3b9c47447f1a0474434093abd30ba77d3438793267639659",
       "generationStatus": "generated",
@@ -88,6 +143,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T19:36:40.723Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2188690": {
+      "sourceHash": "de2f968d7c0c65d9f4ac34fd0b2a35f03d83ebb629e7cf903642078cfb4d90d7",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Decreta intervenção federal no Estado de Roraima para pôr fim ao grave comprometimento da ordem pública.",
+      "resumoDetalhe": "- Decreta intervenção federal que assume o governo estadual de Roraima para pôr fim ao grave comprometimento da ordem pública.\n- Nomeia Antonio Oliverio Garcia de Almeida, conhecido como Antonio Denarium, como interventor e atribui a ele as funções do governador do Estado.\n- Estabelece que o interventor fica subordinado ao Presidente da República, pode requisitar órgãos e meios civis e militares da administração federal quando necessário, e não será punido por não pagamento ou não repasse de recursos resultantes de atos anteriores à intervenção.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:02:33.654Z",
+      "reviewedAt": "2026-08-16T19:25:00.000Z"
     },
     "2190084": {
       "sourceHash": "411fed263bc4d8c7fb678c1fe567b74ef9567092b5d9f325aebd40c27d3703fa",

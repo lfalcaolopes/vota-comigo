@@ -23,6 +23,39 @@
       "generatedAt": "2026-07-07T20:08:24.596Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2236607": {
+      "sourceHash": "02cff9014370f7e60fa3e9a9dad5ac393094616143e4ce8a8b11cbf0374b31d9",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Pune com suspensão da carteira de motorista quem comete infração gravíssima de trânsito e divulga o ato nas redes, e obriga as plataformas a remover o conteúdo quando notificadas.",
+      "resumoDetalhe": "- Cria a punição de suspender o direito de dirigir do condutor que cometer infração de trânsito gravíssima e divulgá-la em redes sociais ou em outros meios digitais, eletrônicos ou impressos, mesmo que nenhum agente de trânsito tenha registrado a infração.\n- Prevê a cassação da carteira de motorista em caso de repetição da conduta dentro de um prazo e, se a pessoa não tiver habilitação, proíbe que ela a obtenha durante o mesmo período.\n- Agrava as penas dos crimes de trânsito quando o condutor divulga a conduta e obriga empresas e plataformas notificadas a retirar de imediato os vídeos ou áudios e a impedir novas publicações, sob as sanções do Marco Civil da Internet, lei que define as regras de uso da internet no país.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
+    "2237331": {
+      "sourceHash": "5fb0f79f6a77d1e7f07976bc883ece2cf311c1b24380b0e1a49cfe4058f9f394",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza que dívidas de tributos do Simples Nacional sejam encerradas por acordo entre o devedor e o governo.",
+      "resumoDetalhe": "- Autoriza que dívidas apuradas no Simples Nacional, o regime simplificado de tributos das micro e pequenas empresas, sejam extintas por acordo entre o devedor e o governo, mesmo quando já estiverem sendo discutidas na esfera administrativa, na Justiça ou inscritas em dívida ativa.\n- Determina que cada acordo siga a lei própria do governo responsável pela cobrança daquela dívida.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
+    "2237596": {
+      "sourceHash": "68497c646cb1fbf59ab72f8c0df7380e0424a83e2043ce170dbad92d6b95ebf6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza o governo federal a doar dois helicópteros da frota da Polícia Federal ao Paraguai.",
+      "resumoDetalhe": "- Autoriza o governo federal, por meio do Ministério da Justiça e Segurança Pública, a doar ao Paraguai dois helicópteros pertencentes à frota da Polícia Federal.\n- Determina que as aeronaves sejam entregues no estado de conservação em que estão e que o custo de levá-las até a faixa de fronteira seja pago com recursos da União.\n- Atribui ao país que recebe a doação a responsabilidade de fazer as aeronaves entrarem em seu território e regularizá-las, e determina que a doação seja formalizada por termo do diretor-geral da Polícia Federal, ratificado pelo ministro da Justiça e Segurança Pública.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
     "2237876": {
       "sourceHash": "8c5f7f3401728c3529eef727aa1e9b8cebf1c711ca933b91cad8086b7f1e668f",
       "generationStatus": "generated",
@@ -45,6 +78,28 @@
       "generatedAt": "2026-07-07T19:36:40.723Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2238652": {
+      "sourceHash": "67e45f599a77558f673c505f13dab5e3ad86fa3c168d8594c8139607a8a76d28",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Atualiza as regras das cooperativas de crédito, definindo funcionamento, governança e operações, sob supervisão do Banco Central e do Conselho Monetário Nacional.",
+      "resumoDetalhe": "- Submete as cooperativas de crédito e suas entidades de cúpula às regras do sistema financeiro e à competência do Banco Central e do Conselho Monetário Nacional, órgãos que regulam e fiscalizam instituições financeiras, e permite que a cooperativa central do próprio sistema, autorizada pelo Banco Central, assuma temporariamente a administração de uma filiada em risco, podendo afastar seus dirigentes.\n- Mantém a regra de que a captação de dinheiro e a concessão de crédito se restringem aos associados, mas abre exceções, como operações com municípios, com outras instituições financeiras, com fundos garantidores e repasses de órgãos públicos, e permite oferecer outros serviços financeiros também a quem não é associado.\n- Organiza a governança dessas cooperativas, com exigência de conselho de administração e diretoria, regras de composição e de mandato, limites ao acúmulo de cargos, disciplina dos conselhos fiscais, aprovação da política de remuneração, regras para campanhas de captação de associados e para o destino das sobras, além da restituição e da impenhorabilidade das cotas de capital.\n- Define a área de atuação e de admissão de associados, permitindo alcançar pessoas de qualquer lugar do país por meios presenciais ou eletrônicos, e admite operações de crédito com recursos e riscos compartilhados entre cooperativas do mesmo sistema.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
+    "2239098": {
+      "sourceHash": "fd0494ec73a1125fa204dea702a5e371762db925dbf676e258d9112432597f14",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Torna mais grave o furto praticado durante incêndio, naufrágio, inundação, calamidade pública ou acidente de trânsito.",
+      "resumoDetalhe": "- Passa a tratar como furto qualificado, modalidade mais grave do crime, o furto cometido durante incêndio, naufrágio, inundação, desastre ou qualquer calamidade pública, incluídos os acidentes de trânsito.\n- Sustenta, na justificativa, que quem furta aproveitando uma tragédia age com maior oportunismo, que a agravante hoje existente aumentaria pouco a pena e que o furto qualificado teria pena em dobro em relação ao furto simples.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
     "2241662": {
       "sourceHash": "da4c0844f1f46fa9374840e9f06ef5ab5b84d37b592623b011d9a872f6fbb431",
       "generationStatus": "generated",
@@ -56,6 +111,17 @@
       "generatedAt": "2026-06-26T00:18:40.840Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
     },
+    "2241695": {
+      "sourceHash": "49efb243a2b40e6727b80e07e23c88a3bdf898fedf4e2c9cc0c11dec06072364",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Suspende, por um período determinado durante a pandemia do coronavírus, o cumprimento de ordens de despejo contra inquilinos sem renda e contra pequenos negócios.",
+      "resumoDetalhe": "- Suspende por um prazo determinado o cumprimento de ordens de despejo de imóveis residenciais por falta de pagamento do aluguel, quando o inquilino estiver desempregado ou tiver comprovadamente perdido renda com a paralisação do trabalho por conta própria.\n- Suspende pelo mesmo prazo o despejo de imóveis comerciais alugados por microempreendedores individuais, microempresas e empresas de pequeno porte.\n- Proíbe a cobrança de taxas e multas por atraso referentes a esse mesmo período.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
     "2242583": {
       "sourceHash": "b1cdb638c4d5d5088249f6489debb19acd2469eb03a095915d11e159a9600bda",
       "generationStatus": "generated",
@@ -66,6 +132,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:12:46.007Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2242821": {
+      "sourceHash": "5b040a792f678ef4dc87f6a8acfd0c8b29264e773cdc984e135e4e504532b024",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aplica pena em dobro a crimes contra a administração pública cometidos durante calamidade pública.",
+      "resumoDetalhe": "- Aplica pena em dobro aos crimes contra a administração pública cometidos durante uma calamidade pública declarada pelo poder público.\n- Estende essa pena em dobro à corrupção ativa, que é oferecer ou prometer vantagem a um agente público, e à fraude ou perturbação de licitações, as disputas em que o governo escolhe quem vai lhe fornecer produtos e serviços.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:09:19.792Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
     },
     "2242888": {
       "sourceHash": "2eff7c71660981d8f45fbb5f7673951b273f5a746db6942821b988524364ba79",
@@ -88,6 +165,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2247980": {
+      "sourceHash": "2c811ee9d511789c7db849f8775d838b57b56f71d156ea1993dc56053eb7a859",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza o governo a criar um programa de benefícios para profissionais de saúde que atuam no combate à covid pelo SUS, com seguro de vida, auxílio por contágio e pagamento a convocados.",
+      "resumoDetalhe": "- Autoriza o Poder Executivo a criar um programa de apoio aos profissionais de saúde que atuam no enfrentamento da pandemia de covid pelo SUS, a rede pública de saúde.\n- Prevê um seguro de vida contratado pelo Ministério da Saúde, com valor mínimo garantido, para os profissionais que atuam em estabelecimentos que atendem pelo SUS.\n- Concede um auxílio por atividade de risco, pago por um período determinado, ao profissional de saúde que se contaminar enquanto atua em estabelecimento do SUS.\n- Garante remuneração compatível com o piso salarial do estado ao profissional sem vínculo que for convocado para atuar na rede, estende a ele o seguro de vida e o auxílio de risco e permite prorrogar os benefícios enquanto houver necessidade.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
     },
     "2249891": {
       "sourceHash": "1bf8619aed346616d9b5a8c45ce58a0df80c8053d92c54fee394ca883731a978",
@@ -155,6 +243,17 @@
       "generatedAt": "2026-06-26T02:56:11.740Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
     },
+    "2252649": {
+      "sourceHash": "ee5b43b3625269757cd43d3e5321d0bb082fe7d77704537b02fc02ad7a80d02b",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria as debêntures de infraestrutura, títulos que empresas de projetos prioritários emitem para captar dinheiro, e muda as regras de tributação e dos fundos que investem no setor.",
+      "resumoDetalhe": "- Cria as debêntures de infraestrutura, títulos de dívida que empresas criadas especificamente para tocar projetos prioritários de infraestrutura ou de pesquisa e inovação podem vender ao público, com a obrigação de aplicar o dinheiro captado somente nesses projetos.\n- Define como esses títulos são tributados, com imposto retido na fonte, afastamento da isenção que já existe para outros títulos do gênero e imposto mais alto para investidor sediado em país de tributação favorecida, e permite que a empresa emissora abata juros e parte do lucro tributável, com abatimento maior quando o projeto for certificado como sustentável.\n- Proíbe que pessoas ligadas à empresa emissora comprem esses títulos, salvo exceções que o Executivo definir, com multa e responsabilidade solidária em caso de descumprimento, e permite que fundos de investimento em infraestrutura contem esses títulos na parcela mínima exigida de sua carteira, ajustando prazos e áreas consideradas prioritárias.\n- Isenta de imposto os juros de empréstimos tomados no exterior por essas empresas para financiar projetos de infraestrutura, admite garantias de organismos internacionais em parcerias público-privadas e autoriza a União a entrar, até um limite definido, como cotista de um fundo que cobre riscos desses projetos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
     "2253778": {
       "sourceHash": "57b6756a1797e19d827227b4230ad4c6f82956407d6537c22e9170da89bf7792",
       "generationStatus": "generated",
@@ -165,6 +264,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:23:14.848Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2253943": {
+      "sourceHash": "d49704e5700ede572ba15fe302d46902c27340ffc6cdc109f084cb5c7d2b7791",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Afasta os trabalhadores da educação pública de parte das restrições impostas pelo programa de enfrentamento ao coronavírus.",
+      "resumoDetalhe": "- Determina que parte das restrições do programa federativo de enfrentamento ao coronavírus não se aplique aos trabalhadores da educação pública da União, dos estados, do Distrito Federal e dos municípios.\n- Explica, na justificativa, que as regras afastadas são as que proíbem conceder aumento, auxílio ou benefício que eleve a despesa com pessoal e as que impedem contratar servidores e realizar concurso público enquanto durar o programa.\n- Sustenta, na justificativa, que a retomada das aulas exigirá repor conteúdo em fins de semana e feriados, o que dependeria de pagar horas extras aos professores ou de contratar novos docentes.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
     },
     "2254253": {
       "sourceHash": "9e3fe9809432cb4d907d982c4500eb135bde0b0e917c7a0cb15b3a190efc894c",
@@ -243,6 +353,17 @@
       "generatedAt": "2026-06-25T22:43:30.565Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
     },
+    "2260458": {
+      "sourceHash": "02cbd086ba7be27e16d4f9cb079d6a3e415001d1a1dfabcabbc6d1115dcaf88f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Proíbe tatuagem em animais por motivo estético e pune quem faz o procedimento ou permite que ele seja feito.",
+      "resumoDetalhe": "- Proíbe fazer tatuagem em animais por motivo estético e alcança tanto quem realiza o procedimento quanto quem permite que ele seja feito.\n- Sujeita essas pessoas às mesmas penas já previstas para quem maltrata animais na lei que pune crimes contra o meio ambiente.\n- Sustenta, na justificativa, que a tatuagem só serve ao gosto do dono, causa dor ao animal e o expõe a infecções, reações alérgicas, cicatrizes e queimaduras.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:09:19.792Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
     "2260971": {
       "sourceHash": "b426e362cde032813d367223c4fe1085f2eef81d1fefe1928ae32ca7767744ad",
       "generationStatus": "generated",
@@ -275,6 +396,50 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-08T00:31:37.208Z",
       "reviewedAt": "2026-07-08T00:35:04.621Z"
+    },
+    "2262099": {
+      "sourceHash": "8d98cceac20012b42e4a5d3689b1a8e93478134e07628d4ea981319ecacb4eff",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Impede o bloqueio dos recursos do fundo federal que financia ciência e inovação, o FNDCT, e define onde esse dinheiro pode ser aplicado.",
+      "resumoDetalhe": "- Proíbe o bloqueio do dinheiro destinado à inovação e ao desenvolvimento científico e tecnológico quando ele vier de um fundo criado para essa finalidade, incluindo essas despesas entre as que não podem ser cortadas quando o governo contingencia gastos.\n- Define o Fundo Nacional de Desenvolvimento Científico e Tecnológico, o FNDCT, como fundo especial destinado a financiar pesquisa e inovação, e deixa claro que ele não é um fundo de investimentos nem se vincula ao sistema financeiro.\n- Garante que a programação financeira e os créditos do fundo possam ser executados sem limites, salvo se a arrecadação prevista não se realizar, e proíbe guardar esses valores em reserva de contingência.\n- Destina os recursos do fundo ao apoio a programas e projetos de ciência, tecnologia e inovação, da pesquisa à formação de pessoal e à infraestrutura, inclusive ações para neutralizar emissões de gases de efeito estufa e para desenvolver a bioeconomia, e permite que organizações sociais com contrato de gestão acessem parte dos recursos não reembolsáveis.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
+    "2263290": {
+      "sourceHash": "9b6dfcbcdcfdb8568311738dfd5ed7209b3ff709dc973b2114b519953565ebc2",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza governos federal, estadual e municipal a importar medicamentos e equipamentos de saúde por meio da Organização Pan-Americana da Saúde, com liberação obrigatória da Anvisa, agência que fiscaliza produtos de saúde.",
+      "resumoDetalhe": "- Autoriza a União, os estados, os municípios e o Distrito Federal a comprar no exterior medicamentos, insumos e equipamentos de saúde por meio da Organização Pan-Americana da Saúde, órgão internacional que faz compras conjuntas para vários países.\n- Exige que os itens importados tenham liberação de uso no Brasil pela Agência Nacional de Vigilância Sanitária, a Anvisa, que fiscaliza medicamentos e produtos de saúde.\n- Determina que as compras ligadas ao combate da pandemia do novo coronavírus sigam, quando dependerem de registro, as regras especiais da lei de emergência em saúde pública.\n- Encarrega o Ministério da Saúde de editar as normas necessárias para colocar essas importações em prática.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:09:19.792Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
+    "2265123": {
+      "sourceHash": "7eff57ea931fdeab76f694ca990fc45a00e05fe660d2a40566c01c95f0a884bc",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza o Banco Central a receber depósitos de bancos e outras instituições financeiras, com remuneração definida pelo próprio Banco Central.",
+      "resumoDetalhe": "- Autoriza o Banco Central a guardar dinheiro que bancos e outras instituições financeiras deixem com ele, tanto para retirada a qualquer momento quanto por prazo combinado, e deixa a remuneração desse dinheiro a cargo do próprio Banco Central.\n- Obriga o Banco Central a levar informações detalhadas sobre esses depósitos às audiências públicas de uma comissão do Senado, a publicar demonstrativos periódicos e a prestar contas ao Congresso sobre as operações realizadas.\n- Atribui ao próprio Banco Central definir os limites, os prazos, as formas de negociação e as demais condições desses depósitos.\n- Autoriza também o Banco Central a receber depósitos de entidades não financeiras que fazem parte do sistema brasileiro de pagamentos, a estrutura por onde passam as transferências e os pagamentos do país.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:09:19.792Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
+    "2265505": {
+      "sourceHash": "ec94895dcc5913746f053a39863ecc9d2828f24b4ff2a6cf137d07e89055b313",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Obriga a União a repassar a estados, ao Distrito Federal e a municípios um valor bilionário por vários anos, com a condição de que eles desistam de cobrar dívidas da União na Justiça.",
+      "resumoDetalhe": "- Obriga a União a entregar a estados, ao Distrito Federal e a municípios um valor definido em lei ao longo de vários anos, pago em parcelas mensais e reduzido aos poucos no fim do período, com parte indo direto ao estado e parte aos seus municípios, e determina que o dinheiro seja previsto nos orçamentos federais.\n- Acrescenta um repasse extra vinculado à receita obtida com o leilão de dois blocos de petróleo, pago de uma só vez no ano em que essa receita entrar.\n- Reparte o dinheiro entre os estados segundo percentuais definidos para cada um e índices apurados periodicamente pelo conselho que reúne as secretarias estaduais de fazenda, e distribui a parte dos municípios pelo mesmo critério usado no rateio do ICMS, imposto estadual sobre circulação de mercadorias e serviços.\n- Condiciona o recebimento a que o ente abra mão, por declaração em sistema oficial, de cobrar da União direitos previstos em regra transitória da Constituição, juntando essa desistência aos processos judiciais em curso para que sejam encerrados, sem cobrança de honorários.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
     },
     "2266116": {
       "sourceHash": "ec19c0c81fde736357b1d728b59259bb3de96e2cbfedb3f6cbd749cbd9830e4f",
@@ -342,6 +507,17 @@
       "generatedAt": "2026-08-16T06:10:38.605Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "2268414": {
+      "sourceHash": "603401805c6f28a30856b6cf59a8bef02c3ee8d0c081af4ba5bd503f1be76082",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Fixa o salário mínimo em R$ 1.100,00 a partir de 1º de janeiro de 2021.",
+      "resumoDetalhe": "- Fixa o valor do salário mínimo que passa a valer no primeiro dia do ano seguinte e define também quanto ele corresponde por dia e por hora.\n- Explica, na exposição de motivos, que o valor saiu da correção do salário mínimo anterior pela inflação medida pelo INPC, índice que acompanha os preços para as famílias de renda mais baixa, com arredondamento para cima.\n- Estima, na mesma exposição de motivos, quanto cada real de aumento pesa nas contas da União e afirma que esse impacto seria acomodado nas revisões periódicas de receitas e despesas previstas na Lei de Responsabilidade Fiscal e no teto de gastos federais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:09:19.792Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
     "2268417": {
       "sourceHash": "16ab520706e5d7a4553d2680d3e4afa3dbed7bdec7e298149f27a95785bc92df",
       "generationStatus": "generated",
@@ -352,6 +528,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T18:07:53.948Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2284931": {
+      "sourceHash": "c4427efe9358829472ca4a09dee55df164f8de39e5da8c125cb4b85504740ece",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui a educação bilíngue para pessoas surdas, com Libras (Língua Brasileira de Sinais) como primeira língua e o português escrito como segunda.",
+      "resumoDetalhe": "- Cria a educação bilíngue de surdos, ensino oferecido em Libras (Língua Brasileira de Sinais) como primeira língua e em português escrito como segunda, disponível em escolas e classes próprias para surdos, em escolas comuns ou em polos, para quem optar por essa modalidade.\n- Determina que essa oferta comece já na educação infantil, siga ao longo da vida e conte com apoio educacional especializado, sem retirar de quem preferir o direito de estudar em turma comum.\n- Obriga as redes de ensino a garantir material didático próprio e professores bilíngues com formação superior na área, ouvidas as entidades que representam as pessoas surdas na contratação e na avaliação desses professores.\n- Prevê programas de ensino e pesquisa com apoio técnico e financeiro da União, planejados junto com as comunidades surdas, para valorizar a língua e a cultura surda, formar profissionais, criar currículos próprios e produzir material didático, inclusive no ensino superior.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:09:19.792Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
     },
     "2309349": {
       "sourceHash": "3a19d78dc360514fdd46dd3b738da21afe5a1a13724eb895cfa4f4fff42e18eb",

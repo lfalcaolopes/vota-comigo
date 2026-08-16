@@ -56,6 +56,28 @@
       "generatedAt": "2026-08-16T06:45:23.563Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "2351179": {
+      "sourceHash": "914cee5bd742a6decb24644f5d792646f3c43de1ba08467ab5eb3c314bfb661f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Garante igualdade salarial entre mulheres e homens na mesma função e cria regras para detectar, punir e corrigir desigualdades.",
+      "resumoDetalhe": "- Garante a igualdade salarial e remuneratória entre mulheres e homens no exercício da mesma função.\n- Exige que empresas privadas com número mínimo de empregados publiquem relatórios de transparência salarial; se esses relatórios mostrarem desigualdade injustificada, obriga a apresentar e implementar plano de ação com metas, prazos e participação de representantes dos trabalhadores.\n- Prevê punições administrativas e judiciais: pagamento das diferenças salariais, multa calculada com base no maior salário pago pelo empregador que aumenta em caso de reincidência, e possibilidade de indenização por danos morais quando houver discriminação comprovada por gênero, raça ou etnia.\n- Facilita a atuação judicial e a fiscalização: autoriza decisão provisória e imediata da Justiça para igualar os salários quando a discriminação for comprovada, cria protocolo de fiscalização no Ministério do Trabalho e determina ato do ministro para regulamentar os relatórios.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
+    "2351284": {
+      "sourceHash": "a4b4199451e0918aa19250f7634c814a445dd633d85ecfc685c6f96ebdf818bf",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Determina cumprimento mínimo de 80% da pena para progressão de regime, ou seja, para passar a um regime de prisão menos rígido, em casos de homicídio contra autoridades e agentes de segurança ou seus familiares.",
+      "resumoDetalhe": "- Estabelece cumprimento mínimo da pena para permitir a progressão de regime (mudar o preso de um regime mais fechado para um menos fechado) quando o condenado cometer homicídio qualificado (ou seja, homicídio com circunstâncias que o tornam mais grave).\n- Aplica a regra a homicídios praticados contra autoridades e agentes públicos da área de segurança, entre eles integrantes do sistema prisional e da Força Nacional de Segurança Pública, quando a vítima for atacada no exercício da função ou por causa dessa condição, e também contra seus cônjuges, companheiros ou parentes próximos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
     "2351506": {
       "sourceHash": "3a0d86e9b2905b22f58fb1592d5e4958260ed0028aacb53d38d335ce233b403a",
       "generationStatus": "generated",
@@ -66,6 +88,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2351990": {
+      "sourceHash": "a48b52ec240798f89ef8e4d4083b396e3df18349ac5e53837d31c90e05f229f7",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui a Estratégia Nacional de Formação de Especialistas para a Saúde dentro do Programa Mais Médicos, definindo formação, bolsas e indenizações para atrair e formar médicos para o SUS.",
+      "resumoDetalhe": "- Institui a Estratégia Nacional de Formação de Especialistas para a Saúde no âmbito do Programa Mais Médicos, para integrar formação, provimento e educação pelo trabalho no SUS e determina que as despesas saiam do orçamento do Ministério da Saúde.\n- Define regras de formação e supervisão: prevê cursos de aperfeiçoamento e pós-graduação oferecidos por instituições de ensino, prazo de formação fixado por ato conjunto dos ministros da Saúde e da Educação, e supervisão profissional contínua.\n- Regula a participação e a recontratação de médicos intercambistas, que são médicos com diploma obtido fora do país: permite que atuem apenas em atividades de ensino, pesquisa e extensão do Programa, sem exigir a revalidação do diploma para esse fim, reconhece o tempo de serviço no Programa como experiência em provas de título e concursos e estabelece regras de visto temporário.\n- Estabelece bolsas e indenizações que não criam vínculo de emprego com a União nem se incorporam ao salário: prevê pagamento extra a quem atua em áreas onde é difícil fixar médicos, valor diferenciado para quem cursou a graduação com financiamento estudantil do Fies e complementação da bolsa nas licenças de maternidade e paternidade.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
     },
     "2352476": {
       "sourceHash": "7120151e97c99671303a3ea888a4e7991d0b3d3d137455566ba4ecd9730dcfd3",
@@ -78,6 +111,28 @@
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2355135": {
+      "sourceHash": "59e564ca0a93f44398c16c906ca6c51df5952306de9b64651205eb27bda7e5c8",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Susta, ou seja, derruba, os efeitos do decreto do governo federal que regulamenta a prestação regionalizada do saneamento básico e a aplicação de recursos federais no setor.",
+      "resumoDetalhe": "- Susta os efeitos de um decreto do Poder Executivo que trata da prestação regionalizada dos serviços públicos de saneamento básico, do apoio técnico e financeiro ao setor e da destinação de recursos e financiamentos federais, e que também alterou decretos anteriores sobre o tema.\n- Sustenta, na justificativa, que o decreto permitiria a empresas estatais estaduais prestar serviços de saneamento em regiões metropolitanas e microrregiões sem licitação, a disputa pública para escolher quem executa o serviço.\n- Aponta, ainda na justificativa, que o decreto acabaria com um limite para parcerias entre o poder público e empresas privadas no saneamento.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
+    "2355510": {
+      "sourceHash": "f5100f14ac891d265c7040492c5c86a8c76164cc379a4c392354754e8d7e64a4",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reabre prazo para repactuação de dívidas de crédito rural e estende as mesmas condições ao Microempreendedor Individual (MEI, pequeno negócio formalizado).",
+      "resumoDetalhe": "- Reabre o prazo para que interessados peçam a prorrogação ou a renegociação de dívidas de crédito rural abrangidas por uma lei anterior de renegociação.\n- Inclui nessa prorrogação ou renegociação as dívidas contratadas até uma data de corte anterior à pandemia.\n- Estende as mesmas condições e prazos de repactuação aos devedores qualificados como Microempreendedor Individual (MEI), pessoa que formaliza um pequeno negócio e tem regras simplificadas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
     "2357053": {
       "sourceHash": "f8a8723aade753b98f139d40b55b561357b3ad92edb063831ce63628f1bbeb1c",
       "generationStatus": "generated",
@@ -88,6 +143,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-06-26T02:30:38.288Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2357055": {
+      "sourceHash": "027ca1b01102e97b50fd718b4cd6f881101c62c96a5fa9d857ea0cdf04b2fa01",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria funções comissionadas, postos de chefia e assessoramento pagos com gratificação, no quadro de pessoal do Tribunal de Justiça do Distrito Federal e dos Territórios, condicionando o preenchimento à previsão orçamentária.",
+      "resumoDetalhe": "- Cria funções comissionadas, que são postos de chefia e assessoramento remunerados com gratificação, no quadro de pessoal do Tribunal de Justiça do Distrito Federal e dos Territórios.\n- Determina que as despesas dessas funções corram por dotações orçamentárias do próprio Tribunal e que a criação só ocorra se houver autorização expressa e dinheiro suficiente previsto na Lei Orçamentária Anual, a lei que define o orçamento do ano.\n- Autoriza o Tribunal a editar os atos normativos necessários para aplicar a lei.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
     },
     "2358548": {
       "sourceHash": "edf09feddc60a17b5d6fb7550ebbb62dbdad7a581ac5249925661ae446117de6",
@@ -110,6 +176,50 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:01:17.719Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2358922": {
+      "sourceHash": "0444f7634d96aac21e50f480a59825565c8df26806ebf4c5150f52cb7c165853",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite usar como garantia de empréstimo o valor que a pessoa já pode sacar de planos de previdência, de seguros de pessoas, de fundos de aposentadoria e de títulos de capitalização.",
+      "resumoDetalhe": "- Permite usar como garantia de empréstimo o direito de resgate de planos de previdência aberta, de seguros de pessoas, de cotas de FAPI (Fundo de Aposentadoria Programada Individual) e de títulos de capitalização, considerando apenas o valor que já pode ser sacado no momento e exigindo que o pagamento do empréstimo termine até o fim do período aplicável ao produto.\n- Exige que sejam respeitados os regulamentos e as regras técnicas dos produtos e a legislação tributária quando o direito de resgate for oferecido como garantia.\n- Torna vedado ao titular resgatar ou transferir o valor dado em garantia antes de quitar o crédito ou sem a autorização do credor, e permite que o valor seja liberado ao credor para pagar débitos vencidos e não pagos.\n- Determina que a garantia seja formalizada por contrato específico, vinculado ao documento do produto e assinado pelo tomador, pela entidade do produto e pela instituição financeira; proíbe que as entidades do produto imponham obstáculos; e remete a regulamentação aos órgãos normativos do setor.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
+    "2359135": {
+      "sourceHash": "9ddcc5115456ffb9cf27ecf5ece13734ca79ef86bd62ad80ed59e8d2bf657d01",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Fixa o salário mínimo em R$ 1.320,00 por mês, com valores de R$ 44,00 por dia e R$ 6,00 por hora, a partir de 1º de maio de 2023.",
+      "resumoDetalhe": "- Fixa o novo valor do salário mínimo por mês e também os valores correspondentes por dia e por hora.\n- Revoga a medida provisória anterior sobre o salário mínimo, que deixa de valer na mesma data.\n- Apresenta justificativa para o reajuste e traz estimativas de impacto nas despesas com previdência, seguro-desemprego, abono e benefícios assistenciais, indicando que o orçamento será avaliado e ajustado nas revisões periódicas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
+    "2360457": {
+      "sourceHash": "8b58d7563df5c27a7be2195b515934bbdc52fc2b067bb36e010948cc3a944541",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui o Dia Nacional dos Congados e Reinados, a ser celebrado no dia sete de outubro.",
+      "resumoDetalhe": "- Cria o Dia Nacional dos Congados e Reinados e fixa sua celebração no dia sete de outubro.\n- Apresenta como justificativa a homenagem ao Congado e ao Reinado, manifestações afro-brasileiras que reúnem fé, música e dança e mantêm vivas as tradições e a ancestralidade do povo negro.\n- Sustenta, na justificativa, que a data ajudaria a incentivar a pesquisa, a preservação e a promoção dessas tradições e a sua abordagem nas escolas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
+    "2364109": {
+      "sourceHash": "ed8324e6f6ddc8a68f15f6a50df65678f95db37edd82a1f163af868f9ce7cf34",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria crime de discriminação contra pessoas politicamente expostas, quem ocupa ou ocupou cargos públicos de destaque, e exige que bancos justifiquem por escrito a negativa de conta ou de crédito por esse motivo.",
+      "resumoDetalhe": "- Cria crimes que punem a injúria e outras formas de discriminação praticadas apenas pelo fato de a pessoa ser politicamente exposta ou de responder a processo, entre elas impedir o acesso a cargos públicos, barrar promoções e negar emprego.\n- Define quem são as pessoas politicamente expostas, abrangendo ocupantes de cargos públicos em diversos níveis, pessoas no exterior, dirigentes, familiares, colaboradores próximos e pessoas jurídicas vinculadas; prevê fontes oficiais e abertas para identificação e manutenção dessa condição por um período após o término do cargo.\n- Proíbe instituições financeiras e administradoras de meios de pagamento de negar abertura ou manutenção de conta, acesso a crédito ou outros serviços apenas por essa condição; exige que a negativa venha acompanhada de justificativa técnica por escrito e prevê responsabilização civil, penal e administrativa dos responsáveis.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
     },
     "2367600": {
       "sourceHash": "138bfce24ff628353e1efd9caf02e1affe445c80fd9377b98a25b50269d77b0c",
@@ -166,6 +276,28 @@
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2382257": {
+      "sourceHash": "59139711135c69d97ddfea292518dfdb937d788bc8994fee1356401b92534f5a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Prorroga até o final de 2024 o prazo para que estados e municípios usem as sobras de dinheiro federal repassado para a saúde.",
+      "resumoDetalhe": "- Prorroga o prazo para que estados, Distrito Federal e municípios remanejem e apliquem as sobras de dinheiro repassado para a saúde.\n- Dispensa uma exigência da lei para as sobras de repasses regulares e automáticos feitos pelo Fundo Nacional de Saúde aos fundos de saúde locais em período anterior, permitindo usar esse dinheiro em ações e serviços de saúde sem ligação estrita ao destino original.\n- Autoriza que as transferências feitas pelo Fundo Nacional de Saúde diretamente aos fundos de saúde estaduais, municipais e do Distrito Federal para enfrentar a pandemia sejam executadas pelos governos locais até o novo prazo.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
+    "2382675": {
+      "sourceHash": "60564e7effee5cf359c7f3da2005d81f3717ab8ba18d2aeb200da1a2451cb772",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Estabelece diretrizes para o governo federal formular, apresentar ao Congresso e prestar contas da política industrial, tecnológica e de comércio exterior, alinhada à redução das emissões que aquecem o clima e à troca por fontes de energia mais limpas.",
+      "resumoDetalhe": "- Define a política industrial, tecnológica e de comércio exterior como o conjunto de ações do governo federal voltadas ao desenvolvimento da produção, à inovação, à industrialização e ao crescimento de serviços especializados, e determina que ela siga uma estratégia de redução das emissões que aquecem o clima e de troca gradual dos combustíveis fósseis por fontes mais limpas.\n- Exige que o Poder Executivo apresente essa política ao Congresso no início de cada mandato presidencial, com objetivos e metas acompanhados de indicadores que permitam medir os resultados em produção, tecnologia, emprego, desigualdade e meio ambiente.\n- Determina que o governo informe quais ferramentas usará para cada objetivo, como empresas estatais, compras públicas, investimento em pesquisa, redução de impostos e financiamento por bancos públicos.\n- Obriga o Executivo a prestar contas todo ano ao Congresso, em relatório detalhado sobre o cumprimento das metas, a avaliação dos resultados e as medidas de proteção do mercado interno.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
     "2383019": {
       "sourceHash": "0ff9b980917c654ec94f7da42906d4231b93352919dc957210aca64e7c1853ba",
       "generationStatus": "generated",
@@ -221,6 +353,17 @@
       "generatedAt": "2026-07-07T19:31:12.147Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2387067": {
+      "sourceHash": "ad5ad1b8319f2a58ed751ccf9df9bf14a109cd854d08b7b64da17922b069b540",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Define critérios e prazos para inelegibilidade, indicando quem fica impedido de disputar eleições e como contar esses prazos.",
+      "resumoDetalhe": "- Estabelece regras sobre inelegibilidade, indicando situações em que a pessoa fica impedida de disputar cargo eletivo por prazo determinado após ato ou decisão que a afetou.\n- Define que, para atos de improbidade administrativa, é preciso provar dolo (vontade livre e consciente de praticar o ilícito); e que o mero exercício da função pública, sem prova desse dolo, não gera inelegibilidade.\n- Determina critérios claros para contar o início e o fim dos prazos de inelegibilidade em diferentes hipóteses e permite abater do total o tempo já cumprido entre decisão colegiada e o trânsito em julgado.\n- Determina que essas regras de contagem tenham aplicação imediata, inclusive sobre condenações e fatos anteriores, e obriga o servidor público que se licenciou para concorrer a voltar ao cargo se a candidatura não for registrada ou for cassada, sob pena de responder administrativamente.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
     "2387579": {
       "sourceHash": "ace6640e94a8422c7303d2203ca608218241673959278eeea36fc4e1c58c6acd",
       "generationStatus": "generated",
@@ -243,6 +386,61 @@
       "generatedAt": "2026-08-16T06:45:23.563Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "2388837": {
+      "sourceHash": "988ebb163c85faf9ab3e031e0124d53088f25df6a786d7f18f929fec8c24a5d6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Abre crédito extraordinário de R$ 360,9 milhões para três ministérios financiarem ações de emergência e assistência a municípios atingidos por desastre climático no Sul.",
+      "resumoDetalhe": "- Abre crédito extraordinário, verba nova liberada fora do orçamento já aprovado, em favor de três ministérios, para atender municípios da Região Sul atingidos por um desastre climático.\n- Destina recursos ao emprego conjunto das Forças Armadas na região atingida e às ações de proteção e defesa civil.\n- Destina recursos à segurança alimentar e à assistência social, com apoio à produção rural, compra e distribuição de alimentos da agricultura familiar e reforço da rede pública de assistência social.\n- Descreve, na exposição de motivos, o uso previsto desse dinheiro: busca, salvamento e transporte, entrega de itens de emergência, reconstrução de moradias, pontes e estradas e atendimento a pessoas desalojadas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
+    "2391935": {
+      "sourceHash": "2a23cbb671b6c2d07c3399fcd864bf7194d973b2dbe2183da36c6897dd2bc9e0",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite ao contribuinte confessar dívidas com a Receita Federal e quitá-las sem multas e sem juros de atraso, pagando parte à vista e parcelando o restante.",
+      "resumoDetalhe": "- Cria um programa em que o contribuinte pode confessar débitos administrados pela Receita Federal e pagar ou parcelar o valor total, inclusive corrigindo declarações já entregues, durante um prazo limitado após a regulamentação, sem a cobrança das multas por atraso; ficam de fora os débitos do Simples Nacional, regime simplificado para micro e pequenas empresas.\n- Permite liquidar os débitos com redução total dos juros de mora quando há pagamento inicial e parcelamento do restante, cobrando juros correntes sobre as prestações; autoriza também usar no pagamento precatórios, que são dívidas que o poder público já foi condenado judicialmente a pagar.\n- Admite usar, como parte do pagamento, créditos que a empresa acumulou por prejuízos e por base de cálculo negativa da CSLL (Contribuição Social sobre o Lucro Líquido, tributo cobrado sobre o lucro das empresas), inclusive de empresas do mesmo grupo, com um limite de aproveitamento e sujeitos a verificação futura pela Receita, e estabelece tratamento contábil e fiscal específico para a transferência desses créditos e dos precatórios.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
+    "2395883": {
+      "sourceHash": "6be1f4690b6b7394c56209e4a0347df3c0dcff62180250b1f77d8c558f8577e8",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reconhece a BR-319 como estrada essencial à segurança nacional e obriga o poder público a garantir que ela continue trafegável.",
+      "resumoDetalhe": "- Reconhece a BR-319 como infraestrutura crítica, ou seja, estrutura cuja interrupção causa sério impacto social, econômico e de segurança, e determina que o poder público garanta a trafegabilidade da rodovia, com responsabilidade ambiental e social.\n- Determina a recomposição e a manutenção do pavimento, a substituição ou adaptação de pontes e demais estruturas da estrada para resistir às mudanças do clima e a implantação de passagens seguras para a fauna, para evitar atropelamentos.\n- Exige procedimentos de liberação e licenciamento simplificados para atividades de pequeno e médio potencial poluidor ligadas à rodovia, incluindo serviços de apoio e obras necessárias à execução das obras.\n- Proíbe novas ligações rodoviárias ao longo do eixo da rodovia, ressalvado o acesso a propriedades legais; enquadra a BR-319 como prioridade em planos nacionais e autoriza o uso de doações sob custódia do BNDES, o banco público de desenvolvimento, para recuperação, pavimentação e ampliação da capacidade.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:24:02.672Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
+    "2397890": {
+      "sourceHash": "80d1328867585272b45fce9b9a5f05660fd9751731e0c29edd48628339d4313c",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Prorroga o prazo de pagamento de tributos do Simples Nacional para micro e pequenas empresas em municípios com decreto de calamidade reconhecido.",
+      "resumoDetalhe": "- Prorroga o vencimento dos tributos de Microempresas e Empresas de Pequeno Porte optantes pelo Simples Nacional quando a sede estiver em município alcançado por decreto de calamidade pública estadual ou distrital reconhecido pelo Ministério da Integração e do Desenvolvimento Regional.\n- Sustenta, na justificativa, que deixar essa prorrogação apenas a cargo do Comitê Gestor do Simples Nacional gera demora burocrática nas situações de emergência.\n- Determina que o Comitê Gestor do Simples Nacional regulamentará, por resolução, os detalhes sobre o novo prazo e a forma de pagamento.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
+    "2397925": {
+      "sourceHash": "9a012c1f353a65823f92988dc974a34a33e287396a5b945c8ced69a346e9223f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Estabelece novos prazos para municípios elaborarem e aprovarem o Plano de Mobilidade Urbana.",
+      "resumoDetalhe": "- Fixa novos prazos para que os municípios elaborem e aprovem o Plano de Mobilidade Urbana, documento que organiza o transporte e o deslocamento na cidade, com prazo mais curto para os municípios de maior população e prazo mais longo para os de menor população.\n- Apresenta como justificativa a falta de dinheiro e de pessoal técnico nos municípios menores para elaborar o plano dentro do prazo anterior.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:24:02.672Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
     "2398530": {
       "sourceHash": "fefc91938c6ba2815471468a60f0eaeb2c0710fdf829943cef3b8967b2a89f95",
       "generationStatus": "generated",
@@ -253,6 +451,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:01:17.719Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2398741": {
+      "sourceHash": "3686cc9dd80f100b3c6dec4de74fd83cf8029b9159659a82cd09b855b2f7cd2d",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Prorroga o prazo para gastar os recursos da Lei Paulo Gustavo, que repassa dinheiro federal para a cultura, e regula como esse dinheiro pode ser usado e devolvido.",
+      "resumoDetalhe": "- Prorroga o prazo de execução dos recursos da Lei Paulo Gustavo, que repassa dinheiro federal a Estados, Distrito Federal e Municípios para o setor cultural, autorizando que continuem a aplicar esse dinheiro.\n- Define que são despesas de desenvolvimento do espaço ou das atividades culturais as despesas gerais e habituais relacionadas a serviços recorrentes, transporte, manutenção, atividades artísticas, tributos e encargos trabalhistas e sociais, além de outras despesas comprovadas pelos espaços.\n- Determina que o saldo remanescente nas contas criadas para gerir esses recursos seja restituído à conta única do Tesouro Nacional por meio de guia eletrônica.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
     },
     "2399598": {
       "sourceHash": "9724b4eed99e8e304e435d07a092dbfe513a5a83a6ea8cb000ba72172f2811b1",
@@ -276,6 +485,28 @@
       "generatedAt": "2026-08-16T06:45:23.563Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
+    "2409076": {
+      "sourceHash": "61e96695cc2b9beaf2c4605e8c9da3c8db099db35947ef3de3a8a38c13e593eb",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Deixa de fora do limite de gastos do governo federal as despesas de um programa para manter estudantes no ensino médio e autoriza usar como fonte a sobra de caixa do Fundo Social, formado com receitas do petróleo.",
+      "resumoDetalhe": "- Dispensa as despesas destinadas a um programa de incentivo à permanência de estudantes no ensino médio da contagem dos limites de gastos do governo federal, até certo valor máximo.\n- Autoriza usar como fonte para essas despesas o dinheiro que sobrou em caixa no Fundo Social, fundo público formado com receitas do petróleo, mediante abertura de crédito adicional por projeto de lei.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
+    "2410601": {
+      "sourceHash": "42b7f6196413679444b4b3ac5fe3d90f0c11999ccd751370ef44efd9f70f9fc8",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova o texto atualizado de uma convenção internacional que fixa padrões de formação, certificação e serviço a bordo para os trabalhadores do mar.",
+      "resumoDetalhe": "- Aprova o texto atualizado de uma convenção internacional sobre formação, certificação e serviço a bordo dos trabalhadores do mar, com as atualizações aprovadas na Organização Marítima Internacional.\n- Determina que qualquer mudança futura nessa convenção, ou acordo complementar que gere encargos graves ao patrimônio nacional, seja submetido à aprovação do Congresso Nacional.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
     "2413257": {
       "sourceHash": "af554da772c510237ffd61fbeb10fcb1ffac0e9993ed4cee2724cadacf8b1015",
       "generationStatus": "generated",
@@ -287,6 +518,17 @@
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2416729": {
+      "sourceHash": "e2a6d2de976953c232afd55048ea14e1e93c49c1ddb8acbffb4375d39c2d2feb",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Define regras claras para atualização monetária e juros e permite operações de crédito fora do sistema bancário em certas situações.",
+      "resumoDetalhe": "- Determina que, quando não houver índice combinado em contrato, a atualização monetária será feita pelo IPCA, índice de inflação medido pelo IBGE, e que essa correção abrange juros, custas e honorários de advogado.\n- Define uma taxa legal de juros para os casos em que as partes não combinaram taxa, calculada a partir do rendimento real de títulos do Tesouro corrigidos pela inflação, com um acréscimo mensal que o Conselho Monetário Nacional pode reduzir, cabendo ao Banco Central divulgar a taxa; os juros passam a contar desde o atraso e se acumulam ano a ano.\n- Afasta a Lei da Usura, norma antiga que limita a cobrança de juros, nos contratos entre empresas, nas obrigações representadas por títulos ou valores mobiliários e nas operações contratadas por fundos ou clubes de investimento, permitindo operações de crédito fora do sistema bancário, sem prejuízo da proteção às pessoas físicas contra práticas abusivas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
+    },
     "2416733": {
       "sourceHash": "7c8dfb10de81a559d534b51a91bd4b8ab8c508f3be6b608ffaddf2be6e145e87",
       "generationStatus": "generated",
@@ -297,6 +539,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:10:38.605Z",
       "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2422905": {
+      "sourceHash": "4dc51ad9e749d2f5059ffe1aa1ed7a91cd35a19213f9671f31c56baca33d51b0",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Torna imunes ao IPVA (imposto sobre a propriedade de veículos) os veículos de passageiros, as caminhonetes e os veículos mistos com 20 anos ou mais de fabricação, com algumas exceções.",
+      "resumoDetalhe": "- Concede imunidade do IPVA, o imposto sobre a propriedade de veículos, aos veículos terrestres de passageiros, às caminhonetes e aos veículos mistos a partir de certa idade de fabricação.\n- Deixa de fora dessa imunidade os micro-ônibus, os ônibus, os reboques e os semirreboques.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:20:51.471Z",
+      "reviewedAt": "2026-08-16T20:10:00.000Z"
     },
     "2454495": {
       "sourceHash": "baad05f73cf0e8a3373587a906376125fa60515c8ae1ff7ed8fd6f60b4a25dbf",
