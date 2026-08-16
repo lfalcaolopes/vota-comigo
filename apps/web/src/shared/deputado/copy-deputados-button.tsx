@@ -67,10 +67,10 @@ export function CopyDeputadosButton({
         onClick={copiar}
         ref={triggerRef}
       >
-        <CopyIcon />
+        {status === "copiado" ? <CheckIcon /> : <CopyIcon />}
         {labels.acao}
       </Button>
-      <span aria-live="polite" className="text-sm text-muted" role="status">
+      <span aria-live="polite" className="sr-only" role="status">
         {status === "copiado" ? labels.confirmacao : ""}
       </span>
 
@@ -116,6 +116,25 @@ function toCopyLabels(deputados: readonly DeputadoTextItem[]): CopyLabels {
     confirmacao: "Lista copiada",
     manual: "Copiar a lista manualmente",
   };
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="text-success"
+      fill="none"
+      height="16"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 16 16"
+      width="16"
+    >
+      <path d="m3 8.5 3.5 3.5L13 4.5" />
+    </svg>
+  );
 }
 
 function CopyIcon() {

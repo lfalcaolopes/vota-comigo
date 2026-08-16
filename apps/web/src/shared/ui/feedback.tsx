@@ -153,13 +153,30 @@ export function ErrorState({
   );
 }
 
-type SourceLinkProps = AnchorHTMLAttributes<HTMLAnchorElement>;
+type SourceLinkTone = "primary" | "muted";
 
-export function SourceLink({ children, className, ...props }: SourceLinkProps) {
+const sourceLinkTones: Record<SourceLinkTone, string> = {
+  primary:
+    "gap-2 font-[650] text-info decoration-info/35 hover:decoration-info",
+  muted:
+    "gap-1.5 text-muted decoration-border-strong hover:text-ink hover:decoration-ink",
+};
+
+type SourceLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
+  tone?: SourceLinkTone;
+};
+
+export function SourceLink({
+  children,
+  className,
+  tone = "primary",
+  ...props
+}: SourceLinkProps) {
   return (
     <a
       className={joinClassNames(
-        "inline-flex min-w-0 items-center gap-2 text-sm font-[650] text-info underline decoration-info/35 underline-offset-[0.18em]",
+        "inline-flex min-w-0 items-center text-sm underline underline-offset-[0.18em] transition-colors duration-[140ms] ease-standard",
+        sourceLinkTones[tone],
         className,
       )}
       {...props}

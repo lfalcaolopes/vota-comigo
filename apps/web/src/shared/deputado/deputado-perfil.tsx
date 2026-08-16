@@ -77,31 +77,36 @@ function Identity({ perfil }: { perfil: DeputadoPerfilData }) {
       )}
     >
       <DeputadoAvatar loading="eager" nome={nome} urlFoto={urlFoto} size="xl" />
-      <div className="grid min-w-0 gap-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge tone="neutral">{CARGO_DEPUTADO}</Badge>
-          <Badge
-            aria-label={toAtividadeAriaLabel(perfil.emAtividade)}
-            tone={toAtividadeTone(perfil.emAtividade)}
-          >
-            {toAtividadeLabel(perfil.emAtividade)}
-          </Badge>
+      <div className="grid min-w-0 gap-6">
+        <div className="grid gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge tone="neutral">{CARGO_DEPUTADO}</Badge>
+            <Badge
+              aria-label={toAtividadeAriaLabel(perfil.emAtividade)}
+              tone={toAtividadeTone(perfil.emAtividade)}
+            >
+              {toAtividadeLabel(perfil.emAtividade)}
+            </Badge>
+          </div>
+          <div className="grid gap-1.5">
+            <h1 className="text-2xl leading-tight font-[700] text-pretty text-ink md:text-3xl">
+              {nome}
+            </h1>
+            {perfil.snapshotPublicoDisponivel ? (
+              <p className="text-sm text-muted">
+                {siglaPartido ?? "—"} · {siglaUf ?? "—"}
+              </p>
+            ) : null}
+            {mostrarNomeCivil ? (
+              <p className="text-sm text-muted">
+                Nome civil: <span className="text-ink">{perfil.nomeCivil}</span>
+              </p>
+            ) : null}
+          </div>
         </div>
-        <h1 className="text-2xl leading-tight font-[700] text-pretty text-ink md:text-3xl">
-          {nome}
-        </h1>
-        {perfil.snapshotPublicoDisponivel ? (
-          <p className="text-sm text-muted">
-            {siglaPartido ?? "—"} · {siglaUf ?? "—"}
-          </p>
-        ) : null}
-        {mostrarNomeCivil ? (
-          <p className="text-sm text-muted">
-            Nome civil: <span className="text-ink">{perfil.nomeCivil}</span>
-          </p>
-        ) : null}
-        <div className="grid gap-2 pt-1">
-          <div>
+
+        <div className="grid gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
             <SourceLink
               href={perfil.fonteOficial}
               rel="noreferrer"
@@ -109,11 +114,23 @@ function Identity({ perfil }: { perfil: DeputadoPerfilData }) {
             >
               Consultar perfil oficial na Câmara
             </SourceLink>
+            <CopyDeputadosButton
+              contexto={null}
+              deputados={[
+                {
+                  externalIdDeputado: perfil.externalIdDeputado,
+                  nome: perfil.nomePublico,
+                  siglaPartido,
+                  siglaUf,
+                  compatibilidade: null,
+                },
+              ]}
+            />
           </div>
           {perfil.redesSociais.length > 0 ? (
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
               <span className="text-sm text-muted">Redes sociais:</span>
-              <ul className="flex flex-wrap gap-x-3 gap-y-2">
+              <ul className="flex flex-wrap gap-x-4 gap-y-1">
                 {perfil.redesSociais.map((url) => (
                   <li key={url} className="min-w-0">
                     <SourceLink
@@ -121,6 +138,7 @@ function Identity({ perfil }: { perfil: DeputadoPerfilData }) {
                       href={url}
                       rel="noreferrer"
                       target="_blank"
+                      tone="muted"
                     >
                       {toRedeSocialNome(url)}
                     </SourceLink>
@@ -129,19 +147,6 @@ function Identity({ perfil }: { perfil: DeputadoPerfilData }) {
               </ul>
             </div>
           ) : null}
-          <CopyDeputadosButton
-            className="pt-1"
-            contexto={null}
-            deputados={[
-              {
-                externalIdDeputado: perfil.externalIdDeputado,
-                nome: perfil.nomePublico,
-                siglaPartido,
-                siglaUf,
-                compatibilidade: null,
-              },
-            ]}
-          />
         </div>
       </div>
       {hasPublicDetails ? <IdentityDetails perfil={perfil} /> : null}
