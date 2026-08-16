@@ -10,10 +10,17 @@ import { joinClassNames } from "./utils";
 type PanelProps = PropsWithChildren<
   HTMLAttributes<HTMLElement> & {
     title?: string;
+    titleAs?: "h2" | "h3";
   }
 >;
 
-export function Panel({ children, className, title, ...props }: PanelProps) {
+export function Panel({
+  children,
+  className,
+  title,
+  titleAs: Title = "h2",
+  ...props
+}: PanelProps) {
   return (
     <section
       className={joinClassNames(
@@ -24,7 +31,9 @@ export function Panel({ children, className, title, ...props }: PanelProps) {
     >
       {title ? (
         <div className="flex items-start justify-between gap-4 px-5 pt-5">
-          <h2 className="text-lg font-[680] leading-snug text-ink">{title}</h2>
+          <Title className="text-lg font-[680] leading-snug text-ink">
+            {title}
+          </Title>
         </div>
       ) : null}
       <div className="grid min-w-0 gap-4 p-5">{children}</div>

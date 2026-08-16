@@ -29,7 +29,7 @@ export function HomeTransparencia() {
             </h3>
             <p className="text-base leading-normal text-pretty text-muted">
               Os dados vêm dos Dados Abertos da Câmara dos Deputados e cobrem as
-              votações de 2015 até junho de 2026.
+              votações de 2015 até 16 de agosto de 2026.
             </p>
             <SourceLink
               href="https://dadosabertos.camara.leg.br/"
