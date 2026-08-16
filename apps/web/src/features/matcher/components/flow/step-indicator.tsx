@@ -13,23 +13,26 @@ type StepIndicatorProps = {
   currentRoute: MatcherRoute;
 };
 
+const PILL_BASE =
+  "flex h-7 items-center rounded-full border px-2.5 leading-none";
+
 export function StepIndicator({ currentRoute }: StepIndicatorProps) {
   return (
-    <ol className="flex flex-wrap justify-start gap-2 text-xs font-[650] tabular-nums text-muted">
+    <ol className="flex flex-wrap items-center justify-start gap-2 text-xs font-[650] tabular-nums text-muted">
       {MATCHER_ROUTE_ORDER.map((route, position) => {
         const status = stepStatus(currentRoute, route);
+        const label = (
+          <StepLabel label={MATCHER_STEP_LABELS[route]} position={position} />
+        );
 
         if (status === "done") {
           return (
-            <li key={route}>
+            <li className="flex" key={route}>
               <Link
-                className="cursor-pointer rounded-full border border-border px-2.5 py-1 hover:border-primary hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className={`${PILL_BASE} cursor-pointer border-border hover:border-primary hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
                 href={route}
               >
-                <StepLabel
-                  label={MATCHER_STEP_LABELS[route]}
-                  position={position}
-                />
+                {label}
               </Link>
             </li>
           );
@@ -37,25 +40,21 @@ export function StepIndicator({ currentRoute }: StepIndicatorProps) {
 
         if (status === "current") {
           return (
-            <li
-              aria-current="step"
-              className="rounded-full border border-primary bg-primary-soft px-2.5 py-1 text-ink"
-              key={route}
-            >
-              <StepLabel
-                label={MATCHER_STEP_LABELS[route]}
-                position={position}
-              />
+            <li aria-current="step" className="flex" key={route}>
+              <span
+                className={`${PILL_BASE} border-primary bg-primary-soft text-ink`}
+              >
+                {label}
+              </span>
             </li>
           );
         }
 
         return (
-          <li
-            className="rounded-full border border-border px-2.5 py-1 opacity-50"
-            key={route}
-          >
-            <StepLabel label={MATCHER_STEP_LABELS[route]} position={position} />
+          <li className="flex" key={route}>
+            <span className={`${PILL_BASE} border-border opacity-50`}>
+              {label}
+            </span>
           </li>
         );
       })}
