@@ -18,9 +18,8 @@ export function MatcherLocal() {
         <div className="mx-auto w-full max-w-6xl">
           <div className="w-full max-w-2xl">
             <StepLocal
-              cidade={matcher.state.cidade}
-              onConfirm={(siglaUf, cidade) => {
-                matcher.setLocal(siglaUf, cidade);
+              onConfirm={(siglaUf) => {
+                matcher.setLocal(siglaUf);
                 navigate("/matcher/proposicoes");
               }}
               siglaUf={matcher.state.siglaUf}

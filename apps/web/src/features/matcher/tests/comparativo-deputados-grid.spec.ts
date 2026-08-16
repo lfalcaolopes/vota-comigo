@@ -68,7 +68,6 @@ function detalhe(
 ): MatcherDeputadoDetalhe {
   return {
     siglaUf: "SP",
-    cidade: null,
     totalProposicoesSelecionadas: 3,
     totalPosicoesComputaveis: 3,
     deputado: {

@@ -3,7 +3,6 @@ import { expect, test, type Page } from "@playwright/test";
 const rascunho = {
   version: 1,
   siglaUf: "SP",
-  cidade: "",
   escopo: "estadual",
   selected: [1, 2, 3].map((externalIdProposicao) => ({
     externalIdProposicao,
@@ -27,7 +26,6 @@ const rascunho = {
 function detalhe(externalIdDeputado: number) {
   return {
     siglaUf: "SP",
-    cidade: null,
     totalProposicoesSelecionadas: 3,
     totalPosicoesComputaveis: 3,
     deputado: {
@@ -84,7 +82,6 @@ function perfil(externalIdDeputado: number) {
 
 const resultado = {
   siglaUf: "SP",
-  cidade: null,
   totalProposicoesSelecionadas: 3,
   totalPosicoesComputaveis: 3,
   escopo: "estadual",

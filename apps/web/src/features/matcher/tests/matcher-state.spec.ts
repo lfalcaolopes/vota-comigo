@@ -61,7 +61,6 @@ function resultado(
 ): MatcherResultado {
   return {
     siglaUf: "SP",
-    cidade: null,
     totalProposicoesSelecionadas: 3,
     totalPosicoesComputaveis: 3,
     escopo,
@@ -123,7 +122,7 @@ describe("matcherReducer", () => {
   });
 
   describe("when recording the location", () => {
-    it("stores the chosen UF and cidade", () => {
+    it("stores the chosen UF", () => {
       // Arrange
       const state = initMatcherState(candidates);
 
@@ -131,12 +130,10 @@ describe("matcherReducer", () => {
       const next = matcherReducer(state, {
         type: "setLocal",
         siglaUf: "SP",
-        cidade: "Santos",
       });
 
       // Assert
       expect(next.siglaUf).toBe("SP");
-      expect(next.cidade).toBe("Santos");
     });
   });
 
@@ -155,7 +152,6 @@ describe("matcherReducer", () => {
         type: "hydrateRascunho",
         rascunho: {
           siglaUf: "BA",
-          cidade: "Salvador",
           escopo: "nacional",
           selected,
           posicoes,
@@ -165,7 +161,6 @@ describe("matcherReducer", () => {
 
       // Assert
       expect(next.siglaUf).toBe("BA");
-      expect(next.cidade).toBe("Salvador");
       expect(next.escopo).toBe("nacional");
       expect(next.selected).toEqual(selected);
       expect(next.posicoes).toEqual(posicoes);
@@ -180,7 +175,6 @@ describe("matcherReducer", () => {
       const withLocal = matcherReducer(initMatcherState(candidates), {
         type: "setLocal",
         siglaUf: "SP",
-        cidade: "Santos",
       });
       const withSelection = matcherReducer(withLocal, {
         type: "toggleProposicao",
@@ -192,7 +186,6 @@ describe("matcherReducer", () => {
 
       // Assert
       expect(next.siglaUf).toBeNull();
-      expect(next.cidade).toBe("");
       expect(next.selected).toEqual([]);
       expect(next.posicoes).toEqual(new Map());
       expect(next.resultados).toEqual({ estadual: null, nacional: null });
@@ -378,7 +371,6 @@ describe("matcherReducer", () => {
   describe("when running the matcher", () => {
     const resultado = {
       siglaUf: "SP" as const,
-      cidade: null,
       totalProposicoesSelecionadas: 3,
       totalPosicoesComputaveis: 3,
       escopo: "estadual" as const,
@@ -457,7 +449,6 @@ describe("matcherReducer", () => {
       state = matcherReducer(state, {
         type: "setLocal",
         siglaUf: "SP",
-        cidade: "",
       });
       state = matcherReducer(state, {
         type: "setPosicao",
@@ -1057,7 +1048,6 @@ describe("matcherReducer", () => {
       next = matcherReducer(next, {
         type: "setLocal",
         siglaUf: "SP",
-        cidade: "",
       });
       for (const id of [1, 2, 3]) {
         next = matcherReducer(next, {
@@ -1102,7 +1092,6 @@ describe("matcherReducer", () => {
       const state = matcherReducer(initMatcherState(candidates), {
         type: "setLocal",
         siglaUf: "SP",
-        cidade: "",
       });
 
       // Act / Assert
@@ -1114,7 +1103,6 @@ describe("matcherReducer", () => {
       let state = matcherReducer(initMatcherState(candidates), {
         type: "setLocal",
         siglaUf: "SP",
-        cidade: "",
       });
       for (const id of [1, 2, 3, 4]) {
         state = matcherReducer(state, {

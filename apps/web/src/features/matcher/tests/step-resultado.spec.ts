@@ -38,7 +38,6 @@ function proposicao(externalIdProposicao: number): ProposicaoCard {
 function resultadoVazio(): MatcherResultado {
   return {
     siglaUf: "SP",
-    cidade: null,
     totalProposicoesSelecionadas: 1,
     totalPosicoesComputaveis: 1,
     escopo: "estadual",

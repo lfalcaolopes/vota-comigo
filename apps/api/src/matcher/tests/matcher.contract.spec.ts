@@ -212,7 +212,6 @@ describe('POST /matcher', () => {
         .post('/matcher')
         .send({
           siglaUf: 'PE',
-          cidade: 'Recife',
           posicoes: [
             posicao({ externalIdProposicao: 1 }),
             posicao({
@@ -228,7 +227,6 @@ describe('POST /matcher', () => {
       const body = matcherExecucaoResumoSchema.parse(response.body as unknown);
       expect(body).toMatchObject({
         siglaUf: 'PE',
-        cidade: 'Recife',
         totalProposicoesSelecionadas: 3,
         totalPosicoesComputaveis: 3,
       });
@@ -240,7 +238,6 @@ describe('POST /matcher', () => {
         .post('/matcher')
         .send({
           siglaUf: 'PE',
-          cidade: 'Recife',
           posicoes: [
             posicao({ externalIdProposicao: 1 }),
             posicao({
@@ -319,7 +316,6 @@ describe('POST /matcher', () => {
           .post('/matcher')
           .send({
             siglaUf: 'PE',
-            cidade: 'Recife',
             posicoes: [
               posicao({ externalIdProposicao: 1 }),
               posicao({
@@ -386,28 +382,6 @@ describe('POST /matcher', () => {
 
       // Assert
       expect(response.status).toBe(400);
-    });
-
-    it('coalesces a missing cidade to null', async () => {
-      // Act
-      const response = await request(getTestServer(app))
-        .post('/matcher')
-        .send({
-          siglaUf: 'PE',
-          posicoes: [
-            posicao({ externalIdProposicao: 1 }),
-            posicao({
-              externalIdProposicao: 2,
-              posicao: 'rejeitar',
-            }),
-            posicao({ externalIdProposicao: 3 }),
-          ],
-        });
-
-      // Assert
-      expect(response.status).toBe(200);
-      const body = matcherExecucaoResumoSchema.parse(response.body as unknown);
-      expect(body.cidade).toBeNull();
     });
 
     it('accepts up to thirty selected proposicoes, counting nao_sei', async () => {
@@ -670,7 +644,6 @@ describe('POST /matcher/deputados/:externalIdDeputado', () => {
         .post('/matcher/deputados/100')
         .send({
           siglaUf: 'PE',
-          cidade: 'Recife',
           posicoes: [
             posicao({ externalIdProposicao: 1 }),
             posicao({ externalIdProposicao: 2, posicao: 'rejeitar' }),
@@ -684,7 +657,6 @@ describe('POST /matcher/deputados/:externalIdDeputado', () => {
       const body = matcherDeputadoDetalheSchema.parse(response.body as unknown);
       expect(body).toMatchObject({
         siglaUf: 'PE',
-        cidade: 'Recife',
         totalProposicoesSelecionadas: 4,
         totalPosicoesComputaveis: 3,
         deputado: {

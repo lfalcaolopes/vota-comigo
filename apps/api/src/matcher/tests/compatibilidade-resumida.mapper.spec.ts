@@ -8,7 +8,6 @@ import type { DeputadoResumoComputado } from '../types/compatibilidade.types';
 
 const resumo: MatcherExecucaoResumo = {
   siglaUf: 'PE',
-  cidade: null,
   totalProposicoesSelecionadas: 3,
   totalPosicoesComputaveis: 3,
 };

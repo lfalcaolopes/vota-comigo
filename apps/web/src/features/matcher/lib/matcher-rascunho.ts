@@ -16,7 +16,6 @@ import { z } from "zod";
 
 export type MatcherRascunho = {
   siglaUf: SiglaUf | null;
-  cidade: string;
   escopo: EscopoMatcher;
   selected: ProposicaoCard[];
   posicoes: Map<number, PosicaoUsuarioMatcher>;
@@ -26,7 +25,6 @@ export type MatcherRascunho = {
 export function hasRascunhoEntries(rascunho: MatcherRascunho): boolean {
   return (
     rascunho.siglaUf !== null ||
-    rascunho.cidade.trim() !== "" ||
     rascunho.escopo !== "estadual" ||
     rascunho.selected.length > 0 ||
     rascunho.posicoes.size > 0 ||
@@ -34,13 +32,14 @@ export function hasRascunhoEntries(rascunho: MatcherRascunho): boolean {
   );
 }
 
-const CURRENT_VERSION = 1 as const;
+// Versão 2 removeu `cidade`; como o schema é estrito, um rascunho da versão 1
+// seria rejeitado de qualquer forma, e a versão nova torna isso explícito.
+const CURRENT_VERSION = 2 as const;
 
 const serializedRascunhoSchema = z
   .object({
     version: z.literal(CURRENT_VERSION),
     siglaUf: siglaUfEnum.nullable(),
-    cidade: z.string().max(120),
     escopo: escopoMatcherEnum,
     selected: z.array(proposicaoCardSchema).max(MAX_POSICOES),
     posicoes: z.array(posicaoMatcherSchema).max(MAX_POSICOES),
@@ -77,7 +76,6 @@ export function serializeRascunho(rascunho: MatcherRascunho): string {
   return JSON.stringify({
     version: CURRENT_VERSION,
     siglaUf: rascunho.siglaUf,
-    cidade: rascunho.cidade,
     escopo: rascunho.escopo,
     selected: rascunho.selected,
     posicoes: [...rascunho.posicoes].map(([externalIdProposicao, posicao]) => ({
@@ -97,7 +95,6 @@ export function parseRascunho(raw: string): MatcherRascunho | null {
     const { data } = result;
     return {
       siglaUf: data.siglaUf,
-      cidade: data.cidade,
       escopo: data.escopo,
       selected: data.selected,
       posicoes: new Map(

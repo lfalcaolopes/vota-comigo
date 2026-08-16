@@ -26,7 +26,6 @@ export function MatcherComparativo({ ids }: { ids: string }) {
       : buildExecucaoRequest({
           siglaUf: state.siglaUf,
           escopo: state.escopo,
-          cidade: state.cidade,
           posicoes: state.posicoes,
           ...toResultadoFiltros(state),
         }).posicoes;

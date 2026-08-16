@@ -69,7 +69,6 @@ export class MatcherService {
 
     const validation = validateExecucao({
       siglaUf: request.siglaUf,
-      cidade: request.cidade,
       posicoes: request.posicoes,
       externalIdProposicoesFiltroConcordancia:
         request.externalIdProposicoesFiltroConcordancia,

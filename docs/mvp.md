@@ -92,7 +92,7 @@ Ferramenta de compatibilidade entre usuário e deputados com base nos votos. Fra
 **Fluxo:**
 
 1. Usuário clica para iniciar
-2. Informa estado (obrigatório) e cidade (opcional, preparando para cobertura municipal futura)
+2. Informa o estado (obrigatório)
 3. Sistema apresenta as 5 proposições mais bem posicionadas no ranking público e computáveis pelo matcher, já pré-selecionadas. Usuário pode:
    - Expandir para ver/selecionar mais proposições
    - Desselecionar proposições pré-selecionadas

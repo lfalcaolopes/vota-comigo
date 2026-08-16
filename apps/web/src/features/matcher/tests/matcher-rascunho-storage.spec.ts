@@ -24,7 +24,6 @@ describe("Persistência do rascunho de execução do matcher", () => {
       };
       const rascunho = {
         siglaUf: "CE" as const,
-        cidade: "Fortaleza",
         escopo: "estadual" as const,
         selected: [],
         posicoes: new Map<number, PosicaoUsuarioMatcher>(),
@@ -55,7 +54,6 @@ describe("Persistência do rascunho de execução do matcher", () => {
       };
       saveRascunho(storage, {
         siglaUf: "CE",
-        cidade: "Fortaleza",
         escopo: "estadual",
         selected: [],
         posicoes: new Map(),

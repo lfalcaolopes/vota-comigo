@@ -36,7 +36,6 @@ describe("Rascunho de execução do matcher", () => {
       // Act
       const serialized = serializeRascunho({
         siglaUf: "SP",
-        cidade: "Campinas",
         escopo: "nacional",
         selected,
         posicoes,
@@ -47,7 +46,6 @@ describe("Rascunho de execução do matcher", () => {
       // Assert
       expect(parsed).toEqual({
         siglaUf: "SP",
-        cidade: "Campinas",
         escopo: "nacional",
         selected,
         posicoes,
@@ -61,7 +59,6 @@ describe("Rascunho de execução do matcher", () => {
       // Arrange
       const emptyRascunho = {
         siglaUf: null,
-        cidade: "",
         escopo: "estadual" as const,
         selected: [],
         posicoes: new Map<number, PosicaoUsuarioMatcher>(),
@@ -79,7 +76,6 @@ describe("Rascunho de execução do matcher", () => {
       // Arrange
       const emptyRascunho = {
         siglaUf: null,
-        cidade: "",
         escopo: "estadual" as const,
         selected: [],
         posicoes: new Map<number, PosicaoUsuarioMatcher>(),
@@ -99,7 +95,6 @@ describe("Rascunho de execução do matcher", () => {
       // Arrange
       const partialRascunho = {
         siglaUf: "PE" as const,
-        cidade: "Recife",
         escopo: "estadual" as const,
         selected: [],
         posicoes: new Map<number, PosicaoUsuarioMatcher>(),
@@ -117,7 +112,6 @@ describe("Rascunho de execução do matcher", () => {
       // Arrange
       const partialRascunho = {
         siglaUf: "PE" as const,
-        cidade: "Recife",
         escopo: "estadual" as const,
         selected: [],
         posicoes: new Map<number, PosicaoUsuarioMatcher>(),
@@ -150,7 +144,7 @@ describe("Rascunho de execução do matcher", () => {
     it("descarta o rascunho", () => {
       // Arrange
       const outdated = JSON.stringify({
-        version: 0,
+        version: 1,
         siglaUf: "SP",
         cidade: "Campinas",
         escopo: "estadual",
@@ -170,9 +164,8 @@ describe("Rascunho de execução do matcher", () => {
     it("retoma o rascunho sem marcações", () => {
       // Arrange
       const legacy = JSON.stringify({
-        version: 1,
+        version: 2,
         siglaUf: "SP",
-        cidade: "Campinas",
         escopo: "estadual",
         selected,
         posicoes: [{ externalIdProposicao: 123, posicao: "aprovar" }],
@@ -184,7 +177,6 @@ describe("Rascunho de execução do matcher", () => {
       // Assert
       expect(parsed).toEqual({
         siglaUf: "SP",
-        cidade: "Campinas",
         escopo: "estadual",
         selected,
         posicoes: new Map([[123, "aprovar"]]),
@@ -197,9 +189,8 @@ describe("Rascunho de execução do matcher", () => {
     it("descarta o rascunho", () => {
       // Arrange
       const invalid = JSON.stringify({
-        version: 1,
+        version: 2,
         siglaUf: "XX",
-        cidade: "Cidade inexistente",
         escopo: "estadual",
         selected: [],
         posicoes: [],
@@ -215,9 +206,8 @@ describe("Rascunho de execução do matcher", () => {
     it("descarta marcações inválidas do filtro de concordância", () => {
       // Arrange
       const invalid = JSON.stringify({
-        version: 1,
+        version: 2,
         siglaUf: "SP",
-        cidade: "Campinas",
         escopo: "estadual",
         selected,
         posicoes: [{ externalIdProposicao: 123, posicao: "aprovar" }],
@@ -235,9 +225,8 @@ describe("Rascunho de execução do matcher", () => {
     it("descarta marcação ausente das posições computáveis", () => {
       // Arrange
       const invalid = JSON.stringify({
-        version: 1,
+        version: 2,
         siglaUf: "SP",
-        cidade: "Campinas",
         escopo: "estadual",
         selected,
         posicoes: [{ externalIdProposicao: 123, posicao: "aprovar" }],
@@ -254,9 +243,8 @@ describe("Rascunho de execução do matcher", () => {
     it("descarta marcação cuja posição é não sei", () => {
       // Arrange
       const invalid = JSON.stringify({
-        version: 1,
+        version: 2,
         siglaUf: "SP",
-        cidade: "Campinas",
         escopo: "estadual",
         selected,
         posicoes: [{ externalIdProposicao: 123, posicao: "nao_sei" }],
@@ -276,7 +264,6 @@ describe("Rascunho de execução do matcher", () => {
       // Arrange
       const stateWithDerivedData = {
         siglaUf: "SP" as const,
-        cidade: "Campinas",
         escopo: "estadual" as const,
         selected,
         posicoes: new Map<number, PosicaoUsuarioMatcher>([[123, "aprovar"]]),
@@ -292,9 +279,8 @@ describe("Rascunho de execução do matcher", () => {
 
       // Assert
       expect(serialized).toEqual({
-        version: 1,
+        version: 2,
         siglaUf: "SP",
-        cidade: "Campinas",
         escopo: "estadual",
         selected,
         posicoes: [{ externalIdProposicao: 123, posicao: "aprovar" }],

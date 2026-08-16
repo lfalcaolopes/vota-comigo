@@ -52,7 +52,6 @@ describe('validateExecucao', () => {
       // Act
       const result = validateExecucao({
         siglaUf: 'PE',
-        cidade: 'Recife',
         posicoes,
         externalIdProposicoesFiltroConcordancia: [],
         externalIdProposicoesComputaveis: new Set([1, 2, 3]),
@@ -63,7 +62,6 @@ describe('validateExecucao', () => {
         ok: true,
         resumo: {
           siglaUf: 'PE',
-          cidade: 'Recife',
           totalProposicoesSelecionadas: 3,
           totalPosicoesComputaveis: 3,
         },

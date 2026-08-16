@@ -60,7 +60,6 @@ export function useMatcherState() {
 
     const rascunho = {
       siglaUf: state.siglaUf,
-      cidade: state.cidade,
       escopo: state.escopo,
       selected: state.selected,
       posicoes: state.posicoes,
@@ -74,7 +73,6 @@ export function useMatcherState() {
       clearRascunho(window.sessionStorage);
     }
   }, [
-    state.cidade,
     state.escopo,
     state.externalIdProposicoesFiltroConcordancia,
     state.isHydrated,
@@ -83,8 +81,8 @@ export function useMatcherState() {
     state.siglaUf,
   ]);
 
-  function setLocal(siglaUf: SiglaUf, cidade: string) {
-    dispatch({ type: "setLocal", siglaUf, cidade });
+  function setLocal(siglaUf: SiglaUf) {
+    dispatch({ type: "setLocal", siglaUf });
   }
 
   function toggleProposicao(proposicao: ProposicaoCard) {
@@ -116,7 +114,6 @@ export function useMatcherState() {
       const request = buildExecucaoRequest({
         siglaUf: state.siglaUf,
         escopo,
-        cidade: state.cidade,
         posicoes: state.posicoes,
         ...filtros,
       });

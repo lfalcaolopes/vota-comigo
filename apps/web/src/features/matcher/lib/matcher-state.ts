@@ -36,7 +36,6 @@ export type MatcherStatus = "idle" | "loading" | "error";
 export type MatcherState = {
   isHydrated: boolean;
   siglaUf: SiglaUf | null;
-  cidade: string;
   selected: ProposicaoCard[];
   posicoes: Map<number, PosicaoUsuarioMatcher>;
   resultados: Record<EscopoMatcher, MatcherResultado | null>;
@@ -54,7 +53,7 @@ export type MatcherState = {
 export type MatcherAction =
   | { type: "hydrateRascunho"; rascunho: MatcherRascunho | null }
   | { type: "resetMatcher" }
-  | { type: "setLocal"; siglaUf: SiglaUf; cidade: string }
+  | { type: "setLocal"; siglaUf: SiglaUf }
   | { type: "toggleProposicao"; proposicao: ProposicaoCard }
   | {
       type: "setPosicao";
@@ -81,7 +80,6 @@ export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
   return {
     isHydrated: false,
     siglaUf: null,
-    cidade: "",
     selected: [],
     posicoes: new Map(),
     resultados: { estadual: null, nacional: null },
@@ -140,7 +138,7 @@ export function matcherReducer(
     case "resetMatcher":
       return { ...initMatcherState([]), isHydrated: true };
     case "setLocal":
-      return { ...state, siglaUf: action.siglaUf, cidade: action.cidade };
+      return { ...state, siglaUf: action.siglaUf };
     case "toggleProposicao": {
       const id = action.proposicao.externalIdProposicao;
       if (isSelected(state, id)) {

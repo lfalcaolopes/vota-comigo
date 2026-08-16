@@ -237,15 +237,11 @@ describe('MatcherService.execute', () => {
       );
 
       // Act
-      const resultado = await service.execute(
-        request({ cidade: 'Recife' }),
-        pagina,
-      );
+      const resultado = await service.execute(request(), pagina);
 
       // Assert
       expect(resultado).toMatchObject({
         siglaUf: 'PE',
-        cidade: 'Recife',
         totalProposicoesSelecionadas: 3,
         totalPosicoesComputaveis: 3,
         escopo: 'estadual',

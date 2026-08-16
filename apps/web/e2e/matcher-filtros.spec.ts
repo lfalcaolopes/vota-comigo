@@ -72,7 +72,6 @@ const selected = [
 const rascunho = {
   version: 1,
   siglaUf: "SP",
-  cidade: "Campinas",
   escopo: "estadual",
   selected,
   posicoes: [
@@ -86,7 +85,6 @@ const rascunho = {
 
 const resultado = {
   siglaUf: "SP",
-  cidade: "Campinas",
   totalProposicoesSelecionadas: 4,
   totalPosicoesComputaveis: 3,
   escopo: "estadual",

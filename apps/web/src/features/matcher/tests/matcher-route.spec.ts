@@ -18,7 +18,6 @@ import type { MatcherRascunho } from "../lib/matcher-rascunho";
 function emptyRascunho(): MatcherRascunho {
   return {
     siglaUf: null,
-    cidade: "",
     escopo: "estadual",
     selected: [],
     posicoes: new Map(),

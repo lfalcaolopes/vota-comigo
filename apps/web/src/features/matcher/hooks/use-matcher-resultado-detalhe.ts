@@ -26,7 +26,6 @@ export function useMatcherResultadoDetalhe(externalIdDeputado: number) {
       const request = buildExecucaoRequest({
         siglaUf: state.siglaUf,
         escopo: state.escopo,
-        cidade: state.cidade,
         posicoes: state.posicoes,
         ...toResultadoFiltros(state),
       });

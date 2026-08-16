@@ -14,7 +14,6 @@ import {
   groupVotosByMatcherEffect,
   sortVotosByVotacaoDataDesc,
   toFiltroLabel,
-  toMatcherEffectLabel,
   toMatcherEffectVerdict,
   toSituacaoLabel,
 } from "../lib/matcher-detalhe-presentation";
@@ -148,29 +147,6 @@ describe("toSituacaoLabel", () => {
       expect(toSituacaoLabel(situacao)).toBe(expected);
     });
   }
-});
-
-describe("toMatcherEffectLabel", () => {
-  describe("when effect is concordancia", () => {
-    it("returns 'Votou como você'", () => {
-      // Act / Assert
-      expect(toMatcherEffectLabel("concordancia")).toBe("Votou como você");
-    });
-  });
-
-  describe("when effect is discordancia", () => {
-    it("returns 'Votou diferente'", () => {
-      // Act / Assert
-      expect(toMatcherEffectLabel("discordancia")).toBe("Votou diferente");
-    });
-  });
-
-  describe("when effect is fora_do_denominador", () => {
-    it("returns 'Fora da conta'", () => {
-      // Act / Assert
-      expect(toMatcherEffectLabel("fora_do_denominador")).toBe("Fora da conta");
-    });
-  });
 });
 
 describe("toMatcherEffectVerdict", () => {

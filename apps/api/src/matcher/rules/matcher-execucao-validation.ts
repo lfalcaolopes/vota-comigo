@@ -11,7 +11,6 @@ import type {
 
 export type ExecucaoValidationInput = {
   siglaUf: SiglaUf;
-  cidade?: string;
   posicoes: readonly PosicaoMatcher[];
   externalIdProposicoesFiltroConcordancia: readonly number[];
   externalIdProposicoesComputaveis: ReadonlySet<number>;
@@ -73,7 +72,6 @@ export function validateExecucao(
     ok: true,
     resumo: {
       siglaUf: input.siglaUf,
-      cidade: input.cidade ?? null,
       totalProposicoesSelecionadas: input.posicoes.length,
       totalPosicoesComputaveis: posicoesComputaveisSelecionadas.length,
     },

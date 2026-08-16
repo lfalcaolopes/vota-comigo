@@ -14,7 +14,6 @@ import { toResultadoFiltros, type ResultadoFiltros } from "./resultado-filtros";
 export type ExecucaoPayloadInput = ResultadoFiltros & {
   siglaUf: SiglaUf;
   escopo: EscopoMatcher;
-  cidade?: string;
   posicoes: ReadonlyMap<number, PosicaoUsuarioMatcher>;
 };
 
@@ -32,7 +31,6 @@ export function buildExecucaoRequest(
       posicao,
     }));
 
-  const cidade = input.cidade?.trim();
   const { externalIdProposicoesFiltroConcordancia, partidos, ...recorte } =
     toResultadoFiltros(input);
 
@@ -45,6 +43,5 @@ export function buildExecucaoRequest(
     externalIdProposicoesFiltroConcordancia: [
       ...externalIdProposicoesFiltroConcordancia,
     ],
-    ...(cidade ? { cidade } : {}),
   };
 }

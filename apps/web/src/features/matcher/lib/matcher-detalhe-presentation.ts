@@ -50,12 +50,6 @@ export function toSituacaoLabel(
   return SITUACAO_LABELS[situacao];
 }
 
-export function toMatcherEffectLabel(effect: MatcherEffect): string {
-  if (effect === "concordancia") return "Votou como você";
-  if (effect === "discordancia") return "Votou diferente";
-  return "Fora da conta";
-}
-
 export const VOTO_FILTROS = [
   "todos",
   "alinhados",

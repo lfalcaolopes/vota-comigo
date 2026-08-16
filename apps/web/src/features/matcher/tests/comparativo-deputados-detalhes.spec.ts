@@ -10,7 +10,6 @@ import { loadComparativoDeputadosData } from "../lib/comparativo-deputados-detal
 function detalhe(externalIdDeputado: number): MatcherDeputadoDetalhe {
   return {
     siglaUf: "SP",
-    cidade: null,
     totalProposicoesSelecionadas: 3,
     totalPosicoesComputaveis: 3,
     deputado: {
@@ -74,7 +73,6 @@ describe("loadComparativoDeputadosData", () => {
       const request: MatcherExecucaoRequest = {
         siglaUf: "SP",
         escopo: "estadual",
-        cidade: "Santos",
         apenasEmAtividade: true,
         partidos: [],
         ocultarAmostraPequena: false,

@@ -64,7 +64,6 @@ export const matcherCompletionEventSchema = z.object({
 export const matcherExecucaoRequestSchema = z.object({
   siglaUf: siglaUfEnum,
   escopo: escopoMatcherEnum.default("estadual"),
-  cidade: z.string().trim().min(1).max(120).optional(),
   posicoes: z
     .array(posicaoMatcherSchema)
     .min(MIN_POSICOES_COMPUTAVEIS)
@@ -94,7 +93,6 @@ export const matcherExecucaoRequestSchema = z.object({
 
 export const matcherExecucaoResumoSchema = z.object({
   siglaUf: siglaUfEnum,
-  cidade: z.string().nullable(),
   totalProposicoesSelecionadas: z.number().int().nonnegative(),
   totalPosicoesComputaveis: z.number().int().nonnegative(),
 });

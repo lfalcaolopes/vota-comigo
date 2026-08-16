@@ -25,7 +25,6 @@ const request: MatcherExecucaoRequest = {
 
 const resultado: MatcherResultado = {
   siglaUf: "SP",
-  cidade: null,
   totalProposicoesSelecionadas: 3,
   totalPosicoesComputaveis: 3,
   escopo: "estadual",
@@ -131,7 +130,6 @@ describe("runMatcher", () => {
 
 const detalhe: MatcherDeputadoDetalhe = {
   siglaUf: "SP",
-  cidade: null,
   totalProposicoesSelecionadas: 3,
   totalPosicoesComputaveis: 3,
   deputado: {

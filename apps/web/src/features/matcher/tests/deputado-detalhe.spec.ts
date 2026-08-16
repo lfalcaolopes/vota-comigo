@@ -17,7 +17,6 @@ import { RESULTADO_FILTROS_PADRAO } from "../lib/resultado-filtros";
 function detalhe(): MatcherDeputadoDetalhe {
   return {
     siglaUf: "PE",
-    cidade: null,
     totalProposicoesSelecionadas: 3,
     totalPosicoesComputaveis: 3,
     deputado: {
@@ -95,7 +94,6 @@ function perfil(
 function resultado(deputados: MatcherDeputadoResumo[]) {
   return {
     siglaUf: "PE" as const,
-    cidade: null,
     totalProposicoesSelecionadas: 3,
     totalPosicoesComputaveis: 3,
     escopo: "estadual" as const,
