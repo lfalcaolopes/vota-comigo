@@ -12,6 +12,9 @@ const request: MatcherExecucaoRequest = {
   siglaUf: "SP",
   escopo: "estadual",
   apenasEmAtividade: false,
+  partidos: [],
+  ocultarAmostraPequena: false,
+  sexo: null,
   externalIdProposicoesFiltroConcordancia: [],
   posicoes: [
     { externalIdProposicao: 1, posicao: "aprovar" },
@@ -32,7 +35,6 @@ const resultado: MatcherResultado = {
   total: 0,
   limit: 20,
   offset: 0,
-  semBomMatch: false,
 };
 
 afterEach(() => {

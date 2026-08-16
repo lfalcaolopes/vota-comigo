@@ -74,7 +74,7 @@ export interface DeputadosRepository {
     pagination: DeputadosFeedPagination,
   ): Promise<DeputadosFeedPage>;
   loadUfsDisponiveis(): Promise<readonly string[]>;
-  loadPartidosDisponiveis(): Promise<readonly string[]>;
+  loadPartidosDisponiveis(siglaUf?: string): Promise<readonly string[]>;
   loadDeputadoPerfil(
     externalIdDeputado: number,
   ): Promise<DeputadoPerfilSource | null>;
@@ -344,7 +344,7 @@ export function createDeputadosRepository(
       return rows.flatMap((row) => (row.siglaUf === null ? [] : [row.siglaUf]));
     },
 
-    async loadPartidosDisponiveis() {
+    async loadPartidosDisponiveis(siglaUf) {
       const snapshot = snapshotPublico();
 
       const rows = await db
@@ -355,6 +355,7 @@ export function createDeputadosRepository(
           and(
             presencaRegistrada(snapshot.deputadoId),
             isNotNull(partido.sigla),
+            ...(siglaUf === undefined ? [] : [eq(snapshot.siglaUf, siglaUf)]),
           ),
         );
 

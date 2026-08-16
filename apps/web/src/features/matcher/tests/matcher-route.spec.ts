@@ -12,6 +12,7 @@ import {
   stepStatus,
   toPosicoesHref,
 } from "../lib/matcher-route";
+import { RESULTADO_FILTROS_URL_PADRAO } from "../lib/resultado-filtros";
 import type { MatcherRascunho } from "../lib/matcher-rascunho";
 
 function emptyRascunho(): MatcherRascunho {
@@ -102,7 +103,7 @@ describe("matcher route", () => {
       // Assert
       expect(filters).toEqual({
         escopo: "estadual",
-        apenasEmAtividade: false,
+        ...RESULTADO_FILTROS_URL_PADRAO,
       });
     });
   });
@@ -138,8 +139,46 @@ describe("matcher route", () => {
       // Assert
       expect(filters).toEqual({
         escopo: "estadual",
-        apenasEmAtividade: false,
+        ...RESULTADO_FILTROS_URL_PADRAO,
       });
+    });
+  });
+
+  describe("when the requested partidos are repeated in the address", () => {
+    it("reads a deduplicated, upper-cased selection", () => {
+      // Arrange / Act
+      const filters = parseResultadoUrlState({ partido: ["pt", "PT", "psol"] });
+
+      // Assert
+      expect(filters.partidos).toEqual(["PT", "PSOL"]);
+    });
+  });
+
+  describe("when a small sample recorte is requested", () => {
+    it("enables the amostra filter", () => {
+      // Arrange / Act
+      const filters = parseResultadoUrlState({ amostra: "1" });
+
+      // Assert
+      expect(filters.ocultarAmostraPequena).toBe(true);
+    });
+  });
+
+  describe("when a sexo recorte is requested", () => {
+    it("reads the requested sexo", () => {
+      // Arrange / Act
+      const filters = parseResultadoUrlState({ sexo: "F" });
+
+      // Assert
+      expect(filters.sexo).toBe("F");
+    });
+
+    it("ignores a sexo outside the enum", () => {
+      // Arrange / Act
+      const filters = parseResultadoUrlState({ sexo: "X" });
+
+      // Assert
+      expect(filters.sexo).toBeNull();
     });
   });
 
@@ -149,10 +188,43 @@ describe("matcher route", () => {
       const href = buildResultadoHref({
         escopo: "nacional",
         apenasEmAtividade: true,
+        partidos: ["PSOL", "PT"],
+        ocultarAmostraPequena: true,
+        sexo: "F",
       });
 
       // Assert
-      expect(href).toBe("/matcher/resultado?escopo=nacional&atividade=1");
+      expect(href).toBe(
+        "/matcher/resultado?escopo=nacional&atividade=1&partido=PSOL&partido=PT&amostra=1&sexo=F",
+      );
+    });
+  });
+
+  describe("when the browser goes back to an address with every recorte", () => {
+    it("reads back the same state the address was built from", () => {
+      // Arrange
+      const state = {
+        escopo: "nacional" as const,
+        apenasEmAtividade: true,
+        partidos: ["PSOL", "PT"],
+        ocultarAmostraPequena: true,
+        sexo: "M" as const,
+      };
+
+      // Act
+      const search = new URLSearchParams(
+        buildResultadoHref(state).split("?")[1],
+      );
+      const lido = parseResultadoUrlState({
+        escopo: search.get("escopo") ?? undefined,
+        atividade: search.get("atividade") ?? undefined,
+        partido: search.getAll("partido"),
+        amostra: search.get("amostra") ?? undefined,
+        sexo: search.get("sexo") ?? undefined,
+      });
+
+      // Assert
+      expect(lido).toEqual(state);
     });
   });
 

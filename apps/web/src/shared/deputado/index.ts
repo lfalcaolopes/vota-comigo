@@ -20,7 +20,6 @@ export {
   descreverFiltrosAtivos,
   removerFiltro,
   saoFiltrosIguais,
-  toggleValor,
   FILTROS_PADRAO,
   type DeputadoFeedFiltros,
   type DeputadoFiltroAtivo,
@@ -67,6 +66,7 @@ export {
   useComparativoDeputados,
   type ComparativoDeputadosState,
 } from "./use-comparativo-deputados";
+export { usePartidosDisponiveis } from "./use-partidos-disponiveis";
 export { DeputadoPerfil } from "./deputado-perfil";
 export { parseDeputadoPerfilYear } from "./deputado-perfil-year-url";
 export { DeputadoPerfilSkeleton } from "./deputado-perfil-skeleton";

@@ -119,14 +119,13 @@ function fakeRepository(
         const siglaUf = deriveSnapshotPublico(source.eventos)?.siglaUf;
         return siglaUf === undefined || siglaUf === null ? [] : [siglaUf];
       }),
-    loadPartidosDisponiveis: async () =>
+    loadPartidosDisponiveis: async (siglaUf) =>
       [...byExternalId.values()].flatMap((source) => {
-        const siglaPartido = deriveSnapshotPublico(
-          source.eventos,
-        )?.siglaPartido;
-        return siglaPartido === undefined || siglaPartido === null
-          ? []
-          : [siglaPartido];
+        const snapshot = deriveSnapshotPublico(source.eventos);
+        const siglaPartido = snapshot?.siglaPartido;
+        if (siglaPartido === undefined || siglaPartido === null) return [];
+        if (siglaUf !== undefined && snapshot?.siglaUf !== siglaUf) return [];
+        return [siglaPartido];
       }),
     loadDeputadoPerfil: async (externalIdDeputado) =>
       byExternalId.get(externalIdDeputado) ?? null,
@@ -807,6 +806,32 @@ describe('GET /deputados/feed/partidos', () => {
         { siglaPartido: 'PSOL' },
         { siglaPartido: 'PT' },
       ]);
+    });
+  });
+
+  describe('when a uf is informed', () => {
+    it('returns only the partidos with a deputado in that uf', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/feed/partidos?uf=RJ',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = partidosDisponiveisResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.items).toEqual([{ siglaPartido: 'PSOL' }]);
+    });
+
+    it('rejects a uf that is not two letters', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/feed/partidos?uf=RJX',
+      );
+
+      // Assert
+      expect(response.status).toBe(400);
     });
   });
 });

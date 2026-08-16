@@ -5,7 +5,13 @@ export { ExternalLinkIcon } from "./external-link-icon";
 export { TitleLink } from "./title-link";
 export { ChipGroup } from "./chip-group";
 export type { ChipGroupOption } from "./chip-group";
-export { toFiltroAtivo } from "./filtro-descritor";
+export {
+  descreverSelecao,
+  saoSelecoesIguais,
+  toFiltroAtivo,
+  toggleValor,
+  toSelecaoKey,
+} from "./filtro-descritor";
 export type { FiltroAtivo } from "./filtro-descritor";
 export { FiltrosAtivos } from "./filtros-ativos";
 export { FiltroSecao, FiltrosPanel } from "./filtros-panel";

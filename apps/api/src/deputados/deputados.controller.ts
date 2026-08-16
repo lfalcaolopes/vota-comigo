@@ -87,6 +87,15 @@ function toList(raw: QueryParam): readonly string[] | undefined {
   return values;
 }
 
+function parseUf(raw: string | undefined): string | undefined {
+  if (raw === undefined) return undefined;
+  const uf = raw.trim().toUpperCase();
+  if (!/^[A-Z]{2}$/.test(uf)) {
+    throw new BadRequestException('uf must have two letters');
+  }
+  return uf;
+}
+
 function parseUfs(raw: QueryParam): readonly string[] | undefined {
   const values = toList(raw);
   if (values === undefined) return undefined;
@@ -147,8 +156,10 @@ export class DeputadosController {
 
   @Get('feed/partidos')
   @CacheControl(CACHE_REFERENCE)
-  async feedPartidos(): Promise<PartidosDisponiveisResponse> {
-    return this.service.partidosDisponiveis();
+  async feedPartidos(
+    @Query('uf') ufParam?: string,
+  ): Promise<PartidosDisponiveisResponse> {
+    return this.service.partidosDisponiveis(parseUf(ufParam));
   }
 
   @Get('feed')

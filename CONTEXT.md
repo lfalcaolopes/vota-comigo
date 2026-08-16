@@ -178,10 +178,11 @@ _Avoid_: Sessão do matcher, progresso salvo.
 
 **Amostra pequena no matcher**: Alerta de resultado do matcher quando a amostra comparável de um deputado é menor que 50% das posições computáveis do usuário.
 
-**Sem bom match**: Condição do matcher quando o melhor resultado do escopo consultado tem compatibilidade bruta menor que 60%.
-
 **Filtro de concordância do matcher**: Recorte do resultado do matcher que exibe apenas deputados com concordância em todas as proposições marcadas pelo usuário, entre as que ele selecionou.
 _Avoid_: Filtro de proposição, recorte por concordância.
+
+**Recorte do resultado do matcher**: Conjunto de filtros que restringem quais deputados aparecem no resultado do matcher sem consultar as respostas do usuário — em atividade, partido, sexo e ocultar amostra pequena.
+_Avoid_: Filtro demográfico, filtro de perfil.
 
 **Resumo de resultado do matcher**: Apresentação enxuta de um deputado no ranking do matcher, com compatibilidade, amostra comparável e alertas curtos.
 
@@ -283,15 +284,19 @@ _Avoid_: Ano completo como sinônimo, já que a completude do dump e a da reposi
 - O desempate por deputado **Em atividade** no **Matcher** usa o snapshot mais recente conhecido, não a condição **Em exercício** em cada votação histórica.
 - O ranking do **Matcher** é ordenado pelo **Score Wilson do matcher**, preservando a **Compatibilidade bruta** e a amostra comparável para exibição.
 - O **Resumo de resultado do matcher** preserva a transparência de amostra sem exibir todas as métricas; o **Detalhe de resultado do matcher** contém métricas completas e detalhamento voto a voto.
-- O **Matcher** sinaliza **Sem bom match** quando o melhor resultado do escopo consultado tem **Compatibilidade bruta** menor que 60%.
 - O **Filtro de concordância do matcher** restringe quais **Deputados** aparecem no resultado; ele não altera a **Compatibilidade**, a **Compatibilidade bruta**, a amostra comparável nem o **Score Wilson do matcher** de nenhum **Deputado**.
 - O **Filtro de concordância do matcher** exige concordância em todas as **Proposições** marcadas; **Abstenção**, **Obstrução**, **Ausência sem motivo conhecido**, **Artigo 17**, **Voto não informado**, ausência de **Em exercício** e **Lacuna de dados** reprovam.
 - Uma **Proposição** com **Posição do usuário** `não sei` não pode entrar no **Filtro de concordância do matcher**.
 - O **Filtro de concordância do matcher** é entrada do **Rascunho de execução do matcher** e, diferente do escopo e de **Em atividade**, nunca aparece em endereço de página, porque a **Proposição** marcada permite inferir a **Posição do usuário** a partir dos **Deputados** exibidos.
 - Qualquer mudança na lista de **Proposições** selecionadas ou no valor de uma **Posição do usuário** zera o **Filtro de concordância do matcher**; trocar escopo ou **Em atividade** não zera.
-- A condição **Sem bom match** considera o conjunto restrito pelo **Filtro de concordância do matcher**.
 - Um **Filtro de concordância do matcher** que não deixa nenhum **Deputado** passar não é falha: é informação sobre o conjunto consultado.
 - O **Detalhe de resultado do matcher** de um **Deputado** exibido sob **Filtro de concordância do matcher** continua mostrando todos os votos, inclusive os discordantes.
+- O **Recorte do resultado do matcher** é aplicado depois do cálculo: como o **Filtro de concordância do matcher**, restringe quais **Deputados** aparecem sem alterar a **Compatibilidade**, a amostra comparável nem o **Score Wilson do matcher**.
+- Todo **Recorte do resultado do matcher** aparece no endereço da página, ao contrário do **Filtro de concordância do matcher**: recortar o conjunto exibido não revela nada sobre a **Posição do usuário** de quem filtrou.
+- Ocultar amostra pequena usa o alerta **Amostra pequena no matcher**, não um limiar próprio, para que filtro e alerta nunca divirjam.
+- Um **Recorte do resultado do matcher** que não deixa nenhum **Deputado** passar tem um único diagnóstico, comum aos recortes e válido também quando o recorte é **Em atividade**; só o **Filtro de concordância do matcher** mantém diagnóstico próprio.
+- O diagnóstico por escopo fica reservado à ausência de **Deputados** com votos comparáveis, que é afirmação sobre o dado; atribuí-la a um resultado esvaziado por **Recorte do resultado do matcher** seria falso.
+- O diagnóstico de **Recorte do resultado do matcher** vazio oferece ampliar para o escopo nacional quando o escopo é estadual, porque ampliar o conjunto avaliado é remédio tão plausível quanto afrouxar o recorte.
 - O **Comparativo de deputados** compara apenas **Deputados** cobertos pelo produto no MVP.
 - O **Rascunho de execução do matcher** guarda apenas entradas do usuário; resultado, detalhe e **Comparativo de deputados** são derivados dele e recalculados sob demanda.
 - O **Rascunho de execução do matcher** nunca trafega para o servidor e nunca aparece em endereço de página, porque **Posição do usuário** é convicção política.

@@ -79,7 +79,10 @@ describe("filtros do resultado do matcher", () => {
       });
 
       // Act
-      const proximo = removerResultadoFiltro(marcado, "concordancia");
+      const proximo = removerResultadoFiltro(
+        marcado,
+        "externalIdProposicoesFiltroConcordancia",
+      );
 
       // Assert
       expect(proximo).toEqual(filtros({ apenasEmAtividade: true }));
@@ -126,6 +129,89 @@ describe("filtros do resultado do matcher", () => {
     });
   });
 
+  describe("quando há partidos selecionados", () => {
+    it("descreve a sigla quando só há uma", () => {
+      // Act
+      const ativos = descreverResultadoFiltrosAtivos(
+        filtros({ partidos: ["PT"] }),
+      );
+
+      // Assert
+      expect(ativos).toEqual([
+        {
+          id: "partidos",
+          label: "Partido: PT",
+          removeLabel: "Remover filtro Partido: PT",
+        },
+      ]);
+    });
+
+    it("conta a seleção inteira como um filtro só", () => {
+      // Arrange
+      const selecionado = filtros({ partidos: ["PT", "PL", "PSOL"] });
+
+      // Act
+      const ativos = descreverResultadoFiltrosAtivos(selecionado);
+
+      // Assert
+      expect(contarResultadoFiltrosAtivos(selecionado)).toBe(1);
+      expect(ativos[0].label).toBe("Partido: 3 partidos");
+    });
+
+    it("volta ao padrão ao remover o filtro", () => {
+      // Act
+      const proximo = removerResultadoFiltro(
+        filtros({ partidos: ["PT"] }),
+        "partidos",
+      );
+
+      // Assert
+      expect(proximo.partidos).toEqual([]);
+    });
+  });
+
+  describe("quando a amostra pequena está oculta", () => {
+    it("descreve o filtro com o rótulo do interruptor", () => {
+      // Act
+      const ativos = descreverResultadoFiltrosAtivos(
+        filtros({ ocultarAmostraPequena: true }),
+      );
+
+      // Assert
+      expect(ativos).toEqual([
+        {
+          id: "ocultarAmostraPequena",
+          label: "Ocultar amostra pequena",
+          removeLabel: "Remover filtro Ocultar amostra pequena",
+        },
+      ]);
+    });
+  });
+
+  describe("quando há um sexo selecionado", () => {
+    it("descreve o filtro com o rótulo do sexo", () => {
+      // Act
+      const ativos = descreverResultadoFiltrosAtivos(filtros({ sexo: "F" }));
+
+      // Assert
+      expect(ativos).toEqual([
+        {
+          id: "sexo",
+          label: "Sexo: Feminino",
+          removeLabel: "Remover filtro Sexo: Feminino",
+        },
+      ]);
+    });
+
+    it("volta ao padrão ao remover o filtro", () => {
+      // Act
+      const proximo = removerResultadoFiltro(filtros({ sexo: "M" }), "sexo");
+
+      // Assert
+      expect(proximo.sexo).toBeNull();
+    });
+  });
+
   describe("ao comparar dois recortes", () => {
     it("ignora a ordem das proposições marcadas", () => {
       // Act
@@ -136,6 +222,50 @@ describe("filtros do resultado do matcher", () => {
 
       // Assert
       expect(iguais).toBe(true);
+    });
+
+    it("ignora a ordem dos partidos selecionados", () => {
+      // Act
+      const iguais = saoResultadoFiltrosIguais(
+        filtros({ partidos: ["PT", "PL"] }),
+        filtros({ partidos: ["PL", "PT"] }),
+      );
+
+      // Assert
+      expect(iguais).toBe(true);
+    });
+
+    it("distingue recortes com partidos diferentes", () => {
+      // Act
+      const iguais = saoResultadoFiltrosIguais(
+        filtros({ partidos: ["PT"] }),
+        filtros({ partidos: ["PL"] }),
+      );
+
+      // Assert
+      expect(iguais).toBe(false);
+    });
+
+    it("distingue o recorte de amostra pequena", () => {
+      // Act
+      const iguais = saoResultadoFiltrosIguais(
+        filtros({ ocultarAmostraPequena: true }),
+        filtros({ ocultarAmostraPequena: false }),
+      );
+
+      // Assert
+      expect(iguais).toBe(false);
+    });
+
+    it("distingue o recorte de sexo", () => {
+      // Act
+      const iguais = saoResultadoFiltrosIguais(
+        filtros({ sexo: "F" }),
+        filtros({ sexo: "M" }),
+      );
+
+      // Assert
+      expect(iguais).toBe(false);
     });
 
     it("distingue recortes com marcações diferentes", () => {

@@ -5,8 +5,6 @@ import type {
 import { describe, expect, it } from "vitest";
 
 import {
-  SEM_BOM_MATCH_BANNER_BODY,
-  SEM_BOM_MATCH_BANNER_TITLE,
   formatPercentual,
   getInitials,
   toAlertaLabel,
@@ -245,21 +243,5 @@ describe("toCopyContextLabel", () => {
         }),
       ).toBe("1 proposição · Rio de Janeiro");
     });
-  });
-});
-
-describe("SEM_BOM_MATCH_BANNER_TITLE", () => {
-  it("is a non-empty string", () => {
-    // Act / Assert
-    expect(typeof SEM_BOM_MATCH_BANNER_TITLE).toBe("string");
-    expect(SEM_BOM_MATCH_BANNER_TITLE.length).toBeGreaterThan(0);
-  });
-});
-
-describe("SEM_BOM_MATCH_BANNER_BODY", () => {
-  it("is a non-empty string", () => {
-    // Act / Assert
-    expect(typeof SEM_BOM_MATCH_BANNER_BODY).toBe("string");
-    expect(SEM_BOM_MATCH_BANNER_BODY.length).toBeGreaterThan(0);
   });
 });

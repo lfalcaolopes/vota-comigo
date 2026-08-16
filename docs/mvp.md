@@ -170,7 +170,7 @@ Ordenação secundária considera tamanho de amostra entre deputados empatados e
 **Comportamentos de borda:**
 
 - **Pesquisa por deputado fora da base.** Se o usuário pesquisa por nome de uma pessoa que não está no sistema, exibir mensagem explicando que o MVP mapeia apenas deputados federais que já estiveram em atividade na Câmara. Candidatos novos, vereadores, deputados estaduais e senadores serão cobertos em versões futuras.
-- **Matcher sem bom match.** Se o resultado do matcher não tem deputado com compatibilidade alta (threshold a definir — ex.: top resultado < 60%), complementar a mensagem de resultado com sugestão explícita ao usuário: considerar candidatos novos fora da base atual. Converte frustração em ação cívica consistente com a missão do produto.
+- **Matcher sem bom match — abandonado.** A intenção original era sinalizar o resultado como insuficiente quando o topo ficasse abaixo de um limiar (ex.: 60%) e sugerir considerar candidatos novos. A sinalização foi implementada e removida: o limiar é arbitrário e a aplicação não tem base para classificar um resultado como insuficiente. Se 58% é pouco depende do que o usuário procura, não do dado; julgar a qualidade do match é dele. A sugestão de candidatos novos, se voltar, precisa de um gatilho que não seja um juízo de valor sobre a compatibilidade.
 
 ### MVP-3. Perfil do Deputado — versão essencial
 
@@ -292,4 +292,4 @@ O MVP está pronto para ir ao ar quando:
 2. Mobile está refinado, não apenas funcional
 3. A regra de ranking público por volume de votações em plenário continua produzindo uma lista defensável com os dados mais recentes
 4. Os casos de amostra desigual e desempate do matcher estão decididos e documentados
-5. Comportamentos de borda do matcher implementados: mensagem para pesquisa de deputado fora da base, sugestão de candidatos novos quando matcher não encontra bom match
+5. Comportamentos de borda do matcher implementados: mensagem para pesquisa de deputado fora da base

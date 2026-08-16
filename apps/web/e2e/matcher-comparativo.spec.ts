@@ -105,7 +105,6 @@ const resultado = {
   total: 2,
   limit: 20,
   offset: 0,
-  semBomMatch: false,
 };
 
 const JANELA_57 = {

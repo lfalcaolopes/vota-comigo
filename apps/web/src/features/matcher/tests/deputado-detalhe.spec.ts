@@ -12,6 +12,7 @@ import { DeputadoDetalhe } from "../components/detalhe/deputado-detalhe";
 import { DeputadoCard } from "../components/resultado/deputado-card";
 import { StepResultado } from "../components/resultado/step-resultado";
 import { initMatcherState, matcherReducer } from "../lib/matcher-state";
+import { RESULTADO_FILTROS_PADRAO } from "../lib/resultado-filtros";
 
 function detalhe(): MatcherDeputadoDetalhe {
   return {
@@ -104,7 +105,6 @@ function resultado(deputados: MatcherDeputadoResumo[]) {
     total: deputados.length,
     limit: 20,
     offset: 0,
-    semBomMatch: false,
   };
 }
 
@@ -223,10 +223,8 @@ describe("StepResultado", () => {
       const html = renderToStaticMarkup(
         createElement(StepResultado, {
           escopo: "estadual",
-          filtros: {
-            apenasEmAtividade: false,
-            externalIdProposicoesFiltroConcordancia: [],
-          },
+          filtros: RESULTADO_FILTROS_PADRAO,
+          partidos: [],
           hasMore: false,
           onApplyFiltros: () => {},
           onToggleFiltroConcordancia: () => {},
@@ -281,10 +279,8 @@ describe("StepResultado", () => {
       const html = renderToStaticMarkup(
         createElement(StepResultado, {
           escopo: "estadual",
-          filtros: {
-            apenasEmAtividade: false,
-            externalIdProposicoesFiltroConcordancia: [],
-          },
+          filtros: RESULTADO_FILTROS_PADRAO,
+          partidos: [],
           hasMore: false,
           onApplyFiltros: () => {},
           onToggleFiltroConcordancia: () => {},

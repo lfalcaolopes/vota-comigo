@@ -1,16 +1,25 @@
 "use client";
 
 import type {
+  PartidoDisponivel,
   PosicaoUsuarioMatcher,
   ProposicaoCard,
 } from "@vota-comigo/shared-types";
 import { useState } from "react";
 
+import { DeputadoPartidoControl, DeputadoSexoControl } from "@/shared/deputado";
 import { ProposicoesSelecionadasList } from "@/shared/proposicao";
-import { Checkbox, FiltroSecao, FiltrosPanel, Switch } from "@/shared/ui";
+import {
+  Checkbox,
+  FiltroSecao,
+  FiltrosPanel,
+  Switch,
+  toggleValor,
+} from "@/shared/ui";
 
 import {
   contarResultadoFiltrosAtivos,
+  RESULTADO_FILTRO_NOME,
   RESULTADO_FILTROS_PADRAO,
   saoResultadoFiltrosIguais,
   toggleResultadoFiltroConcordancia,
@@ -20,6 +29,7 @@ import {
 type ResultadoFiltrosPanelProps = {
   filtros: ResultadoFiltros;
   onApply: (filtros: ResultadoFiltros) => void;
+  partidos: readonly PartidoDisponivel[];
   posicoes: ReadonlyMap<number, PosicaoUsuarioMatcher>;
   proposicoesElegiveis: readonly ProposicaoCard[];
 };
@@ -27,6 +37,7 @@ type ResultadoFiltrosPanelProps = {
 export function ResultadoFiltrosPanel({
   filtros,
   onApply,
+  partidos,
   posicoes,
   proposicoesElegiveis,
 }: ResultadoFiltrosPanelProps) {
@@ -50,7 +61,7 @@ export function ResultadoFiltrosPanel({
       <Switch
         checked={rascunho.apenasEmAtividade}
         className="min-h-11 justify-start"
-        label="Apenas em atividade"
+        label={RESULTADO_FILTRO_NOME.apenasEmAtividade}
         onChange={(event) =>
           setRascunho((atual) => ({
             ...atual,
@@ -58,6 +69,40 @@ export function ResultadoFiltrosPanel({
           }))
         }
       />
+
+      <Switch
+        checked={rascunho.ocultarAmostraPequena}
+        className="min-h-11 justify-start"
+        label={RESULTADO_FILTRO_NOME.ocultarAmostraPequena}
+        onChange={(event) =>
+          setRascunho((atual) => ({
+            ...atual,
+            ocultarAmostraPequena: event.target.checked,
+          }))
+        }
+      />
+
+      {partidos.length > 0 ? (
+        <FiltroSecao titulo={RESULTADO_FILTRO_NOME.partidos}>
+          <DeputadoPartidoControl
+            onToggle={(siglaPartido) =>
+              setRascunho((atual) => ({
+                ...atual,
+                partidos: toggleValor(atual.partidos, siglaPartido),
+              }))
+            }
+            partidos={partidos}
+            selecionados={rascunho.partidos}
+          />
+        </FiltroSecao>
+      ) : null}
+
+      <FiltroSecao titulo={RESULTADO_FILTRO_NOME.sexo}>
+        <DeputadoSexoControl
+          onChange={(sexo) => setRascunho((atual) => ({ ...atual, sexo }))}
+          sexo={rascunho.sexo}
+        />
+      </FiltroSecao>
 
       <FiltroSecao titulo="Exigir concordância">
         {proposicoesElegiveis.length === 0 ? (

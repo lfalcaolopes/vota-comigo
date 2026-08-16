@@ -5,6 +5,7 @@ import {
 import { describe, expect, it } from "vitest";
 
 import { buildExecucaoRequest } from "../lib/matcher-payload";
+import { RESULTADO_FILTROS_PADRAO } from "../lib/resultado-filtros";
 
 function posicoesMap(
   entries: [number, PosicaoUsuarioMatcher][],
@@ -101,7 +102,7 @@ describe("buildExecucaoRequest", () => {
       const input = {
         siglaUf: "SP" as const,
         escopo: "estadual" as const,
-        apenasEmAtividade: false,
+        ...RESULTADO_FILTROS_PADRAO,
         posicoes: posicoesMap([
           [1, "aprovar"],
           [2, "rejeitar"],
@@ -124,7 +125,7 @@ describe("buildExecucaoRequest", () => {
       const input = {
         siglaUf: "SP" as const,
         escopo: "estadual" as const,
-        apenasEmAtividade: false,
+        ...RESULTADO_FILTROS_PADRAO,
         posicoes: posicoesMap([
           [1, "aprovar"],
           [2, "nao_sei"],
@@ -151,6 +152,7 @@ describe("buildExecucaoRequest", () => {
       const input = {
         siglaUf: "SP" as const,
         escopo: "estadual" as const,
+        ...RESULTADO_FILTROS_PADRAO,
         apenasEmAtividade: true,
         posicoes: posicoesMap([[1, "aprovar"]]),
       };
@@ -167,7 +169,7 @@ describe("buildExecucaoRequest", () => {
       const input = {
         siglaUf: "SP" as const,
         escopo: "estadual" as const,
-        apenasEmAtividade: false,
+        ...RESULTADO_FILTROS_PADRAO,
         posicoes: posicoesMap([[1, "aprovar"]]),
       };
 
@@ -186,7 +188,7 @@ describe("buildExecucaoRequest", () => {
         siglaUf: "RJ" as const,
         escopo: "estadual" as const,
         cidade: "  Niterói  ",
-        apenasEmAtividade: false,
+        ...RESULTADO_FILTROS_PADRAO,
         posicoes: posicoesMap([[1, "aprovar"]]),
       };
 
@@ -204,7 +206,7 @@ describe("buildExecucaoRequest", () => {
         siglaUf: "SP" as const,
         escopo: "estadual" as const,
         cidade: cidadeMax,
-        apenasEmAtividade: false,
+        ...RESULTADO_FILTROS_PADRAO,
         posicoes: posicoesMap([[1, "aprovar"]]),
       };
 
@@ -224,7 +226,7 @@ describe("buildExecucaoRequest", () => {
         siglaUf: "RJ" as const,
         escopo: "nacional" as const,
         cidade: "   ",
-        apenasEmAtividade: false,
+        ...RESULTADO_FILTROS_PADRAO,
         posicoes: posicoesMap([[1, "aprovar"]]),
       };
 

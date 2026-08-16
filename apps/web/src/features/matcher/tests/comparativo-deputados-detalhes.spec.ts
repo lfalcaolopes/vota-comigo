@@ -76,6 +76,9 @@ describe("loadComparativoDeputadosData", () => {
         escopo: "estadual",
         cidade: "Santos",
         apenasEmAtividade: true,
+        partidos: [],
+        ocultarAmostraPequena: false,
+        sexo: null,
         externalIdProposicoesFiltroConcordancia: [1],
         posicoes: [
           { externalIdProposicao: 1, posicao: "aprovar" },

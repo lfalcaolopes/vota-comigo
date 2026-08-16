@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useMatcherComparativo } from "../../hooks/use-matcher-comparativo";
 import { buildExecucaoRequest } from "../../lib/matcher-payload";
 import { parseComparativoIds } from "../../lib/matcher-route";
+import { toResultadoFiltros } from "../../lib/resultado-filtros";
 import { MatcherRouteGate } from "../flow/matcher-route-gate";
 import { MatcherStepFrame } from "../flow/matcher-step-frame";
 import { useMatcher } from "../matcher-provider";
@@ -27,9 +28,7 @@ export function MatcherComparativo({ ids }: { ids: string }) {
           escopo: state.escopo,
           cidade: state.cidade,
           posicoes: state.posicoes,
-          apenasEmAtividade: state.apenasEmAtividade,
-          externalIdProposicoesFiltroConcordancia:
-            state.externalIdProposicoesFiltroConcordancia,
+          ...toResultadoFiltros(state),
         }).posicoes;
   const deputados = detalhes.map(({ deputado, metrics }) => ({
     ...deputado,

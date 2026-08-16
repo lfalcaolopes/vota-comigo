@@ -18,7 +18,10 @@ import {
   saveRascunho,
 } from "../lib/matcher-rascunho-storage";
 import { hasRascunhoEntries } from "../lib/matcher-rascunho";
-import type { ResultadoFiltros } from "../lib/resultado-filtros";
+import {
+  toResultadoFiltros,
+  type ResultadoFiltros,
+} from "../lib/resultado-filtros";
 import {
   activeResultado,
   canAdvanceSelecao,
@@ -35,6 +38,13 @@ const PAGE_SIZE = 20;
 // O escopo e a atividade vêm da URL; a concordância vem do rascunho, por
 // decisão do ADR 021. A execução precisa das duas fontes juntas.
 export type ResultadoExecucaoFiltros = ResultadoUrlState & ResultadoFiltros;
+
+type RunFetchInput = {
+  escopo: EscopoMatcher;
+  offset: number;
+  append: boolean;
+  filtros?: ResultadoFiltros;
+};
 
 export function useMatcherState() {
   const [state, dispatch] = useReducer(matcherReducer, [], initMatcherState);
@@ -88,13 +98,12 @@ export function useMatcherState() {
     dispatch({ type: "setPosicao", externalIdProposicao, posicao });
   }
 
-  async function runFetch(
-    escopo: EscopoMatcher,
-    offset: number,
-    append: boolean,
-    apenasEmAtividade: boolean = state.apenasEmAtividade,
-    externalIdProposicoesFiltroConcordancia: readonly number[] = state.externalIdProposicoesFiltroConcordancia,
-  ) {
+  async function runFetch({
+    escopo,
+    offset,
+    append,
+    filtros = toResultadoFiltros(state),
+  }: RunFetchInput) {
     if (state.siglaUf === null || !canRunMatcher(state)) return false;
     if (append && state.status === "loading") return false;
 
@@ -109,8 +118,7 @@ export function useMatcherState() {
         escopo,
         cidade: state.cidade,
         posicoes: state.posicoes,
-        apenasEmAtividade,
-        externalIdProposicoesFiltroConcordancia,
+        ...filtros,
       });
       const resultado = await runMatcher(request, { limit: PAGE_SIZE, offset });
       if (requestId !== resultadoRequestIdRef.current) return false;
@@ -128,32 +136,35 @@ export function useMatcherState() {
   }
 
   async function execute() {
-    return runFetch(state.escopo, 0, false);
+    return runFetch({ escopo: state.escopo, offset: 0, append: false });
   }
 
   async function executeResultado(filters: ResultadoExecucaoFiltros) {
     dispatch({ type: "setResultadoFilters", ...filters });
-    return runFetch(
-      filters.escopo,
-      0,
-      false,
-      filters.apenasEmAtividade,
-      filters.externalIdProposicoesFiltroConcordancia,
-    );
+    return runFetch({
+      escopo: filters.escopo,
+      offset: 0,
+      append: false,
+      filtros: filters,
+    });
   }
 
   async function setEscopo(escopo: EscopoMatcher) {
     if (escopo === state.escopo) return;
     dispatch({ type: "setEscopo", escopo });
     if (state.resultados[escopo] === null) {
-      await runFetch(escopo, 0, false);
+      await runFetch({ escopo, offset: 0, append: false });
     }
   }
 
   async function loadMore() {
     const r = activeResultado(state);
     if (!r || r.deputados.length >= r.total) return;
-    await runFetch(state.escopo, r.deputados.length, true);
+    await runFetch({
+      escopo: state.escopo,
+      offset: r.deputados.length,
+      append: true,
+    });
   }
 
   async function toggleFiltroConcordancia(externalIdProposicao: number) {
@@ -170,7 +181,15 @@ export function useMatcherState() {
           externalIdProposicao,
         ];
     dispatch({ type: "toggleFiltroConcordancia", externalIdProposicao });
-    await runFetch(state.escopo, 0, false, state.apenasEmAtividade, next);
+    await runFetch({
+      escopo: state.escopo,
+      offset: 0,
+      append: false,
+      filtros: {
+        ...toResultadoFiltros(state),
+        externalIdProposicoesFiltroConcordancia: next,
+      },
+    });
   }
 
   function startComparativoSelection() {

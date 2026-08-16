@@ -291,6 +291,7 @@ export function createMatcherRepository(
           urlFoto: maisRecente.urlFoto,
           nomeEleitoral: maisRecente.nomeEleitoral,
           partido: partido.sigla,
+          siglaSexo: deputado.siglaSexo,
         })
         .from(maisRecente)
         .innerJoin(deputado, eq(maisRecente.deputadoId, deputado.id))
@@ -318,6 +319,7 @@ export function createMatcherRepository(
         nomeEleitoral: row.nomeEleitoral,
         nomeCivil: row.nomeCivil,
         partido: row.partido,
+        siglaSexo: row.siglaSexo,
         siglaUf: row.siglaUf as SiglaUf,
         urlFoto: row.urlFoto,
         intervalos: intervalosByDeputado.get(row.deputadoId) ?? [],
@@ -339,6 +341,7 @@ export function createMatcherRepository(
           siglaUf: deputadoHistorico.siglaUf,
           urlFoto: deputadoHistorico.urlFoto,
           partido: partido.sigla,
+          siglaSexo: deputado.siglaSexo,
         })
         .from(deputado)
         .innerJoin(
@@ -368,6 +371,7 @@ export function createMatcherRepository(
         nomeEleitoral: maisRecente.nomeEleitoral,
         nomeCivil: maisRecente.nomeCivil,
         partido: maisRecente.partido,
+        siglaSexo: maisRecente.siglaSexo,
         siglaUf: maisRecente.siglaUf as SiglaUf,
         urlFoto: maisRecente.urlFoto,
         intervalos: intervalosByDeputado.get(maisRecente.deputadoId) ?? [],

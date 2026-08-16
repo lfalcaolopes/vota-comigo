@@ -14,10 +14,9 @@ import {
   DeputadoUfControl,
   FILTROS_PADRAO,
   saoFiltrosIguais,
-  toggleValor,
   type DeputadoFeedFiltros,
 } from "@/shared/deputado";
-import { FiltroSecao, FiltrosPanel, Switch } from "@/shared/ui";
+import { FiltroSecao, FiltrosPanel, Switch, toggleValor } from "@/shared/ui";
 
 type DeputadosFiltrosPanelProps = {
   filtros: DeputadoFeedFiltros;

@@ -77,8 +77,12 @@ export class DeputadosService {
     };
   }
 
-  async partidosDisponiveis(): Promise<PartidosDisponiveisResponse> {
-    const siglas = new Set(await this.repository.loadPartidosDisponiveis());
+  async partidosDisponiveis(
+    siglaUf?: string,
+  ): Promise<PartidosDisponiveisResponse> {
+    const siglas = new Set(
+      await this.repository.loadPartidosDisponiveis(siglaUf),
+    );
     return {
       items: [...siglas].sort().map((siglaPartido) => ({ siglaPartido })),
     };

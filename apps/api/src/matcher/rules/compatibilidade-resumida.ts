@@ -69,6 +69,7 @@ function avaliarDeputado(
     nomeEleitoral: deputado.nomeEleitoral,
     nomeCivil: deputado.nomeCivil,
     partido: deputado.partido,
+    siglaSexo: deputado.siglaSexo,
     siglaUf: deputado.siglaUf,
     urlFoto: deputado.urlFoto,
     compatibilidadeBruta: round2((concordancias / amostraComparavel) * 100),

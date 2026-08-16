@@ -23,6 +23,7 @@ function deputado(
     nomeEleitoral: null,
     nomeCivil: null,
     partido: 'PT',
+    siglaSexo: 'F',
     siglaUf: 'PE',
     urlFoto: null,
     intervalos: [emExercicio],

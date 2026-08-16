@@ -3,6 +3,7 @@
 import type {
   EscopoMatcher,
   MatcherResultado,
+  PartidoDisponivel,
 } from "@vota-comigo/shared-types";
 import {
   Button,
@@ -17,7 +18,6 @@ import {
   canOpenComparativo,
   hasComparativoDeputadoLimit,
   isComparativoSelectionMode,
-  isSemBomMatch,
   resultadoDisplay,
 } from "../../lib/matcher-state";
 import {
@@ -31,8 +31,8 @@ import { DeputadoCard } from "./deputado-card";
 import { ResultadoFiltrosPanel } from "./resultado-filtros-panel";
 import { OrdenacaoDisclosure } from "./ordenacao-disclosure";
 import { ResultadoFiltroConcordanciaVazio } from "./resultado-filtro-concordancia-vazio";
+import { ResultadoRecorteVazio } from "./resultado-recorte-vazio";
 import { ResultadoVazio } from "./resultado-vazio";
-import { SemBomMatchBanner } from "./sem-bom-match-banner";
 
 const ESCOPO_ITEMS = [
   { id: "estadual", label: "Meu estado" },
@@ -45,6 +45,7 @@ type StepResultadoProps = {
   resultado: MatcherResultado | null;
   escopo: EscopoMatcher;
   filtros: ResultadoFiltros;
+  partidos: readonly PartidoDisponivel[];
   hasMore: boolean;
   onRetry: () => void;
   onEscopoChange: (escopo: EscopoMatcher) => void;
@@ -63,6 +64,7 @@ export function StepResultado({
   resultado,
   escopo,
   filtros,
+  partidos,
   hasMore,
   onRetry,
   onEscopoChange,
@@ -88,6 +90,13 @@ export function StepResultado({
   );
   const hasFiltroConcordancia =
     filtros.externalIdProposicoesFiltroConcordancia.length > 0;
+  // Um texto único atende aos recortes que apenas restringem o conjunto
+  // exibido; a concordância mantém o diagnóstico próprio dela.
+  const hasRecorte =
+    filtros.apenasEmAtividade ||
+    filtros.partidos.length > 0 ||
+    filtros.ocultarAmostraPequena ||
+    filtros.sexo !== null;
   const display = resultadoDisplay(state);
   const compareAction = isSelectingComparativo ? (
     <div className="grid grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
@@ -129,6 +138,7 @@ export function StepResultado({
       <ResultadoFiltrosPanel
         filtros={filtros}
         onApply={onApplyFiltros}
+        partidos={partidos}
         posicoes={state.posicoes}
         proposicoesElegiveis={proposicoesElegiveis}
       />
@@ -159,11 +169,13 @@ export function StepResultado({
         ? "Não foi possível atualizar a lista de deputados."
         : display === "empty" && hasFiltroConcordancia
           ? "Resultado atualizado: nenhum deputado votou com você em todas as proposições marcadas."
-          : display === "empty"
-            ? "Resultado atualizado: nenhum deputado encontrado."
-            : resultado!.total === 1
-              ? "Resultado atualizado: 1 deputado no resultado."
-              : `Resultado atualizado: ${resultado!.total} deputados no resultado.`;
+          : display === "empty" && hasRecorte
+            ? "Resultado atualizado: nenhum deputado no recorte."
+            : display === "empty"
+              ? "Resultado atualizado: nenhum deputado encontrado."
+              : resultado!.total === 1
+                ? "Resultado atualizado: 1 deputado no resultado."
+                : `Resultado atualizado: ${resultado!.total} deputados no resultado.`;
   const resultadoStatus = (
     <p aria-atomic="true" className="sr-only" role="status">
       {resultadoAnnouncement}
@@ -203,6 +215,12 @@ export function StepResultado({
             posicoes={state.posicoes}
             proposicoes={proposicoesMarcadas}
           />
+        ) : hasRecorte ? (
+          <ResultadoRecorteVazio
+            escopo={escopo}
+            onEscopoChange={onEscopoChange}
+            onLimparFiltros={() => onApplyFiltros(RESULTADO_FILTROS_PADRAO)}
+          />
         ) : (
           <ResultadoVazio escopo={escopo} onEscopoChange={onEscopoChange} />
         )}
@@ -223,7 +241,6 @@ export function StepResultado({
           )}
         </div>
       ) : null}
-      {isSemBomMatch(resultado) && <SemBomMatchBanner />}
       {hasFiltroConcordancia ? (
         <header aria-live="polite" className="grid gap-1">
           <h2 className="text-base font-[680] text-ink">

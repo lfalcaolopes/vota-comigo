@@ -1,5 +1,9 @@
-import { MIN_POSICOES_COMPUTAVEIS } from "@vota-comigo/shared-types";
+import {
+  deputadoSexoSchema,
+  MIN_POSICOES_COMPUTAVEIS,
+} from "@vota-comigo/shared-types";
 import type {
+  DeputadoSexo,
   EscopoMatcher,
   PosicaoUsuarioMatcher,
 } from "@vota-comigo/shared-types";
@@ -11,6 +15,10 @@ import {
 
 import type { MatcherRascunho } from "./matcher-rascunho";
 import { validateExecucao } from "./matcher-validation";
+import {
+  toResultadoFiltrosUrlKey,
+  type ResultadoFiltrosUrl,
+} from "./resultado-filtros";
 
 export type MatcherRoute =
   | "/matcher/local"
@@ -38,9 +46,11 @@ export type MatcherHref =
 export type ResultadoSearchParams = {
   atividade?: string;
   escopo?: string;
+  partido?: string | readonly string[];
+  amostra?: string;
+  sexo?: string;
 };
-export type ResultadoUrlState = {
-  apenasEmAtividade: boolean;
+export type ResultadoUrlState = ResultadoFiltrosUrl & {
   escopo: EscopoMatcher;
 };
 
@@ -57,13 +67,46 @@ export function parseResultadoUrlState(
   return {
     escopo: params.escopo === "nacional" ? "nacional" : "estadual",
     apenasEmAtividade: params.atividade === "1",
+    partidos: parsePartidos(params.partido),
+    ocultarAmostraPequena: params.amostra === "1",
+    sexo: parseSexo(params.sexo),
   };
+}
+
+function parseSexo(raw: string | undefined): DeputadoSexo | null {
+  const parsed = deputadoSexoSchema.safeParse(raw);
+  return parsed.success ? parsed.data : null;
+}
+
+// Uma sigla repetida na query string chega como array; uma só, como string.
+function parsePartidos(raw: string | readonly string[] | undefined): string[] {
+  if (raw === undefined) return [];
+  const siglas = (Array.isArray(raw) ? raw : [raw as string])
+    .flatMap((valor) => valor.split(","))
+    .map((valor) => valor.trim().toUpperCase())
+    .filter((valor) => valor.length > 0);
+  return [...new Set(siglas)];
+}
+
+export function toResultadoUrlStateKey(state: ResultadoUrlState): string {
+  return `${state.escopo}|${toResultadoFiltrosUrlKey(state)}`;
+}
+
+export function saoResultadoUrlStatesIguais(
+  a: ResultadoUrlState,
+  b: ResultadoUrlState,
+): boolean {
+  return toResultadoUrlStateKey(a) === toResultadoUrlStateKey(b);
 }
 
 export function buildResultadoHref(state: ResultadoUrlState): ResultadoHref {
   const params = new URLSearchParams();
   if (state.escopo === "nacional") params.set("escopo", state.escopo);
   if (state.apenasEmAtividade) params.set("atividade", "1");
+  for (const sigla of [...state.partidos].sort())
+    params.append("partido", sigla);
+  if (state.ocultarAmostraPequena) params.set("amostra", "1");
+  if (state.sexo !== null) params.set("sexo", state.sexo);
   const search = params.toString();
   return search ? `/matcher/resultado?${search}` : "/matcher/resultado";
 }

@@ -42,6 +42,7 @@ function deputadoInput(
     nomeEleitoral: null,
     nomeCivil: null,
     partido: 'PT',
+    siglaSexo: 'F',
     siglaUf: 'PE',
     urlFoto: null,
     intervalos: [{ openedAt: '2023-02-01T12:00:00Z', closedAt: null }],

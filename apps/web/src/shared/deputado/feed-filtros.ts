@@ -3,7 +3,12 @@ import type {
   DeputadoSexo,
 } from "@vota-comigo/shared-types";
 
-import { toFiltroAtivo, type FiltroAtivo } from "@/shared/ui";
+import {
+  descreverSelecao,
+  saoSelecoesIguais,
+  toFiltroAtivo,
+  type FiltroAtivo,
+} from "@/shared/ui";
 
 import { toEstadoLabel, toFaixaEtariaLabel, toSexoLabel } from "./presentation";
 
@@ -92,15 +97,6 @@ export function removerFiltro(
   return { ...filtros, [id]: FILTROS_PADRAO[id] };
 }
 
-export function toggleValor<Valor extends string>(
-  selecionados: readonly Valor[],
-  valor: Valor,
-): readonly Valor[] {
-  return selecionados.includes(valor)
-    ? selecionados.filter((atual) => atual !== valor)
-    : [...selecionados, valor];
-}
-
 export function saoFiltrosIguais(
   a: DeputadoFeedFiltros,
   b: DeputadoFeedFiltros,
@@ -112,25 +108,6 @@ export function saoFiltrosIguais(
     saoSelecoesIguais(a.partidos, b.partidos) &&
     saoSelecoesIguais(a.faixasEtarias, b.faixasEtarias)
   );
-}
-
-// Selecionar SP e depois RJ é o mesmo filtro que o inverso, então a ordem dos
-// cliques não pode habilitar o "Aplicar" nem contar como recorte novo.
-function saoSelecoesIguais(
-  a: readonly string[],
-  b: readonly string[],
-): boolean {
-  return a.length === b.length && [...a].sort().join() === [...b].sort().join();
-}
-
-function descreverSelecao<Valor extends string>(
-  selecionados: readonly Valor[],
-  toLabel: (valor: Valor) => string,
-  plural: string,
-): string {
-  return selecionados.length === 1
-    ? toLabel(selecionados[0])
-    : `${selecionados.length} ${plural}`;
 }
 
 const FILTRO_NOME: Record<DeputadoFiltroId, string> = {

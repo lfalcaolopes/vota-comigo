@@ -4,6 +4,7 @@ import {
   proposicaoCardSchema,
   votacaoReferenciaResumoSchema,
 } from "./proposicoes";
+import { deputadoSexoSchema } from "./deputados";
 import { deputadoVotacaoClassification } from "./exercicio";
 
 export const siglaUfEnum = z.enum([
@@ -82,6 +83,9 @@ export const matcherExecucaoRequestSchema = z.object({
       });
     }),
   apenasEmAtividade: z.boolean().default(false),
+  partidos: z.array(z.string().trim().min(1).max(20)).max(60).default([]),
+  sexo: deputadoSexoSchema.nullable().default(null),
+  ocultarAmostraPequena: z.boolean().default(false),
   externalIdProposicoesFiltroConcordancia: z
     .array(z.number().int().positive())
     .max(MAX_POSICOES)
@@ -118,7 +122,6 @@ export const matcherResultadoSchema = matcherExecucaoResumoSchema.extend({
   total: z.number().int().nonnegative(),
   limit: z.number().int().nonnegative(),
   offset: z.number().int().nonnegative(),
-  semBomMatch: z.boolean(),
 });
 
 export const matcherEffectEnum = z.enum([

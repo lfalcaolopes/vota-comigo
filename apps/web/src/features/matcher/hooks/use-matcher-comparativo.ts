@@ -13,6 +13,7 @@ import { useMatcher } from "../components/matcher-provider";
 import { loadComparativoDeputadosData } from "../lib/comparativo-deputados-detalhes";
 import { buildExecucaoRequest } from "../lib/matcher-payload";
 import { canRunMatcher, type MatcherStatus } from "../lib/matcher-state";
+import { toResultadoFiltros } from "../lib/resultado-filtros";
 
 export function useMatcherComparativo(externalIdsDeputado: number[] | null) {
   const { state } = useMatcher();
@@ -41,9 +42,7 @@ export function useMatcherComparativo(externalIdsDeputado: number[] | null) {
         escopo: state.escopo,
         cidade: state.cidade,
         posicoes: state.posicoes,
-        apenasEmAtividade: state.apenasEmAtividade,
-        externalIdProposicoesFiltroConcordancia:
-          state.externalIdProposicoesFiltroConcordancia,
+        ...toResultadoFiltros(state),
       });
       const data = await loadComparativoDeputadosData({
         externalIdsDeputado,

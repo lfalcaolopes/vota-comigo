@@ -75,7 +75,6 @@ const resultado = {
   total: 1,
   limit: 20,
   offset: 0,
-  semBomMatch: false,
 };
 
 async function storeRascunho(page: Page) {

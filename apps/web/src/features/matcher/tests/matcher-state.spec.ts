@@ -15,7 +15,6 @@ import {
   hasComparativoDeputadoLimit,
   initMatcherState,
   isComparativoSelectionMode,
-  isSemBomMatch,
   matcherReducer,
   resultadoDisplay,
   selectionCount,
@@ -72,7 +71,6 @@ function resultado(
     total: 0,
     limit: 20,
     offset: 0,
-    semBomMatch: false,
     ...overrides,
   };
 }
@@ -390,7 +388,6 @@ describe("matcherReducer", () => {
       total: 0,
       limit: 20,
       offset: 0,
-      semBomMatch: false,
     };
 
     it("moves to loading on start", () => {
@@ -558,6 +555,9 @@ describe("matcherReducer", () => {
         type: "setResultadoFilters",
         escopo: "nacional",
         apenasEmAtividade: false,
+        partidos: [],
+        ocultarAmostraPequena: false,
+        sexo: null,
         externalIdProposicoesFiltroConcordancia: [],
       });
 
@@ -576,6 +576,9 @@ describe("matcherReducer", () => {
         type: "setResultadoFilters",
         escopo: "nacional",
         apenasEmAtividade: true,
+        partidos: [],
+        ocultarAmostraPequena: false,
+        sexo: null,
         externalIdProposicoesFiltroConcordancia: [],
       });
 
@@ -594,11 +597,37 @@ describe("matcherReducer", () => {
         type: "setResultadoFilters",
         escopo: "nacional",
         apenasEmAtividade: false,
+        partidos: [],
+        ocultarAmostraPequena: false,
+        sexo: null,
         externalIdProposicoesFiltroConcordancia: [1],
       });
 
       // Assert
       expect(next.externalIdProposicoesFiltroConcordancia).toEqual([1]);
+      expect(next.resultados.estadual).toBeNull();
+    });
+
+    it("discards both cached scopes when a recorte changes together with the scope", () => {
+      // Arrange
+      const state = comCache();
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setResultadoFilters",
+        escopo: "nacional",
+        apenasEmAtividade: false,
+        partidos: ["PT"],
+        ocultarAmostraPequena: false,
+        sexo: "F",
+        externalIdProposicoesFiltroConcordancia: [],
+      });
+
+      // Assert
+      expect(next.escopo).toBe("nacional");
+      expect(next.partidos).toEqual(["PT"]);
+      expect(next.sexo).toBe("F");
+      expect(next.resultados.nacional).toBeNull();
       expect(next.resultados.estadual).toBeNull();
     });
 
@@ -614,6 +643,9 @@ describe("matcherReducer", () => {
         type: "setResultadoFilters",
         escopo: "nacional",
         apenasEmAtividade: false,
+        partidos: [],
+        ocultarAmostraPequena: false,
+        sexo: null,
         externalIdProposicoesFiltroConcordancia: [1],
       });
 
@@ -850,35 +882,6 @@ describe("matcherReducer", () => {
 
         // Act / Assert
         expect(resultadoDisplay(state)).toBe("results");
-      });
-    });
-  });
-
-  describe("isSemBomMatch", () => {
-    describe("when resultado is null", () => {
-      it("returns false", () => {
-        // Act / Assert
-        expect(isSemBomMatch(null)).toBe(false);
-      });
-    });
-
-    describe("when semBomMatch is false", () => {
-      it("returns false", () => {
-        // Arrange
-        const r = resultado("estadual", { semBomMatch: false });
-
-        // Act / Assert
-        expect(isSemBomMatch(r)).toBe(false);
-      });
-    });
-
-    describe("when semBomMatch is true", () => {
-      it("returns true", () => {
-        // Arrange
-        const r = resultado("estadual", { semBomMatch: true });
-
-        // Act / Assert
-        expect(isSemBomMatch(r)).toBe(true);
       });
     });
   });

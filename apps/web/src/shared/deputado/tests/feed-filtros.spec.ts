@@ -6,9 +6,9 @@ import {
   FILTROS_PADRAO,
   removerFiltro,
   saoFiltrosIguais,
-  toggleValor,
   type DeputadoFeedFiltros,
 } from "../feed-filtros";
+import { toggleValor } from "@/shared/ui";
 
 function filtros(
   overrides: Partial<DeputadoFeedFiltros> = {},

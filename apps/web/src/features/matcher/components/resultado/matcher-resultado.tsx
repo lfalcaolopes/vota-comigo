@@ -3,24 +3,27 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 
+import { usePartidosDisponiveis } from "@/shared/deputado";
+
 import { useMatcherNavigation } from "../../hooks/use-matcher-navigation";
 import {
   buildComparativoHref,
   buildResultadoHref,
   parseResultadoUrlState,
+  saoResultadoUrlStatesIguais,
+  toResultadoUrlStateKey,
   type ResultadoUrlState,
 } from "../../lib/matcher-route";
-import type { ResultadoFiltros } from "../../lib/resultado-filtros";
+import {
+  toResultadoFiltrosUrl,
+  type ResultadoFiltros,
+} from "../../lib/resultado-filtros";
 import { MatcherRouteGate } from "../flow/matcher-route-gate";
 import { MatcherStepFrame } from "../flow/matcher-step-frame";
 import { useMatcher } from "../matcher-provider";
 import { StepResultado } from "./step-resultado";
 
 const ROUTE = "/matcher/resultado" as const;
-
-function toRequestedFiltersKey(state: ResultadoUrlState): string {
-  return `${state.escopo}:${state.apenasEmAtividade}`;
-}
 
 export function MatcherResultado() {
   const matcher = useMatcher();
@@ -29,17 +32,31 @@ export function MatcherResultado() {
   const requestedFilters = parseResultadoUrlState({
     escopo: searchParams.get("escopo") ?? undefined,
     atividade: searchParams.get("atividade") ?? undefined,
+    partido: searchParams.getAll("partido"),
+    amostra: searchParams.get("amostra") ?? undefined,
+    sexo: searchParams.get("sexo") ?? undefined,
   });
-  const requestedFiltersKey = toRequestedFiltersKey(requestedFilters);
+  const requestedFiltersKey = toResultadoUrlStateKey(requestedFilters);
   const requestedFiltersRef = useRef<string | null>(null);
   // A aplicação em bloco executa o recorte e só então navega, então o efeito da
   // URL fica suspenso até o endereço alcançar a chave que ela já executou.
   const pendingFiltersRef = useRef<string | null>(null);
   const { state } = matcher;
-  // O recorte aplicado é sempre a combinação das duas fontes: a URL carrega
-  // atividade, o rascunho carrega a concordância (ADR 021).
+  // No escopo estadual, oferecer siglas sem deputado no estado devolveria uma
+  // lista vazia ao usuário.
+  const partidos = usePartidosDisponiveis(
+    requestedFilters.escopo === "estadual" && state.siglaUf !== null
+      ? state.siglaUf
+      : undefined,
+  );
+  const appliedFiltersKey = toResultadoUrlStateKey({
+    ...toResultadoFiltrosUrl(state),
+    escopo: state.escopo,
+  });
+  // O recorte aplicado é sempre a combinação das duas fontes: a URL carrega os
+  // recortes compartilháveis, o rascunho carrega a concordância (ADR 021).
   const filtros: ResultadoFiltros = {
-    apenasEmAtividade: requestedFilters.apenasEmAtividade,
+    ...toResultadoFiltrosUrl(requestedFilters),
     externalIdProposicoesFiltroConcordancia:
       matcher.externalIdProposicoesFiltroConcordancia,
   };
@@ -56,8 +73,7 @@ export function MatcherResultado() {
     requestedFiltersRef.current = requestedFiltersKey;
     if (
       matcher.resultado !== null &&
-      matcher.escopo === requestedFilters.escopo &&
-      matcher.apenasEmAtividade === requestedFilters.apenasEmAtividade
+      appliedFiltersKey === requestedFiltersKey
     ) {
       return;
     }
@@ -66,11 +82,9 @@ export function MatcherResultado() {
       externalIdProposicoesFiltroConcordancia:
         matcher.externalIdProposicoesFiltroConcordancia,
     });
-  }, [matcher, requestedFilters, requestedFiltersKey]);
+  }, [appliedFiltersKey, matcher, requestedFilters, requestedFiltersKey]);
 
-  const areRequestedFiltersActive =
-    matcher.escopo === requestedFilters.escopo &&
-    matcher.apenasEmAtividade === requestedFilters.apenasEmAtividade;
+  const areRequestedFiltersActive = appliedFiltersKey === requestedFiltersKey;
   const hasRequestedResult =
     matcher.resultado !== null && areRequestedFiltersActive;
   const isWaitingForResultado =
@@ -79,8 +93,7 @@ export function MatcherResultado() {
   const visibleState = isWaitingForResultado
     ? {
         ...state,
-        escopo: requestedFilters.escopo,
-        apenasEmAtividade: requestedFilters.apenasEmAtividade,
+        ...requestedFilters,
         resultados: {
           ...state.resultados,
           [requestedFilters.escopo]: null,
@@ -90,12 +103,12 @@ export function MatcherResultado() {
     : state;
 
   function applyFiltros(next: ResultadoFiltros) {
-    const url = {
+    const url: ResultadoUrlState = {
+      ...toResultadoFiltrosUrl(next),
       escopo: requestedFilters.escopo,
-      apenasEmAtividade: next.apenasEmAtividade,
     };
-    if (next.apenasEmAtividade !== requestedFilters.apenasEmAtividade) {
-      pendingFiltersRef.current = toRequestedFiltersKey(url);
+    if (!saoResultadoUrlStatesIguais(url, requestedFilters)) {
+      pendingFiltersRef.current = toResultadoUrlStateKey(url);
       navigate(buildResultadoHref(url), "filter");
     }
     void matcher.executeResultado({ ...url, ...next });
@@ -109,6 +122,7 @@ export function MatcherResultado() {
             <StepResultado
               escopo={requestedFilters.escopo}
               filtros={filtros}
+              partidos={partidos}
               hasMore={matcher.hasMore}
               onApplyFiltros={applyFiltros}
               onCancelComparativoSelection={matcher.cancelComparativoSelection}

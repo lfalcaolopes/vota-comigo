@@ -3,6 +3,7 @@ import {
   MIN_POSICOES_COMPUTAVEIS,
 } from "@vota-comigo/shared-types";
 import type {
+  DeputadoSexo,
   EscopoMatcher,
   MatcherDeputadoResumo,
   MatcherResultado,
@@ -23,7 +24,12 @@ import {
 } from "./matcher-validation";
 import { shouldClearFiltroConcordancia } from "./filtro-concordancia-reset";
 import type { MatcherRascunho } from "./matcher-rascunho";
-import { saoResultadoFiltrosIguais } from "./resultado-filtros";
+import {
+  RESULTADO_FILTROS_PADRAO,
+  saoResultadoFiltrosIguais,
+  toResultadoFiltros,
+  type ResultadoFiltros,
+} from "./resultado-filtros";
 
 export type MatcherStatus = "idle" | "loading" | "error";
 
@@ -36,6 +42,9 @@ export type MatcherState = {
   resultados: Record<EscopoMatcher, MatcherResultado | null>;
   escopo: EscopoMatcher;
   apenasEmAtividade: boolean;
+  partidos: readonly string[];
+  ocultarAmostraPequena: boolean;
+  sexo: DeputadoSexo | null;
   externalIdProposicoesFiltroConcordancia: number[];
   status: MatcherStatus;
   isSelectingComparativoDeputados: boolean;
@@ -56,12 +65,7 @@ export type MatcherAction =
   | { type: "runOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
   | { type: "runError" }
   | { type: "setEscopo"; escopo: EscopoMatcher }
-  | {
-      type: "setResultadoFilters";
-      escopo: EscopoMatcher;
-      apenasEmAtividade: boolean;
-      externalIdProposicoesFiltroConcordancia: readonly number[];
-    }
+  | ({ type: "setResultadoFilters"; escopo: EscopoMatcher } & ResultadoFiltros)
   | {
       type: "toggleFiltroConcordancia";
       externalIdProposicao: number;
@@ -82,7 +86,7 @@ export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
     posicoes: new Map(),
     resultados: { estadual: null, nacional: null },
     escopo: "estadual",
-    apenasEmAtividade: false,
+    ...RESULTADO_FILTROS_PADRAO,
     externalIdProposicoesFiltroConcordancia: [],
     status: "idle",
     isSelectingComparativoDeputados: false,
@@ -171,13 +175,13 @@ export function matcherReducer(
     case "setEscopo":
       return { ...state, escopo: action.escopo };
     case "setResultadoFilters": {
-      // Atividade e concordância valem para os dois escopos, então mudá-las
-      // invalida também o resultado que está apenas em cache.
+      // Os recortes valem para os dois escopos, então mudá-los invalida também
+      // o resultado que está apenas em cache.
       const mudouRecorte = !saoResultadoFiltrosIguais(action, state);
       return {
         ...state,
         escopo: action.escopo,
-        apenasEmAtividade: action.apenasEmAtividade,
+        ...toResultadoFiltros(action),
         externalIdProposicoesFiltroConcordancia: [
           ...action.externalIdProposicoesFiltroConcordancia,
         ],
@@ -289,10 +293,6 @@ export function resultadoDisplay(state: MatcherState): ResultadoDisplay {
   if (state.status === "error" && !r) return "error";
   if (!r || r.deputados.length === 0) return "empty";
   return "results";
-}
-
-export function isSemBomMatch(resultado: MatcherResultado | null): boolean {
-  return resultado?.semBomMatch === true;
 }
 
 export function isComparativoSelectionMode(state: MatcherState): boolean {

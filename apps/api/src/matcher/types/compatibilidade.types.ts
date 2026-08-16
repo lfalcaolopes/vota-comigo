@@ -32,6 +32,7 @@ export type DeputadoCompatibilidadeInput = {
   nomeEleitoral: string | null;
   nomeCivil: string | null;
   partido: string | null;
+  siglaSexo: string | null;
   siglaUf: SiglaUf;
   urlFoto: string | null;
   intervalos: readonly IntervaloExercicio[];
@@ -43,6 +44,7 @@ export type DeputadoResumoComputado = {
   nomeEleitoral: string | null;
   nomeCivil: string | null;
   partido: string | null;
+  siglaSexo: string | null;
   siglaUf: SiglaUf;
   urlFoto: string | null;
   compatibilidadeBruta: number;

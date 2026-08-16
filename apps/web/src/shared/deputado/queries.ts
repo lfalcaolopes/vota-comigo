@@ -37,8 +37,14 @@ export function ufsDisponiveis(): Promise<UfsDisponiveisResponse> {
   return apiGet<UfsDisponiveisResponse>("/deputados/feed/ufs");
 }
 
-export function partidosDisponiveis(): Promise<PartidosDisponiveisResponse> {
-  return apiGet<PartidosDisponiveisResponse>("/deputados/feed/partidos");
+export function partidosDisponiveis(
+  siglaUf?: string,
+): Promise<PartidosDisponiveisResponse> {
+  const path =
+    siglaUf === undefined
+      ? "/deputados/feed/partidos"
+      : `/deputados/feed/partidos?uf=${encodeURIComponent(siglaUf)}`;
+  return apiGet<PartidosDisponiveisResponse>(path);
 }
 
 export function perfil(externalIdDeputado: number): Promise<DeputadoPerfil> {

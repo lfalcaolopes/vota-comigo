@@ -7,6 +7,7 @@ import { getDeputadoDetalhe } from "@/shared/matcher";
 
 import { buildExecucaoRequest } from "../lib/matcher-payload";
 import { canRunMatcher, type MatcherStatus } from "../lib/matcher-state";
+import { toResultadoFiltros } from "../lib/resultado-filtros";
 import { useMatcher } from "../components/matcher-provider";
 
 export function useMatcherResultadoDetalhe(externalIdDeputado: number) {
@@ -27,9 +28,7 @@ export function useMatcherResultadoDetalhe(externalIdDeputado: number) {
         escopo: state.escopo,
         cidade: state.cidade,
         posicoes: state.posicoes,
-        apenasEmAtividade: state.apenasEmAtividade,
-        externalIdProposicoesFiltroConcordancia:
-          state.externalIdProposicoesFiltroConcordancia,
+        ...toResultadoFiltros(state),
       });
       const nextDetalhe = await getDeputadoDetalhe(externalIdDeputado, request);
       setDetalhe(nextDetalhe);
