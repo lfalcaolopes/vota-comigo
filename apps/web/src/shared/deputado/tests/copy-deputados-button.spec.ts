@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { CopyDeputadosButton } from "../copy-deputados-button";
 
-const DEPUTADOS = [
+const UM_DEPUTADO = [
   {
     externalIdDeputado: 204521,
     nome: "Fulana de Tal",
@@ -14,9 +14,25 @@ const DEPUTADOS = [
   },
 ];
 
-function render(contexto: string | null = null): string {
+const DOIS_DEPUTADOS = [
+  ...UM_DEPUTADO,
+  {
+    externalIdDeputado: 204522,
+    nome: "Beltrano de Tal",
+    siglaPartido: "PL",
+    siglaUf: "MG",
+    compatibilidade: null,
+  },
+];
+
+type Deputados = (typeof DOIS_DEPUTADOS)[number][];
+
+function render(
+  deputados: Deputados = UM_DEPUTADO,
+  contexto: string | null = null,
+): string {
   return renderToStaticMarkup(
-    createElement(CopyDeputadosButton, { deputados: DEPUTADOS, contexto }),
+    createElement(CopyDeputadosButton, { deputados, contexto }),
   );
 }
 
@@ -27,7 +43,7 @@ describe("CopyDeputadosButton", () => {
       const html = render();
 
       // Assert
-      expect(html).toContain("Copiar em texto");
+      expect(html).toContain("Copiar dados do deputado");
       expect(html).toContain('type="button"');
     });
 
@@ -45,7 +61,7 @@ describe("CopyDeputadosButton", () => {
       const html = render();
 
       // Assert
-      expect(html).not.toContain("Copiado");
+      expect(html).not.toContain("Dados copiados");
     });
 
     it("keeps the manual fallback closed until the copy fails", () => {
@@ -55,6 +71,17 @@ describe("CopyDeputadosButton", () => {
       // Assert
       expect(html).not.toContain("textarea");
       expect(html).toContain('aria-expanded="false"');
+    });
+  });
+
+  describe("when several deputados are compared", () => {
+    it("names the list as the object of the copy", () => {
+      // Act
+      const html = render(DOIS_DEPUTADOS);
+
+      // Assert
+      expect(html).toContain("Copiar lista de deputados");
+      expect(html).not.toContain("Copiar dados do deputado");
     });
   });
 });

@@ -72,6 +72,7 @@ export { parseDeputadoPerfilYear } from "./deputado-perfil-year-url";
 export { DeputadoPerfilSkeleton } from "./deputado-perfil-skeleton";
 export { DeputadoBreadcrumb } from "./deputado-breadcrumb";
 export { DeputadoAvatar } from "./deputado-avatar";
+export { AtividadeStatus } from "./atividade-status";
 export { DeputadoPerfilLink } from "./deputado-perfil-link";
 export { DeputadoRow } from "./deputado-row";
 export { DeputadoPartidoControl } from "./deputado-partido-control";

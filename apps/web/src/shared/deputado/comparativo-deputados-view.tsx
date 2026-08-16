@@ -5,8 +5,9 @@ import type {
 } from "@vota-comigo/shared-types";
 import Link from "next/link";
 
-import { Badge, HelpPopover, InlineMessage } from "@/shared/ui";
+import { HelpPopover, InlineMessage, TitleLink } from "@/shared/ui";
 
+import { AtividadeStatus } from "./atividade-status";
 import { CopyDeputadosButton } from "./copy-deputados-button";
 import type { DeputadoTextItem } from "./deputados-text";
 import {
@@ -24,8 +25,6 @@ import { deriveGastoCotaComparacaoEscala } from "./gasto-cota-comparacao";
 import {
   DIAS_EM_EXERCICIO_INDISPONIVEL,
   JANELA_FORA_DA_BASE_COMPARAVEL,
-  toAtividadeAriaLabel,
-  toAtividadeLabel,
   toDiasEmExercicioLabel,
   toJanelaPeriodoLabel,
 } from "./presentation";
@@ -119,24 +118,16 @@ function ComparativoIdentidade({
     <div className="flex items-start gap-3">
       <DeputadoAvatar nome={column.nome} urlFoto={column.urlFoto} />
       <div className="min-w-0 flex-1">
-        <Link
-          className="block line-clamp-2 break-words text-sm font-[650] text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+        <TitleLink
+          className="block line-clamp-2 text-sm font-[650]"
           href={column.perfilHref}
-          rel="noopener noreferrer"
-          target="_blank"
         >
           {column.nome}
-        </Link>
+        </TitleLink>
         <p className="mt-1 text-xs text-muted">
           {column.siglaPartido} · {column.siglaUf}
         </p>
-        <Badge
-          aria-label={toAtividadeAriaLabel(column.emAtividade)}
-          className="mt-1.5"
-          tone={column.emAtividade ? "success" : "neutral"}
-        >
-          {toAtividadeLabel(column.emAtividade)}
-        </Badge>
+        <AtividadeStatus className="mt-1.5" emAtividade={column.emAtividade} />
       </div>
     </div>
   );
@@ -159,7 +150,7 @@ function ComparativoJanelaBloco({
         <p>{JANELA_FORA_DA_BASE_COMPARAVEL}</p>
       ) : (
         <>
-          <p>{toJanelaPeriodoLabel(janela)}</p>
+          <p>Mandato: {toJanelaPeriodoLabel(janela)}</p>
           <p>
             {janela.diasEmExercicio !== null
               ? toDiasEmExercicioLabel(janela.diasEmExercicio)
@@ -429,25 +420,17 @@ function ComparativoMobileValor({
       <div className="flex min-w-0 items-start gap-3">
         <DeputadoAvatar nome={column.nome} urlFoto={column.urlFoto} />
         <div className="min-w-0 flex-1">
-          <Link
-            className="block line-clamp-2 break-words text-sm font-[650] leading-snug text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+          <TitleLink
+            className="block line-clamp-2 text-sm font-[650] leading-snug"
             href={column.perfilHref}
-            rel="noopener noreferrer"
-            target="_blank"
           >
             {column.nome}
-          </Link>
+          </TitleLink>
           <p className="mt-1 text-xs text-muted">
             {column.siglaPartido} · {column.siglaUf}
           </p>
         </div>
-        <Badge
-          aria-label={toAtividadeAriaLabel(column.emAtividade)}
-          className="shrink-0"
-          tone={column.emAtividade ? "success" : "neutral"}
-        >
-          {toAtividadeLabel(column.emAtividade)}
-        </Badge>
+        <AtividadeStatus className="shrink-0" emAtividade={column.emAtividade} />
       </div>
 
       <div className="border-t border-border pt-2">

@@ -1,5 +1,4 @@
 import type { MatcherVotoDetalhe } from "@vota-comigo/shared-types";
-import Link from "next/link";
 import type { ReactNode } from "react";
 
 import {
@@ -8,7 +7,7 @@ import {
   toIdentificadorLegislativo,
   toTextoResumo,
 } from "@/shared/proposicao";
-import { Badge } from "@/shared/ui";
+import { Badge, TitleLink } from "@/shared/ui";
 
 import {
   toMatcherEffectVerdict,
@@ -34,14 +33,12 @@ export function VotoDetalheItem({ voto }: VotoDetalheItemProps) {
   return (
     <article className="grid gap-2 border-b border-border py-3">
       <div className="flex items-center justify-between gap-3">
-        <Link
-          className="break-words text-sm font-[650] text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+        <TitleLink
+          className="text-sm font-[650]"
           href={`/proposicoes/${proposicao.externalIdProposicao}`}
-          rel="noopener noreferrer"
-          target="_blank"
         >
           {identificador}
-        </Link>
+        </TitleLink>
         <Badge className="shrink-0" tone={verdict.tone}>
           {verdict.label}
         </Badge>

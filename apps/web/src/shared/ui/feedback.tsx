@@ -5,6 +5,7 @@ import type {
   ReactNode,
 } from "react";
 import { Button } from "./button";
+import { ExternalLinkIcon } from "./external-link-icon";
 import { joinClassNames } from "./utils";
 
 type PanelProps = PropsWithChildren<
@@ -164,21 +165,7 @@ export function SourceLink({ children, className, ...props }: SourceLinkProps) {
       {...props}
     >
       <span className="[overflow-wrap:anywhere]">{children}</span>
-      <svg
-        aria-hidden="true"
-        fill="none"
-        height="16"
-        viewBox="0 0 16 16"
-        width="16"
-      >
-        <path
-          d="M6.25 3.75h6m0 0v6m0-6-7 7M4.75 5.5H3.5a1.5 1.5 0 0 0-1.5 1.5v5.5A1.5 1.5 0 0 0 3.5 14h5.5a1.5 1.5 0 0 0 1.5-1.5v-1.25"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="1.5"
-        />
-      </svg>
+      <ExternalLinkIcon />
     </a>
   );
 }

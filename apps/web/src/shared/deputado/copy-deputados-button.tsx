@@ -3,12 +3,19 @@
 import { useEffect, useId, useRef, useState } from "react";
 
 import { Button, Popover } from "@/shared/ui";
+import { joinClassNames } from "@/shared/ui/utils";
 
 import { buildDeputadosText, type DeputadoTextItem } from "./deputados-text";
 
 const CONFIRMACAO_MS = 2400;
 
 type CopyStatus = "idle" | "copiado" | "manual";
+
+type CopyLabels = {
+  acao: string;
+  confirmacao: string;
+  manual: string;
+};
 
 export function CopyDeputadosButton({
   className,
@@ -24,6 +31,7 @@ export function CopyDeputadosButton({
   const [texto, setTexto] = useState("");
   const triggerRef = useRef<HTMLButtonElement>(null);
   const textoRef = useRef<HTMLTextAreaElement>(null);
+  const labels = toCopyLabels(deputados);
 
   useEffect(() => {
     if (status !== "copiado") return;
@@ -49,25 +57,25 @@ export function CopyDeputadosButton({
   };
 
   return (
-    <div className={className}>
-      <div className="flex flex-wrap items-center gap-2">
-        <Button
-          aria-controls={status === "manual" ? panelId : undefined}
-          aria-expanded={status === "manual"}
-          aria-haspopup="dialog"
-          onClick={copiar}
-          ref={triggerRef}
-        >
-          <CopyIcon />
-          Copiar em texto
-        </Button>
-        <span aria-live="polite" className="text-sm text-muted" role="status">
-          {status === "copiado" ? "Copiado" : ""}
-        </span>
-      </div>
+    <div
+      className={joinClassNames("flex flex-wrap items-center gap-2", className)}
+    >
+      <Button
+        aria-controls={status === "manual" ? panelId : undefined}
+        aria-expanded={status === "manual"}
+        aria-haspopup="dialog"
+        onClick={copiar}
+        ref={triggerRef}
+      >
+        <CopyIcon />
+        {labels.acao}
+      </Button>
+      <span aria-live="polite" className="text-sm text-muted" role="status">
+        {status === "copiado" ? labels.confirmacao : ""}
+      </span>
 
       <Popover
-        ariaLabel="Copiar a lista manualmente"
+        ariaLabel={labels.manual}
         className="grid gap-2 p-4 sm:p-3"
         id={panelId}
         initialFocusRef={textoRef}
@@ -92,6 +100,22 @@ export function CopyDeputadosButton({
       </Popover>
     </div>
   );
+}
+
+function toCopyLabels(deputados: readonly DeputadoTextItem[]): CopyLabels {
+  if (deputados.length < 2) {
+    return {
+      acao: "Copiar dados do deputado",
+      confirmacao: "Dados copiados",
+      manual: "Copiar os dados manualmente",
+    };
+  }
+
+  return {
+    acao: "Copiar lista de deputados",
+    confirmacao: "Lista copiada",
+    manual: "Copiar a lista manualmente",
+  };
 }
 
 function CopyIcon() {

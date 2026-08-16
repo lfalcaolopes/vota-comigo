@@ -33,7 +33,7 @@ export function DeputadoAvatar({
     return (
       <Image
         alt={nome ? `Foto de ${nome}` : "Foto do deputado"}
-        className={`${className} rounded-full border border-border object-cover`}
+        className={`${className} rounded-full border border-border object-cover object-[center_20%]`}
         height={px}
         loading={loading}
         src={urlFoto}

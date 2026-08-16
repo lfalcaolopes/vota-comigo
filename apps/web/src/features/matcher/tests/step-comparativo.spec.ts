@@ -194,7 +194,7 @@ describe("StepComparativo", () => {
       });
 
       // Assert
-      expect(html).toContain("Copiar em texto");
+      expect(html).toContain("Copiar lista de deputados");
     });
 
     it("does not offer it while the comparativo is still loading", () => {
@@ -202,7 +202,7 @@ describe("StepComparativo", () => {
       const html = render({ status: "loading" });
 
       // Assert
-      expect(html).not.toContain("Copiar em texto");
+      expect(html).not.toContain("Copiar lista de deputados");
     });
   });
 
@@ -345,6 +345,7 @@ describe("StepComparativo", () => {
       expect(html).toContain('href="/deputados/20"');
       expect(html).toContain('target="_blank"');
       expect(html).toContain('rel="noopener noreferrer"');
+      expect(html).toContain("abre em nova aba");
     });
 
     it("keeps the label column sticky so the reading anchor stays visible while scrolling horizontally", () => {

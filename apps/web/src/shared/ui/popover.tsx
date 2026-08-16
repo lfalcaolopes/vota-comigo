@@ -6,8 +6,15 @@ import { createPortal } from "react-dom";
 
 import { useMountTransition } from "../hooks/use-mount-transition";
 import { trapFocus } from "./focus-trap";
-import type { PopoverAlign, PopoverPosition } from "./popover-position";
-import { anchoredPopoverPosition } from "./popover-position";
+import type {
+  PopoverAlign,
+  PopoverPosition,
+  PopoverSizeLock,
+} from "./popover-position";
+import {
+  anchoredPopoverPosition,
+  isTriggerMostlyHidden,
+} from "./popover-position";
 import { joinClassNames } from "./utils";
 
 export const POPOVER_TRANSITION_MS = 180;
@@ -58,11 +65,22 @@ export function Popover({
   // only closes that leave focus inside the panel hand it back to the trigger.
   const shouldRestoreFocusRef = useRef(true);
   const wasOpenRef = useRef(false);
+  // Read through a ref so an inline onClose does not retake the size lock on
+  // every render of the host.
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   // The panel lives in a portal, so it is positioned from the trigger rect
   // instead of an absolute offset that ancestors with overflow would clip.
   useLayoutEffect(() => {
     if (!isMounted) return;
+
+    // Measured on the first pass of an opening and reused while the page
+    // scrolls; only a resize is allowed to measure it again.
+    let locked: PopoverSizeLock | null = null;
 
     const updatePosition = () => {
       const trigger = triggerRef.current;
@@ -75,24 +93,36 @@ export function Popover({
       }
 
       const rect = trigger.getBoundingClientRect();
-      setPosition(
-        anchoredPopoverPosition({
-          align,
-          gap: VIEWPORT_GAP,
-          panelHeight: panelRef.current?.scrollHeight ?? 0,
-          panelWidth: width,
-          trigger: rect,
-          viewport: { width: window.innerWidth, height: window.innerHeight },
-        }),
-      );
+      const viewport = { width: window.innerWidth, height: window.innerHeight };
+      if (isTriggerMostlyHidden(rect, viewport)) {
+        onCloseRef.current();
+        return;
+      }
+
+      const next = anchoredPopoverPosition({
+        align,
+        gap: VIEWPORT_GAP,
+        locked: locked ?? undefined,
+        panelHeight: panelRef.current?.scrollHeight ?? 0,
+        panelWidth: width,
+        trigger: rect,
+        viewport,
+      });
+      locked = { flip: next.flip, maxHeight: next.maxHeight };
+      setPosition(next);
+    };
+
+    const remeasure = () => {
+      locked = null;
+      updatePosition();
     };
 
     updatePosition();
-    window.addEventListener("resize", updatePosition);
+    window.addEventListener("resize", remeasure);
     window.addEventListener("scroll", updatePosition, true);
 
     return () => {
-      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("resize", remeasure);
       window.removeEventListener("scroll", updatePosition, true);
     };
     // isAnchored re-runs the measurement once the panel carries the classes of
@@ -115,7 +145,9 @@ export function Popover({
     wasOpenRef.current = false;
     if (!shouldRestoreFocusRef.current) return;
     shouldRestoreFocusRef.current = false;
-    triggerRef.current?.focus();
+    // A close caused by the trigger scrolling away would otherwise make the
+    // browser scroll it back into view to show the focus.
+    triggerRef.current?.focus({ preventScroll: true });
   }, [isOpen, triggerRef]);
 
   // The overlay covers the page on small screens, so the list behind it must

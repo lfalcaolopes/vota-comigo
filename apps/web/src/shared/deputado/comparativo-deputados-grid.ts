@@ -104,8 +104,8 @@ export function buildComparativoDeputadosGrid(
       {
         id: "presenca",
         label: "Presença registrada",
-        hint: RECORTE_PRESENCA_COMPARATIVO,
-        help: null,
+        hint: null,
+        help: RECORTE_PRESENCA_COMPARATIVO,
         cells: response.items.map((item) =>
           toRowCell(item, () => toPresencaCell(item.resumoPresenca)),
         ),

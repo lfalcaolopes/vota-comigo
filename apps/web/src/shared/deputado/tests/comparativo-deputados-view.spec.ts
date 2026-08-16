@@ -121,7 +121,7 @@ describe("ComparativoDeputadosView", () => {
       });
 
       // Assert
-      expect(html).toContain("Copiar em texto");
+      expect(html).toContain("Copiar lista de deputados");
     });
 
     it("cala o botão quando a tela que embute a view já tem o seu", () => {
@@ -132,7 +132,7 @@ describe("ComparativoDeputadosView", () => {
       );
 
       // Assert
-      expect(html).not.toContain("Copiar em texto");
+      expect(html).not.toContain("Copiar lista de deputados");
     });
   });
 
@@ -151,6 +151,7 @@ describe("ComparativoDeputadosView", () => {
       expect(html).toContain("Gasto da cota parlamentar");
       expect(html).toContain('href="/deputados/1"');
       expect(html).toContain('target="_blank"');
+      expect(html).toContain("abre em nova aba");
     });
 
     it("mostra o gasto por ano com as duas réguas e o total", () => {

@@ -37,14 +37,15 @@ export function HelpPopover({
         aria-label={label ?? `Mais informações sobre ${title}`}
         // The pseudo-element widens the tap target without changing the layout.
         className={joinClassNames(
-          "relative inline-flex size-4.5 shrink-0 items-center justify-center rounded-full bg-info align-middle text-[0.6875rem] font-[680] leading-none text-white transition-colors duration-[180ms] ease-standard after:absolute after:-inset-2.5 after:content-[''] hover:bg-ink focus-visible:bg-ink",
+          "relative inline-flex size-4.5 shrink-0 items-center justify-center rounded-full align-middle transition-colors duration-[180ms] ease-standard after:absolute after:-inset-2.5 after:content-[''] hover:bg-surface-muted hover:text-ink",
+          isOpen ? "bg-surface-muted text-ink" : "text-subtle",
           className,
         )}
         onClick={() => setIsOpen((current) => !current)}
         ref={triggerRef}
         type="button"
       >
-        ?
+        <HelpIcon />
       </button>
 
       <Popover
@@ -75,6 +76,24 @@ export function HelpPopover({
         <div className="text-sm leading-normal text-muted">{children}</div>
       </Popover>
     </>
+  );
+}
+
+function HelpIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-4 shrink-0"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeWidth="1.6"
+      viewBox="0 0 16 16"
+    >
+      <circle cx="8" cy="8" r="6.2" />
+      <path d="M6.3 6.15a1.75 1.75 0 1 1 1.95 1.8v.75" />
+      <path d="M8.25 11.15h.01" />
+    </svg>
   );
 }
 

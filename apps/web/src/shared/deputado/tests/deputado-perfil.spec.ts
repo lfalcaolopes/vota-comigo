@@ -75,7 +75,7 @@ describe("DeputadoPerfil", () => {
       const html = render(perfil);
 
       // Assert
-      expect(html).toContain("Copiar em texto");
+      expect(html).toContain("Copiar dados do deputado");
     });
   });
 

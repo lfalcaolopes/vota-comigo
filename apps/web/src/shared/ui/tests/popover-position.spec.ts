@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { anchoredPopoverPosition } from "../popover-position";
+import {
+  anchoredPopoverPosition,
+  isTriggerMostlyHidden,
+} from "../popover-position";
 
 const GAP = 8;
 const PANEL_WIDTH = 320;
@@ -131,6 +134,44 @@ describe("anchoredPopoverPosition", () => {
     });
   });
 
+  describe("when the trigger scrolls past the top of the viewport", () => {
+    it("keeps the panel inside the top edge", () => {
+      // Act
+      const result = position({
+        panelHeight: 600,
+        trigger: { top: -60, right: 500, bottom: -20, left: 400 },
+      });
+
+      // Assert
+      expect(result.top).toBe(GAP);
+    });
+
+    it("never grows taller than the viewport", () => {
+      // Act
+      const result = position({
+        panelHeight: 600,
+        trigger: { top: -400, right: 500, bottom: -360, left: 400 },
+      });
+
+      // Assert
+      expect(result.maxHeight).toBe(VIEWPORT.height - GAP * 2);
+    });
+  });
+
+  describe("when the trigger scrolls past the bottom of the viewport", () => {
+    it("keeps the flipped panel inside the bottom edge", () => {
+      // Act
+      const result = position({
+        panelHeight: 1200,
+        trigger: { top: 1200, right: 500, bottom: 1240, left: 400 },
+      });
+
+      // Assert
+      expect(result.top).toBe(GAP);
+      expect(result.top + result.maxHeight).toBe(VIEWPORT.height - GAP);
+    });
+  });
+
   describe("when the trigger leaves no room on either side", () => {
     it("never reports a negative maxHeight", () => {
       // Act
@@ -141,6 +182,146 @@ describe("anchoredPopoverPosition", () => {
       // Assert
       expect(result.maxHeight).toBe(0);
       expect(result.top).toBe(GAP);
+    });
+  });
+
+  describe("when the size was measured on a previous call", () => {
+    it("keeps the locked height even when the trigger frees more room", () => {
+      // Arrange
+      const opened = position({
+        panelHeight: 200,
+        trigger: { top: 500, right: 500, bottom: 540, left: 400 },
+      });
+
+      // Act
+      const scrolled = position({
+        locked: opened,
+        panelHeight: 200,
+        trigger: { top: 100, right: 500, bottom: 140, left: 400 },
+      });
+
+      // Assert
+      expect(opened.maxHeight).toBe(800 - 540 - GAP * 2);
+      expect(scrolled.maxHeight).toBe(opened.maxHeight);
+    });
+
+    it("keeps following the trigger with the locked height", () => {
+      // Arrange
+      const opened = position({ panelHeight: 100 });
+
+      // Act
+      const scrolled = position({
+        locked: opened,
+        panelHeight: 100,
+        trigger: { top: 60, right: 500, bottom: 100, left: 400 },
+      });
+
+      // Assert
+      expect(scrolled.top).toBe(100 + GAP);
+    });
+
+    it("keeps the locked flip instead of dropping back below the trigger", () => {
+      // Arrange
+      const opened = position({
+        panelHeight: 300,
+        trigger: { top: 600, right: 500, bottom: 640, left: 400 },
+      });
+
+      // Act
+      const scrolled = position({
+        locked: opened,
+        panelHeight: 300,
+        trigger: { top: 400, right: 500, bottom: 440, left: 400 },
+      });
+
+      // Assert
+      expect(opened.flip).toBe(true);
+      expect(scrolled.top).toBe(400 - GAP - 300);
+    });
+  });
+});
+
+describe("isTriggerMostlyHidden", () => {
+  describe("when the trigger is comfortably visible", () => {
+    it("keeps it in view", () => {
+      // Act
+      const result = isTriggerMostlyHidden(
+        { top: 100, right: 500, bottom: 140, left: 400 },
+        VIEWPORT,
+      );
+
+      // Assert
+      expect(result).toBe(false);
+    });
+
+    it("keeps it in view while less than half of it is cut", () => {
+      // Act
+      const result = isTriggerMostlyHidden(
+        { top: -13, right: 500, bottom: 27, left: 400 },
+        VIEWPORT,
+      );
+
+      // Assert
+      expect(result).toBe(false);
+    });
+  });
+
+  describe("when the trigger is about to leave the viewport", () => {
+    it("gives it up once more than half is cut at the top", () => {
+      // Act
+      const result = isTriggerMostlyHidden(
+        { top: -30, right: 500, bottom: 10, left: 400 },
+        VIEWPORT,
+      );
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it("gives it up once more than half is cut at the bottom", () => {
+      // Act
+      const result = isTriggerMostlyHidden(
+        { top: 790, right: 500, bottom: 830, left: 400 },
+        VIEWPORT,
+      );
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it("gives it up once more than half is cut sideways", () => {
+      // Act
+      const result = isTriggerMostlyHidden(
+        { top: 100, right: 30, bottom: 140, left: -70 },
+        VIEWPORT,
+      );
+
+      // Assert
+      expect(result).toBe(true);
+    });
+  });
+
+  describe("when the trigger scrolled out of the viewport", () => {
+    it("gives it up past the top", () => {
+      // Act
+      const result = isTriggerMostlyHidden(
+        { top: -60, right: 500, bottom: -20, left: 400 },
+        VIEWPORT,
+      );
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it("gives it up past the bottom", () => {
+      // Act
+      const result = isTriggerMostlyHidden(
+        { top: 900, right: 500, bottom: 940, left: 400 },
+        VIEWPORT,
+      );
+
+      // Assert
+      expect(result).toBe(true);
     });
   });
 });

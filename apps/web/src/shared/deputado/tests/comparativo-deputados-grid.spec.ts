@@ -175,12 +175,12 @@ describe("grade do comparativo de deputados", () => {
       const grid = buildComparativoDeputadosGrid(data);
 
       // Assert
-      expect(rowById(grid, "presenca").hint).toContain(
+      expect(rowById(grid, "presenca").help).toContain(
         "legislatura mostrada na coluna",
       );
     });
 
-    it("explica o que é a cota parlamentar apenas na linha da cota", () => {
+    it("explica cota parlamentar e presença em popovers próprios", () => {
       // Arrange
       const data = response([deputado(1), deputado(2)]);
 
@@ -189,7 +189,7 @@ describe("grade do comparativo de deputados", () => {
 
       // Assert
       expect(rowById(grid, "cota").help).toBe(COTA_PARLAMENTAR_HELP);
-      expect(rowById(grid, "presenca").help).toBeNull();
+      expect(rowById(grid, "presenca").hint).toBeNull();
     });
 
     it("carrega a janela de cada deputado na coluna", () => {

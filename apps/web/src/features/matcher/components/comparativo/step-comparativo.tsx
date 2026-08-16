@@ -9,20 +9,16 @@ import type {
   PosicaoUsuarioMatcher,
   SiglaUf,
 } from "@vota-comigo/shared-types";
-import Link from "next/link";
 import { useState, type ReactNode } from "react";
 
 import {
+  AtividadeStatus,
   ComparativoDeputados,
   CopyDeputadosButton,
   DeputadoAvatar,
   type DeputadoTextItem,
 } from "@/shared/deputado";
-import {
-  nomePublicoLabel,
-  toAtividadeAriaLabel,
-  toAtividadeLabel,
-} from "@/shared/deputado/presentation";
+import { nomePublicoLabel } from "@/shared/deputado/presentation";
 import {
   ProposicaoResumo,
   toIdentificadorLegislativo,
@@ -35,6 +31,7 @@ import {
   ErrorState,
   SegmentedControl,
   SkeletonRows,
+  TitleLink,
 } from "@/shared/ui";
 
 import { buildComparativoDeputadosGrid } from "../../lib/comparativo-deputados-grid";
@@ -101,26 +98,28 @@ export function StepComparativo({
         </Button>
       </div>
 
-      <SegmentedControl
-        activeId={view}
-        className="w-full sm:w-auto sm:justify-self-start"
-        itemClassName="flex-1 sm:flex-none"
-        items={COMPARATIVO_VIEW_ITEMS}
-        label="Visualização do comparativo"
-        onSelect={setView}
-      />
-
-      {status === "idle" ? (
-        <CopyDeputadosButton
-          className="justify-self-start"
-          contexto={toCopyContextLabel({
-            escopo,
-            siglaUf,
-            totalProposicoes: grid.rows.length,
-          })}
-          deputados={[...deputadosById.values()].map(toDeputadoTextItem)}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+        <SegmentedControl
+          activeId={view}
+          className="w-full sm:w-auto"
+          itemClassName="flex-1 sm:flex-none"
+          items={COMPARATIVO_VIEW_ITEMS}
+          label="Visualização do comparativo"
+          onSelect={setView}
         />
-      ) : null}
+
+        {status === "idle" ? (
+          <CopyDeputadosButton
+            className="sm:justify-end"
+            contexto={toCopyContextLabel({
+              escopo,
+              siglaUf,
+              totalProposicoes: grid.rows.length,
+            })}
+            deputados={[...deputadosById.values()].map(toDeputadoTextItem)}
+          />
+        ) : null}
+      </div>
 
       {view === "gerais" ? (
         <ComparativoDeputados
@@ -226,39 +225,23 @@ function ComparativoDeputadoHeader({
         <div className="flex items-start gap-3">
           <DeputadoAvatar nome={deputado.nome} urlFoto={deputado.urlFoto} />
           <div className="min-w-0">
-            <Link
-              className="block line-clamp-2 break-words text-sm font-[650] text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+            <TitleLink
+              className="block line-clamp-2 text-sm font-[650]"
               href={`/deputados/${deputado.deputado.externalIdDeputado}`}
-              rel="noopener noreferrer"
-              target="_blank"
             >
               {deputado.nome ?? "Sem nome"}
-            </Link>
+            </TitleLink>
             <p className="mt-1 text-xs text-muted">
               {deputado.siglaPartido ?? "—"} · {deputado.siglaUf ?? "—"}
             </p>
-            <ComparativoAtividadeStatus emAtividade={deputado.emAtividade} />
+            <AtividadeStatus
+              className="mt-1.5"
+              emAtividade={deputado.emAtividade}
+            />
           </div>
         </div>
       </div>
     </div>
-  );
-}
-
-function ComparativoAtividadeStatus({ emAtividade }: { emAtividade: boolean }) {
-  return (
-    <span
-      aria-label={toAtividadeAriaLabel(emAtividade)}
-      className="mt-1.5 inline-flex max-w-full items-center gap-1.5 text-xs font-[560] leading-normal text-muted [overflow-wrap:anywhere]"
-    >
-      <span
-        aria-hidden="true"
-        className={`size-1.5 shrink-0 rounded-full ${
-          emAtividade ? "bg-success ring-1 ring-success/35" : "bg-subtle"
-        }`}
-      />
-      {toAtividadeLabel(emAtividade)}
-    </span>
   );
 }
 
@@ -276,14 +259,12 @@ function ComparativoRow({ row }: ComparativoRowProps) {
     <>
       <div className="col-[1/-1] border-b border-border bg-bg px-3 pb-3 pt-6">
         <div className="sticky left-0 grid w-fit max-w-[65ch] gap-1">
-          <Link
-            className="block break-words text-base font-[680] leading-snug text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+          <TitleLink
+            className="block text-base font-[680] leading-snug"
             href={`/proposicoes/${row.proposicao.externalIdProposicao}`}
-            rel="noopener noreferrer"
-            target="_blank"
           >
             {identificador}
-          </Link>
+          </TitleLink>
           {textoResumo ? (
             <ProposicaoResumo
               identificador={identificador}
@@ -359,14 +340,12 @@ function ComparativoMobileProposicao({
   return (
     <section className="grid gap-3 border-t border-border pt-5 first:border-t-0 first:pt-0">
       <header className="grid gap-2">
-        <Link
-          className="block break-words text-base font-[680] leading-snug text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+        <TitleLink
+          className="block text-base font-[680] leading-snug"
           href={`/proposicoes/${row.proposicao.externalIdProposicao}`}
-          rel="noopener noreferrer"
-          target="_blank"
         >
           {identificador}
-        </Link>
+        </TitleLink>
         {textoResumo ? (
           <ProposicaoResumo
             clampClassName="line-clamp-3"
@@ -415,14 +394,12 @@ function ComparativoMobileDeputadoVoto({
       <div className="flex min-w-0 items-start gap-3">
         <DeputadoAvatar nome={deputado.nome} urlFoto={deputado.urlFoto} />
         <div className="min-w-0 flex-1">
-          <Link
-            className="block line-clamp-2 break-words text-sm font-[650] leading-snug text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+          <TitleLink
+            className="block line-clamp-2 text-sm font-[650] leading-snug"
             href={`/deputados/${deputado.deputado.externalIdDeputado}`}
-            rel="noopener noreferrer"
-            target="_blank"
           >
             {deputado.nome ?? "Sem nome"}
-          </Link>
+          </TitleLink>
           <p className="mt-1 text-xs text-muted">
             {deputado.siglaPartido ?? "—"} · {deputado.siglaUf ?? "—"}
           </p>
