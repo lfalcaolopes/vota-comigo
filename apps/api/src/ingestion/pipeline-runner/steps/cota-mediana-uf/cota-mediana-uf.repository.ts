@@ -1,12 +1,14 @@
-import { asc, eq, isNotNull } from 'drizzle-orm';
+import { and, asc, eq, isNotNull } from 'drizzle-orm';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
 import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
+import type { GastosSigepaJson } from '@/shared/cota/reposicao-sigepa';
 import {
   cotaCobertura,
   cotaMedianaUf,
   deputadoExercicioIntervalo,
   deputadoGastoCota,
+  deputadoGastoCotaSigepa,
   legislatura,
 } from '@/shared/database/schema';
 
@@ -20,13 +22,16 @@ export function createCotaMedianaUfRepository(
   db: DrizzleDatabase,
 ): CotaMedianaUfRepository {
   return {
-    async loadAnosComCobertura() {
-      const rows = await db
-        .select({ year: cotaCobertura.year })
+    async loadCoberturas() {
+      return db
+        .select({
+          year: cotaCobertura.year,
+          coveredThroughMonth: cotaCobertura.coveredThroughMonth,
+          sigepaReposto: cotaCobertura.sigepaReposto,
+          sigepaCoveredThroughMonth: cotaCobertura.sigepaCoveredThroughMonth,
+        })
         .from(cotaCobertura)
         .orderBy(asc(cotaCobertura.year));
-
-      return rows.map((row) => row.year);
     },
 
     async loadDatasInicioLegislatura() {
@@ -46,14 +51,26 @@ export function createCotaMedianaUfRepository(
           deputadoId: deputadoGastoCota.deputadoId,
           siglaUf: deputadoGastoCota.siglaUf,
           gastosJson: deputadoGastoCota.gastosJson,
+          gastosSigepaJson: deputadoGastoCotaSigepa.gastosJson,
         })
         .from(deputadoGastoCota)
+        .leftJoin(
+          deputadoGastoCotaSigepa,
+          and(
+            eq(
+              deputadoGastoCotaSigepa.deputadoId,
+              deputadoGastoCota.deputadoId,
+            ),
+            eq(deputadoGastoCotaSigepa.year, deputadoGastoCota.year),
+          ),
+        )
         .where(eq(deputadoGastoCota.year, year));
 
       return rows.map((row) => ({
         deputadoId: row.deputadoId,
         siglaUf: row.siglaUf,
         gastosJson: row.gastosJson as GastoCotaJson,
+        gastosSigepaJson: (row.gastosSigepaJson as GastosSigepaJson) ?? null,
       }));
     },
 

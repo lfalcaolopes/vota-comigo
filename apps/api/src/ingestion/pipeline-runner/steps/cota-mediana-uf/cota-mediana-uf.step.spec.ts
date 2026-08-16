@@ -4,6 +4,7 @@ import type { IngestionStepContext } from '../../types/ingestion-pipeline-runner
 
 import { createCotaMedianaUfStep } from './cota-mediana-uf.step';
 import type {
+  CoberturaAnualRow,
   CotaMedianaUfRepository,
   CotaMedianaUfRow,
   GastoCotaAnualRow,
@@ -14,10 +15,22 @@ const anoInteiro: readonly IntervaloExercicio[] = [
 ];
 
 type RepositoryState = {
-  anos?: readonly number[];
+  coberturas?: readonly CoberturaAnualRow[];
   gastos?: Record<number, readonly GastoCotaAnualRow[]>;
   intervalos?: ReadonlyMap<string, readonly IntervaloExercicio[]>;
 };
+
+function cobertura(
+  overrides: Partial<CoberturaAnualRow> = {},
+): CoberturaAnualRow {
+  return {
+    year: 2024,
+    coveredThroughMonth: 12,
+    sigepaReposto: false,
+    sigepaCoveredThroughMonth: null,
+    ...overrides,
+  };
+}
 
 function createRepository(
   state: RepositoryState = {},
@@ -29,7 +42,7 @@ function createRepository(
 
   return {
     replacements,
-    loadAnosComCobertura: () => Promise.resolve(state.anos ?? [2024]),
+    loadCoberturas: () => Promise.resolve(state.coberturas ?? [cobertura()]),
     loadDatasInicioLegislatura: () => Promise.resolve(['2023-02-01']),
     loadGastosAnuais: (year) => Promise.resolve(state.gastos?.[year] ?? []),
     loadIntervalosByDeputadoId: () =>
@@ -64,6 +77,7 @@ function gasto(overrides: Partial<GastoCotaAnualRow> = {}): GastoCotaAnualRow {
     deputadoId: 'a',
     siglaUf: 'MG',
     gastosJson: { '3': { '1': 10000 } },
+    gastosSigepaJson: null,
     ...overrides,
   };
 }
@@ -73,7 +87,7 @@ describe('passo da mediana de gastos da cota por UF', () => {
     it('replaces the medians of that year with the totals of the json', async () => {
       // Arrange
       const repository = createRepository({
-        anos: [2024],
+        coberturas: [cobertura({ year: 2024 })],
         gastos: {
           2024: [
             gasto({ deputadoId: 'a', gastosJson: { '1': { '1': 30000 } } }),
@@ -112,7 +126,7 @@ describe('passo da mediana de gastos da cota por UF', () => {
     it('recalculates every one of them', async () => {
       // Arrange
       const repository = createRepository({
-        anos: [2023, 2024],
+        coberturas: [cobertura({ year: 2023 }), cobertura({ year: 2024 })],
         gastos: { 2023: [gasto()], 2024: [gasto()] },
       });
       const step = createCotaMedianaUfStep(repository);
@@ -139,6 +153,92 @@ describe('passo da mediana de gastos da cota por UF', () => {
       // Assert
       expect(repository.replacements).toEqual([]);
       expect(result).toMatchObject({ read: 0, inserted: 0 });
+    });
+  });
+
+  describe('when the year of the window has been replaced', () => {
+    it('takes the median over the merged expenses', async () => {
+      // Arrange
+      const repository = createRepository({
+        coberturas: [
+          cobertura({
+            year: 2025,
+            sigepaReposto: true,
+            sigepaCoveredThroughMonth: 12,
+          }),
+        ],
+        gastos: {
+          2025: [
+            gasto({
+              deputadoId: 'a',
+              gastosJson: { '8': { '1': 10000, '998': -2500 } },
+              gastosSigepaJson: { '8': 700000 },
+            }),
+            gasto({
+              deputadoId: 'b',
+              gastosJson: { '8': { '1': 20000 } },
+              gastosSigepaJson: { '8': 100000 },
+            }),
+          ],
+        },
+      });
+      const step = createCotaMedianaUfStep(repository);
+
+      // Act
+      await step.run(createContext());
+
+      // Assert
+      expect(repository.replacements).toEqual([
+        {
+          year: 2025,
+          rows: [
+            {
+              year: 2025,
+              siglaUf: 'MG',
+              valorUtilizadoMedianaCentavos: 415000,
+              deputadoCount: 2,
+            },
+          ],
+        },
+      ]);
+    });
+  });
+
+  describe('when a year of the window has not been replaced yet', () => {
+    it('publishes no median for that year', async () => {
+      // Arrange
+      const repository = createRepository({
+        coberturas: [cobertura({ year: 2025 })],
+        gastos: { 2025: [gasto()] },
+      });
+      const step = createCotaMedianaUfStep(repository);
+
+      // Act
+      const result = await step.run(createContext());
+
+      // Assert
+      expect(repository.replacements).toEqual([{ year: 2025, rows: [] }]);
+      expect(result).toMatchObject({ read: 0, inserted: 0 });
+    });
+
+    it('keeps the years outside the window untouched', async () => {
+      // Arrange
+      const repository = createRepository({
+        coberturas: [cobertura({ year: 2024 }), cobertura({ year: 2025 })],
+        gastos: { 2024: [gasto()], 2025: [gasto()] },
+      });
+      const step = createCotaMedianaUfStep(repository);
+
+      // Act
+      await step.run(createContext());
+
+      // Assert
+      expect(
+        repository.replacements.map((entry) => [entry.year, entry.rows.length]),
+      ).toEqual([
+        [2024, 1],
+        [2025, 0],
+      ]);
     });
   });
 

@@ -1,4 +1,9 @@
 import { deriveJanelaExercicioAno } from '@/exercicio/rules/exercicio-ano';
+import { isAnoReposto } from '@/shared/cota/ano-reposto';
+import {
+  applyReposicaoSigepa,
+  deriveSigepaDataStatus,
+} from '@/shared/cota/reposicao-sigepa';
 
 import { sumGastoCotaAno } from '../deputado-gasto-cota/gasto-cota-ano';
 import type {
@@ -30,13 +35,36 @@ export function createCotaMedianaUfStep(
         return emptyResult();
       }
 
-      const anos = await repository.loadAnosComCobertura();
+      const coberturas = await repository.loadCoberturas();
       const datasInicioLegislatura =
         await repository.loadDatasInicioLegislatura();
       let read = 0;
       let inserted = 0;
 
-      for (const year of anos) {
+      for (const cobertura of coberturas) {
+        const year = cobertura.year;
+        const anoReposto = isAnoReposto(cobertura);
+
+        // Ano da janela ainda não reposto não recebe mediana publicada: a
+        // lacuna encolhe o gasto de cada deputado em proporção diferente, e uma
+        // mediana igualmente encolhida faria quem mais voa parecer quem menos
+        // gasta (ADR 022).
+        if (
+          deriveSigepaDataStatus({
+            year,
+            coveredThroughMonth: cobertura.coveredThroughMonth,
+            anoReposto,
+          }) === 'incompleto'
+        ) {
+          context.reporter?.log(
+            `[cota_mediana_uf] ${year}: fonte incompleta, mediana não publicada`,
+          );
+          if (!context.dryRun) {
+            await repository.replaceAno(year, []);
+          }
+          continue;
+        }
+
         const gastos = await repository.loadGastosAnuais(year);
         read += gastos.length;
 
@@ -46,7 +74,14 @@ export function createCotaMedianaUfStep(
           gastos: gastos.map((gasto) => ({
             deputadoId: gasto.deputadoId,
             siglaUf: gasto.siglaUf,
-            valorUtilizadoCentavos: sumGastoCotaAno(gasto.gastosJson),
+            valorUtilizadoCentavos: sumGastoCotaAno(
+              applyReposicaoSigepa({
+                year,
+                anoReposto,
+                gastosJson: gasto.gastosJson,
+                gastosSigepaJson: gasto.gastosSigepaJson,
+              }) ?? {},
+            ),
             intervalos: intervalosByDeputadoId.get(gasto.deputadoId) ?? [],
           })),
         });

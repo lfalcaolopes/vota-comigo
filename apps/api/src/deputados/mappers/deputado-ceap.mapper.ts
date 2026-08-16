@@ -49,11 +49,17 @@ export function toDeputadoCeapLoadedResponse(
     coveredThroughMonth: input.coveredThroughMonth,
     anoReposto: input.anoReposto,
   });
+  // Ano da janela ainda não reposto não recebe mediana: a lacuna encolhe o gasto
+  // de cada deputado em proporção diferente, e uma mediana igualmente encolhida
+  // faria quem mais voa parecer quem menos gasta (ADR 022).
+  const medianaUf =
+    sigepaDataStatus === 'incompleto' ? null : input.source.medianaUf;
   // Sem linha no dump não há UF, e sem UF não há mediana a exigir: é o deputado
   // cujo único gasto do ano veio da reposição.
   if (
     input.status === 'ok' &&
     exercicioAnoCompleto &&
+    sigepaDataStatus !== 'incompleto' &&
     input.source.gasto !== null &&
     input.source.medianaUf === null
   ) {
@@ -70,7 +76,7 @@ export function toDeputadoCeapLoadedResponse(
     siglaUf: input.source.gasto?.siglaUf ?? null,
     exercicioAnoCompleto,
     periodosExercicio: clipIntervalos(input.source.intervalosExercicio, janela),
-    medianaUf: exercicioAnoCompleto ? input.source.medianaUf : null,
+    medianaUf: exercicioAnoCompleto ? medianaUf : null,
     categories: aggregates.categories,
     months: aggregates.months,
   };

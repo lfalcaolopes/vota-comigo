@@ -75,11 +75,12 @@ describe("seção de gastos da cota parlamentar", () => {
       expect(html).not.toContain("canvas");
     });
 
-    it("apresenta discretamente a limitação do SIGEPA sem deixar de comparar a mediana", () => {
+    it("apresenta discretamente a limitação do SIGEPA e o total sem comparação", () => {
       // Arrange
       const response = loadedResponse({
         year: 2025,
         sigepaDataStatus: "incompleto",
+        medianaUf: null,
       });
 
       // Act
@@ -95,7 +96,8 @@ describe("seção de gastos da cota parlamentar", () => {
       );
       expect(html).toContain("Ver dados na Câmara");
       expect(html).toContain("Total registrado em 2025");
-      expect(html).toContain("Mediana em SP");
+      expect(html).not.toContain("Mediana em SP");
+      expect(html).not.toContain("da mediana");
       expect(html).not.toContain("bg-warning-soft");
       expect(html).not.toContain('role="alert"');
     });

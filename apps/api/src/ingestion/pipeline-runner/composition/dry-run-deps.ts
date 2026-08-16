@@ -136,7 +136,7 @@ export const dryRunDeputadoGastoCotaRepository: DeputadoGastoCotaRepository = {
 };
 
 export const dryRunCotaMedianaUfRepository: CotaMedianaUfRepository = {
-  loadAnosComCobertura: () => Promise.resolve([]),
+  loadCoberturas: () => Promise.resolve([]),
   loadDatasInicioLegislatura: () => Promise.resolve([]),
   loadGastosAnuais: () => Promise.resolve([]),
   loadIntervalosByDeputadoId: () => Promise.resolve(new Map()),

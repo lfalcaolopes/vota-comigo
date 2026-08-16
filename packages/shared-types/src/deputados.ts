@@ -154,8 +154,23 @@ export const deputadoCeapResponseSchema = z
     }
 
     if (
+      response.status !== deputadoCeapStatusSchema.enum["ano-nao-carregado"] &&
+      response.sigepaDataStatus ===
+        deputadoCeapSigepaDataStatusSchema.enum.incompleto &&
+      response.medianaUf !== null
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["medianaUf"],
+        message: "medianaUf não acompanha um ano de fonte incompleta",
+      });
+    }
+
+    if (
       response.status === deputadoCeapStatusSchema.enum.ok &&
       response.exercicioAnoCompleto &&
+      response.sigepaDataStatus !==
+        deputadoCeapSigepaDataStatusSchema.enum.incompleto &&
       response.medianaUf === null
     ) {
       ctx.addIssue({

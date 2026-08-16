@@ -284,7 +284,7 @@ describe('DeputadosService gastos da cota', () => {
   });
 
   describe('quando a fonte não contém todos os gastos do SIGEPA', () => {
-    it('marca 2025 a partir de agosto sem deixar de publicar a mediana', async () => {
+    it('marca 2025 a partir de agosto e publica o total sem a mediana', async () => {
       // Arrange
       const service = createService(
         fakeRepository({
@@ -321,7 +321,9 @@ describe('DeputadosService gastos da cota', () => {
       // Assert
       expect(result).toMatchObject({
         sigepaDataStatus: 'incompleto',
-        medianaUf: { amountUsedCents: 9500, deputadoCount: 53 },
+        exercicioAnoCompleto: true,
+        totalAmountUsedCents: 10000,
+        medianaUf: null,
       });
     });
 
