@@ -4,6 +4,10 @@ import {
   type ProposicaoResumoIaGenerationResponse,
 } from './proposicao-resumo-ia-generation-response.schema';
 import { buildProposicaoResumoIaPrompt } from './proposicao-resumo-ia-prompt';
+import {
+  createInteiroTeorPdfDownloader,
+  type DownloadInteiroTeorPdf,
+} from './inteiro-teor-pdf-download';
 
 export type ResumoIaGenerationDiagnostics = {
   finishReason?: string;
@@ -41,6 +45,7 @@ export type CreateOpenrouterResumoIaClientOptions = {
   apiKey: string;
   model: string;
   fetch?: FetchFn;
+  downloadPdf?: DownloadInteiroTeorPdf;
 };
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
@@ -52,17 +57,35 @@ export function createOpenrouterResumoIaClient(
   options: CreateOpenrouterResumoIaClientOptions,
 ): ResumoIaGenerationClient {
   const fetchImpl: FetchFn = options.fetch ?? globalThis.fetch;
+  const downloadPdf = options.downloadPdf ?? createInteiroTeorPdfDownloader();
 
   return {
     async generate(source): Promise<ResumoIaGenerationOutcome> {
       try {
+        let inteiroTeorDataUri: string | null = null;
+        if (source.urlInteiroTeor !== null) {
+          const download = await downloadPdf(source.urlInteiroTeor);
+          if (!download.ok) {
+            return {
+              ok: false,
+              reason: download.reason,
+              ...(download.tooLarge === true
+                ? { failureKind: 'source_too_large' as const }
+                : {}),
+            };
+          }
+          inteiroTeorDataUri = download.dataUri;
+        }
+
         const response = await fetchImpl(OPENROUTER_URL, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${options.apiKey}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(buildRequestBody(source, options.model)),
+          body: JSON.stringify(
+            buildRequestBody(source, options.model, inteiroTeorDataUri),
+          ),
         });
 
         if (!response.ok) {
@@ -143,6 +166,7 @@ export function createOpenrouterResumoIaClient(
 function buildRequestBody(
   source: ProposicaoResumoIaSource,
   model: string,
+  inteiroTeorDataUri: string | null,
 ): Record<string, unknown> {
   const prompt = buildProposicaoResumoIaPrompt(source);
   const base = {
@@ -151,7 +175,7 @@ function buildRequestBody(
     provider: { ignore: IGNORED_PROVIDERS },
   };
 
-  if (source.urlInteiroTeor === null) {
+  if (inteiroTeorDataUri === null) {
     return { ...base, messages: [{ role: 'user', content: prompt }] };
   }
 
@@ -166,7 +190,7 @@ function buildRequestBody(
             type: 'file',
             file: {
               filename: `inteiro-teor-${source.externalIdProposicao}.pdf`,
-              file_data: source.urlInteiroTeor,
+              file_data: inteiroTeorDataUri,
             },
           },
         ],
@@ -212,7 +236,30 @@ function extractOpenrouterError(body: unknown): string | null {
   const text = typeof message === 'string' ? message : 'erro sem mensagem';
   const codeText =
     typeof code === 'string' || typeof code === 'number' ? String(code) : null;
-  return codeText !== null ? `${text} (code=${codeText})` : text;
+  const base = codeText !== null ? `${text} (code=${codeText})` : text;
+
+  const providerDetail = extractProviderDetail(errorRecord);
+  return providerDetail !== null ? `${base}: ${providerDetail}` : base;
+}
+
+// OpenRouter collapses every upstream failure into "Provider returned error";
+// the actual cause only exists inside error.metadata.raw.
+function extractProviderDetail(
+  errorRecord: Record<string, unknown>,
+): string | null {
+  const raw = asRecord(errorRecord['metadata'])?.['raw'];
+  if (typeof raw !== 'string') return null;
+
+  try {
+    const nestedMessage = asRecord(asRecord(JSON.parse(raw))?.['error'])?.[
+      'message'
+    ];
+    if (typeof nestedMessage === 'string') return nestedMessage;
+  } catch {
+    // raw is not always JSON; the truncated text below is still useful.
+  }
+
+  return raw.slice(0, 200);
 }
 
 function extractDiagnostics(body: unknown): ResumoIaGenerationDiagnostics {
