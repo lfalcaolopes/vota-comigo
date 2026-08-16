@@ -39,7 +39,7 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Amplia a possibilidade de desconto automático em benefícios para fazer empréstimos por consignado e determina devolução de valores descontados após a morte.",
-      "resumoDetalhe": "- amplia a margem de desconto sobre benefícios previdenciários e assistenciais para permitir que uma parte maior do benefício seja retida para pagar empréstimos, financiamentos, cartões e operações de crédito, com regras para a instituição financeira reter os valores\n- autoriza que beneficiários do BPC e de programas federais de transferência de renda usem crédito consignado (empréstimo com desconto direto no benefício) para contratar empréstimos e financiamentos, estabelecendo que a responsabilidade pelo pagamento é do beneficiário e que a União não responde por essas dívidas\n- determina a restituição aos cofres públicos dos valores que foram creditados indevidamente em favor de pessoa falecida ou descontados após o óbito por causa de empréstimo ou cartão consignado, excluindo os valores recebidos pela família relativos ao Auxílio Brasil",
+      "resumoDetalhe": "- Amplia a margem de desconto sobre benefícios previdenciários e assistenciais para permitir que uma parte maior do benefício seja retida para pagar empréstimos, financiamentos, cartões e operações de crédito, com regras para a instituição financeira reter os valores.\n- Autoriza que beneficiários do BPC e de programas federais de transferência de renda usem crédito consignado (empréstimo com desconto direto no benefício) para contratar empréstimos e financiamentos, estabelecendo que a responsabilidade pelo pagamento é do beneficiário e que a União não responde por essas dívidas.\n- Determina a restituição aos cofres públicos dos valores que foram creditados indevidamente em favor de pessoa falecida ou descontados após o óbito por causa de empréstimo ou cartão consignado, excluindo os valores recebidos pela família relativos ao Auxílio Brasil.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:22:36.991Z",
@@ -72,7 +72,7 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Institui o Programa Renovar para retirar de circulação veículos em fim de vida e estimular a renovação da frota.",
-      "resumoDetalhe": "- cria o Programa Renovar para promover o desmonte ou a destruição como sucata de veículos e implementos em fim de vida, com objetivo de renovar a frota, aumentar a produtividade da logística, incentivar inovação e reduzir emissões e riscos à segurança.\n- organiza a operação por meio de iniciativas com adesão voluntária de proprietários, financiadores, parceiros e agentes financeiros, e registra todas as operações na Plataforma Renovar, operada pela ABDI, que poderá cobrar pelo serviço e captar recursos; empresas de desmontagem podem comercializar a sucata e destinar parte do valor às iniciativas.\n- institui medidas administrativas e de financiamento: perdoa certos débitos não tributários junto a órgãos federais sob condições definidas, autoriza que recursos de concessionárias do setor de petróleo sejam aplicados no desmonte e considerados para obrigações de PD&I (pesquisa, desenvolvimento e inovação), e direciona receitas para ações de renovação de frota e desempenho ambiental; também permite certificação voluntária de veículos e que o Contran (Conselho Nacional de Trânsito) simplifique procedimentos para baixa de registro.",
+      "resumoDetalhe": "- Cria o Programa Renovar para promover o desmonte ou a destruição como sucata de veículos e implementos em fim de vida, com objetivo de renovar a frota, aumentar a produtividade da logística, incentivar inovação e reduzir emissões e riscos à segurança.\n- Organiza a operação por meio de iniciativas com adesão voluntária de proprietários, financiadores, parceiros e agentes financeiros, e registra todas as operações na Plataforma Renovar, operada pela ABDI, que poderá cobrar pelo serviço e captar recursos; empresas de desmontagem podem comercializar a sucata e destinar parte do valor às iniciativas.\n- Institui medidas administrativas e de financiamento: perdoa certos débitos não tributários junto a órgãos federais sob condições definidas, autoriza que recursos de concessionárias do setor de petróleo sejam aplicados no desmonte e considerados para obrigações de PD&I (pesquisa, desenvolvimento e inovação), e direciona receitas para ações de renovação de frota e desempenho ambiental; também permite certificação voluntária de veículos e que o Contran (Conselho Nacional de Trânsito) simplifique procedimentos para baixa de registro.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T20:06:20.826Z",
@@ -103,31 +103,31 @@
     "2323322": {
       "sourceHash": "bc146cf8ed279f6a91bfd1f5353e05269694025db828dbd130a35010d877b8f9",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Exige que a ANTT publique nova tabela de pisos mínimos do frete quando o preço do diesel oscilar além de um limite.",
-      "resumoDetalhe": "- Exige que a ANTT (Agência Nacional de Transportes Terrestres) publique uma nova tabela de pisos mínimos do transporte rodoviário de cargas sempre que o preço do óleo diesel no mercado nacional oscilar além de um limite em relação ao preço considerado na planilha de cálculo, considerando a variação do combustível.\n- Estabelece que a medida provisória passa a vigorar na data de sua publicação.",
+      "resumoDetalhe": "- Exige que a ANTT (Agência Nacional de Transportes Terrestres) publique uma nova tabela com os pisos mínimos do transporte rodoviário de cargas sempre que o preço do óleo diesel no mercado nacional variar além de um limite.\n- Determina que essa nova tabela leve em conta a variação do combustível em relação ao preço considerado na planilha de cálculo dos pisos.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:01:17.719Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2326450": {
       "sourceHash": "ac5cc80910e3ef4ed4c8083a03b6da789d71e02424201fa4d0be9ed3612e7e29",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
-      "resumoCard": "Institui pisos salariais nacionais para categorias da enfermagem e para parteiras",
+      "reviewStatus": "approved",
+      "resumoCard": "Institui pisos salariais nacionais para categorias da enfermagem e para parteiras.",
       "resumoDetalhe": "- Cria pisos salariais nacionais para enfermeiro, técnico de enfermagem, auxiliar de enfermagem e parteira, a serem observados por empregadores públicos e privados.\n- Exige que uma lei federal fixe esses pisos profissionais nacionais.\n- Determina que a União, os Estados, o Distrito Federal e os Municípios ajustem a remuneração dos cargos ou dos planos de carreira, dentro do mesmo exercício financeiro em que a lei for publicada, para atender aos pisos de cada categoria.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2329218": {
       "sourceHash": "ec2cf639f21a4a07d06053159fb3299b85b8926f5016ac7e72504212ca53a4c0",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Garante tratamento tributário favorecido aos biocombustíveis para que paguem menos tributos que os combustíveis fósseis e tenham vantagem competitiva.",
-      "resumoDetalhe": "- Cria um regime fiscal favorecido para biocombustíveis destinados ao consumo final, por meio de lei complementar, para garantir tributação inferior à dos combustíveis fósseis e assegurar vantagem competitiva, inclusive em relação a certas contribuições sociais e a um imposto federal.\n- Determina que, enquanto a lei complementar não entrar em vigor, a vantagem competitiva será assegurada mantendo a diferença entre as alíquotas aplicadas aos combustíveis fósseis e aos biocombustíveis que os substituem no patamar vigente numa data de referência.\n- Determina que, se a vantagem não for definida por alíquotas, ela será garantida mantendo a diferença da carga tributária efetiva entre os combustíveis.\n- Estabelece salvaguardas de transição: impede que a futura lei complementar fixe vantagem menor que a referida, determina ajuste automático das alíquotas dos biocombustíveis sempre que as alíquotas dos combustíveis fósseis forem alteradas por norma ou decisão com efeito geral, exige que a lei complementar fixe critérios para manter a vantagem caso mude o sistema de recolhimento do tributo do combustível fóssil e dispensa a observância de certo dispositivo constitucional sobre repartição de receitas na aplicação deste artigo.",
+      "resumoDetalhe": "- Cria um regime fiscal favorecido para biocombustíveis destinados ao consumo final, por meio de lei complementar, para garantir tributação inferior à dos combustíveis fósseis e assegurar vantagem competitiva, inclusive em relação a certas contribuições sociais e a um imposto federal.\n- Determina que, enquanto a lei complementar não entrar em vigor, a vantagem competitiva será assegurada mantendo a diferença entre as alíquotas aplicadas aos combustíveis fósseis e aos biocombustíveis que os substituem no patamar vigente numa data de referência.\n- Determina que, se a vantagem não for definida por alíquotas, ela será garantida mantendo a diferença da carga tributária efetiva entre os combustíveis.\n- Estabelece salvaguardas de transição: impede que a futura lei complementar fixe vantagem menor que a referida, determina ajuste automático das alíquotas dos biocombustíveis sempre que as alíquotas dos combustíveis fósseis forem alteradas por norma ou decisão com efeito geral, exige que a lei complementar fixe critérios para manter a vantagem caso mude o sistema de recolhimento do tributo do combustível fóssil e dispensa a observância de certo dispositivo constitucional sobre repartição de receitas na aplicação dessas regras.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-06-26T00:39:02.618Z",
@@ -136,13 +136,13 @@
     "2330227": {
       "sourceHash": "42e99f37dd328a51af930c0ee85dad30fc3f387e6e4735c86256394d16e9da61",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
-      "resumoCard": "Limita quanto a União pode aumentar cobranças patrimoniais na atualização da planta de valores, fixando um teto ligado ao IPCA (IPCA, índice oficial de inflação) e um limite específico para 2022.",
-      "resumoDetalhe": "- Limita o reajuste das receitas patrimoniais resultantes da atualização da planta de valores, determinando que qualquer aumento observe um percentual máximo definido em regulamento, aplicado sobre os valores cobrados no ano anterior, ressalvada a correção de inconsistências cadastrais.\n- Determina que o regulamento não poderá fixar um percentual acima de um teto vinculado ao IPCA (IPCA, índice oficial de inflação) e estabelece, para 2022, um limite específico equivalente ao IPCA do exercício anterior, com a Secretaria responsável fazendo os lançamentos e publicando os documentos de cobrança.\n- Define regra temporária para o período em que o regulamento ainda não for editado: os lançamentos a partir de 2023 seguirão um limite vinculado ao IPCA ou ao limite já fixado para 2022, valendo o menor entre eles, sem prejuízo das correções cadastrais.",
+      "reviewStatus": "approved",
+      "resumoCard": "Limita quanto a União pode aumentar cobranças patrimoniais na atualização da planta de valores, fixando um teto ligado ao IPCA, o índice oficial de inflação.",
+      "resumoDetalhe": "- Limita o reajuste das receitas patrimoniais resultantes da atualização da planta de valores, determinando que qualquer aumento observe um percentual máximo definido em regulamento, aplicado sobre os valores cobrados no ano anterior, ressalvada a correção de inconsistências cadastrais.\n- Determina que o regulamento não poderá fixar percentual acima de um teto vinculado ao IPCA, o índice oficial de inflação, e estabelece, para o ano em que a lei foi publicada, um limite equivalente ao IPCA do exercício anterior, cabendo à Secretaria responsável fazer os lançamentos e publicar os documentos de cobrança.\n- Define uma regra temporária para enquanto o regulamento não for editado, determinando que os lançamentos dos anos seguintes sigam o limite vinculado ao IPCA ou aquele já fixado no ano de publicação, valendo o menor entre os dois, sem prejuízo das correções cadastrais.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:01:17.719Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2334043": {
       "sourceHash": "7ef21b276dfd5a29758afa4b49f755275d633008cc9e460d9a5f9f22a75232bf",
@@ -158,13 +158,13 @@
     "2334279": {
       "sourceHash": "66c48c3a49fa65ac94a877c50a1662728c86adc0e05d1b0bdaf5e6a610d5f5ce",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Cria funções comissionadas no quadro de pessoal do Conselho Nacional de Justiça.",
-      "resumoDetalhe": "- Cria funções comissionadas no quadro de pessoal do Conselho Nacional de Justiça, destinadas a servidores com vínculo efetivo ao Poder Judiciário.\n- Determina que as despesas decorrentes serão pagas com recursos do orçamento do Conselho e que a criação só será implementada mediante autorização prevista no anexo da lei orçamentária anual.\n- Prevê que a implementação deve observar as normas de controle fiscal e orçamentário aplicáveis e que a lei entra em vigor na data de sua publicação.",
+      "resumoDetalhe": "- Cria funções comissionadas no quadro de pessoal do Conselho Nacional de Justiça, destinadas a servidores com vínculo efetivo ao Poder Judiciário.\n- Determina que as despesas decorrentes serão pagas com recursos do orçamento do Conselho e que a criação só será implementada mediante autorização prevista no anexo da lei orçamentária anual.\n- Prevê que a implementação deve observar as normas de controle fiscal e orçamentário aplicáveis.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2336484": {
       "sourceHash": "68bfd6f9e5c58a6ee15df4c24c7e7d1d5279c72d015485f415001fe3c158192f",
@@ -180,24 +180,24 @@
     "2340532": {
       "sourceHash": "ddbe5e2e2c13747b2b71bedd5dedbaefb897814292cf60746ff30f392818f217",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Fixa limites e regras para gastos com publicidade e patrocínio de empresas públicas e sociedades de economia mista, com normas específicas para ano eleitoral.",
-      "resumoDetalhe": "- Estabelece um teto anual para gastos com publicidade e patrocínio das empresas públicas, sociedades de economia mista e suas subsidiárias, calculado com base na receita operacional bruta do exercício anterior, e determina que o Conselho da empresa deve aprovar qualquer aumento desse teto.\n- Regula o ano eleitoral: proíbe, na metade inicial do ano de eleição, reconhecer despesas de publicidade institucional que ultrapassem um limite calculado a partir da média dos gastos dos anos anteriores, e permite publicidade mercadológica e patrocínio de produtos ou serviços que concorram no mercado dentro do limite anual.\n- Determina que, para calcular as médias históricas usadas nos limites eleitorais, os gastos sejam atualizados pelo IPCA (índice de preços usado para corrigir valores) ou por índice que o substitua, e que o reconhecimento contábil das despesas siga o regime de competência (conta-se quando a despesa é oficialmente reconhecida).",
+      "resumoDetalhe": "- Estabelece um teto anual para gastos com publicidade e patrocínio das empresas públicas, sociedades de economia mista e suas subsidiárias, calculado com base na receita operacional bruta do exercício anterior, e determina que o Conselho da empresa deve aprovar qualquer aumento desse teto.\n- Proíbe, na metade inicial do ano de eleição, o reconhecimento de despesas de publicidade institucional que ultrapassem um limite calculado a partir da média dos gastos dos anos anteriores, e permite a publicidade comercial e o patrocínio de produtos ou serviços que concorram no mercado, dentro do limite anual.\n- Determina que, para calcular as médias históricas usadas nos limites eleitorais, os gastos sejam atualizados pelo IPCA (índice de preços usado para corrigir valores) ou por índice que o substitua, e que o reconhecimento contábil das despesas siga o regime de competência (conta-se quando a despesa é oficialmente reconhecida).",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2559194": {
       "sourceHash": "45567bdcb8d33f3c9a649e4f0c2dfdc0579af0baf28f82d3c8aa48f6eba41c35",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Cria o Código de Defesa do Contribuinte, estabelecendo direitos e deveres, regras para devedores contumazes e programas de conformidade tributária e aduaneira.",
-      "resumoDetalhe": "- Cria um conjunto de regras que obrigam as administrações tributárias a agir com transparência, boa-fé e informação clara, facilitar o cumprimento dos tributos e oferecer canais e orientações aos contribuintes.\n- Define o conceito de devedor contumaz como quem mantém dívidas fiscais de grande monta, de forma repetida e sem justificativa; prevê notificação, direito de defesa e aplicação de sanções como perda de benefícios, impedimentos para contratar com o poder público e registro público dessa condição.\n- Institui três programas de conformidade (Confia, Sintonia e OEA) de adesão voluntária, com critérios de entrada, monitoramento e exclusão, visando estimular a cooperação, permitir autorregularização e oferecer benefícios como atendimento prioritário, facilidades de regularização e medidas de facilitação aduaneira.\n- Estabelece selos de conformidade para participantes dos programas, regras para concessão, renovação e cancelamento desses selos, e determina integração e compartilhamento de cadastros entre administrações para registrar e divulgar a condição de devedor contumaz.",
+      "resumoDetalhe": "- Cria um conjunto de regras que obrigam as administrações tributárias a agir com transparência, boa-fé e informação clara, facilitar o cumprimento dos tributos e oferecer canais e orientações aos contribuintes.\n- Define o conceito de devedor contumaz como quem mantém dívidas fiscais de grande monta, de forma repetida e sem justificativa; prevê notificação, direito de defesa e aplicação de sanções como perda de benefícios, impedimentos para contratar com o poder público e registro público dessa condição.\n- Institui programas de conformidade de adesão voluntária (Confia, Sintonia e OEA, este último o Operador Econômico Autorizado, voltado ao comércio exterior), com critérios de entrada, monitoramento e exclusão, para estimular a cooperação, permitir a autorregularização e oferecer benefícios como atendimento prioritário, facilidades de regularização e agilidade na alfândega.\n- Estabelece selos de conformidade para participantes dos programas, regras para concessão, renovação e cancelamento desses selos, e determina integração e compartilhamento de cadastros entre administrações para registrar e divulgar a condição de devedor contumaz.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     }
   }
 }

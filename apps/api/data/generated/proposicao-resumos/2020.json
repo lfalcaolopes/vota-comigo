@@ -27,8 +27,8 @@
       "sourceHash": "8c5f7f3401728c3529eef727aa1e9b8cebf1c711ca933b91cad8086b7f1e668f",
       "generationStatus": "generated",
       "reviewStatus": "approved",
-      "resumoCard": "Autoriza estados a usar valores fixos por volume para calcular o ICMS por substituição tributária sobre gasolina, etanol hidratado e diesel",
-      "resumoDetalhe": "- Define que a base de cálculo do ICMS por substituição tributária para óleo diesel, etanol hidratado e gasolina será um valor fixo por unidade de volume, estabelecido por lei estadual\n- Permite que, nas demais operações, a base de cálculo seja o preço ao consumidor final praticado no mercado, apurado conforme regras previstas\n- Estabelece que o valor fixo por volume não pode ser maior do que o preço médio ao consumidor apurado no ano anterior pelo órgão federal competente\n- Garante o direito de restituição ao contribuinte que pagou o imposto por antecipação (quem pagou por substituição tributária) quando o fato presumido não ocorrer ou quando o valor real for menor que o presumido",
+      "resumoCard": "Autoriza estados a usar valores fixos por volume para calcular o ICMS por substituição tributária sobre gasolina, etanol hidratado e diesel.",
+      "resumoDetalhe": "- Define que a base de cálculo do ICMS por substituição tributária para óleo diesel, etanol hidratado e gasolina será um valor fixo por unidade de volume, estabelecido por lei estadual.\n- Permite que, nas demais operações, a base de cálculo seja o preço ao consumidor final praticado no mercado, apurado conforme regras previstas.\n- Estabelece que o valor fixo por volume não pode ser maior do que o preço médio ao consumidor apurado no ano anterior pelo órgão federal competente.\n- Garante o direito de restituição ao contribuinte que pagou o imposto por antecipação (quem pagou por substituição tributária) quando o fato presumido não ocorrer ou quando o valor real for menor que o presumido.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-06-26T02:56:11.740Z",
@@ -38,8 +38,8 @@
       "sourceHash": "0b559f895fe439cfcf4e9f8c3a99ed4814527201e962dc34081ac5c0453a9f99",
       "generationStatus": "generated",
       "reviewStatus": "approved",
-      "resumoCard": "Define um cronograma para aumentar a mistura obrigatória de biodiesel no diesel e prioriza matérias‑primas nacionais.",
-      "resumoDetalhe": "- Estabelece um cronograma de aumento gradual da mistura obrigatória de biodiesel no óleo diesel vendido ao consumidor em todo o país e impõe mistura mínima maior no diesel usado no transporte coletivo das cidades maiores.\n- Autoriza misturas mais altas e condiciona percentuais maiores à realização de testes por fabricantes de veículos e máquinas; permite que o CNPE (Conselho Nacional de Política Energética, órgão que define diretrizes energéticas) reduza temporariamente a mistura por motivo de interesse público.\n- Determina preferência por matérias‑primas nacionais para fabricar o biodiesel, com prioridade à agricultura familiar, e estabelece definições legais para biodiesel, bioquerosene de aviação e diesel verde.",
+      "resumoCard": "Define um cronograma para aumentar a mistura obrigatória de biodiesel no diesel e prioriza matérias-primas nacionais.",
+      "resumoDetalhe": "- Estabelece um cronograma de aumento gradual da mistura obrigatória de biodiesel no óleo diesel vendido ao consumidor em todo o país e impõe mistura mínima maior no diesel usado no transporte coletivo das cidades maiores.\n- Autoriza misturas mais altas e condiciona percentuais maiores à realização de testes por fabricantes de veículos e máquinas; permite que o CNPE (Conselho Nacional de Política Energética, órgão que define diretrizes energéticas) reduza temporariamente a mistura por motivo de interesse público.\n- Determina preferência por matérias-primas nacionais para fabricar o biodiesel, com prioridade à agricultura familiar, e estabelece definições legais para biodiesel, bioquerosene de aviação e diesel verde.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T19:36:40.723Z",
@@ -94,7 +94,7 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Cria um programa e um plano para monitorar e condicionar empréstimos e garantias da União ao cumprimento de metas fiscais por Estados, Distrito Federal e Municípios.",
-      "resumoDetalhe": "- institui o Programa de Acompanhamento e Transparência Fiscal e exige que Estados, Distrito Federal e Municípios que aderirem permitam acesso à Controladoria-Geral da União (CGU) e ao Tribunal de Contas da União (TCU) às suas informações contábeis e fiscais e contraiam novas dívidas apenas conforme o Programa\n- cria o Plano de Promoção do Equilíbrio Fiscal como instrumento temporário para firmar metas e compromissos entre a União e o ente subnacional, condicionando a liberação de recursos e a concessão de garantia federal ao cumprimento dessas metas\n- altera o Regime de Recuperação Fiscal, determinando que os planos incluam medidas como venda de participações ou ativos, adoção de regras previdenciárias, redução de incentivos fiscais, revisão de regimes de servidores, centralização financeira, leilões para pagamento de dívidas e a limitação do crescimento das despesas primárias pela variação do IPCA (índice de inflação oficial), além de criar um Conselho de Supervisão com poderes de fiscalização e aplicação de sanções\n- autoriza a União e a Secretaria do Tesouro Nacional a repactuar e refinanciar dívidas, incorporar saldos devedores resultantes de decisões judiciais, dispensar exigências documentais e estabelecer metodologias, e obriga entes com excesso de gasto com pessoal a reduzir esse excesso gradualmente até se enquadrar, sob risco de restrições",
+      "resumoDetalhe": "- Institui o Programa de Acompanhamento e Transparência Fiscal e exige que Estados, Distrito Federal e Municípios que aderirem permitam acesso à Controladoria-Geral da União (CGU) e ao Tribunal de Contas da União (TCU) às suas informações contábeis e fiscais e contraiam novas dívidas apenas conforme o Programa.\n- Cria o Plano de Promoção do Equilíbrio Fiscal como instrumento temporário para firmar metas e compromissos entre a União e o ente subnacional, condicionando a liberação de recursos e a concessão de garantia federal ao cumprimento dessas metas.\n- Altera o Regime de Recuperação Fiscal, determinando que os planos incluam medidas como venda de participações ou ativos, adoção de regras previdenciárias, redução de incentivos fiscais, revisão de regimes de servidores, centralização financeira, leilões para pagamento de dívidas e a limitação do crescimento das despesas primárias pela variação do IPCA (índice de inflação oficial), além de criar um Conselho de Supervisão com poderes de fiscalização e aplicação de sanções.\n- Autoriza a União e a Secretaria do Tesouro Nacional a repactuar e refinanciar dívidas, incorporar saldos devedores resultantes de decisões judiciais, dispensar exigências documentais e estabelecer metodologias, e obriga entes com excesso de gasto com pessoal a reduzir esse excesso gradualmente até se enquadrar, sob risco de restrições.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:23:14.848Z",
@@ -116,7 +116,7 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Cria um regime extraordinário para o governo federal agir nas finanças, contratos e compras enquanto durar um estado de calamidade por pandemia.",
-      "resumoDetalhe": "- Institui um regime extraordinário durante estado de calamidade nacional por pandemia, permitindo à União adotar medidas urgentes quando o regime normal for incompatível.\n- Autoriza contratações simplificadas de pessoal temporário e de obras, serviços e compras, buscando competição quando possível, e exige critérios objetivos publicados para distribuir equipamentos e insumos de saúde a estados e municípios.\n- Dispensa certas limitações legais para atos e proposições com propósito exclusivo de enfrentar a calamidade, desde que não criem despesa permanente; exige identificação orçamentária e prestação de contas separada das despesas relacionadas e a publicação de relatórios periódicos sobre operações de crédito.\n- Autoriza o Banco Central a comprar e vender títulos do Tesouro e determinados ativos do mercado secundário para enfrentar a crise, com preferência por títulos de empresas menores, exigência de transparência nas operações e regras que limitem pagamento de dividendos e aumentos de remuneração; condiciona benefícios federais a empresas ao compromisso de manutenção de empregos e permite ao Congresso suspender atos do Executivo em caso de irregularidade; a emenda entra em vigor na publicação e é revogada automaticamente ao fim do estado de calamidade.",
+      "resumoDetalhe": "- Institui um regime extraordinário durante estado de calamidade nacional por pandemia, permitindo à União adotar medidas urgentes quando o regime normal for incompatível.\n- Autoriza contratações simplificadas de pessoal temporário e de obras, serviços e compras, buscando competição quando possível, e exige critérios objetivos publicados para distribuir equipamentos e insumos de saúde a estados e municípios.\n- Dispensa certas limitações legais para atos e proposições com propósito exclusivo de enfrentar a calamidade, desde que não criem despesa permanente; exige identificação orçamentária e prestação de contas separada das despesas relacionadas e a publicação de relatórios periódicos sobre operações de crédito.\n- Autoriza o Banco Central a comprar e vender títulos do Tesouro e determinados ativos do mercado secundário para enfrentar a crise, com preferência por títulos de empresas menores, exigência de transparência nas operações e regras que limitem pagamento de dividendos e aumentos de remuneração; condiciona benefícios federais a empresas ao compromisso de manutenção de empregos e permite ao Congresso suspender atos do Executivo em caso de irregularidade; e determina que o regime extraordinário se encerre automaticamente ao fim do estado de calamidade.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-06-26T02:11:46.859Z",
@@ -136,13 +136,13 @@
     "2252295": {
       "sourceHash": "5bf6c2bd7adfa0fba09e55847885680667fc0bb49074ac59de0d84e20a3c523f",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Cria a Estratégia Nacional de Saúde para incentivar pesquisa e a produção nacional de itens essenciais à saúde.",
-      "resumoDetalhe": "- Institui uma estratégia nacional que incentiva pesquisa e desenvolvimento em saúde, capacitação de pessoal, prevenção e combate a epidemias e a criação de um parque industrial para dar autonomia na produção de materiais, medicamentos e insumos.\n- Define Empresas Estratégicas de Saúde (EES) como empresas credenciadas que têm sede e indústria no País, registro na ANVISA (agência que regula produtos de saúde), foco em pesquisa e produção nacional e controle majoritariamente por capital nacional.\n- Dispõe incentivos e apoio às EES, incluindo um regime especial tributário chamado RETEES (regime tributário especial para as EES), acesso a financiamentos e preferência em compras públicas; lista produtos e insumos estratégicos elegíveis e prevê que os benefícios valem por prazo definido a partir da publicação da lei.",
+      "resumoDetalhe": "- Institui uma estratégia nacional que incentiva pesquisa e desenvolvimento em saúde, capacitação de pessoal, prevenção e combate a epidemias e a criação de um parque industrial para dar autonomia na produção de materiais, medicamentos e insumos.\n- Define Empresas Estratégicas de Saúde (EES) como empresas credenciadas que têm sede e indústria no País, registro na ANVISA (agência que regula produtos de saúde), foco em pesquisa e produção nacional e controle majoritariamente por capital nacional.\n- Concede incentivos e apoio a essas empresas, com um regime de tributação mais leve, acesso a financiamentos e preferência nas compras do governo, definindo quais produtos e insumos são considerados estratégicos para ter direito aos benefícios.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2252589": {
       "sourceHash": "bdb9452e2f87cda198358f965d8e5c657b9ae732338875645b462ad957621cbe",
@@ -169,24 +169,24 @@
     "2254253": {
       "sourceHash": "9e3fe9809432cb4d907d982c4500eb135bde0b0e917c7a0cb15b3a190efc894c",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Cria um programa emergencial que usa garantias via FGI para facilitar crédito a pequenas e médias empresas afetadas pela pandemia.",
-      "resumoDetalhe": "- institui o Programa Emergencial de Acesso a Crédito sob a supervisão da área do Ministério da Economia para facilitar acesso a crédito por meio de garantias e preservar pequenas e médias empresas, em defesa de empregos e renda.\n- autoriza aporte da União no FGI (Fundo Garantidor para Investimentos), administrado pelo BNDES (banco estatal de desenvolvimento), para formar um patrimônio separado que sirva de garantia das operações do programa, com direitos e obrigações próprios e sem garantia direta da União sobre esse patrimônio.\n- define regras de funcionamento: a cobertura do FGI vale somente para novas operações contratadas durante a vigência do programa, não isenta os devedores de suas obrigações, limita a parcela do prejuízo que o fundo cobre por agente e permite segregar limites por faixa de faturamento; autoriza contratos e comunicações eletrônicas e exige que agentes sigam procedimentos usuais de cobrança e recuperação.\n- altera regras de fundos garantidores e do Pronampe (programa de apoio a micro e pequenas empresas) para disciplinar comissões, limites de cobertura e formas de recuperação de crédito, incluindo leilão, cessão, securitização e renegociação, e cria conselhos de participação relacionados aos fundos.",
+      "resumoDetalhe": "- Institui o Programa Emergencial de Acesso a Crédito, sob supervisão do Ministério da Economia, para facilitar o acesso a crédito por meio de garantias e preservar pequenas e médias empresas, em defesa dos empregos e da renda.\n- Autoriza aporte da União no FGI (Fundo Garantidor para Investimentos), administrado pelo BNDES (banco estatal de desenvolvimento), para formar um patrimônio separado que sirva de garantia às operações do programa, com direitos e obrigações próprios e sem garantia direta da União sobre esse patrimônio.\n- Define que a cobertura do fundo alcança somente as novas operações contratadas enquanto o programa durar, sem liberar o devedor de suas obrigações, limita a parcela do prejuízo que o fundo cobre por banco e permite separar limites por faixa de faturamento, além de autorizar contratos e comunicações eletrônicas e de exigir dos bancos os procedimentos usuais de cobrança.\n- Altera regras de fundos garantidores e do Pronampe (programa de apoio a micro e pequenas empresas) para disciplinar comissões, limites de cobertura e formas de recuperação de crédito, incluindo leilão, cessão, securitização e renegociação, e cria conselhos de participação relacionados aos fundos.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2254287": {
       "sourceHash": "34cf6e2db5670c70fced86de66a5b33263971d9aa1b23fd22937bda7908d9db5",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
-      "resumoCard": "Garante a contagem do tempo para anuênios, triênios, quinquênios e licenças-prêmio de servidores de saúde e segurança, mas suspende o pagamento desses adicionais até prazo previsto na proposta.",
-      "resumoDetalhe": "- Mantém o cômputo do tempo de serviço para servidores públicos civis e militares das áreas de saúde e de segurança, ou seja, o tempo que conta para adquirir anuênios, triênios, quinquênios, licenças-prêmio e mecanismos equivalentes continua a ser considerado.\n- Proíbe o pagamento de novos blocos aquisitivos para esses direitos durante o prazo estabelecido na proposta; blocos aquisitivos são os momentos em que o servidor passa a ter direito ao aumento decorrente do tempo de serviço.\n- Impede o pagamento retroativo desses novos blocos no período em que vigora a proibição e determina que o pagamento voltará a ser efetuado na data fixada pela proposição.",
+      "reviewStatus": "approved",
+      "resumoCard": "Garante a contagem do tempo para anuênios, triênios, quinquênios e licenças-prêmio de servidores de saúde e segurança, mas suspende o pagamento desses adicionais durante o período de congelamento previsto na lei.",
+      "resumoDetalhe": "- Mantém o cômputo do tempo de serviço para servidores públicos civis e militares das áreas de saúde e de segurança, ou seja, o tempo que conta para adquirir anuênios, triênios, quinquênios, licenças-prêmio e mecanismos equivalentes continua a ser considerado.\n- Proíbe o pagamento de novos blocos aquisitivos desses direitos durante o período de congelamento, sendo o bloco aquisitivo o momento em que o servidor passa a ter direito ao aumento decorrente do tempo de serviço.\n- Impede também o pagamento retroativo desses blocos referentes ao período de congelamento e determina que os pagamentos voltem a ser feitos quando esse período terminar.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:10:38.605Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2255149": {
       "sourceHash": "0d48091d646c666c75de7d6afb69b644f89a18cb501eca4097e4925e36eebfea",
@@ -237,7 +237,7 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Cria o Programa BR do Mar para estimular a cabotagem (navegação entre portos do país), permitindo que empresas brasileiras usem embarcações de suas subsidiárias estrangeiras e definindo incentivos e regras para o setor.",
-      "resumoDetalhe": "- institui o Programa BR do Mar com objetivos para ampliar a oferta, melhorar a qualidade e aumentar a concorrência no transporte por cabotagem, e cria regras de habilitação e monitoramento pelo Ministério da Infraestrutura.\n- autoriza o afretamento de embarcações de subsidiárias estrangeiras por empresas brasileiras para operar na cabotagem, condicionando a operação a inspeções brasileiras, tripulação com maioria de brasileiros em cada nível técnico, comandante e chefias brasileiros, seguro marítimo obrigatório e regime especial de admissão temporária com suspensão de tributos federais.\n- permite o uso de recursos do AFRMM (taxa que financia a Marinha Mercante) para construção, manutenção, docagem e garantia de embarcações em estaleiros brasileiros; autoriza o uso temporário de áreas portuárias para operações especiais; e ajusta regras e a estrutura de agências reguladoras e órgãos responsáveis pela infraestrutura portuária.",
+      "resumoDetalhe": "- Institui o Programa BR do Mar com objetivos para ampliar a oferta, melhorar a qualidade e aumentar a concorrência no transporte por cabotagem, e cria regras de habilitação e monitoramento pelo Ministério da Infraestrutura.\n- Autoriza o afretamento de embarcações de subsidiárias estrangeiras por empresas brasileiras para operar na cabotagem, condicionando a operação a inspeções brasileiras, tripulação com maioria de brasileiros em cada nível técnico, comandante e chefias brasileiros, seguro marítimo obrigatório e regime especial de admissão temporária com suspensão de tributos federais.\n- Permite o uso de recursos do AFRMM (taxa que financia a Marinha Mercante) para construção, manutenção, docagem e garantia de embarcações em estaleiros brasileiros; autoriza o uso temporário de áreas portuárias para operações especiais; e ajusta regras e a estrutura de agências reguladoras e órgãos responsáveis pela infraestrutura portuária.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-06-25T22:43:30.565Z",
@@ -270,7 +270,7 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Destina parte de recursos do setor elétrico à Conta de Desenvolvimento Energético (CDE), muda regras do setor e transfere para a União ações da CNEN relativas à INB e à Nuclep.",
-      "resumoDetalhe": "- Destina recursos não aplicados em projetos de pesquisa, desenvolvimento e eficiência energética à Conta de Desenvolvimento Energético (CDE) para ajudar a reduzir encargos dos consumidores durante o período de amortização de operações de crédito, dando à ANEEL a tarefa de regular e fiscalizar essa destinação e mantendo parte dos recursos para projetos em andamento.\n- Estabelece limites e condições para descontos nas tarifas de uso da rede, aplicando esses descontos apenas a novos empreendimentos que cumpram condições temporais e prevê diretrizes para reconhecer benefícios ambientais de fontes de baixa emissão, em articulação entre os órgãos responsáveis e levando em conta a segurança do suprimento e a competitividade.\n- Transfere para a União as ações pertencentes à CNEN que representam o capital da INB e da Nuclep e determina que essas empresas sejam transformadas em empresas públicas vinculadas ao Ministério de Minas e Energia, com resgate das ações privadas com base no patrimônio contábil; prevê representação da União nas assembleias pela Procuradoria‑Geral da Fazenda Nacional.\n- Autoriza a outorga e a contratação para a usina termonuclear Angra, definindo regras para formação do preço da energia, cláusulas de reajuste e revisão e prevendo que eventuais ganhos obtidos em contratações possam ser apropriados em benefício do consumidor.",
+      "resumoDetalhe": "- Destina recursos não aplicados em projetos de pesquisa, desenvolvimento e eficiência energética à Conta de Desenvolvimento Energético (CDE) para ajudar a reduzir encargos dos consumidores durante o período de amortização de operações de crédito, dando à ANEEL a tarefa de regular e fiscalizar essa destinação e mantendo parte dos recursos para projetos em andamento.\n- Estabelece limites e condições para descontos nas tarifas de uso da rede, aplicando esses descontos apenas a novos empreendimentos que cumpram condições temporais e prevê diretrizes para reconhecer benefícios ambientais de fontes de baixa emissão, em articulação entre os órgãos responsáveis e levando em conta a segurança do suprimento e a competitividade.\n- Transfere para a União as ações pertencentes à CNEN que representam o capital da INB e da Nuclep e determina que essas empresas sejam transformadas em empresas públicas vinculadas ao Ministério de Minas e Energia, com resgate das ações privadas com base no patrimônio contábil; prevê representação da União nas assembleias pela Procuradoria-Geral da Fazenda Nacional.\n- Autoriza a outorga e a contratação para a usina termonuclear Angra, definindo regras para formação do preço da energia, cláusulas de reajuste e revisão e prevendo que eventuais ganhos obtidos em contratações possam ser apropriados em benefício do consumidor.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-08T00:31:37.208Z",
@@ -291,8 +291,8 @@
       "sourceHash": "40470f627d3a7cbe2f1e579480795b7e813a9c1eb974d4f0591c965e0ee93b23",
       "generationStatus": "generated",
       "reviewStatus": "approved",
-      "resumoCard": "Afasta certas restrições dessa lei para cargos de direção, funções específicas e para um quadro permanente previsto em outra lei.",
-      "resumoDetalhe": "- Afasta a aplicação de restrições previstas em um artigo daquela lei para cargos de direção e para funções especiais criadas por leis específicas. \n- Estende o mesmo afastamento ao quadro permanente previsto em outra lei.",
+      "resumoCard": "Afasta a proibição de contratar pessoal e de realizar concurso público, imposta durante a pandemia de Covid-19, para cargos de direção de universidades federais e para um quadro permanente federal.",
+      "resumoDetalhe": "- Afasta as proibições de admitir ou contratar pessoal e de realizar concurso público que o programa de enfrentamento à pandemia de Covid-19 impôs aos entes federativos.\n- Aplica esse afastamento aos cargos de direção e às funções criados pelas leis que instituíram universidades federais, e ao quadro permanente previsto em lei própria.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T23:22:20.432Z",
@@ -334,13 +334,13 @@
     "2268069": {
       "sourceHash": "9f92d974d60f7663b2dd9334be2d5a012020cc9ed4f8bc798c42245793af468e",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Estabelece regras para conceder autorizações no transporte rodoviário interestadual e internacional de passageiros.",
-      "resumoDetalhe": "- Estabelece que não haverá limite para autorizações do serviço regular, salvo em caso de inviabilidade técnica, operacional ou econômica, e determina que o Poder Executivo defina esses critérios; autoriza a ANTT (agência federal que regula o transporte rodoviário) a realizar processo seletivo público.\n- Exige que a outorga considere os mercados de cada linha, proíbe o seccionamento intermunicipal, e fixe itinerários, horários e frequências mínimas; obriga a oferta de gratuidades e descontos com ressarcimento específico para o serviço convencional e exige comprovação de acessibilidade, segurança e capacidade técnica, operacional e econômica, além de capital social mínimo.\n- Determina que interessados requeiram autorização ao Poder Executivo indicando mercados pretendidos, itinerários, horários, características da frota, endereços e coordenadas de terminais e pontos de parada, e um estudo de viabilidade econômica; limita a utilização de veículos de terceiros a uma parte da frota.\n- Regula sanções e regularização: fixa multa máxima passível de correção anual, prevê conversão de multas anteriores em advertência se os valores forem investidos para melhorar o serviço, destina a arrecadação das novas multas à fiscalização e educação, e suspende autorizações concedidas em período determinado para reanálise segundo os novos critérios.",
+      "resumoDetalhe": "- Estabelece que não haverá limite para autorizações do serviço regular, salvo em caso de inviabilidade técnica, operacional ou econômica, e determina que o Poder Executivo defina esses critérios; autoriza a ANTT (agência federal que regula o transporte rodoviário) a realizar processo seletivo público.\n- Exige que a autorização leve em conta os mercados atendidos por cada linha e fixe itinerários, horários e frequências mínimas, proíbe que a empresa fatie a linha para explorar apenas trechos entre municípios, obriga a oferta de gratuidades e descontos com ressarcimento próprio no serviço convencional e cobra comprovação de acessibilidade, segurança, capacidade técnica e econômica e capital social mínimo.\n- Determina que interessados requeiram autorização ao Poder Executivo indicando mercados pretendidos, itinerários, horários, características da frota, endereços e coordenadas de terminais e pontos de parada, e um estudo de viabilidade econômica; limita a utilização de veículos de terceiros a uma parte da frota.\n- Fixa um teto para as multas, com correção anual, permite converter multas anteriores em advertência quando o valor correspondente for investido na melhoria do serviço, destina o dinheiro das novas multas à fiscalização e à educação e suspende autorizações concedidas em um período determinado para que sejam reanalisadas.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:10:38.605Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2268417": {
       "sourceHash": "16ab520706e5d7a4553d2680d3e4afa3dbed7bdec7e298149f27a95785bc92df",
@@ -356,13 +356,13 @@
     "2309349": {
       "sourceHash": "3a19d78dc360514fdd46dd3b738da21afe5a1a13724eb895cfa4f4fff42e18eb",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Cria piso salarial nacional de R$ 4.750 para Enfermeiros e pisos proporcionais para Técnico de Enfermagem, Auxiliar de Enfermagem e Parteira, com atualização anual pelo INPC.",
-      "resumoDetalhe": "- Fixa um piso salarial nacional para Enfermeiros aplicável tanto a contratos pela CLT quanto a servidores públicos em todos os níveis de governo.\n- Estabelece pisos para Técnico de Enfermagem, Auxiliar de Enfermagem e Parteira como frações do piso do Enfermeiro.\n- Determina que o piso seja atualizado todo ano com base no INPC (Índice Nacional de Preços ao Consumidor).\n- Assegura a manutenção de salários superiores ao piso e exige que acordos individuais e coletivos respeitem o piso, tornando ilegal sua supressão.",
+      "resumoDetalhe": "- Fixa um piso salarial nacional para Enfermeiros aplicável tanto a contratos pela CLT quanto a servidores públicos em todos os níveis de governo.\n- Estabelece pisos para Técnico de Enfermagem, Auxiliar de Enfermagem e Parteira como frações do piso do Enfermeiro.\n- Determina que o piso seja atualizado todo ano pelo INPC, o índice oficial que mede a inflação para as famílias de menor renda.\n- Assegura a manutenção de salários superiores ao piso e exige que acordos individuais e coletivos respeitem o piso, tornando ilegal sua supressão.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     }
   }
 }

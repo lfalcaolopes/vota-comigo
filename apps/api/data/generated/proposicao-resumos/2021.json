@@ -26,31 +26,31 @@
     "2268884": {
       "sourceHash": "a01ab6da5bd68172b53fd5d177a712f703c7d55a4dcbe389ade48ad4cef7d2c0",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Permite prorrogar por prazo estendido isenções e incentivos de ICMS (imposto sobre circulação de mercadorias e serviços) destinados ao comércio quando o beneficiário for o real remetente da mercadoria.",
-      "resumoDetalhe": "- Altera a lei que regula convênios do ICMS (imposto sobre circulação de mercadorias e serviços) para permitir a prorrogação, por prazo estendido, das isenções, incentivos e benefícios fiscais vinculados ao imposto, desde que o beneficiário seja o real remetente da mercadoria.\n- Altera o prazo máximo de validade desses convênios, estabelecendo a possibilidade de renovação por um período mais longo de fruição.\n- Determina que a nova regra passa a valer na data de publicação da lei.",
+      "resumoDetalhe": "- Altera a lei que regula convênios do ICMS (imposto sobre circulação de mercadorias e serviços) para permitir a prorrogação, por prazo estendido, das isenções, incentivos e benefícios fiscais vinculados ao imposto, desde que o beneficiário seja o real remetente da mercadoria.\n- Altera o prazo máximo de validade desses convênios, estabelecendo a possibilidade de renovação por um período mais longo de fruição.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2268936": {
       "sourceHash": "57c057792cb3bfff96a2cc93f8b1526f84043f0fcc97e46e8dc65b6a69bfb824",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Torna inelegível quem teve contas públicas rejeitadas por irregularidade insanável que configure ato doloso de improbidade administrativa, salvo condenação só à multa ou se a decisão for suspensa/anulada pelo Judiciário.",
-      "resumoDetalhe": "- Define inelegibilidade para quem tiver contas relativas ao exercício de cargo ou função pública rejeitadas por irregularidade insanável que configure ato doloso de improbidade administrativa (ato intencional de má-fé), por decisão irrecorrível, excetuando-se os casos de condenação exclusivamente à pena de multa ou de suspensão/anulação da decisão pelo Poder Judiciário.\n- Aplica essa inelegibilidade a todos os ordenadores de despesa, sem excluir mandatários que tenham agido nessa condição.\n- Estabelece que a inelegibilidade vale para as eleições que se realizarem durante um prazo contado a partir da data da decisão, conforme previsão do texto.",
+      "resumoDetalhe": "- Define inelegibilidade para quem tiver contas relativas ao exercício de cargo ou função pública rejeitadas por irregularidade insanável que configure ato doloso de improbidade administrativa (ato intencional de má-fé), por decisão irrecorrível, excetuando-se os casos de condenação exclusivamente à pena de multa ou de suspensão ou anulação da decisão pelo Poder Judiciário.\n- Aplica essa inelegibilidade a todos os ordenadores de despesa, sem excluir mandatários que tenham agido nessa condição.\n- Estabelece que a inelegibilidade vale para as eleições realizadas dentro de um prazo contado a partir da data da decisão.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2269745": {
       "sourceHash": "9ffb30b461547845ff46f46a02873fa8428474c81017ac9f039327baa78dde8e",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Cria a Política Nacional da Transição Energética (PONTE) para orientar a produção de energia renovável e promover uso eficiente e redução do aquecimento global.",
-      "resumoDetalhe": "- cria a Política Nacional da Transição Energética, chamada PONTE, com o objetivo de promover o uso eficiente de energia por meio de projetos sustentáveis que estimulem novas tecnologias e reduzam o aquecimento global\n- estabelece princípios e diretrizes para a transição, incluindo políticas públicas para reduzir impactos socioeconômicos do aquecimento global, um padrão energético de baixas emissões com atenção a meio ambiente, sociedade e governança, política fiscal vinculada ao custo social das emissões, e planos de longo prazo para produção e infraestrutura\n- define termos e categorias usados na política, como o que é energia renovável, distribuidoras e indústrias geradoras renováveis, microgeração, pequenas centrais e os conceitos de autoconsumidor individual e coletivo, com regras sobre produção, armazenamento e venda para consumo próprio\n- encarrega o governo federal, coordenado pelo Ministério de Minas e Energia, de elaborar um plano de metas para implantar a política, integra outros ministérios e agências federais na estruturação, e exige regulamentação dentro do prazo previsto na lei",
+      "resumoDetalhe": "- Cria a Política Nacional da Transição Energética, chamada PONTE, com o objetivo de promover o uso eficiente de energia por meio de projetos sustentáveis que estimulem novas tecnologias e reduzam o aquecimento global.\n- Estabelece princípios e diretrizes para a transição, incluindo políticas públicas para reduzir impactos socioeconômicos do aquecimento global, um padrão energético de baixas emissões com atenção a meio ambiente, sociedade e governança, política fiscal vinculada ao custo social das emissões, e planos de longo prazo para produção e infraestrutura.\n- Define termos e categorias usados na política, como o que é energia renovável, distribuidoras e indústrias geradoras renováveis, microgeração, pequenas centrais e os conceitos de autoconsumidor individual e coletivo, com regras sobre produção, armazenamento e venda para consumo próprio.\n- Encarrega o governo federal, coordenado pelo Ministério de Minas e Energia, de elaborar um plano de metas para implantar a política, integra outros ministérios e agências federais na estruturação, e exige regulamentação dentro do prazo previsto na lei.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:37:36.257Z",
@@ -70,13 +70,13 @@
     "2270100": {
       "sourceHash": "e27f0ff38aa3f463e0c97564d4d999a65f9e5af11795154fc5aaf9c2afcb160f",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Dispensa a exigência de contrato de trabalho direto entre tripulante e operador quando o operador for órgão ou entidade pública em missões institucionais ou no exercício de poder de polícia.",
-      "resumoDetalhe": "- Dispensa a exigência de contrato de trabalho firmado diretamente com o operador da aeronave quando o operador for órgão ou entidade da administração pública em missões institucionais ou no exercício de poder de polícia.\n- Afirma que, nessas contratações, o tripulante deve manter vínculo empregatício com a empresa que fornece a aeronave, preservando os direitos trabalhistas do aeronauta.\n- Determina que a medida provisória passa a valer na data da sua publicação.",
+      "resumoDetalhe": "- Dispensa a exigência de contrato de trabalho firmado diretamente com o operador da aeronave quando o operador for órgão ou entidade da administração pública em missões institucionais ou no exercício de poder de polícia.\n- Determina que, nessas contratações, o tripulante mantenha vínculo empregatício com a empresa que fornece a aeronave, preservando os direitos trabalhistas do aeronauta.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:16:05.310Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2270789": {
       "sourceHash": "444417daf6bbc927d63634303362cc5897585cf05e34734cdfa5894f017fcb8d",
@@ -104,7 +104,7 @@
       "sourceHash": "6b04e89d2ff40d226367343b51e4de45533f4287a0ebd065e755a07c33222fe3",
       "generationStatus": "generated",
       "reviewStatus": "approved",
-      "resumoCard": "Organiza o sistema postal, abre o setor à iniciativa privada e autoriza transformar os Correios em sociedade de economia mista (empresa com participação do Estado e de investidores), preservando a garantia do serviço postal universal (entrega de correspondência a toda a população).",
+      "resumoCard": "Organiza o sistema postal, abre o setor à iniciativa privada e autoriza transformar os Correios em sociedade de economia mista, empresa com participação do Estado e de investidores, preservando a entrega de correspondência a toda a população.",
       "resumoDetalhe": "- Define e organiza o Sistema Nacional de Serviços Postais, explicando termos como serviço postal, correspondência, objeto postal, correio híbrido e serviços de apoio, e atribui funções ao Ministério das Comunicações e ao órgão regulador.\n- Permite a atuação de empresas privadas nos serviços postais e estabelece princípios para essa atuação: diversidade de oferta, competição justa, respeito aos direitos dos usuários, tratamento igualitário entre operadores e incentivo ao desenvolvimento tecnológico.\n- Determina que a União garanta a prestação do serviço postal universal (entrega de correspondência a toda a população), por meio de empresa estatal existente ou por contratos de concessão, e exige que o operador designado assegure continuidade, metas de universalização, contabilidade separada e informação clara aos usuários.\n- Autoriza a transformação da Empresa Brasileira de Correios e Telégrafos (ECT) em sociedade de economia mista, prevê exclusividade temporária a alguns serviços dos Correios e a possibilidade de outorga de concessões, e atualiza competências regulatórias e dispositivos sobre carreiras e tabelas vinculadas à regulação.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
@@ -148,8 +148,8 @@
       "sourceHash": "5064d6273ef849d63c202ad206281f6da6c95e77bd25ede3e50452c93e74d092",
       "generationStatus": "generated",
       "reviewStatus": "approved",
-      "resumoCard": "Permite que empresas e outras entidades privadas comprem diretamente vacinas contra a Covid-19 aprovadas pela Anvisa ou por autoridades estrangeiras reconhecidas, desde que usem importadora autorizada, e autoriza a dedução integral dessas despesas do imposto de renda.",
-      "resumoDetalhe": "- Permite a pessoas jurídicas de direito privado adquirir diretamente vacinas contra a Covid-19 que tenham autorização da Anvisa ou aprovação por autoridades sanitárias estrangeiras reconhecidas e certificadas pela Organização Mundial da Saúde (Anvisa é a agência que fiscaliza vacinas no Brasil; aprovação emergencial é uma autorização temporária por causa de emergência de saúde; registro sanitário é a autorização para comercializar o produto).\n- Exige que a compra seja feita por meio de empresa importadora legalmente habilitada perante a Anvisa (empresa registrada para trazer vacinas ao país e cumprir exigências sanitárias).\n- Permite que as despesas com a aquisição dessas vacinas sejam integralmente deduzidas do imposto de renda das pessoas jurídicas.",
+      "resumoCard": "Permite que empresas privadas comprem diretamente vacinas contra a Covid-19 aprovadas pela Anvisa ou por autoridades estrangeiras reconhecidas, por meio de importadora autorizada, e deduzam integralmente essa despesa do imposto de renda.",
+      "resumoDetalhe": "- Permite a pessoas jurídicas de direito privado adquirir diretamente vacinas contra a Covid-19 que tenham autorização da Anvisa ou aprovação por autoridades sanitárias estrangeiras reconhecidas e certificadas pela Organização Mundial da Saúde, sendo a Anvisa a agência que fiscaliza vacinas no Brasil.\n- Exige que a compra seja feita por meio de empresa importadora legalmente habilitada perante a Anvisa (empresa registrada para trazer vacinas ao país e cumprir exigências sanitárias).\n- Permite que as despesas com a aquisição dessas vacinas sejam integralmente deduzidas do imposto de renda das pessoas jurídicas.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-06-26T02:30:38.288Z",
@@ -158,20 +158,20 @@
     "2275255": {
       "sourceHash": "d85dc09f792db6dfaaf0ded6d0b096f552c5960c595f20b16b0ec0170d33148a",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Concede prazo extra para transposições e contratos e autoriza ajustes em regras do Regime de Recuperação Fiscal.",
-      "resumoDetalhe": "- Concede prazo adicional para que Estados, Distrito Federal e Municípios façam atos de transposição e de transferência de saldos financeiros, e estabelece que as regras da lei podem valer durante estado de calamidade ou durante o exercício financeiro previsto na lei.\n- Impede que a União aplique penalidades ou exija a restituição por descumprimento de limite de despesas por prazo adicional.\n- Autoriza aditivos em contratos de refinanciamento para reduzir taxa de juros e trocar o índice de atualização quando o contrato estiver atrelado ao IGP-M (índice de inflação usado em alguns contratos), observando condições previstas em lei.\n- Permite afastar vedações no Regime de Recuperação Fiscal quando isso estiver previsto no Plano de Recuperação; define que valores não pagos por Estados em recuperação terão encargos contratuais e a Selic (taxa básica de juros) aplicados, poderão ser capitalizados conforme regras de refinanciamento e incorporados ao saldo do contrato; e autoriza a União a celebrar contratos de refinanciamento, com as mesmas condições financeiras de contratos de recuperação, para tratar de débitos reconhecidos por decisões judiciais.",
+      "resumoDetalhe": "- Concede prazo adicional para que Estados, Distrito Federal e Municípios remanejem saldos financeiros entre programas, valendo essas regras durante o estado de calamidade ou o exercício financeiro alcançado pela lei.\n- Impede que a União aplique penalidades ou exija a restituição por descumprimento de limite de despesas por prazo adicional.\n- Autoriza aditivos em contratos de refinanciamento para reduzir taxa de juros e trocar o índice de atualização quando o contrato estiver atrelado ao IGP-M (índice de inflação usado em alguns contratos), observando condições previstas em lei.\n- Permite afastar proibições do Regime de Recuperação Fiscal quando o próprio Plano de Recuperação previr isso, define que os valores não pagos pelos Estados em recuperação sejam corrigidos por encargos contratuais e pela Selic (taxa básica de juros) e incorporados ao saldo devedor, e autoriza a União a refinanciar débitos reconhecidos por decisão judicial nas mesmas condições.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:01:17.719Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2275537": {
       "sourceHash": "0a8ffd80e21f8d347dd1640c3ce82bb6621d34f601581491c919f8b8622af72a",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Altera a composição e a forma de escolha dos membros do Conselho Nacional do Ministério Público.",
-      "resumoDetalhe": "- Define a composição e a presidência do Conselho Nacional do Ministério Público, estabelecendo que o Procurador‑Geral da República o presidirá e que os demais membros serão nomeados pelo Presidente da República e aprovados pelo Senado, para mandatos curtos com uma recondução permitida.\n- Organiza a distribuição de vagas por origem profissional, reservando lugares para representantes do Ministério Público Federal, do Trabalho e Militar, para membros dos Ministérios Públicos estaduais e do Distrito Federal, e para indicações de tribunais superiores, da Ordem dos Advogados e de cidadãos de notório saber jurídico.\n- Estabelece que a Câmara dos Deputados e o Senado terão, em alternância, a prerrogativa de indicar um membro do Ministério Público para integrar o Conselho, obedecendo à ordem de escolha entre as Casas.\n- Determina que o Conselho eleja, em votação secreta, um Corregedor Nacional sem possibilidade de recondução e autoriza que essa função seja ocupada por pessoa que não seja necessariamente membro do Ministério Público.",
+      "resumoDetalhe": "- Define a composição e a presidência do Conselho Nacional do Ministério Público, estabelecendo que o Procurador-Geral da República o presidirá e que os demais membros serão nomeados pelo Presidente da República e aprovados pelo Senado, para mandatos curtos com uma recondução permitida.\n- Organiza a distribuição de vagas por origem profissional, reservando lugares para representantes do Ministério Público Federal, do Trabalho e Militar, para membros dos Ministérios Públicos estaduais e do Distrito Federal, e para indicações de tribunais superiores, da Ordem dos Advogados e de cidadãos de notório saber jurídico.\n- Estabelece que a Câmara dos Deputados e o Senado terão, em alternância, a prerrogativa de indicar um membro do Ministério Público para integrar o Conselho, obedecendo à ordem de escolha entre as Casas.\n- Determina que o Conselho eleja, em votação secreta, um Corregedor Nacional sem possibilidade de recondução e autoriza que essa função seja ocupada por pessoa que não seja necessariamente membro do Ministério Público.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T17:45:21.754Z",
@@ -180,13 +180,13 @@
     "2276475": {
       "sourceHash": "773caec9cebd63d3f9968ef70b42015cf53821023656cfa00e5f725488f0c54c",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Cria um programa que incentiva empresas a doar recursos para pesquisas e produtos contra a Covid-19 e permite deduzir essas doações do imposto de renda.",
-      "resumoDetalhe": "- Cria o Programa Pró-Pesquisa-Covid-19 para financiar pesquisa e desenvolvimento de medicamentos, vacinas, equipamentos e tratamentos voltados a reduzir os efeitos sanitários da Covid-19 enquanto durar a emergência de saúde pública.\n- Permite que pessoas jurídicas no regime Lucro Real (empresas que apuram imposto sobre o lucro com base no resultado real) deduzam do imposto de renda as doações feitas a instituições habilitadas para essas pesquisas.\n- Exige que as instituições receptoras sejam previamente habilitadas pelo Ministério da Saúde, apresentem estudos com estimativas de custo e o montante já disponível, e prevê que recursos além do previsto sejam redistribuídos pelo Ministério entre projetos que precisem de mais apoio.\n- Estabelece um limite para o impacto nas contas públicas previsto nesta lei.",
+      "resumoDetalhe": "- Cria o Programa Pró-Pesquisa-Covid-19 para financiar pesquisa e desenvolvimento de medicamentos, vacinas, equipamentos e tratamentos voltados a reduzir os efeitos sanitários da Covid-19 enquanto durar a emergência de saúde pública.\n- Permite que pessoas jurídicas no regime Lucro Real (empresas que apuram imposto sobre o lucro com base no resultado real) deduzam do imposto de renda as doações feitas a instituições habilitadas para essas pesquisas.\n- Exige que as instituições receptoras sejam previamente habilitadas pelo Ministério da Saúde, apresentem estudos com estimativas de custo e o montante já disponível, e prevê que recursos além do previsto sejam redistribuídos pelo Ministério entre projetos que precisem de mais apoio.\n- Fixa um teto para a renúncia de receita gerada pelo programa, limitando quanto o governo deixa de arrecadar com essas deduções.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2278161": {
       "sourceHash": "33a41b3ff4327f8e8e6d8da3943d8a629be57d81227843267c4a960ef42f6377",
@@ -246,42 +246,42 @@
     "2280928": {
       "sourceHash": "30d719f5b390406aec79a1d96e95f5073401bfc3140508a1205a524fc9a465db",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Autoriza o governo a conceder licença compulsória de patentes para produzir vacinas, medicamentos e insumos em emergências de saúde pública.",
-      "resumoDetalhe": "- Concede licença compulsória temporária e não exclusiva para exploração de patentes e pedidos de patente necessários ao enfrentamento de emergências de saúde pública, permitindo que instituições públicas, empresas privadas ou organizações da sociedade civil com capacidade econômica realizem a exploração, vedando sublicenciamento.\n- Determina que o Poder Executivo publique e mantenha uma lista de patentes e pedidos de patente sujeitos a licença compulsória, consultando órgãos públicos, instituições de pesquisa e entidades da sociedade civil; permite que qualquer instituição peça a inclusão e prevê a exclusão da lista quando o titular assumir compromissos que garantam oferta interna por meio de exploração direta, licenciamento voluntário ou contratos transparentes.\n- Obriga os titulares a fornecer informações técnicas, resultados de testes e, quando necessário, material biológico aos licenciados; autoriza agências reguladoras e instituições a compartilhar dossiês e materiais; estabelece critérios para fixar a remuneração do titular considerando valor econômico, duração, investimentos e custos, e prevê uma remuneração provisória até que o valor definitivo seja definido; prevê análise prioritária dos pedidos de licença, aprovação tácita se não houver decisão no prazo e permite exportação por razões humanitárias.\n- Define a emergência de saúde pública causada pelo novo coronavírus (SARS-CoV-2) como emergência nacional para fins desta lei e inclui na lista patentes associadas a vacinas contra o vírus (incluindo insumos e invenções necessários à produção) e ao medicamento Remdesivir, salvo quando já existirem acordos de transferência de tecnologia ou licenciamento voluntário que garantam a oferta interna; exige que o Executivo edite os regulamentos necessários e busque cooperação internacional para facilitar acesso universal aos produtos.",
+      "resumoDetalhe": "- Concede licença compulsória temporária e não exclusiva para exploração de patentes e pedidos de patente necessários ao enfrentamento de emergências de saúde pública, permitindo que instituições públicas, empresas privadas ou organizações da sociedade civil com capacidade econômica realizem a exploração, vedando o sublicenciamento.\n- Determina que o Poder Executivo publique e mantenha uma lista das patentes sujeitas à licença compulsória, ouvindo órgãos públicos, instituições de pesquisa e entidades da sociedade civil, e prevê a saída da lista quando o dono da patente assumir compromissos que garantam o abastecimento do país.\n- Obriga o dono da patente a repassar ao licenciado as informações técnicas, os resultados de testes e, quando necessário, o material biológico preciso para produzir, e fixa critérios para calcular quanto ele receberá pelo uso da patente, com um valor provisório até que o definitivo seja definido.\n- Trata a emergência causada pelo novo coronavírus (SARS-CoV-2) como emergência nacional para efeito dessa licença e inclui na lista as patentes ligadas às vacinas contra o vírus e ao medicamento Remdesivir, salvo quando já houver acordo de transferência de tecnologia ou licenciamento voluntário que garanta o abastecimento interno.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2283432": {
       "sourceHash": "6f2286245e207febc4c098f4665a1f2ea9d231b396845d1971fdd389dc77ea0e",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Aumenta a tolerância na pesagem por eixo e permite liberar veículos sujeitos à remoção, com prazo para regularizar a situação.",
-      "resumoDetalhe": "- Altera a regra sobre pesagem por eixo, elevando a margem de tolerância e permitindo uma margem adicional para veículos de menor porte, desde que respeitado o limite técnico do fabricante e a tolerância para o peso bruto total, e autoriza o Conselho Nacional de Trânsito a regulamentar. \n- Estabelece vigência temporária para esses percentuais, remetendo ao Conselho Nacional de Trânsito a definição dos limites após o prazo previsto na lei. \n- Permite que veículos que seriam removidos sejam liberados quando a irregularidade não puder ser sanada no local, desde que o veículo ofereça condições de segurança, mediante recolhimento do Certificado de Licenciamento Anual e concessão de prazo para regularização; exclui essa liberação para determinada infração específica e prevê registro de restrição no Renavam e remoção se não houver regularização.",
+      "resumoDetalhe": "- Altera a regra sobre pesagem por eixo, elevando a margem de tolerância e permitindo uma margem adicional para veículos de menor porte, desde que respeitado o limite técnico do fabricante e a tolerância para o peso bruto total, e autoriza o Conselho Nacional de Trânsito a regulamentar.\n- Estabelece vigência temporária para esses percentuais, remetendo ao Conselho Nacional de Trânsito a definição dos limites após o prazo previsto na lei.\n- Permite que veículos que seriam removidos sejam liberados quando a irregularidade não puder ser sanada no local, desde que o veículo ofereça condições de segurança, mediante recolhimento do Certificado de Licenciamento Anual e concessão de prazo para regularização; exclui essa liberação para determinada infração específica e prevê registro de restrição no Renavam e remoção se não houver regularização.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2283448": {
       "sourceHash": "c6fe335c4e4c27115f38a295ed8541fde53218da1e027b40d578c9e9ce0ff3e4",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
-      "resumoCard": "Obrigar a Aneel (agência reguladora de energia) a devolver aos consumidores valores cobrados a mais quando redução de tributos reduzir as tarifas de energia.",
+      "reviewStatus": "approved",
+      "resumoCard": "Obriga a Aneel (agência reguladora de energia) a devolver aos consumidores valores cobrados a mais quando redução de tributos reduzir as tarifas de energia.",
       "resumoDetalhe": "- Exige a devolução integral aos usuários dos valores cobrados a mais quando mudanças normativas ou decisões administrativas ou judiciais resultarem em redução de quaisquer tributos, exceto impostos sobre a renda.\n- Obriga a Aneel (agência reguladora de energia elétrica) a estabelecer critérios equitativos para fazer essa devolução, considerando procedimentos tarifários aplicáveis, disposições contratuais e normas tributárias.\n- Determina que a devolução seja priorizada no processo tarifário que vier depois do fim do prazo para compensação do crédito tributário (direito de compensar ou recuperar valores junto ao fisco), sempre com a finalidade de reduzir as tarifas pagas pelos usuários do serviço de distribuição.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2283678": {
       "sourceHash": "1741b925de628314376b6538ca648a940cc66e4e004c473c2d4f141542dbd069",
       "generationStatus": "generated",
       "reviewStatus": "approved",
-      "resumoCard": "Cria um fundo privado para pagar estudos, garantir e apoiar projetos de concessão e parcerias público‑privadas, com prioridade para Norte, Nordeste e Centro‑Oeste.",
-      "resumoDetalhe": "- Cria um fundo privado para viabilizar a estruturação e o desenvolvimento de projetos de concessão e parcerias público‑privadas, pagando serviços técnicos de modelagem, participando de garantias e investindo em fundos regulados pela CVM, que é o órgão que regula fundos e o mercado de capitais.\n- Autoriza a União a integrar cotas do fundo, condicionada à disponibilidade orçamentária, e fixa que o fundo terá patrimônio separado, cotas que podem ser compradas por entes públicos e privados e direitos e obrigações próprios.\n- Determina que o fundo será administrado por uma instituição financeira em regime de cotas, sem garantia da administração pública; a administradora e os cotistas não respondem por dívidas além das cotas; e autoriza contratação direta, sem licitação, dessa administradora ou de instituições habilitadas para prestar os serviços técnicos financiados pelo fundo.\n- Altera regras dos Fundos Constitucionais de Financiamento: transfere ao Conselho Monetário Nacional, por proposta do Ministério do Desenvolvimento Regional, a definição dos encargos financeiros e do del credere; muda a remuneração dos saldos não desembolsados para a taxa Selic, a taxa básica de juros do país; e prevê regras temporárias de cálculo enquanto o Conselho não estabelecer as novas taxas.",
+      "resumoCard": "Cria um fundo privado para pagar estudos, garantir e apoiar projetos de concessão e parcerias público-privadas, com prioridade para Norte, Nordeste e Centro-Oeste.",
+      "resumoDetalhe": "- Cria um fundo privado para viabilizar a estruturação e o desenvolvimento de projetos de concessão e parcerias público-privadas, pagando serviços técnicos de modelagem, participando de garantias e investindo em fundos regulados pela CVM, que é o órgão que regula fundos e o mercado de capitais.\n- Autoriza a União a integrar cotas do fundo, condicionada à disponibilidade orçamentária, e fixa que o fundo terá patrimônio separado, cotas que podem ser compradas por entes públicos e privados e direitos e obrigações próprios.\n- Determina que o fundo será administrado por uma instituição financeira em regime de cotas, sem garantia da administração pública; a administradora e os cotistas não respondem por dívidas além das cotas; e autoriza contratação direta, sem licitação, dessa administradora ou de instituições habilitadas para prestar os serviços técnicos financiados pelo fundo.\n- Altera regras dos Fundos Constitucionais de Financiamento: transfere ao Conselho Monetário Nacional, por proposta do Ministério do Desenvolvimento Regional, a definição dos encargos financeiros e do del credere; muda a remuneração dos saldos não desembolsados para a taxa Selic, a taxa básica de juros do país; e prevê regras temporárias de cálculo enquanto o Conselho não estabelecer as novas taxas.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:23:14.848Z",
@@ -290,20 +290,20 @@
     "2285694": {
       "sourceHash": "f11d253a392fce035b4fc723d952592bbc2e9cd55fba78fecc05d12880e5b0de",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Aprova um acordo de cooperação em defesa entre o Brasil e Israel.",
-      "resumoDetalhe": "- aprova o texto do Acordo entre o Governo do Brasil e o Governo do Estado de Israel sobre cooperação em questões relacionadas à defesa\n- exige que quaisquer atos que revisem o Acordo ou ajustes complementares que tragam custos ou compromissos pesados para o patrimônio do país sejam submetidos à aprovação do Congresso Nacional\n- determina que o decreto legislativo passa a valer a partir da sua publicação",
+      "resumoDetalhe": "- Aprova o texto do Acordo entre o Governo do Brasil e o Governo do Estado de Israel sobre cooperação em questões relacionadas à defesa.\n- Exige que quaisquer atos que revisem o Acordo ou ajustes complementares que tragam custos ou compromissos pesados para o patrimônio do país sejam submetidos à aprovação do Congresso Nacional.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2285889": {
       "sourceHash": "b5d92bac415b66440b936a96142ee1c4b6a87a41550dfd78932f16d1c85c4a61",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Regula trabalho a distância de gestantes: autoriza teletrabalho, permite suspensão do contrato quando a função não for compatível e prevê pagamento via BEm.",
-      "resumoDetalhe": "- Define que a empregada gestante afastada deve ficar à disposição para exercer suas atividades em casa por teletrabalho, trabalho remoto ou outra forma de trabalho a distância, e exclui do afastamento a gestante vacinada contra a covid-19.\n- Permite que, se a função não for compatível com trabalho a distância, o empregador suspenda temporariamente o contrato e garante à empregada o direito de receber o Benefício Emergencial de Manutenção do Emprego e da Renda (BEm) enquanto durar a suspensão; o BEm é um benefício emergencial já previsto em medida provisória.\n- Exige que o empregador comunique ao Ministério da Economia a suspensão temporária, autoriza a renegociação de acordos coletivos para adequação dos termos e determina que o Ministério da Economia discipline a forma e os prazos de execução; prevê também que, até o início da licença‑maternidade, a empregada afastada ficará sujeita às medidas das medidas provisórias que tratam do BEm e regras emergenciais.",
+      "resumoDetalhe": "- Define que a empregada gestante afastada deve ficar à disposição para exercer suas atividades em casa por teletrabalho, trabalho remoto ou outra forma de trabalho a distância, e exclui do afastamento a gestante vacinada contra a covid-19.\n- Permite que, se a função não for compatível com trabalho a distância, o empregador suspenda temporariamente o contrato e garante à empregada o direito de receber o Benefício Emergencial de Manutenção do Emprego e da Renda (BEm) enquanto durar a suspensão; o BEm é um benefício emergencial já previsto em medida provisória.\n- Exige que o empregador comunique ao Ministério da Economia a suspensão temporária, autoriza a renegociação de acordos coletivos para adequação dos termos e determina que o Ministério da Economia discipline a forma e os prazos de execução; prevê também que, até o início da licença-maternidade, a empregada afastada ficará sujeita às medidas das medidas provisórias que tratam do BEm e regras emergenciais.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-06-26T00:55:36.769Z",
@@ -312,13 +312,13 @@
     "2286806": {
       "sourceHash": "fb92b6d5cfb3a5a1144a8d5dfd62a8df7bd6fd2a934afd9a8a28bc80adc5c7c8",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Aprova o Acordo de Cooperação em Ciência e Tecnologia entre Brasil e Israel e exige que revisões com custos passem pelo Congresso.",
-      "resumoDetalhe": "- Aprova o texto do Acordo para cooperação em ciência e tecnologia entre o Governo do Brasil e o Governo de Israel, assinado em Jerusalém.\n- Determina que qualquer revisão do Acordo ou ajuste complementar que possa gerar custos ou compromissos pesados para o patrimônio nacional seja submetido à apreciação do Congresso.\n- Estabelece que o decreto legislativo entra em vigor na data de sua publicação.",
+      "resumoDetalhe": "- Aprova o texto do Acordo para cooperação em ciência e tecnologia entre o Governo do Brasil e o Governo de Israel, assinado em Jerusalém.\n- Determina que qualquer revisão do Acordo ou ajuste complementar que possa gerar custos ou compromissos pesados para o patrimônio nacional seja submetido à apreciação do Congresso.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2288387": {
       "sourceHash": "45783dc3bef832d5bf7be9ba82dd6d055de0c37973933bdfef4dda7b1dd49211",
@@ -345,31 +345,31 @@
     "2288801": {
       "sourceHash": "3bc44dda701c75b62bd28bd6ef64087441ddb46fecdab687c68c85c2b36cf8ab",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Estabelece regras para o funcionamento do Fundo Geral de Turismo (Fungetur), definindo fontes de recurso, programas de crédito, compra de cotas em fundos e mecanismos de compartilhamento de risco com instituições financeiras.",
-      "resumoDetalhe": "- Estabelece o Fungetur como fundo vinculado ao Ministério do Turismo com autonomia para usar seus recursos, orçamento e bens, e para dar garantias e financiar projetos e empreendimentos do setor turístico.\n- Autoriza que o Fundo receba recursos de várias fontes, como depósitos, doações, receitas de aplicações financeiras e parte da arrecadação das loterias, além de outras receitas eventuais.\n- Direciona recursos para programas de crédito voltados a microempreendedores, empresas de pequeno, médio e grande porte do turismo, permite a aquisição de cotas em fundos e instrumentos do mercado (como securitização, FIDC e crowdfunding — venda de recebíveis e captação por plataformas eletrônicas) e prevê isenção de IOF nas operações com recursos do Fundo (IOF é o imposto sobre operações financeiras).\n- Autoriza o compartilhamento de risco com instituições financeiras por meio da compra de cotas em fundos garantidores e participação em sociedades de garantia de crédito, estabelece regras para limites de garantia e para a recuperação de dívidas (como leilão, renegociação e securitização), e determina que as sociedades garantidoras não tenham garantia da União.",
+      "resumoDetalhe": "- Estabelece o Fungetur como fundo vinculado ao Ministério do Turismo com autonomia para usar seus recursos, orçamento e bens, e para dar garantias e financiar projetos e empreendimentos do setor turístico.\n- Autoriza que o Fundo receba recursos de várias fontes, como depósitos, doações, receitas de aplicações financeiras e parte da arrecadação das loterias, além de outras receitas eventuais.\n- Direciona recursos para programas de crédito voltados a microempreendedores e a empresas de pequeno, médio e grande porte do turismo, permite a aquisição de cotas em fundos e o uso de instrumentos do mercado financeiro, como a venda antecipada de recebíveis e a captação de dinheiro por plataformas eletrônicas, e prevê isenção do IOF, o imposto sobre operações financeiras, nas operações feitas com recursos do Fundo.\n- Autoriza o compartilhamento de risco com instituições financeiras por meio da compra de cotas em fundos garantidores e participação em sociedades de garantia de crédito, estabelece regras para limites de garantia e para a recuperação de dívidas (como leilão, renegociação e securitização), e determina que as sociedades garantidoras não tenham garantia da União.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:33:03.984Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2289980": {
       "sourceHash": "e16c8bdc7c091714c3e7b088851c57233d54eca086b0f9040e70286cb8082af0",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Cria e regula o Conselho Federal e os Conselhos Regionais de Educação Física, definindo organização, competências, eleição, receitas e disciplina profissional.",
-      "resumoDetalhe": "- cria o Conselho Federal de Educação Física e os Conselhos Regionais como órgãos públicos autônomos organizados em sistema federativo, com sede e personalidade jurídica\n- define as competências do Confef e dos Crefs, como supervisionar e orientar a fiscalização da profissão, editar normas e o código de ética, julgar recursos e publicar orçamento, balanços e relatórios\n- regula a composição e a eleição dos conselheiros, estabelece mandato com possibilidade de reeleição, prevê eleição do presidente e do vice entre os conselheiros, voto pessoal e obrigatório dos profissionais e multa para quem deixar de votar\n- estabelece as fontes de receita e a divisão da arrecadação entre Confef e Crefs, autoriza a cobrança de anuidades, taxas e multas, e disciplina infrações e sanções com processo administrativo e direito de recurso ao Confef",
+      "resumoDetalhe": "- Cria o Conselho Federal de Educação Física e os Conselhos Regionais como órgãos públicos autônomos organizados em sistema federativo, com sede e personalidade jurídica.\n- Define as competências do Confef e dos Crefs, como supervisionar e orientar a fiscalização da profissão, editar normas e o código de ética, julgar recursos e publicar orçamento, balanços e relatórios.\n- Regula a composição e a eleição dos conselheiros, estabelece mandato com possibilidade de reeleição, prevê eleição do presidente e do vice entre os conselheiros, voto pessoal e obrigatório dos profissionais e multa para quem deixar de votar.\n- Estabelece as fontes de receita e a divisão da arrecadação entre Confef e Crefs, autoriza a cobrança de anuidades, taxas e multas, e disciplina infrações e sanções com processo administrativo e direito de recurso ao Confef.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2291794": {
       "sourceHash": "07f23539fcb8bbde22ef836ab0757484a035513d54cc17c9d476006466299c96",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Cria o Ministério do Trabalho e Previdência para concentrar políticas de previdência, emprego e fiscalização das relações de trabalho.",
-      "resumoDetalhe": "- cria o Ministério do Trabalho e Previdência e atribui a ele áreas como previdência e previdência complementar, políticas de emprego e renda, modernização e fiscalização das relações de trabalho, segurança e saúde no trabalho, regulação profissional e registro sindical\n- integra ao ministério conselhos e órgãos ligados à previdência, ao trabalho e a fundos trabalhistas, e determina que alguns desses conselhos tenham composição paritária entre representantes dos trabalhadores e dos empregadores\n- transfere para o novo ministério unidades, cargos e pessoal da Secretaria Especial de Previdência e Trabalho do Ministério da Economia, disciplina a transição sem aumento de despesa, mantém apoio administrativo e jurídico do Ministério da Economia, e prevê que o INSS julgue processos disciplinares da autarquia, além de integrar carreiras de peritos médicos ao ministério",
+      "resumoDetalhe": "- Cria o Ministério do Trabalho e Previdência e atribui a ele áreas como previdência e previdência complementar, políticas de emprego e renda, modernização e fiscalização das relações de trabalho, segurança e saúde no trabalho, regulação profissional e registro sindical.\n- Integra ao ministério conselhos e órgãos ligados à previdência, ao trabalho e a fundos trabalhistas, e determina que alguns desses conselhos tenham composição paritária entre representantes dos trabalhadores e dos empregadores.\n- Transfere para o novo ministério unidades, cargos e pessoal da Secretaria Especial de Previdência e Trabalho do Ministério da Economia, disciplina a transição sem aumento de despesa, mantém apoio administrativo e jurídico do Ministério da Economia, e prevê que o INSS julgue processos disciplinares da autarquia, além de integrar carreiras de peritos médicos ao ministério.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T16:52:37.780Z",
@@ -378,13 +378,13 @@
     "2291898": {
       "sourceHash": "6f139b0710612db8dbd3120b4f94ea3d73b3a77db9a387a113176fb6bb3e39ad",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Autoriza o FNDE a repactuar termos com governos para concluir obras educacionais inacabadas cujo instrumento expirou, sujeitas a requisitos técnicos e orçamentários.",
-      "resumoDetalhe": "- Autoriza o FNDE a repactuar termos de compromisso com os entes federados para finalizar obras e serviços de engenharia de infraestrutura educacional inacabados, aplicando‑se apenas a obras classificadas como \"Obra Inacabada no SIMEC\" (o sistema do Ministério da Educação que monitora obras) em período definido no texto.\n- Exige que os entes apresentem laudo técnico acompanhado de Anotação/Registro de Responsabilidade Técnica e uma planilha orçamentária atualizada, elaborada segundo as regras usadas para orçamentos de obras com recursos da União; obras com muito pouco avanço físico dependem de parecer favorável do FNDE sobre sua viabilidade técnico‑econômica.\n- Estabelece limites e procedimentos formais para a repactuação, restringindo sua repetição, exigindo a publicação do edital de licitação em prazo definido após a repactuação e condicionando a formalização à observância da legislação orçamentária e das leis complementares mencionadas no texto; admite também uso de recursos de emendas parlamentares desde que alocados em ação orçamentária específica.\n- Determina que a repactuação não afasta a responsabilização penal, civil e administrativa dos agentes públicos e das pessoas jurídicas responsáveis pela contratação e acompanhamento das obras.",
+      "resumoDetalhe": "- Autoriza o FNDE a repactuar termos de compromisso com os entes federados para finalizar obras e serviços de engenharia de infraestrutura educacional inacabados, aplicando-se apenas a obras classificadas como \"Obra Inacabada no SIMEC\" (o sistema do Ministério da Educação que monitora obras) em período definido no texto.\n- Exige que os entes apresentem laudo técnico acompanhado de Anotação ou Registro de Responsabilidade Técnica e uma planilha orçamentária atualizada, elaborada segundo as regras usadas para orçamentos de obras com recursos da União; obras com muito pouco avanço físico dependem de parecer favorável do FNDE sobre sua viabilidade técnico-econômica.\n- Estabelece limites e procedimentos formais para a repactuação, restringindo sua repetição, exigindo a publicação do edital de licitação em prazo definido e condicionando a formalização ao cumprimento das regras orçamentárias e fiscais; admite também o uso de recursos de emendas parlamentares desde que alocados em ação orçamentária específica.\n- Determina que a repactuação não afasta a responsabilização penal, civil e administrativa dos agentes públicos e das pessoas jurídicas responsáveis pela contratação e acompanhamento das obras.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:33:03.984Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2292163": {
       "sourceHash": "5fdba222b9b524dcbd4895d1db707a65f8f45de05eb7037bc6834a9955679461",
@@ -424,7 +424,7 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Exige que partidos destinem parte do fundo partidário (recursos públicos para os partidos), do fundo de campanha (recursos para campanhas) e do tempo de rádio e TV para candidaturas e programas voltados a mulheres.",
-      "resumoDetalhe": "- exige que os partidos apliquem parte dos recursos do fundo partidário (recursos públicos para os partidos) na criação e manutenção de programas para promover e difundir a participação política das mulheres, segundo os interesses do partido, podendo acumular esses recursos para usar em campanhas futuras.\n- determina que parte do fundo de financiamento de campanha (recursos para custear campanhas), assim como a parcela do fundo partidário destinada a campanhas, e o tempo gratuito no rádio e na televisão (horário oficial gratuito para propaganda eleitoral) seja destinada a candidaturas femininas, independentemente do número de candidatas, com divisão feita conforme regras internas do partido.\n- assegura que partidos possam usar em eleições seguintes valores não utilizados ou não reconhecidos pela Justiça Eleitoral (órgão que fiscaliza eleições e prestações de contas) e veda sanções, devolução de valores ou suspensão do fundo por descumprimentos ocorridos antes da promulgação desta emenda.",
+      "resumoDetalhe": "- Exige que os partidos apliquem parte dos recursos do fundo partidário (recursos públicos para os partidos) na criação e manutenção de programas para promover e difundir a participação política das mulheres, segundo os interesses do partido, podendo acumular esses recursos para usar em campanhas futuras.\n- Determina que parte do fundo de financiamento de campanha (recursos para custear campanhas), assim como a parcela do fundo partidário destinada a campanhas, e o tempo gratuito no rádio e na televisão (horário oficial gratuito para propaganda eleitoral) seja destinada a candidaturas femininas, independentemente do número de candidatas, com divisão feita conforme regras internas do partido.\n- Assegura que partidos possam usar em eleições seguintes valores não utilizados ou não reconhecidos pela Justiça Eleitoral (órgão que fiscaliza eleições e prestações de contas) e veda sanções, devolução de valores ou suspensão do fundo por descumprimentos ocorridos antes da promulgação desta emenda.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:12:46.007Z",
@@ -433,20 +433,20 @@
     "2294651": {
       "sourceHash": "bcad39ed05cf3372dbad1f94a35df8defb0285298be27400f95dd1d789295a97",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Exclui certas transferências da União com destinação vinculada dos limites de crescimento de despesas e define como serão deduzidas essas verbas.",
-      "resumoDetalhe": "- Exclui do limite de crescimento das despesas nos contratos de refinanciamento de dívidas as despesas pagas com transferências da União que têm aplicações vinculadas e outras transferências previstas na Constituição.\n- Exclui essas mesmas despesas do limite anual de crescimento das despesas primárias no âmbito do Plano de Recuperação Fiscal dos estados e do Distrito Federal.\n- Determina que as deduções desses limites sejam feitas conforme o valor efetivamente transferido pela União a cada exercício e prevê que sejam deduzidas transferências vinculadas a despesas específicas, como transferências fundo a fundo, CIDE (Contribuição de Intervenção no Domínio Econômico), Salário‑educação (verba destinada à educação), Pronatec (programa de formação técnica) e outras transferências vinculadas.",
+      "resumoDetalhe": "- Exclui do limite de crescimento das despesas nos contratos de refinanciamento de dívidas as despesas pagas com transferências da União que têm aplicações vinculadas e outras transferências previstas na Constituição.\n- Exclui essas mesmas despesas do limite anual de crescimento das despesas primárias no âmbito do Plano de Recuperação Fiscal dos estados e do Distrito Federal.\n- Determina que as deduções desses limites sejam feitas conforme o valor efetivamente transferido pela União a cada exercício e prevê que sejam deduzidas transferências vinculadas a despesas específicas, como transferências fundo a fundo, CIDE (Contribuição de Intervenção no Domínio Econômico), Salário-educação (verba destinada à educação), Pronatec (programa de formação técnica) e outras transferências vinculadas.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:33:03.984Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2297579": {
       "sourceHash": "9cabb9e3b61c13bbed7a74a4ff842821f6df481cba27d03d11c45d687129c2a8",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Organiza como a ANS vai avaliar e atualizar o rol de coberturas dos planos privados, criando uma comissão técnica, regras de avaliação, prazos e mecanismo de inclusão automática.",
-      "resumoDetalhe": "- cria a Comissão de Atualização do Rol para assessorar a ANS, com composição e funcionamento definidos por regulamento, e que deve elaborar relatórios baseados em evidências científicas, avaliação econômica e análise de impacto financeiro\n- estabelece que a ANS atualize o rol por meio de processo administrativo a ser concluído em prazo determinado, com possibilidade de prorrogação, e prevê inclusão automática da tecnologia quando a ANS não decidir no prazo, garantindo a continuidade da assistência iniciada\n- define que metodologias, indicadores e parâmetros de custo-efetividade serão fixados em norma pela ANS, com assessoramento da comissão, e que o processo deve incluir apresentação de documentos pelo interessado, apresentação de preço para medicamentos, consulta pública e, quando relevante, audiência pública\n- determina a inclusão no rol das tecnologias que já tenham sido recomendadas positivamente e incorporadas ao SUS pela Conitec, dentro do prazo estabelecido em norma",
+      "resumoDetalhe": "- Cria a Comissão de Atualização do Rol para assessorar a ANS, com composição e funcionamento definidos por regulamento, e que deve elaborar relatórios baseados em evidências científicas, avaliação econômica e análise de impacto financeiro.\n- Estabelece que a ANS atualize o rol por meio de processo administrativo a ser concluído em prazo determinado, com possibilidade de prorrogação, e prevê inclusão automática da tecnologia quando a ANS não decidir no prazo, garantindo a continuidade da assistência iniciada.\n- Define que metodologias, indicadores e parâmetros de custo-efetividade serão fixados em norma pela ANS, com assessoramento da comissão, e que o processo deve incluir apresentação de documentos pelo interessado, apresentação de preço para medicamentos, consulta pública e, quando relevante, audiência pública.\n- Determina a inclusão no rol das tecnologias que já tenham sido recomendadas positivamente e incorporadas ao SUS pela Conitec, dentro do prazo estabelecido em norma.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:12:46.007Z",
@@ -456,7 +456,7 @@
       "sourceHash": "30bc4cb560a3a31301d850ae61273100072e049c97e4905f6bc88677fce40382",
       "generationStatus": "generated",
       "reviewStatus": "approved",
-      "resumoCard": "Afasta a responsabilização de Estados, Distrito Federal, Municípios e seus agentes por não aplicarem integralmente recursos na manutenção e desenvolvimento do ensino durante os exercícios financeiros afetados pela pandemia, e prevê compensação posterior dessa diferença.",
+      "resumoCard": "Afasta a responsabilização de Estados, Distrito Federal, Municípios e seus agentes por não aplicarem o mínimo exigido em educação nos exercícios afetados pela pandemia, e exige a compensação posterior da diferença.",
       "resumoDetalhe": "- Afasta a responsabilização administrativa, civil e criminal dos Estados, do Distrito Federal, dos Municípios e de seus agentes pelo descumprimento da aplicação de recursos para a manutenção e desenvolvimento do ensino nos exercícios financeiros afetados pela pandemia.\n- Determina que o ente público deve complementar, até exercício financeiro posterior aos afetados, a diferença entre o que foi aplicado (conforme informação registrada no sistema integrado de planejamento e orçamento) e o valor mínimo exigido constitucionalmente para aqueles exercícios.\n- Impede a aplicação de penalidades, sanções ou restrições que afetem cadastro, aprovação ou celebração de contratos, aditivos, convênios e a execução ou o recebimento de transferências voluntárias de recursos federais em razão desse descumprimento.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
@@ -466,24 +466,24 @@
     "2301371": {
       "sourceHash": "9a1e641132bb30feae80731e5dea0c893969ed25a7c0285ab3f86e2a2ab85467",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Atualiza a lei do Fundeb com adiamento da revisão, regras para cálculo do VAAT, mais transparência e validação de dados.",
-      "resumoDetalhe": "- Adia a atualização da lei e mantém, por período determinado, um multiplicador aplicado às ponderações usadas na distribuição da complementação do VAAT (valor anual total por aluno).\n- Determina que os indicadores e os cálculos de financiamento considerem dados do FNDE (órgão da educação) e da STN (Secretaria do Tesouro), e que a medida de equidade de aprendizagem seja baseada no Saeb (avaliação nacional de aprendizagem), alinhada à BNCC, considerando alunos com desempenho abaixo do adequado e desigualdades por nível socioeconômico, raça e deficiência.\n- Exige que os entes federativos possam ratificar ou retificar dados preliminares do Censo Escolar dentro de prazo previsto e veda alterações após a publicação oficial; exige também que o poder executivo concedente valide os requisitos mínimos para computar matrículas de instituições comunitárias, confessionais ou filantrópicas conveniadas.\n- Estabelece maior transparência e ajustes administrativos: obriga o FNDE a publicar a memória de cálculo e o detalhamento das receitas usadas no cálculo do VAAT; cria exceção para transferência de recursos destinados ao pagamento de salários da educação quando houver conta específica contratada com instituição financeira, com obrigação de publicar extratos em formato aberto; e amplia a definição de profissionais da educação básica.",
+      "resumoDetalhe": "- Adia a atualização da lei e mantém, por período determinado, um multiplicador aplicado às ponderações usadas na distribuição da complementação do VAAT (valor anual total por aluno).\n- Determina que os indicadores e os cálculos de financiamento considerem dados do FNDE (órgão federal da educação) e da Secretaria do Tesouro, e que a medida de equidade de aprendizagem venha do Saeb, a avaliação nacional de aprendizagem, tomando como referência o currículo comum obrigatório do país e considerando alunos com desempenho abaixo do adequado e desigualdades por nível socioeconômico, raça e deficiência.\n- Exige que os entes federativos possam ratificar ou retificar dados preliminares do Censo Escolar dentro de prazo previsto e veda alterações após a publicação oficial; exige também que o poder executivo concedente valide os requisitos mínimos para computar matrículas de instituições comunitárias, confessionais ou filantrópicas conveniadas.\n- Obriga o FNDE a publicar a memória de cálculo e o detalhamento das receitas usadas na distribuição, abre exceção para a transferência de recursos destinados ao pagamento de salários quando houver conta específica contratada com banco, com obrigação de publicar os extratos em formato aberto, e define quem é considerado profissional da educação básica.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:01:17.719Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2306112": {
       "sourceHash": "8c81c4f2f94a62c4e4eb28f8ae0b03567b431132691831d3cf065c06544af630",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Exige que quem recorre ao recurso especial comprove que a questão de direito federal é relevante e indica quando isso se presume.",
-      "resumoDetalhe": "- Exige que, no recurso especial (recurso ao Superior Tribunal de Justiça sobre matéria federal infraconstitucional), o recorrente demonstre a relevância da questão de direito federal para que o tribunal avalie a admissão do recurso, sendo possível somente não admitir por decisão de grande maioria do colegiado.\n- Considera que há relevância em casos específicos, como ações penais, ações de improbidade administrativa, processos de alto valor econômico, situações que possam gerar inelegibilidade, decisões que contrariem entendimento dominante do Superior Tribunal de Justiça e outras hipóteses previstas em lei.\n- Determina que a exigência de relevância vale para recursos especiais apresentados após a vigência da emenda, permitindo à parte atualizar o valor da causa quando for necessário para comprovar essa relevância.",
+      "resumoDetalhe": "- Exige que, no recurso especial (o recurso ao Superior Tribunal de Justiça sobre questões de leis federais), quem recorre demonstre que a questão discutida é relevante, e só permite que o tribunal recuse o recurso por esse motivo mediante decisão de ampla maioria dos julgadores.\n- Considera que há relevância em casos específicos, como ações penais, ações de improbidade administrativa, processos de alto valor econômico, situações que possam gerar inelegibilidade, decisões que contrariem entendimento dominante do Superior Tribunal de Justiça e outras hipóteses previstas em lei.\n- Determina que a exigência de relevância vale para recursos especiais apresentados após a vigência da emenda, permitindo à parte atualizar o valor da causa quando for necessário para comprovar essa relevância.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2307548": {
       "sourceHash": "f94cbe302b2b7dddf7b7c9f49a56243644c9059049989d91f1c25947ff9f74ff",
@@ -510,31 +510,31 @@
     "2310025": {
       "sourceHash": "a3f9668c093e2dc8233d1f04d1618c47acd300a401534b5afe6a93977a6067ef",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Autoriza repasses federais a Estados, Distrito Federal e Municípios para ações emergenciais no setor cultural por causa da pandemia e estabelece regras de execução e prestação de contas.",
-      "resumoDetalhe": "- autoriza repasse federal aos Estados, ao Distrito Federal e aos Municípios para ações emergenciais no setor cultural, com transferência descentralizada por conta bancária específica e movimentação eletrônica rastreável, sem necessidade de convênio\n- exige que os entes apresentem plano de ação participativo e fortaleçam ou criem seus sistemas locais de cultura (conselhos, planos e fundos), permitindo que municípios se organizem em consórcios para solicitar os recursos\n- destina parte dos recursos exclusivamente ao setor audiovisual por meio de editais e chamamentos para produção audiovisual, manutenção e adaptação de salas de cinema, formação e apoio a empresas do setor, exigindo contrapartida social como exibições gratuitas e medidas de acessibilidade\n- destina outra parte a ações culturais diversas (economia criativa, espaços e micro e pequenas empresas culturais, circulação e transmissão online), define regras de seleção pública simplificada, busca ativa para grupos vulneráveis e prestação de contas, e altera regras para o Fundo Nacional da Cultura (FNC, o fundo federal de apoio à cultura) e para a contabilidade dessas transferências na lei fiscal",
+      "resumoDetalhe": "- Autoriza repasse federal aos Estados, ao Distrito Federal e aos Municípios para ações emergenciais no setor cultural, com transferência descentralizada por conta bancária específica e movimentação eletrônica rastreável, sem necessidade de convênio.\n- Exige que os entes apresentem plano de ação participativo e fortaleçam ou criem seus sistemas locais de cultura (conselhos, planos e fundos), permitindo que municípios se organizem em consórcios para solicitar os recursos.\n- Destina parte dos recursos exclusivamente ao setor audiovisual por meio de editais e chamamentos para produção audiovisual, manutenção e adaptação de salas de cinema, formação e apoio a empresas do setor, exigindo contrapartida social como exibições gratuitas e medidas de acessibilidade.\n- Destina outra parte a ações culturais diversas (economia criativa, espaços e micro e pequenas empresas culturais, circulação e transmissão online), define regras de seleção pública simplificada, busca ativa para grupos vulneráveis e prestação de contas, e altera regras para o Fundo Nacional da Cultura (FNC, o fundo federal de apoio à cultura) e para a contabilidade dessas transferências na lei fiscal.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2310615": {
       "sourceHash": "b7b503f9c5956eede16da692ab307be4ea567a814d535638a842568f2e9d79de",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Atualiza regras do Programa Universidade para Todos (Prouni): tipos de bolsa, seleção por Enem, fiscalização das instituições e cotas para grupos beneficiários.",
-      "resumoDetalhe": "- altera regras das bolsas do Prouni, mantendo bolsas integrais e bolsas parciais que cobrem metade da mensalidade, suprimindo a modalidade de bolsa muito pequena; exige que as instituições contem descontos aplicados ao cálculo do encargo estudantil e obriga a adesão da mantenedora a todas as instituições por ela mantidas.\n- define o processo de seleção com pré-seleção pelos resultados do Enem e seleção final pela instituição; autoriza o Ministério da Educação a dispensar documentos quando puder confirmar dados em bases governamentais, observando a proteção de dados; estabelece que a manutenção da bolsa depende de desempenho acadêmico, prazo máximo do curso e regras sobre suspensão, transferência e encerramento.\n- incrementa mecanismos de controle e supervisão das instituições, criando gradações de sanção que vão de suspensão temporária de participação a desvinculação por reincidência; condiciona a participação das mantenedoras à comprovação periódica de regularidade fiscal e prevê prazos para saneamento antes de sanções mais graves.\n- organiza as reservas e a ordem de prioridade das vagas afirmativas, separando a reserva para pessoas com deficiência da reserva para autodeclarados indígenas e negros e determinando que esses percentuais observem os parâmetros do Censo/IBGE; prevê prioridade e tratamento específico para formação de professores em cursos de licenciatura, Pedagogia e Normal Superior, inclusive para preenchimento de bolsas remanescentes nesses cursos.",
+      "resumoDetalhe": "- Altera as regras das bolsas do Prouni, mantendo as bolsas integrais e as parciais que cobrem metade da mensalidade e deixando de prever a bolsa de menor valor; exige que as instituições considerem os descontos concedidos no cálculo do valor cobrado do estudante e obriga a mantenedora a inscrever no programa todas as instituições que mantém.\n- Define o processo de seleção com pré-seleção pelos resultados do Enem e seleção final pela instituição; autoriza o Ministério da Educação a dispensar documentos quando puder confirmar dados em bases governamentais, observando a proteção de dados; estabelece que a manutenção da bolsa depende de desempenho acadêmico, prazo máximo do curso e regras sobre suspensão, transferência e encerramento.\n- Incrementa mecanismos de controle e supervisão das instituições, criando gradações de sanção que vão de suspensão temporária de participação a desvinculação por reincidência; condiciona a participação das mantenedoras à comprovação periódica de regularidade fiscal e prevê prazos para saneamento antes de sanções mais graves.\n- Organiza as reservas e a ordem de prioridade das vagas afirmativas, separando a reserva para pessoas com deficiência da reserva para autodeclarados indígenas e negros e determinando que esses percentuais observem os parâmetros do Censo do IBGE; prevê prioridade e tratamento específico para formação de professores em cursos de licenciatura, Pedagogia e Normal Superior, inclusive para preenchimento de bolsas remanescentes nesses cursos.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2311542": {
       "sourceHash": "b5b1a0fa36930fc099f8477e1e825fdbcc64d994e0d30c1b472e76658485ce94",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Cria um novo regime para pagamento de precatórios, destina espaço fiscal a uma renda básica familiar e regula pagamentos vinculados ao Fundef.",
-      "resumoDetalhe": "- institui uma renda básica familiar garantida pelo poder público para pessoas em situação de vulnerabilidade, com regras que serão definidas em lei, e determina que parte do espaço fiscal gerado pelo novo regime de precatórios seja destinada a esse programa e à seguridade social\n- estabelece um novo regime de pagamento de sentenças judiciais contra a Fazenda, obrigando a previsão orçamentária para certos precatórios, fixando um limite anual de alocação, definindo ordem de prioridade de pagamentos, permitindo ao credor optar por receber um pagamento único com renúncia de parte do crédito e determinando que o Conselho Nacional de Justiça, órgão que orienta os tribunais, regulamente a atuação necessária\n- autoriza que precatórios relativos à complementação do Fundo de Manutenção e Desenvolvimento do Ensino Fundamental e de Valorização do Magistério sejam pagos em parcelas anuais sucessivas, exige que os recursos que os estados e municípios receberem por essas ações sejam aplicados na manutenção e no desenvolvimento do ensino fundamental público e prevê que uma parcela mínima seja repassada aos profissionais do magistério como abono, vedando a incorporação desse abono na remuneração, aposentadoria ou pensão\n- determina que o Congresso instaure uma comissão mista para examinar atos, fatos e políticas que geram precatórios e sentenças contrárias à Fazenda, em cooperação com o Conselho Nacional de Justiça e com o Tribunal de Contas, para identificar medidas legislativas e propor maior segurança jurídica",
+      "resumoDetalhe": "- Institui uma renda básica familiar garantida pelo poder público para pessoas em situação de vulnerabilidade, com regras que serão definidas em lei, e determina que parte do espaço fiscal gerado pelo novo regime de precatórios seja destinada a esse programa e à seguridade social.\n- Estabelece um novo regime de pagamento de sentenças judiciais contra a Fazenda, obrigando a previsão orçamentária para certos precatórios, fixando um limite anual de alocação, definindo ordem de prioridade de pagamentos, permitindo ao credor optar por receber um pagamento único com renúncia de parte do crédito e determinando que o Conselho Nacional de Justiça, órgão que orienta os tribunais, regulamente a atuação necessária.\n- Autoriza que precatórios relativos à complementação do Fundo de Manutenção e Desenvolvimento do Ensino Fundamental e de Valorização do Magistério sejam pagos em parcelas anuais sucessivas, exige que os recursos que os estados e municípios receberem por essas ações sejam aplicados na manutenção e no desenvolvimento do ensino fundamental público e prevê que uma parcela mínima seja repassada aos profissionais do magistério como abono, vedando a incorporação desse abono na remuneração, aposentadoria ou pensão.\n- Determina que o Congresso instaure uma comissão mista para examinar atos, fatos e políticas que geram precatórios e sentenças contrárias à Fazenda, em cooperação com o Conselho Nacional de Justiça e com o Tribunal de Contas, para identificar medidas legislativas e propor maior segurança jurídica.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T18:14:05.932Z",
@@ -543,13 +543,13 @@
     "2312373": {
       "sourceHash": "474b179f6eba6c58ef56c8d263d436814b31e1a49286188d5a8cfe21f34f1078",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Estende o prazo para que projetos nas áreas da Sudene e da Sudam obtenham redução do imposto de renda e direito ao reinvestimento.",
-      "resumoDetalhe": "- Estende o prazo para que empresas com projeto protocolizado e aprovado nas áreas da Sudene e da Sudam tenham direito à redução do imposto sobre a renda e ao benefício de reinvestimento.\n- Mantém a obrigação de que parte do imposto devido seja depositada em bancos regionais para ser reinvestida em modernização ou complementação de equipamentos.\n- Exige que o governo estime o total da renúncia de receita provocada por esses incentivos e inclua essa estimativa no demonstrativo que acompanha o projeto de lei orçamentária anual.\n- Determina que a lei passe a valer na data de sua publicação.",
+      "resumoDetalhe": "- Estende o prazo para que empresas com projeto protocolizado e aprovado nas áreas da Sudene e da Sudam tenham direito à redução do imposto sobre a renda e ao benefício de reinvestimento.\n- Mantém a obrigação de que parte do imposto devido seja depositada em bancos regionais para ser reinvestida em modernização ou complementação de equipamentos.\n- Exige que o governo estime o total da renúncia de receita provocada por esses incentivos e inclua essa estimativa no demonstrativo que acompanha o projeto de lei orçamentária anual.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2312948": {
       "sourceHash": "8fec141de290e15504166786bc57c60498d46820c6d7d59bf08773a481fb7799",
@@ -565,13 +565,13 @@
     "2313545": {
       "sourceHash": "a6da4f595ef0749ffc5fabd23c56ccb369167bcf4e23a9e0c6791c4d217c4ac7",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Autoriza o governo federal a doar vacinas contra a covid-19 a outros países em cooperação humanitária.",
-      "resumoDetalhe": "- Autoriza o Poder Executivo federal a doar imunizantes contra a covid-19 a outros países, em caráter de cooperação humanitária, desde que o país beneficiado manifeste interesse e aceite o recebimento.\n- Determina que o Ministério da Saúde firmará os termos de doação e definirá as quantidades e os destinatários, após consultar o Ministério das Relações Exteriores.\n- Estabelece que as despesas de transporte das doses poderão ficar a cargo do país receptor ou serem cobridas pelo Governo federal ou por outros colaboradores.\n- Afirma que o uso dos estoques públicos para doação não deve prejudicar a vacinação da população brasileira, seguindo o plano nacional de vacinação, e que só haverá gasto adicional no orçamento para custos de operacionalização.",
+      "resumoDetalhe": "- Autoriza o Poder Executivo federal a doar imunizantes contra a covid-19 a outros países, em caráter de cooperação humanitária, desde que o país beneficiado manifeste interesse e aceite o recebimento.\n- Determina que o Ministério da Saúde firmará os termos de doação e definirá as quantidades e os destinatários, após consultar o Ministério das Relações Exteriores.\n- Estabelece que as despesas de transporte das doses poderão ficar a cargo do país que recebe ou ser cobertas pelo Governo federal ou por outros colaboradores.\n- Determina que o uso dos estoques públicos para doação não prejudique a vacinação da população brasileira, seguindo o plano nacional de vacinação, e que só haja gasto adicional no orçamento para os custos de operacionalização.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2313729": {
       "sourceHash": "3483088493ff6dcf0c6503760a2c42bf092e2c6414f9ad4c43ed53966d5dabea",
@@ -609,24 +609,24 @@
     "2313736": {
       "sourceHash": "41c5e913576e28153e53fb28192a1830895ac9e46da5ca3d70324361fdb0e278",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Fixa o valor do salário mínimo para vigorar em janeiro de 2022 em R$ 1.212,00, indicando também os valores diário e por hora.",
       "resumoDetalhe": "- Fixa o salário mínimo e os respectivos valores diário e por hora, vigentes a partir de janeiro do ano seguinte à publicação.\n- Explica que o cálculo usa o Índice Nacional de Preços ao Consumidor (INPC), com projeções e arredondamento para cima, e inclui a diferença remanescente do ajuste anterior.\n- Estima impacto nas despesas com benefícios que seguem o parâmetro do salário mínimo e determina que a acomodação desse impacto seja feita por meio de revisões periódicas do orçamento, observando as regras do regime fiscal.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2313738": {
       "sourceHash": "42be8bf8e9fd8ee9edeefa900f9c7242a7de67666cecceaeae20886c088f6813",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Exige que o Ministério do Trabalho e Previdência publique todo mês o resultado financeiro do Regime Geral de Previdência Social, com e sem as renúncias previdenciárias (benefícios ou regras que reduzem a arrecadação).",
-      "resumoDetalhe": "- Exige que o Ministério do Trabalho e Previdência divulgue mensalmente o resultado financeiro do Regime Geral de Previdência Social, apresentando versão que inclui as renúncias previdenciárias (benefícios ou regras que reduzem o que entra para a previdência) para avaliar o equilíbrio financeiro.\n- Estabelece que, para outros usos, o resultado considerará apenas as receitas efetivamente arrecadadas e as despesas efetivamente liquidadas e pagas.\n- Revoga dispositivos legais que tratam da compensação pela desoneração da folha ao fundo do regime e determina que a Receita Federal forneça as informações sobre as renúncias previdenciárias para essa apuração.",
+      "resumoDetalhe": "- Exige que o Ministério do Trabalho e Previdência divulgue mensalmente o resultado financeiro do Regime Geral de Previdência Social, apresentando também a versão que inclui as renúncias previdenciárias, para permitir avaliar o equilíbrio financeiro do regime.\n- Estabelece que, para outros usos, o resultado considerará apenas as receitas efetivamente arrecadadas e as despesas efetivamente liquidadas e pagas.\n- Revoga dispositivos legais que tratam da compensação pela desoneração da folha ao fundo do regime e determina que a Receita Federal forneça as informações sobre as renúncias previdenciárias para essa apuração.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2313740": {
       "sourceHash": "5acbc666040687d679a295cb30649a722479df9b4d172ddaa5232cf9f42e5abd",
@@ -642,24 +642,24 @@
     "2318553": {
       "sourceHash": "654a887582bbbf012a35318faa17b9ce00fca4430fb646d1d6f822d3d1ef39ed",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Define destino dos recursos do Pronampe e fixa prazo para uso das garantias.",
-      "resumoDetalhe": "- Permite melhores condições de sustentabilidade ao Pronampe como política oficial de crédito permanente.\n- Estabelece que os valores não usados para garantia das operações do programa e os valores recuperados, inclusive em caso de inadimplência, devem ser devolvidos à União e usados integralmente para pagar a dívida pública do Tesouro Nacional (ou seja, dívidas do governo federal), conforme regras do Poder Executivo (governo federal).\n- Determina que a concessão do crédito garantido por esses recursos ocorra até o prazo fixado na própria lei.",
+      "resumoDetalhe": "- Torna o Pronampe (programa de crédito para micro e pequenas empresas) uma política oficial de crédito permanente.\n- Estabelece que os valores não usados para garantia das operações do programa e os valores recuperados, inclusive em caso de inadimplência, devem ser devolvidos à União e usados integralmente para pagar a dívida pública do Tesouro Nacional (ou seja, dívidas do governo federal), conforme regras do Poder Executivo (governo federal).\n- Determina que o crédito garantido por esses recursos só possa ser concedido dentro do prazo fixado para o programa.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2439779": {
       "sourceHash": "4eb6c2d4934ed7e4fe46190224ac77298a1bd9faa2ae4653a5ff4a2e79424f46",
       "generationStatus": "generated",
-      "reviewStatus": "pending",
+      "reviewStatus": "approved",
       "resumoCard": "Reserva 30% das vagas de concursos e seleções federais para pessoas pretas e pardas, indígenas e quilombolas.",
       "resumoDetalhe": "- Reserva vagas em concursos públicos e em processos seletivos simplificados da administração federal para pessoas pretas e pardas, indígenas e quilombolas.\n- Estabelece procedimento de confirmação da autodeclaração, com normas nacionais, participação de especialistas, critérios mistos de avaliação, decisão colegiada e direito a recurso, e prevê reavaliação periódica com participação da sociedade civil.\n- Prevê investigação e sanções em caso de fraude na autodeclaração, incluindo eliminação do candidato ou anulação da nomeação, com encaminhamento às autoridades competentes para apuração.\n- Determina regras sobre participação em todas as etapas do certame, critérios de nomeação que alternam e respeitam a proporção entre vagas reservadas e vagas gerais, tratamento das vagas remanescentes e acompanhamento pelo Poder Executivo, além de prever revisão do programa e aplicação a futuros editais.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:33:03.984Z",
-      "reviewedAt": null
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     }
   }
 }

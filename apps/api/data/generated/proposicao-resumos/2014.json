@@ -6,7 +6,7 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Cria cargos de juiz do trabalho substituto para o Tribunal Regional do Trabalho de Minas Gerais.",
-      "resumoDetalhe": "- cria cargos de juiz do trabalho substituto no Tribunal Regional do Trabalho de Minas Gerais, com sede em Belo Horizonte\n- destina esses cargos para compor as varas do trabalho criadas no tribunal e para buscar paridade entre juízes titulares e substitutos\n- determina que os recursos para os cargos venham das dotações orçamentárias do tribunal no Orçamento Geral da União e que a implementação observe as regras fiscais da Constituição e da Lei de Responsabilidade Fiscal, que tratam de limites e condições para gastos públicos",
+      "resumoDetalhe": "- Cria cargos de juiz do trabalho substituto no Tribunal Regional do Trabalho de Minas Gerais, com sede em Belo Horizonte.\n- Destina esses cargos para compor as varas do trabalho criadas no tribunal e para buscar paridade entre juízes titulares e substitutos.\n- Determina que os recursos para os cargos venham das dotações orçamentárias do tribunal no Orçamento Geral da União e que a implementação observe as regras fiscais da Constituição e da Lei de Responsabilidade Fiscal, que tratam de limites e condições para gastos públicos.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:37:36.257Z",
