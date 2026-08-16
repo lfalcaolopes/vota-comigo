@@ -59,7 +59,7 @@ export function DeputadoCard({
         </div>
         <div className="flex shrink-0 flex-col items-end">
           <p className="text-lg font-[680] leading-none tabular-nums text-ink">
-            <span className="sr-only">Compatibilidade </span>
+            <span className="sr-only">Concordância </span>
             {percentualLabel}
           </p>
           <p className="mt-1 text-xs text-muted">{amostraLabel}</p>

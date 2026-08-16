@@ -35,7 +35,7 @@ export function FeedList({
   if (display === "empty-default") {
     return (
       <EmptyState
-        body="Ainda não há proposições para mostrar."
+        body="Ainda não há propostas para mostrar."
         title="Nada para exibir ainda"
       />
     );
@@ -49,8 +49,8 @@ export function FeedList({
             Limpar busca e filtros
           </Button>
         }
-        body="Nenhuma proposição foi encontrada com a busca e os filtros utilizados."
-        title="Nenhuma proposição encontrada"
+        body="Nenhuma proposta foi encontrada com a busca e os filtros utilizados."
+        title="Nenhuma proposta encontrada"
       />
     );
   }
@@ -59,7 +59,7 @@ export function FeedList({
     return (
       <div className="grid gap-4">
         <InlineMessage
-          body="Não foi possível carregar as proposições. Tente novamente."
+          body="Não foi possível carregar as propostas. Tente novamente."
           title="Erro ao carregar"
           tone="danger"
         />
@@ -89,7 +89,7 @@ export function FeedList({
 
       {status === "error" ? (
         <InlineMessage
-          body="Não foi possível carregar as proposições. Tente novamente."
+          body="Não foi possível carregar as propostas. Tente novamente."
           title="Erro ao carregar"
           tone="danger"
         />

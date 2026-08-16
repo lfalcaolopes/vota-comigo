@@ -52,7 +52,7 @@ function toIdentificacao(deputado: DeputadoTextItem): string {
 function toMetrica(deputado: DeputadoTextItem): string {
   if (deputado.compatibilidade === null) return "";
 
-  return ` — ${formatPercentual(deputado.compatibilidade)} de compatibilidade`;
+  return ` — ${formatPercentual(deputado.compatibilidade)} de concordância`;
 }
 
 // formatData reads a calendar date out of an ISO prefix, and toISOString would

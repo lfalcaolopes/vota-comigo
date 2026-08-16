@@ -277,7 +277,7 @@ test.describe("filtros do resultado do matcher", () => {
       await expect(abrirFiltros(page)).toContainText("1");
       await expect(
         page.getByRole("button", {
-          name: "Remover filtro Concordância: 1 proposição",
+          name: "Remover filtro Concordância: 1 proposta",
         }),
       ).toBeVisible();
     });
@@ -303,7 +303,7 @@ test.describe("filtros do resultado do matcher", () => {
       // Act
       await page
         .getByRole("button", {
-          name: "Remover filtro Concordância: 2 proposições",
+          name: "Remover filtro Concordância: 2 propostas",
         })
         .click();
 
@@ -461,7 +461,7 @@ test.describe("filtros do resultado do matcher", () => {
       await expect(
         page.locator('[role="status"]').filter({
           hasText:
-            "Resultado atualizado: nenhum deputado votou com você em todas as proposições marcadas.",
+            "Resultado atualizado: nenhum deputado votou com você em todas as propostas marcadas.",
         }),
       ).toBeAttached();
       await expect(abrirFiltros(page)).toBeFocused();
@@ -469,7 +469,7 @@ test.describe("filtros do resultado do matcher", () => {
   });
 
   test.describe("quando o filtro deixa o resultado vazio", () => {
-    test("explica quando as proposições marcadas eliminam todos os deputados", async ({
+    test("explica quando as propostas marcadas eliminam todos os deputados", async ({
       page,
     }) => {
       // Arrange
@@ -493,9 +493,7 @@ test.describe("filtros do resultado do matcher", () => {
         }),
       ).toBeVisible();
       await expect(
-        page.getByText(
-          "O filtro exige concordância nas 2 proposições marcadas.",
-        ),
+        page.getByText("O filtro exige concordância nas 2 propostas marcadas."),
       ).toBeVisible();
       await expect(
         page.getByRole("heading", { name: "Nenhum comparável neste estado" }),
@@ -608,7 +606,7 @@ test.describe("filtros do resultado do matcher", () => {
   });
 
   test.describe("persistência das marcações", () => {
-    test("preserva as proposições marcadas ao recarregar o resultado", async ({
+    test("preserva as propostas marcadas ao recarregar o resultado", async ({
       page,
     }) => {
       // Arrange
@@ -640,7 +638,7 @@ test.describe("filtros do resultado do matcher", () => {
       await expect(page).toHaveURL(/\/matcher\/resultado$/);
     });
 
-    test("preserva as proposições marcadas ao abrir o detalhe e voltar", async ({
+    test("preserva as propostas marcadas ao abrir o detalhe e voltar", async ({
       page,
     }) => {
       // Arrange
@@ -679,7 +677,7 @@ test.describe("filtros do resultado do matcher", () => {
       await expect(concordancia(page, "PL 2630/2020")).toBeChecked();
     });
 
-    test("preserva as proposições marcadas ao ampliar o escopo", async ({
+    test("preserva as propostas marcadas ao ampliar o escopo", async ({
       page,
     }) => {
       // Arrange
@@ -764,21 +762,21 @@ test.describe("filtros do resultado do matcher", () => {
       // Assert
       await expect(
         page.getByRole("heading", {
-          name: "Deputados que votaram com você nas proposições marcadas",
+          name: "Deputados que votaram com você nas propostas marcadas",
         }),
       ).toBeVisible();
 
       // Act
       await page
         .getByRole("button", {
-          name: "Remover filtro Concordância: 1 proposição",
+          name: "Remover filtro Concordância: 1 proposta",
         })
         .click();
 
       // Assert
       await expect(
         page.getByRole("heading", {
-          name: "Deputados que votaram com você nas proposições marcadas",
+          name: "Deputados que votaram com você nas propostas marcadas",
         }),
       ).toHaveCount(0);
     });

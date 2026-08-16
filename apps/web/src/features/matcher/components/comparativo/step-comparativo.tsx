@@ -252,7 +252,7 @@ type ComparativoRowProps = {
 function ComparativoRow({ row }: ComparativoRowProps) {
   const identificador =
     toIdentificadorLegislativo(row.proposicao) ??
-    `Proposição ${row.proposicao.externalIdProposicao}`;
+    `Proposta ${row.proposicao.externalIdProposicao}`;
   const textoResumo = toTextoResumo(row.proposicao);
 
   return (
@@ -334,7 +334,7 @@ function ComparativoMobileProposicao({
 }: ComparativoMobileProposicaoProps) {
   const identificador =
     toIdentificadorLegislativo(row.proposicao) ??
-    `Proposição ${row.proposicao.externalIdProposicao}`;
+    `Proposta ${row.proposicao.externalIdProposicao}`;
   const textoResumo = toTextoResumo(row.proposicao);
 
   return (

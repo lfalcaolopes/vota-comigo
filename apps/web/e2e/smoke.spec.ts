@@ -8,7 +8,7 @@ test.describe("static product pages", () => {
     // Assert
     await expect(
       page.getByRole("heading", {
-        name: "A compatibilidade vem do voto real do deputado.",
+        name: "Tudo aqui vem do registro oficial do mandato.",
       }),
     ).toBeVisible();
   });

@@ -54,7 +54,7 @@ export function MatcherComparativo({ ids }: { ids: string }) {
   return (
     <MatcherRouteGate route={ROUTE}>
       <MatcherStepFrame
-        description="Compare os deputados selecionados usando as mesmas proposições e posições que geraram o resultado."
+        description="Compare os deputados selecionados usando as mesmas propostas e posições que geraram o resultado."
         route={ROUTE}
         title="Comparativo de deputados"
       >

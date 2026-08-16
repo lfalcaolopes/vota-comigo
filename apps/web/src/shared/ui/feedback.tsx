@@ -131,7 +131,7 @@ export function EmptyState({ action, body, title }: EmptyStateProps) {
 }
 
 export function ErrorState({
-  body = "Não foi possível carregar esta proposição. Tente novamente.",
+  body = "Não foi possível carregar esta proposta. Tente novamente.",
   onRetry,
   title = "Erro ao carregar",
 }: {

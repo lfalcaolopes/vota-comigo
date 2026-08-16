@@ -5,7 +5,7 @@ import { Panel, SourceLink } from "@/shared/ui";
 export const metadata: Metadata = {
   title: "Metodologia",
   description:
-    "Como o Quem Vota Comigo calcula compatibilidade, monta o perfil do deputado e trata os dados abertos oficiais.",
+    "Como o Quem Vota Comigo calcula a concordância, monta o perfil do deputado e trata os dados abertos oficiais.",
 };
 
 export default function MetodologiaPage() {
@@ -18,17 +18,24 @@ export default function MetodologiaPage() {
             Tudo aqui vem do registro oficial do mandato.
           </h1>
           <p className="text-base leading-normal text-muted">
-            A aplicação compara a sua opinião sobre cada proposição com o voto
-            que o deputado registrou no plenário, e reúne no perfil de cada um o
+            Comparamos a sua opinião sobre cada proposição com o voto que o
+            deputado registrou no plenário, e reunimos no perfil de cada um o
             que a Câmara publica sobre a atuação do mandato. Ler bem esses
             números depende de saber o que entra na conta e o que fica de fora.
           </p>
+          <p className="text-base leading-normal text-muted">
+            Proposição é o nome oficial do que o resto do site chama de
+            proposta: projeto de lei (PL), proposta de emenda à Constituição
+            (PEC), medida provisória (MPV) e os demais tipos que a Câmara vota.
+            Esta página usa o termo oficial porque é ele que você vai encontrar
+            no portal da Câmara.
+          </p>
         </header>
 
-        <section aria-labelledby="grupo-compatibilidade" className="grid gap-4">
+        <section aria-labelledby="grupo-concordancia" className="grid gap-4">
           <h2
             className="text-sm font-[650] tracking-wide text-subtle uppercase"
-            id="grupo-compatibilidade"
+            id="grupo-concordancia"
           >
             A comparação de votos
           </h2>
@@ -64,15 +71,15 @@ export default function MetodologiaPage() {
                 por aclamação também, porque não registram voto individual.
               </p>
               <p>
-                A base cobre as votações nominais realizadas de 2015 até 16 de
-                agosto de 2026. O recorte é pela data da votação, não pela idade
-                da proposição: uma proposição mais antiga aparece se foi votada
+                A base cobre as votações nominais realizadas de 2015 até agosto
+                de 2026. O recorte é pela data da votação, não pela idade da
+                proposição: uma proposição mais antiga aparece se foi votada
                 nesse período.
               </p>
             </div>
           </Panel>
 
-          <Panel title="Como a compatibilidade é calculada" titleAs="h3">
+          <Panel title="Como a concordância é calculada" titleAs="h3">
             <div className="grid gap-3 leading-normal text-muted">
               <p>
                 Para cada proposição, você responde se ela deveria ser aprovada:
@@ -113,10 +120,10 @@ export default function MetodologiaPage() {
                 voto.
               </p>
               <p>
-                Deputados cuja última legislatura é anterior à 51ª (1999–2003)
-                não existem na aplicação: a Câmara só publica arquivos de votos
-                a partir de 2001, e um perfil sem nenhum voto registrado não
-                teria o que comparar.
+                Deputados cuja última legislatura é anterior à 51ª, iniciada em
+                1999, não existem no Quem Vota Comigo: a Câmara só publica
+                arquivos de votos a partir de 2001, e um perfil sem nenhum voto
+                registrado não teria o que comparar.
               </p>
             </div>
           </Panel>
@@ -124,11 +131,10 @@ export default function MetodologiaPage() {
           <Panel title="Qual votação representa cada proposição" titleAs="h3">
             <div className="grid gap-3 leading-normal text-muted">
               <p>
-                Uma proposição costuma passar por várias votações. A aplicação
-                escolhe a que decide o mérito (o texto-base, o substitutivo ou a
-                medida provisória) e ignora requerimentos, destaques,
-                preliminares e redação final, que não representam sozinhos a
-                decisão de fundo.
+                Uma proposição costuma passar por várias votações. Escolhemos a
+                que decide o mérito (o texto-base, o substitutivo ou a medida
+                provisória) e ignoramos requerimentos, destaques, preliminares e
+                redação final, que não representam sozinhos a decisão de fundo.
               </p>
             </div>
           </Panel>
@@ -138,8 +144,8 @@ export default function MetodologiaPage() {
               <p>
                 O percentual deve ser lido junto da amostra comparável: quantas
                 das suas respostas puderam de fato ser comparadas com aquele
-                deputado. Uma compatibilidade alta sobre poucas votações diz
-                menos do que uma compatibilidade parecida sobre muitas.
+                deputado. Uma concordância alta sobre poucas votações diz menos
+                do que uma concordância parecida sobre muitas.
               </p>
               <p>
                 Por isso a ordem do ranking não usa só o percentual bruto. Ela
@@ -177,8 +183,8 @@ export default function MetodologiaPage() {
                 trazem um resumo gerado por inteligência artificial, sempre
                 identificado como tal. Quando a proposição tem inteiro teor
                 publicado, o modelo lê o PDF oficial completo; quando não tem, o
-                resumo se apoia na ementa, na ementa detalhada e nas palavras
-                chave da própria Câmara.
+                resumo se apoia na ementa, na ementa detalhada e nas
+                palavras-chave da própria Câmara.
               </p>
               <p>
                 Nenhum resumo aparece automaticamente: cada um passa por revisão
@@ -195,7 +201,7 @@ export default function MetodologiaPage() {
               <p>
                 A presença mostrada no perfil e no comparativo não é a presença
                 parlamentar oficial. Ela conta apenas as votações nominais de
-                plenário que entram na base da aplicação, dentro da legislatura
+                plenário que entram na nossa base, dentro da legislatura
                 indicada na tela.
               </p>
               <p>
@@ -224,7 +230,7 @@ export default function MetodologiaPage() {
               <p>
                 O número não mede qualidade nem resultado: uma proposição
                 assinada pode nunca ter sido votada. Relatorias não entram, por
-                não estarem disponíveis nos dados abertos que a aplicação usa.
+                não estarem disponíveis nos dados abertos que usamos.
               </p>
               <p>
                 Comissões e outros órgãos listam os vínculos registrados no ano
@@ -307,57 +313,56 @@ export default function MetodologiaPage() {
                 quantas proposições foram selecionadas e quantas foram
                 respondidas, com a data. Nenhuma posição declarada, nenhum
                 estado informado, nenhum endereço de IP e nenhum identificador
-                que permita reconhecer você depois. A aplicação também usa
-                medição de audiência agregada para saber quais páginas são
-                acessadas, sem perfil individual.
+                que permita reconhecer você depois. Também usamos medição de
+                audiência agregada para saber quais páginas são acessadas, sem
+                perfil individual.
               </p>
             </div>
           </Panel>
 
-          <Panel title="Limites da aplicação" titleAs="h3">
+          <Panel title="Limites" titleAs="h3">
             <div className="grid gap-3 leading-normal text-muted">
               <p>
                 O resultado ajuda a ler comportamento parlamentar registrado,
-                mas não resume tudo sobre um deputado, uma proposição ou uma
-                eleição. Use a compatibilidade como ponto de partida para
-                avaliar o histórico de voto, não como conclusão automática.
+                mas não resume tudo sobre um deputado ou uma proposição. Use a
+                concordância como ponto de partida para avaliar o histórico de
+                voto, não como conclusão automática.
               </p>
               <ul className="grid gap-3 pl-5 [list-style:disc]">
                 <li>
-                  A compatibilidade não mostra o que o deputado pensa. Ela
-                  mostra se o voto registrado na votação usada como referência
+                  A concordância não mostra o que o deputado pensa. Ela mostra
+                  se o voto registrado na votação usada como referência
                   coincidiu com a sua posição.
                 </li>
                 <li>
                   A presença exibida no perfil não é a presença parlamentar
                   geral. Ela considera somente votações nominais de plenário das
-                  proposições que entram na base da aplicação.
+                  proposições que entram na nossa base.
                 </li>
                 <li>
-                  Uma proposição pode ter várias votações. A aplicação escolhe
-                  uma votação para representá-la, priorizando decisões sobre o
-                  mérito da proposta. Essa escolha segue uma regra pública, mas
-                  pode não capturar todas as nuances do processo legislativo.
+                  Uma proposição pode ter várias votações. Escolhemos uma
+                  votação para representá-la, priorizando decisões sobre o
+                  mérito da proposição. Essa escolha segue uma regra pública,
+                  mas pode não capturar todas as nuances do processo
+                  legislativo.
                 </li>
                 <li>
-                  Nem toda proposição da Câmara aparece na aplicação. Entram
-                  apenas proposições com votação nominal em plenário e uma
-                  votação que possa representar a decisão principal sobre a
-                  proposta.
+                  Nem toda proposição da Câmara aparece no site. Entram apenas
+                  proposições com votação nominal em plenário e uma votação que
+                  possa representar a decisão principal sobre ela.
                 </li>
                 <li>
                   O cálculo olha a votação de referência, não todas as votações
                   ligadas à proposição. Quando um deputado fica fora do ranking,
                   isso não prova que ele faltou a todas as votações das
                   proposições selecionadas; significa que não houve votos
-                  comparáveis suficientes nas votações usadas pela aplicação.
+                  comparáveis suficientes nas votações que usamos.
                 </li>
                 <li>
                   Quando não há voto registrado para um deputado que estava em
-                  exercício, a aplicação trata como ausência sem motivo
-                  conhecido. Os Dados Abertos da Câmara usados pela aplicação
-                  não permitem separar uma ausência comum de uma ausência
-                  justificada.
+                  exercício, tratamos como ausência sem motivo conhecido. Os
+                  Dados Abertos da Câmara que usamos não permitem separar uma
+                  ausência comum de uma ausência justificada.
                 </li>
                 <li>
                   Quando o histórico oficial indica que o deputado estava fora

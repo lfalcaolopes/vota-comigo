@@ -52,7 +52,7 @@ afterEach(() => {
 });
 
 describe("buildCompletionEvent", () => {
-  describe("when counting selected and answered proposições", () => {
+  describe("when counting selected and answered propostas", () => {
     it("reports the selected count and the answered count", () => {
       // Arrange
       const state = stateWith((s) =>
@@ -78,7 +78,7 @@ describe("buildCompletionEvent", () => {
       expect(event).toEqual({ totalSelecionadas: 3, totalRespondidas: 2 });
     });
 
-    it('counts "nao_sei" as an answered proposição', () => {
+    it('counts "nao_sei" as an answered proposta', () => {
       // Arrange
       const selected = stateWith((s) =>
         [card(1), card(2), card(3)].reduce(
@@ -100,7 +100,7 @@ describe("buildCompletionEvent", () => {
       expect(event.totalRespondidas).toBe(1);
     });
 
-    it("ignores positions left over from de-selected proposições", () => {
+    it("ignores positions left over from de-selected propostas", () => {
       // Arrange
       const selected = stateWith((s) =>
         [card(1), card(2), card(3)].reduce(

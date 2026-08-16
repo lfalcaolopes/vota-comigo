@@ -181,7 +181,7 @@ describe("DeputadoCard", () => {
 
       // Assert
       expect(html).not.toContain('type="checkbox"');
-      expect(html).toContain("Compatibilidade");
+      expect(html).toContain("Concordância");
     });
   });
 

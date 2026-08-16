@@ -41,10 +41,10 @@ export function SelecaoBottomBar({
   );
   const closeRef = useRef<HTMLButtonElement>(null);
 
-  const faltam = Math.max(MIN_POSICOES_COMPUTAVEIS - totalSelecionadas, 0);
-  const progresso = canAdvance
-    ? `${totalSelecionadas} de até ${MAX_POSICOES} selecionadas`
-    : `Faltam ${faltam} de ${MIN_POSICOES_COMPUTAVEIS} proposições`;
+  const progresso = `${totalSelecionadas} de ${MAX_POSICOES} escolhidas`;
+  const instrucao = canAdvance
+    ? null
+    : `Escolha pelo menos ${MIN_POSICOES_COMPUTAVEIS} para continuar.`;
 
   useEffect(() => {
     if (!isMounted) return;
@@ -80,7 +80,7 @@ export function SelecaoBottomBar({
           />
           <div
             className={joinClassNames(
-              "absolute inset-x-0 bottom-0 grid max-h-[80vh] grid-rows-[auto_auto_minmax(0,1fr)] gap-3 rounded-t-lg border-t border-border bg-surface p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-[0_-8px_24px_oklch(0.205_0.012_48/0.12)] transition-transform duration-[240ms] ease-standard motion-reduce:transition-none",
+              "absolute inset-x-0 bottom-0 grid max-h-[80vh] grid-rows-[auto_auto_auto_minmax(0,1fr)] gap-3 rounded-t-lg border-t border-border bg-surface p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-[0_-8px_24px_oklch(0.205_0.012_48/0.12)] transition-transform duration-[240ms] ease-standard motion-reduce:transition-none",
               isVisible ? "translate-y-0" : "translate-y-full",
             )}
           >
@@ -98,6 +98,9 @@ export function SelecaoBottomBar({
             <p className="text-sm leading-normal text-muted" role="status">
               {progresso}
             </p>
+            {instrucao ? (
+              <p className="text-sm leading-normal text-muted">{instrucao}</p>
+            ) : null}
             <div className="min-h-0 overflow-y-auto">
               <SelecaoResumo
                 listClassName="grid"
@@ -129,9 +132,14 @@ export function SelecaoBottomBar({
             ) : null}
           </div>
 
+          {instrucao ? (
+            <p className="text-xs leading-snug text-muted">{instrucao}</p>
+          ) : null}
+
           {atLimit ? (
             <p className="text-xs leading-snug text-muted">
-              Limite de {MAX_POSICOES} atingido. Desmarque uma para trocar.
+              Limite de {MAX_POSICOES} atingido. Desmarque uma proposta para
+              escolher outra.
             </p>
           ) : null}
 

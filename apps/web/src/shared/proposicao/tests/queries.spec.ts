@@ -264,7 +264,7 @@ const detalheResponse: ProposicaoDetalhe = {
   ementa: "Dispõe sobre alguma coisa.",
   dataApresentacao: "2023-05-10",
   descricaoTipo: "Projeto de Lei",
-  ementaDetalhada: "Texto mais longo explicando a proposição.",
+  ementaDetalhada: "Texto mais longo explicando a proposta.",
   keywords: "Saúde pública.",
   urlInteiroTeor:
     "https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=42",
@@ -303,7 +303,7 @@ describe("detalhe", () => {
       // Assert
       expect(result.externalIdProposicao).toBe(42);
       expect(result.ementaDetalhada).toBe(
-        "Texto mais longo explicando a proposição.",
+        "Texto mais longo explicando a proposta.",
       );
       expect(result.urlInteiroTeor).toBe(
         "https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=42",

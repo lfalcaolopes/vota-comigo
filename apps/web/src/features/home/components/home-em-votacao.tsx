@@ -27,17 +27,17 @@ export function HomeEmVotacao() {
               className="text-2xl leading-tight font-[700] tracking-[-0.01em] text-balance text-ink"
               id="home-em-votacao"
             >
-              Proposições recentes
+              Propostas mais votadas
             </h2>
             <p className="text-base leading-normal text-muted">
-              O que a Câmara já votou, direto dos dados oficiais.
+              As que a Câmara levou mais vezes ao plenário.
             </p>
           </div>
           <Link
             className="shrink-0 text-sm font-[650] text-primary underline-offset-2 hover:underline"
             href="/proposicoes"
           >
-            Ver todas as proposições
+            Ver todas as propostas
           </Link>
         </div>
 
@@ -50,8 +50,8 @@ export function HomeEmVotacao() {
             Resumo por IA
           </Badge>
           <span className="min-w-0">
-            Onde aparece este selo, a proposição já vem em linguagem comum. A
-            versão oficial fica sempre a um clique.
+            Onde aparece este selo, a proposta vem com um resumo curto no lugar
+            do texto oficial. A versão oficial fica sempre a um clique.
           </span>
         </p>
 
@@ -69,7 +69,7 @@ async function DestaquesRows() {
   if (proposicoes.length === 0) {
     return (
       <p className="border-t border-border pt-6 text-base leading-normal text-muted">
-        Nenhuma proposição para mostrar agora.{" "}
+        Nenhuma proposta para mostrar agora.{" "}
         <Link
           className="font-[650] text-primary underline-offset-2 hover:underline"
           href="/proposicoes"

@@ -79,7 +79,7 @@ test.describe("entrada do matcher com rascunho", () => {
       }),
     ).toBeVisible();
     await expect(page).toHaveURL(/\/matcher$/);
-    await expect(page.getByText("Proposições escolhidas")).toBeVisible();
+    await expect(page.getByText("Propostas escolhidas")).toBeVisible();
     await expect(page.getByText("Posições respondidas")).toBeVisible();
   });
 
@@ -91,7 +91,7 @@ test.describe("entrada do matcher com rascunho", () => {
     await page.goto("/matcher");
 
     // Act
-    await page.getByRole("button", { name: "Continuar comparação" }).click();
+    await page.getByRole("button", { name: "Continuar de onde parei" }).click();
 
     // Assert
     await expect(page).toHaveURL(/\/matcher\/resultado$/);
@@ -103,7 +103,7 @@ test.describe("entrada do matcher com rascunho", () => {
     await page.goto("/matcher");
 
     // Act
-    await page.getByRole("button", { name: "Começar nova comparação" }).click();
+    await page.getByRole("button", { name: "Recomeçar do zero" }).click();
 
     // Assert
     await expect(

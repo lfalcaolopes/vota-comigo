@@ -56,33 +56,35 @@ export function MatcherOnboarding({ onStart }: { onStart: () => void }) {
           Compare suas posições com votos reais da Câmara
         </h1>
         <p className="max-w-[68ch] text-sm leading-normal text-muted">
-          Na eleição, você faz uma escolha para deputado federal. Compare como
-          diferentes deputados votaram em proposições que importam para você.
+          Em vez de partir do nome do deputado, parta do que ele votou: escolha
+          as propostas que importam para você, diga como votaria, e veja quem
+          votou parecido.
         </p>
       </header>
 
       <ol className="divide-y divide-border border-y border-border">
         <OnboardingStep
-          description="Selecione pelo menos 3 proposições votadas pela Câmara."
+          description="Escolha de 3 a 30 propostas já votadas pela Câmara. Quanto mais, mais firme fica a comparação."
           position={1}
-          title="Escolha o que importa para você"
+          title="Comece pelos temas que te interessam"
         />
         <OnboardingStep
-          description='Diga se cada proposição deveria ser aprovada. Se não tiver uma posição, escolha "Não sei".'
+          description='Diga se cada proposta deveria ser aprovada. "Não sei" é uma resposta válida, mas ela sai da conta: a comparação usa só o que você respondeu Sim ou Não.'
           position={2}
           title="Declare suas posições"
         />
         <OnboardingStep
-          description="Veja quais deputados votaram de forma semelhante e quantas votações sustentam cada compatibilidade."
+          description="Você vê quais deputados votaram como você e de onde vem cada percentual."
           position={3}
-          title="Compare com votos registrados"
+          title="Veja o resultado completo"
         />
       </ol>
 
       <div className="grid gap-4">
         <p className="max-w-[68ch] text-sm leading-normal text-muted">
-          O resultado considera apenas as proposições escolhidas e as votações
-          comparáveis. Ele não é uma recomendação de voto.
+          Nada aqui é recomendação de voto: comparamos votos registrados em
+          plenário e mostramos o que entrou em cada conta. O resultado cobre só
+          as propostas que você escolher.
         </p>
         <Button
           className="justify-self-start"
@@ -153,19 +155,20 @@ export function MatcherRascunhoChoice({
           Você tem uma comparação em andamento
         </h1>
         <p className="max-w-[68ch] text-sm leading-normal text-muted">
-          Suas escolhas continuam disponíveis nesta aba. Continue de onde parou
-          ou comece uma nova comparação, apagando este rascunho.
+          Suas escolhas continuam disponíveis nesta aba. Você pode continuar de
+          onde parou ou recomeçar do zero. Recomeçar apaga o que você já
+          respondeu.
         </p>
       </header>
 
       <div className="grid gap-5 rounded-lg bg-surface p-5 sm:p-6">
         <dl className="grid gap-2 text-sm sm:grid-cols-3 sm:gap-4">
           <RascunhoSummaryItem
-            label="Estado"
+            label="Estado escolhido"
             value={siglaUf ?? "Não informado"}
           />
           <RascunhoSummaryItem
-            label="Proposições escolhidas"
+            label="Propostas escolhidas"
             value={String(totalSelecionadas)}
           />
           <RascunhoSummaryItem
@@ -176,10 +179,10 @@ export function MatcherRascunhoChoice({
 
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button onClick={onResume} variant="primary">
-            Continuar comparação
+            Continuar de onde parei
           </Button>
           <Button onClick={onStartOver} variant="secondary">
-            Começar nova comparação
+            Recomeçar do zero
           </Button>
         </div>
       </div>

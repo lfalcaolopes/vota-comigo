@@ -18,7 +18,7 @@ export function MatcherResultadoDetalhe({
   return (
     <MatcherRouteGate route={ROUTE}>
       <MatcherStepFrame
-        description="Veja como o deputado votou nas proposições usadas para calcular esta compatibilidade."
+        description="Veja como o deputado votou nas propostas que entraram nesta conta."
         route={ROUTE}
         title="Detalhe do resultado"
       >

@@ -7,13 +7,7 @@ import {
   stepStatus,
   type MatcherRoute,
 } from "../../lib/matcher-route";
-
-const STEP_LABELS: Record<MatcherRoute, string> = {
-  "/matcher/local": "Onde você vota",
-  "/matcher/proposicoes": "Escolha proposições",
-  "/matcher/posicoes": "Sua posição",
-  "/matcher/resultado": "Quem vota com você",
-};
+import { MATCHER_STEP_LABELS } from "../../lib/matcher-step-labels";
 
 type StepIndicatorProps = {
   currentRoute: MatcherRoute;
@@ -32,7 +26,10 @@ export function StepIndicator({ currentRoute }: StepIndicatorProps) {
                 className="cursor-pointer rounded-full border border-border px-2.5 py-1 hover:border-primary hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 href={route}
               >
-                <StepLabel label={STEP_LABELS[route]} position={position} />
+                <StepLabel
+                  label={MATCHER_STEP_LABELS[route]}
+                  position={position}
+                />
               </Link>
             </li>
           );
@@ -45,7 +42,10 @@ export function StepIndicator({ currentRoute }: StepIndicatorProps) {
               className="rounded-full border border-primary bg-primary-soft px-2.5 py-1 text-ink"
               key={route}
             >
-              <StepLabel label={STEP_LABELS[route]} position={position} />
+              <StepLabel
+                label={MATCHER_STEP_LABELS[route]}
+                position={position}
+              />
             </li>
           );
         }
@@ -55,7 +55,7 @@ export function StepIndicator({ currentRoute }: StepIndicatorProps) {
             className="rounded-full border border-border px-2.5 py-1 opacity-50"
             key={route}
           >
-            <StepLabel label={STEP_LABELS[route]} position={position} />
+            <StepLabel label={MATCHER_STEP_LABELS[route]} position={position} />
           </li>
         );
       })}

@@ -168,7 +168,7 @@ export function StepResultado({
       : display === "error"
         ? "Não foi possível atualizar a lista de deputados."
         : display === "empty" && hasFiltroConcordancia
-          ? "Resultado atualizado: nenhum deputado votou com você em todas as proposições marcadas."
+          ? "Resultado atualizado: nenhum deputado votou com você em todas as propostas marcadas."
           : display === "empty" && hasRecorte
             ? "Resultado atualizado: nenhum deputado no recorte."
             : display === "empty"
@@ -244,14 +244,19 @@ export function StepResultado({
       {hasFiltroConcordancia ? (
         <header aria-live="polite" className="grid gap-1">
           <h2 className="text-base font-[680] text-ink">
-            Deputados que votaram com você nas proposições marcadas
+            Deputados que votaram com você nas propostas marcadas
           </h2>
           <p className="text-sm text-muted">
-            Resultado restrito à concordância em todas as proposições marcadas.
-            A compatibilidade continua considerando todas as suas posições.
+            Mostrando só quem votou como você em todas as propostas marcadas. O
+            percentual continua considerando todas as suas respostas.
           </p>
         </header>
       ) : null}
+      <p className="text-sm leading-normal text-muted">
+        Um bom começo de conversa, não um veredito. Abra um deputado para ver
+        voto a voto.
+      </p>
+
       <OrdenacaoDisclosure />
 
       <ul className="grid">

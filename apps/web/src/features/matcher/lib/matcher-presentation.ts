@@ -21,7 +21,7 @@ export function toAmostraComparavelLabel(
   deputado: MatcherDeputadoResumo,
   totalPosicoesComputaveis: number,
 ): string {
-  return `${deputado.amostraComparavel} de ${totalPosicoesComputaveis} votações comparáveis`;
+  return `${deputado.amostraComparavel} das suas ${totalPosicoesComputaveis} respostas entraram na conta`;
 }
 
 export function toCopyContextLabel({
@@ -33,7 +33,7 @@ export function toCopyContextLabel({
   siglaUf: SiglaUf | null;
   totalProposicoes: number;
 }): string {
-  const proposicoes = `${totalProposicoes} ${totalProposicoes === 1 ? "proposição" : "proposições"}`;
+  const proposicoes = `${totalProposicoes} ${totalProposicoes === 1 ? "proposta" : "propostas"}`;
   const abrangencia =
     escopo === "nacional"
       ? "Brasil"
@@ -45,6 +45,6 @@ export function toCopyContextLabel({
 }
 
 export function toAlertaLabel(alerta: AlertaMatcher): string {
-  if (alerta === "amostra_pequena") return "Amostra pequena";
+  if (alerta === "amostra_pequena") return "Poucos votos em comum";
   return alerta;
 }

@@ -18,7 +18,7 @@ const selected: ProposicaoCard[] = [
     ano: 2026,
     ementa: "Altera a legislação eleitoral.",
     resumoIaDisponivel: true,
-    resumoIaCard: "Resumo da proposição.",
+    resumoIaCard: "Resumo da proposta.",
     dataApresentacao: "2026-03-10T12:00:00.000Z",
     volumeVotacoesPlenario: 4,
     dataUltimaVotacao: "2026-06-15T18:30:00.000Z",

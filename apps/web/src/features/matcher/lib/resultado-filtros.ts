@@ -139,7 +139,7 @@ export function descreverResultadoFiltrosAtivos(
       toFiltroAtivo(
         "externalIdProposicoesFiltroConcordancia",
         RESULTADO_FILTRO_NOME.externalIdProposicoesFiltroConcordancia,
-        marcadas === 1 ? "1 proposição" : `${marcadas} proposições`,
+        marcadas === 1 ? "1 proposta" : `${marcadas} propostas`,
       ),
     );
   }

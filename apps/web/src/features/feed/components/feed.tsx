@@ -28,7 +28,7 @@ export function Feed({
       <header className="mb-10 grid max-w-[68ch] gap-4">
         <p className="text-sm font-[650] text-primary">Câmara dos Deputados</p>
         <h1 className="text-3xl leading-tight font-[720] tracking-[-0.02em] text-balance text-ink">
-          Proposições
+          Propostas
         </h1>
       </header>
 

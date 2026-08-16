@@ -30,9 +30,9 @@ export function VotoLista({ votos }: VotoListaProps) {
   const mostraExplicacao = filtro === "fora" && visiveis.length > 0;
 
   return (
-    <section aria-label="Proposições avaliadas" className="grid gap-3">
+    <section aria-label="Propostas avaliadas" className="grid gap-3">
       <div
-        aria-label="Filtrar proposições por resultado"
+        aria-label="Filtrar propostas por resultado"
         className="flex flex-wrap gap-2"
         role="group"
       >
@@ -67,7 +67,7 @@ export function VotoLista({ votos }: VotoListaProps) {
         </ul>
       ) : (
         <p className="py-3 text-sm text-muted">
-          Nenhuma proposição neste filtro.
+          Nenhuma proposta neste filtro.
         </p>
       )}
     </section>

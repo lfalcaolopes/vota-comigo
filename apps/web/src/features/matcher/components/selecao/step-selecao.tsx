@@ -68,10 +68,6 @@ export function StepSelecao({
     selected.map((card) => card.externalIdProposicao),
   );
   const atLimit = totalSelecionadas >= MAX_POSICOES;
-  const faltamSelecionadas = Math.max(
-    MIN_POSICOES_COMPUTAVEIS - totalSelecionadas,
-    0,
-  );
 
   function handleClear() {
     setDraft("");
@@ -110,16 +106,19 @@ export function StepSelecao({
           <div className="grid gap-1">
             <h2 className="text-base font-[680] text-ink">Sua seleção</h2>
             <p className="text-sm leading-normal text-muted" role="status">
-              {canAdvance
-                ? `Selecionadas: ${totalSelecionadas} de até ${MAX_POSICOES}`
-                : `Escolha pelo menos ${MIN_POSICOES_COMPUTAVEIS} proposições para continuar. Faltam ${faltamSelecionadas}.`}
+              {`${totalSelecionadas} de ${MAX_POSICOES} escolhidas`}
             </p>
+            {canAdvance ? null : (
+              <p className="text-sm leading-normal text-muted">
+                {`Escolha pelo menos ${MIN_POSICOES_COMPUTAVEIS} para continuar.`}
+              </p>
+            )}
           </div>
 
           {atLimit ? (
             <InlineMessage
-              body={`Você atingiu o limite de ${MAX_POSICOES} proposições. Desmarque uma para adicionar outra.`}
-              title="Limite atingido"
+              body="Desmarque uma proposta para escolher outra."
+              title={`Limite de ${MAX_POSICOES} atingido`}
             />
           ) : null}
 

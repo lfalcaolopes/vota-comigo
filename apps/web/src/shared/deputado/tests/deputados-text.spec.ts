@@ -39,7 +39,7 @@ describe("buildDeputadosText", () => {
       // Act
       const texto = buildDeputadosText({
         deputados,
-        contexto: "12 proposições · São Paulo",
+        contexto: "12 propostas · São Paulo",
         salvoEm: SALVO_EM,
       });
 
@@ -47,12 +47,12 @@ describe("buildDeputadosText", () => {
       expect(texto).toBe(
         [
           `${SITE_NAME} — deputados de interesse`,
-          "Salvo em 15/08/2026 · 12 proposições · São Paulo",
+          "Salvo em 15/08/2026 · 12 propostas · São Paulo",
           "",
-          "- Fulana de Tal (PT-SP) — 83% de compatibilidade",
+          "- Fulana de Tal (PT-SP) — 83% de concordância",
           `  ${siteUrl}/deputados/204521`,
           "",
-          "- Beltrano Silva (PSOL-RJ) — 79% de compatibilidade",
+          "- Beltrano Silva (PSOL-RJ) — 79% de concordância",
           `  ${siteUrl}/deputados/178903`,
         ].join("\n"),
       );
@@ -67,7 +67,7 @@ describe("buildDeputadosText", () => {
       });
 
       // Assert
-      expect(texto).toContain("— 83% de compatibilidade");
+      expect(texto).toContain("— 83% de concordância");
     });
   });
 

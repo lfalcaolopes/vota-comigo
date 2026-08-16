@@ -430,7 +430,10 @@ function ComparativoMobileValor({
             {column.siglaPartido} · {column.siglaUf}
           </p>
         </div>
-        <AtividadeStatus className="shrink-0" emAtividade={column.emAtividade} />
+        <AtividadeStatus
+          className="shrink-0"
+          emAtividade={column.emAtividade}
+        />
       </div>
 
       <div className="border-t border-border pt-2">

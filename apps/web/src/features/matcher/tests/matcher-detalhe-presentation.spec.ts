@@ -389,21 +389,23 @@ describe("formatAmostraComparavel", () => {
   describe("when there are no comparable votações", () => {
     it("states the absence in plain language", () => {
       // Act / Assert
-      expect(formatAmostraComparavel(0)).toBe("sem votações comparáveis");
+      expect(formatAmostraComparavel(0)).toBe(
+        "nenhuma resposta entrou na conta",
+      );
     });
   });
 
   describe("when there is exactly one comparable votação", () => {
     it("uses the singular noun", () => {
       // Act / Assert
-      expect(formatAmostraComparavel(1)).toBe("em 1 votação comparável");
+      expect(formatAmostraComparavel(1)).toBe("1 resposta entrou na conta");
     });
   });
 
   describe("when there are several comparable votações", () => {
     it("uses the plural noun", () => {
       // Act / Assert
-      expect(formatAmostraComparavel(4)).toBe("em 4 votações comparáveis");
+      expect(formatAmostraComparavel(4)).toBe("4 respostas entraram na conta");
     });
   });
 });

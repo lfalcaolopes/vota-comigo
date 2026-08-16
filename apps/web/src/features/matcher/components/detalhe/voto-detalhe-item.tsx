@@ -25,7 +25,7 @@ export function VotoDetalheItem({ voto }: VotoDetalheItemProps) {
 
   const identificador =
     toIdentificadorLegislativo(proposicao) ??
-    `Proposição ${proposicao.externalIdProposicao}`;
+    `Proposta ${proposicao.externalIdProposicao}`;
   const textoResumo = toTextoResumo(proposicao);
   const verdict = toMatcherEffectVerdict(matcherEffect);
   const dataVotacao = formatShortDate(voto.votacaoReferencia.data);

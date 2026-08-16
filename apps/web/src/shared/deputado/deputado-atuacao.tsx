@@ -120,7 +120,7 @@ export function AtuacaoResumo({
                 )
               : null
           }
-          label="Proposições assinadas"
+          label="Propostas assinadas"
           lacuna={proposicoesLacuna}
           state={proposicoesState}
           value={

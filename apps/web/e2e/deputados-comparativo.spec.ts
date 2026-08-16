@@ -112,8 +112,8 @@ test.describe("comparativo de deputados a partir da listagem", () => {
       page.getByRole("heading", { name: "Comparar deputados" }),
     ).toBeVisible({ timeout: 15_000 });
     await expect(visibleText(page, "Presença registrada")).toBeVisible();
-    await expect(visibleText(page, "Proposições assinadas")).toBeVisible();
-    await expect(visibleText(page, "Órgãos distintos")).toBeVisible();
+    await expect(visibleText(page, "Propostas assinadas")).toBeVisible();
+    await expect(visibleText(page, "Comissões e órgãos")).toBeVisible();
     await expect(page.getByText("Legislaturas diferentes")).toHaveCount(0);
     await expect(
       visibleText(page, "Dados cobertos até dez/2024"),

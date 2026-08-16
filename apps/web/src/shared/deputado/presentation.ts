@@ -10,7 +10,7 @@ import type { BadgeTone } from "@/shared/ui";
 export const CARGO_DEPUTADO = "Deputado federal";
 
 export const RECORTE_BASE_PRESENCA =
-  "Considera as votações de plenário em que o voto de cada deputado fica registrado, entre as proposições usadas na comparação.";
+  "Considera as votações de plenário em que o voto de cada deputado fica registrado, entre as propostas usadas na comparação.";
 
 export const HISTORICO_PARTIDARIO_INDISPONIVEL =
   "Não há histórico partidário na base para este deputado.";
@@ -102,7 +102,7 @@ export function toLegislaturaPeriodoLabel(
 }
 
 export const DIAS_EM_EXERCICIO_INDISPONIVEL = "Dias em exercício indisponíveis";
-export const JANELA_FORA_DA_BASE_COMPARAVEL = "Fora da base comparável";
+export const JANELA_FORA_DA_BASE_COMPARAVEL = "Fora do período coberto";
 
 // Precisão de mês, não de ano: toLegislaturaPeriodoLabel apagaria o
 // truncamento de quem saiu no meio da legislatura.

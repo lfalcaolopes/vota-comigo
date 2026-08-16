@@ -24,8 +24,8 @@ export function ResultadoFiltroConcordanciaVazio({
 }: ResultadoFiltroConcordanciaVazioProps) {
   const proposicoesCountLabel =
     proposicoes.length === 1
-      ? "1 proposição marcada"
-      : `${proposicoes.length} proposições marcadas`;
+      ? "1 proposta marcada"
+      : `${proposicoes.length} propostas marcadas`;
 
   return (
     <section className="grid justify-items-start gap-4 rounded-lg border border-dashed border-border-strong bg-surface p-6">
@@ -39,7 +39,7 @@ export function ResultadoFiltroConcordanciaVazio({
         </p>
       </div>
       <ProposicoesSelecionadasList
-        ariaLabel="Proposições que deixaram o resultado vazio"
+        ariaLabel="Propostas que deixaram o resultado vazio"
         className="w-full"
         posicoes={posicoes}
         proposicoes={proposicoes}

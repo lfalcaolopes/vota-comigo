@@ -20,7 +20,7 @@ async function identificadorDoPrimeiroCard(page: Page): Promise<string> {
   return (await primeiro.locator("p.font-mono").first().innerText()).trim();
 }
 
-test.describe("busca do feed de proposições", () => {
+test.describe("busca do feed de propostas", () => {
   test.beforeAll(async () => {
     test.skip(
       !(await isApiUp()),
@@ -28,7 +28,7 @@ test.describe("busca do feed de proposições", () => {
     );
   });
 
-  test("encontra a proposição pelo próprio identificador legislativo", async ({
+  test("encontra a proposta pelo próprio identificador legislativo", async ({
     page,
   }) => {
     // Arrange

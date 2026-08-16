@@ -23,7 +23,7 @@ export function SelecaoResumo({
   if (selected.length === 0) {
     return (
       <p className="rounded-md border border-border bg-white px-4 py-3 text-sm leading-normal text-muted">
-        As proposições escolhidas aparecem aqui para revisão antes de declarar
+        As propostas escolhidas aparecem aqui para revisão antes de declarar
         suas posições.
       </p>
     );

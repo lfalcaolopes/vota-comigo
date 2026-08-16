@@ -1,6 +1,5 @@
 "use client";
 
-import { MIN_POSICOES_COMPUTAVEIS } from "@vota-comigo/shared-types";
 import type {
   PosicaoUsuarioMatcher,
   ProposicaoCard,
@@ -8,6 +7,8 @@ import type {
 
 import { ProposicoesSelecionadasList } from "@/shared/proposicao";
 import { Button } from "@/shared/ui";
+
+import { toPosicoesPendencia } from "../../lib/posicoes-pendencia";
 
 type StepRevisaoProps = {
   selected: ProposicaoCard[];
@@ -32,6 +33,11 @@ export function StepRevisao({
   onBack,
   onRun,
 }: StepRevisaoProps) {
+  const pendencia = toPosicoesPendencia({
+    faltamComputaveis,
+    faltamRespostas,
+  });
+
   return (
     <div className="grid min-w-0 gap-6">
       <div>
@@ -42,7 +48,7 @@ export function StepRevisao({
       </div>
 
       <ProposicoesSelecionadasList
-        ariaLabel="Proposições selecionadas"
+        ariaLabel="Propostas selecionadas"
         className="-mr-1 max-h-96 overflow-y-auto pr-1 lg:max-h-[min(55vh,32rem)]"
         highlightIndex={highlightIndex}
         posicoes={posicoes}
@@ -59,26 +65,13 @@ export function StepRevisao({
         )}
       />
 
-      {!canRun && faltamRespostas > 0 ? (
+      {!canRun && pendencia ? (
         <p
           className="rounded-md border border-border bg-surface-muted px-4 py-3 text-sm text-muted"
           role="status"
         >
-          Para ver o resultado, responda Sim, Não ou Não sei em todas as
-          proposições selecionadas. Faltam{" "}
-          <strong className="font-[720] text-ink">{faltamRespostas}</strong>.
-        </p>
-      ) : null}
-
-      {!canRun && faltamRespostas === 0 && faltamComputaveis > 0 ? (
-        <p
-          className="rounded-md border border-border bg-surface-muted px-4 py-3 text-sm text-muted"
-          role="status"
-        >
-          Respostas marcadas como Não sei ficam fora do cálculo. Para ver o
-          resultado, responda Sim ou Não em pelo menos{" "}
-          {MIN_POSICOES_COMPUTAVEIS} proposições. Faltam{" "}
-          <strong className="font-[720] text-ink">{faltamComputaveis}</strong>.
+          {pendencia.instrucao}{" "}
+          <strong className="font-[720] text-ink">{pendencia.contagem}</strong>
         </p>
       ) : null}
 

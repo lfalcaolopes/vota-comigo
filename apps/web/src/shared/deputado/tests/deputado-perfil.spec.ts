@@ -477,12 +477,12 @@ describe("DeputadoPerfil", () => {
 
       // Assert
       expect(html).toContain("Discursos registrados");
-      expect(html).toContain("Proposições assinadas");
+      expect(html).toContain("Propostas assinadas");
       expect(html).toContain("Comissões e outros órgãos");
       expect(html.match(/h-7 w-24/g)).toHaveLength(2);
       expect(html).not.toContain("Consultar detalhes no Portal da Câmara");
       expect(html).not.toContain("Selecione o ano para consultar");
-      expect(html.indexOf("Proposições assinadas")).toBeLessThan(
+      expect(html.indexOf("Propostas assinadas")).toBeLessThan(
         html.indexOf("Gastos anuais da cota parlamentar"),
       );
       expect(html.indexOf("Gastos anuais da cota parlamentar")).toBeLessThan(

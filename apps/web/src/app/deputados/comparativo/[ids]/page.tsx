@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Comparar deputados",
   description:
-    "Comparação de dois ou três deputados federais lado a lado, com presença, proposições assinadas, comissões e posição na cota parlamentar.",
+    "Comparação de dois ou três deputados federais lado a lado, com presença, propostas assinadas, comissões e posição na cota parlamentar.",
 };
 
 type PageProps = {

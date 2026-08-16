@@ -146,8 +146,8 @@ describe("ComparativoDeputadosView", () => {
 
       // Assert
       expect(html).toContain("Presença registrada");
-      expect(html).toContain("Proposições assinadas");
-      expect(html).toContain("Órgãos distintos");
+      expect(html).toContain("Propostas assinadas");
+      expect(html).toContain("Comissões e órgãos");
       expect(html).toContain("Gasto da cota parlamentar");
       expect(html).toContain('href="/deputados/1"');
       expect(html).toContain('target="_blank"');
@@ -254,7 +254,7 @@ describe("ComparativoDeputadosView", () => {
 
       // Assert
       expect(html).not.toContain("Legislaturas diferentes");
-      expect(html).not.toContain("fora da base comparável");
+      expect(html).not.toContain("fora do período coberto");
     });
   });
 
@@ -295,9 +295,9 @@ describe("ComparativoDeputadosView", () => {
       });
 
       // Assert
-      expect(html).toContain("Um dos deputados está fora da base comparável");
-      expect(html).toContain("Fora da base comparável");
-      expect(html).toContain("Sem dados comparáveis");
+      expect(html).toContain("Um dos deputados está fora do período coberto");
+      expect(html).toContain("Fora do período coberto");
+      expect(html).toContain("Fora do período coberto");
       expect(html).not.toContain("Legislaturas diferentes");
     });
   });

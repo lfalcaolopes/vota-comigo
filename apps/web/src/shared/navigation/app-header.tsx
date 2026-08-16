@@ -31,7 +31,7 @@ const navItems: NavItem[] = [
   },
   {
     href: "/proposicoes",
-    label: "Proposições",
+    label: "Propostas",
     matches: (pathname) => pathname.startsWith("/proposicoes"),
   },
 ];

@@ -14,9 +14,8 @@ export function HomeHero() {
               Veja quais deputados votam como você.
             </h1>
             <p className="max-w-[58ch] text-lg leading-normal text-pretty text-muted">
-              O Quem Vota Comigo compara as suas posições com os votos reais de
-              deputados federais nas votações da Câmara. Sem recomendação de
-              voto e com método aberto.
+              O Quem Vota Comigo compara suas posições com os votos reais de
+              deputados federais nas votações da Câmara.
             </p>
           </div>
 
@@ -29,7 +28,7 @@ export function HomeHero() {
               href="/proposicoes"
               variant="secondary"
             >
-              Ver proposições
+              Ver propostas
             </ButtonLink>
           </div>
 

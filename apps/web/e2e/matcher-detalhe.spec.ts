@@ -218,7 +218,7 @@ test.describe("detalhe de resultado do matcher", () => {
     // Assert
     await expect(page).toHaveURL(/\/matcher\/local$/);
     await expect(
-      page.getByRole("heading", { name: "Onde você vota" }),
+      page.getByRole("heading", { name: "Escolha o estado" }),
     ).toBeVisible();
     expect(detalheRequests).toBe(0);
   });

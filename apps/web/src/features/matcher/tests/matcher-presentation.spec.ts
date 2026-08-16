@@ -73,7 +73,7 @@ describe("toAmostraComparavelLabel", () => {
       const label = toAmostraComparavelLabel(deputado, 10);
 
       // Assert
-      expect(label).toBe("8 de 10 votações comparáveis");
+      expect(label).toBe("8 das suas 10 respostas entraram na conta");
     });
   });
 
@@ -101,12 +101,12 @@ describe("toAmostraComparavelLabel", () => {
 
 describe("toAlertaLabel", () => {
   describe("when alerta is amostra_pequena", () => {
-    it("returns 'Amostra pequena'", () => {
+    it("returns 'Poucos votos em comum'", () => {
       // Arrange
       const alerta: AlertaMatcher = "amostra_pequena";
 
       // Act / Assert
-      expect(toAlertaLabel(alerta)).toBe("Amostra pequena");
+      expect(toAlertaLabel(alerta)).toBe("Poucos votos em comum");
     });
   });
 });
@@ -204,7 +204,7 @@ describe("toCopyContextLabel", () => {
           escopo: "estadual",
           siglaUf: "SP",
         }),
-      ).toBe("12 proposições · São Paulo");
+      ).toBe("12 propostas · São Paulo");
     });
 
     it("keeps only the proposicoes when the uf is unknown", () => {
@@ -215,7 +215,7 @@ describe("toCopyContextLabel", () => {
           escopo: "estadual",
           siglaUf: null,
         }),
-      ).toBe("12 proposições");
+      ).toBe("12 propostas");
     });
   });
 
@@ -228,7 +228,7 @@ describe("toCopyContextLabel", () => {
           escopo: "nacional",
           siglaUf: "SP",
         }),
-      ).toBe("12 proposições · Brasil");
+      ).toBe("12 propostas · Brasil");
     });
   });
 
@@ -241,7 +241,7 @@ describe("toCopyContextLabel", () => {
           escopo: "estadual",
           siglaUf: "RJ",
         }),
-      ).toBe("1 proposição · Rio de Janeiro");
+      ).toBe("1 proposta · Rio de Janeiro");
     });
   });
 });

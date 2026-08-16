@@ -44,7 +44,7 @@ describe("filtros do resultado do matcher", () => {
     });
   });
 
-  describe("quando há proposições marcadas na concordância", () => {
+  describe("quando há propostas marcadas na concordância", () => {
     it("conta o conjunto inteiro como um filtro só", () => {
       // Arrange
       const marcado = filtros({
@@ -56,17 +56,17 @@ describe("filtros do resultado do matcher", () => {
 
       // Assert
       expect(contarResultadoFiltrosAtivos(marcado)).toBe(1);
-      expect(ativos[0].label).toBe("Concordância: 3 proposições");
+      expect(ativos[0].label).toBe("Concordância: 3 propostas");
     });
 
-    it("usa o singular com uma única proposição marcada", () => {
+    it("usa o singular com uma única proposta marcada", () => {
       // Act
       const ativos = descreverResultadoFiltrosAtivos(
         filtros({ externalIdProposicoesFiltroConcordancia: [7] }),
       );
 
       // Assert
-      expect(ativos[0].label).toBe("Concordância: 1 proposição");
+      expect(ativos[0].label).toBe("Concordância: 1 proposta");
     });
   });
 
@@ -105,8 +105,8 @@ describe("filtros do resultado do matcher", () => {
     });
   });
 
-  describe("ao alternar uma proposição da concordância", () => {
-    it("acrescenta a proposição ainda não marcada", () => {
+  describe("ao alternar uma proposta da concordância", () => {
+    it("acrescenta a proposta ainda não marcada", () => {
       // Act
       const proximo = toggleResultadoFiltroConcordancia(
         filtros({ externalIdProposicoesFiltroConcordancia: [1] }),
@@ -117,7 +117,7 @@ describe("filtros do resultado do matcher", () => {
       expect(proximo.externalIdProposicoesFiltroConcordancia).toEqual([1, 2]);
     });
 
-    it("retira a proposição já marcada", () => {
+    it("retira a proposta já marcada", () => {
       // Act
       const proximo = toggleResultadoFiltroConcordancia(
         filtros({ externalIdProposicoesFiltroConcordancia: [1, 2] }),
@@ -213,7 +213,7 @@ describe("filtros do resultado do matcher", () => {
   });
 
   describe("ao comparar dois recortes", () => {
-    it("ignora a ordem das proposições marcadas", () => {
+    it("ignora a ordem das propostas marcadas", () => {
       // Act
       const iguais = saoResultadoFiltrosIguais(
         filtros({ externalIdProposicoesFiltroConcordancia: [1, 2] }),

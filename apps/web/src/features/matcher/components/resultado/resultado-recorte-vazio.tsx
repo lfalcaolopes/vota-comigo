@@ -27,8 +27,8 @@ export function ResultadoRecorteVazio({
           ) : null}
         </div>
       }
-      body="Nenhum deputado comparável atende aos filtros aplicados. Remova ou altere um filtro para ver mais deputados."
-      title="Nenhum deputado no recorte"
+      body="Nenhum deputado passa nos filtros que você aplicou. Remova ou troque um filtro para ver mais."
+      title="Nenhum deputado passa nos filtros"
     />
   );
 }

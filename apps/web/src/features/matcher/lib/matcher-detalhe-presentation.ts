@@ -5,15 +5,15 @@ import type {
 } from "@vota-comigo/shared-types";
 
 export const FORA_DO_DENOMINADOR_EXPLICACAO =
-  "Estas proposições não entraram no cálculo de compatibilidade porque o deputado estava fora de exercício ou teve impedimento regimental na votação.";
+  "Estas propostas não entraram na conta porque o deputado estava fora de exercício ou teve impedimento regimental na votação.";
 
 export const AMOSTRA_PEQUENA_CAVEAT =
-  "Amostra pequena: o deputado tem voto comparável em menos da metade das proposições que você selecionou, então esta compatibilidade é menos confiável.";
+  "Poucos votos em comum: o deputado tem voto registrado em menos da metade das propostas que você escolheu, então este percentual é menos confiável.";
 
 export function formatAmostraComparavel(amostraComparavel: number): string {
-  if (amostraComparavel === 0) return "sem votações comparáveis";
-  if (amostraComparavel === 1) return "em 1 votação comparável";
-  return `em ${amostraComparavel} votações comparáveis`;
+  if (amostraComparavel === 0) return "nenhuma resposta entrou na conta";
+  if (amostraComparavel === 1) return "1 resposta entrou na conta";
+  return `${amostraComparavel} respostas entraram na conta`;
 }
 
 export function groupVotosByMatcherEffect(

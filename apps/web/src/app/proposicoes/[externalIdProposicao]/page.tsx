@@ -32,10 +32,10 @@ export async function generateMetadata({
       notFound();
     }
     // Transient failure: render a safe title and let the page body surface the error boundary.
-    return { title: "Proposição" };
+    return { title: "Proposta" };
   }
 
-  const identificador = toIdentificadorLegislativo(proposicao) ?? "Proposição";
+  const identificador = toIdentificadorLegislativo(proposicao) ?? "Proposta";
   const inicioEmenta = proposicao.ementa?.slice(0, 80).trim();
 
   return {

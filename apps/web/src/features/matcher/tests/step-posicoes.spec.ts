@@ -96,7 +96,7 @@ describe("StepPosicoes", () => {
       const html = renderStep(selected, { index: 1, view: "card" });
 
       // Assert
-      expect(html).toContain('aria-label="Proposição 2 de 2"');
+      expect(html).toContain('aria-label="Proposta 2 de 2"');
     });
   });
 
@@ -106,7 +106,7 @@ describe("StepPosicoes", () => {
       const html = renderStep([]);
 
       // Assert
-      expect(html).toContain("Nenhuma proposição selecionada.");
+      expect(html).toContain("Nenhuma proposta escolhida");
       expect(html).not.toContain("Na sua opinião, deveria ser aprovada?");
     });
   });
@@ -124,7 +124,7 @@ describe("StepPosicoes", () => {
 
       // Assert
       expect(html).toContain('role="group"');
-      expect(html).toContain('aria-label="Proposição 1 de 2"');
+      expect(html).toContain('aria-label="Proposta 1 de 2"');
       expect(html).toContain('aria-label="Revisão das suas posições"');
       expect(html).toContain('tabindex="-1"');
     });
@@ -162,7 +162,7 @@ describe("StepPosicoes", () => {
       const html = renderStep([card({ externalIdProposicao: 42 })]);
 
       // Assert
-      expect(html).not.toContain("Ver proposição");
+      expect(html).not.toContain("Ver proposta");
       expect(html).not.toContain("/proposicoes/42");
     });
   });

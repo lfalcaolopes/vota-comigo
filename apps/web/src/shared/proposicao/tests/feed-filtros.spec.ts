@@ -21,7 +21,7 @@ function filtros(
   return { ...FILTROS_PADRAO, ...overrides };
 }
 
-describe("filtros do feed de proposições", () => {
+describe("filtros do feed de propostas", () => {
   describe("quando nada difere do padrão", () => {
     it("não descreve nenhum filtro ativo", () => {
       // Act

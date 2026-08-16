@@ -57,7 +57,7 @@ export function ProposicoesSelecionadasList({
               </p>
               {textoResumo ? (
                 <ProposicaoResumo
-                  identificador={identificador ?? "proposição"}
+                  identificador={identificador ?? "proposta"}
                   texto={textoResumo}
                 />
               ) : null}

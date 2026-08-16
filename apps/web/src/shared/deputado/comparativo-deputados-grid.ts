@@ -112,7 +112,7 @@ export function buildComparativoDeputadosGrid(
       },
       {
         id: "proposicoes-assinadas",
-        label: "Proposições assinadas",
+        label: "Propostas assinadas",
         hint: null,
         help: null,
         cells: response.items.map((item) =>
@@ -123,7 +123,7 @@ export function buildComparativoDeputadosGrid(
       },
       {
         id: "orgaos",
-        label: "Órgãos distintos",
+        label: "Comissões e órgãos",
         hint: null,
         help: null,
         cells: response.items.map((item) =>
@@ -185,10 +185,10 @@ function toRecusaAviso(
   const remaining = totalItems - recusados.length;
   const title =
     recusados.length === 1
-      ? "Um dos deputados está fora da base comparável"
+      ? "Um dos deputados está fora do período coberto"
       : recusados.length === 2
-        ? "Dois dos deputados estão fora da base comparável"
-        : "Todos os deputados estão fora da base comparável";
+        ? "Dois dos deputados estão fora do período coberto"
+        : "Todos os deputados estão fora do período coberto";
 
   const frases = recusados.map((item) => {
     const janela = item.janela;
@@ -199,9 +199,8 @@ function toRecusaAviso(
   });
 
   const cobertura =
-    "O Vota Comigo cobre votações, cota parlamentar e mediana de gastos a partir de 2015, início da 55ª legislatura, então não há dados desse mandato para comparar.";
-  const demais =
-    remaining >= 2 ? " Os demais deputados continuam comparáveis." : "";
+    "O Quem Vota Comigo cobre votações, cota parlamentar e mediana de gastos a partir de 2015, início da 55ª legislatura, então não há dados desse mandato para comparar.";
+  const demais = remaining >= 2 ? " Os demais seguem na comparação." : "";
 
   return {
     tone: "neutral",
@@ -292,7 +291,7 @@ function toRecusaCell(
   janela: Extract<ComparativoJanela, { status: "indisponivel" }>,
 ): CellContent {
   return {
-    value: "Sem dados comparáveis",
+    value: "Fora do período coberto",
     detail:
       janela.ultimaLegislatura === null
         ? null
@@ -343,12 +342,12 @@ function toProposicoesCell(
   janela: ComparativoJanela,
 ): CellContent {
   if (proposicoesAssinadas === null || janela.status === "indisponivel") {
-    return { value: "Sem dados comparáveis", detail: null, lacuna: true };
+    return { value: "Fora do período coberto", detail: null, lacuna: true };
   }
 
   if (!proposicoesAssinadas.disponivel) {
     return {
-      value: "Sem dados na janela",
+      value: "Sem dados no período",
       detail: `Anos não carregados: ${toEnumeracao(
         proposicoesAssinadas.anosDescobertos.map(String),
       )}`,
@@ -368,11 +367,11 @@ function toOrgaosCell(
   janela: ComparativoJanela,
 ): CellContent {
   if (orgaos === null || janela.status === "indisponivel") {
-    return { value: "Sem dados comparáveis", detail: null, lacuna: true };
+    return { value: "Fora do período coberto", detail: null, lacuna: true };
   }
 
   if (orgaos.total === 0) {
-    return { value: "0", detail: "Nenhum órgão na janela", lacuna: false };
+    return { value: "0", detail: "Nenhum órgão no período", lacuna: false };
   }
 
   const nomes = [
@@ -397,7 +396,7 @@ function toCotaCell(
   externalIdDeputado: number,
 ): CellContent {
   if (cota === null) {
-    return { value: "Sem dados comparáveis", detail: null, lacuna: true };
+    return { value: "Fora do período coberto", detail: null, lacuna: true };
   }
 
   const link = toCotaPerfilLink(cota, externalIdDeputado);
@@ -543,6 +542,6 @@ function toCotaPerfilLink(
 function toCotaSemComparacaoLabel(
   motivo: Extract<ComparativoCota, { status: "sem-comparacao" }>["motivo"],
 ): string {
-  if (motivo === "sem-gastos") return "Sem gastos na janela";
-  return "Sem mediana na janela";
+  if (motivo === "sem-gastos") return "Sem gastos no período";
+  return "Sem mediana no período";
 }

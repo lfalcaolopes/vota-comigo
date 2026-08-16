@@ -18,8 +18,8 @@ function input(externalIdProposicoes: number[]) {
 }
 
 describe("Filtro de concordância do matcher", () => {
-  describe("quando a seleção de proposições muda", () => {
-    it("deve ser zerado ao adicionar uma proposição", () => {
+  describe("quando a seleção de propostas muda", () => {
+    it("deve ser zerado ao adicionar uma proposta", () => {
       // Arrange
       const previous = input([1, 2, 3]);
       const next = input([1, 2, 3, 4]);
@@ -31,7 +31,7 @@ describe("Filtro de concordância do matcher", () => {
       expect(shouldClear).toBe(true);
     });
 
-    it("deve ser zerado ao remover uma proposição", () => {
+    it("deve ser zerado ao remover uma proposta", () => {
       // Arrange
       const previous = input([1, 2, 3]);
       const next = input([1, 2]);

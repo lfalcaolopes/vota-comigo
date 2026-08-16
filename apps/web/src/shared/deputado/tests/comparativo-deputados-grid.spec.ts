@@ -163,7 +163,7 @@ describe("grade do comparativo de deputados", () => {
 
       // Assert
       expect(rowById(grid, "proposicoes-assinadas").label).toBe(
-        "Proposições assinadas",
+        "Propostas assinadas",
       );
     });
 
@@ -424,7 +424,7 @@ describe("grade do comparativo de deputados", () => {
 
       // Assert
       expect(rowById(grid, "cota").cells[0]).toMatchObject({
-        value: "Sem mediana na janela",
+        value: "Sem mediana no período",
         lacuna: true,
       });
     });
@@ -450,7 +450,7 @@ describe("grade do comparativo de deputados", () => {
 
       // Assert
       expect(rowById(grid, "cota").cells[0]).toMatchObject({
-        value: "Sem gastos na janela",
+        value: "Sem gastos no período",
         link: {
           href: "/deputados/1?year=2024#gastos",
           label: "Ver mais detalhes no perfil",
@@ -499,7 +499,7 @@ describe("grade do comparativo de deputados", () => {
       const grid = buildComparativoDeputadosGrid(data);
 
       // Assert
-      expect(rowById(grid, "orgaos").label).toBe("Órgãos distintos");
+      expect(rowById(grid, "orgaos").label).toBe("Comissões e órgãos");
     });
   });
 
@@ -565,7 +565,7 @@ describe("grade do comparativo de deputados", () => {
 
       // Assert
       expect(rowById(grid, "proposicoes-assinadas").cells[0]).toMatchObject({
-        value: "Sem dados na janela",
+        value: "Sem dados no período",
         detail: "Anos não carregados: 2025 e 2026",
         lacuna: true,
       });
@@ -581,7 +581,7 @@ describe("grade do comparativo de deputados", () => {
       // Assert
       expect(rowById(grid, "orgaos").cells[0]).toMatchObject({
         value: "0",
-        detail: "Nenhum órgão na janela",
+        detail: "Nenhum órgão no período",
       });
     });
   });
@@ -610,7 +610,7 @@ describe("grade do comparativo de deputados", () => {
       }).toEqual({
         proposicoes: {
           externalIdDeputado: 1,
-          value: "Sem dados comparáveis",
+          value: "Fora do período coberto",
           valueUnit: null,
           detail: "Última atuação na 54ª legislatura",
           leituras: null,
@@ -621,7 +621,7 @@ describe("grade do comparativo de deputados", () => {
         },
         presenca: {
           externalIdDeputado: 1,
-          value: "Sem dados comparáveis",
+          value: "Fora do período coberto",
           valueUnit: null,
           detail: "Última atuação na 54ª legislatura",
           leituras: null,
@@ -718,8 +718,8 @@ describe("aviso do topo do comparativo de deputados", () => {
       // Assert
       expect(aviso).toEqual({
         tone: "neutral",
-        title: "Um dos deputados está fora da base comparável",
-        body: "Fulano de Tal atuou pela última vez na 54ª legislatura. O Vota Comigo cobre votações, cota parlamentar e mediana de gastos a partir de 2015, início da 55ª legislatura, então não há dados desse mandato para comparar.",
+        title: "Um dos deputados está fora do período coberto",
+        body: "Fulano de Tal atuou pela última vez na 54ª legislatura. O Quem Vota Comigo cobre votações, cota parlamentar e mediana de gastos a partir de 2015, início da 55ª legislatura, então não há dados desse mandato para comparar.",
       });
     });
 
@@ -738,9 +738,7 @@ describe("aviso do topo do comparativo de deputados", () => {
       const aviso = toComparativoAviso(data);
 
       // Assert
-      expect(aviso?.body).toContain(
-        "Os demais deputados continuam comparáveis.",
-      );
+      expect(aviso?.body).toContain("Os demais seguem na comparação.");
     });
   });
 });

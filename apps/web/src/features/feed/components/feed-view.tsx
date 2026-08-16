@@ -110,12 +110,12 @@ export function FeedView({
 
   const announcement =
     display === "loading"
-      ? "Atualizando lista de proposições."
+      ? "Atualizando lista de propostas."
       : display === "error"
-        ? "Não foi possível atualizar a lista de proposições."
+        ? "Não foi possível atualizar a lista de propostas."
         : total === 1
-          ? "Lista atualizada: 1 proposição encontrada."
-          : `Lista atualizada: ${total} proposições encontradas.`;
+          ? "Lista atualizada: 1 proposta encontrada."
+          : `Lista atualizada: ${total} propostas encontradas.`;
 
   return (
     <div className="grid min-w-0 gap-7">

@@ -10,7 +10,7 @@ import {
 export const metadata: Metadata = {
   title: "Fazer comparação",
   description:
-    "Declare sua posição sobre as proposições mais votadas e descubra quais deputados federais votaram de forma compatível com você.",
+    "Declare sua posição sobre as propostas mais votadas e descubra quais deputados federais votaram de forma compatível com você.",
 };
 
 export default function MatcherLayout({ children }: { children: ReactNode }) {

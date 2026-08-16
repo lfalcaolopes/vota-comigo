@@ -98,7 +98,7 @@ describe("resultado do matcher", () => {
       });
 
       // Assert
-      expect(html).toContain("Nenhum deputado no recorte");
+      expect(html).toContain("Nenhum deputado passa nos filtros");
       expect(html).toContain(
         "Resultado atualizado: nenhum deputado no recorte",
       );
@@ -111,7 +111,7 @@ describe("resultado do matcher", () => {
       const html = render({ ...RESULTADO_FILTROS_PADRAO, sexo: "F" });
 
       // Assert
-      expect(html).toContain("Nenhum deputado no recorte");
+      expect(html).toContain("Nenhum deputado passa nos filtros");
     });
   });
 
@@ -124,7 +124,7 @@ describe("resultado do matcher", () => {
       });
 
       // Assert
-      expect(html).toContain("Nenhum deputado no recorte");
+      expect(html).toContain("Nenhum deputado passa nos filtros");
     });
   });
 
@@ -137,7 +137,7 @@ describe("resultado do matcher", () => {
       });
 
       // Assert: há deputados comparáveis; o que esvaziou a lista foi o filtro
-      expect(html).toContain("Nenhum deputado no recorte");
+      expect(html).toContain("Nenhum deputado passa nos filtros");
       expect(html).not.toContain("Nenhum comparável neste estado");
     });
   });
@@ -159,7 +159,7 @@ describe("resultado do matcher", () => {
       );
 
       // Assert
-      expect(html).toContain("Nenhum deputado no recorte");
+      expect(html).toContain("Nenhum deputado passa nos filtros");
       expect(html).not.toContain("Ver todos os deputados (Brasil)");
     });
   });
@@ -174,9 +174,9 @@ describe("resultado do matcher", () => {
       });
 
       // Assert
-      expect(html).not.toContain("Nenhum deputado no recorte");
+      expect(html).not.toContain("Nenhum deputado passa nos filtros");
       expect(html).toContain(
-        "nenhum deputado votou com você em todas as proposições marcadas",
+        "nenhum deputado votou com você em todas as propostas marcadas",
       );
     });
   });
@@ -187,7 +187,7 @@ describe("resultado do matcher", () => {
       const html = render(RESULTADO_FILTROS_PADRAO);
 
       // Assert
-      expect(html).not.toContain("Nenhum deputado no recorte");
+      expect(html).not.toContain("Nenhum deputado passa nos filtros");
       expect(html).toContain(
         "Resultado atualizado: nenhum deputado encontrado",
       );

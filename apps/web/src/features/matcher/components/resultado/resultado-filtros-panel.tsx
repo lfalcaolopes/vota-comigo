@@ -107,18 +107,18 @@ export function ResultadoFiltrosPanel({
       <FiltroSecao titulo="Exigir concordância">
         {proposicoesElegiveis.length === 0 ? (
           <p className="text-sm leading-normal text-muted">
-            Marque aprovar ou rejeitar em ao menos uma proposição para exigir
-            concordância. Proposições respondidas com &quot;não sei&quot; não
+            Marque aprovar ou rejeitar em ao menos uma proposta para exigir
+            concordância. Propostas respondidas com &quot;não sei&quot; não
             entram nesse filtro.
           </p>
         ) : (
           <>
             <p className="text-sm leading-normal text-muted">
-              Marque as proposições em que o deputado precisa ter votado de
-              acordo com você.
+              Marque as propostas em que o deputado precisa ter votado de acordo
+              com você.
             </p>
             <ProposicoesSelecionadasList
-              ariaLabel="Proposições do filtro de concordância"
+              ariaLabel="Propostas do filtro de concordância"
               posicoes={posicoes}
               proposicoes={proposicoesElegiveis}
               renderAction={(proposicao, _index, identificador) => (

@@ -17,13 +17,11 @@ describe("Entrada do matcher sem rascunho", () => {
 
       // Assert
       expect(html).toContain("Compare suas posições com votos reais da Câmara");
-      expect(html).toContain(
-        "Na eleição, você faz uma escolha para deputado federal.",
-      );
-      expect(html).toContain("Escolha o que importa para você");
+      expect(html).toContain("Em vez de partir do nome do deputado");
+      expect(html).toContain("Comece pelos temas que te interessam");
       expect(html).toContain("Declare suas posições");
-      expect(html).toContain("Compare com votos registrados");
-      expect(html).toContain("Ele não é uma recomendação de voto.");
+      expect(html).toContain("Veja o resultado completo");
+      expect(html).toContain("Nada aqui é recomendação de voto");
       expect(html).toContain("Começar comparação");
     });
   });
@@ -45,8 +43,8 @@ describe("Entrada do matcher com rascunho", () => {
 
       // Assert
       expect(html).toContain("Você tem uma comparação em andamento");
-      expect(html).toContain("Continuar comparação");
-      expect(html).toContain("Começar nova comparação");
+      expect(html).toContain("Continuar de onde parei");
+      expect(html).toContain("Recomeçar do zero");
       expect(html).toContain("SP");
       expect(html).toContain(">7<");
       expect(html).toContain(">4<");

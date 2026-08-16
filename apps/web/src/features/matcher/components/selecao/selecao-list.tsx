@@ -1,7 +1,7 @@
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
 
 import type { FeedDisplay, FeedStatus } from "@/shared/proposicao";
-import { ProposicaoRow } from "@/shared/proposicao";
+import { ProposicaoRow, toIdentificadorLegislativo } from "@/shared/proposicao";
 import {
   Button,
   CheckboxControl,
@@ -23,6 +23,12 @@ type SelecaoListProps = {
   onClearTudo: () => Promise<void>;
 };
 
+function toSelecaoLabel(card: ProposicaoCard): string {
+  const identificador = toIdentificadorLegislativo(card);
+  if (identificador !== null) return identificador;
+  return card.ementa ?? "esta proposta";
+}
+
 export function SelecaoList({
   items,
   total,
@@ -42,8 +48,8 @@ export function SelecaoList({
   if (display === "empty-default") {
     return (
       <EmptyState
-        body="Ainda não há proposições para mostrar."
-        title="Nada para exibir ainda"
+        body="Nenhuma proposta foi carregada. Tente recarregar a página."
+        title="Nenhuma proposta disponível"
       />
     );
   }
@@ -56,8 +62,8 @@ export function SelecaoList({
             Limpar busca e filtros
           </Button>
         }
-        body="Nenhuma proposição foi encontrada com a busca e os filtros utilizados."
-        title="Nenhuma proposição encontrada"
+        body="Nenhuma proposta combina com a busca e os filtros atuais. Tente remover um filtro ou buscar por outras palavras."
+        title="Nenhuma proposta encontrada"
       />
     );
   }
@@ -66,7 +72,7 @@ export function SelecaoList({
     return (
       <div className="grid gap-4">
         <InlineMessage
-          body="Não foi possível carregar as proposições. Tente novamente."
+          body="Não foi possível carregar as propostas. Tente novamente."
           title="Erro ao carregar"
           tone="danger"
         />
@@ -106,7 +112,7 @@ export function SelecaoList({
                 }}
               >
                 <CheckboxControl
-                  aria-label={`Selecionar proposição ${card.externalIdProposicao}`}
+                  aria-label={`Selecionar ${toSelecaoLabel(card)}`}
                   checked={isSelected}
                   className="mt-6"
                   disabled={disabled}
@@ -124,7 +130,7 @@ export function SelecaoList({
 
       {status === "error" ? (
         <InlineMessage
-          body="Não foi possível carregar as proposições. Tente novamente."
+          body="Não foi possível carregar as propostas. Tente novamente."
           title="Erro ao carregar"
           tone="danger"
         />

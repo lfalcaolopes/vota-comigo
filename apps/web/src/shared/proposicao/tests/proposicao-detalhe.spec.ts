@@ -16,7 +16,7 @@ function makeProposicao(
     ementa: "Dispõe sobre alguma coisa.",
     dataApresentacao: "2023-05-10",
     descricaoTipo: "Projeto de Lei",
-    ementaDetalhada: "Texto mais longo explicando a proposição.",
+    ementaDetalhada: "Texto mais longo explicando a proposta.",
     keywords: "Saúde pública.",
     urlInteiroTeor:
       "https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=42",
@@ -161,7 +161,7 @@ describe("ProposicaoDetalhe", () => {
 
       // Assert
       expect(html).toContain(
-        "Gerado por IA a partir do texto completo da proposição",
+        "Gerado por IA a partir do texto completo da proposta",
       );
     });
 

@@ -313,7 +313,7 @@ test.describe("comparativo de deputados do matcher", () => {
       page.getByText("Presença registrada").filter({ visible: true }).first(),
     ).toBeVisible();
     await expect(
-      page.getByText("Proposições assinadas").filter({ visible: true }).first(),
+      page.getByText("Propostas assinadas").filter({ visible: true }).first(),
     ).toBeVisible();
     expect(comparativoRequests).toBe(1);
 
@@ -365,7 +365,7 @@ test.describe("comparativo de deputados do matcher", () => {
     // Assert
     await expect(page).toHaveURL(/\/matcher\/local$/);
     await expect(
-      page.getByRole("heading", { name: "Onde você vota" }),
+      page.getByRole("heading", { name: "Escolha o estado" }),
     ).toBeVisible();
     expect(detalheRequests).toBe(0);
   });
