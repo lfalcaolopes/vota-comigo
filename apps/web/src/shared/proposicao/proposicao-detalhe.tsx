@@ -34,7 +34,7 @@ export function ProposicaoDetalhe({
       <div className="grid min-w-0 gap-8">
         <header>
           <h1 className="font-mono text-base font-[650] tracking-[-0.01em] text-ink md:text-lg">
-            {identificador ?? "Sem identificador"}
+            {identificador ?? "Proposta sem número"}
           </h1>
         </header>
 
@@ -102,10 +102,10 @@ function Estatisticas({ proposicao }: { proposicao: ProposicaoDetalheData }) {
   return (
     <div className="grid gap-3">
       <h2 className="text-xs font-medium tracking-wide text-subtle uppercase">
-        Estatísticas
+        Última votação
       </h2>
       <dl className="grid gap-y-3">
-        <StatusItem label="Última votação" mono>
+        <StatusItem label="Data" mono>
           {ultimaVotacao}
         </StatusItem>
       </dl>

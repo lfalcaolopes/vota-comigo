@@ -43,9 +43,9 @@ describe("toResultadoLabel", () => {
   });
 
   describe("when resultado is indisponivel", () => {
-    it("returns 'Indisponível' with accent", () => {
+    it("returns 'Resultado não informado' with accent", () => {
       // Act / Assert
-      expect(toResultadoLabel("indisponivel")).toBe("Indisponível");
+      expect(toResultadoLabel("indisponivel")).toBe("Resultado não informado");
     });
   });
 });
@@ -90,7 +90,7 @@ describe("toComparadorLabel", () => {
       const votacao = makeVotacao({ isReferenciaMatcher: true });
 
       // Act / Assert
-      expect(toComparadorLabel(votacao)).toBe("Votação usada no comparador");
+      expect(toComparadorLabel(votacao)).toBe("Votação usada na comparação");
     });
   });
 
@@ -171,7 +171,7 @@ describe("toPlacarCategorias", () => {
 
 describe("toPlacarResumidoLabel", () => {
   describe("when placarCompleto is false", () => {
-    it("returns 'Placar resumido'", () => {
+    it("returns 'Só Sim e Não registrados'", () => {
       // Arrange
       const placar: PlacarVotacao = {
         placarCompleto: false,
@@ -181,7 +181,7 @@ describe("toPlacarResumidoLabel", () => {
       };
 
       // Act / Assert
-      expect(toPlacarResumidoLabel(placar)).toBe("Placar resumido");
+      expect(toPlacarResumidoLabel(placar)).toBe("Só Sim e Não registrados");
     });
   });
 

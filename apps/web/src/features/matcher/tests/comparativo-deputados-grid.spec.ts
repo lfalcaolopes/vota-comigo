@@ -167,21 +167,21 @@ describe("buildComparativoDeputadosGrid", () => {
           situacaoDeputadoVotacao: "sim",
           matcherEffect: "concordancia",
           situacaoLabel: "Sim",
-          matcherEffectVerdict: { label: "Alinhado", tone: "success" },
+          matcherEffectVerdict: { label: "Votou como você", tone: "success" },
         }),
         expect.objectContaining({
           externalIdDeputado: 10,
           situacaoDeputadoVotacao: "nao",
           matcherEffect: "discordancia",
           situacaoLabel: "Não",
-          matcherEffectVerdict: { label: "Divergente", tone: "danger" },
+          matcherEffectVerdict: { label: "Votou diferente", tone: "danger" },
         }),
         expect.objectContaining({
           externalIdDeputado: 30,
           situacaoDeputadoVotacao: "fora_de_exercicio",
           matcherEffect: "fora_do_denominador",
           situacaoLabel: "Fora de exercício",
-          matcherEffectVerdict: { label: "Fora do cálculo", tone: "neutral" },
+          matcherEffectVerdict: { label: "Fora da conta", tone: "neutral" },
         }),
       ]);
     });

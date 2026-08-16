@@ -111,7 +111,7 @@ export function saoFiltrosIguais(
 }
 
 const FILTRO_NOME: Record<DeputadoFiltroId, string> = {
-  incluirForaDeExercicio: "Incluindo fora de exercício",
+  incluirForaDeExercicio: "Incluindo quem não está em exercício",
   ufs: "Estado",
   partidos: "Partido",
   sexo: "Sexo",

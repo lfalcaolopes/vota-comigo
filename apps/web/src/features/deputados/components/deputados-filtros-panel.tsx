@@ -47,7 +47,7 @@ export function DeputadosFiltrosPanel({
       <Switch
         checked={rascunho.incluirForaDeExercicio}
         className="min-h-11 justify-start"
-        label="Incluir fora de exercício"
+        label="Incluir quem não está em exercício"
         onChange={(event) =>
           setRascunho((atual) => ({
             ...atual,

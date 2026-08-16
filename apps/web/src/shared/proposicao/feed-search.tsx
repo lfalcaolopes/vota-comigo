@@ -36,9 +36,9 @@ export function FeedSearch({
             className="h-11"
             hideLabel
             id="feed-search"
-            label="Buscar por identificador ou ementa"
+            label="Buscar pelo número ou pelo texto da proposta"
             onChange={(event) => onChange(event.target.value)}
-            placeholder="Buscar por identificador ou ementa"
+            placeholder="Buscar pelo número ou pelo texto da proposta"
             value={value}
           />
         </div>

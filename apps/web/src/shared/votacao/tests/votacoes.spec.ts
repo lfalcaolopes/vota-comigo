@@ -46,7 +46,9 @@ describe("Votacoes", () => {
       const html = render(votacoes);
 
       // Assert
-      expect(html).toContain("Nenhuma votação nominal em plenário registrada.");
+      expect(html).toContain(
+        "Nenhuma votação com o voto de cada deputado registrado.",
+      );
       expect(html).not.toContain("Mostrar todas");
     });
   });

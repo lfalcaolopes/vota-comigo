@@ -44,8 +44,8 @@ export function DeputadosFeedList({
   if (display === "empty-default") {
     return (
       <EmptyState
-        body="Ainda não há deputados para exibir."
-        title="Nada para exibir ainda"
+        body="Nenhum deputado foi carregado. Tente recarregar a página."
+        title="Nenhum deputado disponível"
       />
     );
   }
@@ -56,14 +56,14 @@ export function DeputadosFeedList({
         action={
           <div className="flex flex-wrap gap-2">
             <Button onClick={onIncluirForaDeExercicio} variant="primary">
-              Buscar também fora de exercício
+              Incluir quem não está em exercício
             </Button>
             <Button onClick={onClearTudo} variant="secondary">
               Limpar busca e filtros
             </Button>
           </div>
         }
-        body="Nenhum deputado em exercício foi encontrado com a busca e os filtros utilizados."
+        body="Nenhum deputado em exercício combina com a busca e os filtros atuais. Você pode incluir quem já deixou o cargo."
         title="Nenhum deputado encontrado"
       />
     ) : (
@@ -73,7 +73,7 @@ export function DeputadosFeedList({
             Limpar busca e filtros
           </Button>
         }
-        body="Nenhum deputado foi encontrado com a busca e os filtros utilizados."
+        body="Nenhum deputado combina com a busca e os filtros atuais. Tente remover um filtro ou buscar por outro nome."
         title="Nenhum deputado encontrado"
       />
     );

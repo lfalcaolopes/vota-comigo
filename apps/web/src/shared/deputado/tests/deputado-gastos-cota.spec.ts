@@ -487,7 +487,7 @@ describe("seção de gastos da cota parlamentar", () => {
         "Não há registros de gastos da cota para este deputado neste ano",
       );
       expect(html).toContain("outubro de 2024");
-      expect(html).not.toContain("Este ano ainda não foi carregado");
+      expect(html).not.toContain("Ainda não temos os gastos deste ano");
       expect(html).not.toContain("R$ 0,00");
     });
   });
@@ -505,10 +505,8 @@ describe("seção de gastos da cota parlamentar", () => {
       const html = render(response);
 
       // Assert
-      expect(html).toContain("Este ano ainda não foi carregado");
-      expect(html).toContain(
-        "Os gastos da cota de 2022 ainda não estão disponíveis no produto",
-      );
+      expect(html).toContain("Ainda não temos os gastos deste ano");
+      expect(html).toContain("Os gastos de 2022 ainda não entraram no site");
       expect(html).toContain("Fonte: Câmara dos Deputados");
       expect(html).not.toContain("não registrou gastos");
       expect(html).not.toContain("Dados da Câmara atualizados até");

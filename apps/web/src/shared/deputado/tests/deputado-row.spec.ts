@@ -50,7 +50,7 @@ describe("DeputadoRow", () => {
       expect(html).toContain("Maria da Silva");
       expect(html).toContain("PT");
       expect(html).toContain("SP");
-      expect(html).toContain("Em atividade");
+      expect(html).toContain("Em exercício");
       expect(html).not.toContain("Nome civil");
     });
   });
@@ -69,7 +69,7 @@ describe("DeputadoRow", () => {
       expect(html).toContain("Nome não informado");
       expect(html).toContain("Partido não informado");
       expect(html).toContain("UF não informada");
-      expect(html).toContain("Fora de atividade");
+      expect(html).toContain("Fora de exercício");
     });
   });
 

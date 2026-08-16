@@ -6,13 +6,13 @@ describe("descritor de filtro ativo", () => {
   describe("quando o filtro é um interruptor sem valor", () => {
     it("usa apenas o nome do filtro no rótulo", () => {
       // Act
-      const filtro = toFiltroAtivo("emAtividade", "Em atividade");
+      const filtro = toFiltroAtivo("emAtividade", "Em exercício");
 
       // Assert
       expect(filtro).toEqual({
         id: "emAtividade",
-        label: "Em atividade",
-        removeLabel: "Remover filtro Em atividade",
+        label: "Em exercício",
+        removeLabel: "Remover filtro Em exercício",
       });
     });
   });

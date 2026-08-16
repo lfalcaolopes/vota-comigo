@@ -30,6 +30,11 @@ export function Feed({
         <h1 className="text-3xl leading-tight font-[720] tracking-[-0.02em] text-balance text-ink">
           Propostas
         </h1>
+        <p className="text-base leading-normal text-muted">
+          Propostas que a Câmara já levou a voto em plenário. Busque pelo número
+          ou pelo texto, filtre por tema, e abra qualquer uma para ver detalhes
+          de cada votação.
+        </p>
       </header>
 
       <FeedView

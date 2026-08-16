@@ -58,7 +58,7 @@ function ProposicaoRowContent({
     <>
       <div className="flex items-center justify-between gap-3">
         <p className="font-mono text-sm font-[650] tracking-[-0.01em] text-ink">
-          {identificador ?? "Sem identificador"}
+          {identificador ?? "Proposta sem número"}
         </p>
 
         {resumoIa ? (
@@ -77,7 +77,7 @@ function ProposicaoRowContent({
           <ProposicaoResumo
             clampClassName={clampClassName}
             className="text-base leading-snug text-pretty text-muted"
-            identificador={identificador ?? "Sem identificador"}
+            identificador={identificador ?? "Proposta sem número"}
             texto={textoResumo}
           />
         ) : (

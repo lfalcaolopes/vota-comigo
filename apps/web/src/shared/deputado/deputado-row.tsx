@@ -101,7 +101,7 @@ function DeputadoRowContent({
           className="shrink-0"
           tone={card.emAtividade ? "success" : "neutral"}
         >
-          {card.emAtividade ? "Em atividade" : "Fora de atividade"}
+          {card.emAtividade ? "Em exercício" : "Fora de exercício"}
         </Badge>
       </div>
     </div>

@@ -93,7 +93,7 @@ describe("listagem de deputados", () => {
 
       // Assert
       expect(html).toContain("em exercício");
-      expect(html).toContain("Buscar também fora de exercício");
+      expect(html).toContain("Incluir quem não está em exercício");
       expect(html).toContain("Limpar busca e filtros");
     });
 
@@ -106,7 +106,7 @@ describe("listagem de deputados", () => {
       });
 
       // Assert
-      expect(html).not.toContain("Buscar também fora de exercício");
+      expect(html).not.toContain("Incluir quem não está em exercício");
       expect(html).toContain("Limpar busca e filtros");
     });
   });

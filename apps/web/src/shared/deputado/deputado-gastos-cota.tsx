@@ -107,8 +107,8 @@ export function DeputadoGastosCotaSection({
       {response !== null && response.status === "ano-nao-carregado" ? (
         <div className="grid gap-5">
           <InlineMessage
-            body={`Os gastos da cota de ${response.year} ainda não estão disponíveis no produto.`}
-            title="Este ano ainda não foi carregado"
+            body={`Os gastos de ${response.year} ainda não entraram no site.`}
+            title="Ainda não temos os gastos deste ano"
             tone="warning"
           />
           <CotaSourceLink />

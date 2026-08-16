@@ -17,7 +17,7 @@ export type PlacarCategoria = {
 export function toResultadoLabel(resultado: Resultado): string {
   if (resultado === "aprovada") return "Aprovada";
   if (resultado === "rejeitada") return "Rejeitada";
-  return "Indisponível";
+  return "Resultado não informado";
 }
 
 export function toResultadoTone(resultado: Resultado): ResultadoTone {
@@ -29,7 +29,7 @@ export function toResultadoTone(resultado: Resultado): ResultadoTone {
 export function toComparadorLabel(
   votacao: Pick<VotacaoNominal, "isReferenciaMatcher">,
 ): string | null {
-  return votacao.isReferenciaMatcher ? "Votação usada no comparador" : null;
+  return votacao.isReferenciaMatcher ? "Votação usada na comparação" : null;
 }
 
 export function toPlacarCategorias(placar: PlacarVotacao): PlacarCategoria[] {
@@ -40,7 +40,7 @@ export function toPlacarCategorias(placar: PlacarVotacao): PlacarCategoria[] {
 }
 
 export function toPlacarResumidoLabel(placar: PlacarVotacao): string | null {
-  return placar.placarCompleto ? null : "Placar resumido";
+  return placar.placarCompleto ? null : "Só Sim e Não registrados";
 }
 
 export function sortByDataDesc(votacoes: VotacaoNominal[]): VotacaoNominal[] {

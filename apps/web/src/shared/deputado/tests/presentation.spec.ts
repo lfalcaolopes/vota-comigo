@@ -116,14 +116,14 @@ describe("toAtividadeLabel", () => {
   describe("when emAtividade is true", () => {
     it("returns the active label", () => {
       // Act / Assert
-      expect(toAtividadeLabel(true)).toBe("Em atividade");
+      expect(toAtividadeLabel(true)).toBe("Em exercício");
     });
   });
 
   describe("when emAtividade is false", () => {
     it("returns the inactive label", () => {
       // Act / Assert
-      expect(toAtividadeLabel(false)).toBe("Mandato encerrado");
+      expect(toAtividadeLabel(false)).toBe("Fora de exercício");
     });
   });
 });

@@ -25,7 +25,7 @@ export function ProposicaoBreadcrumb({
       </Link>
       <span aria-hidden="true">›</span>
       <span className="font-mono text-muted">
-        {identificador ?? "Sem identificador"}
+        {identificador ?? "Proposta sem número"}
       </span>
     </nav>
   );

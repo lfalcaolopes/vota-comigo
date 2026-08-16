@@ -53,7 +53,7 @@ export function ProposicoesSelecionadasList({
           >
             <div className="grid min-w-0 gap-0.5">
               <p className="truncate font-mono text-sm font-[650] tracking-[-0.01em] text-ink">
-                {identificador ?? "Sem identificador"}
+                {identificador ?? "Proposta sem número"}
               </p>
               {textoResumo ? (
                 <ProposicaoResumo
@@ -75,7 +75,7 @@ export function ProposicoesSelecionadasList({
             {renderAction(
               proposicao,
               index,
-              identificador ?? "Sem identificador",
+              identificador ?? "Proposta sem número",
             )}
           </li>
         );

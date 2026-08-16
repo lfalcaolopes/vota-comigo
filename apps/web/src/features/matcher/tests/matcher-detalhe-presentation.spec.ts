@@ -16,7 +16,6 @@ import {
   toFiltroLabel,
   toMatcherEffectLabel,
   toMatcherEffectVerdict,
-  toPosicaoLabel,
   toSituacaoLabel,
 } from "../lib/matcher-detalhe-presentation";
 
@@ -138,7 +137,7 @@ describe("toSituacaoLabel", () => {
     ["obstrucao", "Obstrução"],
     ["ausencia_sem_motivo_conhecido", "Ausência sem motivo conhecido"],
     ["fora_de_exercicio", "Fora de exercício"],
-    ["artigo_17", "Artigo 17"],
+    ["artigo_17", "Impedimento regimental"],
     ["voto_nao_informado", "Voto não informado"],
     ["lacuna_de_dados", "Sem dados"],
   ];
@@ -151,43 +150,25 @@ describe("toSituacaoLabel", () => {
   }
 });
 
-describe("toPosicaoLabel", () => {
-  describe("when posicao is aprovar", () => {
-    it("returns 'A favor da aprovação'", () => {
-      // Act / Assert
-      expect(toPosicaoLabel("aprovar")).toBe("A favor da aprovação");
-    });
-  });
-
-  describe("when posicao is rejeitar", () => {
-    it("returns 'Contra a aprovação'", () => {
-      // Act / Assert
-      expect(toPosicaoLabel("rejeitar")).toBe("Contra a aprovação");
-    });
-  });
-});
-
 describe("toMatcherEffectLabel", () => {
   describe("when effect is concordancia", () => {
-    it("returns 'Concordou'", () => {
+    it("returns 'Votou como você'", () => {
       // Act / Assert
-      expect(toMatcherEffectLabel("concordancia")).toBe("Concordou");
+      expect(toMatcherEffectLabel("concordancia")).toBe("Votou como você");
     });
   });
 
   describe("when effect is discordancia", () => {
-    it("returns 'Discordou'", () => {
+    it("returns 'Votou diferente'", () => {
       // Act / Assert
-      expect(toMatcherEffectLabel("discordancia")).toBe("Discordou");
+      expect(toMatcherEffectLabel("discordancia")).toBe("Votou diferente");
     });
   });
 
   describe("when effect is fora_do_denominador", () => {
-    it("returns 'Fora do denominador'", () => {
+    it("returns 'Fora da conta'", () => {
       // Act / Assert
-      expect(toMatcherEffectLabel("fora_do_denominador")).toBe(
-        "Fora do denominador",
-      );
+      expect(toMatcherEffectLabel("fora_do_denominador")).toBe("Fora da conta");
     });
   });
 });
@@ -199,7 +180,7 @@ describe("toMatcherEffectVerdict", () => {
       const verdict = toMatcherEffectVerdict("concordancia");
 
       // Assert
-      expect(verdict).toEqual({ label: "Alinhado", tone: "success" });
+      expect(verdict).toEqual({ label: "Votou como você", tone: "success" });
     });
   });
 
@@ -209,7 +190,7 @@ describe("toMatcherEffectVerdict", () => {
       const verdict = toMatcherEffectVerdict("discordancia");
 
       // Assert
-      expect(verdict).toEqual({ label: "Divergente", tone: "danger" });
+      expect(verdict).toEqual({ label: "Votou diferente", tone: "danger" });
     });
   });
 
@@ -219,7 +200,7 @@ describe("toMatcherEffectVerdict", () => {
       const verdict = toMatcherEffectVerdict("fora_do_denominador");
 
       // Assert
-      expect(verdict).toEqual({ label: "Fora do cálculo", tone: "neutral" });
+      expect(verdict).toEqual({ label: "Fora da conta", tone: "neutral" });
     });
   });
 });
@@ -364,9 +345,9 @@ describe("sortVotosByVotacaoDataDesc", () => {
 describe("toFiltroLabel", () => {
   const cases: [Parameters<typeof toFiltroLabel>[0], string][] = [
     ["todos", "Todos"],
-    ["alinhados", "Alinhados"],
-    ["divergentes", "Divergentes"],
-    ["fora", "Fora do cálculo"],
+    ["alinhados", "Votou como você"],
+    ["divergentes", "Votou diferente"],
+    ["fora", "Fora da conta"],
   ];
 
   for (const [filtro, expected] of cases) {

@@ -32,6 +32,11 @@ export function DeputadosFeed({
         <h1 className="text-3xl leading-tight font-[720] text-balance text-ink">
           Deputados
         </h1>
+        <p className="text-base leading-normal text-muted">
+          Todos os deputados federais em exercício. Busque por nome ou filtre
+          por estado, partido, sexo e idade. Abra um perfil para ver presença,
+          gastos e histórico partidário.
+        </p>
       </header>
 
       <DeputadosFeedView

@@ -33,7 +33,7 @@ export function SelecaoResumo({
     <ul className={listClassName}>
       {selected.map((card) => {
         const identificador = toIdentificadorLegislativo(card);
-        const label = identificador ?? "Sem identificador";
+        const label = identificador ?? "Proposta sem número";
         const textoResumo = toTextoResumo(card);
 
         return (

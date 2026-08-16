@@ -285,8 +285,8 @@ function Overview({ perfil }: { perfil: DeputadoPerfilData }) {
           Visão geral
         </h2>
         <p className="text-sm leading-normal text-muted">
-          Presença nas votações consideradas pelo produto e trajetória
-          partidária registrada pela Câmara.
+          Presença nas votações que usamos e trajetória partidária registrada
+          pela Câmara.
         </p>
       </div>
 
@@ -373,7 +373,7 @@ function Overview({ perfil }: { perfil: DeputadoPerfilData }) {
       {perfil.historicoParlamentarDisponivel ? null : (
         <InlineMessage
           title="Sem histórico parlamentar"
-          body="Este deputado está cadastrado, mas ainda não há histórico parlamentar na base para exibir snapshot atual, presença e histórico partidário."
+          body="Este deputado está cadastrado, mas ainda não temos presença nem histórico partidário para mostrar."
         />
       )}
     </section>

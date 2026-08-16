@@ -97,8 +97,8 @@ describe("filtros da listagem de deputados", () => {
       expect(ativos).toEqual([
         {
           id: "incluirForaDeExercicio",
-          label: "Incluindo fora de exercício",
-          removeLabel: "Remover filtro Incluindo fora de exercício",
+          label: "Incluindo quem não está em exercício",
+          removeLabel: "Remover filtro Incluindo quem não está em exercício",
         },
       ]);
     });

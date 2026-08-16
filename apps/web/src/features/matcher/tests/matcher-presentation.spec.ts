@@ -113,16 +113,16 @@ describe("toAlertaLabel", () => {
 
 describe("toAtividadeLabel", () => {
   describe("when emAtividade is true", () => {
-    it("returns 'Em atividade'", () => {
+    it("returns 'Em exercício'", () => {
       // Act / Assert
-      expect(toAtividadeLabel(true)).toBe("Em atividade");
+      expect(toAtividadeLabel(true)).toBe("Em exercício");
     });
   });
 
   describe("when emAtividade is false", () => {
-    it("returns 'Mandato encerrado'", () => {
+    it("returns 'Fora de exercício'", () => {
       // Act / Assert
-      expect(toAtividadeLabel(false)).toBe("Mandato encerrado");
+      expect(toAtividadeLabel(false)).toBe("Fora de exercício");
     });
   });
 });

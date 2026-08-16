@@ -192,7 +192,7 @@ describe("DeputadoPerfil", () => {
       const html = render(perfil);
 
       // Assert
-      expect(html).toContain("Em atividade");
+      expect(html).toContain("Em exercício");
     });
 
     it("shows mandato encerrado badge when deputado is inactive", () => {
@@ -203,7 +203,7 @@ describe("DeputadoPerfil", () => {
       const html = render(perfil);
 
       // Assert
-      expect(html).toContain("Mandato encerrado");
+      expect(html).toContain("Fora de exercício");
     });
 
     it("shows the avatar image when urlFoto is available", () => {
@@ -518,7 +518,7 @@ describe("DeputadoPerfil", () => {
       const html = render(perfil);
 
       // Assert
-      expect(html).toContain('aria-label="Situação do mandato: Em atividade"');
+      expect(html).toContain('aria-label="Situação do mandato: Em exercício"');
     });
 
     it("gives the presenca percentual a self-contained accessible label", () => {

@@ -279,16 +279,16 @@ describe("StepComparativo", () => {
       expect(html).toContain("Ementa 1");
       expect(html).toContain("Você");
       expect(html).toContain("Sim");
-      expect(html).toContain("Alinhado");
+      expect(html).toContain("Votou como você");
       expect(html).toContain("Não");
-      expect(html).toContain("Divergente");
+      expect(html).toContain("Votou diferente");
       expect(html).toContain("PL 2/2024");
       expect(html).toContain("Abstenção");
       expect(html).toContain("Fora de exercício");
-      expect(html).toContain("Fora do cálculo");
+      expect(html).toContain("Fora da conta");
       expect(html).toContain("Sua posição");
-      expect(html).not.toContain("A favor da aprovação");
-      expect(html).not.toContain("Contra a aprovação");
+      expect(html).not.toContain("Deveria ser aprovada");
+      expect(html).not.toContain("Não deveria ser aprovada");
       expect(html).not.toContain("Votação");
       expect(html).not.toContain("1 jun 2024");
       expect(html).not.toContain("Placar");
@@ -307,7 +307,9 @@ describe("StepComparativo", () => {
       // Assert
       expect(html).toContain("col-[1/-1]");
       expect(html).toContain("max-w-[65ch]");
-      expect(html.indexOf("Ementa 1")).toBeLessThan(html.indexOf("Alinhado"));
+      expect(html.indexOf("Ementa 1")).toBeLessThan(
+        html.indexOf("Votou como você"),
+      );
     });
 
     it("offers an expand control when the summary does not fit the clamp", () => {
@@ -341,7 +343,7 @@ describe("StepComparativo", () => {
       // Assert
       expect(html).toContain("Deputado 20");
       expect(html).toContain("PP · SP");
-      expect(html).toContain("Em atividade");
+      expect(html).toContain("Em exercício");
       expect(html).toContain('href="/deputados/20"');
       expect(html).toContain('target="_blank"');
       expect(html).toContain('rel="noopener noreferrer"');

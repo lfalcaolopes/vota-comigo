@@ -39,7 +39,7 @@ const SITUACAO_LABELS: Record<DeputadoVotacaoClassification, string> = {
   obstrucao: "Obstrução",
   ausencia_sem_motivo_conhecido: "Ausência sem motivo conhecido",
   fora_de_exercicio: "Fora de exercício",
-  artigo_17: "Artigo 17",
+  artigo_17: "Impedimento regimental",
   voto_nao_informado: "Voto não informado",
   lacuna_de_dados: "Sem dados",
 };
@@ -50,14 +50,10 @@ export function toSituacaoLabel(
   return SITUACAO_LABELS[situacao];
 }
 
-export function toPosicaoLabel(posicao: "aprovar" | "rejeitar"): string {
-  return posicao === "aprovar" ? "A favor da aprovação" : "Contra a aprovação";
-}
-
 export function toMatcherEffectLabel(effect: MatcherEffect): string {
-  if (effect === "concordancia") return "Concordou";
-  if (effect === "discordancia") return "Discordou";
-  return "Fora do denominador";
+  if (effect === "concordancia") return "Votou como você";
+  if (effect === "discordancia") return "Votou diferente";
+  return "Fora da conta";
 }
 
 export const VOTO_FILTROS = [
@@ -77,9 +73,9 @@ const FILTRO_EFFECT: Record<Exclude<VotoFiltro, "todos">, MatcherEffect> = {
 
 const FILTRO_LABELS: Record<VotoFiltro, string> = {
   todos: "Todos",
-  alinhados: "Alinhados",
-  divergentes: "Divergentes",
-  fora: "Fora do cálculo",
+  alinhados: "Votou como você",
+  divergentes: "Votou diferente",
+  fora: "Fora da conta",
 };
 
 export function toFiltroLabel(filtro: VotoFiltro): string {
@@ -130,7 +126,9 @@ export type MatcherVerdict = {
 };
 
 export function toMatcherEffectVerdict(effect: MatcherEffect): MatcherVerdict {
-  if (effect === "concordancia") return { label: "Alinhado", tone: "success" };
-  if (effect === "discordancia") return { label: "Divergente", tone: "danger" };
-  return { label: "Fora do cálculo", tone: "neutral" };
+  if (effect === "concordancia")
+    return { label: "Votou como você", tone: "success" };
+  if (effect === "discordancia")
+    return { label: "Votou diferente", tone: "danger" };
+  return { label: "Fora da conta", tone: "neutral" };
 }

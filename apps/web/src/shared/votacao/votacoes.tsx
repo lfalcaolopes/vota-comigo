@@ -17,7 +17,7 @@ export function Votacoes({ votacoes }: { votacoes: VotacaoNominal[] }) {
       </h2>
       {sorted.length === 0 ? (
         <p className="text-sm text-muted">
-          Nenhuma votação nominal em plenário registrada.
+          Nenhuma votação com o voto de cada deputado registrado.
         </p>
       ) : (
         <div>

@@ -60,7 +60,7 @@ test.describe("painel de filtros da listagem de deputados", () => {
     await expect(abrirFiltros(page)).toHaveText("Filtros");
     await expect(
       page.getByRole("button", {
-        name: "Remover filtro Incluindo fora de exercício",
+        name: "Remover filtro Incluindo quem não está em exercício",
       }),
     ).toBeHidden();
 
@@ -70,7 +70,7 @@ test.describe("painel de filtros da listagem de deputados", () => {
     // Assert
     await expect(
       page.getByRole("button", {
-        name: "Remover filtro Incluindo fora de exercício",
+        name: "Remover filtro Incluindo quem não está em exercício",
       }),
     ).toBeVisible();
   });
@@ -86,7 +86,7 @@ test.describe("painel de filtros da listagem de deputados", () => {
 
     // Act
     await page
-      .getByRole("button", { name: "Buscar também fora de exercício" })
+      .getByRole("button", { name: "Incluir quem não está em exercício" })
       .click();
 
     // Assert
@@ -94,7 +94,7 @@ test.describe("painel de filtros da listagem de deputados", () => {
     await expect(page).toHaveURL(/q=eduardo\+cunha/);
     await expect(
       page.getByRole("button", {
-        name: "Remover filtro Incluindo fora de exercício",
+        name: "Remover filtro Incluindo quem não está em exercício",
       }),
     ).toBeVisible();
     await expect(page.getByText("EDUARDO CUNHA")).toBeVisible();
@@ -115,9 +115,11 @@ test.describe("painel de filtros da listagem de deputados", () => {
     // Act
     await abrirFiltros(page).click();
     await expect(painel(page)).toBeVisible();
-    await painel(page).getByText("Incluir fora de exercício").click();
+    await painel(page).getByText("Incluir quem não está em exercício").click();
     await expect(
-      painel(page).getByRole("checkbox", { name: "Incluir fora de exercício" }),
+      painel(page).getByRole("checkbox", {
+        name: "Incluir quem não está em exercício",
+      }),
     ).toBeChecked();
     await estado(page, "São Paulo").click();
     await painel(page).getByRole("button", { name: "Aplicar" }).click();
@@ -131,7 +133,7 @@ test.describe("painel de filtros da listagem de deputados", () => {
     ).toBeVisible();
     await expect(
       page.getByRole("button", {
-        name: "Remover filtro Incluindo fora de exercício",
+        name: "Remover filtro Incluindo quem não está em exercício",
       }),
     ).toBeVisible();
     expect(consultas).toHaveLength(1);

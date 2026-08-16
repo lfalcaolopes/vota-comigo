@@ -79,7 +79,7 @@ describe("ProposicaoDetalhe", () => {
       const html = render(proposicao);
 
       // Assert
-      expect(html).toContain("Estatísticas");
+      expect(html).toContain("Última votação");
       expect(html).toContain("Última votação");
       expect(html).toContain("14 mar 2025");
       expect(html).toContain("Ver texto completo");

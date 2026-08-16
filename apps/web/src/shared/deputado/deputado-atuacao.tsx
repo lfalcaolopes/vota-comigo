@@ -186,7 +186,7 @@ export function DeputadoOrgaosSection({ state }: { state: OrgaosState }) {
       {state.status === "error" ? (
         <InlineMessage
           body="Tente novamente mais tarde. Os demais dados do perfil continuam disponíveis."
-          title="Não foi possível carregar os vínculos agora."
+          title="Não foi possível carregar as comissões agora."
           tone="danger"
         />
       ) : null}

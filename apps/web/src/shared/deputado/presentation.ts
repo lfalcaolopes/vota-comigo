@@ -10,7 +10,7 @@ import type { BadgeTone } from "@/shared/ui";
 export const CARGO_DEPUTADO = "Deputado federal";
 
 export const RECORTE_BASE_PRESENCA =
-  "Considera as votações de plenário em que o voto de cada deputado fica registrado, entre as propostas usadas na comparação.";
+  "Considera as votações de plenário em que o voto de cada deputado fica registrado, entre as propostas que o Quem Vota Comigo acompanha.";
 
 export const HISTORICO_PARTIDARIO_INDISPONIVEL =
   "Não há histórico partidário na base para este deputado.";
@@ -149,7 +149,7 @@ export function nomePublicoLabel(deputado: {
 }
 
 export function toAtividadeLabel(emAtividade: boolean): string {
-  return emAtividade ? "Em atividade" : "Mandato encerrado";
+  return emAtividade ? "Em exercício" : "Fora de exercício";
 }
 
 export function toAtividadeTone(emAtividade: boolean): BadgeTone {

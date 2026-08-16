@@ -35,8 +35,8 @@ export function FeedList({
   if (display === "empty-default") {
     return (
       <EmptyState
-        body="Ainda não há propostas para mostrar."
-        title="Nada para exibir ainda"
+        body="Nenhuma proposta foi carregada. Tente recarregar a página."
+        title="Nenhuma proposta disponível"
       />
     );
   }
@@ -49,7 +49,7 @@ export function FeedList({
             Limpar busca e filtros
           </Button>
         }
-        body="Nenhuma proposta foi encontrada com a busca e os filtros utilizados."
+        body="Nenhuma proposta combina com a busca e os filtros atuais. Tente remover um filtro ou buscar por outras palavras."
         title="Nenhuma proposta encontrada"
       />
     );

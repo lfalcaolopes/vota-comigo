@@ -5,13 +5,13 @@ import {
   formatShortDate,
   ProposicaoResumo,
   toIdentificadorLegislativo,
+  toPosicaoUsuarioLabel,
   toTextoResumo,
 } from "@/shared/proposicao";
 import { Badge, TitleLink } from "@/shared/ui";
 
 import {
   toMatcherEffectVerdict,
-  toPosicaoLabel,
   toSituacaoLabel,
 } from "../../lib/matcher-detalhe-presentation";
 
@@ -50,7 +50,7 @@ export function VotoDetalheItem({ voto }: VotoDetalheItemProps) {
 
       <dl className="mt-1 flex flex-wrap gap-x-5 gap-y-2 text-xs">
         <MetaItem label="Sua posição">
-          {toPosicaoLabel(posicaoUsuario)}
+          {toPosicaoUsuarioLabel(posicaoUsuario)}
         </MetaItem>
         <MetaItem label="Deputado votou">
           {toSituacaoLabel(situacaoDeputadoVotacao)}
