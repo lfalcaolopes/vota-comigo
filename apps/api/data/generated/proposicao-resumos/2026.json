@@ -1,0 +1,16 @@
+{
+  "ano": 2026,
+  "items": {
+    "2601040": {
+      "sourceHash": "270bb8bb233ac26dceffb3e7fe0f132684e0408c354d632050a218f834aaf988",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Reduz as alíquotas de PIS/Pasep e Cofins para a indústria química e petroquímica e organiza um tratamento tributário transitório para o setor.",
+      "resumoDetalhe": "- Reduz as alíquotas da Contribuição para o PIS/Pasep e da Cofins sobre vendas e importações de insumos usados pela indústria química e petroquímica, aplicando um tratamento tributário específico ao setor.\n- Estabelece o Regime Especial da Indústria Química (REIQ) em caráter transitório — REIQ é um benefício tributário para o setor — e define regras para habilitação e uma data de referência para adesões posteriores.\n- Limita o montante total da renúncia fiscal decorrente desse benefício durante o período transitório e afasta a aplicação de certas exigências da Lei de Responsabilidade Fiscal e da Lei de Diretrizes Orçamentárias, mantendo previsão de compensação do impacto nas contas públicas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:10:38.605Z",
+      "reviewedAt": null
+    }
+  }
+}

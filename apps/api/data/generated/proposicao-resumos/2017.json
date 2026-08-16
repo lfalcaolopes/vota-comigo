@@ -23,6 +23,17 @@
       "generatedAt": "2026-07-07T17:19:37.817Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2127797": {
+      "sourceHash": "0cfe1cb8e91b0ac2ef8c1a99800f8a5b1efb051ec90faad653069682e88489b6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Transforma a Autoridade Pública Olímpica na Autoridade de Governança do Legado Olímpico (AGLO) e estabelece suas funções, estrutura e regras para uso e gestão das instalações do legado.",
+      "resumoDetalhe": "- Cria a AGLO como autarquia federal temporária vinculada ao Ministério do Esporte, definindo que ela deve viabilizar, manter, administrar e permitir o uso das instalações esportivas do legado olímpico, elaborar plano de utilização e buscar modelos de gestão sustentável.\n- Organiza a administração da AGLO com Presidente, Diretor-Executivo e Diretores responsáveis pelo planejamento, orçamento e prestação de contas; sucede a antiga Autoridade Pública Olímpica, recebe seu patrimônio e cargos, e prevê a extinção da AGLO após a definição da destinação de longo prazo do legado.\n- Permite que a AGLO funcione com servidores requisitados e cedidos de outros órgãos, preservando os direitos deles, e prevê opção de regime de remuneração para quem ocupar seus cargos.\n- Define de onde vem o dinheiro da AGLO, somando verbas do orçamento a receitas próprias obtidas com o uso das instalações, e autoriza a cessão temporária das áreas para a realização de eventos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:33:03.984Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
     "2127803": {
       "sourceHash": "fa94d814031033a3435999598a1a7092105139e501a98a15affb5b1cd21dac61",
       "generationStatus": "generated",
@@ -44,6 +55,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2144465": {
+      "sourceHash": "1fd1c5aa1d52545b988437aaa4b8ac805301fc72277db9e66cdb140c02b97c04",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reorganiza o Fies, definindo regras de financiamento estudantil, criando um fundo garantidor privado com participação da União e fixando responsabilidades para cobrança e repasses.",
+      "resumoDetalhe": "- Institui regras para concessão de financiamento a estudantes de cursos superiores não gratuitos, definindo como será contratado o valor do curso, as garantias exigidas e a participação das instituições de ensino no risco.\n- Cria o FG-Fies (Fundo Garantidor do Fies, um fundo privado para garantir os créditos do programa) e disciplina sua gestão, seu estatuto e a forma de participação da União e das mantenedoras de ensino.\n- Obriga o desconto de parte da dívida direto no salário, feito pelo empregador, atribui a ele a responsabilidade pelo repasse e prevê multas e mecanismos de cobrança quando o repasse não acontecer.\n- Destina recursos de fundos regionais e constitucionais ao financiamento estudantil em modalidade específica, e organiza agentes operadores e critérios para uso desses recursos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:10:38.605Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2147241": {
       "sourceHash": "e933d5cd6203ce3f9778f15759e337816ef7b745e0f3aa77d58291700609f4ed",
@@ -89,6 +111,17 @@
       "generatedAt": "2026-06-25T22:43:30.565Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
     },
+    "2162116": {
+      "sourceHash": "83190be1caef5b33473905a1e9831f4154e2b87ffae3ba0217bb092d96c8f56e",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Garante na Constituição que a União reserve recursos mínimos para financiar o Sistema Único de Assistência Social (SUAS).",
+      "resumoDetalhe": "- Cria na Constituição o Sistema Único de Assistência Social (SUAS) como um sistema descentralizado e participativo para organizar a assistência social.\n- Exige que a União aplique, anualmente, um percentual mínimo da sua receita corrente líquida para financiar o SUAS, assegurando verba específica para o funcionamento do sistema.\n- Determina que eventual diferença entre o valor calculado para aplicação e a receita efetivamente realizada seja ajustada no início do exercício seguinte, com acréscimos ou deduções na aplicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:10:38.605Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
     "2164234": {
       "sourceHash": "8a8cb386688a235fc7fa394b5e54d457150510397b2889790a03d36de2a87e0e",
       "generationStatus": "generated",
@@ -110,6 +143,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2166464": {
+      "sourceHash": "6bed7d82bb08d8aff28aa6cdb48ea9c8a330389e31e4b120929b3eda0aa98389",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza governos a cederem direitos sobre créditos tributários e não tributários a investidores, com regras para a operação e acesso a informações pela administração tributária.",
+      "resumoDetalhe": "- Autoriza a União, os Estados, o Distrito Federal e os Municípios a venderem, por meio de lei específica, o direito de receber dívidas de impostos e de outras cobranças a empresas privadas ou a fundos de investimento, inclusive quando essas dívidas já estiverem inscritas em dívida ativa (a lista oficial de quem deve ao poder público).\n- Determina que a venda não muda a dívida em si, preservando sua natureza, suas garantias e as regras de correção, juros, multas e prazos, e mantém com o poder público a tarefa de cobrar na Justiça, sem transferir ao comprador a relação com quem deve.\n- Proíbe que banco controlado pelo governo que vende os créditos seja o comprador principal ou negocie esses créditos depois, embora possa prestar serviços na montagem da operação, e trata a venda como alienação definitiva de patrimônio público, com parte do dinheiro obtido destinada à previdência e o restante a investimentos.\n- Autoriza a administração tributária a pedir informações de cadastro e de patrimônio dos contribuintes a órgãos e empresas e a compartilhar bases de dados com outras administrações, e prevê que o protesto extrajudicial da dívida interrompa a prescrição, o prazo depois do qual a cobrança não pode mais ser feita.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:10:38.605Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2166600": {
       "sourceHash": "e43b9d308aa324d77f8ccb8fe7c67666c8440d13dc1066fc9f65e80b16fde7be",

@@ -23,6 +23,17 @@
       "generatedAt": "2026-07-07T17:45:21.754Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "544681": {
+      "sourceHash": "b160810a304fcaaa2dbc422b8cc933e03b021ac1e59fa71fdf777b2c7f080af6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Proíbe que lei transfira tarefas ou serviços a Estados, Distrito Federal ou municípios sem prever repasses de dinheiro para custeá-los.",
+      "resumoDetalhe": "- Proíbe que lei imponha ou transfira tarefas ou a prestação de serviços aos Estados, ao Distrito Federal ou aos municípios sem prever o repasse de dinheiro necessário para pagar por eles.\n- Alcança qualquer tarefa ou serviço criado por lei, tornando a previsão dos recursos condição para que o encargo seja transferido.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:54:43.704Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
     "545304": {
       "sourceHash": "e3ef9dc850de8551b007469fd5fba7844748286930361c132a9d8fa9485dcd14",
       "generationStatus": "generated",

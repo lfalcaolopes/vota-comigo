@@ -12,6 +12,17 @@
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2416804": {
+      "sourceHash": "ad692cf410f514cead2c388c4b4ee31ac4ffd97230734345861774d3e6b58052",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Autoriza depreciação acelerada para máquinas e equipamentos novos usados em determinadas atividades econômicas.",
+      "resumoDetalhe": "- Autoriza o Poder Executivo, por decreto, a conceder depreciação acelerada para máquinas, equipamentos, aparelhos e instrumentos novos adquiridos no período especificado na lei e empregados no ativo imobilizado de determinadas atividades econômicas; depreciação acelerada é quando a empresa abate no imposto uma parte maior do custo do bem mais cedo.\n- Permite que, para cálculo do Imposto de Renda e da Contribuição Social, as empresas deduzam uma parcela significativa do valor desses bens no ano em que começam a operar e outra parcela significativa no ano seguinte, ficando o restante sujeito à depreciação normal conforme o desgaste, sem que o total ultrapasse o custo de aquisição.\n- Define exclusões e condições: veda o benefício para certos bens (por exemplo, edifícios, terrenos, obras de arte, bens com quota de exaustão e alguns bens importados com benefícios fiscais) e exige que só sejam beneficiados bens intrinsecamente ligados à produção ou comercialização; autoriza condicionar o benefício a requisitos de promoção da indústria nacional e agregação de valor.\n- Estabelece um limite máximo para a renúncia fiscal no ano indicado na lei (renúncia fiscal = perda de receita do governo por benefício tributário), exige habilitação prévia das empresas pelo Ministério do Desenvolvimento, Indústria, Comércio e Serviços, designa esse ministério para acompanhar e avaliar o benefício e permite que o Executivo amplie, por decreto e observadas regras fiscais, as atividades contempladas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:10:38.605Z",
+      "reviewedAt": null
+    },
     "2421211": {
       "sourceHash": "1813fedca36f1e64f9a14d39a1483d1e17aa0413ab37171647543d551a2dcda9",
       "generationStatus": "generated",
@@ -78,6 +89,39 @@
       "generatedAt": "2026-06-26T01:58:05.096Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
     },
+    "2442331": {
+      "sourceHash": "0440e9f096f7c64b16ff4c41a549fa6f900624a01c568c973380248d07b87cfa",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Aprova textos de resoluções internacionais sobre segurança no mar e exige aval do Congresso para atos que gerem encargos ao país.",
+      "resumoDetalhe": "- Aprova textos de resoluções da Organização Marítima Internacional relacionados à Convenção SOLAS (a convenção sobre segurança da vida no mar), incluindo as emendas anexas.\n- Submete ao Congresso Nacional atos que possam levar à denúncia ou revisão dessas resoluções, ou a ajustes complementares na convenção ou nas resoluções, quando esses atos impliquem encargos ou compromissos gravosos ao patrimônio do país.\n- Determina que o decreto legislativo passa a valer na data de sua publicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
+    },
+    "2442848": {
+      "sourceHash": "6d9fec2208e8f4d9ceee4aeeb90093737d94d5d05d63f81eef9e802b8f9c4e39",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Aprova a Convenção entre Brasil e Colômbia para eliminar a dupla tributação sobre a renda e prevenir evasão e elisão fiscais, e seu Protocolo.",
+      "resumoDetalhe": "- Aprova os textos da Convenção entre Brasil e Colômbia e do seu Protocolo que tratam da eliminação da dupla tributação sobre a renda e da prevenção da evasão e da elisão fiscais.\n- Exige aprovação do Congresso Nacional para qualquer ato que possa denunciar ou revisar a Convenção ou o Protocolo, bem como para ajustes complementares que imponham encargos ao patrimônio nacional.\n- Determina que o decreto legislativo passa a vigorar na data de sua publicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
+    },
+    "2447191": {
+      "sourceHash": "3728b62185396ea4903596f9bd0c4a8b931b4e046015ec66b24e0ba0c37571e6",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Inclui despesas dos hospitais universitários federais no cálculo do gasto mínimo constitucional em saúde",
+      "resumoDetalhe": "- Inclui as despesas de custeio e de investimento dos hospitais universitários federais para fins do cálculo do gasto mínimo constitucional em saúde, desde que essas despesas sejam aprovadas pelo Ministério da Saúde e sigam as diretrizes da lei.\n- Inclui a remuneração do pessoal ativo e do pessoal inativo desses hospitais como despesa válida para esses fins.\n- Permite que os repasses de recursos para esses hospitais, inclusive recursos de emendas parlamentares, sejam feitos por transferência de créditos do Fundo Nacional de Saúde para os hospitais ou para a entidade pública que os administra.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:10:38.605Z",
+      "reviewedAt": null
+    },
     "2448974": {
       "sourceHash": "d88a7e91bb1518f42d50a73d20c627caa34eccb96257f1c268d8733410032942",
       "generationStatus": "generated",
@@ -100,6 +144,17 @@
       "generatedAt": "2026-07-07T20:08:24.596Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2454400": {
+      "sourceHash": "fb6f8ae48b09a23c961503648130129d4b37c36af173a86a26c502fea54ff453",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Cria o Programa de Pleno Pagamento de Dívidas dos Estados (Propag) para revisar e refinanciar dívidas dos Estados e do Distrito Federal com a União, vinculando benefícios a aportes e investimentos em educação profissional e infraestrutura.",
+      "resumoDetalhe": "- Institui o Propag para promover a revisão das dívidas dos Estados e do Distrito Federal com a União e apoiar a recuperação fiscal e investimentos em produtividade, adaptação às mudanças climáticas, infraestrutura, segurança pública e formação profissional.\n- Autoriza que os Estados paguem ou compensem a dívida com transferência de dinheiro, participações societárias, bens, cessão de créditos ou recebíveis e outras formas de ativo, e prevê o refinanciamento da dívida apurada em parcelas mensais sucessivas, com possibilidade de amortizações extraordinárias e cláusula de arbitragem; veda contratar novo crédito para pagar essas parcelas.\n- Estabelece encargos e condições vinculadas à realização de aportes anuais e investimentos estaduais em educação profissional técnica e em obras de saneamento, habitação, adaptação às mudanças climáticas, transportes ou segurança; cria o Fundo de Equalização Federativa para financiar essas ações, define critérios de distribuição dos recursos e exige prestação de contas e fiscalização pelos órgãos competentes.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:01:17.719Z",
+      "reviewedAt": null
+    },
     "2454704": {
       "sourceHash": "4d4740f50da8c4465a99fe7c2557942a250645fde8a0fa35e46a911aea96e954",
       "generationStatus": "generated",
@@ -110,6 +165,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:23:14.848Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2456110": {
+      "sourceHash": "8a32b9235a099d7ac01f13d8efb5421b4ff65a4417e654bd04e81c1dedfeb68d",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Aprova o Acordo entre Brasil e Croácia para cooperação na área de educação.",
+      "resumoDetalhe": "- Aprova o texto do Acordo entre o Brasil e a Croácia sobre cooperação na área de educação.\n- Determina que atos que possam levar à denúncia ou revisão do Acordo, e ajustes que imponham encargos ou compromissos pesados ao patrimônio nacional, dependem de aprovação do Congresso Nacional.\n- Estabelece que o decreto legislativo entra em vigor na data de sua publicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
     },
     "2456731": {
       "sourceHash": "484f2a432c6790c6beaee7cd077dbd3c2911c3ce68808f5e496bf220f32878dd",
@@ -122,6 +188,17 @@
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2460010": {
+      "sourceHash": "0d27aac0aad7c8adb1b0675d81c0437d357ba36a668a31f34aa01c26ed1af1f3",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Altera como instituições financeiras podem abater perdas com créditos inadimplidos, fazendo a dedução aos poucos ao longo de vários anos.",
+      "resumoDetalhe": "- Estabelece que perdas de créditos inadimplidos só poderão ser excluídas do lucro para fins de imposto de forma parcelada, com deduções mensais espalhadas ao longo de vários anos, começando em data futura.\n- Permite que as instituições financeiras escolham, até uma data limite, uma opção alternativa de parcelamento mais lenta; a escolha é irreversível.\n- Veda que as instituições deduzam, em um mesmo exercício, perdas em valor superior ao lucro desse exercício antes da dedução; as perdas não deduzidas devem ser somadas ao saldo para dedução futura, respeitando a opção de parcelamento escolhida.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:57:06.620Z",
+      "reviewedAt": null
+    },
     "2461207": {
       "sourceHash": "9c4c8b432b21b39a3f1dc1ee541abfab49cbc6f5d128b914190e9185cc52a611",
       "generationStatus": "generated",
@@ -132,6 +209,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T17:19:37.817Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2463814": {
+      "sourceHash": "14873dff365569dd829a5775a2f36d8485b928e174e0a393bffb37368eed27b7",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Abre crédito extraordinário para financiar ações emergenciais de combate a queimadas, seca e seus impactos por vários ministérios.",
+      "resumoDetalhe": "- Abre crédito extraordinário (dinheiro extra criado para situações de emergência) em favor de vários ministérios para custear medidas contra queimadas, seca e a crise climática.\n- Destina recursos para operações de segurança pública, incluindo apoio a operações integradas e mobilização da Força Nacional para atuar temporariamente no combate a incêndios e na proteção de pessoas e bens.\n- Financia ações de saúde e vigilância, como atendimento especializado, aquisição de insumos, reforço de vigilância em saúde e medidas para ampliar o acesso à água em comunidades indígenas e rurais.\n- Reforça fiscalização e resposta ambiental, com contratação de equipes, locação de aeronaves, compra de equipamentos e investimentos em tecnologias, e ainda apoia ações de defesa civil, programas sociais de acesso à água e pagamento de auxílio a pescadores artesanais afetados.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:01:17.719Z",
+      "reviewedAt": null
     },
     "2466104": {
       "sourceHash": "efda02c157746e42d2680a0015dbc697edf95e0d259a9d90bdd19ac0f45ac0c6",
@@ -144,6 +232,17 @@
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2466108": {
+      "sourceHash": "86928578487a39274c86ee97b47b8e9c52e3a45dc2b3d36d07d456297f197116",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Institui o Dia Nacional da Axé Music, celebrado anualmente no dia dezessete de fevereiro.",
+      "resumoDetalhe": "- Cria o Dia Nacional da Axé Music e define que a comemoração ocorra todo ano no dia dezessete de fevereiro.\n- Reconhece a Axé Music como manifestação cultural, destacando sua origem na Bahia e sua importância para a identidade cultural.\n- Determina que a lei passe a vigorar a partir da data de sua publicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
+    },
     "2471177": {
       "sourceHash": "546c1ff4f1055498a94869b5202faf32ba92df0f46c20bb5ff4ebf8fb5c75747",
       "generationStatus": "generated",
@@ -155,6 +254,17 @@
       "generatedAt": "2026-07-07T19:36:40.723Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2473375": {
+      "sourceHash": "f066c2f3f039caa4ee99d588b4525453607d8cda00dfcc209a58262c44071fbc",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Exige cadastro biométrico e atualização do CadÚnico para receber benefícios sociais, amplia checagens com outros bancos de dados e vincula gastos a limites orçamentários.",
+      "resumoDetalhe": "- Exige documento com cadastro biométrico feito pelo Poder Público para concessão, manutenção ou renovação de benefícios da seguridade social e impõe atualização periódica do Cadastro Único para quem recebe programas que usam esse cadastro, com possibilidade de suspensão do benefício se a pessoa não regularizar após notificação.\n- Determina que o CadÚnico passe a coletar informações socioeconômicas e territoriais para checagem em outras bases de dados, e obriga concessionárias de serviços e órgãos federais a fornecerem dados necessários para verificação de requisitos, observando a proteção de dados pessoais.\n- Define regras para o Benefício de Prestação Continuada (BPC): especifica quem conta como família para calcular renda; estabelece que a renda familiar será a soma dos rendimentos brutos mensais sem deduções não previstas em lei; considera que posse de bens ou terra acima do limite de isenção do imposto de renda indica meios de prover a própria manutenção; e exige o registro do código da Classificação Internacional de Doenças (CID) nos sistemas usados para concessão.\n- Vincula despesas a limites orçamentários e regras de correção: torna o custeio sujeito à disponibilidade orçamentária, altera a forma de aporte a fundo constitucional vinculando-o à dotação anterior corrigida pelo IPCA (índice de preços) ou índice que o substituir, e estabelece limites e parâmetros para o Programa Bolsa Família e para o aumento real do salário mínimo conforme índices previstos em lei complementar.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:57:06.620Z",
+      "reviewedAt": null
+    },
     "2473389": {
       "sourceHash": "26ee772121594e08e17497db2c5714e590e53f33c7c18cc95c64206f6ac15b52",
       "generationStatus": "generated",
@@ -165,6 +275,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:23:14.848Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2481257": {
+      "sourceHash": "d6f79e1c2c46ebd6e58f6d7f864056279a37f3677598e716fd8eae6b30357e1a",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Aprova o relatório que aprecia a Política Nacional de Defesa, a Estratégia Nacional de Defesa e o Livro Branco de Defesa Nacional — documentos que orientam as prioridades e ações de defesa do país — e encaminha suas recomendações ao Presidente.",
+      "resumoDetalhe": "- Aprova o relatório da Comissão Mista de Controle da Atividade de Inteligência como apreciação, pelo Congresso Nacional, dos textos da Política Nacional de Defesa, da Estratégia Nacional de Defesa e do Livro Branco de Defesa Nacional atualizados, documentos que orientam as prioridades e ações de defesa do país.\n- Envia o relatório, com as sugestões e recomendações do Congresso Nacional, ao Presidente da República.\n- Estabelece que o decreto legislativo entra em vigor na data de sua publicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
     }
   }
 }

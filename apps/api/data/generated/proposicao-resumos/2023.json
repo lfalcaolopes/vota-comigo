@@ -1,6 +1,17 @@
 {
   "ano": 2023,
   "items": {
+    "1197773": {
+      "sourceHash": "8ddb3a5106e7bbc8d9e2bbb00bb7bdf9d11da8b650f147b7070f199f95056d00",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Considera homicídio qualificado o assassinato de membros do Ministério Público ou magistrados ligado ao exercício da função, e estende a qualificação a parentes por vingança.",
+      "resumoDetalhe": "- Cria homicídio qualificado, ou seja, trata como assassinato com pena mais grave, quando a vítima for membro do Ministério Público ou magistrado no exercício da sua função ou por causa dela.\n- Estende a mesma qualificação quando o crime for praticado contra familiares próximos por motivo de vingança.\n- Inclui esse tipo de homicídio entre os crimes hediondos, quando ocorrer em atividade típica de grupo de extermínio, mesmo que cometido por agente isolado.\n- Determina que a lei passe a vigorar na data de sua publicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:01:17.719Z",
+      "reviewedAt": null
+    },
     "2115253": {
       "sourceHash": "1fab57f75b6a28a1271854dd98e6098f8f77b163914a826a7e0e458a7eda0412",
       "generationStatus": "generated",
@@ -33,6 +44,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T18:15:29.632Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2350586": {
+      "sourceHash": "fbc3fa869bd717e544ac0fc5ca4eec2423d0a6dc4039e324572f0eeca0be5df2",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Prorroga o prazo para empresas recolherem a contribuição sobre a receita bruta e estende o adicional da Cofins-Importação.",
+      "resumoDetalhe": "- Prorroga o prazo para que empresas possam optar por recolher a contribuição previdenciária sobre a receita bruta em vez de sobre a folha de salários.\n- Prorroga o prazo para manter um adicional de alíquota na Cofins-Importação sobre determinados bens importados, visando equilibrar a tributação entre operações internas e importações.\n- Exige que o Poder Executivo defina mecanismos para monitorar e avaliar o impacto da desoneração da folha sobre a manutenção dos empregos nas empresas alcançadas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
     },
     "2351506": {
       "sourceHash": "3a0d86e9b2905b22f58fb1592d5e4958260ed0028aacb53d38d335ce233b403a",
@@ -78,6 +100,17 @@
       "generatedAt": "2026-07-07T18:15:29.632Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2358915": {
+      "sourceHash": "f32fac97327c36bfc02218eceeef47cddeed81e1ff3977ae1e7bfe57061f5482",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Institui a Política Nacional de Trabalho Digno e Cidadania (PNTC PopRua) para promover trabalho, renda, qualificação e acesso a direitos para a população em situação de rua.",
+      "resumoDetalhe": "- Cria a PNTC PopRua com o objetivo de promover o direito ao trabalho, à renda, à qualificação profissional e à elevação da escolaridade da população em situação de rua.\n- Institui uma rede de Centros de Apoio ao Trabalhador em Situação de Rua (CatRua) para cadastrar, orientar, qualificar e acompanhar a inserção no mercado de trabalho, com atendimento itinerante e plano individual de acompanhamento.\n- Determina que empresas e organizações que recebem incentivos ou firmam contratos públicos reservem vagas para pessoas em situação de rua, com encaminhamento pelos CatRua e previsão de perda de incentivos ou rescisão de contrato em caso de descumprimento.\n- Estabelece medidas integradas de inclusão, como bolsas de qualificação (QualisRua) para apoiar permanência em cursos, garantia de acesso imediato à moradia ou acolhimento provisório, prioridade para vagas em creches e escolas para filhos, apoio ao cooperativismo e incubadoras sociais, inclusão digital, e comitês de monitoramento e transparência dos resultados.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:01:17.719Z",
+      "reviewedAt": null
+    },
     "2367600": {
       "sourceHash": "138bfce24ff628353e1efd9caf02e1affe445c80fd9377b98a25b50269d77b0c",
       "generationStatus": "generated",
@@ -88,6 +121,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T16:46:42.082Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2372071": {
+      "sourceHash": "39e81cddb5c03d3b19e17bf2463e87dedb0a161463a55e6582e351d597f17808",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Autoriza a União a compensar Estados e o Distrito Federal pelas perdas de arrecadação do ICMS (imposto sobre circulação de mercadorias e serviços), com pagamentos por abatimento de dívidas ou por transferências diretas conforme Anexo.",
+      "resumoDetalhe": "- Estabelece que a União compensará os Estados e o Distrito Federal pelas perdas de arrecadação do ICMS, indicando valores e cronograma no Anexo.\n- Determina que a compensação será, em primeiro lugar, feita por dedução das parcelas de contratos de dívida administrados pela Secretaria do Tesouro; quando não houver contrato ou as parcelas forem insuficientes, prevê transferência direta de recursos pela União.\n- Dispõe que estados que receberam menos por decisões judiciais terão direito à diferença, e que estados que receberam mais deverão incorporar o excesso ao saldo de suas dívidas, refinanciar ou aplicar o valor em convênio para obra.\n- Exige que os Estados observem as vinculações legais relativas à saúde, à educação e ao Fundeb (fundo da educação básica) sobre os valores compensados, repassem parte aos Municípios e comprovem mensalmente as transferências no Siconfi, sob pena de suspensão das compensações; também define tratamento contábil e autoriza regulamentação pelo Ministro da Fazenda.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:01:17.719Z",
+      "reviewedAt": null
     },
     "2374400": {
       "sourceHash": "0951dfe374a1110a7969bcffb2c4d0d62dc340de79a8a2ff33b06187fdfb1511",
@@ -188,6 +232,28 @@
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2388029": {
+      "sourceHash": "648d613e0a19248b63eb6ee925941f1dab50dc3b785122a5a9f30bafb2c1541a",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Autoriza parlamentares a reservar cinco por cento das suas emendas para uso em catástrofes e emergências naturais.",
+      "resumoDetalhe": "- Cria a possibilidade de o parlamentar reservar parte do valor de suas emendas para enfrentar catástrofes e emergências naturais, a critério do deputado ou senador.\n- Destina esses recursos ao órgão federal responsável pela Defesa Civil, que deve repassar imediatamente às unidades da federação quando ocorrer o desastre.\n- Prevê que, se os recursos reservados não forem utilizados até o final da Legislatura por ausência de desastres, os valores retornam aos parlamentares para outro destino.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
+    },
+    "2398530": {
+      "sourceHash": "fefc91938c6ba2815471468a60f0eaeb2c0710fdf829943cef3b8967b2a89f95",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Autoriza perdão parcial ou total, liquidação, rebate e renegociação de dívidas rurais para produtores afetados por adversidades climáticas, usando recursos de programas e fundos públicos.",
+      "resumoDetalhe": "- Autoriza a liquidação, anistia, renegociação e concessão de rebate para dívidas de crédito rural contraídas até o marco temporal previsto na lei, para agricultores, pecuaristas, piscicultores, pescadores e carcinicultores, com uso de recursos do Pronaf, do FNE e de outros mecanismos de financiamento, dando prioridade às áreas atingidas por seca e outras regiões afetadas por eventos climáticos.\n- Estabelece que critérios específicos para anistia, descontos e valores de rebate serão definidos em regulamentação; permite renegociação com carência, prazo da operação e juros calculados a partir da TLP (taxa de longo prazo usada em contratos, explicada em linguagem simples) acrescida de pequena margem e custos dos agentes; autoriza renegociar a totalidade da dívida conforme critérios de renda e patrimônio e aplicar rebate que reduza parte dos juros e encargos.\n- Determina que dívidas cedidas a fundos de direitos creditórios também entram nas medidas; obriga os bancos administradores de fundos constitucionais, mediante pedido do beneficiário, a substituir encargos antigos pelos encargos aplicados em novas operações, conforme normas; veda renegociação extraordinária quando houve renegociação anterior rescindida por inadimplência, salvo se a inadimplência decorreu de seca ou estiagem reconhecida como emergência ou calamidade dentro do período previsto na norma, e prevê regulamentação pelo Poder Executivo em prazo definido pela lei.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:01:17.719Z",
+      "reviewedAt": null
+    },
     "2399598": {
       "sourceHash": "9724b4eed99e8e304e435d07a092dbfe513a5a83a6ea8cb000ba72172f2811b1",
       "generationStatus": "generated",
@@ -198,6 +264,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2400758": {
+      "sourceHash": "73a5a4fde1d4a600435be77cbf24044ee2a5d9be1f494242746a553059181679",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Cria o Seguro Obrigatório SPVAT para pagar indenização por morte e invalidez permanente a vítimas de acidentes de trânsito, financiado por prêmio pago pelos proprietários de veículos e gerido por fundo operacionalizado pela Caixa.",
+      "resumoDetalhe": "- Cria o Seguro Obrigatório para Proteção de Vítimas de Acidentes de Trânsito (SPVAT) que garante indenização por morte e por invalidez permanente às vítimas ou aos seus beneficiários, paga mediante simples prova do acidente e independentemente da existência de culpa.\n- Cria um fundo mutualista, financiado pelos prêmios pagos pelos proprietários de veículos, e atribui à Caixa Econômica Federal a gestão operacional do fundo, incluindo cobrança de prêmios, processamento de pedidos de indenização e pagamento das indenizações.\n- Determina que a quitação do prêmio é requisito para o licenciamento, para a transferência de propriedade e para a baixa de registro do veículo, e permite convênios com unidades federativas para cobrar o prêmio junto ao licenciamento, com reembolso pelas despesas de arrecadação.\n- Estabelece governança e fiscalização: o CNSP fixa os valores dos prêmios, define regras e examina as contas; a Susep presta assessoramento técnico e fiscaliza a operação; prevê transferência dos ativos e passivos do fundo antigo para o novo fundo e autoriza cobrança de prêmios destinados a cobrir eventual déficit remanescente; prevê sanção administrativa pelo não pagamento do prêmio.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
     },
     "2413257": {
       "sourceHash": "af554da772c510237ffd61fbeb10fcb1ffac0e9993ed4cee2724cadacf8b1015",
@@ -210,6 +287,17 @@
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2416733": {
+      "sourceHash": "7c8dfb10de81a559d534b51a91bd4b8ab8c508f3be6b608ffaddf2be6e145e87",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Cria a Letra de Crédito do Desenvolvimento (LCD) para que bancos de desenvolvimento captem recursos por meio de título registrado.",
+      "resumoDetalhe": "- Cria a Letra de Crédito do Desenvolvimento (LCD) como título de crédito nominativo, transferível e representativo de promessa de pagamento, a ser emitida por bancos de desenvolvimento autorizados e mantida em registro escritural.\n- Exige que a LCD seja registrada eletronicamente com informações como nome da emissora e do titular, valor, vencimento e forma de pagamento; e delega ao Conselho Monetário Nacional a definição das regras de emissão, limites e condições de resgate antecipado, considerando porte e risco das instituições.\n- Permite remuneração fixa ou flutuante, incluindo atualização por índices de preços ou por taxas de mercado como DI Over ou Selic (Selic: taxa básica de juros), e autoriza emissão com garantia real via penhor ou cessão de direitos creditórios, com possibilidade de substituir garantias por outras de risco equivalente quando previsto.\n- Exige relatório anual público no site da emissora com os projetos apoiados e a aderência aos Objetivos de Desenvolvimento Sustentável da ONU; estabelece tributação retida na fonte sobre os rendimentos com tratamento diferenciado conforme o tipo de beneficiário e indica o Ministério do Desenvolvimento, Indústria, Comércio e Serviços como órgão gestor da avaliação dos benefícios tributários, além de sujeitar oferta pública às normas da Comissão de Valores Mobiliários.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:10:38.605Z",
+      "reviewedAt": null
+    },
     "2454495": {
       "sourceHash": "baad05f73cf0e8a3373587a906376125fa60515c8ae1ff7ed8fd6f60b4a25dbf",
       "generationStatus": "generated",
@@ -220,6 +308,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2543171": {
+      "sourceHash": "95ad6fe554d5692b02387776c2cf5c2e3bd346e709edab23a6677cd255319c7e",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Cria um sistema nacional de apoio oficial ao crédito à exportação, com regras para financiamentos, garantias, participação do setor privado e transparência por meio de um portal único.",
+      "resumoDetalhe": "- Estabelece um sistema de apoio oficial ao crédito à exportação e prevê um fundo com natureza privada e patrimônio próprio, sob diretrizes da Camex, além de prever que a União honre coberturas se o patrimônio do fundo for insuficiente.\n- Permite habilitar financiadores e seguradores privados como operadores em modalidades indiretas, para ampliar a participação do mercado privado nas soluções de financiamento e de garantias, e exige que os operadores ofereçam meios alternativos de solução de conflitos, como mediação, conciliação e arbitragem.\n- Determina que prazos, limites, processos e condições das modalidades direta e indireta sejam definidos em regulamento com revisões, e cria um portal único na internet para solicitação de apoio oficial, garantindo transparência das condições financeiras e o aproveitamento compartilhado de documentos entre operadores.\n- Define que agentes públicos só serão responsabilizados pessoalmente por decisões em caso de dolo (má-fé) ou erro grosseiro (falha grave), e amplia as finalidades do BNDES para financiar exportação de bens e serviços, com regras de elegibilidade, transparência e vedação de novos financiamentos a devedores públicos externos inadimplentes salvo renegociação, além de exigir apresentação regular de informações públicas sobre essas operações.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
     }
   }
 }

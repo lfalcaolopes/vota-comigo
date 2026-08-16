@@ -133,6 +133,17 @@
       "generatedAt": "2026-06-26T02:56:11.740Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
     },
+    "2252295": {
+      "sourceHash": "5bf6c2bd7adfa0fba09e55847885680667fc0bb49074ac59de0d84e20a3c523f",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Cria a Estratégia Nacional de Saúde para incentivar pesquisa e a produção nacional de itens essenciais à saúde.",
+      "resumoDetalhe": "- Institui uma estratégia nacional que incentiva pesquisa e desenvolvimento em saúde, capacitação de pessoal, prevenção e combate a epidemias e a criação de um parque industrial para dar autonomia na produção de materiais, medicamentos e insumos.\n- Define Empresas Estratégicas de Saúde (EES) como empresas credenciadas que têm sede e indústria no País, registro na ANVISA (agência que regula produtos de saúde), foco em pesquisa e produção nacional e controle majoritariamente por capital nacional.\n- Dispõe incentivos e apoio às EES, incluindo um regime especial tributário chamado RETEES (regime tributário especial para as EES), acesso a financiamentos e preferência em compras públicas; lista produtos e insumos estratégicos elegíveis e prevê que os benefícios valem por prazo definido a partir da publicação da lei.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
+    },
     "2252589": {
       "sourceHash": "bdb9452e2f87cda198358f965d8e5c657b9ae732338875645b462ad957621cbe",
       "generationStatus": "generated",
@@ -154,6 +165,28 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:23:14.848Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2254253": {
+      "sourceHash": "9e3fe9809432cb4d907d982c4500eb135bde0b0e917c7a0cb15b3a190efc894c",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Cria um programa emergencial que usa garantias via FGI para facilitar crédito a pequenas e médias empresas afetadas pela pandemia.",
+      "resumoDetalhe": "- institui o Programa Emergencial de Acesso a Crédito sob a supervisão da área do Ministério da Economia para facilitar acesso a crédito por meio de garantias e preservar pequenas e médias empresas, em defesa de empregos e renda.\n- autoriza aporte da União no FGI (Fundo Garantidor para Investimentos), administrado pelo BNDES (banco estatal de desenvolvimento), para formar um patrimônio separado que sirva de garantia das operações do programa, com direitos e obrigações próprios e sem garantia direta da União sobre esse patrimônio.\n- define regras de funcionamento: a cobertura do FGI vale somente para novas operações contratadas durante a vigência do programa, não isenta os devedores de suas obrigações, limita a parcela do prejuízo que o fundo cobre por agente e permite segregar limites por faixa de faturamento; autoriza contratos e comunicações eletrônicas e exige que agentes sigam procedimentos usuais de cobrança e recuperação.\n- altera regras de fundos garantidores e do Pronampe (programa de apoio a micro e pequenas empresas) para disciplinar comissões, limites de cobertura e formas de recuperação de crédito, incluindo leilão, cessão, securitização e renegociação, e cria conselhos de participação relacionados aos fundos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
+    },
+    "2254287": {
+      "sourceHash": "34cf6e2db5670c70fced86de66a5b33263971d9aa1b23fd22937bda7908d9db5",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Garante a contagem do tempo para anuênios, triênios, quinquênios e licenças-prêmio de servidores de saúde e segurança, mas suspende o pagamento desses adicionais até prazo previsto na proposta.",
+      "resumoDetalhe": "- Mantém o cômputo do tempo de serviço para servidores públicos civis e militares das áreas de saúde e de segurança, ou seja, o tempo que conta para adquirir anuênios, triênios, quinquênios, licenças-prêmio e mecanismos equivalentes continua a ser considerado.\n- Proíbe o pagamento de novos blocos aquisitivos para esses direitos durante o prazo estabelecido na proposta; blocos aquisitivos são os momentos em que o servidor passa a ter direito ao aumento decorrente do tempo de serviço.\n- Impede o pagamento retroativo desses novos blocos no período em que vigora a proibição e determina que o pagamento voltará a ser efetuado na data fixada pela proposição.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:10:38.605Z",
+      "reviewedAt": null
     },
     "2255149": {
       "sourceHash": "0d48091d646c666c75de7d6afb69b644f89a18cb501eca4097e4925e36eebfea",
@@ -298,6 +331,17 @@
       "generatedAt": "2026-07-07T17:19:37.817Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2268069": {
+      "sourceHash": "9f92d974d60f7663b2dd9334be2d5a012020cc9ed4f8bc798c42245793af468e",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Estabelece regras para conceder autorizações no transporte rodoviário interestadual e internacional de passageiros.",
+      "resumoDetalhe": "- Estabelece que não haverá limite para autorizações do serviço regular, salvo em caso de inviabilidade técnica, operacional ou econômica, e determina que o Poder Executivo defina esses critérios; autoriza a ANTT (agência federal que regula o transporte rodoviário) a realizar processo seletivo público.\n- Exige que a outorga considere os mercados de cada linha, proíbe o seccionamento intermunicipal, e fixe itinerários, horários e frequências mínimas; obriga a oferta de gratuidades e descontos com ressarcimento específico para o serviço convencional e exige comprovação de acessibilidade, segurança e capacidade técnica, operacional e econômica, além de capital social mínimo.\n- Determina que interessados requeiram autorização ao Poder Executivo indicando mercados pretendidos, itinerários, horários, características da frota, endereços e coordenadas de terminais e pontos de parada, e um estudo de viabilidade econômica; limita a utilização de veículos de terceiros a uma parte da frota.\n- Regula sanções e regularização: fixa multa máxima passível de correção anual, prevê conversão de multas anteriores em advertência se os valores forem investidos para melhorar o serviço, destina a arrecadação das novas multas à fiscalização e educação, e suspende autorizações concedidas em período determinado para reanálise segundo os novos critérios.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:10:38.605Z",
+      "reviewedAt": null
+    },
     "2268417": {
       "sourceHash": "16ab520706e5d7a4553d2680d3e4afa3dbed7bdec7e298149f27a95785bc92df",
       "generationStatus": "generated",
@@ -308,6 +352,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T18:07:53.948Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2309349": {
+      "sourceHash": "3a19d78dc360514fdd46dd3b738da21afe5a1a13724eb895cfa4f4fff42e18eb",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Cria piso salarial nacional de R$ 4.750 para Enfermeiros e pisos proporcionais para Técnico de Enfermagem, Auxiliar de Enfermagem e Parteira, com atualização anual pelo INPC.",
+      "resumoDetalhe": "- Fixa um piso salarial nacional para Enfermeiros aplicável tanto a contratos pela CLT quanto a servidores públicos em todos os níveis de governo.\n- Estabelece pisos para Técnico de Enfermagem, Auxiliar de Enfermagem e Parteira como frações do piso do Enfermeiro.\n- Determina que o piso seja atualizado todo ano com base no INPC (Índice Nacional de Preços ao Consumidor).\n- Assegura a manutenção de salários superiores ao piso e exige que acordos individuais e coletivos respeitem o piso, tornando ilegal sua supressão.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
     }
   }
 }

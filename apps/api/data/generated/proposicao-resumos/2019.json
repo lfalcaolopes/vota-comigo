@@ -67,6 +67,17 @@
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2194646": {
+      "sourceHash": "f45e7c76bc93136c0a1b3cc9cac7e00ad62da47d1cb5b36a3aa4e694aae0463c",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Cria um Estatuto para garantir que pessoas com câncer tenham acesso ao tratamento adequado, proteção de direitos e atendimento prioritário.",
+      "resumoDetalhe": "- Institui o Estatuto da Pessoa com Câncer para assegurar acesso ao tratamento adequado e promover a dignidade, a cidadania e a inclusão social das pessoas com câncer.\n- Estabelece princípios e objetivos que priorizam a prevenção, o diagnóstico precoce, informação clara, transparência nos processos, formação de profissionais, ampliação da rede de atendimento e humanização do cuidado.\n- Garante direitos e deveres: acesso a atendimento de saúde integral pelo SUS (Sistema Único de Saúde), assistência social e jurídica, prioridade no atendimento e na tramitação de processos, presença de acompanhante, acesso a transporte público gratuito quando comprovada necessidade, atenção especial a crianças e adolescentes e obrigação do Estado de formular políticas públicas, fornecer medicamentos eficazes e capacitar profissionais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:16:05.310Z",
+      "reviewedAt": null
+    },
     "2194861": {
       "sourceHash": "8c788f4d1d0f04c57c1f6291c147b482461d75d622f88bfbdb6a629d0d9f7cdb",
       "generationStatus": "generated",
@@ -154,6 +165,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T19:46:33.443Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2204088": {
+      "sourceHash": "b171bf41a3e8d64315215abfa2e0e57e7e39f8189c366eeb5cd6b1916728e9b7",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Cria política nacional de proteção para pessoas com fibromialgia e as reconhece como pessoas com deficiência.",
+      "resumoDetalhe": "- Institui a Política Nacional de Proteção dos Direitos da Pessoa com Fibromialgia, com diretrizes para atendimento multidisciplinar, participação da comunidade, divulgação de informações, capacitação de profissionais, estímulo à inclusão no trabalho e fomento à pesquisa; autoriza o governo a contratar organizações privadas, com preferência por sem fins lucrativos, para executar essas ações.\n- Inclui a fibromialgia em relação de condições prevista na lei do imposto de renda para tratamentos de proventos de aposentadoria ou reforma, desde que haja conclusão de médico especialista, mesmo se a doença tiver surgido depois da aposentadoria.\n- Considera a pessoa com fibromialgia como pessoa com deficiência para todos os efeitos legais e estabelece prazo para a lei entrar em vigor após sua publicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
     },
     "2205645": {
       "sourceHash": "200b44fea38adf05c1ecc7ec9ef71f2625881f31a29e97f1a2de1bcdf51f6fed",
@@ -243,6 +265,17 @@
       "generatedAt": "2026-07-07T20:09:47.061Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2210757": {
+      "sourceHash": "49cd1ad453fea0a523632c4075c0831dcbe9cdc2522c190cc3c850f4df48c5f2",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Inclui a proteção de dados pessoais entre os direitos fundamentais e dá à União a exclusividade para legislar sobre o tema.",
+      "resumoDetalhe": "- Inclui a proteção de dados pessoais entre os direitos e garantias fundamentais, assegurando o direito à proteção dos dados, inclusive em meios digitais.\n- Fixa competência privativa da União para legislar sobre proteção e tratamento de dados pessoais, ou seja, só o governo federal pode criar as regras sobre esse assunto.\n- Determina que a emenda entra em vigor na data de sua publicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
+    },
     "2213191": {
       "sourceHash": "f08d496ac74daa92ea9bd6b5485a9c5f93ebe8a0cdd39f0536948d8158ccebd9",
       "generationStatus": "generated",
@@ -267,13 +300,24 @@
     },
     "2217142": {
       "sourceHash": "b6294c7e179c56ca41c108e6f8781c4e7e5e14a82fad5f5f747c87f64ace9478",
-      "generationStatus": "error",
+      "generationStatus": "source_too_large",
       "reviewStatus": "pending",
       "resumoCard": null,
       "resumoDetalhe": null,
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
-      "generatedAt": "2026-07-08T00:31:37.208Z",
+      "generatedAt": "2026-08-16T06:18:39.590Z",
+      "reviewedAt": null
+    },
+    "2220292": {
+      "sourceHash": "3e55e687977bacec1ee96a67e67001547ffee508abb9bf7a6173618279b41509",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Torna obrigatório que cada voto gere cédula física conferível pelo eleitor, depositada em urna lacrada para auditoria.",
+      "resumoDetalhe": "- Exige que, na votação e na apuração de eleições, plebiscitos e referendos, seja gerada cédula física conferível pelo eleitor.\n- Determina que a cédula seja depositada de forma automática e sem contato manual do eleitor em urnas indevassáveis, ou seja, urnas lacradas e inacessíveis, para fins de auditoria.\n- Estabelece que essa obrigação vale independentemente do meio usado para registrar o voto e que a emenda passa a vigorar na data de sua promulgação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
       "reviewedAt": null
     },
     "2222884": {
@@ -298,6 +342,17 @@
       "generatedAt": "2026-07-07T16:52:37.780Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2228151": {
+      "sourceHash": "7992833a57affc5e50dfa28d18c1bc86d0b98b2ca19da816d14942d1a6bae76e",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Reduz e isenta tarifas de transmissão e distribuição para micro e minigeradores que compensam energia excedente.",
+      "resumoDetalhe": "- Concede redução nas tarifas de uso das redes de transmissão e distribuição e nos encargos para microgeradores e minigeradores, aplicando essa redução às unidades consumidoras onde a energia excedente é compensada.\n- Concede isenção plena dessas tarifas e encargos, por um período, a microgeradores e minigeradores que solicitaram acesso às distribuidoras até uma data limite; a isenção não vale para custos de disponibilidade nem para demanda contratada (custo por manter capacidade reservada).\n- Determina que a lei entra em vigor na data de sua publicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
+    },
     "2229308": {
       "sourceHash": "bdb24036fac49776db32a0409fa68b3625929047ac3af9abfd8b7f3dde9dab90",
       "generationStatus": "generated",
@@ -319,6 +374,28 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2233802": {
+      "sourceHash": "3551a0d01d80ec8c78cad56953cee55433e7bb9225a0302445c9a07c4a11b74f",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Estabelece jornada de trabalho de até oito horas por dia e trinta e seis horas por semana, com possibilidade de compensação por acordo coletivo, e entra em vigor após dez anos.",
+      "resumoDetalhe": "- Estabelece um limite para a duração do trabalho diário e reduz a jornada semanal para um patamar menor.\n- Permite a compensação de horários e autoriza a redução da jornada por meio de acordo ou convenção coletiva de trabalho (negociação entre trabalhadores e empregadores).\n- Determina que a nova regra só passe a valer após um período de transição de vários anos contado a partir da publicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
+    },
+    "2234001": {
+      "sourceHash": "20a440c11ef96c0270561700bf4dabe202b515860c467633af454b47ed980608",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Organiza o Simples Nacional, amplia ocupações que podem ser MEI, cria regras para transportadores autônomos e reconhece profissionais independentes como empresários.",
+      "resumoDetalhe": "- Organiza a composição e o funcionamento do Comitê Gestor do Simples Nacional, indicando representantes da União, dos estados e dos municípios, do Sebrae e de confederações, e fixando regras de quórum, votação e rodízio de vagas.\n- Permite que o microempreendedor individual (MEI) inclua várias ocupações e quem comercializa e processa produtos de origem extrativista, autorizando esses profissionais a optar pela sistemática de recolhimento do Simples Nacional.\n- Estabelece regras específicas para o transportador autônomo de cargas inscrito como MEI, definindo como contabilizar a receita de frete, como será calculada a contribuição mensal e permitindo o diferimento de certos impostos para o tomador quando este for pessoa jurídica não participante do Simples.\n- Define como empresário quem presta serviços de forma independente e autônoma, inclusive atividades intelectuais, científicas, literárias ou artísticas, mesmo com auxiliares, desde que não exista relação de emprego com o contratante.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:33:03.984Z",
+      "reviewedAt": null
     },
     "2265124": {
       "sourceHash": "d5a80eeb8845390408681183a8b75293b591c92a8105dc30a6765d26eff10390",

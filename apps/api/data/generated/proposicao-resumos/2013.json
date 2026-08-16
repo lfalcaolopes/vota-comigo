@@ -1,0 +1,16 @@
+{
+  "ano": 2013,
+  "items": {
+    "603566": {
+      "sourceHash": "ba1d3334dc20fb99e49f7c46911f6f444895a16c5241399e69112207d81ece6c",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Estabelece um percentual mínimo para o Imposto Sobre Serviços (ISS), limita os benefícios que os municípios podem conceder, inclui novos serviços na lista dos que pagam o imposto e cria punição para concessões irregulares.",
+      "resumoDetalhe": "- Fixa um percentual mínimo para o Imposto Sobre Serviços (ISS) e proíbe que municípios concedam isenções, incentivos ou outros benefícios que façam o imposto cobrado ficar abaixo desse mínimo, com poucas exceções.\n- Define que, quando essas regras não são seguidas, o imposto é devido no município de quem contrata ou intermedeia o serviço, e responsabiliza pelo pagamento a empresa que contrata, mesmo que ela seja dispensada de pagar impostos.\n- Inclui na lista de serviços que pagam o imposto uma série de atividades, entre elas serviços digitais como guarda e processamento de dados e disponibilização de programas e conteúdos pela internet.\n- Cria punição por improbidade administrativa (uso desonesto do cargo público) para a autoridade que conceder ou mantiver benefício contrário à regra do percentual mínimo, com perda do cargo público, suspensão dos direitos políticos e multa proporcional ao benefício concedido.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:52:50.835Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
+    }
+  }
+}

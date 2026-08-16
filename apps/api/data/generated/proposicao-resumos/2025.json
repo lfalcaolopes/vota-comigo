@@ -1,6 +1,28 @@
 {
   "ano": 2025,
   "items": {
+    "2481875": {
+      "sourceHash": "8034638c2808e880a540a743c903cfcd4508b3398b50b9075f2f088e91ce0c51",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Transforma cargos vagos na Justiça Federal da primeira região e cria nova Turma Recursal para os Juizados Especiais Federais do Piauí.",
+      "resumoDetalhe": "- Transforma certos cargos vagos de juiz federal substituto em cargos de juiz federal, conforme indicação do Tribunal Regional Federal e estudos internos sobre a demanda processual.\n- Cria uma nova Turma Recursal dos Juizados Especiais Federais do Piauí, com sede em Teresina e atuação em todo o estado; Turma Recursal é o colegiado que julga recursos das varas dos Juizados.\n- Determina que as sobras orçamentárias resultantes das transformações sejam usadas para criar funções comissionadas segundo a organização definida pelo Tribunal Regional Federal, e que a execução seja feita observando disponibilidade orçamentária, financeira e de pessoal, sem aumento de despesas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
+    },
+    "2482078": {
+      "sourceHash": "cb76470109430dd5acba669ba13ad1f3e0146daf964e934e73210d4d8dc683b1",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Susta os efeitos da resolução do CONANDA sobre o atendimento a crianças e adolescentes vítimas de violência sexual.",
+      "resumoDetalhe": "- Susta, por inteiro, a resolução do CONANDA que trata do atendimento a crianças e adolescentes vítimas de violência sexual.\n- Afirma que o conselho extrapolou sua competência ao tratar de matéria criminal e de aborto, e apresenta esses pontos como fundamento para a sustação.\n- Afirma que a resolução dava autonomia decisória a menores sem autorização dos responsáveis, permitia a realização de aborto sem boletim de ocorrência, sem autorização judicial e sem comunicação aos responsáveis, não estabelecia limite de tempo de gravidez e trazia regras que podem restringir o direito de objeção de consciência de profissionais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:57:06.620Z",
+      "reviewedAt": null
+    },
     "2483495": {
       "sourceHash": "ef2af221c1a022a6f04880e2b342c19f8d171d836c45f8787395ec55f56b8f44",
       "generationStatus": "generated",
@@ -11,6 +33,39 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T16:52:37.780Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2485066": {
+      "sourceHash": "6a7892fbc533c6ce7d4518a853b92c8cbfbc885c28183e8b9efaab77dd5481ad",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Prorroga o prazo para liquidar restos a pagar não processados inscritos em exercícios anteriores, revalidando valores cancelados.",
+      "resumoDetalhe": "- Revalida e autoriza a liquidação, por prazo adicional, de restos a pagar não processados inscritos em exercícios anteriores que estavam vigentes em dezembro e foram cancelados.\n- Aplica a prorrogação apenas a despesas cujo processo de compra já foi iniciado ou a convênios e instrumentos semelhantes que estão em fase de resolução de cláusula suspensiva.\n- Exige que os restos a pagar revalidados obedeçam às regras de transparência e rastreabilidade previstas na Lei de Responsabilidade Fiscal, que exige clareza e controle das contas públicas, e em outra lei complementar recente.\n- Veda o pagamento de obras e serviços que estejam sob investigação ou tenham indícios de irregularidade, salvo se as apurações concluírem favoravelmente ou se as irregularidades forem sanadas dentro do prazo e conforme a lei.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
+    },
+    "2487358": {
+      "sourceHash": "4658a5f04b0f90e0a508c6fde6b5ecb46b88634325f66edbfc63ff2810344c14",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Renomeia a Sala de Reuniões do Colégio de Líderes da Câmara para Sala Miguel Arraes.",
+      "resumoDetalhe": "- Renomeia o espaço atualmente chamado \"Sala de Reuniões do Colégio de Líderes\", no Edifício Principal, térreo, Ala C, para \"Sala Miguel Arraes\".\n- Determina que a mudança de nome começa a valer na data em que a resolução for promulgada.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
+    },
+    "2494408": {
+      "sourceHash": "ae9d1364f51c939e8ce5214f5dc2d4ecb691570946f503140e4b23a289708aa2",
+      "generationStatus": "source_too_large",
+      "reviewStatus": "pending",
+      "resumoCard": null,
+      "resumoDetalhe": null,
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
     },
     "2497816": {
       "sourceHash": "e2e13d75a9e8ea18163001b51fae7694d215a06c66aa21d121c16a4569a3965b",
@@ -23,15 +78,26 @@
       "generatedAt": "2026-07-07T18:14:05.932Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
-    "2500260": {
-      "sourceHash": "ef38d38f833a9317f19b6b00f09567eb537eb35b3cb682cc5545453b500c62bd",
-      "generationStatus": "error",
+    "2497993": {
+      "sourceHash": "a980f0223fbcdc9c0557703af7147087b42cd5100eca8c1885056ee4bee2d59a",
+      "generationStatus": "generated",
       "reviewStatus": "pending",
-      "resumoCard": null,
-      "resumoDetalhe": null,
+      "resumoCard": "Autoriza o Banco do Nordeste (BNB) a criar subsidiárias para atuar em atividades financeiras e correlatas.",
+      "resumoDetalhe": "- Autoriza o Banco do Nordeste do Brasil S.A. (BNB) a constituir subsidiárias integrais ou controladas para exercer atividades do banco ou atividades relacionadas; subsidiária integral é empresa totalmente controlada pelo banco e controlada é empresa em que o banco detém o controle majoritário.\n- Permite que essas subsidiárias atuem em ramos como securitário (seguros), previdenciário (planos de previdência), capitalização (produtos de capitalização) e outras atividades complementares ao setor financeiro, incluindo a criação de subsidiária na forma de sociedade por ações para explorar banco de investimento e participações; sociedade por ações é empresa com capital dividido em ações.\n- Permite que a aquisição de ações ou participações para formar ou controlar essas empresas ocorra por qualquer modalidade prevista em lei e determina que a lei passe a vigorar na data de sua publicação.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
-      "generatedAt": "2026-07-07T16:52:37.780Z",
+      "generatedAt": "2026-08-16T05:57:06.620Z",
+      "reviewedAt": null
+    },
+    "2500260": {
+      "sourceHash": "ef38d38f833a9317f19b6b00f09567eb537eb35b3cb682cc5545453b500c62bd",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Dá o nome \"Viaduto Papa Francisco\" ao viaduto na rodovia federal que dá acesso ao Santuário Nacional de Aparecida, em São Paulo.",
+      "resumoDetalhe": "- Denomina o viaduto localizado na rodovia federal de acesso ao Santuário Nacional de Aparecida como \"Viaduto Papa Francisco\".\n- Determina que a lei passa a valer na data de sua publicação.\n- Apresenta justificativa dizendo que a homenagem reconhece a liderança e o legado do Papa Francisco e que atende aos critérios legais para nomeação de vias federais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:57:06.620Z",
       "reviewedAt": null
     },
     "2515300": {
@@ -44,6 +110,50 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T20:09:47.061Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2515648": {
+      "sourceHash": "505f930c8c6df60a3ed8d743f02bb9b32f598884edb870bd525a5cbee116ca13",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Susta os efeitos do Decreto nº 12.466/2025 que aumentou o IOF (imposto sobre operações de crédito, câmbio e seguro).",
+      "resumoDetalhe": "- Susta os efeitos do Decreto nº 12.466/2025, que elevou o IOF (imposto sobre operações de crédito, câmbio, seguro e títulos).\n- Determina que o decreto legislativo entra em vigor na data de sua publicação.\n- Apresenta justificativa alegando que o aumento do IOF alcança empresas, operações de câmbio e planos de previdência, e afirma que o IOF é um imposto extrafiscal usado somente como instrumento de política econômica, não para gerar arrecadação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:57:06.620Z",
+      "reviewedAt": null
+    },
+    "2519886": {
+      "sourceHash": "aedae24c09aa7b5da4a0e440403ad84b8ba70527af7fa6d1a05b8e28e2b2e42f",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Cria o Programa Agora Tem Especialistas para que hospitais privados prestem atendimentos ao SUS em troca de créditos financeiros usados para abater impostos federais, e institui o Grupo Hospitalar Conceição S.A.",
+      "resumoDetalhe": "- Institui o Programa Agora Tem Especialistas, de adesão de hospitais privados, para ampliar e qualificar atendimentos especializados e reduzir o tempo de espera, com regras, especialidades preferenciais e credenciamento definidos pelo Ministério da Saúde\n- Autoriza que hospitais participantes recebam créditos financeiros pela prestação de serviços ao SUS e usem esses créditos para abater impostos federais, condicionando o acesso a requisitos como registro eletrônico da oferta, regularidade junto à seguridade social e renúncia a impugnações ou ações sobre créditos tributários\n- Ratifica e organiza o Grupo Hospitalar Conceição S.A. como entidade federal voltada ao SUS, com atuação em assistência, ensino e pesquisa; aplica regime trabalhista comum, disciplina fontes de recurso, garante que seus bens, serviços e rendas não possam ser penhorados e permite contratação direta em determinadas situações\n- Altera normas para criar um sistema público de dados sobre tempo de espera, instituir a Rede Tempo é Vida para priorizar tratamento radioterápico a pessoas com câncer e garantir apoio como transporte e hospedagem quando necessário, permitir que ressarcimentos ao SUS sejam convertidos em prestação de serviços, lançar o Projeto Mais Médicos Especialistas para alocar especialistas em áreas prioritárias e ampliar o papel da AGSUS na atenção especializada",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:01:17.719Z",
+      "reviewedAt": null
+    },
+    "2520670": {
+      "sourceHash": "c5d59e065edfdf575e28d66d8135728323564a9c1dbba0429d9d56e5dd342779",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Determina redução mínima de dez por cento nos benefícios federais de natureza tributária, financeira e creditícia no período de 2025 a 2026.",
+      "resumoDetalhe": "- Reduz de forma escalonada os benefícios federais de natureza tributária, financeira e creditícia, com parte da redução aplicada em um primeiro período e complemento no período seguinte, até atingir a meta mínima prevista.\n- Autoriza diferenciar a intensidade das reduções por setor econômico, desde que o total das reduções alcance a meta mínima estabelecida pela lei.\n- Afasta da aplicação da redução certos benefícios que são mencionados na emenda constitucional citada no texto da proposição, mantendo, porém, a obrigação de atingir a meta mínima.\n- Veda a concessão de novos benefícios federais e a prorrogação dos já existentes, salvo quando a nova medida for acompanhada de redução simultânea e equivalente em outros benefícios da mesma natureza.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:57:06.620Z",
+      "reviewedAt": null
+    },
+    "2524984": {
+      "sourceHash": "393c878b85b2342ed4f7d79a53f64279281670e4118806628fd5d5db30bb3380",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Reestrutura a carreira e a remuneração dos servidores do Tribunal de Contas da União, cria indenização para funções de confiança e fixa novas exigências de formação.",
+      "resumoDetalhe": "- altera e organiza a carreira do Tribunal de Contas da União, fixando os nomes dos cargos, a estrutura em classes e padrões e reconhecendo a carreira como típica de Estado (cargo de caráter nacional essencial ao controle externo).\n- exige nível superior para ingresso no cargo de Técnico Federal de Controle Externo e passa a exigir conclusão de curso de pós‑graduação para promoção entre classes, com regras a serem definidas pelo Tribunal.\n- substitui a gratificação de desempenho por uma Gratificação de Desempenho e Alinhamento Estratégico (GDAE) — gratificação vinculada ao desempenho individual e ao alinhamento com metas institucionais — e uniformiza a gratificação de controle externo, definindo percentuais, periodicidade e critérios a serem regulamentados pelo Tribunal.\n- cria a Indenização por Regime Especial de Dedicação Gerencial (IREDG) para servidores efetivos em funções de confiança da Secretaria, estabelecendo condições de pagamento, condicionamento à dotação orçamentária, regras sobre não incorporação à aposentadoria e limites sobre sua utilização e tributação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:01:17.719Z",
+      "reviewedAt": null
     },
     "2530336": {
       "sourceHash": "69591b2a835935c31e8dbc854594f42eb9914838dc2261110ae89d04841277ee",
@@ -67,6 +177,61 @@
       "generatedAt": "2026-07-07T19:32:44.100Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2554285": {
+      "sourceHash": "c68abe4dc830eeb9ecb821746b001d477068309513f7eb73b3280060155aa634",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Cria três cargos de desembargador no TRF5 e amplia a estrutura de pessoal do tribunal.",
+      "resumoDetalhe": "- Cria cargos de Desembargador Federal no Tribunal Regional Federal da 5ª Região e acrescenta a estrutura de pessoal necessária, incluindo cargos de analista e técnico, cargos em comissão e funções comissionadas para formar novos gabinetes e uma turma adicional.\n- Destina as despesas para serem pagas com as dotações orçamentárias do próprio tribunal e condiciona a implantação à autorização prevista na lei de diretrizes orçamentárias, com início a partir do exercício financeiro indicado na proposta.\n- Determina que a implantação observe as regras fiscais e orçamentárias aplicáveis, isto é, que respeite limites de gasto previstos na Constituição e na Lei de Responsabilidade Fiscal.\n- Prevê a especialização das turmas e a possibilidade de instituição de um órgão especial — órgão especial é um grupo de julgadores para tratar de atribuições administrativas e julgamentos delegados — e estabelece prazo para que essa reorganização seja implementada pelos órgãos competentes.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:54:43.704Z",
+      "reviewedAt": null
+    },
+    "2557414": {
+      "sourceHash": "86de79fd0ce3cda974b968a13533e0dad3c6fa9313125564a3707735eb690ae7",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Cria o Auxílio Gás do Povo com duas formas de atendimento: pagamento em dinheiro ou entrega gratuita de botijões para famílias de baixa renda.",
+      "resumoDetalhe": "- Institui o Auxílio Gás do Povo e prevê duas modalidades de operação: pagamento em dinheiro às famílias e gratuidade com entrega de botijão nas revendas autorizadas, sendo que cada família só pode receber uma das modalidades.\n- Define a modalidade de pagamento em dinheiro como benefício bimestral cujo valor corresponde a parte do preço médio do botijão de GLP, com pagamento preferencial à mulher responsável pela família.\n- Cria a modalidade de gratuidade que disponibiliza botijão gratuito diretamente na revenda varejista credenciada pela ANP, exige inscrição no CadÚnico e baixo rendimento per capita (com prioridade a quem tem renda até meio salário mínimo, ou seja, metade do salário mínimo), exige dados cadastrais atualizados e limita o atendimento para cada família durante o período previsto em regulamento.\n- Organiza a governança e a operacionalização: atribui papéis ao Ministério do Desenvolvimento e ao Ministério de Minas e Energia, prevê que Caixa e empresa de tecnologia (Dataprev) operem a distribuição por contrato com a União, determina o apoio da ANP no credenciamento e no fornecimento de preços, cria comitê gestor e prevê fontes de custeio por repasses da União e por adesão de entes subnacionais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
+    },
+    "2564274": {
+      "sourceHash": "552e3345a5edf44866772fbfba858471e6cdec253f418a41820d72efc6b64fbf",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Reajusta e atualiza as tabelas de vencimentos dos servidores do Poder Judiciário da União.",
+      "resumoDetalhe": "- Reajusta os vencimentos básicos dos cargos efetivos, os valores dos cargos em comissão e das funções comissionadas do Poder Judiciário da União.\n- Atualiza os anexos da lei das carreiras do Judiciário federal com novas tabelas de vencimentos para cargos de carreira, cargos em comissão e funções comissionadas.\n- Revoga anexos específicos da lei anterior que tratavam de parâmetros de carreira e remuneração.\n- Determina que a recomposição será feita em parcelas sucessivas e cumulativas e que a implementação observará a capacidade orçamentária e os limites legais de despesas de pessoal.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
+    },
+    "2576234": {
+      "sourceHash": "f4bc441ca13173434e0d3900dd046d2d7892346b1324d855e65a90d07b07428f",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Autoriza o Executivo a não computar certas despesas de projetos estratégicos de defesa no cálculo da meta fiscal e do limite de despesas, dentro de limites previstos no orçamento e em lei.",
+      "resumoDetalhe": "- Autoriza o Poder Executivo a descontar despesas com projetos estratégicos em defesa do cálculo da meta de resultado primário e do limite de despesas, respeitando limites previstos no orçamento e por lei.\n- Determina que, em um exercício inicial, parte dessas despesas não será contabilizada na meta fiscal, e que as dotações empenhadas serão compensadas no exercício seguinte.\n- Exige que as despesas não computadas na meta fiscal sejam obrigatoriamente classificadas como despesas de capital.\n- Permite que esses projetos sejam custeados com recursos de fundos públicos vinculados ao Ministério da Defesa, exige que contribuam para o desenvolvimento da Base Industrial de Defesa e estabelece que restos a pagar relacionados não serão contabilizados na meta fiscal.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": null
+    },
+    "2578879": {
+      "sourceHash": "d4a11f5966c0ca3e61347ab690e4a4031a95d964e0dc5b6216d916e7358f1abb",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Cria cargos e funções no quadro do Conselho Nacional de Justiça e autoriza o provimento gradual condicionado à previsão orçamentária.",
+      "resumoDetalhe": "- Cria cargos e funções no quadro de pessoal do Conselho Nacional de Justiça, incluindo vagas para analista, técnico, cargos em comissão e funções comissionadas.\n- Implementa o provimento desses cargos de forma gradativa conforme o anexo do projeto e condiciona cada provimento à autorização específica na lei orçamentária anual.\n- Determina que as despesas serão pagas com as dotações do CNJ, apresenta estimativa de impacto orçamentário e estabelece que a execução deve observar as regras constitucionais e fiscais, podendo ser ajustada se houver limites que restrinjam o crescimento de pessoal.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:33:03.984Z",
+      "reviewedAt": null
+    },
     "2579832": {
       "sourceHash": "e8fbebfaa8fc8a25935b9447a639d2a4d1501688e270f25a5ba12147db36bec7",
       "generationStatus": "generated",
@@ -77,6 +242,17 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T17:45:21.754Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2595984": {
+      "sourceHash": "31292cac36492add14dc57a43e55246ef414f5e010fa59846758bc2d1a50f436",
+      "generationStatus": "generated",
+      "reviewStatus": "pending",
+      "resumoCard": "Cria varas federais em municípios do Amazonas e de Mato Grosso do Sul e prevê os cargos e a previsão orçamentária para instalá‑las.",
+      "resumoDetalhe": "- Cria varas federais para interiorizar a Justiça Federal em cidades do Amazonas e de Mato Grosso do Sul.\n- Acrescenta ao quadro da Justiça Federal de primeiro grau cargos de magistratura, cargos de apoio e funções comissionadas para compor essas varas.\n- Prevê que as despesas serão atendidas por dotações da Justiça Federal e condiciona a implantação à autorização e à disponibilidade orçamentária, observando a Lei de Responsabilidade Fiscal e o arcabouço fiscal, isto é, as regras que limitam gastos públicos.\n- Determina a submissão prévia ao Conselho Nacional de Justiça para análise do impacto financeiro e solicita que o Superior Tribunal de Justiça consolide as informações técnicas antes do envio ao Congresso Nacional.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:54:43.704Z",
+      "reviewedAt": null
     }
   }
 }
