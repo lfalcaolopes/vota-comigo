@@ -13,6 +13,7 @@ import {
   toAmostraComparavelLabel,
   toAtividadeLabel,
   toAtividadeTone,
+  toCopyContextLabel,
 } from "../lib/matcher-presentation";
 
 function makeDeputado(
@@ -191,6 +192,58 @@ describe("getInitials", () => {
     it("returns '?'", () => {
       // Act / Assert
       expect(getInitials("   ")).toBe("?");
+    });
+  });
+});
+
+describe("toCopyContextLabel", () => {
+  describe("when the escopo is estadual", () => {
+    it("names the state the recorte came from", () => {
+      // Act / Assert
+      expect(
+        toCopyContextLabel({
+          totalProposicoes: 12,
+          escopo: "estadual",
+          siglaUf: "SP",
+        }),
+      ).toBe("12 proposições · São Paulo");
+    });
+
+    it("keeps only the proposicoes when the uf is unknown", () => {
+      // Act / Assert
+      expect(
+        toCopyContextLabel({
+          totalProposicoes: 12,
+          escopo: "estadual",
+          siglaUf: null,
+        }),
+      ).toBe("12 proposições");
+    });
+  });
+
+  describe("when the escopo is nacional", () => {
+    it("names the whole country instead of the uf of the user", () => {
+      // Act / Assert
+      expect(
+        toCopyContextLabel({
+          totalProposicoes: 12,
+          escopo: "nacional",
+          siglaUf: "SP",
+        }),
+      ).toBe("12 proposições · Brasil");
+    });
+  });
+
+  describe("when a single proposicao generated the recorte", () => {
+    it("keeps the noun singular", () => {
+      // Act / Assert
+      expect(
+        toCopyContextLabel({
+          totalProposicoes: 1,
+          escopo: "estadual",
+          siglaUf: "RJ",
+        }),
+      ).toBe("1 proposição · Rio de Janeiro");
     });
   });
 });

@@ -248,6 +248,58 @@ test.describe("comparativo de deputados a partir da listagem", () => {
     await expect(page.getByRole("dialog").locator(":focus")).toHaveCount(1);
   });
 
+  test("copia os deputados comparados como texto puro", async ({ page }) => {
+    // Arrange
+    await page
+      .context()
+      .grantPermissions(["clipboard-read", "clipboard-write"]);
+    await routeComparativo(page);
+    await page.goto("/deputados/comparativo/20,10");
+    const copiar = page.getByRole("button", { name: "Copiar em texto" });
+    await expect(copiar).toBeVisible({ timeout: 15_000 });
+
+    // Act
+    await copiar.click();
+
+    // Assert
+    await expect(page.getByRole("status")).toHaveText("Copiado");
+    const texto = await page.evaluate(() => navigator.clipboard.readText());
+    expect(texto).toContain("Quem Vota Comigo — deputados de interesse");
+    expect(texto).toContain("· 2 deputados comparados");
+    expect(texto).toContain("- Deputado 20 (PP-SP)");
+    expect(texto).toMatch(/\n {2}https?:\/\/[^\n]+\/deputados\/20\n/);
+    expect(texto).not.toContain("compatibilidade");
+  });
+
+  test("oferece o texto para cópia manual quando a área de transferência falha", async ({
+    page,
+  }) => {
+    // Arrange
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, "clipboard", {
+        configurable: true,
+        value: {
+          writeText: () => Promise.reject(new Error("sem permissão")),
+        },
+      });
+    });
+    await routeComparativo(page);
+    await page.goto("/deputados/comparativo/20,10");
+    const copiar = page.getByRole("button", { name: "Copiar em texto" });
+    await expect(copiar).toBeVisible({ timeout: 15_000 });
+
+    // Act
+    await copiar.click();
+
+    // Assert
+    const popover = page.getByRole("dialog");
+    await expect(popover).toBeVisible();
+    await expect(popover.locator("textarea")).toHaveValue(
+      /Quem Vota Comigo — deputados de interesse/,
+    );
+    await expect(page.getByRole("status")).toHaveText("");
+  });
+
   test("recusa um endereço com deputados repetidos", async ({ page }) => {
     // Arrange
     await routeComparativo(page);

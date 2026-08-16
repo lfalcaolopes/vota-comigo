@@ -7,8 +7,10 @@ import { useComparativoDeputados } from "./use-comparativo-deputados";
 
 export function ComparativoDeputados({
   externalIdsDeputado,
+  showCopyButton = true,
 }: {
   externalIdsDeputado: readonly number[];
+  showCopyButton?: boolean;
 }) {
   const { state, retry } = useComparativoDeputados(externalIdsDeputado);
 
@@ -25,5 +27,10 @@ export function ComparativoDeputados({
     );
   }
 
-  return <ComparativoDeputadosView response={state.response} />;
+  return (
+    <ComparativoDeputadosView
+      response={state.response}
+      showCopyButton={showCopyButton}
+    />
+  );
 }

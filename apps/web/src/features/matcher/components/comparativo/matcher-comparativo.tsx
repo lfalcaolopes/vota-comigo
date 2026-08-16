@@ -64,10 +64,12 @@ export function MatcherComparativo({ ids }: { ids: string }) {
             <StepComparativo
               deputados={deputados}
               detalhes={detalhes}
+              escopo={state.escopo}
               onBack={() => router.push("/matcher/resultado")}
               onRetry={retry}
               perfis={perfis}
               posicoes={posicoes}
+              siglaUf={state.siglaUf}
               status={status}
             />
           </div>

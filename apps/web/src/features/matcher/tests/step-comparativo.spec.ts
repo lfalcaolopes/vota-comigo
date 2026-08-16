@@ -160,19 +160,23 @@ function perfil(
 function render(props: {
   deputados?: MatcherDeputadoResumo[];
   detalhes?: MatcherDeputadoDetalhe[];
+  escopo?: "estadual" | "nacional";
   perfis?: DeputadoPerfil[];
   posicoes?: PosicaoMatcher[];
+  siglaUf?: "SP" | null;
   status?: "idle" | "loading" | "error";
 }): string {
   return renderToStaticMarkup(
     createElement(StepComparativo, {
       deputados: props.deputados ?? [deputado(20), deputado(10)],
       detalhes: props.detalhes ?? [],
+      escopo: props.escopo ?? "estadual",
       perfis: props.perfis ?? [perfil(20), perfil(10)],
       posicoes: props.posicoes ?? [
         { externalIdProposicao: 1, posicao: "aprovar" },
         { externalIdProposicao: 2, posicao: "rejeitar" },
       ],
+      siglaUf: props.siglaUf === undefined ? "SP" : props.siglaUf,
       status: props.status ?? "idle",
       onBack: vi.fn(),
       onRetry: vi.fn(),
@@ -181,6 +185,27 @@ function render(props: {
 }
 
 describe("StepComparativo", () => {
+  describe("when the user wants to take the comparativo away as text", () => {
+    it("offers the copy gesture once the comparativo is loaded", () => {
+      // Arrange / Act
+      const html = render({
+        status: "idle",
+        detalhes: [detalhe(20, [voto(1)]), detalhe(10, [voto(1)])],
+      });
+
+      // Assert
+      expect(html).toContain("Copiar em texto");
+    });
+
+    it("does not offer it while the comparativo is still loading", () => {
+      // Arrange / Act
+      const html = render({ status: "loading" });
+
+      // Assert
+      expect(html).not.toContain("Copiar em texto");
+    });
+  });
+
   describe("when comparativo detalhes are loading", () => {
     it("shows the back action and skeleton without rendering deputado columns", () => {
       // Arrange / Act
@@ -361,7 +386,6 @@ describe("StepComparativo", () => {
       expect(html).not.toContain(
         "Role na horizontal para ver todos os deputados.",
       );
-      expect(html).not.toContain('role="status"');
     });
 
     it("does not render profile details outside the comparativo scope", () => {

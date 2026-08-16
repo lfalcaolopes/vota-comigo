@@ -66,6 +66,19 @@ function render(perfil: DeputadoPerfilData): string {
 }
 
 describe("DeputadoPerfil", () => {
+  describe("anotacao do deputado fora da plataforma", () => {
+    it("offers the copy gesture next to the identity of the deputado", () => {
+      // Arrange
+      const perfil = makePerfil();
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Copiar em texto");
+    });
+  });
+
   describe("navegacao pelo perfil", () => {
     it("offers direct links to the summary and annual data", () => {
       // Arrange

@@ -3,6 +3,7 @@ import type { DeputadoPerfil as DeputadoPerfilData } from "@vota-comigo/shared-t
 import { Badge, InlineMessage, SourceLink } from "@/shared/ui";
 import { joinClassNames } from "@/shared/ui/utils";
 
+import { CopyDeputadosButton } from "./copy-deputados-button";
 import { DeputadoAvatar } from "./deputado-avatar";
 import { DeputadoAtuacao } from "./deputado-atuacao";
 import {
@@ -128,6 +129,19 @@ function Identity({ perfil }: { perfil: DeputadoPerfilData }) {
               </ul>
             </div>
           ) : null}
+          <CopyDeputadosButton
+            className="pt-1"
+            contexto={null}
+            deputados={[
+              {
+                externalIdDeputado: perfil.externalIdDeputado,
+                nome: perfil.nomePublico,
+                siglaPartido,
+                siglaUf,
+                compatibilidade: null,
+              },
+            ]}
+          />
         </div>
       </div>
       {hasPublicDetails ? <IdentityDetails perfil={perfil} /> : null}

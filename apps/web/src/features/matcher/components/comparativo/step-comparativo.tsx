@@ -2,15 +2,22 @@
 
 import type {
   DeputadoPerfil,
+  EscopoMatcher,
   MatcherDeputadoDetalhe,
   MatcherDeputadoResumo,
   PosicaoMatcher,
   PosicaoUsuarioMatcher,
+  SiglaUf,
 } from "@vota-comigo/shared-types";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 
-import { ComparativoDeputados, DeputadoAvatar } from "@/shared/deputado";
+import {
+  ComparativoDeputados,
+  CopyDeputadosButton,
+  DeputadoAvatar,
+  type DeputadoTextItem,
+} from "@/shared/deputado";
 import {
   nomePublicoLabel,
   toAtividadeAriaLabel,
@@ -31,6 +38,7 @@ import {
 } from "@/shared/ui";
 
 import { buildComparativoDeputadosGrid } from "../../lib/comparativo-deputados-grid";
+import { toCopyContextLabel } from "../../lib/matcher-presentation";
 import type { MatcherStatus } from "../../lib/matcher-state";
 
 const COMPARATIVO_VIEW_ITEMS = [
@@ -44,8 +52,10 @@ const labelColumnClassName =
 type StepComparativoProps = {
   deputados: MatcherDeputadoResumo[];
   detalhes: MatcherDeputadoDetalhe[];
+  escopo: EscopoMatcher;
   perfis: DeputadoPerfil[];
   posicoes: PosicaoMatcher[];
+  siglaUf: SiglaUf | null;
   status: MatcherStatus;
   onBack: () => void;
   onRetry: () => void;
@@ -54,8 +64,10 @@ type StepComparativoProps = {
 export function StepComparativo({
   deputados,
   detalhes,
+  escopo,
   perfis,
   posicoes,
+  siglaUf,
   status,
   onBack,
   onRetry,
@@ -98,11 +110,24 @@ export function StepComparativo({
         onSelect={setView}
       />
 
+      {status === "idle" ? (
+        <CopyDeputadosButton
+          className="justify-self-start"
+          contexto={toCopyContextLabel({
+            escopo,
+            siglaUf,
+            totalProposicoes: grid.rows.length,
+          })}
+          deputados={[...deputadosById.values()].map(toDeputadoTextItem)}
+        />
+      ) : null}
+
       {view === "gerais" ? (
         <ComparativoDeputados
           externalIdsDeputado={deputados.map(
             (deputado) => deputado.externalIdDeputado,
           )}
+          showCopyButton={false}
         />
       ) : null}
 
@@ -153,8 +178,8 @@ type ComparativoDeputadoDisplay = {
   deputado: MatcherDeputadoResumo;
   emAtividade: boolean;
   nome: string | null;
-  siglaPartido: string;
-  siglaUf: string;
+  siglaPartido: string | null;
+  siglaUf: string | null;
   urlFoto: string | null;
 };
 
@@ -168,9 +193,21 @@ function toComparativoDeputadoDisplay(
     deputado,
     emAtividade: perfil?.emAtividade ?? deputado.emAtividade,
     nome: perfil ? nomePublicoLabel(perfil) : deputado.nome,
-    siglaPartido: snapshot?.siglaPartido ?? deputado.partido ?? "—",
-    siglaUf: snapshot?.siglaUf ?? deputado.siglaUf ?? "—",
+    siglaPartido: snapshot?.siglaPartido ?? deputado.partido,
+    siglaUf: snapshot?.siglaUf ?? deputado.siglaUf,
     urlFoto: snapshot?.urlFoto ?? deputado.urlFoto,
+  };
+}
+
+function toDeputadoTextItem(
+  display: ComparativoDeputadoDisplay,
+): DeputadoTextItem {
+  return {
+    externalIdDeputado: display.deputado.externalIdDeputado,
+    nome: display.nome,
+    siglaPartido: display.siglaPartido,
+    siglaUf: display.siglaUf,
+    compatibilidade: display.deputado.compatibilidadeBruta,
   };
 }
 
@@ -198,7 +235,7 @@ function ComparativoDeputadoHeader({
               {deputado.nome ?? "Sem nome"}
             </Link>
             <p className="mt-1 text-xs text-muted">
-              {deputado.siglaPartido} · {deputado.siglaUf}
+              {deputado.siglaPartido ?? "—"} · {deputado.siglaUf ?? "—"}
             </p>
             <ComparativoAtividadeStatus emAtividade={deputado.emAtividade} />
           </div>
@@ -387,7 +424,7 @@ function ComparativoMobileDeputadoVoto({
             {deputado.nome ?? "Sem nome"}
           </Link>
           <p className="mt-1 text-xs text-muted">
-            {deputado.siglaPartido} · {deputado.siglaUf}
+            {deputado.siglaPartido ?? "—"} · {deputado.siglaUf ?? "—"}
           </p>
         </div>
         <Badge

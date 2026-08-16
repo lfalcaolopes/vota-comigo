@@ -1,4 +1,5 @@
 import type {
+  ComparativoDeputado,
   ComparativoDeputadosResponse,
   ComparativoJanela,
 } from "@vota-comigo/shared-types";
@@ -6,6 +7,8 @@ import Link from "next/link";
 
 import { Badge, HelpPopover, InlineMessage } from "@/shared/ui";
 
+import { CopyDeputadosButton } from "./copy-deputados-button";
+import type { DeputadoTextItem } from "./deputados-text";
 import {
   buildComparativoDeputadosGrid,
   toComparativoAviso,
@@ -29,8 +32,10 @@ const labelColumnClassName =
 
 export function ComparativoDeputadosView({
   response,
+  showCopyButton = true,
 }: {
   response: ComparativoDeputadosResponse;
+  showCopyButton?: boolean;
 }) {
   const grid = buildComparativoDeputadosGrid(response);
   const columnsById = new Map(
@@ -47,6 +52,14 @@ export function ComparativoDeputadosView({
           body={aviso.body}
           title={aviso.title}
           tone={aviso.tone}
+        />
+      ) : null}
+
+      {showCopyButton ? (
+        <CopyDeputadosButton
+          className="justify-self-start"
+          contexto={`${response.items.length} deputados comparados`}
+          deputados={response.items.map(toDeputadoTextItem)}
         />
       ) : null}
 
@@ -82,6 +95,16 @@ export function ComparativoDeputadosView({
       ) : null}
     </div>
   );
+}
+
+function toDeputadoTextItem(item: ComparativoDeputado): DeputadoTextItem {
+  return {
+    externalIdDeputado: item.externalIdDeputado,
+    nome: item.nomePublico,
+    siglaPartido: item.snapshotPublico?.siglaPartido ?? null,
+    siglaUf: item.snapshotPublico?.siglaUf ?? null,
+    compatibilidade: null,
+  };
 }
 
 function ComparativoIdentidade({

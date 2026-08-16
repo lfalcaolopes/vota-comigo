@@ -52,6 +52,12 @@ export {
   type ComparativoDeputadosHref,
 } from "./comparativo-selecao";
 export { ComparativoDeputados } from "./comparativo-deputados";
+export { CopyDeputadosButton } from "./copy-deputados-button";
+export {
+  buildDeputadosText,
+  type BuildDeputadosTextInput,
+  type DeputadoTextItem,
+} from "./deputados-text";
 export { ComparativoDeputadosView } from "./comparativo-deputados-view";
 export {
   buildComparativoDeputadosGrid,

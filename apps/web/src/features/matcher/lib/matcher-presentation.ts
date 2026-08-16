@@ -1,7 +1,11 @@
 import type {
   AlertaMatcher,
+  EscopoMatcher,
   MatcherDeputadoResumo,
+  SiglaUf,
 } from "@vota-comigo/shared-types";
+
+import { toEstadoLabel } from "@/shared/deputado/presentation";
 
 export {
   getInitials,
@@ -23,6 +27,26 @@ export function toAmostraComparavelLabel(
   totalPosicoesComputaveis: number,
 ): string {
   return `${deputado.amostraComparavel} de ${totalPosicoesComputaveis} votações comparáveis`;
+}
+
+export function toCopyContextLabel({
+  escopo,
+  siglaUf,
+  totalProposicoes,
+}: {
+  escopo: EscopoMatcher;
+  siglaUf: SiglaUf | null;
+  totalProposicoes: number;
+}): string {
+  const proposicoes = `${totalProposicoes} ${totalProposicoes === 1 ? "proposição" : "proposições"}`;
+  const abrangencia =
+    escopo === "nacional"
+      ? "Brasil"
+      : siglaUf === null
+        ? null
+        : toEstadoLabel(siglaUf);
+
+  return abrangencia === null ? proposicoes : `${proposicoes} · ${abrangencia}`;
 }
 
 export function toAlertaLabel(alerta: AlertaMatcher): string {

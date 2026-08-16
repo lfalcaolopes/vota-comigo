@@ -100,13 +100,40 @@ function deputado(
   };
 }
 
-function render(response: ComparativoDeputadosResponse): string {
+function render(
+  response: ComparativoDeputadosResponse,
+  showCopyButton?: boolean,
+): string {
   return renderToStaticMarkup(
-    createElement(ComparativoDeputadosView, { response }),
+    createElement(ComparativoDeputadosView, { response, showCopyButton }),
   );
 }
 
 describe("ComparativoDeputadosView", () => {
+  describe("quando o recorte pode ser levado embora em texto", () => {
+    it("oferece o gesto de copiar junto da comparação", () => {
+      // Arrange / Act
+      const html = render({
+        janelasCoincidem: true,
+        items: [deputado(1), deputado(2)],
+      });
+
+      // Assert
+      expect(html).toContain("Copiar em texto");
+    });
+
+    it("cala o botão quando a tela que embute a view já tem o seu", () => {
+      // Arrange / Act
+      const html = render(
+        { janelasCoincidem: true, items: [deputado(1), deputado(2)] },
+        false,
+      );
+
+      // Assert
+      expect(html).not.toContain("Copiar em texto");
+    });
+  });
+
   describe("quando dois deputados são comparados na mesma janela", () => {
     it("mostra cada métrica e leva ao perfil em nova aba", () => {
       // Arrange / Act
