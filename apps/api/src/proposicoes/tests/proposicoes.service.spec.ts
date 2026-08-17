@@ -34,6 +34,7 @@ function joinRow(
     votosNao: 100,
     votosOutros: 5,
     aprovacao: 1,
+    votosComputaveis: 400,
     resumoIa: null,
     ...overrides,
   };

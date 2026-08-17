@@ -10,7 +10,7 @@ import type {
   ProposicaoComputavelRow,
 } from './proposicao-computavel.repository.types';
 
-export const PROPOSICAO_COMPUTAVEL_RULE_VERSION = 1;
+export const PROPOSICAO_COMPUTAVEL_RULE_VERSION = 2;
 
 export function createProposicaoComputavelStep(
   repository: ProposicaoComputavelRepository,

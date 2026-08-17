@@ -70,7 +70,7 @@ _Avoid_: Matéria.
 
 **Votação nominal**: Votação em que o voto individual de cada deputado é registrado.
 
-**Votação de referência do matcher**: Votação nominal em plenário escolhida como votação decisiva de referência de uma proposição no matcher, priorizando votos de mérito decisório descritos pela Câmara e usando turno explícito apenas como fallback controlado, sem usar destaques, requerimentos ou fragmentos procedurais.
+**Votação de referência do matcher**: Votação nominal em plenário com voto computável registrado, escolhida como votação decisiva de referência de uma proposição no matcher, priorizando votos de mérito decisório descritos pela Câmara e usando turno explícito apenas como fallback controlado, sem usar destaques, requerimentos ou fragmentos procedurais.
 
 **Voto de mérito decisório**: Votação nominal cujo resultado descrito pela Câmara decide o texto-base, substitutivo, medida provisória, projeto, proposta de emenda à Constituição, revisão do Senado ou equivalente substantivo da proposição afetada, em oposição a requerimentos, destaques, preliminares, redação final e fragmentos procedurais.
 
@@ -247,6 +247,7 @@ _Avoid_: Ano completo como sinônimo, já que a completude do dump e a da reposi
 - Cada **Proposição computável pelo matcher** tem exatamente uma **Votação de referência do matcher**.
 - Para **Proposição** do tipo PEC, a **Votação de referência do matcher** prioriza o segundo turno quando ele existe.
 - A **Votação de referência do matcher** é escolhida dentro das **Votações** vinculadas à **Proposição afetada**, sem reconstruir **Proposição principal** ou consolidar proposições derivadas.
+- Uma **Votação** sem nenhum **Voto computável** registrado não é candidata a **Votação de referência do matcher**, ainda que tenha **Placar completo**.
 - No **Ranking de volume de votações em plenário**, uma **Votação** vinculada a múltiplas **Proposições afetadas** conta uma vez para cada proposição vinculada.
 - Uma **Votação** tem **Escopo de votação** igual a `plenario` ou `comissao`.
 - Uma **Votação nominal** registra **Votos computáveis** dos **Deputados em exercício** naquela data.

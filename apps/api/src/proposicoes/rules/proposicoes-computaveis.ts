@@ -31,6 +31,7 @@ function toCandidate(row: ProposicaoVotacaoJoinRow): VotacaoCandidate {
     votosNao: row.votosNao,
     votosOutros: row.votosOutros,
     aprovacao: row.aprovacao,
+    votosComputaveis: row.votosComputaveis,
   };
 }
 

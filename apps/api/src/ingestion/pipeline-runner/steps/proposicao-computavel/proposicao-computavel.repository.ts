@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
@@ -6,6 +6,7 @@ import {
   proposicaoComputavel,
   votacao,
   votacaoProposicao,
+  votacaoVotos,
 } from '@/shared/database/schema';
 import type {
   ProposicaoComputavelRepository,
@@ -13,6 +14,10 @@ import type {
 } from './proposicao-computavel.repository.types';
 
 const INSERT_CHUNK_SIZE = 1000;
+
+const VOTOS_COMPUTAVEIS = sql<
+  number | null
+>`${votacaoVotos.votosSim} + ${votacaoVotos.votosNao} + ${votacaoVotos.votosAbstencao} + ${votacaoVotos.votosObstrucao}`;
 
 export function createProposicaoComputavelRepository(
   db: DrizzleDatabase,
@@ -35,6 +40,7 @@ export function createProposicaoComputavelRepository(
           votosNao: votacao.votosNao,
           votosOutros: votacao.votosOutros,
           aprovacao: votacao.aprovacao,
+          votosComputaveis: VOTOS_COMPUTAVEIS,
         })
         .from(votacaoProposicao)
         .innerJoin(votacao, eq(votacaoProposicao.votacaoId, votacao.id))
@@ -42,6 +48,7 @@ export function createProposicaoComputavelRepository(
           proposicao,
           eq(votacaoProposicao.proposicaoId, proposicao.id),
         )
+        .leftJoin(votacaoVotos, eq(votacaoVotos.votacaoId, votacao.id))
         .where(eq(votacao.escopoVotacao, 'plenario'));
     },
 

@@ -51,6 +51,7 @@ export type ProposicaoVotacaoJoinRow = {
   votosNao: number | null;
   votosOutros: number | null;
   aprovacao: number | null;
+  votosComputaveis: number | null;
   resumoIa: ProposicaoResumoIaProjection | null;
 };
 

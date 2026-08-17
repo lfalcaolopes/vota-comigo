@@ -19,6 +19,7 @@ function candidate(
     votosNao: null,
     votosOutros: null,
     aprovacao: null,
+    votosComputaveis: 405,
     ...overrides,
   };
 }
@@ -307,6 +308,79 @@ describe('selectVotacaoReferencia', () => {
 
       // Assert
       expect(referencia).toBeNull();
+    });
+  });
+
+  describe('when the source published the placar without any voto computavel', () => {
+    it('discards the candidate even with the highest priority pattern', () => {
+      // Arrange
+      const semDirecao = candidate({
+        externalIdVotacao: 'sem-direcao',
+        descricao: 'Aprovada a Proposta de Emenda à Constituição',
+        ultimaAberturaVotacaoDescricao: 'Votação em segundo turno',
+        votosSim: 322,
+        votosNao: 18,
+        votosComputaveis: 0,
+      });
+
+      // Act
+      const referencia = selectVotacaoReferencia([semDirecao]);
+
+      // Assert
+      expect(referencia).toBeNull();
+    });
+
+    it('falls back to a lower priority candidate that has votos computaveis', () => {
+      // Arrange
+      const semDirecao = candidate({
+        externalIdVotacao: 'sem-direcao',
+        descricao: 'Aprovado o Projeto de Lei',
+        votosComputaveis: 0,
+      });
+      const redacaoFinal = candidate({
+        externalIdVotacao: 'redacao-final',
+        descricao: 'Aprovada a redação final',
+        votosComputaveis: 340,
+      });
+
+      // Act
+      const referencia = selectVotacaoReferencia([semDirecao, redacaoFinal]);
+
+      // Assert
+      expect(referencia?.externalIdVotacao).toBe('redacao-final');
+      expect(referencia?.classification.pattern).toBe('redacao_final');
+    });
+
+    it('discards the candidate when there is no individual vote record at all', () => {
+      // Arrange
+      const semRegistro = candidate({
+        externalIdVotacao: 'sem-registro',
+        descricao: 'Aprovado o Projeto de Lei',
+        votosComputaveis: null,
+      });
+
+      // Act
+      const referencia = selectVotacaoReferencia([semRegistro]);
+
+      // Assert
+      expect(referencia).toBeNull();
+    });
+  });
+
+  describe('when a candidate has few votos computaveis', () => {
+    it('keeps it, because low participation is a real plenary and not a source gap', () => {
+      // Arrange
+      const poucosVotos = candidate({
+        externalIdVotacao: 'plenario-esvaziado',
+        descricao: 'Aprovado o Projeto de Lei',
+        votosComputaveis: 1,
+      });
+
+      // Act
+      const referencia = selectVotacaoReferencia([poucosVotos]);
+
+      // Assert
+      expect(referencia?.externalIdVotacao).toBe('plenario-esvaziado');
     });
   });
 });
