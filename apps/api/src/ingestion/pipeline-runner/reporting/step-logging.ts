@@ -59,9 +59,10 @@ export type ProgressLogger = {
 export function createProgressLogger(
   reporter: IngestionReporter | undefined,
   label: string,
-  options: { interval?: number } = {},
+  options: { interval?: number; unit?: string } = {},
 ): ProgressLogger {
   const interval = options.interval ?? DEFAULT_PROGRESS_INTERVAL;
+  const unit = options.unit ?? 'registros';
   let lastReported = 0;
 
   return {
@@ -71,7 +72,7 @@ export function createProgressLogger(
       }
 
       lastReported = processed;
-      reporter.log(`[${label}] ${processed} registros processados…`);
+      reporter.log(`[${label}] ${processed} ${unit} processados…`);
     },
     done(total: number): void {
       // Só fecha com linha final quando houve progresso parcial, para não
@@ -80,7 +81,7 @@ export function createProgressLogger(
         return;
       }
 
-      reporter.log(`[${label}] leitura concluída: ${total} registros`);
+      reporter.log(`[${label}] leitura concluída: ${total} ${unit}`);
     },
   };
 }

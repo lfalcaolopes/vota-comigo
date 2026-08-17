@@ -150,6 +150,27 @@ describe('step logging', () => {
       });
     });
 
+    describe('when the caller names the unit being processed', () => {
+      it('reports progress in that unit instead of generic records', () => {
+        // Arrange
+        const reporter = createReporter();
+        const progress = createProgressLogger(reporter, 'deputado_presenca', {
+          interval: 100,
+          unit: 'deputado(s)',
+        });
+
+        // Act
+        for (let processed = 1; processed <= 100; processed += 1) {
+          progress.tick(processed);
+        }
+
+        // Assert
+        expect(reporter.lines).toEqual([
+          '[deputado_presenca] 100 deputado(s) processados…',
+        ]);
+      });
+    });
+
     describe('when the volume never reaches the interval', () => {
       it('stays silent so it does not duplicate the step summary', () => {
         // Arrange

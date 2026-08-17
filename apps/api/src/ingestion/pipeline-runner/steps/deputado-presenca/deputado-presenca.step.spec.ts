@@ -1,5 +1,6 @@
 import {
   createDeputadoPresencaStep,
+  DEPUTADO_PRESENCA_PROGRESS_INTERVAL,
   DEPUTADO_PRESENCA_RULE_VERSION,
 } from './deputado-presenca.step';
 import type {
@@ -279,6 +280,69 @@ describe('deputado_presenca step', () => {
         ]),
       );
       expect(repository.rows).toHaveLength(2);
+    });
+  });
+
+  describe('when the run takes long enough to need feedback', () => {
+    it('announces every phase with the volume it is handling', async () => {
+      // Arrange
+      const log = jest.fn();
+      const repository = createFakeRepository(
+        [deputadoComHistorico('dep-1')],
+        [votacaoComputavel({ sim: ['dep-1'] })],
+      );
+      const step = createDeputadoPresencaStep(repository);
+
+      // Act
+      await step.run(context({ reporter: { log } }));
+
+      // Assert
+      expect(log.mock.calls.map(([line]) => line)).toEqual([
+        '[deputado_presenca] carregando histórico parlamentar…',
+        '[deputado_presenca] 1 deputado(s) com histórico',
+        '[deputado_presenca] carregando legislaturas e votações computáveis…',
+        '[deputado_presenca] 1 votação(ões) computável(is) em 1 legislatura(s)',
+        '[deputado_presenca] calculando presença de 1 deputado(s)…',
+        '[deputado_presenca] 1 deputado(s) com presença de 1 com histórico',
+        '[deputado_presenca] gravando 1 linha(s)…',
+      ]);
+    });
+
+    it('reports partial progress while the presença is calculated', async () => {
+      // Arrange
+      const log = jest.fn();
+      const deputados = Array.from(
+        { length: DEPUTADO_PRESENCA_PROGRESS_INTERVAL },
+        (_, index) => deputadoComHistorico(`dep-${index}`),
+      );
+      const repository = createFakeRepository(deputados, [
+        votacaoComputavel({ sim: ['dep-0'] }),
+      ]);
+      const step = createDeputadoPresencaStep(repository);
+
+      // Act
+      await step.run(context({ reporter: { log } }));
+
+      // Assert
+      expect(log).toHaveBeenCalledWith(
+        `[deputado_presenca] ${DEPUTADO_PRESENCA_PROGRESS_INTERVAL} deputado(s) processados…`,
+      );
+    });
+
+    it('omits the write phase when nothing will be written', async () => {
+      // Arrange
+      const log = jest.fn();
+      const repository = createFakeRepository(
+        [deputadoComHistorico('dep-1')],
+        [votacaoComputavel({ sim: ['dep-1'] })],
+      );
+      const step = createDeputadoPresencaStep(repository);
+
+      // Act
+      await step.run(context({ dryRun: true, reporter: { log } }));
+
+      // Assert
+      expect(log).not.toHaveBeenCalledWith(expect.stringContaining('gravando'));
     });
   });
 
