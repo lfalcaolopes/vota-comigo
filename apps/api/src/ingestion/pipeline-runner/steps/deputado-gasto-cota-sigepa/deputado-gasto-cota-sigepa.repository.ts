@@ -3,6 +3,7 @@ import { and, asc, eq, notExists, sql } from 'drizzle-orm';
 import type { DrizzleDatabase } from '@/shared/database/client';
 import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
 import {
+  cotaCategoria,
   cotaCobertura,
   deputado,
   deputadoExercicioIntervalo,
@@ -86,6 +87,16 @@ export function createDeputadoGastoCotaSigepaRepository(
           sigepaCoveredThroughMonth: coveredThroughMonth,
         })
         .where(eq(cotaCobertura.year, year));
+    },
+
+    async saveCategoria({ externalNumSubCota, descricao }) {
+      await db
+        .insert(cotaCategoria)
+        .values({ externalNumSubCota, descricao })
+        .onConflictDoUpdate({
+          target: cotaCategoria.externalNumSubCota,
+          set: { descricao },
+        });
     },
 
     async loadLegislaturas() {

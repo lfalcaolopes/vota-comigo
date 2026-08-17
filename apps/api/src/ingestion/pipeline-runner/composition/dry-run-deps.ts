@@ -166,6 +166,7 @@ export const dryRunGastoCotaSigepaDeps: DeputadoGastoCotaSigepaStepDeps = {
     loadLegislaturas: dryRunReadGuard,
     loadCobertura: dryRunReadGuard,
     saveAnoReposto: dryRunWriteGuard,
+    saveCategoria: dryRunWriteGuard,
     upsert: dryRunWriteGuard,
   },
   despesasClient: { fetch: dryRunReadGuard },

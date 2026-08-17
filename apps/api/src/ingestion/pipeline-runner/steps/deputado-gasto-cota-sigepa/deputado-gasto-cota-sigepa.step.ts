@@ -1,3 +1,5 @@
+import { CATEGORIA_PASSAGEM_AEREA_SIGEPA } from '@/shared/cota/categorias-passagem-aerea';
+
 import { StrictModeError } from '../../errors/strict-mode-error';
 import { stepLabel } from '../../reporting/step-logging';
 import {
@@ -14,7 +16,10 @@ import type {
 } from '../../types/ingestion-pipeline-runner.types';
 
 import { isEmExercicioNoAno } from './exercicio-no-ano';
-import { aggregateGastosSigepa } from './gasto-sigepa';
+import {
+  aggregateGastosSigepa,
+  DESCRICAO_PASSAGEM_AEREA_SIGEPA,
+} from './gasto-sigepa';
 import { deriveLegislaturasNoAno } from './legislaturas-do-ano';
 import type {
   CoberturaAno,
@@ -67,6 +72,13 @@ export function createDeputadoGastoCotaSigepaStep(
           `[${stepLabel(STEP_NAME, year)}] a recarga não é retomável: --limit reconsulta sempre os mesmos deputados.`,
         );
       }
+
+      // A categoria 998 sumiu do dump, então quem a repõe é quem a declara: o
+      // gasto gravado abaixo ficaria sem descrição na leitura (ADR 022).
+      await deps.repository.saveCategoria({
+        externalNumSubCota: CATEGORIA_PASSAGEM_AEREA_SIGEPA,
+        descricao: DESCRICAO_PASSAGEM_AEREA_SIGEPA,
+      });
 
       const candidatos = deps.refetch
         ? await deps.repository.loadDeputadosElegiveis(year)
@@ -183,6 +195,18 @@ async function recordAnoReposto(input: RecordAnoRepostoInput): Promise<void> {
   const pendentes = semReposicao.filter((deputado) =>
     isEmExercicioNoAno(deputado.intervalos, year),
   );
+
+  // Zero pendentes tem dois significados: todos os elegíveis cobertos, ou
+  // elegível nenhum. Sem os intervalos de exercício — que dependem do passo
+  // manual de histórico — a completude seria vacuamente verdadeira e marcaria
+  // como reposto um ano sem uma única linha de reposição (ADR 022).
+  if (pendentes.length === 0 && !(await temElegivel(deps, year))) {
+    context.reporter?.log(
+      `[${stepLabel(STEP_NAME, year)}] exercício ausente, completude não apurada`,
+    );
+    return;
+  }
+
   const reposto = pendentes.length === 0;
 
   await deps.repository.saveAnoReposto({
@@ -192,6 +216,17 @@ async function recordAnoReposto(input: RecordAnoRepostoInput): Promise<void> {
   });
 
   reportCompletude({ context, year, cobertura, pendentes: pendentes.length });
+}
+
+async function temElegivel(
+  deps: DeputadoGastoCotaSigepaStepDeps,
+  year: number,
+): Promise<boolean> {
+  const elegiveis = await deps.repository.loadDeputadosElegiveis(year);
+
+  return elegiveis.some((deputado) =>
+    isEmExercicioNoAno(deputado.intervalos, year),
+  );
 }
 
 type ReportCompletudeInput = {

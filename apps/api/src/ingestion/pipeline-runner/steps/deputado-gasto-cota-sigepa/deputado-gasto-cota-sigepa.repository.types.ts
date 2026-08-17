@@ -76,6 +76,11 @@ export type AnoRepostoRegistro = {
   coveredThroughMonth: number | null;
 };
 
+export type CotaCategoriaRegistro = {
+  externalNumSubCota: number;
+  descricao: string;
+};
+
 export type DeputadoGastoCotaSigepaRepository = {
   // Sem linha em deputado_gasto_cota_sigepa para o ano: o pendente é derivado
   // do banco, sem estado novo (ADR 022).
@@ -90,6 +95,9 @@ export type DeputadoGastoCotaSigepaRepository = {
   loadLegislaturas(): Promise<readonly LegislaturaPeriodo[]>;
   loadCobertura(year: number): Promise<CoberturaAno | null>;
   saveAnoReposto(registro: AnoRepostoRegistro): Promise<void>;
+  // O dump deixou de publicar a categoria 998, então a reposição virou a única
+  // fonte da descrição: sem gravá-la, a leitura acha o gasto e não acha o nome.
+  saveCategoria(registro: CotaCategoriaRegistro): Promise<void>;
   upsert(
     rows: readonly GastoCotaSigepaRow[],
   ): Promise<GastoCotaSigepaUpsertResult>;

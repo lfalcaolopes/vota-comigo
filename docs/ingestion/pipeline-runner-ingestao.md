@@ -132,6 +132,8 @@ Quando nomeado explicitamente, o passo manual roda normalmente, inclusive junto 
 
 Repõe pela API a categoria `998 — PASSAGEM AÉREA - SIGEPA`, que o dump anual deixou de publicar a partir de agosto de 2025 ([ADR-0022](../adr/022-reposicao-passagem-aerea-sigepa-modulo-a-parte.md)). É anual: um ano por execução, sempre com a janela recortada.
 
+Toda execução começa gravando a categoria 998 em `cota_categoria`, antes de qualquer gasto. O export removeu a categoria de todos os anos, não só dos meses da janela, então o passo do CSV nunca aprende essa descrição e numa base nova a leitura acharia o gasto reposto sem nome para exibir.
+
 Repor um ano custa cerca de 1540 requisições contra um balde de tokens que esvazia por volta de 1000, então **um ano não cabe em uma única execução**. O passo é retomável: são pendentes os deputados com exercício no ano — não os presentes no dump — que ainda não têm linha em `deputado_gasto_cota_sigepa` para aquele ano. Cada lote é gravado em sua própria transação, então uma interrupção preserva o que já fechou, e a execução seguinte retoma só o que falta. Um deputado que não voou recebe linha com gastos vazios e sai do conjunto pendente.
 
 ```bash
@@ -253,6 +255,8 @@ Quando um arquivo de um passo de escopo único não está em disco, o pipeline-r
 O último passo, `sanity`, compara o placar oficial de cada votação (`votosSim`/`votosNao` de `votacoes-{ano}.csv`) com as contagens derivadas dos votos individuais agregados em `votacao_votos`. Quando `sim` ou `não` divergem, a votação vira rejeição `sanity_placar_divergente`, com ambos os valores, no resumo e no arquivo de erros. Votações sem placar oficial contam como ignoradas (não comparáveis), não como divergência. As demais categorias derivadas (abstenção, obstrução, Artigo 17, não informado) entram só como detalhe de `--debug`, porque a semântica do agrupamento "Outros" da Câmara é ambígua. Em `--dry-run` o passo é pulado (não há escrita fresca para validar); em `--strict` aborta na primeira divergência.
 
 Um caso é tratado como **lacuna de fonte**, não divergência: quando o placar oficial tem votos mas a fonte não traz nenhuma direção individual (todos vieram em branco, agregados em `nao_informado`). É um problema conhecido do `votacoesVotos` da Câmara — o placar agregado é publicado, mas o voto por deputado fica vazio. O `sanity` registra então uma lacuna `votos_individuais_ausentes`, deixando claro que a base local está fiel à fonte (sem registro sintético) e que aquela amostra é inutilizável para o matcher.
+
+Essa votação também deixa de ser candidata a votação de referência em `proposicao_computavel` (ADR 023): sem direção de voto individual ela não casa nenhum deputado, e a proposição só sai do matcher se não tiver nenhuma outra candidata.
 
 ### Logs ao vivo
 

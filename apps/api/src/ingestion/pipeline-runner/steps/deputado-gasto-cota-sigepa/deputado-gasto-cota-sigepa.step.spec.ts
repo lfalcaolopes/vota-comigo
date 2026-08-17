@@ -1,3 +1,4 @@
+import { CATEGORIA_PASSAGEM_AEREA_SIGEPA } from '@/shared/cota/categorias-passagem-aerea';
 import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
 
 import type { IngestionStepContext } from '../../types/ingestion-pipeline-runner.types';
@@ -7,6 +8,7 @@ import type { LegislaturaPeriodo } from './legislaturas-do-ano';
 import type {
   AnoRepostoRegistro,
   CoberturaAno,
+  CotaCategoriaRegistro,
   DeputadoDespesasClient,
   DeputadoDespesasFetchResult,
   DeputadoDespesasQuery,
@@ -60,6 +62,7 @@ function despesa(overrides: Partial<DespesaCota> = {}): DespesaCota {
 type FakeRepository = DeputadoGastoCotaSigepaRepository & {
   readonly upserted: GastoCotaSigepaRow[];
   readonly completude: AnoRepostoRegistro[];
+  readonly categorias: CotaCategoriaRegistro[];
 };
 
 type RepositoryOverrides = {
@@ -84,10 +87,17 @@ function repositoryOf(
   );
   const upserted: GastoCotaSigepaRow[] = [];
   const completude: AnoRepostoRegistro[] = [];
+  const categorias: CotaCategoriaRegistro[] = [];
 
   return {
     upserted,
     completude,
+    categorias,
+    saveCategoria(registro) {
+      categorias.push(registro);
+
+      return Promise.resolve();
+    },
     loadDeputadosSemReposicao: (year) =>
       Promise.resolve(
         deputados.filter(
@@ -216,6 +226,31 @@ describe('deputado_gasto_cota_sigepa step', () => {
           deputadoId: 'dep-1',
           year: 2025,
           gastosJson: { '3': 123456, '4': -5000 },
+        },
+      ]);
+    });
+  });
+
+  describe('when the reposicao is the only source of the category', () => {
+    it('declares the categoria so the gastos it writes have a description', async () => {
+      // Arrange
+      const { step, repository } = stepWith({
+        repository: repositoryOf([deputado()]),
+        despesasClient: clientOf(
+          new Map<number, DeputadoDespesasFetchResult>([
+            [220593, { ok: true, despesas: [despesa()] }],
+          ]),
+        ),
+      });
+
+      // Act
+      await step.run(context());
+
+      // Assert
+      expect(repository.categorias).toEqual([
+        {
+          externalNumSubCota: CATEGORIA_PASSAGEM_AEREA_SIGEPA,
+          descricao: DESCRICAO_PASSAGEM_AEREA_SIGEPA,
         },
       ]);
     });
@@ -478,6 +513,7 @@ describe('deputado_gasto_cota_sigepa step', () => {
           loadLegislaturas: fail('loadLegislaturas'),
           loadCobertura: fail('loadCobertura'),
           saveAnoReposto: fail('saveAnoReposto'),
+          saveCategoria: fail('saveCategoria'),
           upsert: fail('upsert'),
         },
         despesasClient: { fetch: fail('despesasClient') },
@@ -624,6 +660,52 @@ describe('deputado_gasto_cota_sigepa step', () => {
 
       // Assert
       expect(repository.completude).toEqual([]);
+    });
+  });
+
+  describe('when no deputado has exercicio intervalos in the year', () => {
+    it('registers nothing, because an empty eligible set makes the completude vacuously true', async () => {
+      // Arrange
+      const repository = repositoryOf([]);
+      const { step } = stepWith({ repository });
+
+      // Act
+      await step.run(context());
+
+      // Assert
+      expect(repository.completude).toEqual([]);
+    });
+
+    it('leaves a year already reposto untouched instead of unregistering it', async () => {
+      // Arrange
+      const repository = repositoryOf([], {
+        cobertura: { coveredThroughMonth: 12, sigepaReposto: true },
+      });
+      const { step } = stepWith({ repository });
+
+      // Act
+      await step.run(context());
+
+      // Assert
+      expect(repository.completude).toEqual([]);
+    });
+
+    it('announces that the completude was not apurada', async () => {
+      // Arrange
+      const { step } = stepWith({ repository: repositoryOf([]) });
+      const logged: string[] = [];
+
+      // Act
+      await step.run(
+        context({ reporter: { log: (line) => logged.push(line) } }),
+      );
+
+      // Assert
+      expect(logged).toContainEqual(
+        expect.stringContaining(
+          '[deputado_gasto_cota_sigepa 2025] exercício ausente, completude não apurada',
+        ),
+      );
     });
   });
 
