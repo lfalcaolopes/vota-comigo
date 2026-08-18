@@ -76,7 +76,7 @@ describe('deputado_exercicio_intervalo step', () => {
   describe('when there is no parliamentary history yet (first ingestion)', () => {
     it('skips the computation without touching the table', async () => {
       // Arrange
-      const log = jest.fn();
+      const log = jest.fn<void, [string]>();
       const repository = createFakeRepository([]);
       const step = createDeputadoExercicioIntervaloStep(repository);
 
@@ -164,7 +164,7 @@ describe('deputado_exercicio_intervalo step', () => {
   describe('when the run takes long enough to need feedback', () => {
     it('announces every phase with the volume it is handling', async () => {
       // Arrange
-      const log = jest.fn();
+      const log = jest.fn<void, [string]>();
       const repository = createFakeRepository([
         deputadoComHistorico('dep-1', [EVENTO_ENTRADA]),
       ]);
@@ -185,7 +185,7 @@ describe('deputado_exercicio_intervalo step', () => {
 
     it('omits the write phase when nothing will be written', async () => {
       // Arrange
-      const log = jest.fn();
+      const log = jest.fn<void, [string]>();
       const repository = createFakeRepository([
         deputadoComHistorico('dep-1', [EVENTO_ENTRADA]),
       ]);

@@ -111,7 +111,7 @@ describe('deputado_presenca step', () => {
   describe('when there is no parliamentary history yet (first ingestion)', () => {
     it('skips the computation without touching the table', async () => {
       // Arrange
-      const log = jest.fn();
+      const log = jest.fn<void, [string]>();
       const repository = createFakeRepository([], []);
       const step = createDeputadoPresencaStep(repository);
 
@@ -130,7 +130,7 @@ describe('deputado_presenca step', () => {
   describe('when there are no legislaturas registered yet', () => {
     it('skips the computation without touching the table', async () => {
       // Arrange
-      const log = jest.fn();
+      const log = jest.fn<void, [string]>();
       const repository = createFakeRepository(
         [deputadoComHistorico('dep-1')],
         [votacaoComputavel({ sim: ['dep-1'] })],
@@ -286,7 +286,7 @@ describe('deputado_presenca step', () => {
   describe('when the run takes long enough to need feedback', () => {
     it('announces every phase with the volume it is handling', async () => {
       // Arrange
-      const log = jest.fn();
+      const log = jest.fn<void, [string]>();
       const repository = createFakeRepository(
         [deputadoComHistorico('dep-1')],
         [votacaoComputavel({ sim: ['dep-1'] })],
@@ -310,7 +310,7 @@ describe('deputado_presenca step', () => {
 
     it('reports partial progress while the presença is calculated', async () => {
       // Arrange
-      const log = jest.fn();
+      const log = jest.fn<void, [string]>();
       const deputados = Array.from(
         { length: DEPUTADO_PRESENCA_PROGRESS_INTERVAL },
         (_, index) => deputadoComHistorico(`dep-${index}`),
@@ -331,7 +331,7 @@ describe('deputado_presenca step', () => {
 
     it('omits the write phase when nothing will be written', async () => {
       // Arrange
-      const log = jest.fn();
+      const log = jest.fn<void, [string]>();
       const repository = createFakeRepository(
         [deputadoComHistorico('dep-1')],
         [votacaoComputavel({ sim: ['dep-1'] })],
