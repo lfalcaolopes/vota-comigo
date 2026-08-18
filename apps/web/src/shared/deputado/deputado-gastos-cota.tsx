@@ -4,7 +4,6 @@ import type { DeputadoCeapResponse } from "@vota-comigo/shared-types";
 
 import { InlineMessage, Skeleton, SkeletonRows, SourceLink } from "@/shared/ui";
 
-import { formatData } from "./presentation";
 import { GastoCotaDistribuicaoAnual } from "./gasto-cota-distribuicao-anual";
 import type { DeputadoYearCacheState } from "./use-deputado-year-cache";
 
@@ -51,19 +50,6 @@ export function DeputadoGastosCotaSection({
           {response.sigepaDataStatus === "incompleto" ? (
             <CotaSigepaDataNote />
           ) : null}
-          {!response.exercicioAnoCompleto ? (
-            <p className="text-sm text-muted">
-              Exercício no ano:{" "}
-              {response.periodosExercicio
-                .map(
-                  (periodo) =>
-                    `${formatData(periodo.startDate)} a ${formatData(periodo.endDate)}`,
-                )
-                .join("; ")}
-              . Sem comparação com deputados que exerceram o ano inteiro.
-            </p>
-          ) : null}
-
           <GastoCotaDistribuicaoAnual
             categories={response.categories}
             coverageLabel={formatCoverageRange(
@@ -71,6 +57,8 @@ export function DeputadoGastosCotaSection({
               response.year,
             )}
             coveredThroughMonth={response.coveredThroughMonth}
+            diasEmExercicio={response.diasEmExercicio}
+            diasNaJanela={response.diasNaJanela}
             key={response.year}
             medianaUf={response.medianaUf}
             sigepaDataStatus={response.sigepaDataStatus}

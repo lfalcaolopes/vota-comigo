@@ -81,6 +81,11 @@ export function formatGastoCotaComparacao(
     (Math.abs(difference) / medianaAmountUsedCents) * 100,
   );
 
+  // Meio ponto percentual arredonda para zero, e "0% acima" se lê como erro.
+  if (percentage === 0) {
+    return "Praticamente igual à mediana";
+  }
+
   return `${percentage}% ${difference < 0 ? "abaixo" : "acima"} da mediana`;
 }
 

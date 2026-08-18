@@ -176,12 +176,8 @@ describe('DeputadosService gastos da cota', () => {
         totalAmountUsedCents: 0,
         siglaUf: null,
         exercicioAnoCompleto: true,
-        periodosExercicio: [
-          {
-            startDate: '2024-01-01T00:00:00.000Z',
-            endDate: '2025-01-01T00:00:00.000Z',
-          },
-        ],
+        diasEmExercicio: 366,
+        diasNaJanela: 366,
         medianaUf: null,
         tetoUf: null,
         categories: [],
@@ -325,7 +321,7 @@ describe('DeputadosService gastos da cota', () => {
       });
     });
 
-    it('proporciona o teto aos meses exercidos, onde não há mediana', async () => {
+    it('proporciona o teto aos meses exercidos', async () => {
       // Arrange
       const service = createService(
         fakeRepository({
@@ -346,7 +342,6 @@ describe('DeputadosService gastos da cota', () => {
       // Assert
       expect(result).toMatchObject({
         exercicioAnoCompleto: false,
-        medianaUf: null,
         tetoUf: { amountCents: 4188651 * 5, monthCount: 5 },
       });
     });
@@ -634,7 +629,7 @@ describe('DeputadosService gastos da cota', () => {
   });
 
   describe('quando o deputado exerceu parte do ano carregado', () => {
-    it('informa o período exercido sem publicar a mediana', async () => {
+    it('resume os dias exercidos ao lado da mediana da UF', async () => {
       // Arrange
       const service = createService(
         fakeRepository({
@@ -678,17 +673,9 @@ describe('DeputadosService gastos da cota', () => {
       // Assert
       expect(result).toMatchObject({
         exercicioAnoCompleto: false,
-        periodosExercicio: [
-          {
-            startDate: '2024-08-01T12:00:00.000Z',
-            endDate: '2024-10-01T12:00:00.000Z',
-          },
-          {
-            startDate: '2024-11-01T12:00:00.000Z',
-            endDate: '2024-12-01T12:00:00.000Z',
-          },
-        ],
-        medianaUf: null,
+        diasEmExercicio: 91,
+        diasNaJanela: 366,
+        medianaUf: { amountUsedCents: 9500, deputadoCount: 53 },
       });
     });
   });

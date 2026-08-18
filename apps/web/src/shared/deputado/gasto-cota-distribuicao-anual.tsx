@@ -34,6 +34,8 @@ export function GastoCotaDistribuicaoAnual({
   categories,
   coverageLabel,
   coveredThroughMonth,
+  diasEmExercicio,
+  diasNaJanela,
   medianaUf,
   sigepaDataStatus,
   siglaUf,
@@ -44,6 +46,8 @@ export function GastoCotaDistribuicaoAnual({
   categories: readonly DeputadoCeapCategory[];
   coverageLabel: string;
   coveredThroughMonth: number;
+  diasEmExercicio: number;
+  diasNaJanela: number;
   medianaUf: DeputadoCeapMedianaUf | null;
   sigepaDataStatus: DeputadoCeapSigepaDataStatus;
   siglaUf: string | null;
@@ -64,6 +68,8 @@ export function GastoCotaDistribuicaoAnual({
         <GastoCotaComparacao
           coverageLabel={coverageLabel}
           coveredThroughMonth={coveredThroughMonth}
+          diasEmExercicio={diasEmExercicio}
+          diasNaJanela={diasNaJanela}
           medianaUf={medianaUf}
           siglaUf={siglaUf}
           tetoUf={tetoUf}
@@ -162,6 +168,8 @@ export function GastoCotaDistribuicaoAnual({
         <GastoCotaComparacao
           coverageLabel={coverageLabel}
           coveredThroughMonth={coveredThroughMonth}
+          diasEmExercicio={diasEmExercicio}
+          diasNaJanela={diasNaJanela}
           medianaUf={medianaUf}
           siglaUf={siglaUf}
           tetoUf={tetoUf}
@@ -177,6 +185,8 @@ export function GastoCotaDistribuicaoAnual({
 function GastoCotaComparacao({
   coverageLabel,
   coveredThroughMonth,
+  diasEmExercicio,
+  diasNaJanela,
   medianaUf,
   siglaUf,
   tetoUf,
@@ -186,6 +196,8 @@ function GastoCotaComparacao({
 }: {
   coverageLabel: string;
   coveredThroughMonth: number;
+  diasEmExercicio: number;
+  diasNaJanela: number;
   medianaUf: DeputadoCeapMedianaUf | null;
   siglaUf: string | null;
   tetoUf: DeputadoCeapTetoUf | null;
@@ -320,15 +332,20 @@ function GastoCotaComparacao({
       ) : null}
 
       <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1 text-xs text-muted">
-        {hasMediana ? (
-          <span>
-            Comparação com {medianaUf.deputadoCount}{" "}
-            {medianaUf.deputadoCount === 1 ? "deputado" : "deputados"} de{" "}
-            {siglaUf} em exercício durante todo o ano
-          </span>
-        ) : (
-          <span />
-        )}
+        <div className="grid gap-1">
+          {hasMediana ? (
+            <span>
+              Comparação com {medianaUf.deputadoCount}{" "}
+              {medianaUf.deputadoCount === 1 ? "deputado" : "deputados"} de{" "}
+              {siglaUf} em exercício durante todo o ano
+            </span>
+          ) : null}
+          {diasEmExercicio < diasNaJanela ? (
+            <span>
+              Exercício em {diasEmExercicio} dos {diasNaJanela} dias de {year}
+            </span>
+          ) : null}
+        </div>
         <span className="sm:ml-auto sm:text-right">
           Dados disponíveis: {coverageLabel}.
         </span>

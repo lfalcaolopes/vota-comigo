@@ -1,10 +1,10 @@
 import type { DeputadoCeapResponse } from '@vota-comigo/shared-types';
 
 import {
+  deriveDiasExercicioAno,
   deriveJanelaExercicioAno,
   exerceuAnoInteiro,
 } from '@/exercicio/rules/exercicio-ano';
-import { toEpochMillis } from '@/exercicio/rules/instante';
 import {
   deriveSigepaDataStatus,
   type GastosCotaJson,
@@ -54,7 +54,13 @@ export function toDeputadoCeapLoadedResponse(
   // de cada deputado em proporção diferente, e uma mediana igualmente encolhida
   // faria quem mais voa parecer quem menos gasta (ADR 022).
   const medianaUf =
-    sigepaDataStatus === 'incompleto' ? null : input.source.medianaUf;
+    sigepaDataStatus === 'incompleto' || input.status !== 'ok'
+      ? null
+      : input.source.medianaUf;
+  // Quem exerceu parte do ano continua fora da coorte que forma a mediana, mas
+  // enxerga a mediana: o recorte do exercício vai ao lado dela, para o leitor
+  // ponderar em vez de ficar sem referência nenhuma.
+  const dias = deriveDiasExercicioAno(input.source.intervalosExercicio, janela);
   // Sem linha no dump não há UF, e sem UF não há mediana a exigir: é o deputado
   // cujo único gasto do ano veio da reposição.
   if (
@@ -78,8 +84,9 @@ export function toDeputadoCeapLoadedResponse(
     totalAmountUsedCents: aggregates.totalAmountUsedCents,
     siglaUf,
     exercicioAnoCompleto,
-    periodosExercicio: clipIntervalos(input.source.intervalosExercicio, janela),
-    medianaUf: exercicioAnoCompleto ? medianaUf : null,
+    diasEmExercicio: dias.diasEmExercicio,
+    diasNaJanela: dias.diasNaJanela,
+    medianaUf,
     tetoUf: tetoAnualCota(
       siglaUf,
       input.year,
@@ -166,39 +173,4 @@ function deriveAggregates(
     categories,
     months,
   };
-}
-
-function clipIntervalos(
-  intervalos: DeputadoCeapSource['intervalosExercicio'],
-  janela: { inicio: string; fim: string },
-) {
-  const inicioJanela = toEpochMillis(janela.inicio);
-  const fimJanela = toEpochMillis(janela.fim);
-  if (inicioJanela === null || fimJanela === null) {
-    return [];
-  }
-
-  return intervalos
-    .flatMap((intervalo) => {
-      const inicio = toEpochMillis(intervalo.openedAt);
-      const fim =
-        intervalo.closedAt === null
-          ? fimJanela
-          : toEpochMillis(intervalo.closedAt);
-      if (inicio === null || fim === null) {
-        return [];
-      }
-
-      const startDate = Math.max(inicio, inicioJanela);
-      const endDate = Math.min(fim, fimJanela);
-      return startDate < endDate
-        ? [
-            {
-              startDate: new Date(startDate).toISOString(),
-              endDate: new Date(endDate).toISOString(),
-            },
-          ]
-        : [];
-    })
-    .sort((a, b) => a.startDate.localeCompare(b.startDate));
 }

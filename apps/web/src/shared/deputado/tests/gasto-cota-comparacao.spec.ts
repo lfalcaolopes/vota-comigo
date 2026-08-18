@@ -179,6 +179,20 @@ describe("leitura do total contra a mediana da UF", () => {
     });
   });
 
+  describe("quando a diferença some no arredondamento", () => {
+    it("não anuncia zero por cento de distância", () => {
+      // Arrange
+      const mediana = 45810654;
+      const total = 45990993;
+
+      // Act
+      const leitura = formatGastoCotaComparacao(total, mediana);
+
+      // Assert
+      expect(leitura).toBe("Praticamente igual à mediana");
+    });
+  });
+
   describe("quando o total é negativo", () => {
     it("expressa a distância em valor absoluto", () => {
       // Arrange

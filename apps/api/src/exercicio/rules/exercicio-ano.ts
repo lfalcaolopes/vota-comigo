@@ -106,6 +106,30 @@ export function somarDiasEmExercicio(
   return Math.round(totalMillis / DIA_EM_MILLIS);
 }
 
+export type DiasExercicioAno = {
+  diasEmExercicio: number;
+  diasNaJanela: number;
+};
+
+// O denominador é a janela, não o ano civil: em ano de posse ninguém poderia
+// ter exercido os 365 dias, e dividir por eles faria todo mundo parecer ausente.
+export function deriveDiasExercicioAno(
+  intervalos: readonly IntervaloExercicio[],
+  janela: JanelaExercicioAno,
+): DiasExercicioAno {
+  const inicio = toEpochMillis(janela.inicio);
+  const fim = toEpochMillis(janela.fim);
+
+  if (inicio === null || fim === null || fim <= inicio) {
+    return { diasEmExercicio: 0, diasNaJanela: 0 };
+  }
+
+  return {
+    diasEmExercicio: somarDiasEmExercicio(intervalos, inicio, fim),
+    diasNaJanela: Math.round((fim - inicio) / DIA_EM_MILLIS),
+  };
+}
+
 export function exerceuAnoInteiro(
   intervalos: readonly IntervaloExercicio[],
   janela: JanelaExercicioAno,

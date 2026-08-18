@@ -1,5 +1,6 @@
 import {
   clipIntervalosExercicio,
+  deriveDiasExercicioAno,
   deriveJanelaExercicioAno,
   exerceuAnoInteiro,
 } from '../rules/exercicio-ano';
@@ -271,6 +272,86 @@ describe('intervalos de exercicio recortados por uma janela', () => {
 
       // Assert
       expect(recortados).toEqual([]);
+    });
+  });
+});
+
+describe('dias de exercicio dentro da janela do ano', () => {
+  const janela = {
+    inicio: '2025-01-01T00:00:00.000Z',
+    fim: '2026-01-01T00:00:00.000Z',
+  };
+
+  describe('when the deputado was away twice during the year', () => {
+    it('reports the days actually served against the whole window', () => {
+      // Arrange
+      const intervalos = [
+        {
+          openedAt: '2025-01-01T00:00:00.000Z',
+          closedAt: '2025-11-06T00:00:00.000Z',
+        },
+        {
+          openedAt: '2025-11-24T00:00:00.000Z',
+          closedAt: '2025-12-02T00:00:00.000Z',
+        },
+        { openedAt: '2025-12-14T00:00:00.000Z', closedAt: null },
+      ];
+
+      // Act
+      const dias = deriveDiasExercicioAno(intervalos, janela);
+
+      // Assert
+      expect(dias).toEqual({ diasEmExercicio: 335, diasNaJanela: 365 });
+    });
+  });
+
+  describe('when an intervalo runs past both ends of the window', () => {
+    it('counts only the days inside the window', () => {
+      // Arrange
+      const intervalos = [
+        {
+          openedAt: '2023-02-01T00:00:00.000Z',
+          closedAt: '2027-01-01T00:00:00.000Z',
+        },
+      ];
+
+      // Act
+      const dias = deriveDiasExercicioAno(intervalos, janela);
+
+      // Assert
+      expect(dias).toEqual({ diasEmExercicio: 365, diasNaJanela: 365 });
+    });
+  });
+
+  describe('when the window opens at the posse of a new legislatura', () => {
+    it('shrinks the window to the days the mandate could exist', () => {
+      // Arrange
+      const janelaPosse = {
+        inicio: '2027-02-02T00:00:00.000Z',
+        fim: '2028-01-01T00:00:00.000Z',
+      };
+      const intervalos = [
+        { openedAt: '2027-02-01T15:00:00.000Z', closedAt: null },
+      ];
+
+      // Act
+      const dias = deriveDiasExercicioAno(intervalos, janelaPosse);
+
+      // Assert
+      expect(dias).toEqual({ diasEmExercicio: 333, diasNaJanela: 333 });
+    });
+  });
+
+  describe('when the deputado has no intervalo at all', () => {
+    it('reports no days served', () => {
+      // Arrange
+      const intervalos: { openedAt: string; closedAt: string | null }[] = [];
+
+      // Act
+      const dias = deriveDiasExercicioAno(intervalos, janela);
+
+      // Assert
+      expect(dias).toEqual({ diasEmExercicio: 0, diasNaJanela: 365 });
     });
   });
 });

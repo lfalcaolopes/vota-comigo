@@ -10,7 +10,8 @@ function loadedResponse() {
     totalAmountUsedCents: 100,
     siglaUf: 'MG',
     exercicioAnoCompleto: true,
-    periodosExercicio: [],
+    diasEmExercicio: 365,
+    diasNaJanela: 365,
     medianaUf: { amountUsedCents: 90, deputadoCount: 4 },
     tetoUf: { amountCents: 500, monthCount: 12 },
     categories: [],
@@ -35,12 +36,8 @@ describe('contrato dos gastos da cota do deputado', () => {
         totalAmountUsedCents: 42797820,
         siglaUf: 'MG',
         exercicioAnoCompleto: true,
-        periodosExercicio: [
-          {
-            startDate: '2025-01-01T00:00:00.000Z',
-            endDate: '2026-01-01T00:00:00.000Z',
-          },
-        ],
+        diasEmExercicio: 365,
+        diasNaJanela: 365,
         medianaUf: {
           amountUsedCents: 39120400,
           deputadoCount: 53,
@@ -88,31 +85,30 @@ describe('contrato dos gastos da cota do deputado', () => {
   });
 
   describe('quando o deputado exerceu apenas parte do ano', () => {
-    it('rejeita uma comparação com a mediana da UF', () => {
+    it('aceita a mediana da UF ao lado do recorte do exercício', () => {
       // Arrange
       const response = {
-        year: 2025,
-        availableYears: [2025],
-        status: 'ok',
-        sigepaDataStatus: 'completo',
-        coveredThroughMonth: 8,
-        totalAmountUsedCents: 100,
-        siglaUf: 'MG',
+        ...loadedResponse(),
         exercicioAnoCompleto: false,
-        periodosExercicio: [
-          {
-            startDate: '2025-08-01T00:00:00.000Z',
-            endDate: '2026-01-01T00:00:00.000Z',
-          },
-        ],
-        medianaUf: { amountUsedCents: 39120400, deputadoCount: 53 },
+        diasEmExercicio: 153,
+        diasNaJanela: 365,
         tetoUf: { amountCents: 20938255, monthCount: 5 },
-        categories: [],
-        months: Array.from({ length: 12 }, (_, index) => ({
-          month: index + 1,
-          totalAmountUsedCents: index < 8 ? 0 : null,
-          categories: [],
-        })),
+      };
+
+      // Act
+      const result = deputadoCeapResponseSchema.safeParse(response);
+
+      // Assert
+      expect(result.success).toBe(true);
+    });
+
+    it('rejeita mais dias em exercício do que a janela do ano tem', () => {
+      // Arrange
+      const response = {
+        ...loadedResponse(),
+        exercicioAnoCompleto: false,
+        diasEmExercicio: 366,
+        diasNaJanela: 365,
       };
 
       // Act

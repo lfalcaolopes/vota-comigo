@@ -20,7 +20,8 @@ function loadedResponse(
     totalAmountUsedCents: 42_712_345,
     siglaUf: "SP",
     exercicioAnoCompleto: true,
-    periodosExercicio: [{ startDate: "2024-01-01", endDate: "2024-12-31" }],
+    diasEmExercicio: 366,
+    diasNaJanela: 366,
     medianaUf: { amountUsedCents: 39_800_000, deputadoCount: 63 },
     tetoUf: { amountCents: 51_404_796, monthCount: 12 },
     categories: [],
@@ -133,7 +134,8 @@ describe("seção de gastos da cota parlamentar", () => {
         medianaUf: null,
         tetoUf: { amountCents: 21_418_665, monthCount: 5 },
         exercicioAnoCompleto: false,
-        periodosExercicio: [{ startDate: "2025-08-01", endDate: "2025-12-31" }],
+        diasEmExercicio: 153,
+        diasNaJanela: 365,
       });
 
       // Act
@@ -461,13 +463,13 @@ describe("seção de gastos da cota parlamentar", () => {
   });
 
   describe("quando o deputado exerceu apenas parte do ano", () => {
-    it("mantém o total real e substitui a comparação pelo período exercido", () => {
+    it("mantém a comparação com a mediana e resume os dias exercidos", () => {
       // Arrange
       const response = loadedResponse({
         totalAmountUsedCents: 15_000_000,
         exercicioAnoCompleto: false,
-        periodosExercicio: [{ startDate: "2024-08-15", endDate: "2024-12-31" }],
-        medianaUf: null,
+        diasEmExercicio: 139,
+        diasNaJanela: 366,
       });
 
       // Act
@@ -475,13 +477,22 @@ describe("seção de gastos da cota parlamentar", () => {
 
       // Assert
       expect(html).toContain("R$ 150.000,00");
-      expect(html).toContain("15/08/2024 a 31/12/2024");
-      expect(html).toContain(
-        "Sem comparação com deputados que exerceram o ano inteiro",
-      );
-      expect(html).not.toContain("Mediana");
+      expect(html).toContain("Exercício em 139 dos 366 dias de 2024");
+      expect(html).toContain("Mediana em SP");
+      expect(html).toContain("62% abaixo da mediana");
       expect(html).not.toContain("projetado");
       expect(html).not.toContain("anualizado");
+    });
+
+    it("não resume os dias quando o exercício cobre a janela inteira", () => {
+      // Arrange
+      const response = loadedResponse();
+
+      // Act
+      const html = render(response);
+
+      // Assert
+      expect(html).not.toContain("Exercício em");
     });
   });
 

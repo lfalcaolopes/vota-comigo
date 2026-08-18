@@ -72,11 +72,6 @@ export const deputadoCeapMonthSchema = z.object({
   categories: z.array(deputadoCeapMonthCategorySchema),
 });
 
-export const deputadoCeapPeriodoExercicioSchema = z.object({
-  startDate: z.string().min(1),
-  endDate: z.string().min(1),
-});
-
 export const deputadoCeapMedianaUfSchema = z.object({
   amountUsedCents: amountUsedCentsSchema,
   deputadoCount: z.number().int().positive(),
@@ -103,7 +98,8 @@ const deputadoCeapLoadedResponseSchema = z.object({
   totalAmountUsedCents: amountUsedCentsSchema,
   siglaUf: z.string().length(2).nullable(),
   exercicioAnoCompleto: z.boolean(),
-  periodosExercicio: z.array(deputadoCeapPeriodoExercicioSchema),
+  diasEmExercicio: z.number().int().nonnegative(),
+  diasNaJanela: z.number().int().positive(),
   medianaUf: deputadoCeapMedianaUfSchema.nullable(),
   tetoUf: deputadoCeapTetoUfSchema.nullable(),
   categories: z.array(deputadoCeapCategorySchema),
@@ -148,14 +144,23 @@ export const deputadoCeapResponseSchema = z
     if (
       response.status !== deputadoCeapStatusSchema.enum["ano-nao-carregado"] &&
       response.medianaUf !== null &&
-      (!response.exercicioAnoCompleto ||
-        response.status !== deputadoCeapStatusSchema.enum.ok)
+      response.status !== deputadoCeapStatusSchema.enum.ok
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["medianaUf"],
-        message:
-          "medianaUf só pode acompanhar dados de exercício anual completo",
+        message: "medianaUf só pode acompanhar um ano com gastos",
+      });
+    }
+
+    if (
+      response.status !== deputadoCeapStatusSchema.enum["ano-nao-carregado"] &&
+      response.diasEmExercicio > response.diasNaJanela
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["diasEmExercicio"],
+        message: "diasEmExercicio não pode exceder a janela do ano",
       });
     }
 
@@ -476,9 +481,6 @@ export type DeputadoCeapMonthCategory = z.infer<
   typeof deputadoCeapMonthCategorySchema
 >;
 export type DeputadoCeapMonth = z.infer<typeof deputadoCeapMonthSchema>;
-export type DeputadoCeapPeriodoExercicio = z.infer<
-  typeof deputadoCeapPeriodoExercicioSchema
->;
 export type DeputadoCeapMedianaUf = z.infer<typeof deputadoCeapMedianaUfSchema>;
 export type DeputadoCeapTetoUf = z.infer<typeof deputadoCeapTetoUfSchema>;
 export type DeputadoCeapResponse = z.infer<typeof deputadoCeapResponseSchema>;
