@@ -7,11 +7,11 @@ export default function ProposicaoNotFound() {
         <EmptyState
           action={
             <ButtonLink href="/proposicoes">
-              Voltar para as proposições
+              Voltar para as propostas
             </ButtonLink>
           }
-          body="Este endereço não corresponde a nenhuma proposição do Quem Vota Comigo."
-          title="Proposição não encontrada"
+          body="Este endereço não corresponde a nenhuma proposta do Quem Vota Comigo."
+          title="Proposta não encontrada"
         />
       </div>
     </main>

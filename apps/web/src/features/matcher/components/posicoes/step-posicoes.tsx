@@ -5,7 +5,7 @@ import type {
   ProposicaoCard,
   ProposicaoDetalhe,
 } from "@vota-comigo/shared-types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import {
   EmentaDetalhada,
@@ -18,6 +18,8 @@ import {
 import { Button, ErrorState, SkeletonRows } from "@/shared/ui";
 
 import { useProposicaoDetalhe } from "../../hooks/use-proposicao-detalhe";
+import type { PosicoesRouteView } from "../../lib/matcher-route";
+import { toPosicoesPendencia } from "../../lib/posicoes-pendencia";
 import { PosicaoChoices } from "./posicao-choices";
 import { StepRevisao } from "./step-revisao";
 
@@ -26,6 +28,8 @@ const QUESTION_ID = "matcher-posicao-pergunta";
 type StepPosicoesProps = {
   selected: ProposicaoCard[];
   posicoes: Map<number, PosicaoUsuarioMatcher>;
+  index: number;
+  view: "card" | "revisao";
   faltamRespostas: number;
   faltamComputaveis: number;
   canRun: boolean;
@@ -34,23 +38,25 @@ type StepPosicoesProps = {
     posicao: PosicaoUsuarioMatcher,
   ) => void;
   onBack: () => void;
+  onNavigate: (destination: PosicoesRouteView) => void;
+  onReviewBack: () => void;
   onRun: () => void;
 };
-
-type View = "card" | "revisao";
 
 export function StepPosicoes({
   selected,
   posicoes,
+  index,
+  view,
   faltamRespostas,
   faltamComputaveis,
   canRun,
   onSetPosicao,
   onBack,
+  onNavigate,
+  onReviewBack,
   onRun,
 }: StepPosicoesProps) {
-  const [view, setView] = useState<View>("card");
-  const [index, setIndex] = useState(0);
   const cardPaneRef = useRef<HTMLDivElement>(null);
   const revisaoPaneRef = useRef<HTMLDivElement>(null);
 
@@ -69,7 +75,14 @@ export function StepPosicoes({
   if (selected.length === 0) {
     return (
       <div className="mx-auto grid w-full max-w-6xl gap-4">
-        <p className="text-sm text-muted">Nenhuma proposição selecionada.</p>
+        <div className="grid gap-1">
+          <h2 className="text-base font-[680] text-ink">
+            Nenhuma proposta escolhida
+          </h2>
+          <p className="text-sm text-muted">
+            Volte e escolha as propostas que você quer comparar.
+          </p>
+        </div>
         <Button className="justify-self-start" onClick={onBack}>
           Voltar
         </Button>
@@ -78,7 +91,6 @@ export function StepPosicoes({
   }
 
   const card = selected[index];
-  const isFirst = index === 0;
   const isLast = index === selected.length - 1;
   const current = posicoes.get(card.externalIdProposicao);
 
@@ -86,24 +98,20 @@ export function StepPosicoes({
   // panes are always shown, so advancing past the last card is a visual no-op.
   function goNext() {
     if (isLast) {
-      setView("revisao");
+      onNavigate({ view: "revisao" });
     } else {
-      setIndex((v) => v + 1);
+      onNavigate({ view: "card", index: index + 1 });
     }
   }
 
   function goBack() {
-    if (isFirst) {
-      onBack();
-    } else {
-      setIndex((v) => v - 1);
-    }
+    onBack();
   }
 
   return (
     <div className="mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[minmax(0,1fr)_21rem] lg:items-start lg:gap-8">
       <div
-        aria-label={`Proposição ${index + 1} de ${selected.length}`}
+        aria-label={`Proposta ${index + 1} de ${selected.length}`}
         className={`${view === "revisao" ? "hidden lg:grid" : "grid"} gap-6 focus-visible:outline-none`}
         ref={cardPaneRef}
         role="group"
@@ -142,13 +150,9 @@ export function StepPosicoes({
           faltamComputaveis={faltamComputaveis}
           faltamRespostas={faltamRespostas}
           highlightIndex={index}
-          onBack={() => {
-            setIndex(selected.length - 1);
-            setView("card");
-          }}
+          onBack={onReviewBack}
           onEditar={(editIndex) => {
-            setIndex(editIndex);
-            setView("card");
+            onNavigate({ view: "card", index: editIndex });
           }}
           onRun={onRun}
           posicoes={posicoes}
@@ -216,12 +220,16 @@ export function PosicaoConteudo({
   const temResumoIa = Boolean(
     detalhe.resumoIaDisponivel && detalhe.resumoIaDetalhe,
   );
+  const pendencia = toPosicoesPendencia({
+    faltamComputaveis,
+    faltamRespostas,
+  });
 
   return (
     <div className="grid gap-6">
       <div className="grid min-w-0 gap-6">
         <h2 className="font-mono text-base font-[650] tracking-[-0.01em] text-ink md:text-lg">
-          {identificador ?? "Sem identificador"}
+          {identificador ?? detalhe.ementa ?? "Proposta sem número"}
         </h2>
 
         {temResumoIa ? (
@@ -258,17 +266,15 @@ export function PosicaoConteudo({
           value={current}
         />
 
-        {faltamRespostas > 0 ? (
-          <p className="text-xs leading-snug text-muted lg:hidden" role="status">
-            Faltam{" "}
-            <strong className="font-[720] text-ink">{faltamRespostas}</strong>{" "}
-            respostas para ver o resultado.
-          </p>
-        ) : faltamComputaveis > 0 ? (
-          <p className="text-xs leading-snug text-muted lg:hidden" role="status">
-            Faltam{" "}
-            <strong className="font-[720] text-ink">{faltamComputaveis}</strong>{" "}
-            respostas Sim ou Não para ver o resultado.
+        {pendencia ? (
+          <p
+            className="text-xs leading-snug text-muted lg:hidden"
+            role="status"
+          >
+            {pendencia.instrucao}{" "}
+            <strong className="font-[720] text-ink">
+              {pendencia.contagem}
+            </strong>
           </p>
         ) : null}
       </div>

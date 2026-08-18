@@ -4,22 +4,36 @@ import type {
   VotacaoRef,
 } from '../types/exercicio.types';
 import { classifyEvento } from './evento-exercicio';
+import { toEpochMillis } from './instante';
 
-export function resolveVotacaoTimestamp(votacao: VotacaoRef): string | null {
-  return votacao.dataHoraRegistro ?? votacao.data ?? null;
+type EventoOrdenado = {
+  evento: EventoExercicio;
+  epoch: number;
+};
+
+function ordenarPorInstante(
+  eventos: readonly EventoExercicio[],
+): readonly EventoOrdenado[] {
+  return eventos
+    .flatMap((evento) => {
+      const epoch = toEpochMillis(evento.dataHora);
+      return epoch === null ? [] : [{ evento, epoch }];
+    })
+    .sort((a, b) => a.epoch - b.epoch);
+}
+
+export function resolveVotacaoTimestamp(votacao: VotacaoRef): number | null {
+  const bruto = votacao.dataHoraRegistro ?? votacao.data ?? null;
+  return bruto === null ? null : toEpochMillis(bruto);
 }
 
 export function deriveIntervalosExercicio(
   eventos: readonly EventoExercicio[],
 ): readonly IntervaloExercicio[] {
-  const ordenados = [...eventos].sort((a, b) =>
-    a.dataHora < b.dataHora ? -1 : a.dataHora > b.dataHora ? 1 : 0,
-  );
-
   const intervalos: IntervaloExercicio[] = [];
   let openedAt: string | null = null;
 
-  for (const evento of ordenados) {
+  for (const { evento } of ordenarPorInstante(eventos)) {
     const efeito = classifyEvento(evento);
     if (efeito === 'open' && openedAt === null) {
       openedAt = evento.dataHora;
@@ -38,13 +52,21 @@ export function deriveIntervalosExercicio(
 
 export function isEmExercicioFromIntervalos(
   intervalos: readonly IntervaloExercicio[],
-  instante: string,
+  instante: number,
 ): boolean {
-  return intervalos.some(
-    (intervalo) =>
-      intervalo.openedAt <= instante &&
-      (intervalo.closedAt === null || instante < intervalo.closedAt),
-  );
+  return intervalos.some((intervalo) => {
+    const abertura = toEpochMillis(intervalo.openedAt);
+    if (abertura === null || abertura > instante) {
+      return false;
+    }
+    // um limite ilegível não vira intervalo em aberto: sem instante confiável,
+    // o intervalo simplesmente não casa
+    const fechamento =
+      intervalo.closedAt === null
+        ? Number.POSITIVE_INFINITY
+        : toEpochMillis(intervalo.closedAt);
+    return fechamento !== null && instante < fechamento;
+  });
 }
 
 export function isEmAtividadeFromIntervalos(
@@ -57,9 +79,10 @@ export function isEmExercicio(
   eventos: readonly EventoExercicio[],
   instante: string,
 ): boolean {
-  return isEmExercicioFromIntervalos(
-    deriveIntervalosExercicio(eventos),
-    instante,
+  const epoch = toEpochMillis(instante);
+  return (
+    epoch !== null &&
+    isEmExercicioFromIntervalos(deriveIntervalosExercicio(eventos), epoch)
   );
 }
 
@@ -71,8 +94,13 @@ export function getPartidoVigente(
   eventos: readonly EventoExercicio[],
   instante: string,
 ): string | null {
-  const comPartido = eventos.filter(
-    (evento) => evento.dataHora <= instante && evento.partido !== null,
+  const limite = toEpochMillis(instante);
+  if (limite === null) {
+    return null;
+  }
+
+  const comPartido = ordenarPorInstante(eventos).filter(
+    (item) => item.epoch <= limite && item.evento.partido !== null,
   );
-  return comPartido.at(-1)?.partido ?? null;
+  return comPartido.at(-1)?.evento.partido ?? null;
 }

@@ -1,4 +1,5 @@
 import type { MatcherDeputadoResumo } from "@vota-comigo/shared-types";
+import Link from "next/link";
 
 import { DeputadoAvatar } from "@/shared/deputado";
 import { Badge, CheckboxControl } from "@/shared/ui";
@@ -11,11 +12,11 @@ import {
   toAtividadeLabel,
   toAtividadeTone,
 } from "../../lib/matcher-presentation";
+import { buildResultadoDetalheHref } from "../../lib/matcher-route";
 
 type DeputadoCardProps = {
   deputado: MatcherDeputadoResumo;
   totalPosicoesComputaveis: number;
-  onOpen: (externalIdDeputado: number) => void;
   comparativoSelection?: {
     disabled: boolean;
     onToggle: (externalIdDeputado: number) => void;
@@ -27,7 +28,6 @@ export function DeputadoCard({
   comparativoSelection,
   deputado,
   totalPosicoesComputaveis,
-  onOpen,
 }: DeputadoCardProps) {
   const percentualLabel = formatPercentual(deputado.compatibilidadeBruta);
   const amostraLabel = toAmostraComparavelLabel(
@@ -59,10 +59,12 @@ export function DeputadoCard({
         </div>
         <div className="flex shrink-0 flex-col items-end">
           <p className="text-lg font-[680] leading-none tabular-nums text-ink">
-            <span className="sr-only">Compatibilidade </span>
+            <span className="sr-only">Concordância </span>
             {percentualLabel}
           </p>
-          <p className="mt-1 text-xs text-muted">{amostraLabel}</p>
+          <p className="mt-1 hidden text-xs text-muted sm:block">
+            {amostraLabel}
+          </p>
         </div>
         {!comparativoSelection ? (
           <svg
@@ -83,6 +85,8 @@ export function DeputadoCard({
           </svg>
         ) : null}
       </div>
+
+      <p className="text-xs text-muted sm:hidden">{amostraLabel}</p>
 
       <div className="flex flex-wrap gap-2">
         <Badge tone={atividadeTone}>
@@ -164,13 +168,12 @@ export function DeputadoCard({
 
   return (
     <li className="border-b border-border">
-      <button
+      <Link
         className="group grid w-full cursor-pointer gap-3 py-3 text-left transition-colors duration-[180ms] ease-standard hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        onClick={() => onOpen(deputado.externalIdDeputado)}
-        type="button"
+        href={buildResultadoDetalheHref(deputado.externalIdDeputado)}
       >
         {content}
-      </button>
+      </Link>
     </li>
   );
 }

@@ -1,7 +1,7 @@
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
 
 import type { FeedDisplay, FeedStatus } from "@/shared/proposicao";
-import { ProposicaoRow } from "@/shared/proposicao";
+import { ProposicaoRow, toIdentificadorLegislativo } from "@/shared/proposicao";
 import {
   Button,
   CheckboxControl,
@@ -20,8 +20,14 @@ type SelecaoListProps = {
   atLimit: boolean;
   onToggle: (proposicao: ProposicaoCard) => void;
   onLoadMore: () => Promise<void>;
-  onClearFilters: () => Promise<void>;
+  onClearTudo: () => Promise<void>;
 };
+
+function toSelecaoLabel(card: ProposicaoCard): string {
+  const identificador = toIdentificadorLegislativo(card);
+  if (identificador !== null) return identificador;
+  return card.ementa ?? "esta proposta";
+}
 
 export function SelecaoList({
   items,
@@ -33,7 +39,7 @@ export function SelecaoList({
   atLimit,
   onToggle,
   onLoadMore,
-  onClearFilters,
+  onClearTudo,
 }: SelecaoListProps) {
   if (display === "loading") {
     return <SkeletonRows count={4} />;
@@ -42,8 +48,8 @@ export function SelecaoList({
   if (display === "empty-default") {
     return (
       <EmptyState
-        body="Ainda não há proposições para mostrar."
-        title="Nada para exibir ainda"
+        body="Nenhuma proposta foi carregada. Tente recarregar a página."
+        title="Nenhuma proposta disponível"
       />
     );
   }
@@ -52,12 +58,12 @@ export function SelecaoList({
     return (
       <EmptyState
         action={
-          <Button onClick={() => void onClearFilters()} variant="secondary">
-            Limpar filtros
+          <Button onClick={() => void onClearTudo()} variant="secondary">
+            Limpar busca e filtros
           </Button>
         }
-        body="Nenhuma proposição foi encontrada com a busca e os filtros utilizados."
-        title="Nenhuma proposição encontrada"
+        body="Nenhuma proposta combina com a busca e os filtros atuais. Tente remover um filtro ou buscar por outras palavras."
+        title="Nenhuma proposta encontrada"
       />
     );
   }
@@ -66,7 +72,7 @@ export function SelecaoList({
     return (
       <div className="grid gap-4">
         <InlineMessage
-          body="Não foi possível carregar as proposições. Tente novamente."
+          body="Não foi possível carregar as propostas. Tente novamente."
           title="Erro ao carregar"
           tone="danger"
         />
@@ -89,13 +95,24 @@ export function SelecaoList({
           const disabled = !isSelected && atLimit;
           return (
             <li key={card.externalIdProposicao}>
-              <label
+              {/* o card traz seus proprios controles, entao o clique na linha nao pode vir de um label */}
+              <div
                 className={`flex items-start gap-3 py-1 ${
                   disabled ? "cursor-not-allowed" : "cursor-pointer"
                 }`}
+                onClick={(event) => {
+                  if (disabled) return;
+                  if (
+                    event.target instanceof Element &&
+                    event.target.closest("button, a, input")
+                  ) {
+                    return;
+                  }
+                  onToggle(card);
+                }}
               >
                 <CheckboxControl
-                  aria-label={`Selecionar proposição ${card.externalIdProposicao}`}
+                  aria-label={`Selecionar ${toSelecaoLabel(card)}`}
                   checked={isSelected}
                   className="mt-6"
                   disabled={disabled}
@@ -104,7 +121,7 @@ export function SelecaoList({
                 <div className="min-w-0 flex-1">
                   <ProposicaoRow card={card} />
                 </div>
-              </label>
+              </div>
             </li>
           );
         })}
@@ -113,7 +130,7 @@ export function SelecaoList({
 
       {status === "error" ? (
         <InlineMessage
-          body="Não foi possível carregar as proposições. Tente novamente."
+          body="Não foi possível carregar as propostas. Tente novamente."
           title="Erro ao carregar"
           tone="danger"
         />

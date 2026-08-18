@@ -1,6 +1,7 @@
 import type { DeputadoCard } from "@vota-comigo/shared-types";
 import { describe, expect, it } from "vitest";
 
+import { FILTROS_PADRAO, type DeputadoFeedFiltros } from "../feed-filtros";
 import {
   deputadoFeedDisplay,
   deputadoFeedReducer,
@@ -23,24 +24,43 @@ function card(externalIdDeputado: number): DeputadoCard {
 
 const firstPage = [card(1), card(2)];
 
+function init(
+  overrides: {
+    items?: DeputadoCard[];
+    total?: number;
+    query?: string;
+    filtros?: Partial<DeputadoFeedFiltros>;
+  } = {},
+) {
+  return initDeputadoFeedState({
+    items: overrides.items ?? firstPage,
+    total: overrides.total ?? 50,
+    query: overrides.query ?? "",
+    filtros: { ...FILTROS_PADRAO, ...overrides.filtros },
+  });
+}
+
 describe("initDeputadoFeedState", () => {
   describe("when initialised with filters", () => {
-    it("stores items, total, query, activity, and UF", () => {
-      // Arrange / Act
-      const state = initDeputadoFeedState(
-        firstPage,
-        50,
-        " maria ",
-        true,
-        "SP",
-        "PT",
-      );
+    it("stores items, total, query, and the applied filters", () => {
+      // Act
+      const state = init({
+        query: " maria ",
+        filtros: {
+          incluirForaDeExercicio: true,
+          ufs: ["SP"],
+          partidos: ["PT"],
+        },
+      });
 
       // Assert
       expect(state.query).toBe("maria");
-      expect(state.emAtividade).toBe(true);
-      expect(state.uf).toBe("SP");
-      expect(state.partido).toBe("PT");
+      expect(state.filtros).toEqual({
+        ...FILTROS_PADRAO,
+        incluirForaDeExercicio: true,
+        ufs: ["SP"],
+        partidos: ["PT"],
+      });
       expect(state.feed.items).toEqual(firstPage);
       expect(state.feed.total).toBe(50);
       expect(state.status).toBe("idle");
@@ -49,10 +69,10 @@ describe("initDeputadoFeedState", () => {
 });
 
 describe("deputadoFeedReducer", () => {
-  describe("when changeQuery is dispatched", () => {
+  describe("when the search term changes", () => {
     it("records the query, clears items, and starts loading", () => {
       // Arrange
-      const state = initDeputadoFeedState(firstPage, 50);
+      const state = init();
 
       // Act
       const next = deputadoFeedReducer(state, {
@@ -65,75 +85,101 @@ describe("deputadoFeedReducer", () => {
       expect(next.feed.items).toEqual([]);
       expect(next.status).toBe("loading");
     });
-  });
 
-  describe("when toggleEmAtividade is dispatched", () => {
-    it("toggles activity while preserving query, UF, and partido", () => {
+    it("keeps the applied filters when the search is cleared", () => {
       // Arrange
-      const state = initDeputadoFeedState(
-        firstPage,
-        50,
-        "maria",
-        false,
-        "SP",
-        "PT",
-      );
+      const state = init({ query: "maria", filtros: { ufs: ["SP"] } });
 
       // Act
-      const next = deputadoFeedReducer(state, { type: "toggleEmAtividade" });
+      const next = deputadoFeedReducer(state, { type: "clearSearch" });
 
       // Assert
-      expect(next.emAtividade).toBe(true);
-      expect(next.query).toBe("maria");
-      expect(next.uf).toBe("SP");
-      expect(next.partido).toBe("PT");
-      expect(next.feed.items).toEqual([]);
-      expect(next.status).toBe("loading");
+      expect(next.query).toBe("");
+      expect(next.filtros.ufs).toEqual(["SP"]);
     });
   });
 
-  describe("when changePartido is dispatched", () => {
-    it("records the partido, clears items, and starts loading", () => {
+  describe("when a filter set is applied", () => {
+    it("replaces every filter at once and starts loading", () => {
       // Arrange
-      const state = initDeputadoFeedState(firstPage, 50);
+      const state = init({ filtros: { ufs: ["SP"], partidos: ["PT"] } });
 
       // Act
       const next = deputadoFeedReducer(state, {
-        type: "changePartido",
-        partido: "PSOL",
+        type: "applyFiltros",
+        filtros: {
+          ...FILTROS_PADRAO,
+          incluirForaDeExercicio: true,
+          ufs: ["RJ"],
+        },
       });
 
       // Assert
-      expect(next.partido).toBe("PSOL");
+      expect(next.filtros).toEqual({
+        ...FILTROS_PADRAO,
+        incluirForaDeExercicio: true,
+        ufs: ["RJ"],
+      });
       expect(next.feed.items).toEqual([]);
       expect(next.status).toBe("loading");
     });
-  });
 
-  describe("when changeUf is dispatched", () => {
-    it("records the UF, clears items, and starts loading", () => {
+    it("keeps the search term, because the search lives outside the panel", () => {
       // Arrange
-      const state = initDeputadoFeedState(firstPage, 50);
+      const state = init({ query: "maria" });
 
       // Act
-      const next = deputadoFeedReducer(state, { type: "changeUf", uf: "RJ" });
+      const next = deputadoFeedReducer(state, {
+        type: "applyFiltros",
+        filtros: FILTROS_PADRAO,
+      });
 
       // Assert
-      expect(next.uf).toBe("RJ");
-      expect(next.feed.items).toEqual([]);
+      expect(next.query).toBe("maria");
+    });
+
+    it("clears a filter that the applied set leaves at its default", () => {
+      // Arrange
+      const state = init({ filtros: { ufs: ["SP"], partidos: ["PT"] } });
+
+      // Act
+      const next = deputadoFeedReducer(state, {
+        type: "applyFiltros",
+        filtros: { ...FILTROS_PADRAO, partidos: ["PT"] },
+      });
+
+      // Assert
+      expect(next.filtros.ufs).toEqual([]);
+      expect(next.filtros.partidos).toEqual(["PT"]);
+    });
+  });
+
+  describe("when everything is cleared from the empty list", () => {
+    it("drops the search term along with the filters", () => {
+      // Arrange
+      const state = init({
+        query: "maria",
+        filtros: {
+          incluirForaDeExercicio: true,
+          ufs: ["SP"],
+          partidos: ["PT"],
+        },
+      });
+
+      // Act
+      const next = deputadoFeedReducer(state, { type: "clearTudo" });
+
+      // Assert
+      expect(next.query).toBe("");
+      expect(next.filtros).toEqual(FILTROS_PADRAO);
       expect(next.status).toBe("loading");
     });
   });
 
-  describe("when loadMoreSuccess is dispatched", () => {
+  describe("when a further page arrives", () => {
     it("appends the new page", () => {
       // Arrange
-      const loading = deputadoFeedReducer(
-        initDeputadoFeedState(firstPage, 50),
-        {
-          type: "loadMoreStart",
-        },
-      );
+      const loading = deputadoFeedReducer(init(), { type: "loadMoreStart" });
 
       // Act
       const next = deputadoFeedReducer(loading, {
@@ -152,15 +198,23 @@ describe("deputadoFeedReducer", () => {
 describe("deputadoFeedDisplay", () => {
   it("uses empty-filtered when filters are active and no items are loaded", () => {
     // Arrange
-    const state = initDeputadoFeedState([], 0, "", false, null, "PT");
+    const state = init({ items: [], total: 0, filtros: { partidos: ["PT"] } });
 
     // Act / Assert
     expect(deputadoFeedDisplay(state)).toBe("empty-filtered");
   });
 
+  it("uses empty-default when nothing is filtered and no items are loaded", () => {
+    // Arrange
+    const state = init({ items: [], total: 0 });
+
+    // Act / Assert
+    expect(deputadoFeedDisplay(state)).toBe("empty-default");
+  });
+
   it("uses error when the empty feed is in error state", () => {
     // Arrange
-    const state = deputadoFeedReducer(initDeputadoFeedState([], 0), {
+    const state = deputadoFeedReducer(init({ items: [], total: 0 }), {
       type: "loadError",
     });
 
@@ -172,7 +226,7 @@ describe("deputadoFeedDisplay", () => {
 describe("deputadoNextOffset and deputadoHasMore", () => {
   it("derive pagination state from the loaded items and total", () => {
     // Arrange
-    const state = initDeputadoFeedState(firstPage, 50);
+    const state = init();
 
     // Act / Assert
     expect(deputadoNextOffset(state)).toBe(2);

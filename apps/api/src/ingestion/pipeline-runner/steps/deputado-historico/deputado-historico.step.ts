@@ -1,11 +1,14 @@
 import type {
   ExternalGap,
-  IngestionReporter,
   IngestionStep,
   IngestionStepContext,
   Rejection,
   StepRunResult,
 } from '../../types/ingestion-pipeline-runner.types';
+import {
+  createApiWindowReporting,
+  type ApiWindowReporting,
+} from '../../shared/api-window-reporting';
 import { mapWithConcurrency } from '../../shared/bounded-concurrency';
 import { extractExternalIdFromUri } from '../../shared/camara-uri';
 import { normalizeSiglaPartido } from '../../shared/sigla-partido';
@@ -28,7 +31,6 @@ import type {
 } from './deputado-historico.repository.types';
 
 const API_CONCURRENCY = 3;
-const PROGRESS_INTERVAL = 50;
 const DEFAULT_CHUNK_SIZE = 50;
 
 export type DeputadoHistoricoStepDeps = {
@@ -59,6 +61,7 @@ export function createDeputadoHistoricoStep(
 
       const total = batch.length;
       const chunkSize = deps.chunkSize ?? DEFAULT_CHUNK_SIZE;
+      const reporting = createApiWindowReporting(context, 'deputado_historico');
       const legislaturaIds = await deps.legislaturaLookup.loadIdByExternalId();
 
       const progress = { processed: 0, failures: 0 };
@@ -72,6 +75,7 @@ export function createDeputadoHistoricoStep(
         const events = await fetchChunk(
           deps,
           context,
+          reporting,
           chunk,
           total,
           progress,
@@ -116,8 +120,7 @@ export function createDeputadoHistoricoStep(
         tally.updated += updated;
       }
 
-      reportPendingSummary(
-        context,
+      reporting.pendingSummary(
         loaded.length,
         progress.processed - progress.failures,
       );
@@ -152,6 +155,7 @@ type FetchedEvent = {
 async function fetchChunk(
   deps: DeputadoHistoricoStepDeps,
   context: IngestionStepContext,
+  reporting: ApiWindowReporting,
   chunk: readonly IngestedDeputado[],
   total: number,
   progress: { processed: number; failures: number },
@@ -173,8 +177,8 @@ async function fetchChunk(
       }
 
       reportDebugItem(context, deputado, result, performance.now() - startedAt);
-      reportProgress(context.reporter, progress.processed, total);
-      reportStatus(context, progress.processed, total, progress.failures);
+      reporting.progress(progress.processed, total);
+      reporting.status(progress.processed, total, progress.failures);
 
       return { deputado, result };
     },
@@ -200,46 +204,6 @@ async function fetchChunk(
   }
 
   return events;
-}
-
-function reportPendingSummary(
-  context: IngestionStepContext,
-  totalPending: number,
-  processed: number,
-): void {
-  const reporter = context.reporter;
-
-  if (reporter === undefined) {
-    return;
-  }
-
-  const remaining = Math.max(totalPending - processed, 0);
-  const tail =
-    remaining > 0 ? ' — rode de novo para continuar' : ' — nada pendente';
-
-  reporter.log(
-    `[deputado_historico] ${processed} processados nesta janela, ${remaining} ainda pendentes${tail}`,
-  );
-}
-
-function reportProgress(
-  reporter: IngestionReporter | undefined,
-  processed: number,
-  total: number,
-): void {
-  if (reporter === undefined) {
-    return;
-  }
-
-  if (processed !== total && processed % PROGRESS_INTERVAL !== 0) {
-    return;
-  }
-
-  const pct = total === 0 ? 100 : Math.round((processed / total) * 100);
-
-  reporter.log(
-    `[deputado_historico] ${processed}/${total} deputados (${pct}%)`,
-  );
 }
 
 function debugEventHandler(
@@ -290,25 +254,6 @@ function reportDebugWrite(
   }
 
   reporter.debug(`[debug] gravando ${rowCount} eventos no banco em lotes`);
-}
-
-function reportStatus(
-  context: IngestionStepContext,
-  processed: number,
-  total: number,
-  failures: number,
-): void {
-  const reporter = context.reporter;
-
-  if (!context.debug || reporter?.status === undefined) {
-    return;
-  }
-
-  const pct = total === 0 ? 100 : Math.round((processed / total) * 100);
-
-  reporter.status(
-    `deputado_historico ${processed}/${total} (${pct}%) ok:${processed - failures} falhas:${failures}`,
-  );
 }
 
 function emptyResult(): StepRunResult {

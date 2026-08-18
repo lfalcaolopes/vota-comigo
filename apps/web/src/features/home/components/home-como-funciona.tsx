@@ -7,21 +7,21 @@ type Passo = {
 const passos: Passo[] = [
   {
     numero: "01",
-    titulo: "Declare suas posições",
+    titulo: "Escolha as propostas",
     descricao:
-      "Você responde se concorda ou discorda de proposições já votadas na Câmara, resumidas em linguagem comum.",
+      "Você escolhe entre as propostas já votadas na Câmara, a partir dos temas que te interessam.",
   },
   {
     numero: "02",
-    titulo: "Comparamos com votos reais",
+    titulo: "Declare suas posições",
     descricao:
-      "Cada resposta é confrontada com o voto nominal registrado por cada deputado federal naquela votação.",
+      "Você lê um resumo curto de cada uma e diz se concorda ou discorda. Cada resposta é comparada com o voto registrado por cada deputado federal naquela votação.",
   },
   {
     numero: "03",
-    titulo: "Veja a compatibilidade com contexto",
+    titulo: "Veja o resultado completo",
     descricao:
-      "Além do percentual, você vê em quantas votações a conta se baseia, a presença do deputado e o que ficou de fora da conta.",
+      "Você vê de onde vem cada percentual: quantas votações entraram na conta, o que ficou de fora e quanto o deputado esteve presente.",
   },
 ];
 
@@ -40,7 +40,7 @@ export function HomeComoFunciona() {
             Como funciona
           </h2>
           <p className="text-base leading-normal text-muted">
-            Três passos, da sua opinião ao voto real de cada deputado federal.
+            Três passos, da sua opinião ao resultado completo.
           </p>
         </div>
 

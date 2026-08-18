@@ -1,0 +1,38 @@
+{
+  "ano": 2003,
+  "items": {
+    "106701": {
+      "sourceHash": "00c16007effe7a9df8aab7878f5c2ded613e75b0bba54549799c42fa958e9919",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Criminaliza a caça, a captura, a guarda, o transporte e o comércio de animais silvestres sem autorização, e a venda de peixes ornamentais sem permissão.",
+      "resumoDetalhe": "- Cria crime com pena de detenção e multa para quem mata, persegue, caça, apanha, usa ou impede a procriação de animais silvestres sem permissão, licença ou autorização, e para quem modifica ou destrói ninho, abrigo ou criadouro natural.\n- Cria crime com pena para quem vende, expõe, exporta, adquire, guarda, tem em cativeiro, usa ou transporta ovos, larvas, espécimes ou produtos da fauna oriundos de criadouros não autorizados ou sem permissão, com pena mais severa para atuação em grande escala ou de caráter permanente; prevê que, em caso de guarda doméstica de espécie não ameaçada, o juiz pode deixar de aplicar a pena.\n- Define como fauna silvestre os animais que passam toda a vida ou parte dela em território ou em águas brasileiras; aumenta as penas em situações mais graves, como o crime contra espécie rara ou ameaçada de extinção, dentro de unidade de conservação ou com métodos capazes de provocar destruição em massa; deixa os atos de pesca fora dessas regras; e cria crime específico para comercializar peixes ornamentais sem permissão.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:30:16.198Z",
+      "reviewedAt": "2026-08-16T18:00:00Z"
+    },
+    "146708": {
+      "sourceHash": "e0a9d5be87710796add8f26618474307378ea16732412a40537958912a70eac3",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Fixa os dias e horários das provas de concursos públicos e vestibulares, com alternativa aos sábados para quem comprova convicção religiosa, e obriga escolas a abonar faltas por motivo de crença.",
+      "resumoDetalhe": "- Estabelece que provas de concursos públicos e vestibulares sejam realizadas de domingo a sexta, no período entre o começo da manhã e o fim da tarde, e que, quando não for possível, possam ocorrer no sábado com opção de horário diferente para quem alegar e comprovar convicção religiosa.\n- Determina que o candidato que optar pelo horário alternativo aos sábados fique incomunicável desde o horário regular do exame até o início do horário alternativo previamente fixado.\n- Exige que escolas públicas e privadas abonem as faltas de alunos que, por crença religiosa, não possam assistir aulas nas sextas-feiras à noite e nos sábados até o fim da tarde, mediante declaração da congregação com assinatura reconhecida em cartório; permite que a escola peça tarefas alternativas para repor as faltas.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:30:16.198Z",
+      "reviewedAt": "2026-08-16T18:00:00Z"
+    },
+    "148200": {
+      "sourceHash": "a88e6381d2a6354e608bd56bf95d41054f0701518137a0187dc8bd3ff3d99805",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite que militares estaduais e do Distrito Federal acumulem o cargo militar com atividades de ensino, técnicas, científicas ou de saúde, se houver compatibilidade de horários.",
+      "resumoDetalhe": "- Aplica aos militares dos Estados, do Distrito Federal e dos Territórios a proibição de acumular cargos públicos que a Constituição impõe aos servidores em geral.\n- Permite a acumulação do cargo militar com outro cargo quando houver compatibilidade de horários e o outro cargo for de professor, de atividade técnica ou científica, ou um cargo privativo de profissionais da saúde que tenham regulamentação própria (conselhos e regras profissionais).",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:30:16.198Z",
+      "reviewedAt": "2026-08-16T18:00:00Z"
+    }
+  }
+}

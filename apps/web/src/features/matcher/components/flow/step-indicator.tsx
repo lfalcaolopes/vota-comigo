@@ -1,62 +1,60 @@
 "use client";
 
-import {
-  STEP_ORDER,
-  stepStatus,
-  type MainMatcherStep,
-  type MatcherStep,
-} from "../../lib/matcher-state";
+import Link from "next/link";
 
-const STEP_LABELS: Record<MainMatcherStep, string> = {
-  local: "Onde você vota",
-  selecao: "Escolha proposições",
-  posicoes: "Sua posição",
-  resultado: "Quem vota com você",
-};
+import {
+  MATCHER_ROUTE_ORDER,
+  stepStatus,
+  type MatcherRoute,
+} from "../../lib/matcher-route";
+import { MATCHER_STEP_LABELS } from "../../lib/matcher-step-labels";
 
 type StepIndicatorProps = {
-  current: MatcherStep;
-  onNavigate: (step: MatcherStep) => void;
+  currentRoute: MatcherRoute;
 };
 
-export function StepIndicator({ current, onNavigate }: StepIndicatorProps) {
+const PILL_BASE =
+  "flex h-7 items-center rounded-full border px-2.5 leading-none";
+
+export function StepIndicator({ currentRoute }: StepIndicatorProps) {
   return (
-    <ol className="flex flex-wrap justify-start gap-2 text-xs font-[650] tabular-nums text-muted">
-      {STEP_ORDER.map((step, position) => {
-        const status = stepStatus(current, step);
+    <ol className="flex flex-wrap items-center justify-start gap-2 text-xs font-[650] tabular-nums text-muted">
+      {MATCHER_ROUTE_ORDER.map((route, position) => {
+        const status = stepStatus(currentRoute, route);
+        const label = (
+          <StepLabel label={MATCHER_STEP_LABELS[route]} position={position} />
+        );
 
         if (status === "done") {
           return (
-            <li key={step}>
-              <button
-                className="cursor-pointer rounded-full border border-border px-2.5 py-1 hover:border-primary hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                onClick={() => onNavigate(step)}
-                type="button"
+            <li className="flex" key={route}>
+              <Link
+                className={`${PILL_BASE} cursor-pointer border-border hover:border-primary hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
+                href={route}
               >
-                <StepLabel label={STEP_LABELS[step]} position={position} />
-              </button>
+                {label}
+              </Link>
             </li>
           );
         }
 
         if (status === "current") {
           return (
-            <li
-              aria-current="step"
-              className="rounded-full border border-primary bg-primary-soft px-2.5 py-1 text-ink"
-              key={step}
-            >
-              <StepLabel label={STEP_LABELS[step]} position={position} />
+            <li aria-current="step" className="flex" key={route}>
+              <span
+                className={`${PILL_BASE} border-primary bg-primary-soft text-ink`}
+              >
+                {label}
+              </span>
             </li>
           );
         }
 
         return (
-          <li
-            className="rounded-full border border-border px-2.5 py-1 opacity-50"
-            key={step}
-          >
-            <StepLabel label={STEP_LABELS[step]} position={position} />
+          <li className="flex" key={route}>
+            <span className={`${PILL_BASE} border-border opacity-50`}>
+              {label}
+            </span>
           </li>
         );
       })}

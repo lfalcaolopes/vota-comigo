@@ -23,13 +23,13 @@ export function MetricasGlossario() {
         <span>O que estes números significam</span>
       </summary>
       <dl className="mt-3 grid gap-3 leading-normal text-muted">
-        <Definicao termo="Votações comparáveis">
+        <Definicao termo="Respostas que entraram na conta">
           Votações em que o deputado registrou um voto que pôde ser comparado à
-          sua posição. É a base do cálculo de compatibilidade.
+          sua resposta. É a base do percentual.
         </Definicao>
-        <Definicao termo="Compatibilidade">
-          Porcentagem das votações comparáveis em que o voto do deputado
-          coincidiu com a sua posição.
+        <Definicao termo="Concordância">
+          Percentual das respostas que entraram na conta em que o voto do
+          deputado coincidiu com a sua.
         </Definicao>
         <Definicao termo="Cobertura de exercício">
           Votações, entre as que você selecionou, em que o deputado estava em

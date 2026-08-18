@@ -6,7 +6,7 @@ Contrato operacional do pipeline-runner de ingestão dos dados da Câmara dos De
 
 O pipeline-runner é o orquestrador da pipeline de ingestão: lê os CSVs já baixados localmente (saída do downloader, ver [camara-csv-downloader.md](./camara-csv-downloader.md)), transforma os dados conforme as regras documentadas, complementa lacunas específicas via API da Câmara quando permitido, e popula o banco.
 
-A API dentro do pipeline-runner é exceção controlada, não uma segunda fonte geral de enriquecimento. No desenho atual ela entra **apenas** no passo `deputado_historico`, via `GET /deputados/{id}/historico` — o único dado necessário que não existe em CSV. As proposições vêm **exclusivamente** dos CSVs locais; quando faltam arquivos `proposicoes-{ano}.csv` ou `proposicoesTemas-{ano}.csv`, o pipeline-runner os baixa automaticamente pelo downloader, sem fallback de API ([ADR-0012](../adr/012-ingestao-proposicoes-sem-api-sem-principal.md)).
+A API dentro do pipeline-runner é exceção controlada, não uma segunda fonte geral de enriquecimento. No desenho atual ela entra em dois passos manuais: `deputado_historico`, via `GET /deputados/{id}/historico` — o único dado necessário que não existe em CSV —, e `deputado_gasto_cota_sigepa`, via `GET /deputados/{id}/despesas`, que repõe uma categoria que o dump anual deixou de publicar ([ADR-0022](../adr/022-reposicao-passagem-aerea-sigepa-modulo-a-parte.md)). As proposições vêm **exclusivamente** dos CSVs locais; quando faltam arquivos `proposicoes-{ano}.csv` ou `proposicoesTemas-{ano}.csv`, o pipeline-runner os baixa automaticamente pelo downloader, sem fallback de API ([ADR-0012](../adr/012-ingestao-proposicoes-sem-api-sem-principal.md)).
 
 ### O que o pipeline-runner não faz
 
@@ -78,25 +78,31 @@ O prefixo `DATABASE_URL=... pnpm ...` aplica o override apenas àquele comando, 
 
 Os passos rodam em ordem de dependência (chaves estrangeiras entre tabelas). A ordem abaixo é a lista válida para `--only`.
 
-| #   | Passo                | Escopo | Fonte    | Origem em disco / API                                                               |
-| --- | -------------------- | ------ | -------- | ----------------------------------------------------------------------------------- |
-| 1   | `legislaturas`       | único  | CSV      | `data/raw/legislaturas/legislaturas.csv`                                            |
-| 2   | `deputados`          | único  | CSV      | `data/raw/deputados/deputados.csv`                                                  |
-| 3   | `partidos`           | anual  | CSV      | `data/raw/votacoesVotos/votacoesVotos-{ano}.csv`                                    |
-| 4   | `votacoes`           | anual  | CSV      | `data/raw/votacoes/votacoes-{ano}.csv` (+ companheiro `votacoesVotos-{ano}.csv`)    |
-| 5   | `votacao_votos`      | anual  | CSV      | `data/raw/votacoesVotos/votacoesVotos-{ano}.csv`                                    |
-| 6   | `proposicoes`        | único  | derivado | `data/raw/proposicoes/proposicoes-{ano}.csv` (anos derivados, baixados sob demanda) |
-| 7   | `votacao_proposicao` | único  | derivado | `data/raw/votacoesProposicoes/votacoesProposicoes-{ano}.csv`                        |
-| 8   | `tema`               | único  | derivado | `data/raw/proposicoesTemas/proposicoesTemas-{ano}.csv` (baixado sob demanda)        |
-| 9   | `deputado_historico` | único  | API      | `GET /deputados/{id}/historico` (passo **manual**)                                  |
-| 10  | `sanity`             | único  | banco    | lê placares já gravados para conferência                                            |
+| #   | Passo                        | Escopo | Fonte    | Origem em disco / API                                                               |
+| --- | ---------------------------- | ------ | -------- | ----------------------------------------------------------------------------------- |
+| 1   | `legislaturas`               | único  | CSV      | `data/raw/legislaturas/legislaturas.csv`                                            |
+| 2   | `deputados`                  | único  | CSV      | `data/raw/deputados/deputados.csv`                                                  |
+| 3   | `partidos`                   | anual  | CSV      | `data/raw/votacoesVotos/votacoesVotos-{ano}.csv`                                    |
+| 4   | `votacoes`                   | anual  | CSV      | `data/raw/votacoes/votacoes-{ano}.csv` (+ companheiro `votacoesVotos-{ano}.csv`)    |
+| 5   | `votacao_votos`              | anual  | CSV      | `data/raw/votacoesVotos/votacoesVotos-{ano}.csv`                                    |
+| 6   | `proposicoes`                | único  | derivado | `data/raw/proposicoes/proposicoes-{ano}.csv` (anos derivados, baixados sob demanda) |
+| 7   | `votacao_proposicao`         | único  | derivado | `data/raw/votacoesProposicoes/votacoesProposicoes-{ano}.csv`                        |
+| 8   | `tema`                       | único  | derivado | `data/raw/proposicoesTemas/proposicoesTemas-{ano}.csv` (baixado sob demanda)        |
+| 9   | `proposicao_embedding`       | único  | derivado | lê o corpus já gravado e chama `POST /embeddings` do OpenRouter                      |
+| 10  | `deputado_historico`         | único  | API      | `GET /deputados/{id}/historico` (passo **manual**)                                  |
+| 11  | `deputado_gasto_cota_sigepa` | anual  | API      | `GET /deputados/{id}/despesas` (passo **manual**)                                   |
+| 12  | `sanity`                     | único  | banco    | lê placares já gravados para conferência                                            |
+
+> A tabela lista os passos principais; a lista completa e a ordem real de execução estão em `plan/ingestion-step-descriptors.ts`.
+
+O passo `proposicao_embedding` roda depois de `proposicao_computavel` e vetoriza ementa, palavras-chave e os resumos de IA aprovados de cada proposição computável, para a busca semântica do feed. Ele só reembeda linhas cujo `source_hash` mudou, então em regime permanente processa dezenas de linhas. Exige `OPENROUTER_API_KEY`; sem ela cada lote é rejeitado com essa causa, sem derrubar os demais passos. Como o texto inclui o resumo aprovado, rode `import:resumos-ia` antes dele quando houver resumo novo.
 
 - **Escopo único** (`single`): processa um arquivo independentemente da janela `--from`/`--to` (ex.: legislaturas, deputados).
 - **Escopo anual** (`annual`): processa um arquivo por ano da janela.
 - **Fonte derivada**: o passo varre múltiplos anos por conta própria, deriva o conjunto de arquivos necessários e baixa os ausentes.
 - **Passo manual**: fica **fora da execução padrão**; só roda quando nomeado em `--only` (ver [`--only`](#--onlypasso1passo2) e [Passos manuais](#passos-manuais)).
 
-Sem `--only`, `pnpm ingest` executa os passos 1–8 e o 10 (`sanity`), pulando o passo 9 (`deputado_historico`).
+Sem `--only`, `pnpm ingest` executa os passos 1–8 e o 11 (`sanity`), pulando os passos manuais 9 (`deputado_historico`) e 10 (`deputado_gasto_cota_sigepa`).
 
 ---
 
@@ -115,10 +121,10 @@ pnpm ingest -- --only=votacoes,proposicoes
 
 #### Passos manuais
 
-`deputado_historico` é um passo manual: depende da API da Câmara, é lento e sujeito a indisponibilidade e throttling (ver [throttling-deputado-historico.md](./throttling-deputado-historico.md)), então fica fora da execução padrão. Rode-o à parte:
+`deputado_historico` e `deputado_gasto_cota_sigepa` são passos manuais: dependem da API da Câmara, são lentos e sujeitos a indisponibilidade e throttling (ver [throttling-deputado-historico.md](./throttling-deputado-historico.md)), então ficam fora da execução padrão. Rode-os à parte:
 
 ```bash
-# Ingestão padrão: CSVs + sanity, sem histórico
+# Ingestão padrão: CSVs + sanity, sem os passos de API
 pnpm ingest -- --from=2020 --to=2025
 
 # Histórico parlamentar, isolado e quando convém
@@ -126,6 +132,23 @@ pnpm ingest -- --only=deputado_historico
 ```
 
 Quando nomeado explicitamente, o passo manual roda normalmente, inclusive junto de outros (ex.: `--only=deputado_historico,votacoes`).
+
+##### `deputado_gasto_cota_sigepa`
+
+Repõe pela API a categoria `998 — PASSAGEM AÉREA - SIGEPA`, que o dump anual deixou de publicar a partir de agosto de 2025 ([ADR-0022](../adr/022-reposicao-passagem-aerea-sigepa-modulo-a-parte.md)). É anual: um ano por execução, sempre com a janela recortada.
+
+Toda execução começa gravando a categoria 998 em `cota_categoria`, antes de qualquer gasto. O export removeu a categoria de todos os anos, não só dos meses da janela, então o passo do CSV nunca aprende essa descrição e numa base nova a leitura acharia o gasto reposto sem nome para exibir.
+
+Repor um ano custa cerca de 1540 requisições contra um balde de tokens que esvazia por volta de 1000, então **um ano não cabe em uma única execução**. O passo é retomável: são pendentes os deputados com exercício no ano — não os presentes no dump — que ainda não têm linha em `deputado_gasto_cota_sigepa` para aquele ano. Cada lote é gravado em sua própria transação, então uma interrupção preserva o que já fechou, e a execução seguinte retoma só o que falta. Um deputado que não voou recebe linha com gastos vazios e sai do conjunto pendente.
+
+```bash
+# Uma janela de 150 deputados de 2025; repita até "nada pendente"
+pnpm ingest -- --only=deputado_gasto_cota_sigepa --from=2025 --to=2025 --limit=150
+```
+
+O `--limit` vale por ano planejado, então mantenha `--from`/`--to` no mesmo ano para conduzir o orçamento de requisições. Deputado que esgota as tentativas vira lacuna no gap log e permanece pendente para a execução seguinte.
+
+Ao fim de cada execução o passo apura a completude do ano: se todos os elegíveis já têm linha, o ano é registrado como **reposto** em `cota_cobertura`, junto com o mês de cobertura do dump contra o qual a apuração foi feita. Guardar o mês é o que evita um estado silenciosamente errado — se um dump posterior avançar a cobertura do ano, passam a existir meses de SIGEPA que ninguém buscou, e a leitura devolve o ano à condição de não reposto sem intervenção. A apuração não roda em ano cujo dump ainda não foi ingerido, porque não há cobertura contra a qual apurar.
 
 ### `--from={ano}` e `--to={ano}`
 
@@ -177,6 +200,16 @@ Por padrão, `deputado_historico` processa apenas deputados pendentes (sem linha
 pnpm ingest -- --only=deputado_historico --refetch-historico
 ```
 
+### `--refetch-sigepa`
+
+Por padrão, `deputado_gasto_cota_sigepa` só consulta deputados-ano sem linha em `deputado_gasto_cota_sigepa` — um deputado-ano gravado nunca é reconsultado. `--refetch-sigepa` força a rebusca de todos os elegíveis do ano, inclusive os já gravados, e reapura a completude ao fim. É a resposta à retroatividade de três meses da CEAP ([ADR-0022](../adr/022-reposicao-passagem-aerea-sigepa-modulo-a-parte.md)): sem a flag, o ano corrente fica congelado no dia da consulta.
+
+```bash
+pnpm ingest -- --only=deputado_gasto_cota_sigepa --from=2026 --to=2026 --refetch-sigepa
+```
+
+A recarga **não é retomável**: o conjunto é sempre o de todos os elegíveis do ano, então combinar com `--limit` reconsulta sempre os mesmos primeiros N deputados, sem avançar entre execuções (o passo avisa quando as duas flags aparecem juntas). Rode a recarga de uma vez, aceitando o atraso de ~75s por requisição depois que o balde de tokens esvazia.
+
 ### `--retry-gaps={arquivo}`
 
 Reprocessa **apenas** o passo `deputado_historico` para **apenas** os deputados que falharam em uma execução anterior, lendo os IDs do arquivo de lacunas (gap log) gerado por aquela execução. O upsert é idempotente, então reprocessar é seguro. Conflita com `--only` para qualquer passo diferente de `deputado_historico`. Se o arquivo não tiver registros reprocessáveis, encerra com sucesso sem trabalho.
@@ -227,6 +260,8 @@ Quando um arquivo de um passo de escopo único não está em disco, o pipeline-r
 O último passo, `sanity`, compara o placar oficial de cada votação (`votosSim`/`votosNao` de `votacoes-{ano}.csv`) com as contagens derivadas dos votos individuais agregados em `votacao_votos`. Quando `sim` ou `não` divergem, a votação vira rejeição `sanity_placar_divergente`, com ambos os valores, no resumo e no arquivo de erros. Votações sem placar oficial contam como ignoradas (não comparáveis), não como divergência. As demais categorias derivadas (abstenção, obstrução, Artigo 17, não informado) entram só como detalhe de `--debug`, porque a semântica do agrupamento "Outros" da Câmara é ambígua. Em `--dry-run` o passo é pulado (não há escrita fresca para validar); em `--strict` aborta na primeira divergência.
 
 Um caso é tratado como **lacuna de fonte**, não divergência: quando o placar oficial tem votos mas a fonte não traz nenhuma direção individual (todos vieram em branco, agregados em `nao_informado`). É um problema conhecido do `votacoesVotos` da Câmara — o placar agregado é publicado, mas o voto por deputado fica vazio. O `sanity` registra então uma lacuna `votos_individuais_ausentes`, deixando claro que a base local está fiel à fonte (sem registro sintético) e que aquela amostra é inutilizável para o matcher.
+
+Essa votação também deixa de ser candidata a votação de referência em `proposicao_computavel` (ADR 023): sem direção de voto individual ela não casa nenhum deputado, e a proposição só sai do matcher se não tiver nenhuma outra candidata.
 
 ### Logs ao vivo
 

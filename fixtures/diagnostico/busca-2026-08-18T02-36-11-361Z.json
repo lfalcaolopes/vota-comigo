@@ -1,0 +1,1624 @@
+{
+  "cabecalho": {
+    "timestamp": "2026-08-18T02:36:11.361Z",
+    "commit": "ec679e290e31e132e8a5f8448870c3602ea1218d",
+    "commitLimpo": false,
+    "banco": "localhost:5432/vota_comigo",
+    "profundidade": 50,
+    "ordenacao": "mais-votadas (volume_votacoes_plenario desc, sem relevancia textual)"
+  },
+  "buscaConfig": {
+    "implementacao": "LIKE %token% sobre corpus concatenado, com acentuacao dobrada por translate() dos dois lados. Tokens da consulta sao combinados com AND. Consultas que viram citacao (sigla/numero/ano) ignoram o corpus e viram lookup exato.",
+    "fonte": "/home/lfalcao/dev/vota-comigo/apps/api/src/proposicoes/repository/proposicoes-search.condition.ts",
+    "corpusColunas": [
+      "proposicao.ementa",
+      "proposicao.keywords",
+      "proposicao_resumo_ia.resumo_card",
+      "proposicao_resumo_ia.resumo_detalhe"
+    ],
+    "corpusExpressao": "translate(lower(coalesce(ementa,''))) || ' ' || translate(lower(coalesce(keywords,''))) || ' ' || case when <resumo IA publico> then translate(lower(coalesce(resumo_card,''))) || ' ' || translate(lower(coalesce(resumo_detalhe,''))) else '' end",
+    "resumoIaPublico": "generation_status = 'generated' and review_status = 'approved' and resumo_card is not null",
+    "indiceFts": "Nenhum. Nao existe coluna tsvector nem indice GIN sobre proposicao, portanto nao ha stemmer nem lista de stopwords de producao a reusar.",
+    "sondaMorfologica": "to_tsvector('portuguese', <corpus>) @@ plainto_tsquery('portuguese', <token>) — usado somente como sonda de diagnostico para a categoria MORFOLOGICA, nao reflete o comportamento de producao."
+  },
+  "consultas": [
+    {
+      "consulta": "Estatuto do Desarmamento",
+      "nota": "tecnico | armas | nome de lei alterada, não de proposição alteradora",
+      "plano": "tokens (AND, LIKE %token%): [estatuto, do, desarmamento]",
+      "totalNoFiltro": 4,
+      "retornados": 4,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2210523,
+          "titulo": "PL 3715/2019",
+          "ementa": "Altera a Lei nº 10.826, de 22 de dezembro de 2003 (Estatuto do Desarmamento), para determinar que, em área rural, para fins de posse de arma de fogo, considera-se residência ou domicílio toda a extensão do respectivo imóvel."
+        },
+        {
+          "posicao": 2,
+          "externalIdProposicao": 264726,
+          "titulo": "PL 4149/2004",
+          "ementa": "Dá nova redação ao art. 15 da Lei nº 10.826, de 22 de dezembro de 2003, que \"Dispõe sobre registro, posse e comercialização de armas de fogo e munição, sobre o Sistema Nacional de Armas-Sinarm, define crimes e dá outras providências.\""
+        },
+        {
+          "posicao": 3,
+          "externalIdProposicao": 2209381,
+          "titulo": "PL 3723/2019",
+          "ementa": "Altera a Lei nº 10.826, de 22 de dezembro de 2003, que dispõe sobre registro, posse e comercialização de armas de fogo e munição, sobre o Sistema Nacional de Armas - Sinarm e define crimes.\r\n\r\nNOVA EMENTA: Altera a Lei nº 10.826, de 22 de dezembro de 2003, que dispõe sobre registro, posse e comercialização de armas de fogo e munição, sobre o Sistema Nacional de Armas (Sinarm) e define crimes, e o Decreto-Lei nº 2.848, de 7 de dezembro de 1940 (Código Penal); e revoga dispositivos das Leis nºs 7.102, de 20 de junho de 1983, e 7.170, de 14 de dezembro de 1983."
+        },
+        {
+          "posicao": 4,
+          "externalIdProposicao": 2178170,
+          "titulo": "PL 10372/2018",
+          "ementa": "Introduz modificações na legislação penal e processual penal para aperfeiçoar o combate ao crime organizado, aos delitos de tráfico de drogas, tráfico de armas e milícia privada, aos crimes cometidos com violência ou grave ameaça e crimes hediondos, bem como para agilizar e modernizar a investigação criminal e a persecução penal."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 264726,
+          "posicao": 2,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2209381,
+          "posicao": 3,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2210523,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "PDL 3/2025",
+      "nota": "sigla | anistia-responsabilizacao | CONTROLE POSITIVO: matéria com votação nominal individual confirmada na base",
+      "plano": "citacao (lookup exato, corpus ignorado): sigla=pdl numero=3 ano=2025",
+      "totalNoFiltro": 1,
+      "retornados": 1,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2482078,
+          "titulo": "PDL 3/2025",
+          "ementa": "Susta os efeitos da Resolução nº 258, de 23 de dezembro de 2024, do Conselho Nacional dos Direitos da Criança e do Adolescente (CONANDA)."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 2482078,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "PEC 3/2021",
+      "nota": "sigla | instituicoes-mandato | par formal de 'PEC da Impunidade'",
+      "plano": "citacao (lookup exato, corpus ignorado): sigla=pec numero=3 ano=2021",
+      "totalNoFiltro": 1,
+      "retornados": 1,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2270800,
+          "titulo": "PEC 3/2021",
+          "ementa": "Altera os arts. 14, 27, 53, 102 e 105 da Constituição Federal, para dispor sobre as prerrogativas parlamentares e dá outras providências."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 2270800,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "PEC Kamikaze",
+      "nota": "apelido | previdencia-estado | segundo caso canônico de alias carregado",
+      "plano": "tokens (AND, LIKE %token%): [pec, kamikaze]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2329218,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "kamikaze",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "PEC da Blindagem",
+      "nota": "apelido | instituicoes-mandato",
+      "plano": "tokens (AND, LIKE %token%): [pec, da, blindagem]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2270800,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "blindagem",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "PEC da Impunidade",
+      "nota": "apelido | instituicoes-mandato | matéria de origem do projeto; par carregado de 'PEC 3/2021'",
+      "plano": "tokens (AND, LIKE %token%): [pec, da, impunidade]",
+      "totalNoFiltro": 1,
+      "retornados": 1,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2080604,
+          "titulo": "PL 3855/2019",
+          "ementa": "Estabelece medidas contra a corrupção e demais crimes contra o patrimônio público e combate o enriquecimento ilícito de agentes públicos.\r\n\r\nNOVA EMENTA: Estabelece medidas de combate à impunidade, à corrupção; altera os Decretos-Leis nºs 2.848, de 7 de dezembro de 1940 - Código Penal, e 3.689, de 3 de outubro de 1941 - Código de Processo Penal; as Leis nºs 4.717, de 29 de junho de 1965, 4.737, de 15 de julho de 1965, 8.072, de 25 de julho de 1990, 8.112, de 11 de dezembro de 1990, 8.429, de 2 de junho de 1992, 8.906, de 4 de julho de 1994, 9.096, de 19 de setembro de 1995,  9.504, de 30 de setembro de 1997, 9.613, de 3 de março de 1998, e 7.347, de 24 de julho de 1985; revoga dispositivos do Decreto-Lei nº 201, de 27 de fevereiro de 1967, e da Lei nº 8.137, de 27 de dezembro de 1990; e dá outras providências."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 2270800,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "impunidade",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "PEC da Segurança Pública",
+      "nota": "apelido | seguranca-justica",
+      "plano": "tokens (AND, LIKE %token%): [pec, da, seguranca, publica]",
+      "totalNoFiltro": 21,
+      "retornados": 21,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2241662,
+          "titulo": "MPV 927/2020",
+          "ementa": "Dispõe sobre as medidas trabalhistas para enfrentamento do estado de calamidade pública reconhecido pelo Decreto Legislativo nº 6, de 20 de março de 2020, e da emergência de saúde pública de importância internacional decorrente do coronavírus (covid-19), e dá outras providências.\r\n\r\nNOVA EMENTA: Dispõe sobre as medidas trabalhistas para enfrentamento do estado de calamidade pública reconhecido pelo Decreto Legislativo nº 6, de 20 de março de 2020, e da emergência de saúde pública de importância internacional decorrente da pandemia da Covid-19; altera as Leis nºs 8.212, de 24 de julho de 1991, e 13.979, de 6 de fevereiro de 2020; e dá outras providências."
+        },
+        {
+          "posicao": 2,
+          "externalIdProposicao": 2311542,
+          "titulo": "PEC 46/2021",
+          "ementa": "Altera a Constituição Federal e o Ato das Disposições Constitucionais Transitórias para estabelecer o novo regime de pagamentos de precatórios, modificar normas relativas ao Novo Regime Fiscal e autorizar o parcelamento de débitos previdenciários dos Municípios; e dá outras providências."
+        },
+        {
+          "posicao": 3,
+          "externalIdProposicao": 2279744,
+          "titulo": "PL 1613/2021",
+          "ementa": "Altera a Lei nº 8.080, de 19 de setembro de 1990 (Lei Orgânica da Saúde), para dispor sobre os processos de incorporação de tecnologias ao Sistema Único de Saúde (SUS) e sobre a utilização, pelo SUS, de medicamentos cuja indicação de uso seja distinta daquela aprovada no registro da Agência Nacional de Vigilância Sanitária (Anvisa)."
+        },
+        {
+          "posicao": 4,
+          "externalIdProposicao": 2579832,
+          "titulo": "PL 5582/2025",
+          "ementa": "Altera a Lei nº 12.850, de 2 de agosto de 2013, o Decreto-Lei nº 2.848, de 7 de dezembro de 1940 – Código Penal, o Decreto-Lei nº 3.689, de 3 de outubro de 1941 – Código de Processo Penal, a Lei nº 8.072, de 25 de julho de 1990, a Lei nº 7.960, de 21 de dezembro de 1989, e a Lei nº 7.210, de 11 de julho de 1984, para dispor sobre o combate às organizações criminosas no País."
+        },
+        {
+          "posicao": 5,
+          "externalIdProposicao": 2345493,
+          "titulo": "MPV 1154/2023",
+          "ementa": "Estabelece a organização básica dos órgãos da Presidência da República e dos Ministérios.\r\n\r\nNOVA EMENTA: Estabelece a organização básica dos órgãos da Presidência da República e dos Ministérios; altera as Leis nºs 9.984, de 17 de julho de 2000, 9.433, de 8 de janeiro de 1997, 8.001, de 13 de março de 1990, 14.204, de 16 de setembro de 2021, 11.445, de 5 de janeiro de 2007, 13.334, de 13 de setembro de 2016, 12.897, de 18 de dezembro de 2013, 8.745, de 9 de dezembro de 1993, 9.069, de 29 de junho de 1995, e 10.668, de 14 de maio de 2003; e revoga dispositivos das Leis nºs 13.844, de 18 de junho de 2019, 13.901, de 11 de novembro de 2019, 14.261, de 16 de dezembro de 2021, e as Leis nºs 8.028, de 12 de abril de 1990, e 14.074, de 14 de outubro de 2020."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 2500080,
+          "posicao": 18,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "PEC3/2021",
+      "nota": "ruido | controle | sigla sem espaço; deve retornar o mesmo que 'PEC 3/2021'",
+      "plano": "tokens (AND, LIKE %token%): [pec3, 2021]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2270800,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "pec3",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "PL Antifacção",
+      "nota": "apelido | seguranca-justica | matéria de 2025; testa cobertura da janela de ingestão",
+      "plano": "tokens (AND, LIKE %token%): [pl, antifaccao]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2579832,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "antifaccao",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "PL da Devastação",
+      "nota": "apelido | meio-ambiente-terra | caso canônico de alias: deve ser encontrável, título exibido deve ser o descritivo",
+      "plano": "tokens (AND, LIKE %token%): [pl, da, devastacao]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 257161,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "devastacao",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "PL da Dosimetria",
+      "nota": "apelido | anistia-responsabilizacao",
+      "plano": "tokens (AND, LIKE %token%): [pl, da, dosimetria]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2358548,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "dosimetria",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "aborrto",
+      "nota": "ruido | controle | erro de digitação; mede tolerância a typo",
+      "plano": "tokens (AND, LIKE %token%): [aborrto]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2482078,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "aborrto",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "aborto",
+      "nota": "popular | aborto | termo isolado de alta ambiguidade; mede ordenação, não recall",
+      "plano": "tokens (AND, LIKE %token%): [aborto]",
+      "totalNoFiltro": 1,
+      "retornados": 1,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2482078,
+          "titulo": "PDL 3/2025",
+          "ementa": "Susta os efeitos da Resolução nº 258, de 23 de dezembro de 2024, do Conselho Nacional dos Direitos da Criança e do Adolescente (CONANDA)."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 2482078,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "aborto legal em caso de estupro",
+      "nota": "linguagem_natural | aborto",
+      "plano": "tokens (AND, LIKE %token%): [aborto, legal, em, caso, de, estupro]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2482078,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "legal",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "caso",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "estupro",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "adultização de crianças na internet",
+      "nota": "popular | internet-plataformas",
+      "plano": "tokens (AND, LIKE %token%): [adultizacao, de, criancas, na, internet]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2453934,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "adultizacao",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "anistia 8 de janeiro",
+      "nota": "popular | anistia-responsabilizacao",
+      "plano": "tokens (AND, LIKE %token%): [anistia, 8, de, janeiro]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2358548,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "8",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "janeiro",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "aumento do salário mínimo",
+      "nota": "popular | economia-tributacao",
+      "plano": "tokens (AND, LIKE %token%): [aumento, do, salario, minimo]",
+      "totalNoFiltro": 6,
+      "retornados": 6,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2080237,
+          "titulo": "PLP 257/2016",
+          "ementa": "Estabelece o Plano de Auxílio aos Estados e ao Distrito Federal e medidas de estímulo ao reequilíbrio fiscal; altera a Lei nº 9.496, de 11 de setembro de 1997, a Medida Provisória nº 2.192-70, de 24 de agosto de 2001, a Lei Complementar nº 148, de 25 de novembro de 2014, e a Lei Complementar nº 101, de 4 de maio de 2000; e dá outras providências.\r\n\r\nNOVA EMENTA: Estabelece o Plano de Auxílio aos Estados e ao Distrito Federal e medidas de estímulo ao reequilíbrio fiscal; e altera a Lei Complementar nº 148, de 25 de novembro de 2014, a Lei nº 9.496, de 11 de setembro de 1997, e a Medida Provisória nº 2.192-70, de 24 de agosto de 2001."
+        },
+        {
+          "posicao": 2,
+          "externalIdProposicao": 1150196,
+          "titulo": "MPV 672/2015",
+          "ementa": "Dispõe sobre a política de valorização do salário mínimo para o período de 2016 a 2019.\r\n\r\nNOVA EMENTA: Dispõe sobre a política de valorização do salário mínimo e dos benefícios pagos pelo Regime Geral de Previdência Social para o período de 2016 a 2019."
+        },
+        {
+          "posicao": 3,
+          "externalIdProposicao": 2473375,
+          "titulo": "PL 4614/2024",
+          "ementa": "Altera a Lei nº 8.171, de 17 de janeiro de 1991, a Lei nº 8.742, de 7 de dezembro de 1993, a Lei nº 10.633, de 27 de dezembro de 2002, e a Lei nº 14.601, de 19 de junho de 2023, estabelece disposições para políticas públicas, e dá outras providências."
+        },
+        {
+          "posicao": 4,
+          "externalIdProposicao": 1701050,
+          "titulo": "PEC 122/2015",
+          "ementa": "Acrescenta §§ 6º e 7º ao art. 167 da Constituição Federal, para proibir a imposição e a transferência, por lei, de qualquer encargo financeiro decorrente da prestação de serviço público para a União, os Estados, o Distrito Federal e os Municípios, bem como para proibir a criação ou o aumento de despesa que não conste da lei orçamentária anual ou do projeto de lei orçamentária anual enviado pelo chefe do Poder Executivo, nos termos que especifica.\r\n\r\nNOVA EMENTA: Acrescenta § 7º ao art. 167 da Constituição Federal, para proibir a imposição e a transferência, por lei, de qualquer encargo financeiro decorrente da prestação de serviço público para a União, os Estados, o Distrito Federal e os Municípios."
+        },
+        {
+          "posicao": 5,
+          "externalIdProposicao": 2268414,
+          "titulo": "MPV 1021/2020",
+          "ementa": "Dispõe sobre o valor do salário mínimo a vigorar a partir de 1º de janeiro de 2021."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 1150196,
+          "posicao": 2,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2268414,
+          "posicao": 5,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2313736,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "aumento",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        },
+        {
+          "externalIdProposicao": 2359135,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "aumento",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "colecionador atirador caçador",
+      "nota": "popular | armas | jargão de nicho; provavelmente ausente de qualquer ementa",
+      "plano": "tokens (AND, LIKE %token%): [colecionador, atirador, cacador]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2209381,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "atirador",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "cotas raciais em universidades",
+      "nota": "popular | educacao-cultura",
+      "plano": "tokens (AND, LIKE %token%): [cotas, raciais, em, universidades]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2310615,
+          "posicao": null,
+          "categoria": "MORFOLOGICA",
+          "tokensFalhos": [
+            {
+              "token": "raciais",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "universidades",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "demarcação de terras indígenas",
+      "nota": "tecnico | meio-ambiente-terra",
+      "plano": "tokens (AND, LIKE %token%): [demarcacao, de, terras, indigenas]",
+      "totalNoFiltro": 1,
+      "retornados": 1,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 345311,
+          "titulo": "PL 490/2007",
+          "ementa": "Altera a Lei n° 6.001, de 19 de dezembro de 1973, que dispõe sobre o Estatuto do Índio. \r\n\r\nNOVA EMENTA: Regulamenta o art. 231 da Constituição Federal, para dispor sobre o reconhecimento, a demarcação, o uso e a gestão de terras indígenas; e altera as Leis nºs 11.460, de 21 de março de 2007, 4.132, de 10 de setembro de 1962, e 6.001, de 19 de dezembro de 1973."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 345311,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "eleitoral",
+      "nota": "ruido | controle | genérico demais; mede teto de resultados e sanidade da ordenação",
+      "plano": "tokens (AND, LIKE %token%): [eleitoral]",
+      "totalNoFiltro": 18,
+      "retornados": 18,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 373327,
+          "titulo": "PEC 182/2007",
+          "ementa": "Altera os arts. 17, 46 e 55 da Constituição Federal, para assegurar aos partidos políticos a titularidade dos mandatos parlamentares e estabelecer a perda dos mandatos dos membros do Poder Legislativo e do Poder Executivo que se desfiliarem dos partidos pelos quais forem eleitos."
+        },
+        {
+          "posicao": 2,
+          "externalIdProposicao": 2292163,
+          "titulo": "PLP 112/2021",
+          "ementa": "Institui o Código Eleitoral.\r\n\r\nNOVA EMENTA: Dispõe sobre as normas eleitorais e as normas processuais eleitorais brasileiras."
+        },
+        {
+          "posicao": 3,
+          "externalIdProposicao": 2187087,
+          "titulo": "PL 5029/2019",
+          "ementa": "Dispõe sobre a remuneração recebida por funcionário de partido político com recursos do fundo partidário e dá outras providências.\r\n\r\nNOVA EMENTA: Altera as Leis n°s 9.096, de 19 de setembro de 1995, 9.504, de 30 setembro de 1997, 4.737, de 15 de julho de 1965 (Código Eleitoral), 13.831, de 17 de maio de 2019, e a Consolidação das Leis do Trabalho, aprovada pelo Decreto-Lei nº 5.452, de 1º de maio de 1943, para dispor sobre regras aplicadas às eleições; revoga dispositivo da Lei nº 13.488, de 6 de outubro de 2017; e dá outras providências."
+        },
+        {
+          "posicao": 4,
+          "externalIdProposicao": 531331,
+          "titulo": "PEC 125/2011",
+          "ementa": "Acrescenta dispositivos à Constituição Federal vedando a realização de eleições em data próxima a feriado nacional.\r\n\r\nNOVA EMENTA: Acrescenta dispositivo ao Ato das Disposições Constitucionais Transitórias e altera a Constituição Federal, para fins de reforma político-eleitoral."
+        },
+        {
+          "posicao": 5,
+          "externalIdProposicao": 2080604,
+          "titulo": "PL 3855/2019",
+          "ementa": "Estabelece medidas contra a corrupção e demais crimes contra o patrimônio público e combate o enriquecimento ilícito de agentes públicos.\r\n\r\nNOVA EMENTA: Estabelece medidas de combate à impunidade, à corrupção; altera os Decretos-Leis nºs 2.848, de 7 de dezembro de 1940 - Código Penal, e 3.689, de 3 de outubro de 1941 - Código de Processo Penal; as Leis nºs 4.717, de 29 de junho de 1965, 4.737, de 15 de julho de 1965, 8.072, de 25 de julho de 1990, 8.112, de 11 de dezembro de 1990, 8.429, de 2 de junho de 1992, 8.906, de 4 de julho de 1994, 9.096, de 19 de setembro de 1995,  9.504, de 30 de setembro de 1997, 9.613, de 3 de março de 1998, e 7.347, de 24 de julho de 1985; revoga dispositivos do Decreto-Lei nº 201, de 27 de fevereiro de 1967, e da Lei nº 8.137, de 27 de dezembro de 1990; e dá outras providências."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 373327,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 531331,
+          "posicao": 4,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 1594917,
+          "posicao": 17,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2118401,
+          "posicao": 7,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2187087,
+          "posicao": 3,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2220292,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "eleitoral",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        },
+        {
+          "externalIdProposicao": 2256130,
+          "posicao": 11,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2292163,
+          "posicao": 2,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2293703,
+          "posicao": 10,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2293710,
+          "posicao": 16,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2352476,
+          "posicao": 9,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2387066,
+          "posicao": 6,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2387067,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "eleitoral",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "ensino domiciliar",
+      "nota": "tecnico | educacao-cultura | par técnico de 'homeschooling'",
+      "plano": "tokens (AND, LIKE %token%): [ensino, domiciliar]",
+      "totalNoFiltro": 1,
+      "retornados": 1,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 534328,
+          "titulo": "PL 3179/2012",
+          "ementa": "Acrescenta parágrafo ao art. 23 da Lei nº 9.394, de 1996, de diretrizes e bases da educação nacional, para dispor sobre a possibilidade de oferta domiciliar da educação básica. \r\n\r\nNOVA EMENTA: Altera as Leis nºs 9.394, de 20 de dezembro de 1996 (Lei de Diretrizes e Bases da Educação Nacional), e 8.069, de 13 de julho de 1990, (Estatuto da Criança e do Adolescente), para dispor sobre a possibilidade de oferta domiciliar da educação básica."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 534328,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "excludente de ilicitude",
+      "nota": "tecnico | seguranca-justica",
+      "plano": "tokens (AND, LIKE %token%): [excludente, de, ilicitude]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2178170,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "excludente",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "ilicitude",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "fim da escala 6x1",
+      "nota": "popular | economia-tributacao",
+      "plano": "tokens (AND, LIKE %token%): [fim, da, escala, 6x1]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2233802,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "fim",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "escala",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "6x1",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "foro privilegiado",
+      "nota": "popular | instituicoes-mandato",
+      "plano": "tokens (AND, LIKE %token%): [foro, privilegiado]",
+      "totalNoFiltro": 1,
+      "retornados": 1,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2270800,
+          "titulo": "PEC 3/2021",
+          "ementa": "Altera os arts. 14, 27, 53, 102 e 105 da Constituição Federal, para dispor sobre as prerrogativas parlamentares e dá outras providências."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 2270800,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "fundo eleitoral",
+      "nota": "popular | instituicoes-mandato",
+      "plano": "tokens (AND, LIKE %token%): [fundo, eleitoral]",
+      "totalNoFiltro": 8,
+      "retornados": 8,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2292163,
+          "titulo": "PLP 112/2021",
+          "ementa": "Institui o Código Eleitoral.\r\n\r\nNOVA EMENTA: Dispõe sobre as normas eleitorais e as normas processuais eleitorais brasileiras."
+        },
+        {
+          "posicao": 2,
+          "externalIdProposicao": 2187087,
+          "titulo": "PL 5029/2019",
+          "ementa": "Dispõe sobre a remuneração recebida por funcionário de partido político com recursos do fundo partidário e dá outras providências.\r\n\r\nNOVA EMENTA: Altera as Leis n°s 9.096, de 19 de setembro de 1995, 9.504, de 30 setembro de 1997, 4.737, de 15 de julho de 1965 (Código Eleitoral), 13.831, de 17 de maio de 2019, e a Consolidação das Leis do Trabalho, aprovada pelo Decreto-Lei nº 5.452, de 1º de maio de 1943, para dispor sobre regras aplicadas às eleições; revoga dispositivo da Lei nº 13.488, de 6 de outubro de 2017; e dá outras providências."
+        },
+        {
+          "posicao": 3,
+          "externalIdProposicao": 2387066,
+          "titulo": "PL 4438/2023",
+          "ementa": "Altera a Lei nº 4.737, de julho de 1965 (Código Eleitoral), a Lei nº 9.096, de 19 de setembro de 1995 (Lei dos Partidos Políticos) e a Lei nº 9.504, de 30 de setembro de 1997 (Lei as Eleições), com o fim de promover reforma no ordenamento político-eleitoral (Minirreforma Eleitoral de 2023)."
+        },
+        {
+          "posicao": 4,
+          "externalIdProposicao": 2118401,
+          "titulo": "PEC 282/2016",
+          "ementa": "Altera a Constituição Federal para vedar as coligações nas eleições proporcionais, disciplinar a autonomia dos partidos políticos e estabelecer normas sobre fidelidade partidária e funcionamento parlamentar dos partidos políticos; e estabelece normas de transição.\r\n\r\nNOVA EMENTA: Altera a Constituição Federal para vedar as coligações partidárias nas\r\neleições proporcionais, estabelecer normas sobre acesso dos partidos políticos aos recursos do fundo partidário e ao tempo de propaganda gratuito no rádio e na televisão e dispor sobre regras de transição."
+        },
+        {
+          "posicao": 5,
+          "externalIdProposicao": 2352476,
+          "titulo": "PEC 9/2023",
+          "ementa": "Altera a Emenda Constitucional nº 117, de 5 de abril de 2022, quanto à aplicação de sanções aos partidos que não preencheram a cota mínima de recursos ou que não destinaram os valores mínimos em razão de sexo e raça em eleições, bem como nas prestações de contas anuais e eleitorais.\r\n\r\nNOVA EMENTA: Impõe aos partidos políticos a obrigatoriedade da aplicação de recursos financeiros para as candidaturas de pessoas pretas e pardas; estabelece parâmetros e condições para regularização e refinanciamento de débitos de partidos políticos; e reforça a imunidade tributária dos partidos políticos conforme previsto na Constituição Federal."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 2293703,
+          "posicao": 6,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2352476,
+          "posicao": 5,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2387066,
+          "posicao": 3,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "homeschooling",
+      "nota": "popular | educacao-cultura | estrangeirismo; par popular de 'ensino domiciliar'",
+      "plano": "tokens (AND, LIKE %token%): [homeschooling]",
+      "totalNoFiltro": 1,
+      "retornados": 1,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 534328,
+          "titulo": "PL 3179/2012",
+          "ementa": "Acrescenta parágrafo ao art. 23 da Lei nº 9.394, de 1996, de diretrizes e bases da educação nacional, para dispor sobre a possibilidade de oferta domiciliar da educação básica. \r\n\r\nNOVA EMENTA: Altera as Leis nºs 9.394, de 20 de dezembro de 1996 (Lei de Diretrizes e Bases da Educação Nacional), e 8.069, de 13 de julho de 1990, (Estatuto da Criança e do Adolescente), para dispor sobre a possibilidade de oferta domiciliar da educação básica."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 534328,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "impunidade",
+      "nota": "ruido | controle | fragmento de alias sem contexto",
+      "plano": "tokens (AND, LIKE %token%): [impunidade]",
+      "totalNoFiltro": 1,
+      "retornados": 1,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2080604,
+          "titulo": "PL 3855/2019",
+          "ementa": "Estabelece medidas contra a corrupção e demais crimes contra o patrimônio público e combate o enriquecimento ilícito de agentes públicos.\r\n\r\nNOVA EMENTA: Estabelece medidas de combate à impunidade, à corrupção; altera os Decretos-Leis nºs 2.848, de 7 de dezembro de 1940 - Código Penal, e 3.689, de 3 de outubro de 1941 - Código de Processo Penal; as Leis nºs 4.717, de 29 de junho de 1965, 4.737, de 15 de julho de 1965, 8.072, de 25 de julho de 1990, 8.112, de 11 de dezembro de 1990, 8.429, de 2 de junho de 1992, 8.906, de 4 de julho de 1994, 9.096, de 19 de setembro de 1995,  9.504, de 30 de setembro de 1997, 9.613, de 3 de março de 1998, e 7.347, de 24 de julho de 1985; revoga dispositivos do Decreto-Lei nº 201, de 27 de fevereiro de 1967, e da Lei nº 8.137, de 27 de dezembro de 1990; e dá outras providências."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 2080604,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2270800,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "impunidade",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "invasão de terras MST",
+      "nota": "popular | meio-ambiente-terra",
+      "plano": "tokens (AND, LIKE %token%): [invasao, de, terras, mst]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2349493,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "terras",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "mst",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        },
+        {
+          "externalIdProposicao": 2386051,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "invasao",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "terras",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "mst",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "isenção do imposto de renda até 5 mil",
+      "nota": "linguagem_natural | economia-tributacao",
+      "plano": "tokens (AND, LIKE %token%): [isencao, do, imposto, de, renda, ate, 5, mil]",
+      "totalNoFiltro": 1,
+      "retornados": 1,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 259094,
+          "titulo": "PEC 293/2004",
+          "ementa": "Altera o Sistema Tributário Nacional e dá outras providências.  (Desmembramento da PEC nº 255/04, devendo os arts. 3º, 8º e 9º, serem renumerados para 3º, 4º e 5º; e os arts. 146, IV, 150, VI e, 153, § 4º, IV, 158, parágrafo único, I, II, 171-A e parágrafo único, 203, parágrafo único e 216, § 3º, constantes do art. 1º, e os arts., 4º, 5º, 7º, renumerados para 2º, 3º e 4º)."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 2487436,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "isencao",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "mil",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "licenciamento ambiental",
+      "nota": "tecnico | meio-ambiente-terra | par neutro de 'PL da Devastação'; devem convergir no mesmo resultado",
+      "plano": "tokens (AND, LIKE %token%): [licenciamento, ambiental]",
+      "totalNoFiltro": 4,
+      "retornados": 4,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 257161,
+          "titulo": "PL 2159/2021",
+          "ementa": "Dispõe sobre o licenciamento ambiental, regulamenta o inciso IV do § 1º do art. 225 da Constituição Federal, e dá outras providências.\r\n\r\nNOVA EMENTA: Dispõe sobre o licenciamento ambiental; regulamenta o inciso IV do § 1º do art. 225 da Constituição Federal; altera as Leis nºs 9.605, de 12 de fevereiro de 1998, e 9.985, de 18 de julho de 2000; revoga dispositivo da Lei nº 7.661, de 16 de maio de 1988; e dá outras providências."
+        },
+        {
+          "posicao": 2,
+          "externalIdProposicao": 2207613,
+          "titulo": "PL 3261/2019",
+          "ementa": "Atualiza o marco legal do saneamento básico e altera a Lei nº 11.445, de 5 de janeiro de 2007 (Lei do Saneamento Básico), para aprimorar as condições estruturais do saneamento básico no País, a Lei nº 13.529, de 4 de dezembro de 2017, para autorizar a União a participar de fundo com a finalidade exclusiva de financiar serviços técnicos especializados, a Lei nº 11.107, de 6 de abril de 2005 (Lei de Consórcios Públicos), para vedar a prestação por contrato de programa dos serviços públicos de que trata o art. 175 da Constituição Federal, a Lei nº 13.089, de 12 de janeiro de 2015 (Estatuto da Metrópole), para estender seu âmbito de aplicação às microrregiões, e a Lei nº 12.305, de 2 de agosto de 2010 (Lei de Resíduos Sólidos), para tratar de prazos para a disposição final ambientalmente adequada dos rejeitos."
+        },
+        {
+          "posicao": 3,
+          "externalIdProposicao": 2121849,
+          "titulo": "MPV 758/2016",
+          "ementa": "Altera os limites do Parque Nacional do Jamanxim e da Área de Proteção Ambiental do Tapajós.\r\n\r\nNOVA EMENTA: Altera os limites do Parque Nacional do Jamanxim e cria a Área de Proteção Ambiental Rio Branco."
+        },
+        {
+          "posicao": 4,
+          "externalIdProposicao": 2395883,
+          "titulo": "PL 4994/2023",
+          "ementa": "Reconhece a rodovia BR-319-RO/AM como infraestrutura crítica, indispensável à segurança nacional e estabelece a garantia de sua trafegabilidade nas condições que especifica."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 257161,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "marco temporal",
+      "nota": "tecnico | meio-ambiente-terra | curto e ambíguo fora do contexto indígena",
+      "plano": "tokens (AND, LIKE %token%): [marco, temporal]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 345311,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "temporal",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "posse e porte de armas",
+      "nota": "popular | armas",
+      "plano": "tokens (AND, LIKE %token%): [posse, e, porte, de, armas]",
+      "totalNoFiltro": 2,
+      "retornados": 2,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2209381,
+          "titulo": "PL 3723/2019",
+          "ementa": "Altera a Lei nº 10.826, de 22 de dezembro de 2003, que dispõe sobre registro, posse e comercialização de armas de fogo e munição, sobre o Sistema Nacional de Armas - Sinarm e define crimes.\r\n\r\nNOVA EMENTA: Altera a Lei nº 10.826, de 22 de dezembro de 2003, que dispõe sobre registro, posse e comercialização de armas de fogo e munição, sobre o Sistema Nacional de Armas (Sinarm) e define crimes, e o Decreto-Lei nº 2.848, de 7 de dezembro de 1940 (Código Penal); e revoga dispositivos das Leis nºs 7.102, de 20 de junho de 1983, e 7.170, de 14 de dezembro de 1983."
+        },
+        {
+          "posicao": 2,
+          "externalIdProposicao": 2178170,
+          "titulo": "PL 10372/2018",
+          "ementa": "Introduz modificações na legislação penal e processual penal para aperfeiçoar o combate ao crime organizado, aos delitos de tráfico de drogas, tráfico de armas e milícia privada, aos crimes cometidos com violência ou grave ameaça e crimes hediondos, bem como para agilizar e modernizar a investigação criminal e a persecução penal."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 2209381,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2210523,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "armas",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "previdencia",
+      "nota": "ruido | controle | sem acento; deve retornar o mesmo que 'reforma da previdência'",
+      "plano": "tokens (AND, LIKE %token%): [previdencia]",
+      "totalNoFiltro": 41,
+      "retornados": 41,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2192459,
+          "titulo": "PEC 6/2019",
+          "ementa": "Modifica o sistema de previdência social, estabelece regras de transição e disposições transitórias, e dá outras providências."
+        },
+        {
+          "posicao": 2,
+          "externalIdProposicao": 2293449,
+          "titulo": "PEC 23/2021",
+          "ementa": "Altera os art. 100, art. 109, art. 160, art. 166 e art. 167 da Constituição e acrescenta os art. 80-A e art. 101-A no Ato das Disposições Constitucionais Transitórias, e dá outras providências.\r\n\r\nNOVA EMENTA: Altera os arts. 100, 160 e 167 da Constituição Federal e o Ato das Disposições Constitucionais Transitórias para estabelecer o novo regime de pagamentos de precatórios, modificar normas relativas ao Novo Regime Fiscal e autorizar o parcelamento de débitos previdenciários dos Municípios; e dá outras providências."
+        },
+        {
+          "posicao": 3,
+          "externalIdProposicao": 2241662,
+          "titulo": "MPV 927/2020",
+          "ementa": "Dispõe sobre as medidas trabalhistas para enfrentamento do estado de calamidade pública reconhecido pelo Decreto Legislativo nº 6, de 20 de março de 2020, e da emergência de saúde pública de importância internacional decorrente do coronavírus (covid-19), e dá outras providências.\r\n\r\nNOVA EMENTA: Dispõe sobre as medidas trabalhistas para enfrentamento do estado de calamidade pública reconhecido pelo Decreto Legislativo nº 6, de 20 de março de 2020, e da emergência de saúde pública de importância internacional decorrente da pandemia da Covid-19; altera as Leis nºs 8.212, de 24 de julho de 1991, e 13.979, de 6 de fevereiro de 2020; e dá outras providências."
+        },
+        {
+          "posicao": 4,
+          "externalIdProposicao": 2222884,
+          "titulo": "MPV 897/2019",
+          "ementa": "Institui o Fundo de Aval Fraterno, dispõe sobre o patrimônio de afetação de propriedades rurais, a Cédula Imobiliária Rural, a escrituração de títulos de crédito e a concessão de subvenção econômica para empresas cerealistas, e dá outras providências.\r\n\r\nNOVA EMENTA:Institui o Fundo Garantidor Solidário (FGS); dispõe sobre o patrimônio rural em afetação, a Cédula Imobiliária Rural (CIR), a escrituração de títulos de crédito e a concessão de subvenção econômica para empresas cerealistas; altera as Leis nºs 8.427, de 27 de maio de 1992, 8.929, de 22 de agosto de 1994, 11.076, de 30 de dezembro de 2004, 10.931, de 2 de agosto de 2004, 12.865, de 9 de outubro de 2013, 5.709, de 7 de outubro de 1971, 6.634, de 2 de maio de 1979, 6.015, de 31 de dezembro de 1973, 7.827, de 27 de setembro de 1989, 8.212, de 24 de julho de 1991, 10.169, de 29 de dezembro de 2000, 11.116, de 18 de maio de 2005, 12.810, de 15 de maio de 2013, 13.340, de 28 de setembro de 2016, 13.576, de 26 de dezembro de 2017, e o Decreto-Lei nº 167, de 14 de fevereiro de 1967; revoga dispositivos das Leis nºs 4.728, de 14 de julho de 1965, e 13.476, de 28 de agosto de 2017, e dos Decretos-Leis nºs 13, de 18 de julho de 1966; 14, de 29 de julho de 1966; e 73, de 21 de novembro de 1966; e dá outras providências."
+        },
+        {
+          "posicao": 5,
+          "externalIdProposicao": 2080237,
+          "titulo": "PLP 257/2016",
+          "ementa": "Estabelece o Plano de Auxílio aos Estados e ao Distrito Federal e medidas de estímulo ao reequilíbrio fiscal; altera a Lei nº 9.496, de 11 de setembro de 1997, a Medida Provisória nº 2.192-70, de 24 de agosto de 2001, a Lei Complementar nº 148, de 25 de novembro de 2014, e a Lei Complementar nº 101, de 4 de maio de 2000; e dá outras providências.\r\n\r\nNOVA EMENTA: Estabelece o Plano de Auxílio aos Estados e ao Distrito Federal e medidas de estímulo ao reequilíbrio fiscal; e altera a Lei Complementar nº 148, de 25 de novembro de 2014, a Lei nº 9.496, de 11 de setembro de 1997, e a Medida Provisória nº 2.192-70, de 24 de agosto de 2001."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 2192459,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "privatização da Eletrobras",
+      "nota": "popular | previdencia-estado",
+      "plano": "tokens (AND, LIKE %token%): [privatizacao, da, eletrobras]",
+      "totalNoFiltro": 2,
+      "retornados": 2,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2270789,
+          "titulo": "MPV 1031/2021",
+          "ementa": "Dispõe sobre a desestatização da empresa Centrais Elétricas Brasileiras S.A. - Eletrobras e altera a Lei nº 5.899, de 5 de julho de 1973, a Lei nº 9.991, de 24 de julho de 2000, e a Lei nº 10.438, de 26 de abril de 2002.\r\n\r\nNOVA EMENTA: Dispõe sobre a desestatização da empresa Centrais Elétricas Brasileiras S.A. (Eletrobras); altera as Leis nºs 5.899, de 5 de julho de 1973, 9.991, de 24 de julho de 2000, 10.438, de 26 de abril de 2002, 10.848, de 15 de março de 2004, 13.182, de 3 de novembro de 2015, 13.203, de 8 de dezembro de 2015, 14.118, de 13 de janeiro de 2021, 9.648, de 27 de maio de 1998, e 9.074, de 7 de julho de 1995; e revoga dispositivos da Lei nº 3.890-A, de 25 de abril de 1961."
+        },
+        {
+          "posicao": 2,
+          "externalIdProposicao": 2261939,
+          "titulo": "MPV 998/2020",
+          "ementa": "Altera a Lei nº 9.991, de 24 de julho de 2000, a Lei nº 5.655, de 20 de maio de 1971, o Decreto-Lei nº 1.383, de 26 de dezembro de 1974, a Lei nº 9.427, de 26 de dezembro de 1996, a Lei nº 10.438, de 26 de abril de 2002, a Lei nº 10.848, de 15 de março de 2004, a Lei nº 12.111, de 9 de dezembro de 2009, e a Lei nº 12.783, de 11 de janeiro de 2013, transfere para a União as ações de titularidade da Comissão Nacional de Energia Nuclear representativas do capital social das Indústrias Nucleares do Brasil S.A. e da Nuclebrás Equipamentos Pesados S.A e dá outras providências."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 2270789,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "privatização dos Correios",
+      "nota": "popular | previdencia-estado",
+      "plano": "tokens (AND, LIKE %token%): [privatizacao, dos, correios]",
+      "totalNoFiltro": 1,
+      "retornados": 1,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2270894,
+          "titulo": "PL 591/2021",
+          "ementa": "Dispõe sobre a organização e a manutenção do Sistema Nacional de Serviços Postais.\r\n\r\nNOVA EMENTA: Dispõe sobre o marco regulatório, a organização e a manutenção do Sistema Nacional de Serviços Postais (SNSP); altera as Leis nºs 5.070, de 7 de julho de 1966, 6.538, de 22 de junho de 1978, 9.472, de 16 de julho de 1997, 10.871, de 20 de maio de 2004, 11.890, de 24 de dezembro de 2008, e 13.326, de 29 de julho de 2016; e revoga as Leis nºs 498, de 28 de novembro de 1948, 937, de 30 de novembro de 1949, 1.882, de 9 de junho de 1953, e 2.610, de 22 de setembro de 1955, e os Decretos-Lei nºs 2.621, de 24 de setembro de 1940, 4.030, de 19 de janeiro de 1942, 6.613, de 22 de junho de 1944, 8.308, de 6 de dezembro de 1945, 8.867, de 24 de janeiro de 1946, e 8.988, de 16 de fevereiro de 1946."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 2270894,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "quem votou contra a reforma da previdência",
+      "nota": "linguagem_natural | controle | pergunta, não termo; verificar degradação",
+      "plano": "tokens (AND, LIKE %token%): [quem, votou, contra, a, reforma, da, previdencia]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2192459,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "votou",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "redução da maioridade penal",
+      "nota": "popular | seguranca-justica",
+      "plano": "tokens (AND, LIKE %token%): [reducao, da, maioridade, penal]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 14493,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "maioridade",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "reforma da previdência",
+      "nota": "tecnico | previdencia-estado",
+      "plano": "tokens (AND, LIKE %token%): [reforma, da, previdencia]",
+      "totalNoFiltro": 5,
+      "retornados": 5,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2192459,
+          "titulo": "PEC 6/2019",
+          "ementa": "Modifica o sistema de previdência social, estabelece regras de transição e disposições transitórias, e dá outras providências."
+        },
+        {
+          "posicao": 2,
+          "externalIdProposicao": 2080237,
+          "titulo": "PLP 257/2016",
+          "ementa": "Estabelece o Plano de Auxílio aos Estados e ao Distrito Federal e medidas de estímulo ao reequilíbrio fiscal; altera a Lei nº 9.496, de 11 de setembro de 1997, a Medida Provisória nº 2.192-70, de 24 de agosto de 2001, a Lei Complementar nº 148, de 25 de novembro de 2014, e a Lei Complementar nº 101, de 4 de maio de 2000; e dá outras providências.\r\n\r\nNOVA EMENTA: Estabelece o Plano de Auxílio aos Estados e ao Distrito Federal e medidas de estímulo ao reequilíbrio fiscal; e altera a Lei Complementar nº 148, de 25 de novembro de 2014, a Lei nº 9.496, de 11 de setembro de 1997, e a Medida Provisória nº 2.192-70, de 24 de agosto de 2001."
+        },
+        {
+          "posicao": 3,
+          "externalIdProposicao": 2494408,
+          "titulo": "PL 1466/2025",
+          "ementa": "Cria a Carreira de Desenvolvimento Socioeconômico, a Carreira de Desenvolvimento das Políticas de Justiça e Defesa e a Carreira de Fiscalização da Comissão de Valores Mobiliários, altera a remuneração de servidores e empregados públicos do Poder Executivo federal, altera a remuneração de cargos em comissão, de funções de confiança e de gratificações do Poder Executivo federal, reestrutura cargos efetivos, planos de cargos e carreiras, padroniza e unifica regras de incorporação de gratificações de desempenho, altera as regras do Sistema de Desenvolvimento na Carreira, transforma cargos efetivos vagos em outros cargos efetivos, em cargos em comissão e em funções de confiança, altera a regra de designação dos membros dos conselhos deliberativos e fiscais das entidades fechadas de previdência complementar e dá outras providências."
+        },
+        {
+          "posicao": 4,
+          "externalIdProposicao": 2084401,
+          "titulo": "MPV 726/2016",
+          "ementa": "Altera e revoga dispositivos da Lei nº 10.683, de 28 de maio de 2003, que dispõe sobre a organização da Presidência da República e dos Ministérios.\r\n\r\nNOVA EMENTA: Altera as Leis nºs 10.683, de 28 de maio de 2003, que dispõe sobre a organização da Presidência da República e dos Ministérios, e 11.890, de 24 de dezembro de 2008, e revoga a Medida Provisória nº 717, de 16 de março de 2016."
+        },
+        {
+          "posicao": 5,
+          "externalIdProposicao": 2275723,
+          "titulo": "PL 1100/2021",
+          "ementa": "Dispõe sobre a isenção de Imposto de Renda e dispensa de carência previdenciária para pessoas acometidas por sequelas da COVID-19, alterando a Lei nº 7.713, de 22 de dezembro de 1988 e a Lei nº 8.213, de 24 de julho de 1991.\r\n\r\nNOVA EMENTA: Altera as Leis nºs 7.713, de 22 de dezembro de 1988, e 8.213, de 24 de julho de 1991, para conceder isenção de imposto sobre a renda e dispensar o período de carência para obtenção de benefícios previdenciários por incapacidade para pessoas acometidas de complicações e sequelas graves decorrentes da Covid-19."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 2192459,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "reforma tributária",
+      "nota": "tecnico | economia-tributacao | múltiplos turnos e retorno do Senado; bom teste da colapsagem de sub-votações",
+      "plano": "tokens (AND, LIKE %token%): [reforma, tributaria]",
+      "totalNoFiltro": 8,
+      "retornados": 8,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 2192459,
+          "titulo": "PEC 6/2019",
+          "ementa": "Modifica o sistema de previdência social, estabelece regras de transição e disposições transitórias, e dá outras providências."
+        },
+        {
+          "posicao": 2,
+          "externalIdProposicao": 2288389,
+          "titulo": "PL 2337/2021",
+          "ementa": "Altera a legislação do Imposto sobre a Renda e Proventos de Qualquer Natureza das Pessoas Físicas e das Pessoas Jurídicas e da Contribuição Social sobre o Lucro Líquido.\r\n\r\nNOVA EMENTA: Altera as Leis nºs 9.249, de 26 de dezembro de 1995, 13.043, de 13 de novembro de 2014, 8.981, de 20 de janeiro de 1995, 7.689, de 15 de dezembro de 1988, 9.430, de 27 de dezembro de 1996, 11.196, de 21 de novembro de 2005, 11.774, de 17 de setembro de 2008, 9.065, de 20 de junho de 1995, 9.718, de 27 de novembro de 1998, 12.973, de 13 de maio de 2014, 10.892, de 13 de julho de 2004, 11.033, de 21 de dezembro de 2004, 11.053, de 29 de dezembro de 2004, 11.312, de 27 de junho de 2006, 11.478, de 29 de maio de 2007, 7.713, de 22 de dezembro de 1988, 9.250, de 26 de dezembro de 1995, 11.482, de 31 de maio de 2007, 8.069, de 13 de julho de 1990, (Estatuto da Criança e do Adolescente), 8.685, de 20 de julho de 1993, 9.532, de 10 de dezembro de 1997, 11.438, de 29 de dezembro de 2006, 12.213, de 20 de janeiro de 2010, 12.715, de 17 de setembro de 2012, 10.865, de 30 de abril de 2004, 9.779, de 19 de janeiro de 1999, 10.522, de 19 de julho de 2002, 8.001, de 13 de março de 1990, e 13.575, de 26 de dezembro de 2017, o Decreto-Lei nº 1.598, de 26 de dezembro de 1977, e o Decreto nº 70.235, de 6 de março de 1972, para modificar a legislação relativa ao Imposto sobre a Renda e Proventos de Qualquer Natureza das pessoas físicas e das pessoas jurídicas e à Contribuição Social sobre o Lucro Líquido (CSLL); revoga a Lei nº 10.312, de 27 de novembro de 2001, e dispositivos das Leis nºs 4.506, de 30 de novembro de 1964, 9.959, de 27 de janeiro de 2000, 10.147, de 21 de dezembro de 2000, 10.637, de 30 de dezembro de 2002, 10.833, de 29 de dezembro de 2003, e 12.431, de 24 de junho de 2011, e das Medidas Provisórias nºs 2.189-49, de 23 de agosto de 2001, e 2.158-35, de 24 de agosto de 2001; e dá outras providências."
+        },
+        {
+          "posicao": 3,
+          "externalIdProposicao": 259094,
+          "titulo": "PEC 293/2004",
+          "ementa": "Altera o Sistema Tributário Nacional e dá outras providências.  (Desmembramento da PEC nº 255/04, devendo os arts. 3º, 8º e 9º, serem renumerados para 3º, 4º e 5º; e os arts. 146, IV, 150, VI e, 153, § 4º, IV, 158, parágrafo único, I, II, 171-A e parágrafo único, 203, parágrafo único e 216, § 3º, constantes do art. 1º, e os arts., 4º, 5º, 7º, renumerados para 2º, 3º e 4º)."
+        },
+        {
+          "posicao": 4,
+          "externalIdProposicao": 2196833,
+          "titulo": "PEC 45/2019",
+          "ementa": "Altera o Sistema Tributário Nacional e dá outras providências.\r\n\r\nNOVA EMENTA: Altera o Sistema Tributário Nacional."
+        },
+        {
+          "posicao": 5,
+          "externalIdProposicao": 2438459,
+          "titulo": "PLP 108/2024",
+          "ementa": "Institui o Comitê Gestor do Imposto sobre Bens e Serviços - CG-IBS, dispõe sobre o processo administrativo tributário relativo ao lançamento de ofício do Imposto sobre Bens e Serviços - IBS, sobre a distribuição para os entes federativos do produto da arrecadação do IBS, e sobre o Imposto sobre TransmissãoCausa mortis e Doação de Quaisquer Bens ou Direitos - ITCMD, e dá outras providências."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 259094,
+          "posicao": 3,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 347421,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "reforma",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        },
+        {
+          "externalIdProposicao": 2196833,
+          "posicao": 4,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2430143,
+          "posicao": 6,
+          "categoria": null,
+          "tokensFalhos": []
+        },
+        {
+          "externalIdProposicao": 2438459,
+          "posicao": 5,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "saidinha de presos",
+      "nota": "popular | seguranca-justica | par popular de 'saída temporária de presos'",
+      "plano": "tokens (AND, LIKE %token%): [saidinha, de, presos]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 596844,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "saidinha",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "saída temporária de presos",
+      "nota": "tecnico | seguranca-justica | par técnico de 'saidinha de presos'; divergência entre os dois isola apelido vs. ementa",
+      "plano": "tokens (AND, LIKE %token%): [saida, temporaria, de, presos]",
+      "totalNoFiltro": 1,
+      "retornados": 1,
+      "top": [
+        {
+          "posicao": 1,
+          "externalIdProposicao": 596844,
+          "titulo": "PL 6579/2013",
+          "ementa": "Altera os arts. 123 e 124 da Lei nº 7.210, de 11 de julho de 1984 (Lei de Execução Penal), para restringir o benefício da saída temporária de presos."
+        }
+      ],
+      "esperados": [
+        {
+          "externalIdProposicao": 596844,
+          "posicao": 1,
+          "categoria": null,
+          "tokensFalhos": []
+        }
+      ]
+    },
+    {
+      "consulta": "taxa das blusinhas",
+      "nota": "apelido | economia-tributacao | apelido de emenda dentro de projeto maior; testa granularidade da matéria",
+      "plano": "tokens (AND, LIKE %token%): [taxa, das, blusinhas]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2422697,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "taxa",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "blusinhas",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "taxação dos super-ricos",
+      "nota": "popular | economia-tributacao",
+      "plano": "tokens (AND, LIKE %token%): [taxacao, dos, super-ricos]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2288389,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "taxacao",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "super-ricos",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        },
+        {
+          "externalIdProposicao": 2383287,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "taxacao",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "super-ricos",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        },
+        {
+          "externalIdProposicao": 2487436,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "taxacao",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "super-ricos",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "urgência para o projeto de anistia",
+      "nota": "linguagem_natural | anistia-responsabilizacao | requerimento de urgência é votação procedimental; testa distinção mérito vs. procedimento",
+      "plano": "tokens (AND, LIKE %token%): [urgencia, para, o, projeto, de, anistia]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2358548,
+          "posicao": null,
+          "categoria": "FORA_DO_CORPUS",
+          "tokensFalhos": [
+            {
+              "token": "urgencia",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "para",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            },
+            {
+              "token": "projeto",
+              "foraDoCorpus": true,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "consulta": "voto impresso auditável",
+      "nota": "popular | instituicoes-mandato",
+      "plano": "tokens (AND, LIKE %token%): [voto, impresso, auditavel]",
+      "totalNoFiltro": 0,
+      "retornados": 0,
+      "top": [],
+      "esperados": [
+        {
+          "externalIdProposicao": 2220292,
+          "posicao": null,
+          "categoria": "VOCABULARIO",
+          "tokensFalhos": [
+            {
+              "token": "auditavel",
+              "foraDoCorpus": false,
+              "radicalNoCorpus": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "resumo": {
+    "totalEsperados": 74,
+    "encontrados": 39,
+    "ausentes": 35,
+    "porCategoria": [
+      {
+        "categoria": "FORA_DO_CORPUS",
+        "total": 1,
+        "percentual": 2.857142857142857
+      },
+      {
+        "categoria": "MORFOLOGICA",
+        "total": 1,
+        "percentual": 2.857142857142857
+      },
+      {
+        "categoria": "VOCABULARIO",
+        "total": 33,
+        "percentual": 94.28571428571429
+      }
+    ]
+  }
+}

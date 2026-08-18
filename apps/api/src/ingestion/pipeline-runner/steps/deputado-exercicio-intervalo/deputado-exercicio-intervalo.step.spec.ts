@@ -76,7 +76,7 @@ describe('deputado_exercicio_intervalo step', () => {
   describe('when there is no parliamentary history yet (first ingestion)', () => {
     it('skips the computation without touching the table', async () => {
       // Arrange
-      const log = jest.fn();
+      const log = jest.fn<void, [string]>();
       const repository = createFakeRepository([]);
       const step = createDeputadoExercicioIntervaloStep(repository);
 
@@ -158,6 +158,44 @@ describe('deputado_exercicio_intervalo step', () => {
       // Assert
       expect(result).toMatchObject({ read: 1, inserted: 0, ignored: 1 });
       expect(repository.rows).toEqual([]);
+    });
+  });
+
+  describe('when the run takes long enough to need feedback', () => {
+    it('announces every phase with the volume it is handling', async () => {
+      // Arrange
+      const log = jest.fn<void, [string]>();
+      const repository = createFakeRepository([
+        deputadoComHistorico('dep-1', [EVENTO_ENTRADA]),
+      ]);
+      const step = createDeputadoExercicioIntervaloStep(repository);
+
+      // Act
+      await step.run(context({ reporter: { log } }));
+
+      // Assert
+      expect(log.mock.calls.map(([line]) => line)).toEqual([
+        '[deputado_exercicio_intervalo] carregando histórico parlamentar…',
+        '[deputado_exercicio_intervalo] 1 deputado(s) com histórico',
+        '[deputado_exercicio_intervalo] calculando intervalos de 1 deputado(s)…',
+        '[deputado_exercicio_intervalo] 1 intervalo(s) de 1 deputado(s) de 1 com histórico',
+        '[deputado_exercicio_intervalo] gravando 1 intervalo(s)…',
+      ]);
+    });
+
+    it('omits the write phase when nothing will be written', async () => {
+      // Arrange
+      const log = jest.fn<void, [string]>();
+      const repository = createFakeRepository([
+        deputadoComHistorico('dep-1', [EVENTO_ENTRADA]),
+      ]);
+      const step = createDeputadoExercicioIntervaloStep(repository);
+
+      // Act
+      await step.run(context({ dryRun: true, reporter: { log } }));
+
+      // Assert
+      expect(log).not.toHaveBeenCalledWith(expect.stringContaining('gravando'));
     });
   });
 

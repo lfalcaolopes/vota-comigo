@@ -11,17 +11,18 @@ import type {
 } from "@vota-comigo/shared-types";
 import { useState } from "react";
 
-import type { FeedDisplay, FeedStatus } from "@/shared/proposicao";
-import {
-  FeedOrdenacaoControl,
-  FeedSearch,
-  FeedTemaControl,
+import type {
+  FeedDisplay,
+  FeedStatus,
+  ProposicaoFeedFiltros,
 } from "@/shared/proposicao";
+import { FeedOrdenacaoControl, FeedSearch } from "@/shared/proposicao";
 import { Button, InlineMessage } from "@/shared/ui";
 
 import { SelecaoBottomBar } from "./selecao-bottom-bar";
 import { SelecaoList } from "./selecao-list";
 import { SelecaoResumo } from "./selecao-resumo";
+import { SelecaoTemaControl } from "./selecao-tema-control";
 
 type StepSelecaoProps = {
   items: ProposicaoCard[];
@@ -30,8 +31,7 @@ type StepSelecaoProps = {
   display: FeedDisplay;
   canLoadMore: boolean;
   query: string;
-  ordenacao: FeedOrdenacao;
-  tema: number | null;
+  filtros: ProposicaoFeedFiltros;
   temas: readonly TemaDisponivel[];
   selected: ProposicaoCard[];
   totalSelecionadas: number;
@@ -39,9 +39,8 @@ type StepSelecaoProps = {
   onToggle: (proposicao: ProposicaoCard) => void;
   onSubmitSearch: (raw: string) => Promise<void>;
   onClearSearch: () => void;
-  onChangeOrdenacao: (value: FeedOrdenacao) => Promise<void>;
-  onChangeTema: (cod: number) => void;
-  onClearFilters: () => Promise<void>;
+  onApplyFiltros: (filtros: ProposicaoFeedFiltros) => Promise<void>;
+  onClearTudo: () => Promise<void>;
   onLoadMore: () => Promise<void>;
   onBack: () => void;
   onAdvance: () => void;
@@ -54,8 +53,7 @@ export function StepSelecao({
   display,
   canLoadMore,
   query,
-  ordenacao,
-  tema,
+  filtros,
   temas,
   selected,
   totalSelecionadas,
@@ -63,9 +61,8 @@ export function StepSelecao({
   onToggle,
   onSubmitSearch,
   onClearSearch,
-  onChangeOrdenacao,
-  onChangeTema,
-  onClearFilters,
+  onApplyFiltros,
+  onClearTudo,
   onLoadMore,
   onBack,
   onAdvance,
@@ -76,10 +73,6 @@ export function StepSelecao({
     selected.map((card) => card.externalIdProposicao),
   );
   const atLimit = totalSelecionadas >= MAX_POSICOES;
-  const faltamSelecionadas = Math.max(
-    MIN_POSICOES_COMPUTAVEIS - totalSelecionadas,
-    0,
-  );
 
   function handleClear() {
     setDraft("");
@@ -95,9 +88,20 @@ export function StepSelecao({
     void onSubmitSearch(term);
   }
 
-  async function handleClearFilters() {
+  async function handleClearTudo() {
     setDraft("");
-    await onClearFilters();
+    await onClearTudo();
+  }
+
+  function handleChangeOrdenacao(ordenacao: FeedOrdenacao) {
+    void onApplyFiltros({ ...filtros, ordenacao });
+  }
+
+  function handleSelectTema(cod: number) {
+    void onApplyFiltros({
+      ...filtros,
+      tema: filtros.tema === cod ? null : cod,
+    });
   }
 
   const filterPanelClassName = "order-last sm:basis-full sm:shrink-0";
@@ -109,7 +113,6 @@ export function StepSelecao({
       <div className="grid min-w-0 gap-4 sm:flex sm:flex-wrap sm:items-start sm:gap-2">
         <FeedSearch
           className="w-full sm:min-w-0 sm:flex-1"
-          disabled={status === "loading"}
           isSearching={query !== ""}
           onChange={setDraft}
           onClear={handleClear}
@@ -124,25 +127,23 @@ export function StepSelecao({
             <FeedOrdenacaoControl
               className="col-span-full w-full sm:w-auto sm:shrink-0"
               itemClassName="flex-1 sm:flex-none"
-              value={ordenacao}
-              onChange={onChangeOrdenacao}
+              onChange={handleChangeOrdenacao}
+              value={filtros.ordenacao}
             />
 
-            {temas.length > 0 && (
-              <FeedTemaControl
-                activeTema={tema}
-                onSelect={onChangeTema}
-                panelClassName={filterPanelClassName}
-                spanToolbar
-                temas={temas}
-                triggerClassName={filterTriggerClassName}
-              />
-            )}
+            <SelecaoTemaControl
+              activeTema={filtros.tema}
+              onSelect={handleSelectTema}
+              panelClassName={filterPanelClassName}
+              spanToolbar
+              temas={temas}
+              triggerClassName={filterTriggerClassName}
+            />
 
             <Button
               className="h-11 min-w-0 sm:hidden"
               disabled={status === "loading"}
-              onClick={handleClearFilters}
+              onClick={handleClearTudo}
               variant="secondary"
             >
               Limpar
@@ -156,16 +157,19 @@ export function StepSelecao({
           <div className="grid gap-1">
             <h2 className="text-base font-[680] text-ink">Sua seleção</h2>
             <p className="text-sm leading-normal text-muted" role="status">
-              {canAdvance
-                ? `Selecionadas: ${totalSelecionadas} de até ${MAX_POSICOES}`
-                : `Escolha pelo menos ${MIN_POSICOES_COMPUTAVEIS} proposições para continuar. Faltam ${faltamSelecionadas}.`}
+              {`${totalSelecionadas} de ${MAX_POSICOES} escolhidas`}
             </p>
+            {canAdvance ? null : (
+              <p className="text-sm leading-normal text-muted">
+                {`Escolha pelo menos ${MIN_POSICOES_COMPUTAVEIS} para continuar.`}
+              </p>
+            )}
           </div>
 
           {atLimit ? (
             <InlineMessage
-              body={`Você atingiu o limite de ${MAX_POSICOES} proposições. Desmarque uma para adicionar outra.`}
-              title="Limite atingido"
+              body="Desmarque uma proposta para escolher outra."
+              title={`Limite de ${MAX_POSICOES} atingido`}
             />
           ) : null}
 
@@ -191,7 +195,7 @@ export function StepSelecao({
             canLoadMore={canLoadMore}
             display={display}
             items={items}
-            onClearFilters={onClearFilters}
+            onClearTudo={handleClearTudo}
             onLoadMore={onLoadMore}
             onToggle={onToggle}
             selectedIds={selectedIds}

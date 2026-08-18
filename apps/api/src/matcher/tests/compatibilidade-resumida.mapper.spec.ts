@@ -8,7 +8,6 @@ import type { DeputadoResumoComputado } from '../types/compatibilidade.types';
 
 const resumo: MatcherExecucaoResumo = {
   siglaUf: 'PE',
-  cidade: null,
   totalProposicoesSelecionadas: 3,
   totalPosicoesComputaveis: 3,
 };
@@ -26,6 +25,7 @@ function deputado(
     nomeEleitoral: 'Maria da Silva',
     nomeCivil: 'Maria Aparecida da Silva',
     partido: 'PT',
+    siglaSexo: 'F',
     siglaUf: 'PE',
     urlFoto: 'https://foto/dep.jpg',
     compatibilidadeBruta: 100,
@@ -45,7 +45,6 @@ function mapNome(dep: DeputadoResumoComputado): string | null {
     { totalDeputadosAvaliados: 1, deputadosHistoricoIncompleto: 0 },
     [dep],
     paginacao,
-    false,
   );
   return resultado.deputados[0]?.nome ?? null;
 }
@@ -84,7 +83,6 @@ describe('toMatcherResultado', () => {
         { totalDeputadosAvaliados: 1, deputadosHistoricoIncompleto: 0 },
         [deputado({ urlFoto: 'https://foto/recente.jpg' })],
         paginacao,
-        false,
       );
 
       // Assert

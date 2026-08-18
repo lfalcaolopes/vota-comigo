@@ -1,0 +1,16 @@
+{
+  "ano": 2009,
+  "items": {
+    "463155": {
+      "sourceHash": "33acd8e3a37a0dfb4533aa7969464a5d59a815beaaac11374db8274827388fbe",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Fixa regras para calcular e organizar os salários dos advogados públicos da União, dos Estados e do Distrito Federal, vinculando o topo da carreira ao salário dos Ministros do Supremo Tribunal Federal.",
+      "resumoDetalhe": "- Define que o salário do nível máximo da advocacia pública será um percentual do salário dos Ministros do Supremo Tribunal Federal e que os demais níveis serão fixados por lei em regime escalonado.\n- Estabelece limites para a diferença entre um nível e outro, com uma diferença mínima e uma máxima entre os níveis e um teto relativo ao salário dos Ministros do Supremo Tribunal Federal.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T05:57:06.620Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
+    }
+  }
+}

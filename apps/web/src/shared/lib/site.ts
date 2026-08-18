@@ -1,7 +1,7 @@
 export const SITE_NAME = "Quem Vota Comigo";
 
 export const SITE_DESCRIPTION =
-  "Compare suas posições com os votos reais de deputados federais na Câmara dos Deputados, com fonte oficial e método aberto.";
+  "Compare suas posições com os votos reais de deputados federais na Câmara dos Deputados. Dados oficiais e cálculo aberto.";
 
 // Override per environment with NEXT_PUBLIC_SITE_URL; the localhost fallback
 // only makes the canonical/OG/sitemap URLs correct in local development.

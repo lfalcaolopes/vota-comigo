@@ -1,8 +1,10 @@
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import {
+  deputadoDiscursosResponseSchema,
   deputadoFeedResponseSchema,
   deputadoPerfilSchema,
+  deputadoProposicoesAssinadasResponseSchema,
   partidosDisponiveisResponseSchema,
   ufsDisponiveisResponseSchema,
 } from '@vota-comigo/shared-types';
@@ -14,10 +16,18 @@ import {
   type DeputadosRepository,
 } from '../deputados.repository';
 import { DeputadosService } from '../deputados.service';
+import {
+  CAMARA_PAGINATED_CLIENT,
+  type CamaraPaginatedClient,
+} from '../../shared/camara/camara-paginated-client';
 import { deriveSnapshotPublico } from '../rules/snapshot-publico';
 import type {
+  DeputadoCardRow,
   DeputadoPerfilSource,
   DeputadoResumoPresencaRow,
+  DeputadosFeedFilters,
+  DeputadosFeedPage,
+  DeputadosFeedPagination,
 } from '../types/deputados.types';
 
 type TestServer = Parameters<typeof request>[0];
@@ -66,44 +76,112 @@ function source(
 
 type ResumoById = ReadonlyMap<string, DeputadoResumoPresencaRow>;
 
+// O feed filtra e pagina no SQL, entao o fake registra o que chegou ao
+// repositorio: o que ainda e comportamento desta camada e a traducao da
+// query string em filtros, nao a semantica do filtro em si.
+type FeedCall = {
+  filters: DeputadosFeedFilters;
+  pagination: DeputadosFeedPagination;
+};
+
+const feedCalls: FeedCall[] = [];
+
+function card(overrides: Partial<DeputadoCardRow> = {}): DeputadoCardRow {
+  return {
+    externalIdDeputado: 220593,
+    nomePublico: 'Maria da Silva',
+    nomeCivil: 'Maria Aparecida da Silva',
+    siglaPartido: 'PT',
+    siglaUf: 'SP',
+    urlFoto: 'https://example.com/foto.jpg',
+    emAtividade: true,
+    ...overrides,
+  };
+}
+
 function fakeRepository(
   byExternalId: ReadonlyMap<number, DeputadoPerfilSource>,
   resumoById: ResumoById = new Map(),
+  feedPage: DeputadosFeedPage = { items: [card()], total: 1 },
+  proposicoesAssinadasSource: DeputadosRepository['loadDeputadoProposicoesAssinadasSource'] = async () => ({
+    anoCoberto: false,
+    assinaturasJson: null,
+    coveredThroughDate: null,
+  }),
 ): DeputadosRepository {
   return {
-    loadDeputadosFeed: async () => [...byExternalId.values()],
+    loadDeputadosFeed: async (filters, pagination) => {
+      feedCalls.push({ filters, pagination });
+      return feedPage;
+    },
     loadUfsDisponiveis: async () =>
       [...byExternalId.values()].flatMap((source) => {
         const siglaUf = deriveSnapshotPublico(source.eventos)?.siglaUf;
         return siglaUf === undefined || siglaUf === null ? [] : [siglaUf];
       }),
-    loadPartidosDisponiveis: async () =>
+    loadPartidosDisponiveis: async (siglaUf) =>
       [...byExternalId.values()].flatMap((source) => {
-        const siglaPartido = deriveSnapshotPublico(
-          source.eventos,
-        )?.siglaPartido;
-        return siglaPartido === undefined || siglaPartido === null
-          ? []
-          : [siglaPartido];
+        const snapshot = deriveSnapshotPublico(source.eventos);
+        const siglaPartido = snapshot?.siglaPartido;
+        if (siglaPartido === undefined || siglaPartido === null) return [];
+        if (siglaUf !== undefined && snapshot?.siglaUf !== siglaUf) return [];
+        return [siglaPartido];
       }),
     loadDeputadoPerfil: async (externalIdDeputado) =>
       byExternalId.get(externalIdDeputado) ?? null,
     loadResumoPresenca: async (deputadoId) =>
       resumoById.get(deputadoId) ?? null,
+    loadResumoPresencaDaLegislatura: async () => null,
+    loadDeputadoCeapSource: async () => ({
+      coberturas: [],
+      gasto: null,
+      gastosSigepaJson: null,
+      categorias: [],
+      medianaUf: null,
+      intervalosExercicio: [],
+      datasInicioLegislatura: [],
+    }),
+    loadDeputadoOrgaos: async () => [],
+    loadDeputadoProposicoesAssinadasSource: proposicoesAssinadasSource,
+    loadCoberturaCotaMensal: async () => [],
+    loadCotaComparacao: async () => null,
+    loadDeputadoOrgaosNaJanela: async () => [],
+    loadDeputadoProposicoesAssinadasJanela: async () => ({
+      anos: [],
+      coveredThroughDate: null,
+    }),
+    loadLegislaturas: async () => [],
+    loadIntervalosExercicio: async () => [],
   };
 }
 
 async function buildApp(
   byExternalId: ReadonlyMap<number, DeputadoPerfilSource>,
   resumoById?: ResumoById,
+  feedPage?: DeputadosFeedPage,
+  camaraClient: CamaraPaginatedClient = {
+    fetchAll: async () => {
+      throw new Error('should not call the Câmara');
+    },
+  },
+  proposicoesAssinadasSource?: DeputadosRepository['loadDeputadoProposicoesAssinadasSource'],
 ): Promise<INestApplication> {
   const moduleRef = await Test.createTestingModule({
     controllers: [DeputadosController],
     providers: [
       DeputadosService,
       {
+        provide: CAMARA_PAGINATED_CLIENT,
+        useValue: camaraClient,
+      },
+      {
         provide: DEPUTADOS_REPOSITORY,
-        useValue: fakeRepository(byExternalId, resumoById),
+        useValue: fakeRepository(
+          byExternalId,
+          resumoById,
+          feedPage,
+          proposicoesAssinadasSource,
+        ),
       },
     ],
   }).compile();
@@ -112,6 +190,213 @@ async function buildApp(
   await app.init();
   return app;
 }
+
+describe('GET /deputados/:externalIdDeputado/proposicoes-assinadas', () => {
+  describe('quando o ano está coberto e o deputado tem assinaturas', () => {
+    it('responde os totais pelo contrato público, sem consultar a Câmara', async () => {
+      // Arrange
+      const app = await buildApp(
+        new Map([[220593, source()]]),
+        undefined,
+        undefined,
+        undefined,
+        async () => ({
+          anoCoberto: true,
+          assinaturasJson: {
+            '2022-03-23': [2, 1],
+            '2022-05-04': [1, 0],
+          },
+          coveredThroughDate: '2026-08-13',
+        }),
+      );
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/220593/proposicoes-assinadas?year=2022',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoProposicoesAssinadasResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body).toEqual({
+        year: 2022,
+        disponivel: true,
+        total: 3,
+        totalPrimeiroSignatario: 1,
+        coveredThroughDate: '2026-08-13',
+      });
+      expect(response.body).not.toHaveProperty('items');
+      await app.close();
+    });
+  });
+
+  describe('quando a fronteira da fonte é anterior ao ano consultado', () => {
+    it('rejeita a resposta pelo contrato público', () => {
+      // Arrange
+      const response = {
+        year: 2026,
+        disponivel: true,
+        total: 3,
+        totalPrimeiroSignatario: 1,
+        coveredThroughDate: '2025-12-19',
+      };
+
+      // Act
+      const result =
+        deputadoProposicoesAssinadasResponseSchema.safeParse(response);
+
+      // Assert
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('quando o ano não foi coberto pela ingestão', () => {
+    it('responde disponivel false pelo contrato público', async () => {
+      // Arrange
+      const app = await buildApp(
+        new Map([[220593, source()]]),
+        undefined,
+        undefined,
+        undefined,
+        async () => ({
+          anoCoberto: false,
+          assinaturasJson: null,
+          coveredThroughDate: null,
+        }),
+      );
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/220593/proposicoes-assinadas?year=2022',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoProposicoesAssinadasResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body).toEqual({ year: 2022, disponivel: false });
+      await app.close();
+    });
+  });
+
+  describe('quando o deputado não existe no produto', () => {
+    it('responde 404 sem consultar a Câmara', async () => {
+      // Arrange
+      const app = await buildApp(new Map());
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/999999/proposicoes-assinadas?year=2022',
+      );
+
+      // Assert
+      expect(response.status).toBe(404);
+      await app.close();
+    });
+  });
+
+  describe('quando o ano está fora da faixa do deputado', () => {
+    it('responde erro de entrada sem consultar a Câmara', async () => {
+      // Arrange
+      const app = await buildApp(new Map([[220593, source()]]));
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/220593/proposicoes-assinadas?year=2010',
+      );
+
+      // Assert
+      expect(response.status).toBe(400);
+      await app.close();
+    });
+  });
+
+  describe('validação do contrato', () => {
+    it('aceita disponivel false sem os campos de total', () => {
+      // Arrange
+      const body = { year: 2018, disponivel: false };
+
+      // Act / Assert
+      expect(() =>
+        deputadoProposicoesAssinadasResponseSchema.parse(body),
+      ).not.toThrow();
+    });
+
+    it('rejeita totalPrimeiroSignatario maior que o total', () => {
+      // Arrange
+      const body = {
+        year: 2022,
+        disponivel: true,
+        total: 2,
+        totalPrimeiroSignatario: 3,
+      };
+
+      // Act / Assert
+      expect(() =>
+        deputadoProposicoesAssinadasResponseSchema.parse(body),
+      ).toThrow();
+    });
+  });
+});
+
+describe('GET /deputados/:externalIdDeputado/discursos', () => {
+  describe('quando a Câmara devolve um pronunciamento com transcrição', () => {
+    it('responde o ano inteiro pelo contrato público sem transcrição ou paginação', async () => {
+      // Arrange
+      const app = await buildApp(
+        new Map([[220593, source()]]),
+        undefined,
+        undefined,
+        {
+          fetchAll: async () => ({
+            ok: true,
+            pages: 1,
+            items: [
+              {
+                dataHoraInicio: '2022-08-16T15:42:00',
+                tipoDiscurso: 'Discurso',
+                sumario: 'Defesa da transparência pública.',
+                transcricao: 'Texto integral restrito ao backend.',
+              },
+            ],
+          }),
+        },
+      );
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/220593/discursos?year=2022',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = deputadoDiscursosResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body).toEqual({
+        year: 2022,
+        items: [
+          {
+            dataHoraInicio: '2022-08-16T15:42:00',
+            tipoDiscurso: 'Discurso',
+            fase: null,
+            sumario: 'Defesa da transparência pública.',
+            assuntos: [],
+            links: [],
+          },
+        ],
+        total: 1,
+      });
+      expect(response.body).not.toHaveProperty('limit');
+      expect(response.body).not.toHaveProperty('offset');
+      expect(JSON.stringify(response.body)).not.toContain('transcricao');
+      await app.close();
+    });
+  });
+});
 
 describe('GET /deputados/feed', () => {
   let app: INestApplication;
@@ -149,272 +434,213 @@ describe('GET /deputados/feed', () => {
         offset: 0,
       });
     });
+
+    it('reports the total coming from the repository, not the page size', async () => {
+      // Arrange
+      const paged = await buildApp(new Map([[220593, source()]]), undefined, {
+        items: [card()],
+        total: 137,
+      });
+
+      // Act
+      const response = await request(getTestServer(paged)).get(
+        '/deputados/feed?limit=1',
+      );
+
+      // Assert
+      const body = deputadoFeedResponseSchema.parse(response.body as unknown);
+      expect(body.total).toBe(137);
+      expect(body.items).toHaveLength(1);
+      await paged.close();
+    });
   });
 });
 
-describe('GET /deputados/feed?q=', () => {
+describe('GET /deputados/feed query string translation', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    app = await buildApp(
-      new Map([
-        [220593, source()],
-        [
-          220594,
-          source({
-            id: 'aaaaaaaa-0000-0000-0000-000000000002',
-            externalIdDeputado: 220594,
-            nome: 'Aécio Nome Cadastro',
-            nomeCivil: 'Aécio Pereira',
-            eventos: [
-              {
-                dataHora: '2023-01-01T00:00:00+00:00',
-                situacao: 'Exercício',
-                descricaoStatus: 'Entrada - Posse',
-                nomeEleitoral: 'Aécio Pereira',
-                siglaPartido: 'PSOL',
-                siglaUf: 'RJ',
-                urlFoto: null,
-              },
-            ],
-          }),
-        ],
-        [
-          220595,
-          source({
-            id: 'aaaaaaaa-0000-0000-0000-000000000003',
-            externalIdDeputado: 220595,
-            nome: 'Ana Nome Cadastro',
-            nomeCivil: 'Ana Pereira',
-            eventos: [
-              {
-                dataHora: '2023-01-01T00:00:00+00:00',
-                situacao: 'Exercício',
-                descricaoStatus: 'Entrada - Posse',
-                nomeEleitoral: 'Ana Pereira',
-                siglaPartido: 'PL*',
-                siglaUf: 'MG',
-                urlFoto: null,
-              },
-            ],
-          }),
-        ],
-      ]),
-    );
+    app = await buildApp(new Map([[220593, source()]]));
   });
 
   afterAll(async () => {
     await app.close();
   });
 
-  describe('when q matches a public name with different casing', () => {
-    it('returns only matching deputados', async () => {
+  beforeEach(() => {
+    feedCalls.length = 0;
+  });
+
+  describe('when no filter is given', () => {
+    it('asks the repository for the default page with no filters', async () => {
       // Act
-      const response = await request(getTestServer(app)).get(
-        '/deputados/feed?q=maria',
-      );
+      await request(getTestServer(app)).get('/deputados/feed');
 
       // Assert
-      expect(response.status).toBe(200);
-      const body = deputadoFeedResponseSchema.parse(response.body as unknown);
-      expect(body.total).toBe(1);
-      expect(body.items.map((item) => item.externalIdDeputado)).toEqual([
-        220593,
+      expect(feedCalls).toEqual([
+        {
+          filters: {
+            q: undefined,
+            emAtividade: undefined,
+            ufs: undefined,
+            partidos: undefined,
+            sexo: undefined,
+            faixasEtarias: undefined,
+          },
+          pagination: { limit: 20, offset: 0 },
+        },
       ]);
     });
   });
 
-  describe('when q omits accents from a public name', () => {
-    it('returns deputados whose names contain the accented form', async () => {
+  describe('when pagination is given', () => {
+    it('forwards limit and offset to the repository', async () => {
       // Act
-      const response = await request(getTestServer(app)).get(
-        '/deputados/feed?q=aecio',
+      await request(getTestServer(app)).get(
+        '/deputados/feed?limit=5&offset=40',
       );
 
       // Assert
-      expect(response.status).toBe(200);
-      const body = deputadoFeedResponseSchema.parse(response.body as unknown);
-      expect(body.total).toBe(1);
-      expect(body.items.map((item) => item.nomePublico)).toEqual([
-        'Aécio Pereira',
-      ]);
+      expect(feedCalls[0].pagination).toEqual({ limit: 5, offset: 40 });
+    });
+  });
+
+  describe('when q is given', () => {
+    it('forwards the trimmed term to the repository', async () => {
+      // Act
+      await request(getTestServer(app)).get('/deputados/feed?q=%20aecio%20');
+
+      // Assert
+      expect(feedCalls[0].filters.q).toBe('aecio');
+    });
+
+    it('treats a blank term as absent', async () => {
+      // Act
+      await request(getTestServer(app)).get('/deputados/feed?q=%20%20');
+
+      // Assert
+      expect(feedCalls[0].filters.q).toBeUndefined();
+    });
+  });
+
+  describe('when emAtividade is given', () => {
+    it('forwards the parsed boolean to the repository', async () => {
+      // Act
+      await request(getTestServer(app)).get('/deputados/feed?emAtividade=true');
+
+      // Assert
+      expect(feedCalls[0].filters.emAtividade).toBe(true);
+    });
+  });
+
+  describe('when uf is given in lowercase', () => {
+    it('forwards it uppercased to the repository', async () => {
+      // Act
+      await request(getTestServer(app)).get('/deputados/feed?uf=sp');
+
+      // Assert
+      expect(feedCalls[0].filters.ufs).toEqual(['SP']);
     });
   });
 
   describe('when partido has official punctuation', () => {
-    it('accepts the sigla and matches case-insensitively', async () => {
+    it('accepts the sigla and forwards it to the repository', async () => {
       // Act
-      const response = await request(getTestServer(app)).get(
-        '/deputados/feed?partido=pl*',
+      await request(getTestServer(app)).get('/deputados/feed?partido=pl*');
+
+      // Assert
+      expect(feedCalls[0].filters.partidos).toEqual(['pl*']);
+    });
+  });
+
+  describe('when uf and partido are repeated', () => {
+    it('forwards every value as a list', async () => {
+      // Act
+      await request(getTestServer(app)).get(
+        '/deputados/feed?uf=SP&uf=rj&partido=PT&partido=PL',
       );
 
       // Assert
-      expect(response.status).toBe(200);
-      const body = deputadoFeedResponseSchema.parse(response.body as unknown);
-      expect(body.total).toBe(1);
-      expect(body.items.map((item) => item.siglaPartido)).toEqual(['PL*']);
+      expect(feedCalls[0].filters.ufs).toEqual(['SP', 'RJ']);
+      expect(feedCalls[0].filters.partidos).toEqual(['PT', 'PL']);
+    });
+
+    it('collapses repeated values so the same filter is not sent twice', async () => {
+      // Act
+      await request(getTestServer(app)).get('/deputados/feed?uf=SP&uf=sp');
+
+      // Assert
+      expect(feedCalls[0].filters.ufs).toEqual(['SP']);
+    });
+  });
+
+  describe('when sexo is given', () => {
+    it('forwards the parsed sigla to the repository', async () => {
+      // Act
+      await request(getTestServer(app)).get('/deputados/feed?sexo=f');
+
+      // Assert
+      expect(feedCalls[0].filters.sexo).toBe('F');
+    });
+  });
+
+  describe('when faixaEtaria is repeated', () => {
+    it('forwards every parsed faixa to the repository', async () => {
+      // Act
+      await request(getTestServer(app)).get(
+        '/deputados/feed?faixaEtaria=40-49&faixaEtaria=70-mais',
+      );
+
+      // Assert
+      expect(feedCalls[0].filters.faixasEtarias).toEqual(['40-49', '70-mais']);
     });
   });
 });
 
-describe('GET /deputados/feed?emAtividade=true', () => {
+describe('GET /deputados/feed with invalid filters', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    app = await buildApp(
-      new Map([
-        [220593, source()],
-        [
-          220594,
-          source({
-            id: 'aaaaaaaa-0000-0000-0000-000000000002',
-            externalIdDeputado: 220594,
-            eventos: [
-              {
-                dataHora: '2019-02-01T12:00:00+00:00',
-                situacao: 'Exercício',
-                descricaoStatus: 'Entrada - Posse de Eleito Titular',
-                nomeEleitoral: 'José Pereira',
-                siglaPartido: 'PSOL',
-                siglaUf: 'RJ',
-                urlFoto: null,
-              },
-              {
-                dataHora: '2023-01-31T23:59:00+00:00',
-                situacao: 'Fim de Mandato',
-                descricaoStatus: 'Saída - Término da Legislatura',
-                nomeEleitoral: 'José Pereira',
-                siglaPartido: 'PSOL',
-                siglaUf: 'RJ',
-                urlFoto: null,
-              },
-            ],
-          }),
-        ],
-      ]),
-    );
+    app = await buildApp(new Map([[220593, source()]]));
   });
 
   afterAll(async () => {
     await app.close();
   });
 
-  describe('when the activity filter is enabled', () => {
-    it('returns only deputados currently in activity', async () => {
+  describe('when sexo is not a known sigla', () => {
+    it('returns 400', async () => {
       // Act
       const response = await request(getTestServer(app)).get(
-        '/deputados/feed?emAtividade=true',
+        '/deputados/feed?sexo=X',
       );
 
       // Assert
-      expect(response.status).toBe(200);
-      const body = deputadoFeedResponseSchema.parse(response.body as unknown);
-      expect(body.total).toBe(1);
-      expect(body.items.map((item) => item.externalIdDeputado)).toEqual([
-        220593,
-      ]);
+      expect(response.status).toBe(400);
     });
   });
-});
 
-describe('GET /deputados/feed?uf=', () => {
-  let app: INestApplication;
-
-  beforeAll(async () => {
-    app = await buildApp(
-      new Map([
-        [220593, source()],
-        [
-          220594,
-          source({
-            id: 'aaaaaaaa-0000-0000-0000-000000000002',
-            externalIdDeputado: 220594,
-            nome: 'José Nome Cadastro',
-            nomeCivil: 'José Pereira',
-            eventos: [
-              {
-                dataHora: '2023-01-01T00:00:00+00:00',
-                situacao: 'Exercício',
-                descricaoStatus: 'Entrada - Posse',
-                nomeEleitoral: 'José Pereira',
-                siglaPartido: 'PSOL',
-                siglaUf: 'RJ',
-                urlFoto: null,
-              },
-            ],
-          }),
-        ],
-      ]),
-    );
-  });
-
-  afterAll(async () => {
-    await app.close();
-  });
-
-  describe('when uf matches one latest public snapshot', () => {
-    it('returns only deputados from that UF', async () => {
+  describe('when faixaEtaria is not a known range', () => {
+    it('returns 400', async () => {
       // Act
       const response = await request(getTestServer(app)).get(
-        '/deputados/feed?uf=SP',
+        '/deputados/feed?faixaEtaria=30-39',
       );
 
       // Assert
-      expect(response.status).toBe(200);
-      const body = deputadoFeedResponseSchema.parse(response.body as unknown);
-      expect(body.total).toBe(1);
-      expect(body.items.map((item) => item.siglaUf)).toEqual(['SP']);
+      expect(response.status).toBe(400);
     });
   });
-});
 
-describe('GET /deputados/feed?partido=', () => {
-  let app: INestApplication;
-
-  beforeAll(async () => {
-    app = await buildApp(
-      new Map([
-        [220593, source()],
-        [
-          220594,
-          source({
-            id: 'aaaaaaaa-0000-0000-0000-000000000002',
-            externalIdDeputado: 220594,
-            nome: 'José Nome Cadastro',
-            nomeCivil: 'José Pereira',
-            eventos: [
-              {
-                dataHora: '2023-01-01T00:00:00+00:00',
-                situacao: 'Exercício',
-                descricaoStatus: 'Entrada - Posse',
-                nomeEleitoral: 'José Pereira',
-                siglaPartido: 'PSOL',
-                siglaUf: 'RJ',
-                urlFoto: null,
-              },
-            ],
-          }),
-        ],
-      ]),
-    );
-  });
-
-  afterAll(async () => {
-    await app.close();
-  });
-
-  describe('when partido matches one latest public snapshot', () => {
-    it('returns only deputados from that partido', async () => {
+  describe('when one repeated uf is invalid', () => {
+    it('returns 400 instead of silently dropping it', async () => {
       // Act
       const response = await request(getTestServer(app)).get(
-        '/deputados/feed?partido=PT',
+        '/deputados/feed?uf=SP&uf=BRASIL',
       );
 
       // Assert
-      expect(response.status).toBe(200);
-      const body = deputadoFeedResponseSchema.parse(response.body as unknown);
-      expect(body.total).toBe(1);
-      expect(body.items.map((item) => item.siglaPartido)).toEqual(['PT']);
+      expect(response.status).toBe(400);
     });
   });
 });
@@ -580,6 +806,32 @@ describe('GET /deputados/feed/partidos', () => {
         { siglaPartido: 'PSOL' },
         { siglaPartido: 'PT' },
       ]);
+    });
+  });
+
+  describe('when a uf is informed', () => {
+    it('returns only the partidos with a deputado in that uf', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/feed/partidos?uf=RJ',
+      );
+
+      // Assert
+      expect(response.status).toBe(200);
+      const body = partidosDisponiveisResponseSchema.parse(
+        response.body as unknown,
+      );
+      expect(body.items).toEqual([{ siglaPartido: 'PSOL' }]);
+    });
+
+    it('rejects a uf that is not two letters', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/feed/partidos?uf=RJX',
+      );
+
+      // Assert
+      expect(response.status).toBe(400);
     });
   });
 });

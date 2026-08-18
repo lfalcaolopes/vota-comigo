@@ -1,30 +1,47 @@
+"use client";
+
 import type {
   DeputadoPerfil,
+  EscopoMatcher,
   MatcherDeputadoDetalhe,
   MatcherDeputadoResumo,
   PosicaoMatcher,
   PosicaoUsuarioMatcher,
+  SiglaUf,
 } from "@vota-comigo/shared-types";
-import Link from "next/link";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
-import { DeputadoAvatar } from "@/shared/deputado";
 import {
-  nomePublicoLabel,
-  toAtividadeAriaLabel,
-  toAtividadeLabel,
-} from "@/shared/deputado/presentation";
-import { toIdentificadorLegislativo, toTextoResumo } from "@/shared/proposicao";
+  AtividadeStatus,
+  ComparativoDeputados,
+  CopyDeputadosButton,
+  DeputadoAvatar,
+  type DeputadoTextItem,
+} from "@/shared/deputado";
+import { nomePublicoLabel } from "@/shared/deputado/presentation";
+import {
+  ProposicaoResumo,
+  toIdentificadorLegislativo,
+  toTextoResumo,
+} from "@/shared/proposicao";
 import {
   ArrowLeftIcon,
   Badge,
   Button,
   ErrorState,
+  SegmentedControl,
   SkeletonRows,
+  TitleLink,
 } from "@/shared/ui";
 
 import { buildComparativoDeputadosGrid } from "../../lib/comparativo-deputados-grid";
+import { toCopyContextLabel } from "../../lib/matcher-presentation";
 import type { MatcherStatus } from "../../lib/matcher-state";
+
+const COMPARATIVO_VIEW_ITEMS = [
+  { id: "votos", label: "Votos comparados" },
+  { id: "gerais", label: "Dados gerais" },
+];
 
 const labelColumnClassName =
   "sticky left-0 z-10 border-r border-b border-border bg-bg p-3";
@@ -32,8 +49,10 @@ const labelColumnClassName =
 type StepComparativoProps = {
   deputados: MatcherDeputadoResumo[];
   detalhes: MatcherDeputadoDetalhe[];
+  escopo: EscopoMatcher;
   perfis: DeputadoPerfil[];
   posicoes: PosicaoMatcher[];
+  siglaUf: SiglaUf | null;
   status: MatcherStatus;
   onBack: () => void;
   onRetry: () => void;
@@ -42,8 +61,10 @@ type StepComparativoProps = {
 export function StepComparativo({
   deputados,
   detalhes,
+  escopo,
   perfis,
   posicoes,
+  siglaUf,
   status,
   onBack,
   onRetry,
@@ -65,7 +86,8 @@ export function StepComparativo({
       ),
     ]),
   );
-  const gridTemplateColumns = `minmax(12rem,1.1fr) repeat(${grid.columns.length}, minmax(13rem,1fr))`;
+  const gridTemplateColumns = `minmax(8rem,0.6fr) repeat(${grid.columns.length}, minmax(13rem,1fr))`;
+  const [view, setView] = useState("votos");
 
   return (
     <div className="grid gap-5">
@@ -76,15 +98,49 @@ export function StepComparativo({
         </Button>
       </div>
 
-      {status === "loading" ? <SkeletonRows count={5} /> : null}
-      {status === "error" ? (
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+        <SegmentedControl
+          activeId={view}
+          className="w-full sm:w-auto"
+          itemClassName="flex-1 sm:flex-none"
+          items={COMPARATIVO_VIEW_ITEMS}
+          label="Visualização do comparativo"
+          onSelect={setView}
+        />
+
+        {status === "idle" ? (
+          <CopyDeputadosButton
+            className="sm:justify-end"
+            contexto={toCopyContextLabel({
+              escopo,
+              siglaUf,
+              totalProposicoes: grid.rows.length,
+            })}
+            deputados={[...deputadosById.values()].map(toDeputadoTextItem)}
+          />
+        ) : null}
+      </div>
+
+      {view === "gerais" ? (
+        <ComparativoDeputados
+          externalIdsDeputado={deputados.map(
+            (deputado) => deputado.externalIdDeputado,
+          )}
+          showCopyButton={false}
+        />
+      ) : null}
+
+      {view === "votos" && status === "loading" ? (
+        <SkeletonRows count={5} />
+      ) : null}
+      {view === "votos" && status === "error" ? (
         <ErrorState
           body="Não foi possível carregar o comparativo. Tente novamente."
           onRetry={onRetry}
         />
       ) : null}
 
-      {status === "idle" ? (
+      {view === "votos" && status === "idle" ? (
         <>
           <div className="lg:hidden">
             <ComparativoMobile rows={grid.rows} deputadosById={deputadosById} />
@@ -94,7 +150,7 @@ export function StepComparativo({
               <div
                 className={`${labelColumnClassName} text-sm font-[650] text-muted`}
               >
-                Proposição
+                Sua posição
               </div>
               {grid.columns.map(({ deputado }) => (
                 <ComparativoDeputadoHeader
@@ -121,8 +177,8 @@ type ComparativoDeputadoDisplay = {
   deputado: MatcherDeputadoResumo;
   emAtividade: boolean;
   nome: string | null;
-  siglaPartido: string;
-  siglaUf: string;
+  siglaPartido: string | null;
+  siglaUf: string | null;
   urlFoto: string | null;
 };
 
@@ -136,9 +192,21 @@ function toComparativoDeputadoDisplay(
     deputado,
     emAtividade: perfil?.emAtividade ?? deputado.emAtividade,
     nome: perfil ? nomePublicoLabel(perfil) : deputado.nome,
-    siglaPartido: snapshot?.siglaPartido ?? deputado.partido ?? "—",
-    siglaUf: snapshot?.siglaUf ?? deputado.siglaUf ?? "—",
+    siglaPartido: snapshot?.siglaPartido ?? deputado.partido,
+    siglaUf: snapshot?.siglaUf ?? deputado.siglaUf,
     urlFoto: snapshot?.urlFoto ?? deputado.urlFoto,
+  };
+}
+
+function toDeputadoTextItem(
+  display: ComparativoDeputadoDisplay,
+): DeputadoTextItem {
+  return {
+    externalIdDeputado: display.deputado.externalIdDeputado,
+    nome: display.nome,
+    siglaPartido: display.siglaPartido,
+    siglaUf: display.siglaUf,
+    compatibilidade: display.deputado.compatibilidadeBruta,
   };
 }
 
@@ -157,39 +225,23 @@ function ComparativoDeputadoHeader({
         <div className="flex items-start gap-3">
           <DeputadoAvatar nome={deputado.nome} urlFoto={deputado.urlFoto} />
           <div className="min-w-0">
-            <Link
-              className="block line-clamp-2 break-words text-sm font-[650] text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+            <TitleLink
+              className="block line-clamp-2 text-sm font-[650]"
               href={`/deputados/${deputado.deputado.externalIdDeputado}`}
-              rel="noopener noreferrer"
-              target="_blank"
             >
               {deputado.nome ?? "Sem nome"}
-            </Link>
+            </TitleLink>
             <p className="mt-1 text-xs text-muted">
-              {deputado.siglaPartido} · {deputado.siglaUf}
+              {deputado.siglaPartido ?? "—"} · {deputado.siglaUf ?? "—"}
             </p>
-            <ComparativoAtividadeStatus emAtividade={deputado.emAtividade} />
+            <AtividadeStatus
+              className="mt-1.5"
+              emAtividade={deputado.emAtividade}
+            />
           </div>
         </div>
       </div>
     </div>
-  );
-}
-
-function ComparativoAtividadeStatus({ emAtividade }: { emAtividade: boolean }) {
-  return (
-    <span
-      aria-label={toAtividadeAriaLabel(emAtividade)}
-      className="mt-1.5 inline-flex max-w-full items-center gap-1.5 text-xs font-[560] leading-normal text-muted [overflow-wrap:anywhere]"
-    >
-      <span
-        aria-hidden="true"
-        className={`size-1.5 shrink-0 rounded-full ${
-          emAtividade ? "bg-success ring-1 ring-success/35" : "bg-subtle"
-        }`}
-      />
-      {toAtividadeLabel(emAtividade)}
-    </span>
   );
 }
 
@@ -200,25 +252,32 @@ type ComparativoRowProps = {
 function ComparativoRow({ row }: ComparativoRowProps) {
   const identificador =
     toIdentificadorLegislativo(row.proposicao) ??
-    `Proposição ${row.proposicao.externalIdProposicao}`;
+    `Proposta ${row.proposicao.externalIdProposicao}`;
   const textoResumo = toTextoResumo(row.proposicao);
 
   return (
     <>
+      <div className="col-[1/-1] border-b border-border bg-bg px-3 pb-3 pt-6">
+        <div className="sticky left-0 grid w-fit max-w-[65ch] gap-1">
+          <TitleLink
+            className="block text-base font-[680] leading-snug"
+            href={`/proposicoes/${row.proposicao.externalIdProposicao}`}
+          >
+            {identificador}
+          </TitleLink>
+          {textoResumo ? (
+            <ProposicaoResumo
+              identificador={identificador}
+              texto={textoResumo}
+            />
+          ) : null}
+        </div>
+      </div>
+
       <div className={labelColumnClassName}>
-        <Link
-          className="block break-words text-sm font-[650] text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
-          href={`/proposicoes/${row.proposicao.externalIdProposicao}`}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          {identificador}
-        </Link>
-        {textoResumo ? (
-          <p className="mt-1 line-clamp-2 text-sm leading-normal text-muted">
-            {textoResumo}
-          </p>
-        ) : null}
+        <p className="text-sm font-[650] leading-normal text-ink">
+          {toPosicaoUsuarioValueLabel(row.posicaoUsuario)}
+        </p>
       </div>
 
       {row.cells.map((cell) => (
@@ -234,9 +293,6 @@ function ComparativoRow({ row }: ComparativoRowProps) {
               {cell.matcherEffectVerdict.label}
             </Badge>
             <dl className="grid gap-1 text-sm leading-normal">
-              <ComparativoCellFact label="Você">
-                {toPosicaoUsuarioValueLabel(row.posicaoUsuario)}
-              </ComparativoCellFact>
               <ComparativoCellFact label="Deputado">
                 {cell.situacaoLabel}
               </ComparativoCellFact>
@@ -278,24 +334,24 @@ function ComparativoMobileProposicao({
 }: ComparativoMobileProposicaoProps) {
   const identificador =
     toIdentificadorLegislativo(row.proposicao) ??
-    `Proposição ${row.proposicao.externalIdProposicao}`;
+    `Proposta ${row.proposicao.externalIdProposicao}`;
   const textoResumo = toTextoResumo(row.proposicao);
 
   return (
     <section className="grid gap-3 border-t border-border pt-5 first:border-t-0 first:pt-0">
       <header className="grid gap-2">
-        <Link
-          className="block break-words text-base font-[680] leading-snug text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+        <TitleLink
+          className="block text-base font-[680] leading-snug"
           href={`/proposicoes/${row.proposicao.externalIdProposicao}`}
-          rel="noopener noreferrer"
-          target="_blank"
         >
           {identificador}
-        </Link>
+        </TitleLink>
         {textoResumo ? (
-          <p className="line-clamp-3 text-sm leading-normal text-muted">
-            {textoResumo}
-          </p>
+          <ProposicaoResumo
+            clampClassName="line-clamp-3"
+            identificador={identificador}
+            texto={textoResumo}
+          />
         ) : null}
         <dl className="grid rounded-md border border-border bg-surface px-3 py-2 text-sm leading-normal">
           <ComparativoCellFact label="Sua posição">
@@ -338,16 +394,14 @@ function ComparativoMobileDeputadoVoto({
       <div className="flex min-w-0 items-start gap-3">
         <DeputadoAvatar nome={deputado.nome} urlFoto={deputado.urlFoto} />
         <div className="min-w-0 flex-1">
-          <Link
-            className="block line-clamp-2 break-words text-sm font-[650] leading-snug text-ink underline decoration-transparent underline-offset-[0.18em] transition-[text-decoration-color] duration-[180ms] ease-standard hover:decoration-current"
+          <TitleLink
+            className="block line-clamp-2 text-sm font-[650] leading-snug"
             href={`/deputados/${deputado.deputado.externalIdDeputado}`}
-            rel="noopener noreferrer"
-            target="_blank"
           >
             {deputado.nome ?? "Sem nome"}
-          </Link>
+          </TitleLink>
           <p className="mt-1 text-xs text-muted">
-            {deputado.siglaPartido} · {deputado.siglaUf}
+            {deputado.siglaPartido ?? "—"} · {deputado.siglaUf ?? "—"}
           </p>
         </div>
         <Badge

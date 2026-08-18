@@ -18,7 +18,7 @@ export function DetalheMetricas({ metrics }: DetalheMetricasProps) {
     <div className="grid gap-3 rounded-lg border border-border bg-surface-muted p-4">
       <dl className="flex flex-wrap items-end gap-x-8 gap-y-4">
         <div className="grid gap-0.5">
-          <dt className="text-xs text-muted">Compatibilidade</dt>
+          <dt className="text-xs text-muted">Concordância</dt>
           <dd className="text-2xl font-[680] leading-tight tabular-nums text-ink">
             {formatPercentual(metrics.compatibilidadeBruta)}
           </dd>

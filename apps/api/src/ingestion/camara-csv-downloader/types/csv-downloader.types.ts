@@ -42,6 +42,12 @@ export type CsvDownloadPlanItem = {
   filename: string;
   url: string;
   localPath: string;
+  // Presença marca conjunto distribuído em arquivo compactado.
+  archive?: CsvDownloadArchive;
+};
+
+export type CsvDownloadArchive = {
+  entryName: string;
 };
 
 export type CsvPlanItemDownloadResult =
@@ -104,10 +110,21 @@ export type CsvPlanItemFileSystem = {
   rename(from: string, to: string): Promise<void>;
 };
 
+export type CsvArchiveExtraction = {
+  archivePath: string;
+  entryName: string;
+  destinationPath: string;
+};
+
+export type CsvArchiveExtractor = (
+  extraction: CsvArchiveExtraction,
+) => Promise<void>;
+
 export type CsvPlanItemDownloaderOptions = {
   force?: boolean;
   transport?: CsvDownloadTransport;
   fileSystem?: CsvPlanItemFileSystem;
+  extractArchive?: CsvArchiveExtractor;
   inactivityTimeoutMs?: number;
   maxAttempts?: number;
   retryBackoffMs?: readonly number[];

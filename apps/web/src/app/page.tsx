@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { SITE_DESCRIPTION } from "@/shared/lib/site";
 import {
   HomeComoFunciona,
   HomeCta,
@@ -14,8 +15,7 @@ export const metadata: Metadata = {
   title: {
     absolute: "Quem Vota Comigo | Veja quais deputados votam como você",
   },
-  description:
-    "Compare suas posições com os votos reais de deputados federais na Câmara dos Deputados, com fonte oficial e método aberto.",
+  description: SITE_DESCRIPTION,
 };
 
 export default function Home() {

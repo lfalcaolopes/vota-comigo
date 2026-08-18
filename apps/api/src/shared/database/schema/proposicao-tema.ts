@@ -1,4 +1,4 @@
-import { bigint, pgTable, unique, uuid } from 'drizzle-orm/pg-core';
+import { bigint, index, pgTable, unique, uuid } from 'drizzle-orm/pg-core';
 
 import { proposicao } from './proposicao';
 import { tema } from './tema';
@@ -23,5 +23,6 @@ export const proposicaoTema = pgTable(
       table.externalIdProposicao,
       table.externalCodTema,
     ),
+    index('proposicao_tema_proposicao_id_idx').on(table.proposicaoId),
   ],
 );

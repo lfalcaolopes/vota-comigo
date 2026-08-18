@@ -16,7 +16,7 @@ function makeProposicao(
     ementa: "Dispõe sobre alguma coisa.",
     dataApresentacao: "2023-05-10",
     descricaoTipo: "Projeto de Lei",
-    ementaDetalhada: "Texto mais longo explicando a proposição.",
+    ementaDetalhada: "Texto mais longo explicando a proposta.",
     keywords: "Saúde pública.",
     urlInteiroTeor:
       "https://www.camara.leg.br/proposicoesWeb/prop_mostrarintegra?codteor=42",
@@ -79,7 +79,7 @@ describe("ProposicaoDetalhe", () => {
       const html = render(proposicao);
 
       // Assert
-      expect(html).toContain("Estatísticas");
+      expect(html).toContain("Última votação");
       expect(html).toContain("Última votação");
       expect(html).toContain("14 mar 2025");
       expect(html).toContain("Ver texto completo");
@@ -136,7 +136,8 @@ describe("ProposicaoDetalhe", () => {
       const proposicao = makeProposicao({
         resumoIaDisponivel: true,
         resumoIaCard: "Resumo curto aprovado.",
-        resumoIaDetalhe: "- altera a regra de aposentadoria.\n- reduz o teto de gastos.",
+        resumoIaDetalhe:
+          "- altera a regra de aposentadoria.\n- reduz o teto de gastos.",
       });
 
       // Act
@@ -160,7 +161,7 @@ describe("ProposicaoDetalhe", () => {
 
       // Assert
       expect(html).toContain(
-        "Gerado por IA a partir do texto completo da proposição",
+        "Gerado por IA a partir do texto completo da proposta",
       );
     });
 

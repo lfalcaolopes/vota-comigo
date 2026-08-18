@@ -21,11 +21,11 @@ export function ProposicaoBreadcrumb({
         href={feedHref}
         className="text-muted underline-offset-2 hover:text-ink hover:underline"
       >
-        Proposições
+        Propostas
       </Link>
       <span aria-hidden="true">›</span>
       <span className="font-mono text-muted">
-        {identificador ?? "Sem identificador"}
+        {identificador ?? "Proposta sem número"}
       </span>
     </nav>
   );

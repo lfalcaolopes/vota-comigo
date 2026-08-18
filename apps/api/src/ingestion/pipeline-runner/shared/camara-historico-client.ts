@@ -1,21 +1,18 @@
-import {
-  isTransientHttpStatus,
-  retryDelayMs,
-} from '../../camara-csv-downloader/resilience/retry-policy';
 import type {
   DeputadoHistoricoClient,
   DeputadoHistoricoFetchResult,
   DeputadoHistoricoFetchOptions,
   HistoricoEvento,
 } from '../steps/deputado-historico/deputado-historico.repository.types';
-import type {
-  CamaraJsonResponse,
-  CamaraJsonTransport,
-} from './camara-api-transport';
-
-const DEFAULT_BASE_URL = 'https://dadosabertos.camara.leg.br/api/v2';
-const DEFAULT_MAX_ATTEMPTS = 3;
-const DEFAULT_RETRY_BACKOFF_MS: readonly number[] = [1000, 2000];
+import type { CamaraJsonTransport } from './camara-api-transport';
+import {
+  DEFAULT_CAMARA_BASE_URL,
+  DEFAULT_MAX_ATTEMPTS,
+  DEFAULT_RETRY_BACKOFF_MS,
+  defaultSleep,
+  fetchPagedJson,
+} from './camara-paged-json';
+import { asNumber, asString, isRecord } from './json-value';
 
 export type CamaraHistoricoClientDeps = {
   transport: CamaraJsonTransport;
@@ -31,17 +28,13 @@ export function createDeputadoHistoricoClient(
   const sleep = deps.sleep ?? defaultSleep;
   const maxAttempts = deps.maxAttempts ?? DEFAULT_MAX_ATTEMPTS;
   const retryBackoffMs = deps.retryBackoffMs ?? DEFAULT_RETRY_BACKOFF_MS;
-  const baseUrl = deps.baseUrl ?? DEFAULT_BASE_URL;
+  const baseUrl = deps.baseUrl ?? DEFAULT_CAMARA_BASE_URL;
 
   return {
     async fetch(
       externalIdDeputado: number,
       options?: DeputadoHistoricoFetchOptions,
     ): Promise<DeputadoHistoricoFetchResult> {
-      const eventos: HistoricoEvento[] = [];
-      let url: string | undefined =
-        `${baseUrl}/deputados/${externalIdDeputado}/historico`;
-
       const emit = options?.onEvent;
       const onRetry = emit
         ? (attempt: number, delayMs: number, reason: string) =>
@@ -55,96 +48,24 @@ export function createDeputadoHistoricoClient(
             })
         : undefined;
 
-      while (url !== undefined) {
-        const page = await fetchPage(url, {
+      const page = await fetchPagedJson(
+        `${baseUrl}/deputados/${externalIdDeputado}/historico`,
+        {
           transport: deps.transport,
           sleep,
           maxAttempts,
           retryBackoffMs,
           onRetry,
-        });
+        },
+      );
 
-        if (!page.ok) {
-          return { ok: false, reason: page.reason };
-        }
-
-        for (const dado of page.dados) {
-          eventos.push(toHistoricoEvento(dado));
-        }
-
-        url = page.nextUrl;
+      if (!page.ok) {
+        return { ok: false, reason: page.reason };
       }
 
-      return { ok: true, eventos };
+      return { ok: true, eventos: page.dados.map(toHistoricoEvento) };
     },
   };
-}
-
-type PageDeps = {
-  transport: CamaraJsonTransport;
-  sleep: (ms: number) => Promise<void>;
-  maxAttempts: number;
-  retryBackoffMs: readonly number[];
-  onRetry?: (attempt: number, delayMs: number, reason: string) => void;
-};
-
-type PageResult =
-  | { ok: true; dados: readonly unknown[]; nextUrl?: string }
-  | { ok: false; reason: string };
-
-async function fetchPage(url: string, deps: PageDeps): Promise<PageResult> {
-  for (let attempt = 1; attempt <= deps.maxAttempts; attempt += 1) {
-    const response = await deps.transport(url);
-
-    if (response.ok) {
-      return readPage(response.body);
-    }
-
-    const transient = isTransientHttpStatus(response.status);
-    const reason = describeFailure(response);
-
-    if (!transient || attempt === deps.maxAttempts) {
-      return { ok: false, reason };
-    }
-
-    const delayMs = retryDelayMs(response, attempt, deps.retryBackoffMs);
-    deps.onRetry?.(attempt, delayMs, reason);
-    await deps.sleep(delayMs);
-  }
-
-  return { ok: false, reason: 'tentativas esgotadas' };
-}
-
-function describeFailure(response: CamaraJsonResponse): string {
-  if (response.ok) {
-    return '';
-  }
-
-  const parts = [`${response.status} ${response.statusText}`];
-
-  if (response.retryAfter !== undefined) {
-    parts.push(`Retry-After: ${response.retryAfter}`);
-  }
-
-  const remaining = response.rateLimit?.remaining;
-  if (remaining !== undefined) {
-    parts.push(`X-RateLimit-Remaining: ${remaining}`);
-  }
-
-  return parts.length === 1
-    ? parts[0]
-    : `${parts[0]} (${parts.slice(1).join(', ')})`;
-}
-
-function readPage(body: unknown): PageResult {
-  const dados = isRecord(body) && Array.isArray(body.dados) ? body.dados : [];
-  const links = isRecord(body) && Array.isArray(body.links) ? body.links : [];
-  const next = links.find(
-    (link): link is { rel: string; href: string } =>
-      isRecord(link) && link.rel === 'next' && typeof link.href === 'string',
-  );
-
-  return { ok: true, dados, nextUrl: next?.href };
 }
 
 function toHistoricoEvento(dado: unknown): HistoricoEvento {
@@ -164,20 +85,4 @@ function toHistoricoEvento(dado: unknown): HistoricoEvento {
     email: asString(record.email),
     urlFoto: asString(record.urlFoto),
   };
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null;
-}
-
-function asString(value: unknown): string | null {
-  return typeof value === 'string' ? value : null;
-}
-
-function asNumber(value: unknown): number | null {
-  return typeof value === 'number' && Number.isFinite(value) ? value : null;
-}
-
-function defaultSleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }

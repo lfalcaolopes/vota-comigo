@@ -58,29 +58,55 @@ function detalhe(
   };
 }
 
-function renderStep(selected: ProposicaoCard[]): string {
+function renderStep(
+  selected: ProposicaoCard[],
+  route: { index: number; view: "card" | "revisao" } = {
+    index: 0,
+    view: "card",
+  },
+): string {
   return renderToStaticMarkup(
     createElement(StepPosicoes, {
       selected,
+      index: route.index,
+      view: route.view,
       posicoes: new Map(),
       faltamRespostas: 0,
       faltamComputaveis: 0,
       canRun: false,
       onSetPosicao: vi.fn(),
       onBack: vi.fn(),
+      onNavigate: vi.fn(),
+      onReviewBack: vi.fn(),
       onRun: vi.fn(),
     }),
   );
 }
 
 describe("StepPosicoes", () => {
+  describe("when the address selects a proposition", () => {
+    it("shows the proposition identified by the route", () => {
+      // Arrange
+      const selected = [
+        card({ externalIdProposicao: 1 }),
+        card({ externalIdProposicao: 2 }),
+      ];
+
+      // Act
+      const html = renderStep(selected, { index: 1, view: "card" });
+
+      // Assert
+      expect(html).toContain('aria-label="Proposta 2 de 2"');
+    });
+  });
+
   describe("when no proposition is selected", () => {
     it("invites the user to go back instead of rendering a card", () => {
       // Act
       const html = renderStep([]);
 
       // Assert
-      expect(html).toContain("Nenhuma proposição selecionada.");
+      expect(html).toContain("Nenhuma proposta escolhida");
       expect(html).not.toContain("Na sua opinião, deveria ser aprovada?");
     });
   });
@@ -98,9 +124,26 @@ describe("StepPosicoes", () => {
 
       // Assert
       expect(html).toContain('role="group"');
-      expect(html).toContain('aria-label="Proposição 1 de 2"');
+      expect(html).toContain('aria-label="Proposta 1 de 2"');
       expect(html).toContain('aria-label="Revisão das suas posições"');
       expect(html).toContain('tabindex="-1"');
+    });
+  });
+
+  describe("when a selected proposition has a long summary", () => {
+    it("keeps it readable in the review list with an expand control", () => {
+      // Arrange
+      const ementa =
+        "Reforma constitucional da previdência que cria um novo regime de " +
+        "capitalização e estabelece regras de transição.";
+
+      // Act
+      const html = renderStep([card({ ementa })]);
+
+      // Assert
+      expect(html).toContain(ementa);
+      expect(html).toContain("Ver mais");
+      expect(html).not.toContain("line-clamp-1");
     });
   });
 
@@ -119,7 +162,7 @@ describe("StepPosicoes", () => {
       const html = renderStep([card({ externalIdProposicao: 42 })]);
 
       // Assert
-      expect(html).not.toContain("Ver proposição");
+      expect(html).not.toContain("Ver proposta");
       expect(html).not.toContain("/proposicoes/42");
     });
   });

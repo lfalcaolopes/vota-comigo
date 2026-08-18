@@ -3,9 +3,8 @@ import {
   MIN_POSICOES_COMPUTAVEIS,
 } from "@vota-comigo/shared-types";
 import type {
-  DeputadoPerfil,
+  DeputadoSexo,
   EscopoMatcher,
-  MatcherDeputadoDetalhe,
   MatcherDeputadoResumo,
   MatcherResultado,
   PosicaoUsuarioMatcher,
@@ -14,114 +13,82 @@ import type {
 } from "@vota-comigo/shared-types";
 
 import {
+  canOpenComparativo as canOpenComparativoDeputados,
+  hasComparativoDeputadoLimit as hasComparativoDeputadoLimitReached,
+  toggleComparativoDeputado as toggleComparativoDeputadoSelecionado,
+} from "@/shared/deputado";
+
+import {
   validateExecucao,
   type ExecucaoValidation,
 } from "./matcher-validation";
+import { shouldClearFiltroConcordancia } from "./filtro-concordancia-reset";
+import type { MatcherRascunho } from "./matcher-rascunho";
+import {
+  RESULTADO_FILTROS_PADRAO,
+  saoResultadoFiltrosIguais,
+  toResultadoFiltros,
+  type ResultadoFiltros,
+} from "./resultado-filtros";
 
-export type MatcherStep =
-  | "local"
-  | "selecao"
-  | "posicoes"
-  | "resultado"
-  | "comparativo";
 export type MatcherStatus = "idle" | "loading" | "error";
-export type StepStatus = "done" | "current" | "upcoming";
-export type MainMatcherStep = Exclude<MatcherStep, "comparativo">;
-
-export const STEP_ORDER: MainMatcherStep[] = [
-  "local",
-  "selecao",
-  "posicoes",
-  "resultado",
-];
-
-export function stepStatus(
-  current: MatcherStep,
-  step: MainMatcherStep,
-): StepStatus {
-  const currentIndex =
-    current === "comparativo" ? STEP_ORDER.length : STEP_ORDER.indexOf(current);
-  const stepIndex = STEP_ORDER.indexOf(step);
-  if (stepIndex < currentIndex) return "done";
-  if (stepIndex === currentIndex) return "current";
-  return "upcoming";
-}
-
-const MIN_COMPARATIVO_DEPUTADOS = 2;
-const MAX_COMPARATIVO_DEPUTADOS = 3;
 
 export type MatcherState = {
-  step: MatcherStep;
+  isHydrated: boolean;
   siglaUf: SiglaUf | null;
-  cidade: string;
   selected: ProposicaoCard[];
   posicoes: Map<number, PosicaoUsuarioMatcher>;
   resultados: Record<EscopoMatcher, MatcherResultado | null>;
   escopo: EscopoMatcher;
   apenasEmAtividade: boolean;
-  detalhe: MatcherDeputadoDetalhe | null;
-  detalheStatus: MatcherStatus;
-  detalheDeputadoId: number | null;
+  partidos: readonly string[];
+  ocultarAmostraPequena: boolean;
+  sexo: DeputadoSexo | null;
+  externalIdProposicoesFiltroConcordancia: number[];
   status: MatcherStatus;
   isSelectingComparativoDeputados: boolean;
   selectedComparativoDeputados: MatcherDeputadoResumo[];
-  comparativoStatus: MatcherStatus;
-  comparativoDetalhes: MatcherDeputadoDetalhe[];
-  comparativoPerfis: DeputadoPerfil[];
 };
 
 export type MatcherAction =
-  | { type: "setLocal"; siglaUf: SiglaUf; cidade: string }
+  | { type: "hydrateRascunho"; rascunho: MatcherRascunho | null }
+  | { type: "resetMatcher" }
+  | { type: "setLocal"; siglaUf: SiglaUf }
   | { type: "toggleProposicao"; proposicao: ProposicaoCard }
   | {
       type: "setPosicao";
       externalIdProposicao: number;
       posicao: PosicaoUsuarioMatcher;
     }
-  | { type: "goToStep"; step: MatcherStep }
   | { type: "runStart" }
   | { type: "runOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
   | { type: "runError" }
   | { type: "setEscopo"; escopo: EscopoMatcher }
-  | { type: "setApenasEmAtividade"; value: boolean }
+  | ({ type: "setResultadoFilters"; escopo: EscopoMatcher } & ResultadoFiltros)
+  | {
+      type: "toggleFiltroConcordancia";
+      externalIdProposicao: number;
+    }
   | { type: "loadMoreOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
-  | { type: "openDetalheStart"; externalIdDeputado: number }
-  | { type: "openDetalheOk"; detalhe: MatcherDeputadoDetalhe }
-  | { type: "openDetalheError" }
-  | { type: "closeDetalhe" }
   | { type: "startComparativoSelection" }
   | { type: "toggleComparativoDeputado"; deputado: MatcherDeputadoResumo }
-  | { type: "cancelComparativoSelection" }
-  | { type: "openComparativoStart" }
-  | {
-      type: "openComparativoOk";
-      detalhes: MatcherDeputadoDetalhe[];
-      perfis: DeputadoPerfil[];
-    }
-  | { type: "openComparativoError" }
-  | { type: "backFromComparativo" };
+  | { type: "cancelComparativoSelection" };
 
 export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
   void candidates;
 
   return {
-    step: "local",
+    isHydrated: false,
     siglaUf: null,
-    cidade: "",
     selected: [],
     posicoes: new Map(),
     resultados: { estadual: null, nacional: null },
     escopo: "estadual",
-    apenasEmAtividade: false,
-    detalhe: null,
-    detalheStatus: "idle",
-    detalheDeputadoId: null,
+    ...RESULTADO_FILTROS_PADRAO,
+    externalIdProposicoesFiltroConcordancia: [],
     status: "idle",
     isSelectingComparativoDeputados: false,
     selectedComparativoDeputados: [],
-    comparativoStatus: "idle",
-    comparativoDetalhes: [],
-    comparativoPerfis: [],
   };
 }
 
@@ -134,40 +101,29 @@ function isSelected(
   );
 }
 
+function applyFiltroConcordanciaReset(
+  previous: MatcherState,
+  next: MatcherState,
+): MatcherState {
+  return shouldClearFiltroConcordancia(previous, next)
+    ? { ...next, externalIdProposicoesFiltroConcordancia: [] }
+    : next;
+}
+
 function deselect(
   state: MatcherState,
   externalIdProposicao: number,
 ): MatcherState {
   const posicoes = new Map(state.posicoes);
   posicoes.delete(externalIdProposicao);
-  return {
+  const next = {
     ...state,
     selected: state.selected.filter(
       (card) => card.externalIdProposicao !== externalIdProposicao,
     ),
     posicoes,
   };
-}
-
-function hasSelectedComparativoDeputado(
-  state: MatcherState,
-  externalIdDeputado: number,
-): boolean {
-  return state.selectedComparativoDeputados.some(
-    (deputado) => deputado.externalIdDeputado === externalIdDeputado,
-  );
-}
-
-function deselectComparativoDeputado(
-  state: MatcherState,
-  externalIdDeputado: number,
-): MatcherState {
-  return {
-    ...state,
-    selectedComparativoDeputados: state.selectedComparativoDeputados.filter(
-      (deputado) => deputado.externalIdDeputado !== externalIdDeputado,
-    ),
-  };
+  return applyFiltroConcordanciaReset(state, next);
 }
 
 export function matcherReducer(
@@ -175,8 +131,14 @@ export function matcherReducer(
   action: MatcherAction,
 ): MatcherState {
   switch (action.type) {
+    case "hydrateRascunho":
+      return action.rascunho === null
+        ? { ...state, isHydrated: true }
+        : { ...state, ...action.rascunho, isHydrated: true };
+    case "resetMatcher":
+      return { ...initMatcherState([]), isHydrated: true };
     case "setLocal":
-      return { ...state, siglaUf: action.siglaUf, cidade: action.cidade };
+      return { ...state, siglaUf: action.siglaUf };
     case "toggleProposicao": {
       const id = action.proposicao.externalIdProposicao;
       if (isSelected(state, id)) {
@@ -185,21 +147,23 @@ export function matcherReducer(
       if (state.selected.length >= MAX_POSICOES) {
         return state;
       }
-      return { ...state, selected: [...state.selected, action.proposicao] };
+      const next = {
+        ...state,
+        selected: [...state.selected, action.proposicao],
+      };
+      return applyFiltroConcordanciaReset(state, next);
     }
     case "setPosicao": {
       const posicoes = new Map(state.posicoes);
       posicoes.set(action.externalIdProposicao, action.posicao);
-      return { ...state, posicoes };
+      const next = { ...state, posicoes };
+      return applyFiltroConcordanciaReset(state, next);
     }
-    case "goToStep":
-      return { ...state, step: action.step };
     case "runStart":
       return { ...state, status: "loading" };
     case "runOk":
       return {
         ...state,
-        step: "resultado",
         status: "idle",
         escopo: action.escopo,
         resultados: { ...state.resultados, [action.escopo]: action.resultado },
@@ -208,12 +172,40 @@ export function matcherReducer(
       return { ...state, status: "error" };
     case "setEscopo":
       return { ...state, escopo: action.escopo };
-    case "setApenasEmAtividade":
+    case "setResultadoFilters": {
+      // Os recortes valem para os dois escopos, então mudá-los invalida também
+      // o resultado que está apenas em cache.
+      const mudouRecorte = !saoResultadoFiltrosIguais(action, state);
       return {
         ...state,
-        apenasEmAtividade: action.value,
+        escopo: action.escopo,
+        ...toResultadoFiltros(action),
+        externalIdProposicoesFiltroConcordancia: [
+          ...action.externalIdProposicoesFiltroConcordancia,
+        ],
+        resultados: mudouRecorte
+          ? { estadual: null, nacional: null }
+          : { ...state.resultados, [action.escopo]: null },
+      };
+    }
+    case "toggleFiltroConcordancia": {
+      const isMarked = state.externalIdProposicoesFiltroConcordancia.includes(
+        action.externalIdProposicao,
+      );
+      return {
+        ...state,
+        externalIdProposicoesFiltroConcordancia: isMarked
+          ? state.externalIdProposicoesFiltroConcordancia.filter(
+              (externalIdProposicao) =>
+                externalIdProposicao !== action.externalIdProposicao,
+            )
+          : [
+              ...state.externalIdProposicoesFiltroConcordancia,
+              action.externalIdProposicao,
+            ],
         resultados: { estadual: null, nacional: null },
       };
+    }
     case "loadMoreOk": {
       const existing = state.resultados[action.escopo];
       if (existing === null) return state;
@@ -230,96 +222,29 @@ export function matcherReducer(
         },
       };
     }
-    case "openDetalheStart":
-      return {
-        ...state,
-        detalheStatus: "loading",
-        detalheDeputadoId: action.externalIdDeputado,
-        detalhe: null,
-      };
-    case "openDetalheOk":
-      return { ...state, detalheStatus: "idle", detalhe: action.detalhe };
-    case "openDetalheError":
-      return { ...state, detalheStatus: "error" };
-    case "closeDetalhe":
-      return {
-        ...state,
-        detalhe: null,
-        detalheDeputadoId: null,
-        detalheStatus: "idle",
-      };
     case "startComparativoSelection":
       return {
         ...state,
         isSelectingComparativoDeputados: true,
         selectedComparativoDeputados: [],
-        comparativoStatus: "idle",
-        comparativoDetalhes: [],
-        comparativoPerfis: [],
-        detalhe: null,
-        detalheDeputadoId: null,
-        detalheStatus: "idle",
       };
     case "toggleComparativoDeputado": {
-      const id = action.deputado.externalIdDeputado;
-      if (hasSelectedComparativoDeputado(state, id)) {
-        return deselectComparativoDeputado(state, id);
-      }
-      if (
-        state.selectedComparativoDeputados.length >= MAX_COMPARATIVO_DEPUTADOS
-      ) {
-        return state;
-      }
-      return {
-        ...state,
-        selectedComparativoDeputados: [
-          ...state.selectedComparativoDeputados,
-          action.deputado,
-        ],
-      };
+      const selectedComparativoDeputados = toggleComparativoDeputadoSelecionado(
+        state.selectedComparativoDeputados,
+        action.deputado,
+      );
+      return selectedComparativoDeputados === state.selectedComparativoDeputados
+        ? state
+        : {
+            ...state,
+            selectedComparativoDeputados: [...selectedComparativoDeputados],
+          };
     }
     case "cancelComparativoSelection":
       return {
         ...state,
         isSelectingComparativoDeputados: false,
         selectedComparativoDeputados: [],
-        comparativoStatus: "idle",
-        comparativoDetalhes: [],
-        comparativoPerfis: [],
-      };
-    case "openComparativoStart":
-      if (!canOpenComparativo(state)) return state;
-      return {
-        ...state,
-        step: "comparativo",
-        comparativoStatus: "loading",
-        comparativoDetalhes: [],
-        comparativoPerfis: [],
-        isSelectingComparativoDeputados: false,
-      };
-    case "openComparativoOk":
-      return {
-        ...state,
-        comparativoStatus: "idle",
-        comparativoDetalhes: action.detalhes,
-        comparativoPerfis: action.perfis,
-      };
-    case "openComparativoError":
-      return {
-        ...state,
-        comparativoStatus: "error",
-        comparativoDetalhes: [],
-        comparativoPerfis: [],
-      };
-    case "backFromComparativo":
-      return {
-        ...state,
-        step: "resultado",
-        isSelectingComparativoDeputados: false,
-        selectedComparativoDeputados: [],
-        comparativoStatus: "idle",
-        comparativoDetalhes: [],
-        comparativoPerfis: [],
       };
   }
 }
@@ -368,25 +293,14 @@ export function resultadoDisplay(state: MatcherState): ResultadoDisplay {
   return "results";
 }
 
-export function isSemBomMatch(resultado: MatcherResultado | null): boolean {
-  return resultado?.semBomMatch === true;
-}
-
-export function isDetalheOpen(state: MatcherState): boolean {
-  return state.detalheDeputadoId !== null;
-}
-
 export function isComparativoSelectionMode(state: MatcherState): boolean {
   return state.isSelectingComparativoDeputados;
 }
 
 export function canOpenComparativo(state: MatcherState): boolean {
-  return (
-    state.selectedComparativoDeputados.length >= MIN_COMPARATIVO_DEPUTADOS &&
-    state.selectedComparativoDeputados.length <= MAX_COMPARATIVO_DEPUTADOS
-  );
+  return canOpenComparativoDeputados(state.selectedComparativoDeputados);
 }
 
 export function hasComparativoDeputadoLimit(state: MatcherState): boolean {
-  return state.selectedComparativoDeputados.length >= MAX_COMPARATIVO_DEPUTADOS;
+  return hasComparativoDeputadoLimitReached(state.selectedComparativoDeputados);
 }

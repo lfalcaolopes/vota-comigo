@@ -92,7 +92,7 @@ Ferramenta de compatibilidade entre usuário e deputados com base nos votos. Fra
 **Fluxo:**
 
 1. Usuário clica para iniciar
-2. Informa estado (obrigatório) e cidade (opcional, preparando para cobertura municipal futura)
+2. Informa o estado (obrigatório)
 3. Sistema apresenta as 5 proposições mais bem posicionadas no ranking público e computáveis pelo matcher, já pré-selecionadas. Usuário pode:
    - Expandir para ver/selecionar mais proposições
    - Desselecionar proposições pré-selecionadas
@@ -170,7 +170,7 @@ Ordenação secundária considera tamanho de amostra entre deputados empatados e
 **Comportamentos de borda:**
 
 - **Pesquisa por deputado fora da base.** Se o usuário pesquisa por nome de uma pessoa que não está no sistema, exibir mensagem explicando que o MVP mapeia apenas deputados federais que já estiveram em atividade na Câmara. Candidatos novos, vereadores, deputados estaduais e senadores serão cobertos em versões futuras.
-- **Matcher sem bom match.** Se o resultado do matcher não tem deputado com compatibilidade alta (threshold a definir — ex.: top resultado < 60%), complementar a mensagem de resultado com sugestão explícita ao usuário: considerar candidatos novos fora da base atual. Converte frustração em ação cívica consistente com a missão do produto.
+- **Matcher sem bom match — abandonado.** A intenção original era sinalizar o resultado como insuficiente quando o topo ficasse abaixo de um limiar (ex.: 60%) e sugerir considerar candidatos novos. A sinalização foi implementada e removida: o limiar é arbitrário e a aplicação não tem base para classificar um resultado como insuficiente. Se 58% é pouco depende do que o usuário procura, não do dado; julgar a qualidade do match é dele. A sugestão de candidatos novos, se voltar, precisa de um gatilho que não seja um juízo de valor sobre a compatibilidade.
 
 ### MVP-3. Perfil do Deputado — versão essencial
 
@@ -257,7 +257,7 @@ O MVP-4 implementa apenas a entrada contextual pós-matcher. O comparativo geral
 - Em telas pequenas, o comparativo mantém deputados como colunas com rolagem horizontal, preservando o modelo de grid lado a lado.
 - Cada coluna de deputado tem cabeçalho com informações básicas do deputado: foto, nome público, partido atual, status **Em atividade** e entrada para o **Perfil do deputado**.
 - A entrada para o **Perfil do deputado** abre em nova aba, preservando o comparativo efêmero.
-- No MVP-4, o comparativo não precisa ter URL própria compartilhável nem sobreviver a refresh; ele pode depender do estado atual da execução do matcher no cliente.
+- O comparativo tem endereço próprio (`/matcher/comparativo/{ids}`) e sobrevive a refresh reidratando o rascunho de execução do matcher e recalculando (ver ADR 0020); ele continua não sendo compartilhável, porque as linhas dependem das proposições e posições de quem o gerou.
 - Cada célula deputado × proposição exibe o voto real do deputado na votação de referência e um indicador de concordância com a posição do usuário, usando a mesma semântica de concordância/discordância/fora do denominador do matcher.
 - Cada linha de proposição exibe também a posição computável do usuário usada na comparação.
 - A linha de proposição pode exibir metadados enxutos da votação de referência; as células não repetem data ou descrição da votação.
@@ -267,10 +267,10 @@ O MVP-4 implementa apenas a entrada contextual pós-matcher. O comparativo geral
 - As linhas de proposições seguem a ordem da execução atual do matcher.
 - O comparativo deve reaproveitar a semântica do matcher sempre que possível, mantendo o menor número de regras próprias.
 - A implementação do MVP-4 pode montar o comparativo chamando o detalhe do matcher para cada deputado selecionado, sem criar endpoint agregado próprio de comparativo.
-- O **Resumo de presença do deputado** no comparativo pode vir da mesma rota pública do perfil (`GET /deputados/{externalIdDeputado}`), enquanto votos e indicadores de concordância vêm do detalhe do matcher.
+- O **Resumo de presença do deputado** no comparativo é calculado sobre a janela por legislatura do próprio comparativo, não sobre a mesma rota pública do perfil (`GET /deputados/{externalIdDeputado}`, que soma todas as legislaturas); votos e indicadores de concordância vêm do detalhe do matcher.
 - Se qualquer chamada necessária para montar o comparativo falhar, a tela exibe erro global com ação "Tentar novamente", sem renderizar comparação parcial.
 - Por depender da execução efêmera do matcher no MVP-4, a UI do comparativo pode ser implementada dentro de `features/matcher`; uma feature independente `comparativo` fica para quando houver entrada geral ou rota própria.
-- Abaixo das linhas de votos, o comparativo exibe apenas o **Resumo de presença do deputado** como informação consolidada adicional por deputado, usando o mesmo recorte do perfil. As demais informações do perfil ficam fora do comparativo.
+- Abaixo das linhas de votos, o comparativo exibe apenas o **Resumo de presença do deputado** como informação consolidada adicional por deputado, recortada pela janela por legislatura do comparativo (não pelo recorte agregado do perfil). As demais informações do perfil ficam fora do comparativo.
 - Quando o **Resumo de presença do deputado** estiver indisponível, o comparativo segue o perfil: mostra estado indisponível e não exibe `0%`.
 - O comparativo não exibe métricas do matcher como compatibilidade bruta, score Wilson ou amostra comparável; essas métricas permanecem nos resultados e no detalhe do matcher.
 
@@ -292,4 +292,4 @@ O MVP está pronto para ir ao ar quando:
 2. Mobile está refinado, não apenas funcional
 3. A regra de ranking público por volume de votações em plenário continua produzindo uma lista defensável com os dados mais recentes
 4. Os casos de amostra desigual e desempate do matcher estão decididos e documentados
-5. Comportamentos de borda do matcher implementados: mensagem para pesquisa de deputado fora da base, sugestão de candidatos novos quando matcher não encontra bom match
+5. Comportamentos de borda do matcher implementados: mensagem para pesquisa de deputado fora da base

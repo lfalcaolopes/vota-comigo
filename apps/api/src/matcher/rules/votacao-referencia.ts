@@ -14,6 +14,7 @@ export type VotacaoCandidate = {
   votosNao: number | null;
   votosOutros: number | null;
   aprovacao: number | null;
+  votosComputaveis: number | null;
 };
 
 export type VotacaoClassification = {
@@ -112,6 +113,12 @@ export function classifyVotacaoReferencia(
   return null;
 }
 
+// a fonte às vezes publica o placar oficial sem nenhum voto individual; sem
+// direção de voto a votação não pode casar deputado nenhum (ADR 023)
+function hasVotoComputavel(candidate: VotacaoCandidate): boolean {
+  return (candidate.votosComputaveis ?? 0) > 0;
+}
+
 function totalVotos(candidate: VotacaoCandidate): number {
   return (
     (candidate.votosSim ?? 0) +
@@ -142,6 +149,9 @@ export function selectVotacaoReferencia(
   candidates: readonly VotacaoCandidate[],
 ): ClassifiedVotacao | null {
   const classified = candidates.flatMap((candidate) => {
+    if (!hasVotoComputavel(candidate)) {
+      return [];
+    }
     const classification = classifyVotacaoReferencia(candidate);
     if (classification === null) {
       return [];

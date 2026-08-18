@@ -42,6 +42,7 @@ function deputadoInput(
     nomeEleitoral: null,
     nomeCivil: null,
     partido: 'PT',
+    siglaSexo: 'F',
     siglaUf: 'PE',
     urlFoto: null,
     intervalos: [{ openedAt: '2023-02-01T12:00:00Z', closedAt: null }],
@@ -211,7 +212,6 @@ describe('POST /matcher', () => {
         .post('/matcher')
         .send({
           siglaUf: 'PE',
-          cidade: 'Recife',
           posicoes: [
             posicao({ externalIdProposicao: 1 }),
             posicao({
@@ -227,7 +227,6 @@ describe('POST /matcher', () => {
       const body = matcherExecucaoResumoSchema.parse(response.body as unknown);
       expect(body).toMatchObject({
         siglaUf: 'PE',
-        cidade: 'Recife',
         totalProposicoesSelecionadas: 3,
         totalPosicoesComputaveis: 3,
       });
@@ -239,7 +238,6 @@ describe('POST /matcher', () => {
         .post('/matcher')
         .send({
           siglaUf: 'PE',
-          cidade: 'Recife',
           posicoes: [
             posicao({ externalIdProposicao: 1 }),
             posicao({
@@ -318,7 +316,6 @@ describe('POST /matcher', () => {
           .post('/matcher')
           .send({
             siglaUf: 'PE',
-            cidade: 'Recife',
             posicoes: [
               posicao({ externalIdProposicao: 1 }),
               posicao({
@@ -387,28 +384,6 @@ describe('POST /matcher', () => {
       expect(response.status).toBe(400);
     });
 
-    it('coalesces a missing cidade to null', async () => {
-      // Act
-      const response = await request(getTestServer(app))
-        .post('/matcher')
-        .send({
-          siglaUf: 'PE',
-          posicoes: [
-            posicao({ externalIdProposicao: 1 }),
-            posicao({
-              externalIdProposicao: 2,
-              posicao: 'rejeitar',
-            }),
-            posicao({ externalIdProposicao: 3 }),
-          ],
-        });
-
-      // Assert
-      expect(response.status).toBe(200);
-      const body = matcherExecucaoResumoSchema.parse(response.body as unknown);
-      expect(body.cidade).toBeNull();
-    });
-
     it('accepts up to thirty selected proposicoes, counting nao_sei', async () => {
       // Arrange: 3 computaveis + 27 nao_sei = 30 selected
       const posicoes = [
@@ -433,6 +408,26 @@ describe('POST /matcher', () => {
       const body = matcherExecucaoResumoSchema.parse(response.body as unknown);
       expect(body.totalProposicoesSelecionadas).toBe(30);
       expect(body.totalPosicoesComputaveis).toBe(3);
+    });
+  });
+
+  describe('when the filtro de concordancia cites an absent position', () => {
+    it('returns 400', async () => {
+      // Act
+      const response = await request(getTestServer(app))
+        .post('/matcher')
+        .send({
+          siglaUf: 'PE',
+          posicoes: [
+            posicao({ externalIdProposicao: 1 }),
+            posicao({ externalIdProposicao: 2 }),
+            posicao({ externalIdProposicao: 3 }),
+          ],
+          externalIdProposicoesFiltroConcordancia: [99],
+        });
+
+      // Assert
+      expect(response.status).toBe(400);
     });
   });
 
@@ -649,7 +644,6 @@ describe('POST /matcher/deputados/:externalIdDeputado', () => {
         .post('/matcher/deputados/100')
         .send({
           siglaUf: 'PE',
-          cidade: 'Recife',
           posicoes: [
             posicao({ externalIdProposicao: 1 }),
             posicao({ externalIdProposicao: 2, posicao: 'rejeitar' }),
@@ -663,7 +657,6 @@ describe('POST /matcher/deputados/:externalIdDeputado', () => {
       const body = matcherDeputadoDetalheSchema.parse(response.body as unknown);
       expect(body).toMatchObject({
         siglaUf: 'PE',
-        cidade: 'Recife',
         totalProposicoesSelecionadas: 4,
         totalPosicoesComputaveis: 3,
         deputado: {

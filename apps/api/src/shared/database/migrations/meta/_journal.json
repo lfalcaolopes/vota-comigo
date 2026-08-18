@@ -85,6 +85,83 @@
       "when": 1785336416086,
       "tag": "0011_tough_bromley",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1786157404993,
+      "tag": "0012_supreme_spencer_smythe",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1786588172785,
+      "tag": "0013_white_war_machine",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1786590447128,
+      "tag": "0014_wild_peter_quill",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1786730116729,
+      "tag": "0015_overconfident_the_enforcers",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1786731310218,
+      "tag": "0016_busy_weapon_omega",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1786734217604,
+      "tag": "0017_spotty_corsair",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1786800044347,
+      "tag": "0018_smooth_tattoo",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1786828420442,
+      "tag": "0019_giant_hellion",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1786849495892,
+      "tag": "0020_salty_starbolt",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1786854595771,
+      "tag": "0021_fuzzy_chameleon",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1787033521385,
+      "tag": "0022_sparkling_luckman",
+      "breakpoints": true
     }
   ]
 }

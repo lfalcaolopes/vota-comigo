@@ -20,6 +20,12 @@ import { toMatcherResultado } from './mappers/compatibilidade-resumida.mapper';
 import { computeCompatibilidadeDetalhe } from './rules/compatibilidade-detalhe';
 import { computeCompatibilidadeResumida } from './rules/compatibilidade-resumida';
 import { filtrarPorAtividade } from './rules/filtro-atividade';
+import {
+  filtrarPorAmostraPequena,
+  filtrarPorPartido,
+  filtrarPorSexo,
+} from './rules/filtro-recorte';
+import { passesFiltroConcordancia } from './rules/filtro-concordancia';
 import { validateExecucao } from './rules/matcher-execucao-validation';
 import type { Pagination } from './rules/pagination';
 import { sortRanking } from './rules/ranking';
@@ -27,8 +33,6 @@ import type {
   PosicaoComputavel,
   PosicaoComputavelValue,
 } from './types/compatibilidade.types';
-
-const COMPATIBILIDADE_BOM_MATCH_MINIMA = 60;
 
 type PreparedMatcherExecucao = {
   resumo: MatcherExecucaoResumo;
@@ -65,8 +69,9 @@ export class MatcherService {
 
     const validation = validateExecucao({
       siglaUf: request.siglaUf,
-      cidade: request.cidade,
       posicoes: request.posicoes,
+      externalIdProposicoesFiltroConcordancia:
+        request.externalIdProposicoesFiltroConcordancia,
       externalIdProposicoesComputaveis,
     });
 
@@ -116,37 +121,49 @@ export class MatcherService {
       request.siglaUf,
     );
 
+    const externalIdProposicoesFiltroConcordancia = new Set(
+      request.externalIdProposicoesFiltroConcordancia,
+    );
+    const posicoesMarcadas = posicoes.filter((posicao) =>
+      externalIdProposicoesFiltroConcordancia.has(posicao.externalIdProposicao),
+    );
+    const deputadosConcordantes = deputados.filter((deputado) =>
+      passesFiltroConcordancia(deputado, posicoesMarcadas),
+    );
+
     const resultado = computeCompatibilidadeResumida({
       posicoes,
-      deputados,
+      deputados: deputadosConcordantes,
       totalPosicoesComputaveis: resumo.totalPosicoesComputaveis,
     });
 
-    const elegiveis = filtrarPorAtividade(
-      resultado.deputados,
-      request.apenasEmAtividade,
+    // O recorte roda depois do cálculo: filtrar a entrada corromperia
+    // totalDeputadosAvaliados e deputadosHistoricoIncompleto.
+    const elegiveis = filtrarPorAmostraPequena(
+      filtrarPorSexo(
+        filtrarPorPartido(
+          filtrarPorAtividade(resultado.deputados, request.apenasEmAtividade),
+          request.partidos,
+        ),
+        request.sexo,
+      ),
+      request.ocultarAmostraPequena,
     );
     const ordenados = sortRanking(
       elegiveis,
       request.escopo === 'nacional' ? request.siglaUf : undefined,
     );
-    const semBomMatch =
-      ordenados.length === 0 ||
-      ordenados[0].compatibilidadeBruta < COMPATIBILIDADE_BOM_MATCH_MINIMA;
     const total = ordenados.length;
     const pagina = ordenados.slice(
       pagination.offset,
       pagination.offset + pagination.limit,
     );
 
-    return toMatcherResultado(
-      resumo,
-      request.escopo,
-      resultado,
-      pagina,
-      { limit: pagination.limit, offset: pagination.offset, total },
-      semBomMatch,
-    );
+    return toMatcherResultado(resumo, request.escopo, resultado, pagina, {
+      limit: pagination.limit,
+      offset: pagination.offset,
+      total,
+    });
   }
 
   async detail(

@@ -45,6 +45,28 @@
       "generatedAt": "2026-06-26T00:18:40.840Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
     },
+    "2190730": {
+      "sourceHash": "08906a042bf61d4f5ed73abd8a607c8e3fc583e548da689d14e08a53282f3b88",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Obriga estabelecimentos abertos ao público a afixar placas divulgando o Disque 180, canal de denúncia de violência contra a mulher, e o Disque 100, de violações de direitos humanos.",
+      "resumoDetalhe": "- Obriga estabelecimentos abertos ao público, como os de hospedagem, alimentação, comércio, eventos e serviços pessoais, incluídos os que ficam à margem de rodovias, a divulgar o Disque 180, canal de denúncia de violência contra a mulher, e o Disque 100, canal de denúncia de violações de direitos humanos.\n- Exige que a divulgação seja feita por placas afixadas no ponto de maior circulação de clientes, com tamanho padronizado, texto de leitura fácil e contraste que garanta boa visibilidade.\n- Prevê advertência e multa para o estabelecimento que descumprir a obrigação, com valor agravado em caso de reincidência.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
+    "2191208": {
+      "sourceHash": "7f4fe9c92e91218f9d3c93302e28020aa502c4ec28db20b9d359fb85fd6bd435",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Torna obrigatório proibir condenados por crimes sexuais contra crianças de se aproximar de escolas e de frequentar parques e praças com área infantil.",
+      "resumoDetalhe": "- Obriga a Justiça a aplicar penas restritivas de direitos, que limitam o que a pessoa condenada pode fazer sem mantê-la presa, a quem for condenado por crimes sexuais contra crianças e adolescentes, incluídos os ligados a pornografia infantil.\n- Determina que essas restrições impeçam o condenado de chegar perto de escolas de ensino infantil, fundamental e médio, públicas ou privadas, e de frequentar parques e praças que tenham área infantil.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
     "2192459": {
       "sourceHash": "3e3332ed984c9e82f1c159fb4d0accca514838f68f28a939d8342ec21b0f1220",
       "generationStatus": "generated",
@@ -60,12 +82,23 @@
       "sourceHash": "8120639d8cfcd7b0d3c8a8ad2673ab24e4ab79c7a4a6c63fdd652e589458dc86",
       "generationStatus": "generated",
       "reviewStatus": "approved",
-      "resumoCard": "Permite renovar por prazo estendido convênios que beneficiam entidades religiosas e associações beneficentes",
+      "resumoCard": "Permite renovar por prazo estendido convênios que beneficiam entidades religiosas e associações beneficentes.",
       "resumoDetalhe": "- Permite que convênios destinados a entidades religiosas de qualquer culto e a associações beneficentes sejam renovados por prazo estendido junto ao CONFAZ — órgão que reúne os estados para autorizar convênios fiscais.\n- Inclui essas entidades entre os convênios que podem ter validade mais longa, agrupando-as com convênios voltados ao fomento de atividades e a investimentos em infraestrutura.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2194646": {
+      "sourceHash": "f45e7c76bc93136c0a1b3cc9cac7e00ad62da47d1cb5b36a3aa4e694aae0463c",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um Estatuto para garantir que pessoas com câncer tenham acesso ao tratamento adequado, proteção de direitos e atendimento prioritário.",
+      "resumoDetalhe": "- Institui o Estatuto da Pessoa com Câncer para assegurar acesso ao tratamento adequado e promover a dignidade, a cidadania e a inclusão social das pessoas com câncer.\n- Estabelece princípios e objetivos que priorizam a prevenção, o diagnóstico precoce, informação clara, transparência nos processos, formação de profissionais, ampliação da rede de atendimento e humanização do cuidado.\n- Garante ao paciente atendimento integral pelo SUS (Sistema Único de Saúde), assistência social e jurídica, prioridade no atendimento e na tramitação de processos, direito a acompanhante e transporte público gratuito quando houver necessidade comprovada, com atenção especial a crianças e adolescentes.\n- Atribui ao poder público o dever de formular políticas para a área, fornecer os medicamentos eficazes contra a doença e capacitar os profissionais que atendem esses pacientes.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:16:05.310Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2194861": {
       "sourceHash": "8c788f4d1d0f04c57c1f6291c147b482461d75d622f88bfbdb6a629d0d9f7cdb",
@@ -89,6 +122,17 @@
       "generatedAt": "2026-07-07T19:32:44.100Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2196355": {
+      "sourceHash": "8c99a45ceb547d87dde00afc590176467ba7ce7c52527eae81bff08d17b524f0",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Dá ao aeroporto de Tefé, no Amazonas, o nome de Aeroporto Prefeito Orlando Marinho.",
+      "resumoDetalhe": "- Passa a chamar de Aeroporto Prefeito Orlando Marinho o aeroporto do município de Tefé, no Amazonas, atualmente conhecido apenas como Aeroporto de Tefé.\n- Apresenta como justificativa a trajetória do homenageado, que trabalhou como coletor federal de impostos na cidade e depois foi eleito prefeito, e destaca que o aeroporto é a única porta de entrada aérea da região do médio Solimões.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
     "2196833": {
       "sourceHash": "5e91fae8e3e73aa258b742f453c81f84e29d3a23ff2809f9ca1b0cb68c1b84c8",
       "generationStatus": "generated",
@@ -111,12 +155,23 @@
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2197504": {
+      "sourceHash": "08d29473660dccb59826f21136d1d64d9003ece482aa90743d88b179cb10d1b0",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza que emendas individuais impositivas, apresentadas por parlamentares ao orçamento e de execução obrigatória, transfiram dinheiro federal a estados, ao Distrito Federal e a municípios.",
+      "resumoDetalhe": "- Autoriza que emendas individuais impositivas, as emendas ao orçamento que cada parlamentar apresenta e o governo é obrigado a executar, destinem dinheiro federal a estados, ao Distrito Federal e a municípios, na forma de doação ou de repasse com finalidade definida.\n- Separa as duas formas de repasse: a doação é entregue sem necessidade de convênio e o dinheiro passa a pertencer a quem recebe, enquanto o repasse com finalidade definida só pode ser gasto na ação indicada na emenda e não pode pagar servidores ativos, aposentados nem pensionistas.\n- Define quem fiscaliza cada caso: a doação fica a cargo do controle interno e do tribunal de contas do próprio estado ou município, e o repasse com finalidade definida fica com o controle interno federal e o Tribunal de Contas da União, com prestação de contas conforme as regras do tribunal competente.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
     "2199215": {
       "sourceHash": "dba067f576b3e6a520ca36841018dd41d459e37b484b936987c17082d312db90",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Determina que municípios definam, por seus planos diretores e leis de uso do solo, a largura das faixas de proteção ao lado de rios e córregos em áreas urbanas.",
-      "resumoDetalhe": "- atribui aos planos diretores e às leis municipais de uso do solo a definição do tamanho das faixas de proteção ao lado de cursos d'água em áreas urbanas, com consulta aos conselhos estaduais e municipais de meio ambiente\n- determina que, em áreas urbanas, deve-se observar o que está previsto nos planos diretores e nas leis municipais de uso do solo",
+      "resumoDetalhe": "- Atribui aos planos diretores e às leis municipais de uso do solo a definição do tamanho das faixas de proteção ao lado de cursos d'água em áreas urbanas, com consulta aos conselhos estaduais e municipais de meio ambiente.\n- Determina que, em áreas urbanas, deve-se observar o que está previsto nos planos diretores e nas leis municipais de uso do solo.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T19:36:40.723Z",
@@ -126,7 +181,7 @@
       "sourceHash": "314e12c41b628ac9a7819fb44933153f33a77ceb859517eff8248be0036aded6",
       "generationStatus": "generated",
       "reviewStatus": "approved",
-      "resumoCard": "Autoriza a CDE (Conta de Desenvolvimento Energético) a pagar reembolsos por combustíveis e a cobrir custos de transporte e distribuição de contratos de gás para geração, com regras de financiamento, atualização e limitações ao direito de reembolso após conexão ao SIN (Sistema Interligado Nacional).",
+      "resumoCard": "Autoriza a Conta de Desenvolvimento Energético a reembolsar gastos com combustível de usinas e a cobrir custos de transporte e distribuição de gás para geração de energia, com limites e regras de atualização.",
       "resumoDetalhe": "- Autoriza a CDE a pagar reembolsos comprovados de despesas com aquisição de combustível por concessionárias de geração referentes a gastos ocorridos até data determinada, incluindo atualização monetária e vedando o repasse desses recursos às quotas ou o uso para outras finalidades.\n- Destina recursos para o pagamento da parcela de transporte e da margem de distribuição de contratos de fornecimento de gás natural usados para geração, referentes à infraestrutura utilizada até data determinada; fixa que os preços e capacidades considerados para esse repasse sigam valores regulados pela ANP (Agência Nacional do Petróleo, Gás Natural e Biocombustíveis) e estabelece limite financeiro e condicionamento ao caixa público.\n- Determina que a ANEEL (Agência Nacional de Energia Elétrica) inclua no orçamento anual da CDE parcelas equivalentes aos pagamentos referidos, permitindo parcelamento e atualização pela taxa Selic (taxa básica de juros), conforme regulamento.\n- Define que o direito ao reembolso, após a interligação ao SIN (rede elétrica interligada), não alcança prorrogações de autorizações ou concessões das instalações de geração, exceto prorrogações relacionadas ao aproveitamento ótimo de termoelétricas a gás natural em circunstâncias especificadas e conforme regulamento.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
@@ -138,7 +193,7 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Institui a Declaração de Direitos de Liberdade Econômica para facilitar o exercício de atividades econômicas e limitar intervenções regulatórias do Estado.",
-      "resumoDetalhe": "- institui uma Declaração de Direitos de Liberdade Econômica que garante presunção de liberdade e de boa-fé, permite atuar em atividades de baixo risco sem autorização prévia, autoriza testes controlados de novos produtos com consentimento e prevê que pedidos administrativos sejam considerados aprovados se a autoridade não responder, com exceções por segurança, saúde, tributos e outras situações previstas\n- evita o abuso do poder regulatório, proibindo regras que favoreçam grupos, bloqueiem a entrada de concorrentes, imponham especificações desnecessárias, retardem inovação, aumentem custos sem benefício ou criem demanda ou privilégios artificiais\n- exige a realização de análise de impacto regulatório antes de atos normativos federais de interesse geral e promove alterações em regras civis, societárias e processuais, reconhecendo validade de documentos eletrônicos, definindo responsabilidades de sociedades e extinguindo o Fundo Soberano",
+      "resumoDetalhe": "- Institui uma Declaração de Direitos de Liberdade Econômica que garante presunção de liberdade e de boa-fé, permite atuar em atividades de baixo risco sem autorização prévia, autoriza testes controlados de novos produtos com consentimento e prevê que pedidos administrativos sejam considerados aprovados se a autoridade não responder, com exceções por segurança, saúde, tributos e outras situações previstas.\n- Evita o abuso do poder regulatório, proibindo regras que favoreçam grupos, bloqueiem a entrada de concorrentes, imponham especificações desnecessárias, retardem inovação, aumentem custos sem benefício ou criem demanda ou privilégios artificiais.\n- Exige a realização de análise de impacto regulatório antes de atos normativos federais de interesse geral e promove alterações em regras civis, societárias e processuais, reconhecendo validade de documentos eletrônicos, definindo responsabilidades de sociedades e extinguindo o Fundo Soberano.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T17:59:16.487Z",
@@ -154,6 +209,28 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T19:46:33.443Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2204088": {
+      "sourceHash": "b171bf41a3e8d64315215abfa2e0e57e7e39f8189c366eeb5cd6b1916728e9b7",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria política nacional de proteção para pessoas com fibromialgia e as reconhece como pessoas com deficiência.",
+      "resumoDetalhe": "- Institui a Política Nacional de Proteção dos Direitos da Pessoa com Fibromialgia, com diretrizes para atendimento multidisciplinar, participação da comunidade, divulgação de informações, capacitação de profissionais, estímulo à inclusão no trabalho e fomento à pesquisa; autoriza o governo a contratar organizações privadas, com preferência por aquelas sem fins lucrativos, para executar essas ações.\n- Isenta do imposto de renda a aposentadoria ou a reforma de quem tem fibromialgia, desde que haja conclusão de médico especialista, valendo mesmo quando a doença surgir depois da aposentadoria.\n- Considera a pessoa com fibromialgia como pessoa com deficiência para todos os efeitos legais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2205254": {
+      "sourceHash": "7a18cb8eaf3e8d1fd3c8094547e641cd004f69e784eab2aa20e959fd9242d7bd",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Proíbe o bloqueio dos recursos destinados ao Instituto Nacional de Propriedade Intelectual, órgão federal que analisa pedidos de registro de patente.",
+      "resumoDetalhe": "- Proíbe que os recursos destinados ao Instituto Nacional de Propriedade Intelectual, órgão federal que analisa pedidos de registro de patente, sejam contingenciados, ou seja, bloqueados quando o governo corta despesas para cumprir a meta do orçamento.\n- Mantém protegidas da mesma forma as despesas que são obrigações previstas na Constituição e em lei, o pagamento da dívida pública e as despesas que a lei de diretrizes orçamentárias já ressalva.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
     },
     "2205645": {
       "sourceHash": "200b44fea38adf05c1ecc7ec9ef71f2625881f31a29e97f1a2de1bcdf51f6fed",
@@ -182,11 +259,22 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Cria um programa de transparência fiscal e um plano de equilíbrio que condicionam crédito e garantias da União à adoção de medidas e ao acesso a informações contábeis.",
-      "resumoDetalhe": "- institui o Programa de Acompanhamento e Transparência Fiscal para reforçar a transparência das contas dos Estados, do Distrito Federal e dos Municípios, permitindo fixar metas, divulgar informações publicamente e dar à Controladoria-Geral da União acesso a sistemas contábeis quando necessário\n- cria o Plano de Promoção do Equilíbrio Fiscal como um acordo temporário entre a União e os entes subnacionais que define metas, compromissos e as condições para liberação de operações de crédito garantidas pela União, exigindo a aprovação de leis locais que implementem medidas de ajuste fiscal e o acesso da Controladoria-Geral da União aos sistemas contábeis\n- altera regras da Lei de Responsabilidade Fiscal e de leis relacionadas para reforçar o controle das despesas com pessoal (incluindo a apuração de inativos e pensionistas), proibir atos que aumentem despesas sem requisitos legais, limitar a contratação de crédito enquanto houver excesso de gasto, e facilitar aditivos e dispensas documentais em contratos de refinanciamento; autoriza a União a firmar Programas, converter programas de reestruturação e conceder garantias no âmbito do Plano, além de permitir que o Tesouro pague participações em fóruns internacionais",
+      "resumoDetalhe": "- Institui o Programa de Acompanhamento e Transparência Fiscal para reforçar a transparência das contas dos Estados, do Distrito Federal e dos Municípios, permitindo fixar metas, divulgar informações publicamente e dar à Controladoria-Geral da União acesso a sistemas contábeis quando necessário.\n- Cria o Plano de Promoção do Equilíbrio Fiscal como um acordo temporário entre a União e os entes subnacionais que define metas, compromissos e as condições para liberação de operações de crédito garantidas pela União, exigindo a aprovação de leis locais que implementem medidas de ajuste fiscal e o acesso da Controladoria-Geral da União aos sistemas contábeis.\n- Altera regras da Lei de Responsabilidade Fiscal e de leis relacionadas para reforçar o controle das despesas com pessoal (incluindo a apuração de inativos e pensionistas), proibir atos que aumentem despesas sem requisitos legais, limitar a contratação de crédito enquanto houver excesso de gasto, e facilitar aditivos e dispensas documentais em contratos de refinanciamento; autoriza a União a firmar Programas, converter programas de reestruturação e conceder garantias no âmbito do Plano, além de permitir que o Tesouro pague participações em fóruns internacionais.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2207429": {
+      "sourceHash": "a2fc5d74a02e5186049f303c3f60b0f2795cc5b00df819d17f6a3ff1d4586f80",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite obras para recuperar e proteger nascentes e dispensa a autorização do órgão ambiental quando forem feitas em pequenas propriedades rurais.",
+      "resumoDetalhe": "- Inclui entre as atividades admitidas pela lei florestal a instalação de estruturas para captar e conduzir água e efluentes tratados em projetos que dependem essencialmente da água, e também as obras necessárias para recuperar e proteger nascentes.\n- Dispensa a autorização do órgão ambiental para essas obras nas pequenas propriedades e na posse rural familiar, na forma que o regulamento definir.\n- Aponta, na justificativa, a crise de falta de água e o desmatamento como motivo da proposta, e cita programas já existentes de proteção de nascentes.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
     },
     "2207613": {
       "sourceHash": "bd2c0eae1c9d82dfb560d9c009779f966c0ab8d322ae70af1a56aa8f0ca379d5",
@@ -204,7 +292,7 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Garante direitos básicos a atletas em formação e impõe obrigações e responsabilidade às entidades formadoras.",
-      "resumoDetalhe": "- Garante direitos aos atletas em formação, como participação em programas de treino, formação por profissionais especializados, segurança nos locais de treino, acompanhamento e complementação escolar, assistência de saúde e psicológica, alimentação adequada, transporte entre casa e treino e limite diário de tempo dedicado à formação\n- Exige que as entidades formadoras cuidem dos alojamentos com condições de habitabilidade, higiene, salubridade e prevenção de incêndio; mantenham monitor durante o dia; promovam convivência familiar, atividades culturais e de lazer e assistência religiosa; e apresentem ao Ministério Público, órgão fiscalizador, os laudos técnicos de vistoria\n- Suspende a certificação ou a participação em competições das entidades que não cumprirem as regras até a correção dos problemas; responsabiliza as entidades e seus dirigentes pelos prejuízos decorrentes de falhas de segurança; e obriga a entidade a entregar à família documento assumindo responsabilidade pela segurança do atleta enquanto estiver sob sua guarda",
+      "resumoDetalhe": "- Garante direitos aos atletas em formação, como participação em programas de treino, formação por profissionais especializados, segurança nos locais de treino, acompanhamento e complementação escolar, assistência de saúde e psicológica, alimentação adequada, transporte entre casa e treino e limite diário de tempo dedicado à formação.\n- Exige que as entidades formadoras cuidem dos alojamentos com condições de habitabilidade, higiene, salubridade e prevenção de incêndio; mantenham monitor durante o dia; promovam convivência familiar, atividades culturais e de lazer e assistência religiosa; e apresentem ao Ministério Público, órgão fiscalizador, os laudos técnicos de vistoria.\n- Suspende a certificação ou a participação em competições das entidades que não cumprirem as regras até a correção dos problemas; responsabiliza as entidades e seus dirigentes pelos prejuízos decorrentes de falhas de segurança; e obriga a entidade a entregar à família documento assumindo responsabilidade pela segurança do atleta enquanto estiver sob sua guarda.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:22:36.991Z",
@@ -221,11 +309,22 @@
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2208771": {
+      "sourceHash": "f96995d497796068b56735a91537929d56f500e8439326911b45e3dffb40108f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite prorrogar as sessões da Câmara e muda as regras para retirar, adiar e votar propostas e emendas.",
+      "resumoDetalhe": "- Permite que o presidente da Câmara ou o plenário prorroguem o tempo da sessão a pedido de líderes que representem parte dos deputados, e permite renovar a prorrogação antes que a anterior termine, valendo o mesmo para o tempo destinado à Ordem do Dia, a fase da sessão em que as matérias são votadas.\n- Restringe quem pode pedir a retirada de uma proposta da pauta, exigindo o autor, o relator ou um número mínimo de líderes, e cobra apoio ainda maior quando a proposta tramita em urgência, regime que acelera a votação; aprovada a urgência, barra na mesma sessão os pedidos de adiamento e outros incompatíveis com ela.\n- Muda o processamento das emendas e das votações: permite apresentar em plenário emendas que fundem outras já propostas, admite votar emendas em separado a pedido de líderes, exige que o apoio dos líderes seja manifestado a cada votação, vedando acordos prévios, e disciplina o pedido de conferência do resultado nas votações em que não se registra o voto de cada deputado.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
     "2209381": {
       "sourceHash": "fdd82118a14802f588b731c2dec44a12dc02333a4e193f22b3197cdf88212eb9",
       "generationStatus": "generated",
       "reviewStatus": "approved",
-      "resumoCard": "Estabelece regras sobre posse, porte e registro de armas, definindo limites de residência e trabalho, autorizando porte a certas categorias, permitindo compra de armas restritas por órgãos de segurança sem autorização do Exército e exigindo registro de armas não registradas com isenção de taxas.",
+      "resumoCard": "Estabelece regras de posse, porte e registro de armas, define o que conta como residência e local de trabalho, amplia o porte para algumas categorias e cria prazo para registrar armas ainda não registradas.",
       "resumoDetalhe": "- Define o que conta como interior da residência e como local de trabalho, e explica quem é considerado titular ou responsável por um estabelecimento para efeitos de posse de armas.\n- Permite o porte de arma para algumas categorias, cita caçadores e colecionadores registrados e membros de entidades esportivas que usam armas, e estabelece que a Polícia Federal autoriza porte quando o requerente demonstrar que sua atividade profissional o coloca em risco devido à possibilidade de crime violento.\n- Dispensa a autorização do Comando do Exército para aquisição de armas de uso restrito por órgãos de segurança pública, exigindo apenas que essas aquisições sejam comunicadas ao Comando.\n- Obriga possuidores e proprietários de arma não registrada a solicitar o registro dentro de prazo a partir da vigência da lei, mediante apresentação de documentos pessoais e prova da origem lícita; prevê emissão de registro provisório, isenção de taxas e possibilidade de prorrogação do prazo por ato do Poder Executivo.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
@@ -243,6 +342,17 @@
       "generatedAt": "2026-07-07T20:09:47.061Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2210757": {
+      "sourceHash": "49cd1ad453fea0a523632c4075c0831dcbe9cdc2522c190cc3c850f4df48c5f2",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Inclui a proteção de dados pessoais entre os direitos fundamentais e dá à União a exclusividade para legislar sobre o tema.",
+      "resumoDetalhe": "- Inclui a proteção de dados pessoais entre os direitos e garantias fundamentais, assegurando o direito à proteção dos dados, inclusive em meios digitais.\n- Fixa competência privativa da União para legislar sobre proteção e tratamento de dados pessoais, ou seja, só o governo federal pode criar as regras sobre esse assunto.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
     "2213191": {
       "sourceHash": "f08d496ac74daa92ea9bd6b5485a9c5f93ebe8a0cdd39f0536948d8158ccebd9",
       "generationStatus": "generated",
@@ -258,8 +368,8 @@
       "sourceHash": "53c34ea919b94e66759680ef11f83b394f204250db887b11f15be5f71bdd1dd6",
       "generationStatus": "generated",
       "reviewStatus": "approved",
-      "resumoCard": "Aprova acordo entre Brasil e Estados Unidos sobre salvaguardas tecnológicas para lançamentos no Centro Espacial de Alcântara",
-      "resumoDetalhe": "- aprova o acordo entre Brasil e Estados Unidos que trata de salvaguardas tecnológicas, ou seja, regras para proteger tecnologia e controlar transferência de conhecimento, relacionadas a lançamentos a partir do Centro Espacial de Alcântara.\n- exige que o Congresso Nacional aprove qualquer revisão, aditivo ou entendimento complementar que possa trazer custos ou compromissos pesados ao patrimônio do país.",
+      "resumoCard": "Aprova acordo entre Brasil e Estados Unidos sobre salvaguardas tecnológicas para lançamentos no Centro Espacial de Alcântara.",
+      "resumoDetalhe": "- Aprova o acordo entre Brasil e Estados Unidos que trata de salvaguardas tecnológicas, ou seja, regras para proteger tecnologia e controlar transferência de conhecimento, relacionadas a lançamentos a partir do Centro Espacial de Alcântara.\n- Exige que o Congresso Nacional aprove qualquer revisão, aditivo ou entendimento complementar que possa trazer custos ou compromissos pesados ao patrimônio do país.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:22:36.991Z",
@@ -267,25 +377,58 @@
     },
     "2217142": {
       "sourceHash": "b6294c7e179c56ca41c108e6f8781c4e7e5e14a82fad5f5f747c87f64ace9478",
-      "generationStatus": "error",
+      "generationStatus": "source_too_large",
       "reviewStatus": "pending",
       "resumoCard": null,
       "resumoDetalhe": null,
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
-      "generatedAt": "2026-07-08T00:31:37.208Z",
+      "generatedAt": "2026-08-16T06:18:39.590Z",
       "reviewedAt": null
+    },
+    "2220292": {
+      "sourceHash": "3e55e687977bacec1ee96a67e67001547ffee508abb9bf7a6173618279b41509",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Torna obrigatório que cada voto gere cédula física conferível pelo eleitor, depositada em urna lacrada para auditoria.",
+      "resumoDetalhe": "- Exige que, na votação e na apuração de eleições, plebiscitos e referendos, seja gerada cédula física conferível pelo eleitor.\n- Determina que a cédula seja depositada de forma automática e sem contato manual do eleitor em urnas indevassáveis, ou seja, urnas lacradas e inacessíveis, para fins de auditoria.\n- Estabelece que essa obrigação vale independentemente do meio usado para registrar o voto.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2222884": {
       "sourceHash": "271c625d7902efb6ce640d3d8245bda9e3ce0432d5961a606a1a435b6e7be10b",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Cria mecanismos para usar imóvel rural como garantia de crédito (incluindo um fundo de aval e a Cédula Imobiliária Rural) e regula escrituração e subvenções para o crédito rural.",
-      "resumoDetalhe": "- Cria o Fundo de Aval Fraterno (FAF), em que devedores, credores e possíveis garantidores colocam recursos em cotas para garantir empréstimos rurais e pagar o credor conforme a ordem das cotas\n- Permite que o proprietário submeta todo ou parte do imóvel rural a um patrimônio separado para servir de garantia exclusiva de empréstimos, com registro em cartório, vedação de venda enquanto afetado e proteção dessas áreas contra penhora e efeitos de falência, ressalvadas dívidas trabalhistas, previdenciárias e fiscais\n- Institui a Cédula Imobiliária Rural (CIR), título que representa a promessa de pagamento e a garantia do imóvel afetado, exige registro ou depósito para ter força executiva e autoriza o credor a transferir a propriedade vinculada à CIR em caso de não pagamento\n- Regulamenta a escrituração eletrônica e o depósito centralizado de diversos títulos rurais e bancários, cria regras para o Certificado de Depósito Bancário e prevê subvenção por equalização de taxas de juros para empresas cerealistas, com condições de contratação e penalidades por uso irregular",
+      "resumoDetalhe": "- Cria o Fundo de Aval Fraterno (FAF), em que devedores, credores e possíveis garantidores colocam recursos em cotas para garantir empréstimos rurais e pagar o credor conforme a ordem das cotas.\n- Permite que o proprietário submeta todo ou parte do imóvel rural a um patrimônio separado para servir de garantia exclusiva de empréstimos, com registro em cartório, vedação de venda enquanto afetado e proteção dessas áreas contra penhora e efeitos de falência, ressalvadas dívidas trabalhistas, previdenciárias e fiscais.\n- Institui a Cédula Imobiliária Rural (CIR), título que representa a promessa de pagamento e a garantia do imóvel afetado, exige registro ou depósito para ter força executiva e autoriza o credor a transferir a propriedade vinculada à CIR em caso de não pagamento.\n- Regulamenta a escrituração eletrônica e o depósito centralizado de diversos títulos rurais e bancários, cria regras para o Certificado de Depósito Bancário e prevê subvenção por equalização de taxas de juros para empresas cerealistas, com condições de contratação e penalidades por uso irregular.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-06-26T00:39:02.618Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2224225": {
+      "sourceHash": "a6d958e1bd024407e3fb36d248d92e68b623408679a417de5c94f7adceec9814",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza estados, o Distrito Federal e municípios a remanejar sobras de dinheiro federal em seus fundos de saúde, desde que gastem em ações e serviços públicos de saúde.",
+      "resumoDetalhe": "- Autoriza estados, o Distrito Federal e municípios a remanejar as sobras de anos anteriores que estejam em seus fundos de saúde e tenham vindo de repasses do Ministério da Saúde.\n- Determina que esse dinheiro seja usado exclusivamente em ações e serviços públicos de saúde e condiciona o remanejamento a cumprir antes os compromissos já assumidos com a verba, a incluir os valores no planejamento anual de saúde e no orçamento e a dar ciência ao conselho de saúde.\n- Exige que a aplicação desses recursos seja comprovada no relatório anual de gestão e que as contas sejam prestadas segundo as regras aplicáveis.\n- Determina que os valores remanejados não entrem no cálculo de futuros repasses do Ministério da Saúde.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
+    "2224532": {
+      "sourceHash": "aaad25777423a163fbfe58a8350f03a296c8d7aa70ee028b03c44bf211115322",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite que juízes estaduais troquem de posto entre si ou peçam transferência mesmo quando servem em tribunais de estados diferentes.",
+      "resumoDetalhe": "- Permite que juízes estaduais peçam transferência ou troquem de posto entre si em comarcas de mesmo nível, inclusive quando estiverem vinculados a tribunais de justiça de estados diferentes.\n- Determina que essas mudanças sigam, no que couber, os mesmos critérios que a Constituição já exige para a movimentação de juízes na carreira.\n- Sustenta, na justificativa, que juízes federais e do trabalho já podem trocar de tribunal e que o Judiciário tem caráter nacional, o que embasaria estender a mesma possibilidade aos juízes estaduais.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
     },
     "2224999": {
       "sourceHash": "70f3e6c7c97f2f6f50db5ec9acf3c3373690353127c62a00087455521e87963a",
@@ -298,6 +441,50 @@
       "generatedAt": "2026-07-07T16:52:37.780Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
     },
+    "2225224": {
+      "sourceHash": "d309a80f24592d81c8e964c11a8bb93d766187b929e92397ddb8178f56cafeba",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite que quem ocupa um cargo público de professor acumule outro cargo público de qualquer natureza, recebendo pelos dois.",
+      "resumoDetalhe": "- Permite acumular um cargo público de professor com outro cargo público de qualquer natureza, com remuneração pelos dois.\n- Sustenta, na justificativa, que a exigência atual de que o segundo cargo seja técnico ou científico é imprecisa e gera disputas judiciais para definir quais cargos se encaixam nessa descrição.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
+    "2227917": {
+      "sourceHash": "e39af1134880d83bb850f705e87523f2c02f900c0cbbbd4086a39a0b55fdc967",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Prorroga os descontos no imposto de renda para quem investe em produções audiovisuais brasileiras e o regime especial de tributação das salas de cinema.",
+      "resumoDetalhe": "- Prorroga o prazo do regime especial de tributação voltado ao desenvolvimento da exibição de filmes em salas de cinema e condiciona o uso desse benefício ao que a lei de diretrizes orçamentárias de cada ano permitir.\n- Prorroga o desconto no imposto de renda para pessoas e empresas tributadas pelo lucro real, regime em que o imposto incide sobre o lucro apurado, que apliquem dinheiro na compra de cotas dos fundos de financiamento da indústria do cinema.\n- Prorroga o desconto no imposto de renda para quem investe na produção de obras audiovisuais brasileiras independentes comprando cotas que dão direito à comercialização dessas obras, desde que o investimento passe pelo mercado de capitais e o projeto seja aprovado pela agência que regula o cinema.\n- Prorroga também o desconto no imposto de renda para quem patrocina essas produções independentes aprovadas pela mesma agência.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
+    "2228151": {
+      "sourceHash": "7992833a57affc5e50dfa28d18c1bc86d0b98b2ca19da816d14942d1a6bae76e",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reduz e isenta tarifas de transmissão e distribuição para micro e minigeradores que compensam energia excedente.",
+      "resumoDetalhe": "- Concede redução nas tarifas de uso das redes de transmissão e distribuição e nos encargos para microgeradores e minigeradores, aplicando essa redução às unidades consumidoras onde a energia excedente é compensada.\n- Concede isenção plena dessas tarifas e encargos, por um período, a microgeradores e minigeradores que solicitaram acesso às distribuidoras até uma data limite; a isenção não vale para custos de disponibilidade nem para demanda contratada (custo por manter capacidade reservada).",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2228665": {
+      "sourceHash": "4958731f0a7625ff4e068c6b2accf509a295e2a162f37580821bdd0e9a4a3092",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Adia o prazo a partir do qual as empresas poderão usar créditos do ICMS, imposto estadual que incide sobre a circulação de mercadorias e sobre transporte e comunicação.",
+      "resumoDetalhe": "- Adia para uma data futura o momento em que as empresas passam a poder descontar do ICMS que devem o imposto já pago na compra de mercadorias destinadas ao uso ou consumo do próprio estabelecimento.\n- Adia para essa mesma data o direito a esse desconto nas demais situações previstas na lei que disciplina o ICMS, imposto estadual cobrado sobre a circulação de mercadorias e sobre os serviços de transporte e comunicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
     "2229308": {
       "sourceHash": "bdb24036fac49776db32a0409fa68b3625929047ac3af9abfd8b7f3dde9dab90",
       "generationStatus": "generated",
@@ -309,16 +496,71 @@
       "generatedAt": "2026-06-26T01:43:55.505Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
     },
+    "2231632": {
+      "sourceHash": "7323f96b482d2b4c8fba7a614d5625687ee79e6812e36fe8787bac73426750f8",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exige que órgãos públicos usem linguagem simples, clara e inclusiva na comunicação com o público.",
+      "resumoDetalhe": "- Institui a Política Nacional de Linguagem Simples para órgãos e entidades da administração pública direta e indireta, tornando a comunicação oficial mais acessível.\n- Define o que é linguagem simples e estabelece princípios como foco no cidadão, promoção do acesso à informação, redução de desigualdades e simplificação dos atos administrativos.\n- Estabelece formas de aplicar a política, como conhecer e testar os textos com o público, usar palavras comuns, evitar jargões e siglas desconhecidas, explicar termos técnicos e usar imagens e outros recursos complementares.\n- Determina que o Poder Executivo de cada ente da federação defina diretrizes complementares para o cumprimento da política.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
     "2233324": {
       "sourceHash": "c2d11da9a90222670da22aa0cc93e74f4980fbc46d8ba5532e8f71c1a9f255a2",
       "generationStatus": "generated",
       "reviewStatus": "approved",
-      "resumoCard": "Cria o Dia Nacional das Defensoras e Defensores de Direitos Humanos, comemorado todo ano no dia quatorze de março.",
-      "resumoDetalhe": "- institui um dia nacional para reconhecer e lembrar defensoras e defensores de direitos humanos, a ser comemorado anualmente em todo o país.",
+      "resumoCard": "Cria o Dia Nacional das Defensoras e Defensores de Direitos Humanos, comemorado todo ano no dia 14 de março.",
+      "resumoDetalhe": "- Institui um dia nacional para reconhecer e lembrar defensoras e defensores de direitos humanos.\n- Fixa a comemoração no dia quatorze de março, em todo o território nacional, e apresenta como motivação a trajetória de Marielle Franco, vereadora e defensora de direitos humanos.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2233802": {
+      "sourceHash": "3551a0d01d80ec8c78cad56953cee55433e7bb9225a0302445c9a07c4a11b74f",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Estabelece jornada de trabalho de até oito horas por dia e trinta e seis horas por semana, com possibilidade de compensação por acordo coletivo, e entra em vigor após dez anos.",
+      "resumoDetalhe": "- Estabelece um limite para a duração do trabalho diário e reduz a jornada semanal para um patamar menor.\n- Permite a compensação de horários e autoriza a redução da jornada por meio de acordo ou convenção coletiva de trabalho (negociação entre trabalhadores e empregadores).\n- Determina que a nova regra só passe a valer após um período de transição de vários anos contado a partir da publicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:45:23.563Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2234001": {
+      "sourceHash": "20a440c11ef96c0270561700bf4dabe202b515860c467633af454b47ed980608",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Organiza o Simples Nacional, amplia ocupações que podem ser MEI, cria regras para transportadores autônomos e reconhece profissionais independentes como empresários.",
+      "resumoDetalhe": "- Organiza a composição e o funcionamento do Comitê Gestor do Simples Nacional, indicando representantes da União, dos estados e dos municípios, do Sebrae e de confederações, e fixando regras de quórum, votação e rodízio de vagas.\n- Amplia as ocupações que podem se registrar como microempreendedor individual (MEI), incluindo quem comercializa e processa produtos extraídos da natureza, e permite que esses profissionais paguem seus impostos pelo regime simplificado do Simples Nacional.\n- Estabelece regras específicas para o transportador autônomo de cargas inscrito como MEI, definindo como contabilizar a receita de frete e como calcular a contribuição mensal, e permitindo que o pagamento de certos impostos seja transferido para a empresa que contrata o frete, quando ela não fizer parte do Simples.\n- Define como empresário quem presta serviços de forma independente e autônoma, inclusive atividades intelectuais, científicas, literárias ou artísticas, mesmo com auxiliares, desde que não exista relação de emprego com o contratante.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:33:03.984Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2234707": {
+      "sourceHash": "fc526e687058bc43f99a4d102d505de78f7787f348e7853ed5e3f26b466b0baf",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria uma Procuradoria Regional da República com sede em Belo Horizonte, com os cargos, a transferência de processos e as regras para sua instalação.",
+      "resumoDetalhe": "- Cria uma Procuradoria Regional da República com sede em Belo Horizonte e atuação em Minas Gerais, unidade do Ministério Público Federal que atua junto ao tribunal regional federal correspondente.\n- Cria os cargos necessários para compor a nova unidade, entre procuradores regionais, servidores efetivos, cargos em comissão e funções de confiança, com o impacto orçamentário detalhado em anexos, e condiciona a criação desses cargos à autorização na lei do orçamento.\n- Determina que o Procurador-Geral da República instale a nova procuradoria depois de instalado o tribunal correspondente e organize a distribuição e o cronograma de preenchimento dos cargos, observados a disponibilidade orçamentária e os limites de gasto com pessoal da Lei de Responsabilidade Fiscal.\n- Autoriza a remessa dos processos para a nova unidade, preferencialmente em formato digital, permite que procuradores regionais atuais peçam remoção para lá e mantém as atribuições da procuradoria anterior até a instalação completa.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
+    },
+    "2255608": {
+      "sourceHash": "aaf5ace77aac827aab007d3098c640600ab564d01cb1fb27a9387d3cc73d4913",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Obriga os planos de saúde a fornecer medicamentos contra o câncer de uso oral para o paciente tomar em casa, com entrega rápida e orientação sobre o uso.",
+      "resumoDetalhe": "- Torna obrigatória a cobertura, pelos planos de saúde, dos medicamentos antineoplásicos de uso oral, usados no tratamento do câncer, quando houver prescrição médica e o remédio estiver registrado e aprovado para essa finalidade pelo órgão federal de vigilância sanitária.\n- Determina que o medicamento seja entregue em prazo curto após a prescrição, diretamente ao paciente ou a seu representante legal, pela rede própria ou credenciada do plano, podendo a entrega ser fracionada por ciclo de tratamento.\n- Exige a comprovação de que o paciente ou seu representante recebeu orientação sobre o uso, a conservação e o descarte do medicamento.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
     },
     "2265124": {
       "sourceHash": "d5a80eeb8845390408681183a8b75293b591c92a8105dc30a6765d26eff10390",
@@ -336,11 +578,22 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Estabelece regras para controlar gastos e dívida, cria medidas automáticas de ajuste quando despesas correntes ficam muito altas e prevê regime especial para calamidade pública e redução de incentivos fiscais.",
-      "resumoDetalhe": "- exige que a União, os Estados, o Distrito Federal e os Municípios conduzam políticas fiscais com indicadores e planos que garantam a sustentabilidade da dívida, e que os orçamentos e a lei de diretrizes orçamentárias reflitam essa trajetória\n- autoriza poderes e órgãos a aplicar medidas de ajuste fiscal quando a relação entre despesas correntes e receitas correntes ultrapassar limites previstos, vedando aumento de remunerações, criação de cargos, concursos e novos benefícios, e permitindo suspensão de progressões e promoções enquanto durar a situação\n- institui um estado de calamidade pública de âmbito nacional com regime extraordinário: permite contratações e compras simplificadas, suspende certas limitações fiscais e admite uso de superávit financeiro de fundos e flexibiliza regras de crédito e transferências, preservadas exceções previstas\n- obriga avaliação e divulgação de resultados de políticas públicas; determina plano para redução gradual de incentivos e benefícios fiscais com regras e avaliação em lei complementar; permite destinar, por prazo limitado, superávit financeiro de fundos do Poder Executivo à amortização da dívida e traz regras transitórias sobre precatórios e vedações orçamentárias",
+      "resumoDetalhe": "- Exige que a União, os Estados, o Distrito Federal e os Municípios conduzam políticas fiscais com indicadores e planos que garantam a sustentabilidade da dívida, e que os orçamentos e a lei de diretrizes orçamentárias reflitam essa trajetória.\n- Autoriza poderes e órgãos a aplicar medidas de ajuste fiscal quando a relação entre despesas correntes e receitas correntes ultrapassar limites previstos, vedando aumento de remunerações, criação de cargos, concursos e novos benefícios, e permitindo suspensão de progressões e promoções enquanto durar a situação.\n- Institui um estado de calamidade pública de âmbito nacional com regime extraordinário: permite contratações e compras simplificadas, suspende certas limitações fiscais e admite uso de superávit financeiro de fundos e flexibiliza regras de crédito e transferências, preservadas exceções previstas.\n- Obriga avaliação e divulgação de resultados de políticas públicas; determina plano para redução gradual de incentivos e benefícios fiscais com regras e avaliação em lei complementar; permite destinar, por prazo limitado, superávit financeiro de fundos do Poder Executivo à amortização da dívida e traz regras transitórias sobre precatórios e vedações orçamentárias.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-06-25T22:22:05.880Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
+    },
+    "2286993": {
+      "sourceHash": "b31feb53937556f73feec76c0d0bfea5075d4d26a2d39ee1d3bcea59d3dbe51e",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria a Sociedade Anônima do Futebol, empresa voltada só ao futebol profissional, com regras próprias de governança, pagamento de dívidas e tributação.",
+      "resumoDetalhe": "- Cria a Sociedade Anônima do Futebol, empresa dedicada ao futebol profissional, que pode nascer da transformação do próprio clube, da separação do seu departamento de futebol ou de iniciativa privada, e reserva ao clube de origem um tipo de ação que lhe dá poder de decisão sobre mudanças importantes.\n- Impõe regras de governança e transparência, com conselho de administração e conselho fiscal permanentes, proibição de que dirigentes de outras empresas de futebol, organizadores de competições, atletas contratados, árbitros e treinadores em atividade ocupem cargos de direção, e publicação mensal na internet de informações sobre acionistas, contas e administração.\n- Organiza o pagamento das dívidas antigas do clube, que continua responsável por elas, obriga a empresa a repassar parte de suas receitas ao clube para pagar credores, concentra as cobranças judiciais em um procedimento único e permite acordos com credores, inclusive trocar dívida por participação na empresa.\n- Autoriza a emissão de títulos de dívida próprios para financiar a atividade, obriga a manutenção de um programa educacional e esportivo em parceria com escola pública, com espaço garantido para meninas, e institui um regime tributário próprio que reúne vários tributos em um recolhimento mensal único.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
     },
     "2293709": {
       "sourceHash": "cb35cec802b53e737f93e190f36f72eda2284887be217399037700f3d42fd9d6",
@@ -358,11 +611,22 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Cria o Sistema Nacional de Educação para coordenar a cooperação entre União, Estados, Distrito Federal e Municípios na política, na avaliação e no financiamento da educação.",
-      "resumoDetalhe": "- cria o Sistema Nacional de Educação (SNE) para articular e coordenar a cooperação entre os diferentes níveis de governo, com o objetivo de planejar, implementar e avaliar políticas, programas e ações educacionais\n- cria instâncias permanentes de pactuação, como a Cite (fórum nacional entre os níveis de governo) e as Cibes (fóruns estaduais entre o Estado e seus Municípios), para negociar normas, diretrizes, contrapartidas e a coordenação do uso de recursos\n- define o CAQ (Custo Aluno Qualidade) como referência do valor por aluno necessário para garantir um padrão mínimo de qualidade na educação básica e prevê suplementação financeira da União quando a disponibilidade local for insuficiente\n- institui sistemas nacionais de avaliação (Sinaeb para a educação básica, Sinaes para a educação superior e Sinaept para a educação profissional e tecnológica), exige planos de educação nacionais e locais com ampla participação da sociedade e estabelece políticas de inclusão, atenção a povos indígenas e comunidades tradicionais e valorização dos profissionais da educação",
+      "resumoDetalhe": "- Cria o Sistema Nacional de Educação (SNE) para articular e coordenar a cooperação entre os diferentes níveis de governo, com o objetivo de planejar, implementar e avaliar políticas, programas e ações educacionais.\n- Cria instâncias permanentes de pactuação, como a Cite (fórum nacional entre os níveis de governo) e as Cibes (fóruns estaduais entre o Estado e seus Municípios), para negociar normas, diretrizes, contrapartidas e a coordenação do uso de recursos.\n- Define o CAQ (Custo Aluno Qualidade) como referência do valor por aluno necessário para garantir um padrão mínimo de qualidade na educação básica e prevê suplementação financeira da União quando a disponibilidade local for insuficiente.\n- Institui sistemas nacionais de avaliação (Sinaeb para a educação básica, Sinaes para a educação superior e Sinaept para a educação profissional e tecnológica), exige planos de educação nacionais e locais com ampla participação da sociedade e estabelece políticas de inclusão, atenção a povos indígenas e comunidades tradicionais e valorização dos profissionais da educação.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2447983": {
+      "sourceHash": "a37f12529fca2447896dea1c2472e6dff773f13215b881fd0dff1f9d63faaa7a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Permite que cooperativas recebam financiamento dos fundos de desenvolvimento do Nordeste, da Amazônia e do Centro-Oeste.",
+      "resumoDetalhe": "- Permite que sociedades cooperativas sejam beneficiárias dos recursos dos fundos de desenvolvimento do Nordeste, da Amazônia e do Centro-Oeste para financiar seus empreendimentos.\n- Define que essa possibilidade alcança as cooperativas tratadas na lei geral do cooperativismo e nas regras das cooperativas de crédito, na forma que o regulamento estabelecer.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:06:21.440Z",
+      "reviewedAt": "2026-08-16T17:30:00Z"
     }
   }
 }

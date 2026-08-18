@@ -1,7 +1,5 @@
 import type {
-  DeputadoPerfil,
   EscopoMatcher,
-  MatcherDeputadoDetalhe,
   MatcherDeputadoResumo,
   MatcherResultado,
   ProposicaoCard,
@@ -17,13 +15,15 @@ import {
   hasComparativoDeputadoLimit,
   initMatcherState,
   isComparativoSelectionMode,
-  isDetalheOpen,
-  isSemBomMatch,
   matcherReducer,
   resultadoDisplay,
   selectionCount,
-  stepStatus,
 } from "../lib/matcher-state";
+import {
+  loadRascunho,
+  saveRascunho,
+  type RascunhoStorage,
+} from "../lib/matcher-rascunho-storage";
 
 function card(externalIdProposicao: number): ProposicaoCard {
   return {
@@ -61,7 +61,6 @@ function resultado(
 ): MatcherResultado {
   return {
     siglaUf: "SP",
-    cidade: null,
     totalProposicoesSelecionadas: 3,
     totalPosicoesComputaveis: 3,
     escopo,
@@ -71,21 +70,49 @@ function resultado(
     total: 0,
     limit: 20,
     offset: 0,
-    semBomMatch: false,
     ...overrides,
   };
 }
 
 const candidates = [card(1), card(2), card(3), card(4), card(5), card(6)];
 
+function stateWithFiltroConcordancia() {
+  return {
+    ...initMatcherState(candidates),
+    selected: [card(1), card(2), card(3)],
+    posicoes: new Map([
+      [1, "aprovar" as const],
+      [2, "rejeitar" as const],
+      [3, "aprovar" as const],
+    ]),
+    externalIdProposicoesFiltroConcordancia: [1],
+  };
+}
+
 describe("matcherReducer", () => {
+  describe("when toggling the filtro de concordancia", () => {
+    it("marks an unmarked proposition", () => {
+      // Arrange
+      const state = initMatcherState(candidates);
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "toggleFiltroConcordancia",
+        externalIdProposicao: 1,
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([1]);
+      expect(state.externalIdProposicoesFiltroConcordancia).toEqual([]);
+    });
+  });
+
   describe("when initialised with candidate proposicoes", () => {
-    it("starts at the local step without pre-selected proposicoes", () => {
+    it("starts without pre-selected proposicoes", () => {
       // Arrange / Act
       const state = initMatcherState(candidates);
 
       // Assert
-      expect(state.step).toBe("local");
       expect(state.siglaUf).toBeNull();
       expect(state.escopo).toBe("estadual");
       expect(state.status).toBe("idle");
@@ -95,7 +122,7 @@ describe("matcherReducer", () => {
   });
 
   describe("when recording the location", () => {
-    it("stores the chosen UF and cidade without changing the step", () => {
+    it("stores the chosen UF", () => {
       // Arrange
       const state = initMatcherState(candidates);
 
@@ -103,17 +130,98 @@ describe("matcherReducer", () => {
       const next = matcherReducer(state, {
         type: "setLocal",
         siglaUf: "SP",
-        cidade: "Santos",
       });
 
       // Assert
       expect(next.siglaUf).toBe("SP");
-      expect(next.cidade).toBe("Santos");
-      expect(next.step).toBe("local");
+    });
+  });
+
+  describe("when resuming a matcher draft", () => {
+    it("restores every user input", () => {
+      // Arrange
+      const state = initMatcherState(candidates);
+      const selected = [card(2), card(4)];
+      const posicoes = new Map([
+        [2, "aprovar" as const],
+        [4, "nao_sei" as const],
+      ]);
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "hydrateRascunho",
+        rascunho: {
+          siglaUf: "BA",
+          escopo: "nacional",
+          selected,
+          posicoes,
+          externalIdProposicoesFiltroConcordancia: [2],
+        },
+      });
+
+      // Assert
+      expect(next.siglaUf).toBe("BA");
+      expect(next.escopo).toBe("nacional");
+      expect(next.selected).toEqual(selected);
+      expect(next.posicoes).toEqual(posicoes);
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([2]);
+      expect(next.isHydrated).toBe(true);
+    });
+  });
+
+  describe("when starting a new matcher execution", () => {
+    it("discards user inputs and derived results", () => {
+      // Arrange
+      const withLocal = matcherReducer(initMatcherState(candidates), {
+        type: "setLocal",
+        siglaUf: "SP",
+      });
+      const withSelection = matcherReducer(withLocal, {
+        type: "toggleProposicao",
+        proposicao: card(1),
+      });
+
+      // Act
+      const next = matcherReducer(withSelection, { type: "resetMatcher" });
+
+      // Assert
+      expect(next.siglaUf).toBeNull();
+      expect(next.selected).toEqual([]);
+      expect(next.posicoes).toEqual(new Map());
+      expect(next.resultados).toEqual({ estadual: null, nacional: null });
+      expect(next.isHydrated).toBe(true);
     });
   });
 
   describe("when toggling a proposicao", () => {
+    it("clears the filtro de concordancia when adding a proposicao", () => {
+      // Arrange
+      const state = stateWithFiltroConcordancia();
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "toggleProposicao",
+        proposicao: card(4),
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([]);
+    });
+
+    it("clears the filtro de concordancia when removing a proposicao", () => {
+      // Arrange
+      const state = stateWithFiltroConcordancia();
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "toggleProposicao",
+        proposicao: card(3),
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([]);
+    });
+
     it("removes an already-selected proposicao and its declared position", () => {
       // Arrange
       const selected = matcherReducer(initMatcherState(candidates), {
@@ -178,6 +286,61 @@ describe("matcherReducer", () => {
     });
   });
 
+  describe("when setting a posição do usuário", () => {
+    it("clears the filtro de concordancia when the position changes", () => {
+      // Arrange
+      const state = stateWithFiltroConcordancia();
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setPosicao",
+        externalIdProposicao: 1,
+        posicao: "rejeitar",
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([]);
+    });
+
+    it("persists the cleared filtro de concordancia in the rascunho", () => {
+      // Arrange
+      const values = new Map<string, string>();
+      const storage: RascunhoStorage = {
+        getItem: (key) => values.get(key) ?? null,
+        setItem: (key, value) => values.set(key, value),
+        removeItem: (key) => values.delete(key),
+      };
+      const state = stateWithFiltroConcordancia();
+      const next = matcherReducer(state, {
+        type: "setPosicao",
+        externalIdProposicao: 1,
+        posicao: "rejeitar",
+      });
+
+      // Act
+      saveRascunho(storage, next);
+      const persisted = loadRascunho(storage);
+
+      // Assert
+      expect(persisted?.externalIdProposicoesFiltroConcordancia).toEqual([]);
+    });
+
+    it("preserves the filtro de concordancia when the position is unchanged", () => {
+      // Arrange
+      const state = stateWithFiltroConcordancia();
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setPosicao",
+        externalIdProposicao: 1,
+        posicao: "aprovar",
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([1]);
+    });
+  });
+
   describe("canAdvanceSelecao", () => {
     it("requires at least three selected proposicoes", () => {
       // Arrange
@@ -205,41 +368,9 @@ describe("matcherReducer", () => {
     });
   });
 
-  describe("when navigating back to an earlier step", () => {
-    it("preserves the UF, selection and declared positions", () => {
-      // Arrange
-      let state = initMatcherState(candidates);
-      state = matcherReducer(state, {
-        type: "setLocal",
-        siglaUf: "MG",
-        cidade: "",
-      });
-      state = matcherReducer(state, {
-        type: "toggleProposicao",
-        proposicao: card(2),
-      });
-      state = matcherReducer(state, {
-        type: "setPosicao",
-        externalIdProposicao: 2,
-        posicao: "rejeitar",
-      });
-      state = matcherReducer(state, { type: "goToStep", step: "posicoes" });
-
-      // Act
-      const back = matcherReducer(state, { type: "goToStep", step: "selecao" });
-
-      // Assert
-      expect(back.step).toBe("selecao");
-      expect(back.siglaUf).toBe("MG");
-      expect(selectionCount(back)).toBe(1);
-      expect(back.posicoes.get(2)).toBe("rejeitar");
-    });
-  });
-
   describe("when running the matcher", () => {
     const resultado = {
       siglaUf: "SP" as const,
-      cidade: null,
       totalProposicoesSelecionadas: 3,
       totalPosicoesComputaveis: 3,
       escopo: "estadual" as const,
@@ -249,7 +380,6 @@ describe("matcherReducer", () => {
       total: 0,
       limit: 20,
       offset: 0,
-      semBomMatch: false,
     };
 
     it("moves to loading on start", () => {
@@ -263,7 +393,7 @@ describe("matcherReducer", () => {
       expect(next.status).toBe("loading");
     });
 
-    it("caches the result by escopo and lands on the resultado step", () => {
+    it("caches the result by escopo", () => {
       // Arrange
       const loading = matcherReducer(initMatcherState(candidates), {
         type: "runStart",
@@ -277,7 +407,6 @@ describe("matcherReducer", () => {
       });
 
       // Assert
-      expect(next.step).toBe("resultado");
       expect(next.status).toBe("idle");
       expect(next.resultados.estadual).toEqual(resultado);
     });
@@ -296,54 +425,30 @@ describe("matcherReducer", () => {
     });
   });
 
-  describe("step indicator navigation", () => {
-    it("returns 'done' for steps before the current one", () => {
-      // Arrange / Act / Assert
-      expect(stepStatus("selecao", "local")).toBe("done");
-      expect(stepStatus("posicoes", "local")).toBe("done");
-      expect(stepStatus("posicoes", "selecao")).toBe("done");
-      expect(stepStatus("resultado", "local")).toBe("done");
-      expect(stepStatus("resultado", "selecao")).toBe("done");
-      expect(stepStatus("resultado", "posicoes")).toBe("done");
-    });
-
-    it("returns 'current' for the active step", () => {
-      // Arrange / Act / Assert
-      expect(stepStatus("local", "local")).toBe("current");
-      expect(stepStatus("selecao", "selecao")).toBe("current");
-      expect(stepStatus("posicoes", "posicoes")).toBe("current");
-      expect(stepStatus("resultado", "resultado")).toBe("current");
-    });
-
-    it("returns 'upcoming' for steps after the current one", () => {
-      // Arrange / Act / Assert
-      expect(stepStatus("local", "selecao")).toBe("upcoming");
-      expect(stepStatus("local", "posicoes")).toBe("upcoming");
-      expect(stepStatus("local", "resultado")).toBe("upcoming");
-      expect(stepStatus("selecao", "posicoes")).toBe("upcoming");
-      expect(stepStatus("selecao", "resultado")).toBe("upcoming");
-      expect(stepStatus("posicoes", "resultado")).toBe("upcoming");
-    });
-
-    it("works at the extremes: 'local' has no done steps, 'resultado' has no upcoming steps", () => {
-      // Arrange / Act / Assert
-      expect(stepStatus("local", "selecao")).toBe("upcoming");
-      expect(stepStatus("local", "posicoes")).toBe("upcoming");
-      expect(stepStatus("local", "resultado")).toBe("upcoming");
-      expect(stepStatus("resultado", "local")).toBe("done");
-      expect(stepStatus("resultado", "selecao")).toBe("done");
-      expect(stepStatus("resultado", "posicoes")).toBe("done");
-    });
-  });
-
   describe("setEscopo", () => {
+    it("preserves the filtro de concordancia", () => {
+      // Arrange
+      const state = {
+        ...initMatcherState(candidates),
+        externalIdProposicoesFiltroConcordancia: [1],
+      };
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setEscopo",
+        escopo: "nacional",
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([1]);
+    });
+
     it("flips the active escopo without touching selected or posicoes", () => {
       // Arrange
       let state = initMatcherState(candidates);
       state = matcherReducer(state, {
         type: "setLocal",
         siglaUf: "SP",
-        cidade: "",
       });
       state = matcherReducer(state, {
         type: "setPosicao",
@@ -418,6 +523,126 @@ describe("matcherReducer", () => {
       // Assert
       expect(next.escopo).toBe("nacional");
       expect(activeResultado(next)).toBeNull();
+    });
+  });
+
+  describe("when the resultado filters are applied", () => {
+    function comCache() {
+      return {
+        ...initMatcherState(candidates),
+        resultados: {
+          estadual: resultado("estadual"),
+          nacional: resultado("nacional"),
+        },
+      };
+    }
+
+    it("activates the filters and resets the requested first page", () => {
+      // Arrange
+      const state = comCache();
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setResultadoFilters",
+        escopo: "nacional",
+        apenasEmAtividade: false,
+        partidos: [],
+        ocultarAmostraPequena: false,
+        sexo: null,
+        externalIdProposicoesFiltroConcordancia: [],
+      });
+
+      // Assert
+      expect(next.escopo).toBe("nacional");
+      expect(next.resultados.nacional).toBeNull();
+      expect(next.resultados.estadual).not.toBeNull();
+    });
+
+    it("discards the cached scope when the atividade cut changes", () => {
+      // Arrange
+      const state = comCache();
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setResultadoFilters",
+        escopo: "nacional",
+        apenasEmAtividade: true,
+        partidos: [],
+        ocultarAmostraPequena: false,
+        sexo: null,
+        externalIdProposicoesFiltroConcordancia: [],
+      });
+
+      // Assert
+      expect(next.apenasEmAtividade).toBe(true);
+      expect(next.resultados.nacional).toBeNull();
+      expect(next.resultados.estadual).toBeNull();
+    });
+
+    it("discards the cached scope when the concordancia marks change", () => {
+      // Arrange
+      const state = comCache();
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setResultadoFilters",
+        escopo: "nacional",
+        apenasEmAtividade: false,
+        partidos: [],
+        ocultarAmostraPequena: false,
+        sexo: null,
+        externalIdProposicoesFiltroConcordancia: [1],
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([1]);
+      expect(next.resultados.estadual).toBeNull();
+    });
+
+    it("discards both cached scopes when a recorte changes together with the scope", () => {
+      // Arrange
+      const state = comCache();
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setResultadoFilters",
+        escopo: "nacional",
+        apenasEmAtividade: false,
+        partidos: ["PT"],
+        ocultarAmostraPequena: false,
+        sexo: "F",
+        externalIdProposicoesFiltroConcordancia: [],
+      });
+
+      // Assert
+      expect(next.escopo).toBe("nacional");
+      expect(next.partidos).toEqual(["PT"]);
+      expect(next.sexo).toBe("F");
+      expect(next.resultados.nacional).toBeNull();
+      expect(next.resultados.estadual).toBeNull();
+    });
+
+    it("keeps the concordancia marks that were already applied", () => {
+      // Arrange
+      const state = {
+        ...comCache(),
+        externalIdProposicoesFiltroConcordancia: [1],
+      };
+
+      // Act
+      const next = matcherReducer(state, {
+        type: "setResultadoFilters",
+        escopo: "nacional",
+        apenasEmAtividade: false,
+        partidos: [],
+        ocultarAmostraPequena: false,
+        sexo: null,
+        externalIdProposicoesFiltroConcordancia: [1],
+      });
+
+      // Assert
+      expect(next.externalIdProposicoesFiltroConcordancia).toEqual([1]);
+      expect(next.resultados.estadual).not.toBeNull();
     });
   });
 
@@ -652,206 +877,7 @@ describe("matcherReducer", () => {
     });
   });
 
-  describe("isSemBomMatch", () => {
-    describe("when resultado is null", () => {
-      it("returns false", () => {
-        // Act / Assert
-        expect(isSemBomMatch(null)).toBe(false);
-      });
-    });
-
-    describe("when semBomMatch is false", () => {
-      it("returns false", () => {
-        // Arrange
-        const r = resultado("estadual", { semBomMatch: false });
-
-        // Act / Assert
-        expect(isSemBomMatch(r)).toBe(false);
-      });
-    });
-
-    describe("when semBomMatch is true", () => {
-      it("returns true", () => {
-        // Arrange
-        const r = resultado("estadual", { semBomMatch: true });
-
-        // Act / Assert
-        expect(isSemBomMatch(r)).toBe(true);
-      });
-    });
-  });
-
-  describe("detalhe lifecycle", () => {
-    function makeDetalhe(externalIdDeputado: number): MatcherDeputadoDetalhe {
-      return {
-        siglaUf: "SP",
-        cidade: null,
-        totalProposicoesSelecionadas: 3,
-        totalPosicoesComputaveis: 3,
-        deputado: {
-          externalIdDeputado,
-          nome: `Deputado ${externalIdDeputado}`,
-          partido: "PP",
-          siglaUf: "SP",
-          urlFoto: null,
-          emAtividade: true,
-        },
-        metrics: {
-          totalConcordancias: 2,
-          totalDiscordancias: 1,
-          totalForaDoDenominador: 0,
-          amostraComparavel: 3,
-          coberturaExercicio: 3,
-          compatibilidadeBruta: 66.7,
-          scoreOrdenacaoPercentual: 70,
-          alertas: [],
-        },
-        votos: [],
-      };
-    }
-
-    describe("openDetalheStart", () => {
-      it("sets detalheStatus to loading and records the deputado id", () => {
-        // Arrange
-        const state = initMatcherState(candidates);
-
-        // Act
-        const next = matcherReducer(state, {
-          type: "openDetalheStart",
-          externalIdDeputado: 99,
-        });
-
-        // Assert
-        expect(next.detalheStatus).toBe("loading");
-        expect(next.detalheDeputadoId).toBe(99);
-        expect(next.detalhe).toBeNull();
-      });
-    });
-
-    describe("openDetalheOk", () => {
-      it("stores the detalhe and resets status to idle", () => {
-        // Arrange
-        const loading = matcherReducer(initMatcherState(candidates), {
-          type: "openDetalheStart",
-          externalIdDeputado: 42,
-        });
-        const detalhe = makeDetalhe(42);
-
-        // Act
-        const next = matcherReducer(loading, {
-          type: "openDetalheOk",
-          detalhe,
-        });
-
-        // Assert
-        expect(next.detalheStatus).toBe("idle");
-        expect(next.detalhe).toEqual(detalhe);
-      });
-    });
-
-    describe("openDetalheError", () => {
-      it("sets detalheStatus to error", () => {
-        // Arrange
-        const loading = matcherReducer(initMatcherState(candidates), {
-          type: "openDetalheStart",
-          externalIdDeputado: 42,
-        });
-
-        // Act
-        const next = matcherReducer(loading, { type: "openDetalheError" });
-
-        // Assert
-        expect(next.detalheStatus).toBe("error");
-      });
-    });
-
-    describe("closeDetalhe", () => {
-      it("resets detalhe fields without touching resultados", () => {
-        // Arrange
-        const withResultado = matcherReducer(initMatcherState(candidates), {
-          type: "runOk",
-          escopo: "estadual",
-          resultado: resultado("estadual", {
-            deputados: [deputado(1)],
-            total: 1,
-          }),
-        });
-        const withDetalhe = matcherReducer(withResultado, {
-          type: "openDetalheOk",
-          detalhe: makeDetalhe(1),
-        });
-
-        // Act
-        const next = matcherReducer(withDetalhe, { type: "closeDetalhe" });
-
-        // Assert
-        expect(next.detalhe).toBeNull();
-        expect(next.detalheDeputadoId).toBeNull();
-        expect(next.detalheStatus).toBe("idle");
-        expect(next.resultados.estadual).not.toBeNull();
-      });
-    });
-  });
-
   describe("comparativo selection lifecycle", () => {
-    function makeDetalhe(externalIdDeputado: number): MatcherDeputadoDetalhe {
-      return {
-        siglaUf: "SP",
-        cidade: null,
-        totalProposicoesSelecionadas: 3,
-        totalPosicoesComputaveis: 3,
-        deputado: {
-          externalIdDeputado,
-          nome: `Deputado ${externalIdDeputado}`,
-          partido: "PP",
-          siglaUf: "SP",
-          urlFoto: null,
-          emAtividade: true,
-        },
-        metrics: {
-          totalConcordancias: 2,
-          totalDiscordancias: 1,
-          totalForaDoDenominador: 0,
-          amostraComparavel: 3,
-          coberturaExercicio: 3,
-          compatibilidadeBruta: 66.7,
-          scoreOrdenacaoPercentual: 70,
-          alertas: [],
-        },
-        votos: [],
-      };
-    }
-
-    function makePerfil(externalIdDeputado: number): DeputadoPerfil {
-      return {
-        externalIdDeputado,
-        nomePublico: `Deputado ${externalIdDeputado}`,
-        nomeCivil: null,
-        fonteOficial: `https://www.camara.leg.br/deputados/${externalIdDeputado}`,
-        historicoParlamentarDisponivel: true,
-        snapshotPublicoDisponivel: true,
-        snapshotPublico: {
-          nomeEleitoral: `Deputado ${externalIdDeputado}`,
-          siglaPartido: "PP",
-          siglaUf: "SP",
-          urlFoto: null,
-        },
-        emAtividade: true,
-        redesSociais: [],
-        dataNascimento: null,
-        municipioNascimento: null,
-        ufNascimento: null,
-        externalIdLegislaturaInicial: null,
-        externalIdLegislaturaFinal: null,
-        legislaturaInicialPeriodo: null,
-        legislaturaFinalPeriodo: null,
-        resumoPresencaDisponivel: false,
-        resumoPresenca: null,
-        historicoPartidarioDisponivel: false,
-        historicoPartidario: [],
-      };
-    }
-
     it("starts resultado in normal mode without selected deputados", () => {
       // Arrange / Act
       const state = initMatcherState(candidates);
@@ -859,9 +885,6 @@ describe("matcherReducer", () => {
       // Assert
       expect(isComparativoSelectionMode(state)).toBe(false);
       expect(state.selectedComparativoDeputados).toEqual([]);
-      expect(state.comparativoStatus).toBe("idle");
-      expect(state.comparativoDetalhes).toEqual([]);
-      expect(state.comparativoPerfis).toEqual([]);
       expect(canOpenComparativo(state)).toBe(false);
     });
 
@@ -983,164 +1006,6 @@ describe("matcherReducer", () => {
       // Assert
       expect(isComparativoSelectionMode(next)).toBe(false);
       expect(next.selectedComparativoDeputados).toEqual([]);
-      expect(next.step).toBe("local");
-    });
-
-    it("starts opening the comparativo with deputados in the order selected", () => {
-      // Arrange
-      let state = matcherReducer(initMatcherState(candidates), {
-        type: "runOk",
-        escopo: "estadual",
-        resultado: resultado("estadual"),
-      });
-      state = matcherReducer(state, { type: "startComparativoSelection" });
-      state = matcherReducer(state, {
-        type: "toggleComparativoDeputado",
-        deputado: deputado(7),
-      });
-      state = matcherReducer(state, {
-        type: "toggleComparativoDeputado",
-        deputado: deputado(5),
-      });
-
-      // Act
-      const next = matcherReducer(state, { type: "openComparativoStart" });
-
-      // Assert
-      expect(next.step).toBe("comparativo");
-      expect(next.comparativoStatus).toBe("loading");
-      expect(next.comparativoDetalhes).toEqual([]);
-      expect(next.comparativoPerfis).toEqual([]);
-      expect(isComparativoSelectionMode(next)).toBe(false);
-      expect(
-        next.selectedComparativoDeputados.map((d) => d.externalIdDeputado),
-      ).toEqual([7, 5]);
-    });
-
-    it("does not open the comparativo with fewer than two deputados", () => {
-      // Arrange
-      let state = matcherReducer(initMatcherState(candidates), {
-        type: "runOk",
-        escopo: "estadual",
-        resultado: resultado("estadual"),
-      });
-      state = matcherReducer(state, { type: "startComparativoSelection" });
-      state = matcherReducer(state, {
-        type: "toggleComparativoDeputado",
-        deputado: deputado(7),
-      });
-
-      // Act
-      const next = matcherReducer(state, { type: "openComparativoStart" });
-
-      // Assert
-      expect(next.step).toBe("resultado");
-      expect(next.comparativoStatus).toBe("idle");
-      expect(isComparativoSelectionMode(next)).toBe(true);
-    });
-
-    it("stores comparativo detalhes and perfis after loading succeeds", () => {
-      // Arrange
-      const loading = matcherReducer(initMatcherState(candidates), {
-        type: "openComparativoStart",
-      });
-      const detalhes = [makeDetalhe(7), makeDetalhe(5)];
-      const perfis = [makePerfil(7), makePerfil(5)];
-
-      // Act
-      const next = matcherReducer(loading, {
-        type: "openComparativoOk",
-        detalhes,
-        perfis,
-      });
-
-      // Assert
-      expect(next.comparativoStatus).toBe("idle");
-      expect(next.comparativoDetalhes).toEqual(detalhes);
-      expect(next.comparativoPerfis).toEqual(perfis);
-    });
-
-    it("shows a comparativo error without keeping partial detalhes or perfis", () => {
-      // Arrange
-      const loading = matcherReducer(initMatcherState(candidates), {
-        type: "openComparativoStart",
-      });
-
-      // Act
-      const next = matcherReducer(loading, { type: "openComparativoError" });
-
-      // Assert
-      expect(next.comparativoStatus).toBe("error");
-      expect(next.comparativoDetalhes).toEqual([]);
-      expect(next.comparativoPerfis).toEqual([]);
-    });
-
-    it("returns from comparativo to resultado in normal mode", () => {
-      // Arrange
-      let state = matcherReducer(initMatcherState(candidates), {
-        type: "runOk",
-        escopo: "estadual",
-        resultado: resultado("estadual"),
-      });
-      state = matcherReducer(state, { type: "startComparativoSelection" });
-      state = matcherReducer(state, {
-        type: "toggleComparativoDeputado",
-        deputado: deputado(1),
-      });
-      state = matcherReducer(state, {
-        type: "toggleComparativoDeputado",
-        deputado: deputado(2),
-      });
-      state = matcherReducer(state, { type: "openComparativoStart" });
-      state = matcherReducer(state, {
-        type: "openComparativoOk",
-        detalhes: [makeDetalhe(1), makeDetalhe(2)],
-        perfis: [makePerfil(1), makePerfil(2)],
-      });
-
-      // Act
-      const next = matcherReducer(state, { type: "backFromComparativo" });
-
-      // Assert
-      expect(next.step).toBe("resultado");
-      expect(isComparativoSelectionMode(next)).toBe(false);
-      expect(next.selectedComparativoDeputados).toEqual([]);
-      expect(next.comparativoStatus).toBe("idle");
-      expect(next.comparativoDetalhes).toEqual([]);
-      expect(next.comparativoPerfis).toEqual([]);
-    });
-  });
-
-  describe("isDetalheOpen", () => {
-    it("is false when no detalhe has been opened", () => {
-      // Arrange
-      const state = initMatcherState(candidates);
-
-      // Act / Assert
-      expect(isDetalheOpen(state)).toBe(false);
-    });
-
-    it("is true after openDetalheStart", () => {
-      // Arrange
-      const state = matcherReducer(initMatcherState(candidates), {
-        type: "openDetalheStart",
-        externalIdDeputado: 5,
-      });
-
-      // Act / Assert
-      expect(isDetalheOpen(state)).toBe(true);
-    });
-
-    it("is false after closeDetalhe", () => {
-      // Arrange
-      const opened = matcherReducer(initMatcherState(candidates), {
-        type: "openDetalheStart",
-        externalIdDeputado: 5,
-      });
-      const closed = matcherReducer(opened, { type: "closeDetalhe" });
-
-      // Act / Assert
-      expect(isDetalheOpen(closed)).toBe(false);
     });
   });
 
@@ -1153,91 +1018,11 @@ describe("matcherReducer", () => {
       }
       expect(selectionCount(state)).toBe(4);
 
-      // Act
-      const forward = matcherReducer(state, {
-        type: "goToStep",
-        step: "posicoes",
-      });
-      const back = matcherReducer(forward, {
-        type: "goToStep",
-        step: "selecao",
-      });
-
-      // Assert
-      expect(selectionCount(back)).toBe(4);
-      expect(back.selected.map((c) => c.externalIdProposicao)).toEqual([
+      // Act / Assert
+      expect(selectionCount(state)).toBe(4);
+      expect(state.selected.map((c) => c.externalIdProposicao)).toEqual([
         1, 2, 3, 6,
       ]);
-    });
-  });
-
-  describe("setApenasEmAtividade", () => {
-    it("sets apenasEmAtividade to true", () => {
-      // Arrange
-      const state = initMatcherState(candidates);
-
-      // Act
-      const next = matcherReducer(state, {
-        type: "setApenasEmAtividade",
-        value: true,
-      });
-
-      // Assert
-      expect(next.apenasEmAtividade).toBe(true);
-    });
-
-    it("sets apenasEmAtividade to false", () => {
-      // Arrange
-      const state = {
-        ...initMatcherState(candidates),
-        apenasEmAtividade: true,
-      };
-
-      // Act
-      const next = matcherReducer(state, {
-        type: "setApenasEmAtividade",
-        value: false,
-      });
-
-      // Assert
-      expect(next.apenasEmAtividade).toBe(false);
-    });
-
-    it("clears both resultado caches when toggled", () => {
-      // Arrange
-      const r = resultado("estadual");
-      const state = {
-        ...initMatcherState(candidates),
-        resultados: { estadual: r, nacional: r },
-      };
-
-      // Act
-      const next = matcherReducer(state, {
-        type: "setApenasEmAtividade",
-        value: true,
-      });
-
-      // Assert
-      expect(next.resultados.estadual).toBeNull();
-      expect(next.resultados.nacional).toBeNull();
-    });
-
-    it("does not affect other state fields", () => {
-      // Arrange
-      const state = {
-        ...initMatcherState(candidates),
-        escopo: "nacional" as const,
-      };
-
-      // Act
-      const next = matcherReducer(state, {
-        type: "setApenasEmAtividade",
-        value: true,
-      });
-
-      // Assert
-      expect(next.escopo).toBe("nacional");
-      expect(next.step).toBe(state.step);
     });
   });
 
@@ -1263,7 +1048,6 @@ describe("matcherReducer", () => {
       next = matcherReducer(next, {
         type: "setLocal",
         siglaUf: "SP",
-        cidade: "",
       });
       for (const id of [1, 2, 3]) {
         next = matcherReducer(next, {
@@ -1308,7 +1092,6 @@ describe("matcherReducer", () => {
       const state = matcherReducer(initMatcherState(candidates), {
         type: "setLocal",
         siglaUf: "SP",
-        cidade: "",
       });
 
       // Act / Assert
@@ -1320,7 +1103,6 @@ describe("matcherReducer", () => {
       let state = matcherReducer(initMatcherState(candidates), {
         type: "setLocal",
         siglaUf: "SP",
-        cidade: "",
       });
       for (const id of [1, 2, 3, 4]) {
         state = matcherReducer(state, {

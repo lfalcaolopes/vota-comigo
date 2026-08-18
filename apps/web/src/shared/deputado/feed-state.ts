@@ -1,5 +1,11 @@
 import type { DeputadoCard } from "@vota-comigo/shared-types";
 
+import {
+  contarFiltrosAtivos,
+  FILTROS_PADRAO,
+  type DeputadoFeedFiltros,
+} from "./feed-filtros";
+
 export type DeputadoFeedStatus = "idle" | "loading" | "error";
 
 type Page = {
@@ -9,9 +15,7 @@ type Page = {
 
 export type DeputadoFeedState = {
   query: string;
-  emAtividade: boolean;
-  uf: string | null;
-  partido: string | null;
+  filtros: DeputadoFeedFiltros;
   feed: Page;
   status: DeputadoFeedStatus;
 };
@@ -19,32 +23,31 @@ export type DeputadoFeedState = {
 export type DeputadoFeedAction =
   | { type: "changeQuery"; query: string }
   | { type: "clearSearch" }
-  | { type: "toggleEmAtividade" }
-  | { type: "changeUf"; uf: string }
-  | { type: "clearUf" }
-  | { type: "changePartido"; partido: string }
-  | { type: "clearPartido" }
-  | { type: "clearFilters" }
+  | { type: "applyFiltros"; filtros: DeputadoFeedFiltros }
+  | { type: "clearTudo" }
   | { type: "loadMoreStart" }
   | { type: "loadMoreSuccess"; items: DeputadoCard[]; total: number }
   | { type: "feedSuccess"; items: DeputadoCard[]; total: number }
   | { type: "loadError" };
 
+type InitDeputadoFeedState = {
+  items: DeputadoCard[];
+  total: number;
+  query?: string;
+  filtros?: DeputadoFeedFiltros;
+};
+
 const emptyPage: Page = { items: [], total: 0 };
 
-export function initDeputadoFeedState(
-  items: DeputadoCard[],
-  total: number,
+export function initDeputadoFeedState({
+  items,
+  total,
   query = "",
-  emAtividade = false,
-  uf: string | null = null,
-  partido: string | null = null,
-): DeputadoFeedState {
+  filtros = FILTROS_PADRAO,
+}: InitDeputadoFeedState): DeputadoFeedState {
   return {
     query: query.trim(),
-    emAtividade,
-    uf,
-    partido,
+    filtros,
     feed: { items, total },
     status: "idle",
   };
@@ -64,33 +67,18 @@ export function deputadoFeedReducer(
       };
     case "clearSearch":
       return { ...state, query: "", feed: emptyPage, status: "loading" };
-    case "toggleEmAtividade":
+    case "applyFiltros":
       return {
         ...state,
-        emAtividade: !state.emAtividade,
+        filtros: action.filtros,
         feed: emptyPage,
         status: "loading",
       };
-    case "changeUf":
-      return { ...state, uf: action.uf, feed: emptyPage, status: "loading" };
-    case "clearUf":
-      return { ...state, uf: null, feed: emptyPage, status: "loading" };
-    case "changePartido":
-      return {
-        ...state,
-        partido: action.partido,
-        feed: emptyPage,
-        status: "loading",
-      };
-    case "clearPartido":
-      return { ...state, partido: null, feed: emptyPage, status: "loading" };
-    case "clearFilters":
+    case "clearTudo":
       return {
         ...state,
         query: "",
-        emAtividade: false,
-        uf: null,
-        partido: null,
+        filtros: FILTROS_PADRAO,
         feed: emptyPage,
         status: "loading",
       };
@@ -129,12 +117,7 @@ export function deputadoFeedDisplay(
   if (state.feed.items.length > 0) return "results";
   if (state.status === "error") return "error";
   if (state.status === "loading") return "loading";
-  if (
-    state.query !== "" ||
-    state.emAtividade ||
-    state.uf !== null ||
-    state.partido !== null
-  ) {
+  if (state.query !== "" || contarFiltrosAtivos(state.filtros) > 0) {
     return "empty-filtered";
   }
   return "empty-default";

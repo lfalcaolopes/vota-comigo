@@ -1,4 +1,5 @@
 import type { DatasetDownloader } from '../shared/dataset-downloader';
+import type { DeputadoGastoCotaSigepaStepDeps } from '../steps/deputado-gasto-cota-sigepa/deputado-gasto-cota-sigepa.step';
 import type { DeputadoHistoricoStepDeps } from '../steps/deputado-historico/deputado-historico.step';
 import type {
   DeputadoRepository,
@@ -8,8 +9,15 @@ import type { LegislaturaRepository } from '../steps/legislaturas/legislaturas.r
 import type { PartidoRepository } from '../steps/partidos/partidos.repository.types';
 import type { ProposicaoRepository } from '../steps/proposicoes/proposicoes.repository.types';
 import type { ProposicaoComputavelRepository } from '../steps/proposicao-computavel/proposicao-computavel.repository.types';
+import type { ProposicaoEmbeddingRepository } from '../steps/proposicao-embedding/proposicao-embedding.repository.types';
 import type { DeputadoPresencaRepository } from '../steps/deputado-presenca/deputado-presenca.repository.types';
 import type { DeputadoExercicioIntervaloRepository } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.repository.types';
+import type { DeputadoGastoCotaRepository } from '../steps/deputado-gasto-cota/deputado-gasto-cota.repository.types';
+import type { OrgaoRepository } from '../steps/orgaos/orgaos.repository.types';
+import type { DeputadoOrgaoRepository } from '../steps/deputado-orgao/deputado-orgao.repository.types';
+import type { DeputadoProposicaoAssinadaRepository } from '../steps/deputado-proposicao-assinada/deputado-proposicao-assinada.repository.types';
+import type { CotaMedianaUfRepository } from '../steps/cota-mediana-uf/cota-mediana-uf.repository.types';
+import type { DeputadoCotaComparacaoRepository } from '../steps/deputado-cota-comparacao/deputado-cota-comparacao.repository.types';
 import type { SanityRepository } from '../steps/sanity/sanity.repository.types';
 import type {
   TemaLookup,
@@ -38,6 +46,24 @@ export const dryRunPartidoRepository: PartidoRepository = {
   upsert: dryRunWriteGuard,
 };
 
+export const dryRunOrgaoRepository: OrgaoRepository = {
+  upsert: dryRunWriteGuard,
+};
+
+export const dryRunDeputadoOrgaoRepository: DeputadoOrgaoRepository = {
+  loadDeputadoIdByExternalId: () => Promise.resolve(new Map()),
+  loadLegislaturaIdByExternalId: () => Promise.resolve(new Map()),
+  loadOrgaoIdByExternalId: () => Promise.resolve(new Map()),
+  replaceLegislatura: dryRunWriteGuard,
+};
+
+export const dryRunDeputadoProposicaoAssinadaRepository: DeputadoProposicaoAssinadaRepository =
+  {
+    loadDeputadoIdByExternalId: () => Promise.resolve(new Map()),
+    upsertTipos: dryRunWriteGuard,
+    replaceAno: dryRunWriteGuard,
+  };
+
 export const dryRunVotacaoRepository: VotacaoRepository = {
   upsert: dryRunWriteGuard,
 };
@@ -58,6 +84,13 @@ export const dryRunProposicaoComputavelRepository: ProposicaoComputavelRepositor
   {
     loadCandidates: () => Promise.resolve([]),
     fullReplace: dryRunWriteGuard,
+  };
+
+export const dryRunProposicaoEmbeddingRepository: ProposicaoEmbeddingRepository =
+  {
+    loadSources: () => Promise.resolve([]),
+    upsert: dryRunWriteGuard,
+    deleteNaoComputaveis: dryRunWriteGuard,
   };
 
 export const dryRunProposicaoDownloader: DatasetDownloader = {
@@ -96,6 +129,7 @@ export const dryRunLegislaturaLookup: LegislaturaLookup = {
 export const dryRunDeputadoPresencaRepository: DeputadoPresencaRepository = {
   loadDeputadosComHistorico: () => Promise.resolve([]),
   loadComputableVotacoes: () => Promise.resolve([]),
+  loadLegislaturas: () => Promise.resolve([]),
   fullReplace: dryRunWriteGuard,
 };
 
@@ -105,8 +139,45 @@ export const dryRunDeputadoExercicioIntervaloRepository: DeputadoExercicioInterv
     fullReplace: dryRunWriteGuard,
   };
 
+export const dryRunDeputadoGastoCotaRepository: DeputadoGastoCotaRepository = {
+  loadDeputadoIdByExternalId: () => Promise.resolve(new Map()),
+  replaceAno: dryRunWriteGuard,
+};
+
+export const dryRunCotaMedianaUfRepository: CotaMedianaUfRepository = {
+  loadCoberturas: () => Promise.resolve([]),
+  loadDatasInicioLegislatura: () => Promise.resolve([]),
+  loadGastosAnuais: () => Promise.resolve([]),
+  loadIntervalosByDeputadoId: () => Promise.resolve(new Map()),
+  replaceAno: dryRunWriteGuard,
+};
+
+export const dryRunDeputadoCotaComparacaoRepository: DeputadoCotaComparacaoRepository =
+  {
+    loadCoberturas: () => Promise.resolve([]),
+    loadDeputados: () => Promise.resolve([]),
+    loadGastos: () => Promise.resolve([]),
+    loadIntervalosByDeputadoId: () => Promise.resolve(new Map()),
+    loadLegislaturas: () => Promise.resolve([]),
+    loadMedianas: () => Promise.resolve([]),
+    replaceAll: dryRunWriteGuard,
+  };
+
 export const dryRunSanityRepository: SanityRepository = {
   loadPlacares: dryRunReadGuard,
+};
+
+export const dryRunGastoCotaSigepaDeps: DeputadoGastoCotaSigepaStepDeps = {
+  repository: {
+    loadDeputadosSemReposicao: dryRunReadGuard,
+    loadDeputadosElegiveis: dryRunReadGuard,
+    loadLegislaturas: dryRunReadGuard,
+    loadCobertura: dryRunReadGuard,
+    saveAnoReposto: dryRunWriteGuard,
+    saveCategoria: dryRunWriteGuard,
+    upsert: dryRunWriteGuard,
+  },
+  despesasClient: { fetch: dryRunReadGuard },
 };
 
 export const dryRunHistoricoDeps: DeputadoHistoricoStepDeps = {

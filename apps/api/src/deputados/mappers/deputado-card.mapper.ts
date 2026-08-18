@@ -1,34 +1,15 @@
 import type { DeputadoCard } from '@vota-comigo/shared-types';
 
-import { isEmAtividade } from '@/exercicio/rules/intervalos-exercicio';
-import type { EventoExercicio } from '@/exercicio/types/exercicio.types';
-import { nomePublicoDeputado } from '@/shared/deputado/nome-publico';
+import type { DeputadoCardRow } from '../types/deputados.types';
 
-import { deriveSnapshotPublico } from '../rules/snapshot-publico';
-import type { DeputadoPerfilSource } from '../types/deputados.types';
-
-export function toDeputadoCard(source: DeputadoPerfilSource): DeputadoCard {
-  const snapshot = deriveSnapshotPublico(source.eventos);
-  const eventosExercicio: readonly EventoExercicio[] = source.eventos.map(
-    (e) => ({
-      dataHora: e.dataHora,
-      situacao: e.situacao,
-      descricaoStatus: e.descricaoStatus,
-      partido: e.siglaPartido,
-    }),
-  );
-
+export function toDeputadoCard(row: DeputadoCardRow): DeputadoCard {
   return {
-    externalIdDeputado: source.externalIdDeputado,
-    nomePublico: nomePublicoDeputado({
-      nomeEleitoral: snapshot?.nomeEleitoral ?? null,
-      nome: source.nome,
-      nomeCivil: source.nomeCivil,
-    }),
-    nomeCivil: source.nomeCivil,
-    siglaPartido: snapshot?.siglaPartido ?? null,
-    siglaUf: snapshot?.siglaUf ?? null,
-    urlFoto: snapshot?.urlFoto ?? null,
-    emAtividade: isEmAtividade(eventosExercicio),
+    externalIdDeputado: row.externalIdDeputado,
+    nomePublico: row.nomePublico,
+    nomeCivil: row.nomeCivil,
+    siglaPartido: row.siglaPartido,
+    siglaUf: row.siglaUf,
+    urlFoto: row.urlFoto,
+    emAtividade: row.emAtividade,
   };
 }

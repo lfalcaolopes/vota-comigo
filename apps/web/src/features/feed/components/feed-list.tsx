@@ -12,7 +12,7 @@ type FeedListProps = {
   display: FeedDisplay;
   canLoadMore: boolean;
   onLoadMore: () => void;
-  onClearFilters: () => void;
+  onClearTudo: () => void;
   itemSearchParams?: string;
 };
 
@@ -23,7 +23,7 @@ export function FeedList({
   display,
   canLoadMore,
   onLoadMore,
-  onClearFilters,
+  onClearTudo,
   itemSearchParams = "",
 }: FeedListProps) {
   const itemSearchSuffix = itemSearchParams ? `?${itemSearchParams}` : "";
@@ -35,8 +35,8 @@ export function FeedList({
   if (display === "empty-default") {
     return (
       <EmptyState
-        body="Ainda não há proposições para mostrar."
-        title="Nada para exibir ainda"
+        body="Nenhuma proposta foi carregada. Tente recarregar a página."
+        title="Nenhuma proposta disponível"
       />
     );
   }
@@ -45,12 +45,12 @@ export function FeedList({
     return (
       <EmptyState
         action={
-          <Button onClick={onClearFilters} variant="secondary">
-            Limpar filtros
+          <Button onClick={onClearTudo} variant="secondary">
+            Limpar busca e filtros
           </Button>
         }
-        body="Nenhuma proposição foi encontrada com a busca e os filtros utilizados."
-        title="Nenhuma proposição encontrada"
+        body="Nenhuma proposta combina com a busca e os filtros atuais. Tente remover um filtro ou buscar por outras palavras."
+        title="Nenhuma proposta encontrada"
       />
     );
   }
@@ -59,7 +59,7 @@ export function FeedList({
     return (
       <div className="grid gap-4">
         <InlineMessage
-          body="Não foi possível carregar as proposições. Tente novamente."
+          body="Não foi possível carregar as propostas. Tente novamente."
           title="Erro ao carregar"
           tone="danger"
         />
@@ -89,7 +89,7 @@ export function FeedList({
 
       {status === "error" ? (
         <InlineMessage
-          body="Não foi possível carregar as proposições. Tente novamente."
+          body="Não foi possível carregar as propostas. Tente novamente."
           title="Erro ao carregar"
           tone="danger"
         />

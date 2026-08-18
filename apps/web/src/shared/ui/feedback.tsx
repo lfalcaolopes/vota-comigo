@@ -5,15 +5,23 @@ import type {
   ReactNode,
 } from "react";
 import { Button } from "./button";
+import { ExternalLinkIcon } from "./external-link-icon";
 import { joinClassNames } from "./utils";
 
 type PanelProps = PropsWithChildren<
   HTMLAttributes<HTMLElement> & {
     title?: string;
+    titleAs?: "h2" | "h3";
   }
 >;
 
-export function Panel({ children, className, title, ...props }: PanelProps) {
+export function Panel({
+  children,
+  className,
+  title,
+  titleAs: Title = "h2",
+  ...props
+}: PanelProps) {
   return (
     <section
       className={joinClassNames(
@@ -24,7 +32,9 @@ export function Panel({ children, className, title, ...props }: PanelProps) {
     >
       {title ? (
         <div className="flex items-start justify-between gap-4 px-5 pt-5">
-          <h2 className="text-lg font-[680] leading-snug text-ink">{title}</h2>
+          <Title className="text-lg font-[680] leading-snug text-ink">
+            {title}
+          </Title>
         </div>
       ) : null}
       <div className="grid min-w-0 gap-4 p-5">{children}</div>
@@ -121,7 +131,7 @@ export function EmptyState({ action, body, title }: EmptyStateProps) {
 }
 
 export function ErrorState({
-  body = "Não foi possível carregar esta proposição. Tente novamente.",
+  body = "Não foi possível carregar esta proposta. Tente novamente.",
   onRetry,
   title = "Erro ao carregar",
 }: {
@@ -143,33 +153,36 @@ export function ErrorState({
   );
 }
 
-type SourceLinkProps = AnchorHTMLAttributes<HTMLAnchorElement>;
+type SourceLinkTone = "primary" | "muted";
 
-export function SourceLink({ children, className, ...props }: SourceLinkProps) {
+const sourceLinkTones: Record<SourceLinkTone, string> = {
+  primary:
+    "gap-2 font-[650] text-info decoration-info/35 hover:decoration-info",
+  muted:
+    "gap-1.5 text-muted decoration-border-strong hover:text-ink hover:decoration-ink",
+};
+
+type SourceLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
+  tone?: SourceLinkTone;
+};
+
+export function SourceLink({
+  children,
+  className,
+  tone = "primary",
+  ...props
+}: SourceLinkProps) {
   return (
     <a
       className={joinClassNames(
-        "inline-flex min-w-0 items-center gap-2 text-sm font-[650] text-info underline decoration-info/35 underline-offset-[0.18em]",
+        "inline-flex min-w-0 items-center text-sm underline underline-offset-[0.18em] transition-colors duration-[140ms] ease-standard",
+        sourceLinkTones[tone],
         className,
       )}
       {...props}
     >
       <span className="[overflow-wrap:anywhere]">{children}</span>
-      <svg
-        aria-hidden="true"
-        fill="none"
-        height="16"
-        viewBox="0 0 16 16"
-        width="16"
-      >
-        <path
-          d="M6.25 3.75h6m0 0v6m0-6-7 7M4.75 5.5H3.5a1.5 1.5 0 0 0-1.5 1.5v5.5A1.5 1.5 0 0 0 3.5 14h5.5a1.5 1.5 0 0 0 1.5-1.5v-1.25"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="1.5"
-        />
-      </svg>
+      <ExternalLinkIcon />
     </a>
   );
 }

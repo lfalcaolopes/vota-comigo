@@ -45,7 +45,6 @@ export function toMatcherResultado(
   resultado: Omit<CompatibilidadeResumidaResult, 'deputados'>,
   deputados: readonly DeputadoResumoComputado[],
   paginacao: PaginacaoResultado,
-  semBomMatch: boolean,
 ): MatcherResultado {
   return {
     ...resumo,
@@ -56,6 +55,5 @@ export function toMatcherResultado(
     total: paginacao.total,
     limit: paginacao.limit,
     offset: paginacao.offset,
-    semBomMatch,
   };
 }

@@ -11,6 +11,32 @@ function posicao(overrides: Partial<PosicaoMatcher> = {}): PosicaoMatcher {
 }
 
 describe('validateExecucao', () => {
+  describe('when the filtro de concordancia cites an absent computable position', () => {
+    it('rejects the execution naming the offending proposicao', () => {
+      // Arrange
+      const posicoes = [
+        posicao({ externalIdProposicao: 1 }),
+        posicao({ externalIdProposicao: 2 }),
+        posicao({ externalIdProposicao: 3 }),
+      ];
+
+      // Act
+      const result = validateExecucao({
+        siglaUf: 'PE',
+        posicoes,
+        externalIdProposicoesFiltroConcordancia: [99],
+        externalIdProposicoesComputaveis: new Set([1, 2, 3]),
+      });
+
+      // Assert
+      expect(result.ok).toBe(false);
+      if (result.ok) {
+        throw new Error('expected invalid matcher execucao');
+      }
+      expect(result.error).toContain('99');
+    });
+  });
+
   describe('when there are at least three computavel positions, all computaveis', () => {
     it('accepts the execution and summarizes the normalized totals', () => {
       // Arrange
@@ -26,8 +52,8 @@ describe('validateExecucao', () => {
       // Act
       const result = validateExecucao({
         siglaUf: 'PE',
-        cidade: 'Recife',
         posicoes,
+        externalIdProposicoesFiltroConcordancia: [],
         externalIdProposicoesComputaveis: new Set([1, 2, 3]),
       });
 
@@ -36,7 +62,6 @@ describe('validateExecucao', () => {
         ok: true,
         resumo: {
           siglaUf: 'PE',
-          cidade: 'Recife',
           totalProposicoesSelecionadas: 3,
           totalPosicoesComputaveis: 3,
         },
@@ -60,6 +85,7 @@ describe('validateExecucao', () => {
       const result = validateExecucao({
         siglaUf: 'PE',
         posicoes,
+        externalIdProposicoesFiltroConcordancia: [],
         externalIdProposicoesComputaveis: new Set([1, 2, 3]),
       });
 
@@ -88,6 +114,7 @@ describe('validateExecucao', () => {
       const result = validateExecucao({
         siglaUf: 'PE',
         posicoes,
+        externalIdProposicoesFiltroConcordancia: [],
         externalIdProposicoesComputaveis: new Set([1, 2]),
       });
 
@@ -117,6 +144,7 @@ describe('validateExecucao', () => {
       const result = validateExecucao({
         siglaUf: 'PE',
         posicoes,
+        externalIdProposicoesFiltroConcordancia: [],
         externalIdProposicoesComputaveis: new Set([1, 2, 3]),
       });
 

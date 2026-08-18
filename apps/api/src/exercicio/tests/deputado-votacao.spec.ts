@@ -1,16 +1,18 @@
 import { classifyDeputadoVotacao } from '../rules/deputado-votacao';
 import type { IntervaloExercicio } from '../types/exercicio.types';
 
+// Formatos reais: os intervalos vêm de colunas timestamptz e votacao.data de
+// uma coluna date, que o driver entrega sem hora.
 const emExercicio: IntervaloExercicio[] = [
-  { openedAt: '2023-02-01T12:00:00Z', closedAt: null },
+  { openedAt: '2023-02-01 12:00:00+00', closedAt: null },
 ];
 
 const encerradoAntesDaVotacao: IntervaloExercicio[] = [
-  { openedAt: '2023-02-01T12:00:00Z', closedAt: '2023-03-01T12:00:00Z' },
+  { openedAt: '2023-02-01 12:00:00+00', closedAt: '2023-03-01 12:00:00+00' },
 ];
 
 const votacaoComData = {
-  dataHoraRegistro: '2023-06-01T15:00:00Z',
+  dataHoraRegistro: '2023-06-01 15:00:00+00',
   data: '2023-06-01',
 };
 
@@ -160,6 +162,89 @@ describe('classifyDeputadoVotacao', () => {
       const input = {
         intervalos: [],
         votacao: votacaoComData,
+        voto: null,
+      };
+
+      // Act
+      const classificacao = classifyDeputadoVotacao(input);
+
+      // Assert
+      expect(classificacao).toBe('lacuna_de_dados');
+    });
+  });
+
+  describe('when the votação only has a date and the term opened that same day', () => {
+    it('still counts the deputy as in office', () => {
+      // Arrange
+      const abertoNaMeiaNoite: IntervaloExercicio[] = [
+        { openedAt: '2023-02-01 00:00:00+00', closedAt: null },
+      ];
+      const input = {
+        intervalos: abertoNaMeiaNoite,
+        votacao: { dataHoraRegistro: null, data: '2023-02-01' },
+        voto: null,
+      };
+
+      // Act
+      const classificacao = classifyDeputadoVotacao(input);
+
+      // Assert
+      expect(classificacao).toBe('ausencia_sem_motivo_conhecido');
+    });
+  });
+
+  describe('when the votação only has a date and the term closed that same day', () => {
+    it('counts the deputy as out of office', () => {
+      // Arrange
+      const fechadoNaMeiaNoite: IntervaloExercicio[] = [
+        {
+          openedAt: '2019-02-01 00:00:00+00',
+          closedAt: '2023-06-01 00:00:00+00',
+        },
+      ];
+      const input = {
+        intervalos: fechadoNaMeiaNoite,
+        votacao: { dataHoraRegistro: null, data: '2023-06-01' },
+        voto: null,
+      };
+
+      // Act
+      const classificacao = classifyDeputadoVotacao(input);
+
+      // Assert
+      expect(classificacao).toBe('fora_de_exercicio');
+    });
+  });
+
+  describe('when the votação date is stored in a different offset than the intervals', () => {
+    it('compares the underlying instants, not the raw strings', () => {
+      // Arrange
+      const abertoAposAVotacao: IntervaloExercicio[] = [
+        { openedAt: '2023-06-01 12:00:00+00', closedAt: null },
+      ];
+      const antesDaAbertura = {
+        dataHoraRegistro: '2023-06-01 08:00:00-03',
+        data: '2023-06-01',
+      };
+
+      // Act
+      const classificacao = classifyDeputadoVotacao({
+        intervalos: abertoAposAVotacao,
+        votacao: antesDaAbertura,
+        voto: null,
+      });
+
+      // Assert
+      expect(classificacao).toBe('fora_de_exercicio');
+    });
+  });
+
+  describe('when the votação carries an unparseable timestamp', () => {
+    it('classifies as lacuna_de_dados instead of guessing', () => {
+      // Arrange
+      const input = {
+        intervalos: emExercicio,
+        votacao: { dataHoraRegistro: 'sem data', data: null },
         voto: null,
       };
 

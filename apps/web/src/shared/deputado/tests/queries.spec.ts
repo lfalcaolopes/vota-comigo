@@ -1,12 +1,25 @@
 import type {
+  DeputadoCeapResponse,
+  DeputadoDiscursosResponse,
   DeputadoPerfil,
+  DeputadoOrgaosResponse,
+  DeputadoProposicoesAssinadasResponse,
   DeputadosFeedResponse,
   PartidosDisponiveisResponse,
 } from "@vota-comigo/shared-types";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { NotFoundError } from "../../lib/api-client";
-import { feed, partidosDisponiveis, perfil } from "../queries";
+import {
+  ceap,
+  comparativoDeputados,
+  discursos,
+  feed,
+  orgaos,
+  partidosDisponiveis,
+  perfil,
+  proposicoesAssinadas,
+} from "../queries";
 
 const response: DeputadoPerfil = {
   externalIdDeputado: 220593,
@@ -25,6 +38,8 @@ const response: DeputadoPerfil = {
   externalIdLegislaturaFinal: null,
   legislaturaInicialPeriodo: null,
   legislaturaFinalPeriodo: null,
+  defaultYear: null,
+  validYearRange: null,
   resumoPresencaDisponivel: false,
   resumoPresenca: null,
   historicoPartidarioDisponivel: false,
@@ -50,6 +65,32 @@ const feedResponse: DeputadosFeedResponse = {
 
 const partidosResponse: PartidosDisponiveisResponse = {
   items: [{ siglaPartido: "PSOL" }, { siglaPartido: "PT" }],
+};
+
+const orgaosResponse: DeputadoOrgaosResponse = {
+  year: 2022,
+  items: [],
+  total: 0,
+};
+
+const proposicoesAssinadasResponse: DeputadoProposicoesAssinadasResponse = {
+  year: 2022,
+  disponivel: true,
+  total: 0,
+  totalPrimeiroSignatario: 0,
+  coveredThroughDate: "2026-08-13",
+};
+
+const discursosResponse: DeputadoDiscursosResponse = {
+  year: 2022,
+  items: [],
+  total: 0,
+};
+
+const ceapResponse: DeputadoCeapResponse = {
+  year: 2022,
+  availableYears: [2024, 2023, 2022],
+  status: "ano-nao-carregado",
 };
 
 afterEach(() => {
@@ -104,13 +145,155 @@ describe("feed", () => {
       vi.stubGlobal("fetch", fetchSpy);
 
       // Act
-      const result = await feed(20, 40, "maria silva", true, "SP", "PT");
+      const result = await feed(20, 40, "maria silva", {
+        incluirForaDeExercicio: false,
+        ufs: ["SP"],
+        partidos: ["PT"],
+        sexo: null,
+        faixasEtarias: [],
+      });
 
       // Assert
       expect(fetchSpy).toHaveBeenCalledWith(
-        "http://localhost:3001/deputados/feed?limit=20&offset=40&q=maria%20silva&emAtividade=true&uf=SP&partido=PT",
+        "http://localhost:3001/deputados/feed?q=maria+silva&uf=SP&partido=PT&emAtividade=true&limit=20&offset=40",
       );
       expect(result.items[0].externalIdDeputado).toBe(220593);
+    });
+
+    it("repeats the key once per value of a multiple filter", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => feedResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      await feed(20, 0, null, {
+        incluirForaDeExercicio: true,
+        ufs: ["SP", "RJ"],
+        partidos: [],
+        sexo: "F",
+        faixasEtarias: ["40-49"],
+      });
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/feed?uf=SP&uf=RJ&sexo=F&faixaEtaria=40-49&limit=20&offset=0",
+      );
+    });
+  });
+
+  describe("when no filter is provided", () => {
+    it("asks the API only for deputados em exercício", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => feedResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      await feed();
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/feed?emAtividade=true&limit=20&offset=0",
+      );
+    });
+  });
+});
+
+describe("orgaos", () => {
+  describe("when the request succeeds", () => {
+    it("fetches the selected year through the product API", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => orgaosResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      const result = await orgaos(74646, 2022);
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/74646/orgaos?year=2022",
+      );
+      expect(result).toEqual(orgaosResponse);
+    });
+  });
+});
+
+describe("discursos", () => {
+  describe("when the request succeeds", () => {
+    it("fetches the selected year through the product API", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => discursosResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      const result = await discursos(74646, 2022);
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/74646/discursos?year=2022",
+      );
+      expect(result).toEqual(discursosResponse);
+    });
+  });
+});
+
+describe("proposicoesAssinadas", () => {
+  describe("when the request succeeds", () => {
+    it("fetches the selected year through the product API", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => proposicoesAssinadasResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      const result = await proposicoesAssinadas(74646, 2022);
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/74646/proposicoes-assinadas?year=2022",
+      );
+      expect(result).toEqual(proposicoesAssinadasResponse);
+    });
+  });
+});
+
+describe("ceap", () => {
+  describe("when the request succeeds", () => {
+    it("fetches the selected year through the product API", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => ceapResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      const result = await ceap(74646, 2022);
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/74646/ceap?year=2022",
+      );
+      expect(result).toEqual(ceapResponse);
     });
   });
 });
@@ -134,6 +317,53 @@ describe("partidosDisponiveis", () => {
         "http://localhost:3001/deputados/feed/partidos",
       );
       expect(result).toEqual(partidosResponse);
+    });
+  });
+
+  describe("when a UF narrows the recorte", () => {
+    it("asks only for the partidos with a deputado in that UF", async () => {
+      // Arrange
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => partidosResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      await partidosDisponiveis("SP");
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/feed/partidos?uf=SP",
+      );
+    });
+  });
+});
+
+describe("comparativoDeputados", () => {
+  describe("when the request succeeds", () => {
+    it("fetches the compared deputados through the product API", async () => {
+      // Arrange
+      const comparativoResponse = {
+        janelasCoincidem: true,
+        items: [],
+      };
+      const fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => comparativoResponse,
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // Act
+      const result = await comparativoDeputados([74646, 220593]);
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/comparativo-deputados?ids=74646,220593",
+      );
+      expect(result).toEqual(comparativoResponse);
     });
   });
 });

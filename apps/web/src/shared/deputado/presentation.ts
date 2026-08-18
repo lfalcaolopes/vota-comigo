@@ -1,7 +1,8 @@
 import type {
+  DeputadoFaixaEtaria,
   DeputadoLegislaturaPeriodo,
-  DeputadoPerfil,
   DeputadoPeriodoPartidario,
+  DeputadoSexo,
 } from "@vota-comigo/shared-types";
 
 import type { BadgeTone } from "@/shared/ui";
@@ -9,7 +10,7 @@ import type { BadgeTone } from "@/shared/ui";
 export const CARGO_DEPUTADO = "Deputado federal";
 
 export const RECORTE_BASE_PRESENCA =
-  "Considera as votações de plenário em que o voto de cada deputado fica registrado, entre as proposições usadas na comparação.";
+  "Votações de plenário com voto registrado, entre as propostas que acompanhamos. Participação, não desempenho.";
 
 export const HISTORICO_PARTIDARIO_INDISPONIVEL =
   "Não há histórico partidário na base para este deputado.";
@@ -100,12 +101,55 @@ export function toLegislaturaPeriodoLabel(
   return `${toYearLabel(periodo.dataInicio)} – ${toYearLabel(periodo.dataFim)}`;
 }
 
-export function nomePublicoLabel(perfil: DeputadoPerfil): string {
-  return perfil.nomePublico ?? CARGO_DEPUTADO;
+export const DIAS_EM_EXERCICIO_INDISPONIVEL = "Dias em exercício indisponíveis";
+export const JANELA_FORA_DA_BASE_COMPARAVEL = "Fora do período coberto";
+
+// Precisão de mês, não de ano: toLegislaturaPeriodoLabel apagaria o
+// truncamento de quem saiu no meio da legislatura.
+export function toJanelaPeriodoLabel(janela: {
+  dataInicio: string;
+  dataFim: string;
+  encerrada: boolean;
+}): string {
+  const inicio = formatMesAno(janela.dataInicio);
+  if (!janela.encerrada) return `${inicio} – atual`;
+  return `${inicio} – ${formatMesAno(janela.dataFim)}`;
+}
+
+const diasFormatter = new Intl.NumberFormat("pt-BR");
+
+export function toDiasEmExercicioLabel(diasEmExercicio: number): string {
+  const unidade = diasEmExercicio === 1 ? "dia" : "dias";
+  return `${diasFormatter.format(diasEmExercicio)} ${unidade} em exercício`;
+}
+
+export function toUltimaLegislaturaLabel(legislatura: number): string {
+  return `Última atuação na ${legislatura}ª legislatura`;
+}
+
+// Só faz sentido mostrar quando a cobertura ainda não alcançou o fim do ano
+// civil final da janela — numa janela encerrada e totalmente coberta, a
+// linha repetiria o período já exibido acima.
+export function mostrarCoberturaJanela(janela: {
+  dataFim: string;
+  coberturaAte: string;
+}): boolean {
+  const anoFimJanela = janela.dataFim.slice(0, 4);
+  return janela.coberturaAte < `${anoFimJanela}-12-31`;
+}
+
+export function toCoberturaAteLabel(coberturaAte: string): string {
+  return `Dados cobertos até ${formatMesAno(coberturaAte)}`;
+}
+
+export function nomePublicoLabel(deputado: {
+  nomePublico: string | null;
+}): string {
+  return deputado.nomePublico ?? CARGO_DEPUTADO;
 }
 
 export function toAtividadeLabel(emAtividade: boolean): string {
-  return emAtividade ? "Em atividade" : "Mandato encerrado";
+  return emAtividade ? "Em exercício" : "Fora de exercício";
 }
 
 export function toAtividadeTone(emAtividade: boolean): BadgeTone {
@@ -119,6 +163,33 @@ export function toAtividadeAriaLabel(emAtividade: boolean): string {
 export function toEstadoLabel(siglaUf: string): string {
   return ESTADO_LABEL_BY_SIGLA_UF[siglaUf] ?? siglaUf;
 }
+
+const SEXO_LABEL: Record<DeputadoSexo, string> = {
+  F: "Feminino",
+  M: "Masculino",
+};
+
+export function toSexoLabel(sexo: DeputadoSexo): string {
+  return SEXO_LABEL[sexo];
+}
+
+const FAIXA_ETARIA_LABEL: Record<DeputadoFaixaEtaria, string> = {
+  "ate-39": "Até 39 anos",
+  "40-49": "40 a 49 anos",
+  "50-59": "50 a 59 anos",
+  "60-69": "60 a 69 anos",
+  "70-mais": "70 anos ou mais",
+};
+
+export function toFaixaEtariaLabel(faixa: DeputadoFaixaEtaria): string {
+  return FAIXA_ETARIA_LABEL[faixa];
+}
+
+export const SEXO_OPCOES = Object.keys(SEXO_LABEL) as readonly DeputadoSexo[];
+
+export const FAIXA_ETARIA_OPCOES = Object.keys(
+  FAIXA_ETARIA_LABEL,
+) as readonly DeputadoFaixaEtaria[];
 
 export function formatPercentual(value: number): string {
   return `${Math.round(value)}%`;

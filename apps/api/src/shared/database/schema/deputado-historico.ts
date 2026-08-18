@@ -42,9 +42,16 @@ export const deputadoHistorico = pgTable(
       table.dataHora,
       table.descricaoStatus,
     ),
+    // As colunas finais nao filtram nada: cobrem o snapshot publico (ultimo
+    // evento por deputado) para o DISTINCT ON do feed e das listas de
+    // UF/partido virar index-only scan, sem heap fetch por linha.
     index('deputado_historico_deputado_data_idx').on(
       table.deputadoId,
       table.dataHora.desc(),
+      table.nomeEleitoral,
+      table.siglaUf,
+      table.urlFoto,
+      table.partidoId,
     ),
   ],
 );

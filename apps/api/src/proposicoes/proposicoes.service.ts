@@ -13,15 +13,20 @@ import {
   PROPOSICOES_REPOSITORY,
   type ProposicoesRepository,
 } from './proposicoes.repository';
-import { selectComparator } from './rules/proposicoes-ranking';
 import { toTemasDisponiveis } from './rules/temas-disponiveis';
-import { filterProposicoesByQuery } from './rules/proposicoes-search';
+import {
+  QUERY_EMBEDDING,
+  resolveSearchPlan,
+  type QueryEmbedding,
+} from './service/query-embedding';
 
 @Injectable()
 export class ProposicoesService {
   constructor(
     @Inject(PROPOSICOES_REPOSITORY)
     private readonly repository: ProposicoesRepository,
+    @Inject(QUERY_EMBEDDING)
+    private readonly queryEmbedding: QueryEmbedding,
   ) {}
 
   async feed(
@@ -31,16 +36,19 @@ export class ProposicoesService {
     tema?: number,
     q?: string,
   ): Promise<ProposicoesFeedResponse> {
-    const computaveis = await this.repository.loadProposicoesComputaveis(tema);
-    const filtered =
-      q !== undefined && q.trim().length > 0
-        ? filterProposicoesByQuery(computaveis, q.trim())
-        : computaveis;
-    const ranked = [...filtered].sort(selectComparator(ordenacao));
+    const busca =
+      q === undefined ? null : await resolveSearchPlan(q, this.queryEmbedding);
+
+    const page = await this.repository.loadProposicoesComputaveis({
+      ordenacao,
+      tema,
+      busca: busca ?? undefined,
+      pagination: { limit, offset },
+    });
 
     return {
-      items: ranked.slice(offset, offset + limit).map(toProposicaoCard),
-      total: ranked.length,
+      items: page.items.map(toProposicaoCard),
+      total: page.total,
       limit,
       offset,
     };

@@ -5,6 +5,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
 
 import { AnalyticsModule } from './analytics/analytics.module';
+import { ComparativoDeputadosModule } from './comparativo-deputados/comparativo-deputados.module';
 import { DeputadosModule } from './deputados/deputados.module';
 import { HealthModule } from './health/health.module';
 import { MatcherModule } from './matcher/matcher.module';
@@ -26,6 +27,7 @@ import { CacheControlInterceptor } from './shared/http/cache-control.interceptor
     ProposicoesModule,
     MatcherModule,
     DeputadosModule,
+    ComparativoDeputadosModule,
     AnalyticsModule,
   ],
   providers: [

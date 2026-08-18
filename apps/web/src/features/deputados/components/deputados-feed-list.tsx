@@ -8,6 +8,12 @@ import type {
   DeputadoFeedStatus,
 } from "@/shared/deputado";
 
+type DeputadosFeedListSelection = {
+  hasLimit: boolean;
+  onToggle: (externalIdDeputado: number) => void;
+  selectedIds: readonly number[];
+};
+
 type DeputadosFeedListProps = {
   items: DeputadoCard[];
   total: number;
@@ -15,7 +21,9 @@ type DeputadosFeedListProps = {
   display: DeputadoFeedDisplay;
   canLoadMore: boolean;
   onLoadMore: () => void;
-  onClearFilters: () => void;
+  onClearTudo: () => void;
+  onIncluirForaDeExercicio?: () => void;
+  selection?: DeputadosFeedListSelection;
 };
 
 export function DeputadosFeedList({
@@ -25,7 +33,9 @@ export function DeputadosFeedList({
   display,
   canLoadMore,
   onLoadMore,
-  onClearFilters,
+  onClearTudo,
+  onIncluirForaDeExercicio,
+  selection,
 }: DeputadosFeedListProps) {
   if (display === "loading") {
     return <SkeletonRows count={3} />;
@@ -34,21 +44,36 @@ export function DeputadosFeedList({
   if (display === "empty-default") {
     return (
       <EmptyState
-        body="Ainda não há deputados para exibir."
-        title="Nada para exibir ainda"
+        body="Nenhum deputado foi carregado. Tente recarregar a página."
+        title="Nenhum deputado disponível"
       />
     );
   }
 
   if (display === "empty-filtered") {
-    return (
+    return onIncluirForaDeExercicio ? (
       <EmptyState
         action={
-          <Button onClick={onClearFilters} variant="secondary">
-            Limpar filtros
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={onIncluirForaDeExercicio} variant="primary">
+              Incluir quem não está em exercício
+            </Button>
+            <Button onClick={onClearTudo} variant="secondary">
+              Limpar busca e filtros
+            </Button>
+          </div>
+        }
+        body="Nenhum deputado em exercício combina com a busca e os filtros atuais. Você pode incluir quem já deixou o cargo."
+        title="Nenhum deputado encontrado"
+      />
+    ) : (
+      <EmptyState
+        action={
+          <Button onClick={onClearTudo} variant="secondary">
+            Limpar busca e filtros
           </Button>
         }
-        body="Nenhum deputado foi encontrado com a busca e os filtros utilizados."
+        body="Nenhum deputado combina com a busca e os filtros atuais. Tente remover um filtro ou buscar por outro nome."
         title="Nenhum deputado encontrado"
       />
     );
@@ -76,13 +101,29 @@ export function DeputadosFeedList({
   return (
     <div className="grid min-w-0 gap-6">
       <div className="grid min-w-0 border-t border-border">
-        {items.map((card) => (
-          <DeputadoRow
-            card={card}
-            href={`/deputados/${card.externalIdDeputado}`}
-            key={card.externalIdDeputado}
-          />
-        ))}
+        {items.map((card) => {
+          const isSelected =
+            selection?.selectedIds.includes(card.externalIdDeputado) ?? false;
+
+          return (
+            <DeputadoRow
+              card={card}
+              href={
+                selection ? undefined : `/deputados/${card.externalIdDeputado}`
+              }
+              key={card.externalIdDeputado}
+              selection={
+                selection
+                  ? {
+                      disabled: selection.hasLimit && !isSelected,
+                      onToggle: selection.onToggle,
+                      selected: isSelected,
+                    }
+                  : undefined
+              }
+            />
+          );
+        })}
         {status === "loading" ? <SkeletonRows count={3} /> : null}
       </div>
 

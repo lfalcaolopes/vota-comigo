@@ -7,9 +7,10 @@ import type {
   ProposicaoCard,
 } from "@vota-comigo/shared-types";
 
+import { toPosicaoUsuarioLabel } from "@/shared/proposicao";
+
 import {
   toMatcherEffectVerdict,
-  toPosicaoLabel,
   toSituacaoLabel,
   type MatcherVerdict,
 } from "./matcher-detalhe-presentation";
@@ -97,7 +98,7 @@ function buildRow(
   return {
     proposicao: firstVoto.proposicao,
     posicaoUsuario: posicao.posicao,
-    posicaoUsuarioLabel: toPosicaoLabel(posicao.posicao),
+    posicaoUsuarioLabel: toPosicaoUsuarioLabel(posicao.posicao),
     votacaoReferencia: firstVoto.votacaoReferencia,
     cells: cellVotos.map(({ detalhe, voto }) => ({
       externalIdDeputado: detalhe.deputado.externalIdDeputado,

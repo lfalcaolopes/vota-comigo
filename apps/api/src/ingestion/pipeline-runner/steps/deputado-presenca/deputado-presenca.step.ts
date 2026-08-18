@@ -1,7 +1,8 @@
 import type { VotoCategoria } from '@vota-comigo/shared-types';
 
-import { deriveResumoPresenca } from '@/deputados/rules/resumo-presenca';
+import { deriveResumoPresencaPorLegislatura } from '@/deputados/rules/resumo-presenca-por-legislatura';
 
+import { createProgressLogger } from '../../reporting/step-logging';
 import type {
   IngestionStep,
   IngestionStepContext,
@@ -12,9 +13,12 @@ import type {
   DeputadoComHistoricoRow,
   DeputadoPresencaRepository,
   DeputadoPresencaRow,
+  LegislaturaPeriodoRow,
 } from './deputado-presenca.repository.types';
 
 export const DEPUTADO_PRESENCA_RULE_VERSION = 1;
+
+export const DEPUTADO_PRESENCA_PROGRESS_INTERVAL = 250;
 
 export function createDeputadoPresencaStep(
   repository: DeputadoPresencaRepository,
@@ -24,6 +28,10 @@ export function createDeputadoPresencaStep(
     scope: 'single',
     source: 'derived',
     async run(context: IngestionStepContext): Promise<StepRunResult> {
+      context.reporter?.log(
+        '[deputado_presenca] carregando histórico parlamentar…',
+      );
+
       const deputados = await repository.loadDeputadosComHistorico();
 
       // Sem histórico não há como distinguir ausência de fora de exercício;
@@ -35,12 +43,59 @@ export function createDeputadoPresencaStep(
         return emptyResult();
       }
 
+      context.reporter?.log(
+        `[deputado_presenca] ${deputados.length} deputado(s) com histórico`,
+      );
+      context.reporter?.log(
+        '[deputado_presenca] carregando legislaturas e votações computáveis…',
+      );
+
+      const legislaturas = await repository.loadLegislaturas();
+
+      // Sem legislaturas não há como particionar as votações; o fullReplace
+      // zeraria a tabela sem ter como recalcular nada.
+      if (legislaturas.length === 0) {
+        context.reporter?.log(
+          '[deputado_presenca] legislaturas ausentes, presença não calculada',
+        );
+        return emptyResult();
+      }
+
       const votacoes = await repository.loadComputableVotacoes();
-      const rows = toDeputadoPresencaRows(deputados, votacoes);
 
       context.reporter?.log(
-        `[deputado_presenca] ${rows.length} deputado(s) com presença de ${deputados.length} com histórico`,
+        `[deputado_presenca] ${votacoes.length} votação(ões) computável(is) em ${legislaturas.length} legislatura(s)`,
       );
+      context.reporter?.log(
+        `[deputado_presenca] calculando presença de ${deputados.length} deputado(s)…`,
+      );
+
+      const progress = createProgressLogger(
+        context.reporter,
+        'deputado_presenca',
+        {
+          interval: DEPUTADO_PRESENCA_PROGRESS_INTERVAL,
+          unit: 'deputado(s)',
+        },
+      );
+      const rows = toDeputadoPresencaRows(
+        deputados,
+        votacoes,
+        legislaturas,
+        (processed) => progress.tick(processed),
+      );
+
+      const deputadosComLinha = new Set(rows.map((row) => row.deputadoId));
+
+      context.reporter?.log(
+        `[deputado_presenca] ${deputadosComLinha.size} deputado(s) com presença de ${deputados.length} com histórico`,
+      );
+
+      if (!context.dryRun) {
+        context.reporter?.log(
+          `[deputado_presenca] gravando ${rows.length} linha(s)…`,
+        );
+      }
 
       const refresh = context.dryRun
         ? { inserted: 0 }
@@ -50,7 +105,7 @@ export function createDeputadoPresencaStep(
         read: deputados.length,
         inserted: refresh.inserted,
         updated: 0,
-        ignored: deputados.length - rows.length,
+        ignored: deputados.length - deputadosComLinha.size,
         rejected: [],
         externalGaps: [],
       };
@@ -61,6 +116,8 @@ export function createDeputadoPresencaStep(
 export function toDeputadoPresencaRows(
   deputados: readonly DeputadoComHistoricoRow[],
   votacoes: readonly ComputableVotacaoRow[],
+  legislaturas: readonly LegislaturaPeriodoRow[],
+  onDeputadoProcessed?: (processed: number) => void,
 ): readonly DeputadoPresencaRow[] {
   const votacoesComVoto = votacoes.map((votacao) => ({
     votacao: {
@@ -70,30 +127,36 @@ export function toDeputadoPresencaRows(
     votoByDeputado: invertVotosJson(votacao.votosJson),
   }));
 
-  return deputados.flatMap(({ deputadoId, eventos }) => {
-    const result = deriveResumoPresenca({
+  return deputados.flatMap(({ deputadoId, eventos }, index) => {
+    const resultados = deriveResumoPresencaPorLegislatura({
       eventos,
       votacoes: votacoesComVoto.map((votacao) => ({
         votacao: votacao.votacao,
         voto: votacao.votoByDeputado.get(deputadoId) ?? null,
       })),
+      legislaturas,
     });
 
-    if (!result.resumoPresencaDisponivel || result.resumoPresenca === null) {
-      return [];
-    }
+    onDeputadoProcessed?.(index + 1);
 
-    return [
-      {
-        deputadoId,
-        presencas: result.resumoPresenca.presencas,
-        ausenciasSemMotivoConhecido:
-          result.resumoPresenca.ausenciasSemMotivoConhecido,
-        foraDeExercicio: result.foraDeExercicio,
-        lacunaDeDados: result.lacunaDeDados,
-        ruleVersion: DEPUTADO_PRESENCA_RULE_VERSION,
-      },
-    ];
+    return resultados.flatMap((resultado) => {
+      if (resultado.resumoPresenca === null) {
+        return [];
+      }
+
+      return [
+        {
+          deputadoId,
+          legislaturaId: resultado.legislaturaId,
+          presencas: resultado.resumoPresenca.presencas,
+          ausenciasSemMotivoConhecido:
+            resultado.resumoPresenca.ausenciasSemMotivoConhecido,
+          foraDeExercicio: resultado.foraDeExercicio,
+          lacunaDeDados: resultado.lacunaDeDados,
+          ruleVersion: DEPUTADO_PRESENCA_RULE_VERSION,
+        },
+      ];
+    });
   });
 }
 

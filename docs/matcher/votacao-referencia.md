@@ -17,13 +17,23 @@ Tabelas usadas:
 - `votacao_proposicao`: vínculo canônico entre votação e proposição afetada.
 - `votacao`: dados da votação.
 - `proposicao`: dados da proposição afetada.
+- `votacao_votos`: contagens do placar completo, usadas para a elegibilidade da candidata.
 
 Escopo:
 
 - somente `votacao.escopo_votacao = 'plenario'`;
 - somente votações nominais;
+- somente votações com pelo menos um voto computável registrado;
 - vínculo sempre por `votacao_proposicao`;
 - a escolha é por `external_id_proposicao`, sem reconstruir proposição principal e sem consolidar proposições derivadas.
+
+`votos_computaveis` é calculado sobre `votacao_votos` como:
+
+```sql
+vv.votos_sim + vv.votos_nao + vv.votos_abstencao + vv.votos_obstrucao
+```
+
+`votos_artigo_17` e `votos_nao_informado` ficam de fora: são registros individuais sem direção de voto.
 
 Campos textuais reais usados em `votacao`:
 
@@ -90,7 +100,9 @@ A votação candidata recebe `prioridade_votacao_referencia` conforme a primeira
 |          2 | Recall por turno da regra em cascata, desde que a descrição não seja fragmentária nem redação final                                                                             |
 |          1 | Redação final                                                                                                                                                                   |
 
-Votação sem prioridade é descartada como candidata. Proposição sem nenhuma candidata fica sem votação de referência e não é computável pelo matcher.
+Votação sem prioridade é descartada como candidata. Votação com `votos_computaveis = 0` também é descartada, mesmo com prioridade — sem direção de voto individual ela não casa nenhum deputado (ver ADR 023). Proposição sem nenhuma candidata fica sem votação de referência e não é computável pelo matcher.
+
+O descarte por `votos_computaveis` é independente da prioridade: se a proposição tem outra candidata com prioridade menor e com voto computável, é ela que passa a ser a referência.
 
 ## Heurística exata
 
@@ -203,10 +215,12 @@ select distinct on (external_id_proposicao)
   votos_nao,
   votos_outros,
   total_votos,
+  votos_computaveis,
   prioridade_votacao_referencia,
   padrao_votacao_referencia
 from votacoes_classificadas
 where prioridade_votacao_referencia is not null
+  and votos_computaveis > 0
 order by
   external_id_proposicao,
   prioridade_votacao_referencia desc,
@@ -245,6 +259,7 @@ with base as (
     coalesce(v.votos_nao, 0) as votos_nao,
     coalesce(v.votos_outros, 0) as votos_outros,
     coalesce(v.votos_sim, 0) + coalesce(v.votos_nao, 0) + coalesce(v.votos_outros, 0) as total_votos,
+    coalesce(vv.votos_sim + vv.votos_nao + vv.votos_abstencao + vv.votos_obstrucao, 0) as votos_computaveis,
     nullif(btrim(v.descricao), '') as descricao,
     nullif(btrim(v.ultima_abertura_votacao_descricao), '') as ultima_abertura_votacao_descricao,
     nullif(btrim(v.ultima_apresentacao_proposicao_descricao), '') as ultima_apresentacao_proposicao_descricao,
@@ -257,6 +272,7 @@ with base as (
   from votacao_proposicao vp
   join votacao v on v.id = vp.votacao_id
   join proposicao p on p.id = vp.proposicao_id
+  left join votacao_votos vv on vv.votacao_id = v.id
   where v.escopo_votacao = 'plenario'
 ),
 classificadas as (
@@ -327,11 +343,13 @@ select distinct on (external_id_proposicao)
   votos_nao,
   votos_outros,
   total_votos,
+  votos_computaveis,
   prioridade_votacao_referencia,
   padrao_votacao_referencia,
   ementa
 from classificadas
 where prioridade_votacao_referencia is not null
+  and votos_computaveis > 0
 order by
   external_id_proposicao,
   prioridade_votacao_referencia desc,
@@ -408,6 +426,8 @@ A regra decisória pura subiu a qualidade dos casos de mérito, mas caiu para 34
 A regra unida v1 recuperou parte da cobertura, mas capturou 4 REQ por menção a PEC em requerimentos procedurais.
 
 A regra unida v2 é a regra operacional atual: preserva mérito decisório, recupera MPVs de subemenda substitutiva, zera REQ e mantém fora as proposições simbólicas sem voto de mérito.
+
+A elegibilidade por `votos_computaveis` foi acrescentada depois, pela ADR 023, e é ortogonal à classificação: não muda nenhuma prioridade, só remove do conjunto de candidatas as votações em que a fonte publicou o placar sem nenhum voto individual. Os valores de validação acima são anteriores a ela.
 
 ## Arquivos de análise relacionados
 

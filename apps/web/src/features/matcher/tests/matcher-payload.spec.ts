@@ -5,6 +5,7 @@ import {
 import { describe, expect, it } from "vitest";
 
 import { buildExecucaoRequest } from "../lib/matcher-payload";
+import { RESULTADO_FILTROS_PADRAO } from "../lib/resultado-filtros";
 
 function posicoesMap(
   entries: [number, PosicaoUsuarioMatcher][],
@@ -13,6 +14,26 @@ function posicoesMap(
 }
 
 describe("matcherExecucaoRequestSchema", () => {
+  describe("when the filtro de concordancia is omitted", () => {
+    it("defaults to an empty list", () => {
+      // Arrange
+      const partial = {
+        siglaUf: "SP" as const,
+        posicoes: [
+          { externalIdProposicao: 1, posicao: "aprovar" as const },
+          { externalIdProposicao: 2, posicao: "aprovar" as const },
+          { externalIdProposicao: 3, posicao: "aprovar" as const },
+        ],
+      };
+
+      // Act
+      const parsed = matcherExecucaoRequestSchema.parse(partial);
+
+      // Assert
+      expect(parsed.externalIdProposicoesFiltroConcordancia).toEqual([]);
+    });
+  });
+
   describe("when apenasEmAtividade is omitted", () => {
     it("defaults to false", () => {
       // Arrange
@@ -75,13 +96,36 @@ describe("matcherExecucaoRequestSchema", () => {
 });
 
 describe("buildExecucaoRequest", () => {
+  describe("when propositions are marked in the filtro de concordancia", () => {
+    it("forwards their identifiers in the request", () => {
+      // Arrange
+      const input = {
+        siglaUf: "SP" as const,
+        escopo: "estadual" as const,
+        ...RESULTADO_FILTROS_PADRAO,
+        posicoes: posicoesMap([
+          [1, "aprovar"],
+          [2, "rejeitar"],
+          [3, "aprovar"],
+        ]),
+        externalIdProposicoesFiltroConcordancia: [1, 3],
+      };
+
+      // Act
+      const request = buildExecucaoRequest(input);
+
+      // Assert
+      expect(request.externalIdProposicoesFiltroConcordancia).toEqual([1, 3]);
+    });
+  });
+
   describe("when positions mix computable and nao_sei", () => {
     it("includes only the computable positions and omits nao_sei", () => {
       // Arrange
       const input = {
         siglaUf: "SP" as const,
         escopo: "estadual" as const,
-        apenasEmAtividade: false,
+        ...RESULTADO_FILTROS_PADRAO,
         posicoes: posicoesMap([
           [1, "aprovar"],
           [2, "nao_sei"],
@@ -108,6 +152,7 @@ describe("buildExecucaoRequest", () => {
       const input = {
         siglaUf: "SP" as const,
         escopo: "estadual" as const,
+        ...RESULTADO_FILTROS_PADRAO,
         apenasEmAtividade: true,
         posicoes: posicoesMap([[1, "aprovar"]]),
       };
@@ -124,7 +169,7 @@ describe("buildExecucaoRequest", () => {
       const input = {
         siglaUf: "SP" as const,
         escopo: "estadual" as const,
-        apenasEmAtividade: false,
+        ...RESULTADO_FILTROS_PADRAO,
         posicoes: posicoesMap([[1, "aprovar"]]),
       };
 
@@ -133,63 +178,6 @@ describe("buildExecucaoRequest", () => {
 
       // Assert
       expect(request.apenasEmAtividade).toBe(false);
-    });
-  });
-
-  describe("when a cidade is informed", () => {
-    it("attaches the trimmed cidade to the request", () => {
-      // Arrange
-      const input = {
-        siglaUf: "RJ" as const,
-        escopo: "estadual" as const,
-        cidade: "  Niterói  ",
-        apenasEmAtividade: false,
-        posicoes: posicoesMap([[1, "aprovar"]]),
-      };
-
-      // Act
-      const request = buildExecucaoRequest(input);
-
-      // Assert
-      expect(request.cidade).toBe("Niterói");
-    });
-
-    it("includes a cidade of exactly 120 characters", () => {
-      // Arrange
-      const cidadeMax = "A".repeat(120);
-      const input = {
-        siglaUf: "SP" as const,
-        escopo: "estadual" as const,
-        cidade: cidadeMax,
-        apenasEmAtividade: false,
-        posicoes: posicoesMap([[1, "aprovar"]]),
-      };
-
-      // Act
-      const request = buildExecucaoRequest(input);
-
-      // Assert
-      expect(request.cidade).toBe(cidadeMax);
-      expect(request.cidade!.length).toBe(120);
-    });
-  });
-
-  describe("when no cidade is informed", () => {
-    it("omits the cidade field entirely", () => {
-      // Arrange
-      const input = {
-        siglaUf: "RJ" as const,
-        escopo: "nacional" as const,
-        cidade: "   ",
-        apenasEmAtividade: false,
-        posicoes: posicoesMap([[1, "aprovar"]]),
-      };
-
-      // Act
-      const request = buildExecucaoRequest(input);
-
-      // Assert
-      expect(request).not.toHaveProperty("cidade");
     });
   });
 });

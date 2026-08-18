@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { and, eq, isNotNull } from 'drizzle-orm';
 
 import type { VotoCategoria } from '@vota-comigo/shared-types';
 
@@ -7,6 +7,7 @@ import type { EventoExercicio } from '@/exercicio/types/exercicio.types';
 import {
   deputadoHistorico,
   deputadoPresenca,
+  legislatura,
   partido,
   proposicaoComputavel,
   votacao,
@@ -19,6 +20,7 @@ import type {
   DeputadoComHistoricoRow,
   DeputadoPresencaRepository,
   DeputadoPresencaRow,
+  LegislaturaPeriodoRow,
 } from './deputado-presenca.repository.types';
 
 const INSERT_CHUNK_SIZE = 1000;
@@ -94,6 +96,34 @@ export function createDeputadoPresencaRepository(
       );
     },
 
+    async loadLegislaturas() {
+      const rows = await db
+        .select({
+          legislaturaId: legislatura.id,
+          dataInicio: legislatura.dataInicio,
+          dataFim: legislatura.dataFim,
+        })
+        .from(legislatura)
+        .where(
+          and(
+            isNotNull(legislatura.dataInicio),
+            isNotNull(legislatura.dataFim),
+          ),
+        );
+
+      return rows.flatMap((row): LegislaturaPeriodoRow[] =>
+        row.dataInicio === null || row.dataFim === null
+          ? []
+          : [
+              {
+                legislaturaId: row.legislaturaId,
+                dataInicio: row.dataInicio,
+                dataFim: row.dataFim,
+              },
+            ],
+      );
+    },
+
     async fullReplace(rows) {
       return db.transaction(async (tx) => {
         await tx.delete(deputadoPresenca);
@@ -119,6 +149,7 @@ function toValues(
 ): typeof deputadoPresenca.$inferInsert {
   return {
     deputadoId: row.deputadoId,
+    legislaturaId: row.legislaturaId,
     presencas: row.presencas,
     ausenciasSemMotivoConhecido: row.ausenciasSemMotivoConhecido,
     foraDeExercicio: row.foraDeExercicio,

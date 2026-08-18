@@ -6,6 +6,7 @@ import type { EventoExercicio } from '@/exercicio/types/exercicio.types';
 import { nomePublicoDeputado } from '@/shared/deputado/nome-publico';
 
 import { deriveHistoricoPartidario } from '../rules/historico-partidario';
+import { deriveDeputadoPerfilYear } from '../rules/deputado-perfil-year';
 import { parseRedesSociais } from '../rules/redes-sociais';
 import { toResumoPresenca } from '../rules/resumo-presenca';
 import { deriveSnapshotPublico } from '../rules/snapshot-publico';
@@ -18,6 +19,7 @@ import { fonteOficialDeputado } from './camara-portal-url';
 export function toDeputadoPerfil(
   source: DeputadoPerfilSource,
   resumoPresencaRow: DeputadoResumoPresencaRow | null,
+  currentYear = new Date().getFullYear(),
 ): DeputadoPerfil {
   const snapshot = deriveSnapshotPublico(source.eventos);
 
@@ -42,6 +44,10 @@ export function toDeputadoPerfil(
 
   const { historicoPartidarioDisponivel, historicoPartidario } =
     deriveHistoricoPartidario({ eventos: source.eventos, snapshot });
+  const { defaultYear, validYearRange } = deriveDeputadoPerfilYear(
+    source,
+    currentYear,
+  );
 
   return {
     externalIdDeputado: source.externalIdDeputado,
@@ -60,6 +66,8 @@ export function toDeputadoPerfil(
     externalIdLegislaturaFinal: source.externalIdLegislaturaFinal,
     legislaturaInicialPeriodo: source.legislaturaInicialPeriodo,
     legislaturaFinalPeriodo: source.legislaturaFinalPeriodo,
+    defaultYear,
+    validYearRange,
     resumoPresencaDisponivel,
     resumoPresenca,
     historicoPartidarioDisponivel,

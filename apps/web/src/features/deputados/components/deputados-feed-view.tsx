@@ -9,24 +9,28 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 import {
+  buildComparativoDeputadosHref,
   buildDeputadosFeedHref,
-  DeputadoPartidoControl,
-  DeputadoUfControl,
+  canOpenComparativo,
+  descreverFiltrosAtivos,
+  FILTROS_PADRAO,
+  hasComparativoDeputadoLimit,
+  removerFiltro,
+  toggleComparativoDeputado,
   useDeputadoFeedState,
+  type DeputadoFeedFiltros,
+  type DeputadoFiltroId,
 } from "@/shared/deputado";
-import { Button, SearchField, Switch } from "@/shared/ui";
+import { Button, FiltrosAtivos, SearchField } from "@/shared/ui";
 
 import { DeputadosFeedList } from "./deputados-feed-list";
-
-type OpenFilter = "uf" | "partido" | null;
+import { DeputadosFiltrosPanel } from "./deputados-filtros-panel";
 
 type DeputadosFeedViewProps = {
   initialItems: DeputadoCard[];
   initialTotal: number;
   initialQuery?: string | null;
-  initialEmAtividade?: boolean;
-  initialUf?: string | null;
-  initialPartido?: string | null;
+  initialFiltros?: DeputadoFeedFiltros;
   ufs?: readonly UfDisponivel[];
   partidos?: readonly PartidoDisponivel[];
 };
@@ -35,9 +39,7 @@ export function DeputadosFeedView({
   initialItems,
   initialTotal,
   initialQuery = null,
-  initialEmAtividade = false,
-  initialUf = null,
-  initialPartido = null,
+  initialFiltros = FILTROS_PADRAO,
   ufs = [],
   partidos = [],
 }: DeputadosFeedViewProps) {
@@ -48,252 +50,236 @@ export function DeputadosFeedView({
     total,
     status,
     query,
-    emAtividade,
-    uf,
-    partido,
+    filtros,
     display,
     canLoadMore,
     submitSearch,
     clearSearch,
-    toggleEmAtividade,
-    changeUf,
-    clearUf,
-    changePartido,
-    clearPartido,
-    clearFilters,
+    applyFiltros,
+    clearTudo,
     loadMore,
-  } = useDeputadoFeedState(
-    initialItems,
-    initialTotal,
-    initialQuery ?? "",
-    initialEmAtividade,
-    initialUf,
-    initialPartido,
-  );
+  } = useDeputadoFeedState({
+    items: initialItems,
+    total: initialTotal,
+    query: initialQuery ?? "",
+    filtros: initialFiltros,
+  });
 
   const [draft, setDraft] = useState(initialQuery ?? "");
-  const [openFilter, setOpenFilter] = useState<OpenFilter>(null);
+  const [isSelectingComparativo, setIsSelectingComparativo] = useState(false);
+  const [selectedComparativo, setSelectedComparativo] = useState<
+    readonly DeputadoCard[]
+  >([]);
   const activeQuery = query || null;
+  const canCompare = canOpenComparativo(selectedComparativo);
+  const hasDeputadoLimit = hasComparativoDeputadoLimit(selectedComparativo);
 
-  async function handleClear() {
-    setDraft("");
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: null,
-        emAtividade,
-        uf,
-        partido,
-      }),
+  function startComparativoSelection() {
+    setSelectedComparativo([]);
+    setIsSelectingComparativo(true);
+  }
+
+  function cancelComparativoSelection() {
+    setSelectedComparativo([]);
+    setIsSelectingComparativo(false);
+  }
+
+  function handleToggleComparativo(externalIdDeputado: number) {
+    const card = items.find(
+      (item) => item.externalIdDeputado === externalIdDeputado,
     );
+    if (card === undefined) return;
+    setSelectedComparativo((selecionados) =>
+      toggleComparativoDeputado(selecionados, card),
+    );
+  }
+
+  function openComparativo() {
+    router.push(
+      buildComparativoDeputadosHref(
+        selectedComparativo.map((card) => card.externalIdDeputado),
+      ),
+    );
+  }
+
+  function replaceHref(next: { query: string | null } & DeputadoFeedFiltros) {
+    router.replace(buildDeputadosFeedHref(pathname, next));
+  }
+
+  async function handleClearSearch() {
+    setDraft("");
+    replaceHref({ query: null, ...filtros });
     await clearSearch();
   }
 
   async function handleSearch() {
     const term = draft.trim();
     if (term.length === 0) {
-      await handleClear();
+      await handleClearSearch();
       return;
     }
 
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: term,
-        emAtividade,
-        uf,
-        partido,
-      }),
-    );
+    replaceHref({ query: term, ...filtros });
     await submitSearch(term);
   }
 
-  async function handleEmAtividade() {
-    const next = !emAtividade;
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: activeQuery,
-        emAtividade: next,
-        uf,
-        partido,
-      }),
-    );
-    await toggleEmAtividade();
+  async function handleApplyFiltros(next: DeputadoFeedFiltros) {
+    replaceHref({ query: activeQuery, ...next });
+    await applyFiltros(next);
   }
 
-  async function handleUf(value: string) {
-    const next = uf === value ? null : value;
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: activeQuery,
-        emAtividade,
-        uf: next,
-        partido,
-      }),
-    );
-    if (next === null) {
-      await clearUf();
-    } else {
-      await changeUf(next);
-    }
+  async function handleRemoveFiltro(id: DeputadoFiltroId) {
+    await handleApplyFiltros(removerFiltro(filtros, id));
   }
 
-  async function handleClearUf() {
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: activeQuery,
-        emAtividade,
-        uf: null,
-        partido,
-      }),
-    );
-    await clearUf();
+  async function handleIncluirForaDeExercicio() {
+    await handleApplyFiltros({ ...filtros, incluirForaDeExercicio: true });
   }
 
-  async function handlePartido(value: string) {
-    const next = partido === value ? null : value;
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: activeQuery,
-        emAtividade,
-        uf,
-        partido: next,
-      }),
-    );
-    if (next === null) {
-      await clearPartido();
-    } else {
-      await changePartido(next);
-    }
-  }
-
-  async function handleClearPartido() {
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: activeQuery,
-        emAtividade,
-        uf,
-        partido: null,
-      }),
-    );
-    await clearPartido();
-  }
-
-  async function handleClearFilters() {
+  async function handleClearTudo() {
     setDraft("");
-    router.replace(
-      buildDeputadosFeedHref(pathname, {
-        query: null,
-        emAtividade: false,
-        uf: null,
-        partido: null,
-      }),
-    );
-    await clearFilters();
+    replaceHref({ query: null, ...FILTROS_PADRAO });
+    await clearTudo();
   }
 
-  const filterPanelClassName = "order-last";
-  const filterTriggerClassName =
-    "w-full [&>button]:w-full [&>button]:justify-center [&>span]:w-full sm:w-auto sm:[&>button]:w-auto sm:[&>span]:w-auto";
+  const compareAction = isSelectingComparativo ? (
+    <div className="grid grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
+      <Button
+        className="h-11 min-w-0 sm:h-auto"
+        onClick={cancelComparativoSelection}
+        variant="ghost"
+      >
+        Cancelar
+      </Button>
+      <Button
+        className="h-11 min-w-0 sm:h-auto"
+        disabled={!canCompare}
+        onClick={openComparativo}
+        variant="primary"
+      >
+        Comparar
+      </Button>
+    </div>
+  ) : (
+    <Button
+      className="h-11 w-full min-w-0 !border-border-strong sm:h-auto sm:w-auto sm:shrink-0 sm:px-5"
+      onClick={startComparativoSelection}
+      variant="secondary"
+    >
+      Comparar deputados
+    </Button>
+  );
+
+  const announcement =
+    display === "loading"
+      ? "Atualizando lista de deputados."
+      : display === "error"
+        ? "Não foi possível atualizar a lista de deputados."
+        : total === 1
+          ? "Lista atualizada: 1 deputado encontrado."
+          : `Lista atualizada: ${total} deputados encontrados.`;
 
   return (
     <div className="grid min-w-0 gap-7">
-      <div className="grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto_auto] lg:items-start">
-        <div className="grid min-w-0 max-w-full gap-3">
-          <form
-            className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
-            onSubmit={(event) => {
-              event.preventDefault();
-              handleSearch();
-            }}
-          >
-            <div className="min-w-0 flex-1">
-              <SearchField
-                className="h-11"
-                hideLabel
-                id="deputado-feed-search"
-                label="Buscar por nome"
-                onChange={(event) => setDraft(event.target.value)}
-                placeholder="Buscar por nome"
-                value={draft}
-              />
-            </div>
-            <Button
-              className="h-11 sm:shrink-0"
-              disabled={status === "loading"}
-              type="submit"
-              variant="primary"
+      <p aria-atomic="true" className="sr-only" role="status">
+        {announcement}
+      </p>
+
+      <div className="grid min-w-0 gap-3">
+        <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-4">
+          <div className="order-1 sm:order-2 sm:ml-auto">{compareAction}</div>
+          <div className="order-2 grid min-w-0 gap-2 sm:order-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+            <form
+              className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
+              onSubmit={(event) => {
+                event.preventDefault();
+                handleSearch();
+              }}
             >
-              Buscar
-            </Button>
-          </form>
-
-          {query !== "" ? (
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-              <p className="text-muted">
-                Resultados para{" "}
-                <span className="font-[650] text-ink">&quot;{query}&quot;</span>
-              </p>
-              <button
-                className="font-[650] text-muted underline decoration-border underline-offset-2 transition-colors duration-[140ms] ease-standard hover:text-ink hover:decoration-current"
-                onClick={handleClear}
-                type="button"
+              <div className="min-w-0 flex-1">
+                <SearchField
+                  className="h-11"
+                  hideLabel
+                  id="deputado-feed-search"
+                  label="Buscar por nome"
+                  onChange={(event) => setDraft(event.target.value)}
+                  placeholder="Buscar por nome"
+                  value={draft}
+                />
+              </div>
+              <Button
+                className="h-11 sm:shrink-0"
+                type="submit"
+                variant="primary"
               >
-                Limpar busca
-              </button>
-            </div>
-          ) : null}
-        </div>
+                Buscar
+              </Button>
+            </form>
 
-        <div className="grid min-w-0 gap-2 sm:contents">
-          <p className="text-sm font-[650] text-muted sm:hidden">Filtros</p>
-          <div className="grid min-w-0 grid-cols-2 gap-2 sm:contents">
-            <Switch
-              checked={emAtividade}
-              className="h-11 min-w-0 justify-start rounded-md border border-border bg-white px-3 py-2.5 sm:px-4"
-              disabled={status === "loading"}
-              label="Em atividade"
-              onChange={handleEmAtividade}
-            />
-
-            <DeputadoUfControl
-              activeUf={uf}
-              onClear={handleClearUf}
-              onOpenChange={(open) => setOpenFilter(open ? "uf" : null)}
-              onSelect={handleUf}
-              open={openFilter === "uf"}
-              panelClassName={filterPanelClassName}
-              triggerClassName={filterTriggerClassName}
+            <DeputadosFiltrosPanel
+              filtros={filtros}
+              onApply={handleApplyFiltros}
+              partidos={partidos}
               ufs={ufs}
             />
-
-            <DeputadoPartidoControl
-              activePartido={partido}
-              onClear={handleClearPartido}
-              onOpenChange={(open) => setOpenFilter(open ? "partido" : null)}
-              onSelect={handlePartido}
-              open={openFilter === "partido"}
-              panelClassName={filterPanelClassName}
-              triggerClassName={filterTriggerClassName}
-              partidos={partidos}
-            />
-
-            <Button
-              className="h-11 min-w-0 sm:hidden"
-              disabled={status === "loading"}
-              onClick={handleClearFilters}
-              variant="secondary"
-            >
-              Limpar
-            </Button>
           </div>
         </div>
+
+        {query !== "" ? (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+            <p className="text-muted">
+              Resultados para{" "}
+              <span className="font-[650] text-ink">&quot;{query}&quot;</span>
+            </p>
+            <button
+              className="cursor-pointer font-[650] text-muted underline decoration-border underline-offset-2 transition-colors duration-[140ms] ease-standard hover:text-ink hover:decoration-current"
+              onClick={handleClearSearch}
+              type="button"
+            >
+              Limpar busca
+            </button>
+          </div>
+        ) : null}
+
+        <FiltrosAtivos
+          ativos={descreverFiltrosAtivos(filtros)}
+          onClear={() => handleApplyFiltros(FILTROS_PADRAO)}
+          onRemove={handleRemoveFiltro}
+        />
       </div>
+
+      {isSelectingComparativo ? (
+        <div className="text-sm text-muted">
+          {hasDeputadoLimit ? (
+            <p>Você pode comparar até 3 deputados.</p>
+          ) : (
+            <p>Selecione 2 ou 3 deputados para comparar.</p>
+          )}
+        </div>
+      ) : null}
 
       <DeputadosFeedList
         canLoadMore={canLoadMore}
         display={display}
         items={items}
-        onClearFilters={handleClearFilters}
+        onClearTudo={handleClearTudo}
+        onIncluirForaDeExercicio={
+          filtros.incluirForaDeExercicio
+            ? undefined
+            : handleIncluirForaDeExercicio
+        }
         onLoadMore={loadMore}
+        selection={
+          isSelectingComparativo
+            ? {
+                hasLimit: hasDeputadoLimit,
+                onToggle: handleToggleComparativo,
+                selectedIds: selectedComparativo.map(
+                  (card) => card.externalIdDeputado,
+                ),
+              }
+            : undefined
+        }
         status={status}
         total={total}
       />

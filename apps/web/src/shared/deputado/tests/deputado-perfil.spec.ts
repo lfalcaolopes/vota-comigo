@@ -36,6 +36,11 @@ function makePerfil(
       dataInicio: "2023-02-01",
       dataFim: "2027-01-31",
     },
+    defaultYear: 2026,
+    validYearRange: {
+      startYear: 2015,
+      endYear: 2026,
+    },
     resumoPresencaDisponivel: true,
     resumoPresenca: {
       percentualPresenca: 80,
@@ -61,6 +66,70 @@ function render(perfil: DeputadoPerfilData): string {
 }
 
 describe("DeputadoPerfil", () => {
+  describe("anotacao do deputado fora da plataforma", () => {
+    it("offers the copy gesture next to the identity of the deputado", () => {
+      // Arrange
+      const perfil = makePerfil();
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Copiar dados do deputado");
+    });
+  });
+
+  describe("navegacao pelo perfil", () => {
+    it("offers direct links to the summary and annual data", () => {
+      // Arrange
+      const perfil = makePerfil();
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain('aria-label="Seções do perfil"');
+      expect(html).toContain('href="#visao-geral"');
+      expect(html).toContain('href="#atuacao"');
+      expect(html).toContain('href="#gastos"');
+      expect(html).toContain('href="#comissoes"');
+      expect(html).toContain('id="visao-geral"');
+      expect(html).toContain('id="atuacao"');
+      expect(html).toContain('id="gastos"');
+      expect(html).toContain('id="comissoes"');
+      expect(html).not.toContain("Sobre e fontes");
+    });
+
+    it("omits annual section links when the profile has no annual range", () => {
+      // Arrange
+      const perfil = makePerfil({ validYearRange: null });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain('href="#visao-geral"');
+      expect(html).not.toContain('href="#atuacao"');
+      expect(html).not.toContain('href="#gastos"');
+      expect(html).not.toContain('href="#comissoes"');
+    });
+  });
+
+  describe("gastos da cota parlamentar", () => {
+    it("inclui a seção no recorte anual compartilhado do perfil", () => {
+      // Arrange
+      const perfil = makePerfil();
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Atuação na Câmara");
+      expect(html).toContain("Gastos anuais da cota parlamentar");
+      expect(html).toContain("Carregando conteúdo");
+    });
+  });
+
   describe("dados cadastrais basicos", () => {
     it("shows the public name, the cargo and the official source link", () => {
       // Arrange
@@ -72,7 +141,7 @@ describe("DeputadoPerfil", () => {
       // Assert
       expect(html).toContain("Maria da Silva");
       expect(html).toContain("Deputado federal");
-      expect(html).toContain("Ver fonte oficial na Câmara");
+      expect(html).toContain("Consultar perfil oficial na Câmara");
       expect(html).toContain("https://www.camara.leg.br/deputados/220593");
     });
 
@@ -123,7 +192,7 @@ describe("DeputadoPerfil", () => {
       const html = render(perfil);
 
       // Assert
-      expect(html).toContain("Em atividade");
+      expect(html).toContain("Em exercício");
     });
 
     it("shows mandato encerrado badge when deputado is inactive", () => {
@@ -134,7 +203,7 @@ describe("DeputadoPerfil", () => {
       const html = render(perfil);
 
       // Assert
-      expect(html).toContain("Mandato encerrado");
+      expect(html).toContain("Fora de exercício");
     });
 
     it("shows the avatar image when urlFoto is available", () => {
@@ -203,6 +272,7 @@ describe("DeputadoPerfil", () => {
       // Assert
       expect(html).toContain("https://twitter.com/maria");
       expect(html).toContain("https://instagram.com/maria");
+      expect(html).toContain("Redes sociais:");
     });
 
     it("shows the platform name instead of the raw url or handle", () => {
@@ -219,7 +289,7 @@ describe("DeputadoPerfil", () => {
       expect(html).not.toContain("@maria");
     });
 
-    it("omits the redes sociais section when the list is empty", () => {
+    it("omits social links when the list is empty", () => {
       // Arrange
       const perfil = makePerfil({ redesSociais: [] });
 
@@ -227,7 +297,8 @@ describe("DeputadoPerfil", () => {
       const html = render(perfil);
 
       // Assert
-      expect(html).not.toContain("Redes sociais");
+      expect(html).not.toContain("Twitter/X");
+      expect(html).not.toContain("Instagram");
     });
   });
 
@@ -248,6 +319,9 @@ describe("DeputadoPerfil", () => {
       expect(html).toContain("São Paulo · SP");
       expect(html).toContain("Nascimento");
       expect(html).toContain("10/05/1980");
+      expect(html.indexOf("Naturalidade")).toBeLessThan(
+        html.indexOf('aria-label="Seções do perfil"'),
+      );
     });
 
     it("hides the birth date field when dataNascimento is null but keeps naturalidade", () => {
@@ -317,8 +391,32 @@ describe("DeputadoPerfil", () => {
       const html = render(perfil);
 
       // Assert
+      expect(html).toContain("Legislaturas");
       expect(html).toContain("2015 – 2019");
       expect(html).toContain("2023 – 2027");
+      expect(html).toContain("2015 – 2019 e 2023 – 2027");
+    });
+
+    it("condenses matching initial and final legislaturas", () => {
+      // Arrange
+      const periodo = {
+        dataInicio: "2023-02-01",
+        dataFim: "2027-01-31",
+      };
+      const perfil = makePerfil({
+        legislaturaInicialPeriodo: periodo,
+        legislaturaFinalPeriodo: periodo,
+      });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Legislatura");
+      expect(html).not.toContain("Legislatura inicial");
+      expect(html).not.toContain("Legislatura final");
+      expect(html).not.toContain("Legislaturas");
+      expect(html.match(/2023 – 2027/g)).toHaveLength(1);
     });
 
     it("shows historical legislatura metadata from ingested dates", () => {
@@ -353,6 +451,61 @@ describe("DeputadoPerfil", () => {
 
       // Assert
       expect(html).not.toContain("Legislatura inicial");
+      expect(html).not.toContain("Legislatura final");
+    });
+  });
+
+  describe("eixo temporal da atuacao", () => {
+    it("shows the activity section with the default year selected", () => {
+      // Arrange
+      const perfil = makePerfil();
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Atuação na Câmara");
+      expect(html).toContain('<option value="2026" selected="">2026</option>');
+    });
+
+    it("shows the annual summary before the detailed sections", () => {
+      // Arrange
+      const perfil = makePerfil();
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Discursos registrados");
+      expect(html).toContain("Propostas assinadas");
+      expect(html).toContain("Comissões e outros órgãos");
+      expect(html.match(/h-7 w-24/g)).toHaveLength(2);
+      expect(html).not.toContain("Consultar detalhes no Portal da Câmara");
+      expect(html).not.toContain("Selecione o ano para consultar");
+      expect(html.indexOf("Propostas assinadas")).toBeLessThan(
+        html.indexOf("Gastos anuais da cota parlamentar"),
+      );
+      expect(html.indexOf("Gastos anuais da cota parlamentar")).toBeLessThan(
+        html.indexOf("Comissões e outros órgãos"),
+      );
+    });
+
+    it("keeps the page usable without a selector when years are unavailable", () => {
+      // Arrange
+      const perfil = makePerfil({
+        legislaturaInicialPeriodo: null,
+        legislaturaFinalPeriodo: null,
+        defaultYear: null,
+        validYearRange: null,
+      });
+
+      // Act
+      const html = render(perfil);
+
+      // Assert
+      expect(html).toContain("Maria da Silva");
+      expect(html).not.toContain("Atuação na Câmara");
+      expect(html).not.toContain("deputado-perfil-year");
     });
   });
 
@@ -365,7 +518,7 @@ describe("DeputadoPerfil", () => {
       const html = render(perfil);
 
       // Assert
-      expect(html).toContain('aria-label="Situação do mandato: Em atividade"');
+      expect(html).toContain('aria-label="Situação do mandato: Em exercício"');
     });
 
     it("gives the presenca percentual a self-contained accessible label", () => {
@@ -471,8 +624,9 @@ describe("DeputadoPerfil", () => {
         expect(html).toContain("25");
         expect(html).toContain("sem motivo conhecido");
         expect(html).toContain(
-          "votações de plenário em que o voto de cada deputado fica registrado",
+          "Votações de plenário com voto registrado, entre as propostas que acompanhamos.",
         );
+        expect(html).toContain("Participação, não desempenho.");
       });
 
       it("shows the correct percentage without the unavailable message", () => {
@@ -528,7 +682,7 @@ describe("DeputadoPerfil", () => {
 
         // Assert
         expect(html).toContain("Presença indisponível");
-        expect(html).not.toContain("0%");
+        expect(html).not.toContain(">0%<");
       });
 
       it("does not show votacoes em exercicio sample label", () => {
@@ -576,11 +730,47 @@ describe("DeputadoPerfil", () => {
         expect(html).toContain("Histórico partidário");
         expect(html).toContain("PSB");
         expect(html).toContain("Atual");
+        expect(html).toContain("Ver histórico completo");
+        expect(html).not.toContain("Ver histórico completo (1 anterior)");
+        expect(html).toContain("<details");
+        expect(html).not.toContain("<details open");
+        const summaryStart = html.indexOf("<summary");
+        const summaryTag = html.slice(
+          summaryStart,
+          html.indexOf(">", summaryStart),
+        );
+        expect(summaryTag).toContain("text-muted");
+        expect(summaryTag).toContain("group-open:hidden");
+        expect(summaryTag).not.toContain("text-info");
+        expect(summaryTag).not.toContain("underline");
+        expect(html).not.toContain("Recolher histórico partidário");
         expect(html).toContain("jan/2023 – atual");
         expect(html).toContain("fev/2021 – jan/2023");
         expect(html.indexOf("jan/2023 – atual")).toBeLessThan(
           html.indexOf("fev/2021 – jan/2023"),
         );
+      });
+
+      it("labels the most recent period as the last record for an inactive deputado", () => {
+        // Arrange
+        const perfil = makePerfil({
+          emAtividade: false,
+          historicoPartidario: [
+            {
+              siglaPartido: "PSB",
+              dataInicio: "2023-01-01",
+              dataFim: null,
+              atual: true,
+            },
+          ],
+        });
+
+        // Act
+        const html = render(perfil);
+
+        // Assert
+        expect(html).toContain("Último registro");
+        expect(html).not.toContain(">Atual<");
       });
     });
 

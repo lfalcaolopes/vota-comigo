@@ -70,7 +70,7 @@ _Avoid_: Matéria.
 
 **Votação nominal**: Votação em que o voto individual de cada deputado é registrado.
 
-**Votação de referência do matcher**: Votação nominal em plenário escolhida como votação decisiva de referência de uma proposição no matcher, priorizando votos de mérito decisório descritos pela Câmara e usando turno explícito apenas como fallback controlado, sem usar destaques, requerimentos ou fragmentos procedurais.
+**Votação de referência do matcher**: Votação nominal em plenário com voto computável registrado, escolhida como votação decisiva de referência de uma proposição no matcher, priorizando votos de mérito decisório descritos pela Câmara e usando turno explícito apenas como fallback controlado, sem usar destaques, requerimentos ou fragmentos procedurais.
 
 **Voto de mérito decisório**: Votação nominal cujo resultado descrito pela Câmara decide o texto-base, substitutivo, medida provisória, projeto, proposta de emenda à Constituição, revisão do Senado ou equivalente substantivo da proposição afetada, em oposição a requerimentos, destaques, preliminares, redação final e fragmentos procedurais.
 
@@ -149,7 +149,7 @@ _Avoid_: Votadas recentemente.
 
 **Tema disponível no feed**: Tema oficial com texto público associado a pelo menos uma proposição computável pelo matcher, identificado publicamente pelo `externalCodTema` e rotulado pelo texto oficial do tema.
 
-**Busca no feed**: Recorte textual do feed de proposições por identificador legislativo ou ementa, sem busca por nome de tema, combinável com filtro de tema e modo de ordenação.
+**Busca no feed**: Recorte do feed de proposições por consulta livre, combinável com filtro de tema e modo de ordenação. Uma consulta que se resolve em identificador legislativo vira busca exata por sigla, número e ano; qualquer outra é ranqueada por proximidade semântica entre a consulta e o texto da proposição — ementa, palavras-chave e resumos de IA aprovados. Não há busca por nome de tema.
 
 **Sugestão inicial de proposições**: Lista inicial de proposições computáveis pelo matcher apresentada ao usuário a partir do feed de proposições no modo de ordenação padrão.
 
@@ -163,6 +163,9 @@ _Avoid_: Votadas recentemente.
 
 **Execução válida do matcher**: Execução com lista única de três a trinta proposições computáveis pelo matcher e pelo menos três posições computáveis do usuário.
 
+**Rascunho de execução do matcher**: Conjunto de entradas do usuário — UF, cidade, escopo, proposições selecionadas, posições do usuário e filtro de concordância do matcher — mantido no navegador enquanto a aba viver, ainda não necessariamente uma execução válida do matcher. Contém apenas entradas: resultado, detalhe e comparativo são derivados dele e recalculados sob demanda, nunca guardados. Nunca enviado nem armazenado no servidor.
+_Avoid_: Sessão do matcher, progresso salvo.
+
 **UF de resultado do matcher**: Estado mais recente conhecido do deputado, usado para filtrar a visualização padrão dos resultados.
 
 **Cidade informada no matcher**: Município opcional informado pelo usuário, sem efeito no cálculo ou filtro do matcher no MVP.
@@ -175,16 +178,23 @@ _Avoid_: Votadas recentemente.
 
 **Amostra pequena no matcher**: Alerta de resultado do matcher quando a amostra comparável de um deputado é menor que 50% das posições computáveis do usuário.
 
-**Sem bom match**: Condição do matcher quando o melhor resultado do escopo consultado tem compatibilidade bruta menor que 60%.
+**Filtro de concordância do matcher**: Recorte do resultado do matcher que exibe apenas deputados com concordância em todas as proposições marcadas pelo usuário, entre as que ele selecionou.
+_Avoid_: Filtro de proposição, recorte por concordância.
+
+**Recorte do resultado do matcher**: Conjunto de filtros que restringem quais deputados aparecem no resultado do matcher sem consultar as respostas do usuário — em atividade, partido, sexo e ocultar amostra pequena.
+_Avoid_: Filtro demográfico, filtro de perfil.
 
 **Resumo de resultado do matcher**: Apresentação enxuta de um deputado no ranking do matcher, com compatibilidade, amostra comparável e alertas curtos.
 
 **Detalhe de resultado do matcher**: Apresentação expandida de um deputado no matcher, com métricas completas e detalhamento voto a voto.
 
-**Comparativo de deputados**: Experiência pública que coloca dois ou três deputados lado a lado para comparar seus votos e dados consolidados em um recorte de proposições.
+**Comparativo de deputados**: Experiência pública que coloca dois ou três deputados lado a lado para comparar seus dados consolidados e, quando aberta a partir do matcher, também seus votos em um recorte de proposições.
 _Avoid_: Comparativo de políticos.
 
 **Concordância no comparativo**: Indicador de uma célula do Comparativo de deputados que reutiliza a mesma semântica de concordância, discordância e fora do denominador do Matcher.
+
+**Janela do comparativo**: Recorte próprio de cada deputado no Comparativo de deputados, correspondente à última Legislatura em que ele esteve em atividade, truncado no seu último dia de exercício quando ele saiu no meio da legislatura corrente. Deputados cuja última legislatura em atividade é anterior à 55ª ficam fora da base comparável.
+_Avoid_: Ano do comparativo, ano selecionado.
 
 **Perfil do deputado**: Página pública que reúne dados básicos, presença e histórico partidário de um deputado federal coberto pelo produto.
 _Avoid_: Perfil do político.
@@ -201,6 +211,30 @@ _Avoid_: Lista de presença.
 **Histórico partidário do deputado**: Linha do tempo condensada dos partidos de um deputado, derivada de mudanças no histórico parlamentar, sem listar eventos administrativos brutos.
 _Avoid_: Histórico bruto do deputado.
 
+**Proposição assinada pelo deputado**: Proposição em que a Câmara registra o deputado como signatário, atribuída ao ano de `dataApresentacao`, sem distinguir se ele foi proponente ou apoiador e sem considerar a ordem da assinatura. Pelo Regimento Interno, todo signatário é autor. Ficam de fora os tipos `DOC` e `OF`, que a Câmara não trata como proposta legislativa.
+_Avoid_: Proposição criada pelo deputado, Proposição que o deputado apresentou, Iniciativa do deputado, Autoria do deputado como título público.
+
+**Primeiro signatário de proposição**: Deputado registrado pela Câmara com `ordemAssinatura` igual a 1 no CSV de autores da proposição, independentemente do indicador `proponente`.
+_Avoid_: Autor principal, Único autor, Criador da proposição.
+
+**Relatoria de proposição**: Designação de um deputado como relator de uma proposição. A Câmara não publica essa designação em arquivo aberto nem permite filtrá-la pela API, então o produto não a exibe.
+_Avoid_: Proposição relatada como sinônimo de Proposição assinada pelo deputado.
+
+**Cota parlamentar**: Cota para o Exercício da Atividade Parlamentar (CEAP), limite mensal de reembolso de despesas ligadas à atividade parlamentar, cujo teto varia por estado de origem do deputado porque embute o preço da passagem aérea até a capital.
+_Avoid_: Verba indenizatória, Salário do deputado, Auxílio.
+
+**Gasto da cota do deputado**: Valor debitado da cota parlamentar por um deputado em um mês e uma categoria oficial. No dump anual da CEAP é o valor líquido menos a restituição posterior; nos períodos cobertos pela reposição de passagem aérea SIGEPA é o valor líquido, porque a fonte não publica restituição.
+_Avoid_: Despesa do deputado, Gasto pessoal do deputado.
+
+**Cobertura do dado da cota**: Último mês de um ano que o arquivo oficial da CEAP efetivamente cobria quando foi carregado, usado para distinguir um mês sem gasto de um mês ainda não carregado.
+_Avoid_: Mês zerado como sinônimo de mês sem dado.
+
+**Reposição de passagem aérea SIGEPA**: Preenchimento, a partir da API da Câmara, dos gastos da categoria passagem aérea SIGEPA que o dump anual da CEAP deixou de publicar de agosto de 2025 em diante. Vale por ano inteiro: enquanto a reposição de um ano não cobre todos os deputados com exercício naquele ano, nenhum deputado é exibido com o valor reposto.
+_Avoid_: Passagem aérea como sinônimo da categoria SIGEPA — a categoria RPA é distinta e continua vindo do dump.
+
+**Ano reposto**: Ano cuja reposição de passagem aérea SIGEPA cobre todos os deputados elegíveis e foi apurada contra a cobertura do dado da cota vigente. Um dump posterior que avance a cobertura devolve o ano à condição de não reposto.
+_Avoid_: Ano completo como sinônimo, já que a completude do dump e a da reposição são condições separadas.
+
 ## Relationships
 
 - Uma **Legislatura** contém múltiplos **Deputados** com **Mandatos**.
@@ -213,6 +247,7 @@ _Avoid_: Histórico bruto do deputado.
 - Cada **Proposição computável pelo matcher** tem exatamente uma **Votação de referência do matcher**.
 - Para **Proposição** do tipo PEC, a **Votação de referência do matcher** prioriza o segundo turno quando ele existe.
 - A **Votação de referência do matcher** é escolhida dentro das **Votações** vinculadas à **Proposição afetada**, sem reconstruir **Proposição principal** ou consolidar proposições derivadas.
+- Uma **Votação** sem nenhum **Voto computável** registrado não é candidata a **Votação de referência do matcher**, ainda que tenha **Placar completo**.
 - No **Ranking de volume de votações em plenário**, uma **Votação** vinculada a múltiplas **Proposições afetadas** conta uma vez para cada proposição vinculada.
 - Uma **Votação** tem **Escopo de votação** igual a `plenario` ou `comissao`.
 - Uma **Votação nominal** registra **Votos computáveis** dos **Deputados em exercício** naquela data.
@@ -222,7 +257,8 @@ _Avoid_: Histórico bruto do deputado.
 - Sem filtro de tema selecionado, o **Feed de proposições** inclui **Proposições computáveis pelo matcher** com ou sem tema oficial associado.
 - Quando uma **Proposição computável pelo matcher** tem múltiplos **Temas disponíveis no feed**, ela aparece no filtro de qualquer um deles.
 - O **Feed de proposições** pode ser ordenado por **Proposições mais votadas em plenário** ou por **Proposições mais recentes**.
-- A **Busca no feed**, o filtro por **Tema disponível no feed** e o modo de ordenação do **Feed de proposições** podem ser combinados; busca e filtro reduzem o conjunto antes da ordenação e paginação.
+- A **Busca no feed**, o filtro por **Tema disponível no feed** e o modo de ordenação do **Feed de proposições** podem ser combinados; busca e filtro reduzem o conjunto antes da paginação.
+- Quando a **Busca no feed** ranqueia por proximidade semântica, é essa proximidade que ordena o resultado, e o modo de ordenação escolhido não se aplica àquela consulta.
 - O filtro por **Tema disponível no feed** não recalcula a métrica de **Proposições mais votadas em plenário**; ele apenas restringe o conjunto ordenado pelo volume total de votações nominais em plenário.
 - Os critérios ativos do **Feed de proposições** são estado público da URL para permitir compartilhamento, refresh e primeira renderização com o mesmo recorte.
 - A seleção de proposições do **Matcher** usa a mesma semântica de busca, filtro por tema e ordenação do **Feed de proposições**.
@@ -250,16 +286,42 @@ _Avoid_: Histórico bruto do deputado.
 - O desempate por deputado **Em atividade** no **Matcher** usa o snapshot mais recente conhecido, não a condição **Em exercício** em cada votação histórica.
 - O ranking do **Matcher** é ordenado pelo **Score Wilson do matcher**, preservando a **Compatibilidade bruta** e a amostra comparável para exibição.
 - O **Resumo de resultado do matcher** preserva a transparência de amostra sem exibir todas as métricas; o **Detalhe de resultado do matcher** contém métricas completas e detalhamento voto a voto.
-- O **Matcher** sinaliza **Sem bom match** quando o melhor resultado do escopo consultado tem **Compatibilidade bruta** menor que 60%.
+- O **Filtro de concordância do matcher** restringe quais **Deputados** aparecem no resultado; ele não altera a **Compatibilidade**, a **Compatibilidade bruta**, a amostra comparável nem o **Score Wilson do matcher** de nenhum **Deputado**.
+- O **Filtro de concordância do matcher** exige concordância em todas as **Proposições** marcadas; **Abstenção**, **Obstrução**, **Ausência sem motivo conhecido**, **Artigo 17**, **Voto não informado**, ausência de **Em exercício** e **Lacuna de dados** reprovam.
+- Uma **Proposição** com **Posição do usuário** `não sei` não pode entrar no **Filtro de concordância do matcher**.
+- O **Filtro de concordância do matcher** é entrada do **Rascunho de execução do matcher** e, diferente do escopo e de **Em atividade**, nunca aparece em endereço de página, porque a **Proposição** marcada permite inferir a **Posição do usuário** a partir dos **Deputados** exibidos.
+- Qualquer mudança na lista de **Proposições** selecionadas ou no valor de uma **Posição do usuário** zera o **Filtro de concordância do matcher**; trocar escopo ou **Em atividade** não zera.
+- Um **Filtro de concordância do matcher** que não deixa nenhum **Deputado** passar não é falha: é informação sobre o conjunto consultado.
+- O **Detalhe de resultado do matcher** de um **Deputado** exibido sob **Filtro de concordância do matcher** continua mostrando todos os votos, inclusive os discordantes.
+- O **Recorte do resultado do matcher** é aplicado depois do cálculo: como o **Filtro de concordância do matcher**, restringe quais **Deputados** aparecem sem alterar a **Compatibilidade**, a amostra comparável nem o **Score Wilson do matcher**.
+- Todo **Recorte do resultado do matcher** aparece no endereço da página, ao contrário do **Filtro de concordância do matcher**: recortar o conjunto exibido não revela nada sobre a **Posição do usuário** de quem filtrou.
+- Ocultar amostra pequena usa o alerta **Amostra pequena no matcher**, não um limiar próprio, para que filtro e alerta nunca divirjam.
+- Um **Recorte do resultado do matcher** que não deixa nenhum **Deputado** passar tem um único diagnóstico, comum aos recortes e válido também quando o recorte é **Em atividade**; só o **Filtro de concordância do matcher** mantém diagnóstico próprio.
+- O diagnóstico por escopo fica reservado à ausência de **Deputados** com votos comparáveis, que é afirmação sobre o dado; atribuí-la a um resultado esvaziado por **Recorte do resultado do matcher** seria falso.
+- O diagnóstico de **Recorte do resultado do matcher** vazio oferece ampliar para o escopo nacional quando o escopo é estadual, porque ampliar o conjunto avaliado é remédio tão plausível quanto afrouxar o recorte.
 - O **Comparativo de deputados** compara apenas **Deputados** cobertos pelo produto no MVP.
+- O **Rascunho de execução do matcher** guarda apenas entradas do usuário; resultado, detalhe e **Comparativo de deputados** são derivados dele e recalculados sob demanda.
+- O **Rascunho de execução do matcher** nunca trafega para o servidor e nunca aparece em endereço de página, porque **Posição do usuário** é convicção política.
+- Cada passo do **Matcher** e cada view derivada dele são endereçáveis, para que voltar e recarregar preservem o **Rascunho de execução do matcher**.
+- Ao entrar pela raiz do **Matcher** com um **Rascunho de execução do matcher** existente, o usuário escolhe entre retomá-lo e apagá-lo; recarregar ou abrir um endereço interno retoma automaticamente.
+- Um endereço do **Matcher** aberto sem **Rascunho de execução do matcher** suficiente não é erro: leva ao passo mais avançado que o rascunho sustenta.
 - No MVP-5, o **Comparativo de deputados** contextual reutiliza a **Posição do usuário** da execução atual do **Matcher**, sem persisti-la.
 - A **Concordância no comparativo** usa o mesmo efeito calculado pelo **Matcher** para a **Compatibilidade**, preservando a diferença entre concordância, discordância e fora do denominador.
 - O **Comparativo de deputados** contextual inclui apenas **Posições do usuário** computáveis e evita regras próprias quando a semântica já puder ser inferida do **Matcher**.
 - Uma célula fora do denominador no **Comparativo de deputados** preserva a classificação do par **Deputado** e **Votação nominal** usada pelo **Matcher**, em vez de colapsar todos os casos em um rótulo único.
 - No MVP-5, o **Comparativo de deputados** contextual é aberto a partir da seleção de dois ou três **Deputados** no resultado do **Matcher**.
 - O **Comparativo de deputados** usa **Em atividade** como status público atual do deputado, não **Em exercício**.
+- A listagem pública de **Deputados** mostra por padrão apenas quem está **Em atividade**; incluir quem está fora de exercício é escolha explícita, oferecida no painel de filtros e em um clique quando o recorte deixa a busca vazia, e apenas essa inclusão aparece no endereço da página.
 - O **Comparativo de deputados** oferece entrada para o **Perfil do deputado** no cabeçalho de cada deputado comparado.
-- O **Resumo de presença do deputado** exibido no **Comparativo de deputados** usa o mesmo recorte do **Perfil do deputado**, não apenas as proposições comparadas.
+- O **Resumo de presença do deputado** exibido no **Comparativo de deputados** é calculado sobre a **Janela do comparativo** de cada deputado, como as demais métricas da janela; o **Perfil do deputado** soma o **Resumo de presença do deputado** de todas as legislaturas.
+- O **Comparativo de deputados** tem duas entradas: a seleção de **Deputados** no resultado do **Matcher** e a seleção na listagem pública de **Deputados**; a segunda não tem **Posição do usuário** e por isso compara apenas dados consolidados.
+- Aberto pelo **Matcher**, o **Comparativo de deputados** oferece a grade de votos e a comparação de dados consolidados como visualizações da mesma tela, não como endereços diferentes.
+- Cada **Deputado** no **Comparativo de deputados** tem sua própria **Janela do comparativo**; as métricas de presença, proposições assinadas, órgãos e cota são calculadas sobre a janela inteira, com as contagens absolutas normalizadas por ano efetivo e a cota como posição sobre o período.
+- Na **Janela do comparativo**, os **Gastos da cota do deputado** somam todos os anos da janela — inclusive os de exercício parcial —, porque excluir os anos parciais deixaria sem linha justamente quem esteve pouco tempo em exercício; os dias em exercício que qualificam a soma são declarados no cabeçalho da coluna, e o detalhamento ano a ano fica no **Perfil do deputado**, para onde a célula aponta.
+- Um ano da **Janela do comparativo** sem cobertura da fonte de proposições assinadas torna a métrica indisponível para o deputado inteiro, em vez de publicar um total menor que o real.
+- Um **Deputado** cuja última legislatura em atividade é anterior à 55ª fica fora da base comparável no **Comparativo de deputados**: identidade permanece na coluna, mas nenhuma métrica, inclusive o **Resumo de presença do deputado**, é publicada para ele.
+- Quando as **Janelas do comparativo** dos **Deputados** comparados divergem, o **Comparativo de deputados** avisa antes de qualquer número.
+- No **Comparativo de deputados**, os **Gastos da cota do deputado** aparecem como valor gasto — média por ano e total da janela — sempre acompanhados da posição frente à mediana do estado e da UF do **Deputado**: omitir o valor absoluto escondia do usuário o dado que ele veio buscar, e o contexto que evita a leitura como confronto nominal — UF, dias em exercício e aviso de legislaturas divergentes — já está na mesma tela.
 - Um **Perfil do deputado** pertence a exatamente um **Deputado**.
 - O **Perfil do deputado** usa dados cadastrais estáveis do **Deputado** e o **Snapshot público do deputado** para partido, UF representada, foto e outros dados públicos atuais.
 - O **Perfil do deputado** e os cards de resultado do **Matcher** usam a mesma regra de **Nome público do deputado**.
@@ -272,7 +334,27 @@ _Avoid_: Histórico bruto do deputado.
 - Um **Perfil do deputado** existe quando o **Deputado** está cadastrado; ausência de histórico parlamentar é **Lacuna de dados**, não ausência do perfil.
 - O cargo exibido no **Perfil do deputado** é "Deputado federal"; condições como **Titular**, **Suplente**, **Licença**, **Em exercício** e **Em atividade** não substituem o cargo.
 - O **Perfil do deputado** pode exibir **Em atividade** como status público separado do cargo, usando a mesma regra derivada por intervalos de exercício do **Matcher**.
-- O **Perfil do deputado** exibe fonte oficial da Câmara derivada do `externalIdDeputado`, sem buscar dados em runtime na fonte.
+- O **Perfil do deputado** exibe fonte oficial da Câmara derivada do `externalIdDeputado`, sem depender de chamada à fonte para montar esse link.
+- O navegador nunca consulta a **Câmara** diretamente; toda leitura da fonte passa pelo backend do produto, que valida e transforma a resposta antes de publicá-la.
+- Os blocos de identidade do **Perfil do deputado** — **Snapshot público do deputado**, **Resumo de presença do deputado** e **Histórico partidário do deputado** — vêm do banco do produto e não dependem da disponibilidade da **Câmara**.
+- As seções do **Perfil do deputado** que consultam a **Câmara** em runtime falham isoladamente: indisponibilidade da fonte degrada a seção afetada, nunca os blocos de identidade nem as demais seções.
+- **Proposições assinadas pelo deputado** e os vínculos do **Deputado** com órgãos vêm do banco do produto, ingeridos de arquivo. Discursos são a única leitura da **Câmara** em runtime no **Perfil do deputado** e permanecem assim, porque a **Câmara** não os publica em arquivo.
+- O **Perfil do deputado** exibe **Proposições assinadas pelo deputado** recortadas pelo ano de apresentação, derivado de `dataApresentacao` e não do campo legislativo `ano`.
+- A quantidade de **Proposições assinadas pelo deputado** reproduz deliberadamente o contador "de sua autoria" da página oficial do deputado: proposições distintas com assinatura dele e `dataApresentacao` no ano, excluídos os tipos `DOC` e `OF`. Divergir desse número faria o usuário ver dois valores para o mesmo deputado e o mesmo ano.
+- O conjunto de **Proposições assinadas pelo deputado** não distingue proponente de apoiador e não sustenta afirmação de iniciativa, redação ou **Relatoria de proposição**.
+- A quantidade de **Proposições assinadas pelo deputado** não é métrica de produtividade e não cria comparação ou ranking entre **Deputados**, pela mesma razão que valem para presença, órgãos e discursos. A composição é desigual por razão institucional: quem ocupa cadeira na Mesa e relata muito acumula milhares de assinaturas que não descrevem atuação comparável.
+- A quantidade de proposições em que o **Deputado** foi **Primeiro signatário de proposição** é exibida como contador separado, nunca como recorte da quantidade de **Proposições assinadas pelo deputado**.
+- O **Perfil do deputado** exibe **Proposições assinadas pelo deputado** apenas como quantidades, não como lista; as proposições contadas não são importadas para o produto e não existem como **Proposição** no banco.
+- Um ano que a ingestão de **Proposições assinadas pelo deputado** ainda não cobre é **Lacuna de dados**, não zero assinaturas; um **Deputado** sem assinatura em ano coberto é zero real, e os dois nunca são apresentados da mesma forma.
+- O **Perfil do deputado** exibe **Gastos da cota do deputado** agregados por mês e por categoria oficial, sem despesas individuais, fornecedores nem comprovantes.
+- Um mês além da **Cobertura do dado da cota** é **Lacuna de dados**, não gasto zero; os dois nunca são apresentados da mesma forma.
+- Um ano ainda não carregado é **Lacuna de dados**, não ausência de gasto; o **Perfil do deputado** só oferece anos carregados e distingue os dois vazios por texto próprio.
+- O total anual de **Gastos da cota do deputado** é acompanhado da mediana do estado no mesmo ano, porque o teto da **Cota parlamentar** varia por estado e um valor absoluto isolado mede geografia antes de comportamento.
+- A mediana do estado só acompanha o total quando a fonte do ano está completa. Um ano dentro da janela da **Reposição de passagem aérea SIGEPA** que ainda não seja **Ano reposto** exibe o total sem comparação, porque a lacuna encolhe o gasto de cada **Deputado** em proporção diferente — muito para quem voa, pouco para quem não voa — e uma mediana igualmente encolhida faria quem mais voa parecer quem menos gasta.
+- A mediana do estado considera apenas **Deputados** que exerceram o ano inteiro; um **Deputado** com exercício parcial não recebe comparação, e seu gasto nunca é extrapolado por pró-rata.
+- A mediana do estado é sempre exibida com o número de **Deputados** que entraram no cálculo, sem piso de amostra: o denominador é o que calibra a confiança, e suprimi-la tiraria a referência das bancadas pequenas, que têm menos referência própria.
+- Um **Gasto da cota do deputado** agregado pode ser negativo, porque compensações e cancelamentos de passagem aérea excedem o gasto do período; o valor negativo é preservado e nunca apresentado em forma que o exiba como despesa positiva.
+- Comparar um **Deputado** contra a distribuição do seu estado é permitido, e valores de **Deputados** diferentes podem aparecer lado a lado desde que cada um venha com a sua posição frente à mediana do próprio estado, que é o que impede a leitura de um teto de cota maior como gasto maior.
 - Uma **Bancada** emite **Orientação** para uma **Votação**.
 - Um **Partido** pertence a zero ou uma **Federação** e a zero ou um **Bloco** em uma dada **Legislatura**.
 - Quando uma **Federação** orienta, os **Partidos** membros não orientam separadamente naquela **Votação**.

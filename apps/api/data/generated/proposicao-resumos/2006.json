@@ -1,0 +1,16 @@
+{
+  "ano": 2006,
+  "items": {
+    "339287": {
+      "sourceHash": "977481cdc03135412c750a30849263be030f45d595a2fb405cef3e07c1714522",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exige representação proporcional de partidos e de homens e mulheres nas Mesas e em cada comissão, com garantia de vaga para cada sexo.",
+      "resumoDetalhe": "- Assegura que, na constituição das Mesas e de cada comissão (permanente ou temporária), as vagas reflitam, na medida do possível, a proporção dos partidos ou blocos na respectiva Casa.\n- Garante que as vagas também reflitam, na medida do possível, a proporção entre homens e mulheres entre os integrantes da Casa, assegurando vaga para cada sexo.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T15:30:16.198Z",
+      "reviewedAt": "2026-08-16T18:00:00Z"
+    }
+  }
+}

@@ -18,7 +18,7 @@ const groups: FooterGroup[] = [
   {
     title: "Navegar",
     links: [
-      { href: "/proposicoes", label: "Proposições" },
+      { href: "/proposicoes", label: "Propostas" },
       { href: "/deputados", label: "Deputados" },
       { href: "/matcher", label: "Fazer comparação" },
     ],

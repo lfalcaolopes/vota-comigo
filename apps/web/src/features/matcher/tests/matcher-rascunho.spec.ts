@@ -1,0 +1,291 @@
+import type {
+  PosicaoUsuarioMatcher,
+  ProposicaoCard,
+} from "@vota-comigo/shared-types";
+import { describe, expect, it } from "vitest";
+
+import {
+  hasRascunhoEntries,
+  parseRascunho,
+  serializeRascunho,
+} from "../lib/matcher-rascunho";
+
+const selected: ProposicaoCard[] = [
+  {
+    externalIdProposicao: 123,
+    siglaTipo: "PL",
+    numero: 10,
+    ano: 2026,
+    ementa: "Altera a legislação eleitoral.",
+    resumoIaDisponivel: true,
+    resumoIaCard: "Resumo da proposta.",
+    dataApresentacao: "2026-03-10T12:00:00.000Z",
+    volumeVotacoesPlenario: 4,
+    dataUltimaVotacao: "2026-06-15T18:30:00.000Z",
+  },
+];
+
+describe("Rascunho de execução do matcher", () => {
+  describe("quando todas as entradas foram preenchidas", () => {
+    it("preserva as entradas e posições após serializar e reler", () => {
+      // Arrange
+      const posicoes = new Map<number, PosicaoUsuarioMatcher>([
+        [123, "aprovar"],
+      ]);
+
+      // Act
+      const serialized = serializeRascunho({
+        siglaUf: "SP",
+        escopo: "nacional",
+        selected,
+        posicoes,
+        externalIdProposicoesFiltroConcordancia: [123],
+      });
+      const parsed = parseRascunho(serialized);
+
+      // Assert
+      expect(parsed).toEqual({
+        siglaUf: "SP",
+        escopo: "nacional",
+        selected,
+        posicoes,
+        externalIdProposicoesFiltroConcordancia: [123],
+      });
+    });
+  });
+
+  describe("quando o preenchimento ainda não começou", () => {
+    it("trata o rascunho vazio como válido", () => {
+      // Arrange
+      const emptyRascunho = {
+        siglaUf: null,
+        escopo: "estadual" as const,
+        selected: [],
+        posicoes: new Map<number, PosicaoUsuarioMatcher>(),
+        externalIdProposicoesFiltroConcordancia: [],
+      };
+
+      // Act
+      const parsed = parseRascunho(serializeRascunho(emptyRascunho));
+
+      // Assert
+      expect(parsed).toEqual(emptyRascunho);
+    });
+
+    it("não oferece uma retomada vazia", () => {
+      // Arrange
+      const emptyRascunho = {
+        siglaUf: null,
+        escopo: "estadual" as const,
+        selected: [],
+        posicoes: new Map<number, PosicaoUsuarioMatcher>(),
+        externalIdProposicoesFiltroConcordancia: [],
+      };
+
+      // Act
+      const hasEntries = hasRascunhoEntries(emptyRascunho);
+
+      // Assert
+      expect(hasEntries).toBe(false);
+    });
+  });
+
+  describe("quando somente o local foi preenchido", () => {
+    it("trata o rascunho parcial como válido", () => {
+      // Arrange
+      const partialRascunho = {
+        siglaUf: "PE" as const,
+        escopo: "estadual" as const,
+        selected: [],
+        posicoes: new Map<number, PosicaoUsuarioMatcher>(),
+        externalIdProposicoesFiltroConcordancia: [],
+      };
+
+      // Act
+      const parsed = parseRascunho(serializeRascunho(partialRascunho));
+
+      // Assert
+      expect(parsed).toEqual(partialRascunho);
+    });
+
+    it("oferece a retomada do rascunho parcial", () => {
+      // Arrange
+      const partialRascunho = {
+        siglaUf: "PE" as const,
+        escopo: "estadual" as const,
+        selected: [],
+        posicoes: new Map<number, PosicaoUsuarioMatcher>(),
+        externalIdProposicoesFiltroConcordancia: [],
+      };
+
+      // Act
+      const hasEntries = hasRascunhoEntries(partialRascunho);
+
+      // Assert
+      expect(hasEntries).toBe(true);
+    });
+  });
+
+  describe("quando o conteúdo não é JSON válido", () => {
+    it("descarta o rascunho sem lançar erro", () => {
+      // Arrange
+      const malformed = "{nao-e-json";
+
+      // Act
+      const parse = () => parseRascunho(malformed);
+
+      // Assert
+      expect(parse).not.toThrow();
+      expect(parse()).toBeNull();
+    });
+  });
+
+  describe("quando o formato pertence a uma versão anterior", () => {
+    it("descarta o rascunho", () => {
+      // Arrange
+      const outdated = JSON.stringify({
+        version: 1,
+        siglaUf: "SP",
+        cidade: "Campinas",
+        escopo: "estadual",
+        selected: [],
+        posicoes: [],
+      });
+
+      // Act
+      const parsed = parseRascunho(outdated);
+
+      // Assert
+      expect(parsed).toBeNull();
+    });
+  });
+
+  describe("quando o rascunho foi gravado antes do filtro de concordância", () => {
+    it("retoma o rascunho sem marcações", () => {
+      // Arrange
+      const legacy = JSON.stringify({
+        version: 2,
+        siglaUf: "SP",
+        escopo: "estadual",
+        selected,
+        posicoes: [{ externalIdProposicao: 123, posicao: "aprovar" }],
+      });
+
+      // Act
+      const parsed = parseRascunho(legacy);
+
+      // Assert
+      expect(parsed).toEqual({
+        siglaUf: "SP",
+        escopo: "estadual",
+        selected,
+        posicoes: new Map([[123, "aprovar"]]),
+        externalIdProposicoesFiltroConcordancia: [],
+      });
+    });
+  });
+
+  describe("quando uma entrada viola o contrato compartilhado", () => {
+    it("descarta o rascunho", () => {
+      // Arrange
+      const invalid = JSON.stringify({
+        version: 2,
+        siglaUf: "XX",
+        escopo: "estadual",
+        selected: [],
+        posicoes: [],
+      });
+
+      // Act
+      const parsed = parseRascunho(invalid);
+
+      // Assert
+      expect(parsed).toBeNull();
+    });
+
+    it("descarta marcações inválidas do filtro de concordância", () => {
+      // Arrange
+      const invalid = JSON.stringify({
+        version: 2,
+        siglaUf: "SP",
+        escopo: "estadual",
+        selected,
+        posicoes: [{ externalIdProposicao: 123, posicao: "aprovar" }],
+        externalIdProposicoesFiltroConcordancia: ["123"],
+      });
+
+      // Act
+      const parse = () => parseRascunho(invalid);
+
+      // Assert
+      expect(parse).not.toThrow();
+      expect(parse()).toBeNull();
+    });
+
+    it("descarta marcação ausente das posições computáveis", () => {
+      // Arrange
+      const invalid = JSON.stringify({
+        version: 2,
+        siglaUf: "SP",
+        escopo: "estadual",
+        selected,
+        posicoes: [{ externalIdProposicao: 123, posicao: "aprovar" }],
+        externalIdProposicoesFiltroConcordancia: [456],
+      });
+
+      // Act
+      const parsed = parseRascunho(invalid);
+
+      // Assert
+      expect(parsed).toBeNull();
+    });
+
+    it("descarta marcação cuja posição é não sei", () => {
+      // Arrange
+      const invalid = JSON.stringify({
+        version: 2,
+        siglaUf: "SP",
+        escopo: "estadual",
+        selected,
+        posicoes: [{ externalIdProposicao: 123, posicao: "nao_sei" }],
+        externalIdProposicoesFiltroConcordancia: [123],
+      });
+
+      // Act
+      const parsed = parseRascunho(invalid);
+
+      // Assert
+      expect(parsed).toBeNull();
+    });
+  });
+
+  describe("quando o estado contém dados derivados", () => {
+    it("serializa somente as entradas do usuário", () => {
+      // Arrange
+      const stateWithDerivedData = {
+        siglaUf: "SP" as const,
+        escopo: "estadual" as const,
+        selected,
+        posicoes: new Map<number, PosicaoUsuarioMatcher>([[123, "aprovar"]]),
+        externalIdProposicoesFiltroConcordancia: [123],
+        resultados: { estadual: { deputados: [] } },
+        detalhe: { externalIdDeputado: 456 },
+        comparativo: [456, 789],
+        perfis: [{ externalIdDeputado: 456 }],
+      };
+
+      // Act
+      const serialized = JSON.parse(serializeRascunho(stateWithDerivedData));
+
+      // Assert
+      expect(serialized).toEqual({
+        version: 2,
+        siglaUf: "SP",
+        escopo: "estadual",
+        selected,
+        posicoes: [{ externalIdProposicao: 123, posicao: "aprovar" }],
+        externalIdProposicoesFiltroConcordancia: [123],
+      });
+    });
+  });
+});

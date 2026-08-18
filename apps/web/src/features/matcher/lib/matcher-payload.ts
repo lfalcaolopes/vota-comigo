@@ -7,12 +7,14 @@ import type {
   SiglaUf,
 } from "@vota-comigo/shared-types";
 
-export type ExecucaoPayloadInput = {
+import { toResultadoFiltros, type ResultadoFiltros } from "./resultado-filtros";
+
+// O recorte entra como bloco para que um filtro novo chegue ao corpo da
+// requisição sem precisar ser repetido aqui e em cada chamador.
+export type ExecucaoPayloadInput = ResultadoFiltros & {
   siglaUf: SiglaUf;
   escopo: EscopoMatcher;
-  cidade?: string;
   posicoes: ReadonlyMap<number, PosicaoUsuarioMatcher>;
-  apenasEmAtividade: boolean;
 };
 
 function isComputavel(posicao: PosicaoUsuarioMatcher): boolean {
@@ -29,13 +31,17 @@ export function buildExecucaoRequest(
       posicao,
     }));
 
-  const cidade = input.cidade?.trim();
+  const { externalIdProposicoesFiltroConcordancia, partidos, ...recorte } =
+    toResultadoFiltros(input);
 
   return {
     siglaUf: input.siglaUf,
     escopo: input.escopo,
     posicoes,
-    apenasEmAtividade: input.apenasEmAtividade,
-    ...(cidade ? { cidade } : {}),
+    ...recorte,
+    partidos: [...partidos],
+    externalIdProposicoesFiltroConcordancia: [
+      ...externalIdProposicoesFiltroConcordancia,
+    ],
   };
 }

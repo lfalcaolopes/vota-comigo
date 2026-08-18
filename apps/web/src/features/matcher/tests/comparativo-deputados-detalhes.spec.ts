@@ -1,32 +1,15 @@
 import type {
   DeputadoPerfil,
   MatcherDeputadoDetalhe,
-  MatcherDeputadoResumo,
   MatcherExecucaoRequest,
 } from "@vota-comigo/shared-types";
 import { describe, expect, it, vi } from "vitest";
 
 import { loadComparativoDeputadosData } from "../lib/comparativo-deputados-detalhes";
 
-function deputado(externalIdDeputado: number): MatcherDeputadoResumo {
-  return {
-    externalIdDeputado,
-    nome: `Deputado ${externalIdDeputado}`,
-    partido: "PP",
-    siglaUf: "SP",
-    urlFoto: null,
-    emAtividade: true,
-    compatibilidadeBruta: 80,
-    amostraComparavel: 3,
-    scoreOrdenacaoPercentual: 75,
-    alertas: [],
-  };
-}
-
 function detalhe(externalIdDeputado: number): MatcherDeputadoDetalhe {
   return {
     siglaUf: "SP",
-    cidade: null,
     totalProposicoesSelecionadas: 3,
     totalPosicoesComputaveis: 3,
     deputado: {
@@ -74,6 +57,8 @@ function perfil(externalIdDeputado: number): DeputadoPerfil {
     externalIdLegislaturaFinal: null,
     legislaturaInicialPeriodo: null,
     legislaturaFinalPeriodo: null,
+    defaultYear: null,
+    validYearRange: null,
     resumoPresencaDisponivel: false,
     resumoPresenca: null,
     historicoPartidarioDisponivel: false,
@@ -88,8 +73,11 @@ describe("loadComparativoDeputadosData", () => {
       const request: MatcherExecucaoRequest = {
         siglaUf: "SP",
         escopo: "estadual",
-        cidade: "Santos",
         apenasEmAtividade: true,
+        partidos: [],
+        ocultarAmostraPequena: false,
+        sexo: null,
+        externalIdProposicoesFiltroConcordancia: [1],
         posicoes: [
           { externalIdProposicao: 1, posicao: "aprovar" },
           { externalIdProposicao: 2, posicao: "rejeitar" },
@@ -105,7 +93,7 @@ describe("loadComparativoDeputadosData", () => {
 
       // Act
       const data = await loadComparativoDeputadosData({
-        selectedDeputados: [deputado(20), deputado(10), deputado(30)],
+        externalIdsDeputado: [20, 10, 30],
         request,
         getDeputadoDetalhe,
         getDeputadoPerfil,

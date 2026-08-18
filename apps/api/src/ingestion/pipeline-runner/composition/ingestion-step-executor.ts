@@ -148,6 +148,7 @@ function createStepContext(
     return {
       ...base,
       sourceFile: step.name,
+      year: entry.year,
       readRecords: apiReadGuard,
     };
   }
@@ -164,6 +165,20 @@ function createStepContext(
           scope: 'annual',
           dataset,
           year,
+        });
+
+        if (!deps.sourceExists(datasetPath)) {
+          return undefined;
+        }
+
+        return () => deps.csvReader(deps.openSource(datasetPath));
+      },
+      readLegislaturaDataset: (dataset, legislatura) => {
+        const datasetPath = deps.sourcePathFor({
+          stepName: dataset,
+          scope: 'single',
+          dataset,
+          legislatura,
         });
 
         if (!deps.sourceExists(datasetPath)) {

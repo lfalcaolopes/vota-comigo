@@ -4,6 +4,8 @@ import type {
   ProposicaoCard,
 } from "@vota-comigo/shared-types";
 
+import { toPosicaoUsuarioLabel } from "@/shared/proposicao";
+
 export type RevisaoItem = {
   card: ProposicaoCard;
   posicao: PosicaoUsuarioMatcher | null;
@@ -24,8 +26,5 @@ export function buildRevisaoItems(
 }
 
 export function posicaoLabel(posicao: PosicaoUsuarioMatcher | null): string {
-  if (posicao === null) return "A decidir";
-  if (posicao === "aprovar") return "Deveria ser aprovada";
-  if (posicao === "rejeitar") return "Não deveria ser aprovada";
-  return "Não sei";
+  return toPosicaoUsuarioLabel(posicao);
 }

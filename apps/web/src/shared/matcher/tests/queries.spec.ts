@@ -12,6 +12,10 @@ const request: MatcherExecucaoRequest = {
   siglaUf: "SP",
   escopo: "estadual",
   apenasEmAtividade: false,
+  partidos: [],
+  ocultarAmostraPequena: false,
+  sexo: null,
+  externalIdProposicoesFiltroConcordancia: [],
   posicoes: [
     { externalIdProposicao: 1, posicao: "aprovar" },
     { externalIdProposicao: 2, posicao: "rejeitar" },
@@ -21,7 +25,6 @@ const request: MatcherExecucaoRequest = {
 
 const resultado: MatcherResultado = {
   siglaUf: "SP",
-  cidade: null,
   totalProposicoesSelecionadas: 3,
   totalPosicoesComputaveis: 3,
   escopo: "estadual",
@@ -31,7 +34,6 @@ const resultado: MatcherResultado = {
   total: 0,
   limit: 20,
   offset: 0,
-  semBomMatch: false,
 };
 
 afterEach(() => {
@@ -128,7 +130,6 @@ describe("runMatcher", () => {
 
 const detalhe: MatcherDeputadoDetalhe = {
   siglaUf: "SP",
-  cidade: null,
   totalProposicoesSelecionadas: 3,
   totalPosicoesComputaveis: 3,
   deputado: {

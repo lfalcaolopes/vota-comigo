@@ -1,4 +1,7 @@
-import { createProposicaoComputavelStep } from './proposicao-computavel.step';
+import {
+  createProposicaoComputavelStep,
+  PROPOSICAO_COMPUTAVEL_RULE_VERSION,
+} from './proposicao-computavel.step';
 import type {
   ProposicaoComputavelCandidateRow,
   ProposicaoComputavelRepository,
@@ -22,6 +25,7 @@ function candidate(
     votosNao: 100,
     votosOutros: 5,
     aprovacao: 1,
+    votosComputaveis: 400,
     ...overrides,
   };
 }
@@ -73,7 +77,7 @@ function projectionRow(
     votacaoReferenciaPattern: 'projeto_de_lei',
     volumeVotacoesPlenario: 1,
     dataUltimaVotacao: '2024-05-01',
-    ruleVersion: 1,
+    ruleVersion: PROPOSICAO_COMPUTAVEL_RULE_VERSION,
     ...overrides,
   };
 }
@@ -139,6 +143,60 @@ describe('proposicao_computavel step', () => {
         projectionRow({
           votacaoReferenciaId: 'votacao-pec',
           votacaoReferenciaPattern: 'pec_segundo_turno',
+          volumeVotacoesPlenario: 2,
+          dataUltimaVotacao: '2024-06-01',
+        }),
+      ]);
+    });
+  });
+
+  describe('when the only plenary vote has no voto computavel', () => {
+    it('excludes the proposicao from the projection', async () => {
+      // Arrange
+      const repository = createFakeRepository([
+        candidate({ votosComputaveis: 0 }),
+      ]);
+      const step = createProposicaoComputavelStep(repository);
+
+      // Act
+      const result = await step.run(context());
+
+      // Assert
+      expect(result).toMatchObject({ read: 1, inserted: 0, ignored: 1 });
+      expect(repository.rows).toEqual([]);
+    });
+  });
+
+  describe('when only one of the plenary votes has voto computavel', () => {
+    it('keeps the proposicao with that vote as the reference', async () => {
+      // Arrange
+      const repository = createFakeRepository([
+        candidate({
+          votacaoId: 'votacao-pec',
+          externalIdVotacao: '1-2',
+          descricao: 'Proposta de Emenda à Constituição',
+          ultimaAberturaVotacaoDescricao: 'Votação em segundo turno',
+          data: '2024-06-01',
+          votosComputaveis: 0,
+        }),
+        candidate({
+          votacaoId: 'votacao-pl',
+          externalIdVotacao: '1-1',
+          descricao: 'Aprovado o Projeto de Lei',
+          data: '2024-05-01',
+        }),
+      ]);
+      const step = createProposicaoComputavelStep(repository);
+
+      // Act
+      const result = await step.run(context());
+
+      // Assert
+      expect(result).toMatchObject({ read: 2, inserted: 1, ignored: 0 });
+      expect(repository.rows).toEqual([
+        projectionRow({
+          votacaoReferenciaId: 'votacao-pl',
+          votacaoReferenciaPattern: 'projeto_de_lei',
           volumeVotacoesPlenario: 2,
           dataUltimaVotacao: '2024-06-01',
         }),

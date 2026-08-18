@@ -22,6 +22,7 @@ const buttonVariants: Record<ButtonVariant, string> = {
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
+  ref?: Ref<HTMLButtonElement>;
 };
 
 export function Button({

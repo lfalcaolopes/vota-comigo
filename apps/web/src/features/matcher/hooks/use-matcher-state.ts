@@ -6,38 +6,83 @@ import type {
   ProposicaoCard,
   SiglaUf,
 } from "@vota-comigo/shared-types";
-import { useReducer } from "react";
+import { useEffect, useReducer, useRef } from "react";
 
-import { perfil as getDeputadoPerfil } from "@/shared/deputado";
-import { getDeputadoDetalhe, runMatcher } from "@/shared/matcher";
+import { runMatcher } from "@/shared/matcher";
 
-import { loadComparativoDeputadosData } from "../lib/comparativo-deputados-detalhes";
 import { buildExecucaoRequest } from "../lib/matcher-payload";
+import type { ResultadoUrlState } from "../lib/matcher-route";
+import {
+  clearRascunho,
+  loadRascunho,
+  saveRascunho,
+} from "../lib/matcher-rascunho-storage";
+import { hasRascunhoEntries } from "../lib/matcher-rascunho";
+import {
+  toResultadoFiltros,
+  type ResultadoFiltros,
+} from "../lib/resultado-filtros";
 import {
   activeResultado,
   canAdvanceSelecao,
-  canOpenComparativo,
   canRunMatcher,
   executionValidation,
   hasMoreDeputados,
   initMatcherState,
-  isDetalheOpen,
   matcherReducer,
   selectionCount,
-  type MatcherStep,
 } from "../lib/matcher-state";
 
 const PAGE_SIZE = 20;
 
-export function useMatcherState(candidates: ProposicaoCard[]) {
-  const [state, dispatch] = useReducer(
-    matcherReducer,
-    candidates,
-    initMatcherState,
-  );
+// O escopo e a atividade vêm da URL; a concordância vem do rascunho, por
+// decisão do ADR 021. A execução precisa das duas fontes juntas.
+export type ResultadoExecucaoFiltros = ResultadoUrlState & ResultadoFiltros;
 
-  function setLocal(siglaUf: SiglaUf, cidade: string) {
-    dispatch({ type: "setLocal", siglaUf, cidade });
+type RunFetchInput = {
+  escopo: EscopoMatcher;
+  offset: number;
+  append: boolean;
+  filtros?: ResultadoFiltros;
+};
+
+export function useMatcherState() {
+  const [state, dispatch] = useReducer(matcherReducer, [], initMatcherState);
+  const resultadoRequestIdRef = useRef(0);
+
+  useEffect(() => {
+    const rascunho = loadRascunho(window.sessionStorage);
+    dispatch({ type: "hydrateRascunho", rascunho });
+  }, []);
+
+  useEffect(() => {
+    if (!state.isHydrated) return;
+
+    const rascunho = {
+      siglaUf: state.siglaUf,
+      escopo: state.escopo,
+      selected: state.selected,
+      posicoes: state.posicoes,
+      externalIdProposicoesFiltroConcordancia:
+        state.externalIdProposicoesFiltroConcordancia,
+    };
+
+    if (hasRascunhoEntries(rascunho)) {
+      saveRascunho(window.sessionStorage, rascunho);
+    } else {
+      clearRascunho(window.sessionStorage);
+    }
+  }, [
+    state.escopo,
+    state.externalIdProposicoesFiltroConcordancia,
+    state.isHydrated,
+    state.posicoes,
+    state.selected,
+    state.siglaUf,
+  ]);
+
+  function setLocal(siglaUf: SiglaUf) {
+    dispatch({ type: "setLocal", siglaUf });
   }
 
   function toggleProposicao(proposicao: ProposicaoCard) {
@@ -51,18 +96,17 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     dispatch({ type: "setPosicao", externalIdProposicao, posicao });
   }
 
-  function goToStep(step: MatcherStep) {
-    dispatch({ type: "goToStep", step });
-  }
+  async function runFetch({
+    escopo,
+    offset,
+    append,
+    filtros = toResultadoFiltros(state),
+  }: RunFetchInput) {
+    if (state.siglaUf === null || !canRunMatcher(state)) return false;
+    if (append && state.status === "loading") return false;
 
-  async function runFetch(
-    escopo: EscopoMatcher,
-    offset: number,
-    append: boolean,
-    apenasEmAtividade: boolean = state.apenasEmAtividade,
-  ) {
-    if (state.siglaUf === null || !canRunMatcher(state)) return;
-    if (state.status === "loading") return;
+    const requestId = resultadoRequestIdRef.current + 1;
+    resultadoRequestIdRef.current = requestId;
 
     dispatch({ type: "runStart" });
 
@@ -70,66 +114,79 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
       const request = buildExecucaoRequest({
         siglaUf: state.siglaUf,
         escopo,
-        cidade: state.cidade,
         posicoes: state.posicoes,
-        apenasEmAtividade,
+        ...filtros,
       });
       const resultado = await runMatcher(request, { limit: PAGE_SIZE, offset });
+      if (requestId !== resultadoRequestIdRef.current) return false;
       if (append) {
         dispatch({ type: "loadMoreOk", escopo, resultado });
       } else {
         dispatch({ type: "runOk", escopo, resultado });
       }
+      return true;
     } catch {
+      if (requestId !== resultadoRequestIdRef.current) return false;
       dispatch({ type: "runError" });
+      return false;
     }
   }
 
   async function execute() {
-    await runFetch(state.escopo, 0, false);
+    return runFetch({ escopo: state.escopo, offset: 0, append: false });
+  }
+
+  async function executeResultado(filters: ResultadoExecucaoFiltros) {
+    dispatch({ type: "setResultadoFilters", ...filters });
+    return runFetch({
+      escopo: filters.escopo,
+      offset: 0,
+      append: false,
+      filtros: filters,
+    });
   }
 
   async function setEscopo(escopo: EscopoMatcher) {
     if (escopo === state.escopo) return;
     dispatch({ type: "setEscopo", escopo });
     if (state.resultados[escopo] === null) {
-      await runFetch(escopo, 0, false);
+      await runFetch({ escopo, offset: 0, append: false });
     }
   }
 
   async function loadMore() {
     const r = activeResultado(state);
     if (!r || r.deputados.length >= r.total) return;
-    await runFetch(state.escopo, r.deputados.length, true);
+    await runFetch({
+      escopo: state.escopo,
+      offset: r.deputados.length,
+      append: true,
+    });
   }
 
-  async function setApenasEmAtividade(value: boolean) {
-    dispatch({ type: "setApenasEmAtividade", value });
-    await runFetch(state.escopo, 0, false, value);
-  }
-
-  async function openDetalhe(externalIdDeputado: number) {
-    if (state.siglaUf === null || !canRunMatcher(state)) return;
-
-    dispatch({ type: "openDetalheStart", externalIdDeputado });
-
-    try {
-      const request = buildExecucaoRequest({
-        siglaUf: state.siglaUf,
-        escopo: state.escopo,
-        cidade: state.cidade,
-        posicoes: state.posicoes,
-        apenasEmAtividade: state.apenasEmAtividade,
-      });
-      const detalhe = await getDeputadoDetalhe(externalIdDeputado, request);
-      dispatch({ type: "openDetalheOk", detalhe });
-    } catch {
-      dispatch({ type: "openDetalheError" });
-    }
-  }
-
-  function closeDetalhe() {
-    dispatch({ type: "closeDetalhe" });
+  async function toggleFiltroConcordancia(externalIdProposicao: number) {
+    const isMarked =
+      state.externalIdProposicoesFiltroConcordancia.includes(
+        externalIdProposicao,
+      );
+    const next = isMarked
+      ? state.externalIdProposicoesFiltroConcordancia.filter(
+          (id) => id !== externalIdProposicao,
+        )
+      : [
+          ...state.externalIdProposicoesFiltroConcordancia,
+          externalIdProposicao,
+        ];
+    dispatch({ type: "toggleFiltroConcordancia", externalIdProposicao });
+    await runFetch({
+      escopo: state.escopo,
+      offset: 0,
+      append: false,
+      filtros: {
+        ...toResultadoFiltros(state),
+        externalIdProposicoesFiltroConcordancia: next,
+      },
+    });
   }
 
   function startComparativoSelection() {
@@ -149,42 +206,15 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     dispatch({ type: "cancelComparativoSelection" });
   }
 
-  async function openComparativo() {
-    if (state.siglaUf === null || !canRunMatcher(state)) return;
-    if (!canOpenComparativo(state)) return;
-
-    dispatch({ type: "openComparativoStart" });
-
-    try {
-      const request = buildExecucaoRequest({
-        siglaUf: state.siglaUf,
-        escopo: state.escopo,
-        cidade: state.cidade,
-        posicoes: state.posicoes,
-        apenasEmAtividade: state.apenasEmAtividade,
-      });
-      const data = await loadComparativoDeputadosData({
-        selectedDeputados: state.selectedComparativoDeputados,
-        request,
-        getDeputadoDetalhe,
-        getDeputadoPerfil,
-      });
-      dispatch({
-        type: "openComparativoOk",
-        detalhes: data.detalhes,
-        perfis: data.perfis,
-      });
-    } catch {
-      dispatch({ type: "openComparativoError" });
-    }
-  }
-
-  function backFromComparativo() {
-    dispatch({ type: "backFromComparativo" });
+  function resetMatcher() {
+    resultadoRequestIdRef.current += 1;
+    clearRascunho(window.sessionStorage);
+    dispatch({ type: "resetMatcher" });
   }
 
   return {
     state,
+    isHydrated: state.isHydrated,
     validation: executionValidation(state),
     canAdvanceSelecao: canAdvanceSelecao(state),
     canRun: canRunMatcher(state),
@@ -192,24 +222,20 @@ export function useMatcherState(candidates: ProposicaoCard[]) {
     resultado: activeResultado(state),
     escopo: state.escopo,
     apenasEmAtividade: state.apenasEmAtividade,
+    externalIdProposicoesFiltroConcordancia:
+      state.externalIdProposicoesFiltroConcordancia,
     hasMore: hasMoreDeputados(state),
-    detalhe: state.detalhe,
-    detalheStatus: state.detalheStatus,
-    isDetalheOpen: isDetalheOpen(state),
     setLocal,
     toggleProposicao,
     setPosicao,
-    goToStep,
     execute,
+    executeResultado,
     setEscopo,
-    setApenasEmAtividade,
+    toggleFiltroConcordancia,
     loadMore,
-    openDetalhe,
-    closeDetalhe,
     startComparativoSelection,
     toggleComparativoDeputado,
     cancelComparativoSelection,
-    openComparativo,
-    backFromComparativo,
+    resetMatcher,
   };
 }

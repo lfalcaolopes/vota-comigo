@@ -4,6 +4,7 @@ import {
   proposicaoCardSchema,
   votacaoReferenciaResumoSchema,
 } from "./proposicoes";
+import { deputadoSexoSchema } from "./deputados";
 import { deputadoVotacaoClassification } from "./exercicio";
 
 export const siglaUfEnum = z.enum([
@@ -63,7 +64,6 @@ export const matcherCompletionEventSchema = z.object({
 export const matcherExecucaoRequestSchema = z.object({
   siglaUf: siglaUfEnum,
   escopo: escopoMatcherEnum.default("estadual"),
-  cidade: z.string().trim().min(1).max(120).optional(),
   posicoes: z
     .array(posicaoMatcherSchema)
     .min(MIN_POSICOES_COMPUTAVEIS)
@@ -82,11 +82,17 @@ export const matcherExecucaoRequestSchema = z.object({
       });
     }),
   apenasEmAtividade: z.boolean().default(false),
+  partidos: z.array(z.string().trim().min(1).max(20)).max(60).default([]),
+  sexo: deputadoSexoSchema.nullable().default(null),
+  ocultarAmostraPequena: z.boolean().default(false),
+  externalIdProposicoesFiltroConcordancia: z
+    .array(z.number().int().positive())
+    .max(MAX_POSICOES)
+    .default([]),
 });
 
 export const matcherExecucaoResumoSchema = z.object({
   siglaUf: siglaUfEnum,
-  cidade: z.string().nullable(),
   totalProposicoesSelecionadas: z.number().int().nonnegative(),
   totalPosicoesComputaveis: z.number().int().nonnegative(),
 });
@@ -114,7 +120,6 @@ export const matcherResultadoSchema = matcherExecucaoResumoSchema.extend({
   total: z.number().int().nonnegative(),
   limit: z.number().int().nonnegative(),
   offset: z.number().int().nonnegative(),
-  semBomMatch: z.boolean(),
 });
 
 export const matcherEffectEnum = z.enum([

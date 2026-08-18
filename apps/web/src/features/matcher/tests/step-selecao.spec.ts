@@ -32,8 +32,7 @@ function render(selected: ProposicaoCard[]): string {
       display: "empty-default",
       canLoadMore: false,
       query: "",
-      ordenacao: "mais-recentes",
-      tema: null,
+      filtros: { ordenacao: "mais-votadas", tema: null },
       temas,
       selected,
       totalSelecionadas: selected.length,
@@ -41,9 +40,8 @@ function render(selected: ProposicaoCard[]): string {
       onToggle: vi.fn(),
       onSubmitSearch: vi.fn(),
       onClearSearch: vi.fn(),
-      onChangeOrdenacao: vi.fn(),
-      onChangeTema: vi.fn(),
-      onClearFilters: vi.fn(),
+      onApplyFiltros: vi.fn(),
+      onClearTudo: vi.fn(),
       onLoadMore: vi.fn(),
       onBack: vi.fn(),
       onAdvance: vi.fn(),
@@ -88,6 +86,23 @@ describe("StepSelecao sidebar (Sua seleção)", () => {
 
       // Assert
       expect(html).toContain("Ementa oficial.");
+    });
+  });
+
+  describe("when a selected card has a summary longer than the sidebar clamp", () => {
+    it("offers an expand control named after the proposicao", () => {
+      // Arrange
+      const ementa =
+        "Reforma constitucional da previdência que cria um novo regime de " +
+        "capitalização e estabelece regras de transição.";
+      const selected = [card({ ementa })];
+
+      // Act
+      const html = render(selected);
+
+      // Assert
+      expect(html).toContain(ementa);
+      expect(html).toContain('aria-label="Ver mais do resumo de PL 100/2024"');
     });
   });
 });

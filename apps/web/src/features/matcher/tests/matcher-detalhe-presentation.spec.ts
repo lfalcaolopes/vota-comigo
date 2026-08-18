@@ -14,9 +14,7 @@ import {
   groupVotosByMatcherEffect,
   sortVotosByVotacaoDataDesc,
   toFiltroLabel,
-  toMatcherEffectLabel,
   toMatcherEffectVerdict,
-  toPosicaoLabel,
   toSituacaoLabel,
 } from "../lib/matcher-detalhe-presentation";
 
@@ -138,7 +136,7 @@ describe("toSituacaoLabel", () => {
     ["obstrucao", "Obstrução"],
     ["ausencia_sem_motivo_conhecido", "Ausência sem motivo conhecido"],
     ["fora_de_exercicio", "Fora de exercício"],
-    ["artigo_17", "Artigo 17"],
+    ["artigo_17", "Impedimento regimental"],
     ["voto_nao_informado", "Voto não informado"],
     ["lacuna_de_dados", "Sem dados"],
   ];
@@ -151,47 +149,6 @@ describe("toSituacaoLabel", () => {
   }
 });
 
-describe("toPosicaoLabel", () => {
-  describe("when posicao is aprovar", () => {
-    it("returns 'A favor da aprovação'", () => {
-      // Act / Assert
-      expect(toPosicaoLabel("aprovar")).toBe("A favor da aprovação");
-    });
-  });
-
-  describe("when posicao is rejeitar", () => {
-    it("returns 'Contra a aprovação'", () => {
-      // Act / Assert
-      expect(toPosicaoLabel("rejeitar")).toBe("Contra a aprovação");
-    });
-  });
-});
-
-describe("toMatcherEffectLabel", () => {
-  describe("when effect is concordancia", () => {
-    it("returns 'Concordou'", () => {
-      // Act / Assert
-      expect(toMatcherEffectLabel("concordancia")).toBe("Concordou");
-    });
-  });
-
-  describe("when effect is discordancia", () => {
-    it("returns 'Discordou'", () => {
-      // Act / Assert
-      expect(toMatcherEffectLabel("discordancia")).toBe("Discordou");
-    });
-  });
-
-  describe("when effect is fora_do_denominador", () => {
-    it("returns 'Fora do denominador'", () => {
-      // Act / Assert
-      expect(toMatcherEffectLabel("fora_do_denominador")).toBe(
-        "Fora do denominador",
-      );
-    });
-  });
-});
-
 describe("toMatcherEffectVerdict", () => {
   describe("when effect is concordancia", () => {
     it("reads as aligned with a success tone", () => {
@@ -199,7 +156,7 @@ describe("toMatcherEffectVerdict", () => {
       const verdict = toMatcherEffectVerdict("concordancia");
 
       // Assert
-      expect(verdict).toEqual({ label: "Alinhado", tone: "success" });
+      expect(verdict).toEqual({ label: "Votou como você", tone: "success" });
     });
   });
 
@@ -209,7 +166,7 @@ describe("toMatcherEffectVerdict", () => {
       const verdict = toMatcherEffectVerdict("discordancia");
 
       // Assert
-      expect(verdict).toEqual({ label: "Divergente", tone: "danger" });
+      expect(verdict).toEqual({ label: "Votou diferente", tone: "danger" });
     });
   });
 
@@ -219,7 +176,7 @@ describe("toMatcherEffectVerdict", () => {
       const verdict = toMatcherEffectVerdict("fora_do_denominador");
 
       // Assert
-      expect(verdict).toEqual({ label: "Fora do cálculo", tone: "neutral" });
+      expect(verdict).toEqual({ label: "Fora da conta", tone: "neutral" });
     });
   });
 });
@@ -364,9 +321,9 @@ describe("sortVotosByVotacaoDataDesc", () => {
 describe("toFiltroLabel", () => {
   const cases: [Parameters<typeof toFiltroLabel>[0], string][] = [
     ["todos", "Todos"],
-    ["alinhados", "Alinhados"],
-    ["divergentes", "Divergentes"],
-    ["fora", "Fora do cálculo"],
+    ["alinhados", "Votou como você"],
+    ["divergentes", "Votou diferente"],
+    ["fora", "Fora da conta"],
   ];
 
   for (const [filtro, expected] of cases) {
@@ -389,21 +346,23 @@ describe("formatAmostraComparavel", () => {
   describe("when there are no comparable votações", () => {
     it("states the absence in plain language", () => {
       // Act / Assert
-      expect(formatAmostraComparavel(0)).toBe("sem votações comparáveis");
+      expect(formatAmostraComparavel(0)).toBe(
+        "nenhuma resposta entrou na conta",
+      );
     });
   });
 
   describe("when there is exactly one comparable votação", () => {
     it("uses the singular noun", () => {
       // Act / Assert
-      expect(formatAmostraComparavel(1)).toBe("em 1 votação comparável");
+      expect(formatAmostraComparavel(1)).toBe("1 resposta entrou na conta");
     });
   });
 
   describe("when there are several comparable votações", () => {
     it("uses the plural noun", () => {
       // Act / Assert
-      expect(formatAmostraComparavel(4)).toBe("em 4 votações comparáveis");
+      expect(formatAmostraComparavel(4)).toBe("4 respostas entraram na conta");
     });
   });
 });

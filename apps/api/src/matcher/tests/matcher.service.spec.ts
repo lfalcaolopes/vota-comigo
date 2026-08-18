@@ -30,6 +30,10 @@ function request(
     siglaUf: 'PE',
     escopo: 'estadual',
     apenasEmAtividade: false,
+    partidos: [],
+    sexo: null,
+    ocultarAmostraPequena: false,
+    externalIdProposicoesFiltroConcordancia: [],
     posicoes: [
       posicao({ externalIdProposicao: 1, posicao: 'aprovar' }),
       posicao({ externalIdProposicao: 2, posicao: 'rejeitar' }),
@@ -121,6 +125,89 @@ function votacaoReferenciaVotos(
 const pagina = { limit: 20, offset: 0 };
 
 describe('MatcherService.execute', () => {
+  describe('when filtering by concordancia', () => {
+    it('restricts deputados without recalculating compatibility', async () => {
+      // Arrange
+      const votacoes = [
+        votacaoReferenciaVotos(
+          1,
+          new Map([
+            ['dep-1', 'sim'],
+            ['dep-2', 'nao'],
+          ]),
+        ),
+        votacaoReferenciaVotos(
+          2,
+          new Map([
+            ['dep-1', 'nao'],
+            ['dep-2', 'sim'],
+          ]),
+        ),
+        votacaoReferenciaVotos(
+          3,
+          new Map([
+            ['dep-1', 'nao'],
+            ['dep-2', 'sim'],
+          ]),
+        ),
+      ];
+      const deputados = [
+        {
+          deputadoId: 'dep-1',
+          externalIdDeputado: 1,
+          nome: 'Concorda no filtro',
+          nomeEleitoral: null,
+          nomeCivil: null,
+          partido: 'PT',
+          siglaSexo: 'F',
+          siglaUf: 'PE' as const,
+          urlFoto: null,
+          intervalos: [emExercicio],
+        },
+        {
+          deputadoId: 'dep-2',
+          externalIdDeputado: 2,
+          nome: 'Discorda no filtro',
+          nomeEleitoral: null,
+          nomeCivil: null,
+          partido: 'PT',
+          siglaSexo: 'F',
+          siglaUf: 'PE' as const,
+          urlFoto: null,
+          intervalos: [emExercicio],
+        },
+      ];
+      const service = new MatcherService(
+        fakeRepository({
+          computaveis: new Set([1, 2, 3]),
+          votacoes,
+          deputados,
+        }),
+      );
+
+      // Act
+      const resultado = await service.execute(
+        request({
+          posicoes: [
+            posicao({ externalIdProposicao: 1, posicao: 'aprovar' }),
+            posicao({ externalIdProposicao: 2, posicao: 'aprovar' }),
+            posicao({ externalIdProposicao: 3, posicao: 'aprovar' }),
+          ],
+          externalIdProposicoesFiltroConcordancia: [1],
+        }),
+        pagina,
+      );
+
+      // Assert
+      expect(resultado.total).toBe(1);
+      expect(resultado.totalDeputadosAvaliados).toBe(1);
+      expect(resultado.deputados[0]).toMatchObject({
+        externalIdDeputado: 1,
+        compatibilidadeBruta: 33.33,
+      });
+    });
+  });
+
   describe('when the execution is valid', () => {
     it('returns the estadual result with the validation summary and engine deputados', async () => {
       // Arrange
@@ -135,6 +222,7 @@ describe('MatcherService.execute', () => {
           nomeEleitoral: null,
           nomeCivil: null,
           partido: 'PT',
+          siglaSexo: 'F',
           siglaUf: 'PE',
           urlFoto: 'https://foto/dep-1.jpg',
           intervalos: [emExercicio],
@@ -149,15 +237,11 @@ describe('MatcherService.execute', () => {
       );
 
       // Act
-      const resultado = await service.execute(
-        request({ cidade: 'Recife' }),
-        pagina,
-      );
+      const resultado = await service.execute(request(), pagina);
 
       // Assert
       expect(resultado).toMatchObject({
         siglaUf: 'PE',
-        cidade: 'Recife',
         totalProposicoesSelecionadas: 3,
         totalPosicoesComputaveis: 3,
         escopo: 'estadual',
@@ -166,7 +250,6 @@ describe('MatcherService.execute', () => {
         total: 1,
         limit: 20,
         offset: 0,
-        semBomMatch: false,
       });
       expect(resultado.deputados).toEqual([
         {
@@ -233,6 +316,7 @@ describe('MatcherService.execute', () => {
         nomeEleitoral: null,
         nomeCivil: null,
         partido: 'PT',
+        siglaSexo: 'F',
         siglaUf: 'PE',
         urlFoto: null,
         intervalos: [emExercicio],
@@ -244,6 +328,7 @@ describe('MatcherService.execute', () => {
         nomeEleitoral: null,
         nomeCivil: null,
         partido: 'PT',
+        siglaSexo: 'F',
         siglaUf: 'SP',
         urlFoto: null,
         intervalos: [emExercicio],
@@ -324,24 +409,6 @@ describe('MatcherService.execute', () => {
       // Assert: UF informada (PE) no topo, apesar de empatar com SP
       expect(resultado.deputados.map((d) => d.siglaUf)).toEqual(['PE', 'SP']);
     });
-
-    it('derives semBomMatch from the best result of the nacional set', async () => {
-      // Arrange: o topo nacional (dep-sp) tem bruta 100, acima do mínimo
-      const service = new MatcherService(
-        fakeRepository({
-          computaveis: new Set([1, 2, 3]),
-          votacoes,
-          deputados,
-        }),
-      );
-
-      // Act
-      const resultado = await service.execute(reqAprovar(), pagina);
-
-      // Assert
-      expect(resultado.deputados[0]?.compatibilidadeBruta).toBe(100);
-      expect(resultado.semBomMatch).toBe(false);
-    });
   });
 
   describe('when a selected proposicao is not computavel', () => {
@@ -391,6 +458,7 @@ describe('MatcherService.execute', () => {
       nomeEleitoral: null,
       nomeCivil: null,
       partido: 'PT',
+      siglaSexo: 'F',
       siglaUf: 'PE',
       urlFoto: null,
       intervalos: [emExercicio],
@@ -402,6 +470,7 @@ describe('MatcherService.execute', () => {
       nomeEleitoral: null,
       nomeCivil: null,
       partido: 'PT',
+      siglaSexo: 'F',
       siglaUf: 'PE',
       urlFoto: null,
       intervalos: [
@@ -484,7 +553,7 @@ describe('MatcherService.execute', () => {
       expect(resultado.totalDeputadosAvaliados).toBe(2);
     });
 
-    it('derives semBomMatch from the filtered set when apenasEmAtividade is true', async () => {
+    it('returns an empty result when the atividade filter removes everyone', async () => {
       // Arrange: only inactive deputados evaluated
       const service = new MatcherService(
         fakeRepository({
@@ -500,9 +569,8 @@ describe('MatcherService.execute', () => {
         pagina,
       );
 
-      // Assert: empty filtered set -> semBomMatch true
+      // Assert
       expect(resultado.total).toBe(0);
-      expect(resultado.semBomMatch).toBe(true);
     });
   });
 
@@ -546,6 +614,7 @@ describe('MatcherService.execute', () => {
         nomeEleitoral: null,
         nomeCivil: null,
         partido: 'PT',
+        siglaSexo: 'F',
         siglaUf: 'PE',
         urlFoto: null,
         intervalos: [emExercicio],
@@ -587,13 +656,16 @@ describe('MatcherService.execute', () => {
     ];
 
     // todas as posições são aprovar, alinhadas com os votos 'sim'/'nao' acima
-    function reqAprovar(): MatcherExecucaoRequest {
+    function reqAprovar(
+      overrides: Partial<MatcherExecucaoRequest> = {},
+    ): MatcherExecucaoRequest {
       return request({
         posicoes: [
           posicao({ externalIdProposicao: 1, posicao: 'aprovar' }),
           posicao({ externalIdProposicao: 2, posicao: 'aprovar' }),
           posicao({ externalIdProposicao: 3, posicao: 'aprovar' }),
         ],
+        ...overrides,
       });
     }
 
@@ -631,34 +703,7 @@ describe('MatcherService.execute', () => {
       expect(resultado.deputados.map((d) => d.externalIdDeputado)).toEqual([2]);
     });
 
-    it('marks semBomMatch false when the top compatibilidadeBruta is at least 60', async () => {
-      // Act
-      const resultado = await service().execute(reqAprovar(), pagina);
-
-      // Assert
-      expect(resultado.deputados[0]?.compatibilidadeBruta).toBe(100);
-      expect(resultado.semBomMatch).toBe(false);
-    });
-
-    it('marks semBomMatch true when the top compatibilidadeBruta is below 60', async () => {
-      // Arrange: only dep-c, who disagrees everywhere -> bruta 0
-      const onlyLow = new MatcherService(
-        fakeRepository({
-          computaveis: new Set([1, 2, 3]),
-          votacoes,
-          deputados: [dep('dep-c', 3)],
-        }),
-      );
-
-      // Act
-      const resultado = await onlyLow.execute(reqAprovar(), pagina);
-
-      // Assert
-      expect(resultado.deputados[0]?.compatibilidadeBruta).toBeLessThan(60);
-      expect(resultado.semBomMatch).toBe(true);
-    });
-
-    it('marks semBomMatch true when the ranking is empty', async () => {
+    it('returns an empty ranking when no deputado is evaluated', async () => {
       // Arrange: no deputados evaluated
       const empty = new MatcherService(
         fakeRepository({
@@ -673,7 +718,6 @@ describe('MatcherService.execute', () => {
 
       // Assert
       expect(resultado.deputados).toEqual([]);
-      expect(resultado.semBomMatch).toBe(true);
     });
 
     it('does not flag amostra_pequena when the sample covers every computable position', async () => {
@@ -682,6 +726,202 @@ describe('MatcherService.execute', () => {
 
       // Assert: dep-a has 3 comparable votes over 3 computable positions
       expect(resultado.deputados[0]?.alertas).toEqual([]);
+    });
+
+    describe('and a recorte por partido is requested', () => {
+      // dep-b passa a ser o único do PL; dep-a e dep-c continuam no PT
+      const deputadosMistos: DeputadoCompatibilidadeInput[] = [
+        dep('dep-a', 1),
+        { ...dep('dep-b', 2), partido: 'PL' },
+        dep('dep-c', 3),
+      ];
+
+      function servico(): MatcherService {
+        return new MatcherService(
+          fakeRepository({
+            computaveis: new Set([1, 2, 3]),
+            votacoes,
+            deputados: deputadosMistos,
+          }),
+        );
+      }
+
+      it('keeps only the deputados of the requested partidos', async () => {
+        // Act
+        const resultado = await servico().execute(
+          reqAprovar({ partidos: ['PL'] }),
+          pagina,
+        );
+
+        // Assert
+        expect(resultado.deputados.map((d) => d.externalIdDeputado)).toEqual([
+          2,
+        ]);
+        expect(resultado.total).toBe(1);
+      });
+
+      it('keeps totalDeputadosAvaliados unchanged', async () => {
+        // Act
+        const resultado = await servico().execute(
+          reqAprovar({ partidos: ['PL'] }),
+          pagina,
+        );
+
+        // Assert: o recorte muda o conjunto exibido, não o avaliado
+        expect(resultado.totalDeputadosAvaliados).toBe(3);
+      });
+
+      it('returns an empty result when no deputado belongs to the recorte', async () => {
+        // Act
+        const resultado = await servico().execute(
+          reqAprovar({ partidos: ['PSOL'] }),
+          pagina,
+        );
+
+        // Assert
+        expect(resultado.deputados).toEqual([]);
+        expect(resultado.total).toBe(0);
+      });
+    });
+
+    describe('and ocultarAmostraPequena is requested', () => {
+      // dep-parcial deixou o exercício antes das duas últimas votações, que ficam
+      // fora do denominador dele: amostra 1 de 3 posições computáveis
+      function emVotacaoTardia(
+        votacaoReferencia: VotacaoReferenciaVotos,
+      ): VotacaoReferenciaVotos {
+        return {
+          ...votacaoReferencia,
+          votacaoReferencia: {
+            data: '2024-06-01',
+            dataHoraRegistro: '2024-06-01T15:00:00Z',
+          },
+        };
+      }
+
+      const votacoesComParcial: VotacaoReferenciaVotos[] = [
+        votacao(
+          1,
+          new Map([
+            ['dep-a', 'sim'],
+            ['dep-parcial', 'sim'],
+          ]),
+        ),
+        emVotacaoTardia(votacao(2, new Map([['dep-a', 'sim']]))),
+        emVotacaoTardia(votacao(3, new Map([['dep-a', 'sim']]))),
+      ];
+      const comAmostraPequena: DeputadoCompatibilidadeInput[] = [
+        dep('dep-a', 1),
+        {
+          ...dep('dep-parcial', 9),
+          intervalos: [
+            {
+              openedAt: '2023-02-01T12:00:00Z',
+              closedAt: '2023-12-01T12:00:00Z',
+            },
+          ],
+        },
+      ];
+
+      function servico(): MatcherService {
+        return new MatcherService(
+          fakeRepository({
+            computaveis: new Set([1, 2, 3]),
+            votacoes: votacoesComParcial,
+            deputados: comAmostraPequena,
+          }),
+        );
+      }
+
+      it('flags the deputado with a partial sample', async () => {
+        // Act
+        const resultado = await servico().execute(reqAprovar(), pagina);
+
+        // Assert
+        expect(
+          resultado.deputados.find((d) => d.externalIdDeputado === 9)?.alertas,
+        ).toEqual(['amostra_pequena']);
+      });
+
+      it('lists the deputado flagged with amostra_pequena when the recorte is off', async () => {
+        // Act
+        const resultado = await servico().execute(reqAprovar(), pagina);
+
+        // Assert
+        expect(resultado.deputados.map((d) => d.externalIdDeputado)).toContain(
+          9,
+        );
+      });
+
+      it('hides the deputados flagged with amostra_pequena', async () => {
+        // Act
+        const resultado = await servico().execute(
+          reqAprovar({ ocultarAmostraPequena: true }),
+          pagina,
+        );
+
+        // Assert
+        expect(resultado.deputados.map((d) => d.externalIdDeputado)).toEqual([
+          1,
+        ]);
+        expect(resultado.totalDeputadosAvaliados).toBe(2);
+      });
+    });
+
+    describe('and a recorte por sexo is requested', () => {
+      // dep-b passa a ser o único homem; dep-a e dep-c continuam mulheres
+      const deputadosMistos: DeputadoCompatibilidadeInput[] = [
+        dep('dep-a', 1),
+        { ...dep('dep-b', 2), siglaSexo: 'M' },
+        dep('dep-c', 3),
+      ];
+
+      function servico(): MatcherService {
+        return new MatcherService(
+          fakeRepository({
+            computaveis: new Set([1, 2, 3]),
+            votacoes,
+            deputados: deputadosMistos,
+          }),
+        );
+      }
+
+      it('keeps only the deputados of the requested sexo', async () => {
+        // Act
+        const resultado = await servico().execute(
+          reqAprovar({ sexo: 'M' }),
+          pagina,
+        );
+
+        // Assert
+        expect(resultado.deputados.map((d) => d.externalIdDeputado)).toEqual([
+          2,
+        ]);
+        expect(resultado.total).toBe(1);
+      });
+
+      it('keeps totalDeputadosAvaliados unchanged', async () => {
+        // Act
+        const resultado = await servico().execute(
+          reqAprovar({ sexo: 'M' }),
+          pagina,
+        );
+
+        // Assert: o recorte muda o conjunto exibido, não o avaliado
+        expect(resultado.totalDeputadosAvaliados).toBe(3);
+      });
+
+      it('combines with the recorte por partido', async () => {
+        // Act: dep-b é o único homem, mas continua no PT
+        const resultado = await servico().execute(
+          reqAprovar({ sexo: 'M', partidos: ['PL'] }),
+          pagina,
+        );
+
+        // Assert
+        expect(resultado.deputados).toEqual([]);
+        expect(resultado.total).toBe(0);
+      });
     });
   });
 });
@@ -699,6 +939,7 @@ describe('MatcherService and the public name of the deputado', () => {
     nomeEleitoral: 'Ze do Povo',
     nomeCivil: 'Jose da Silva Souza',
     partido: 'PT',
+    siglaSexo: 'F',
     siglaUf: 'PE',
     urlFoto: 'https://foto/recente.jpg',
     intervalos: [emExercicio],
@@ -740,6 +981,30 @@ describe('MatcherService and the public name of the deputado', () => {
       // Assert
       expect(detalhe.deputado.nome).toBe('Ze do Povo');
       expect(detalhe.deputado.urlFoto).toBe('https://foto/recente.jpg');
+    });
+
+    it('keeps every vote when the ranking uses the concordancia filter', async () => {
+      // Arrange
+      const repo = repository();
+      repo.loadVotacoesReferenciaWithVotos = async () => [
+        votacaoReferenciaVotos(1, new Map([['dep-1', 'sim']])),
+        votacaoReferenciaVotos(2, new Map([['dep-1', 'sim']])),
+        votacaoReferenciaVotos(3, new Map([['dep-1', 'nao']])),
+      ];
+
+      // Act
+      const detalhe = await new MatcherService(repo).detail(
+        100,
+        request({ externalIdProposicoesFiltroConcordancia: [1] }),
+      );
+
+      // Assert
+      expect(detalhe.votos).toHaveLength(3);
+      expect(detalhe.votos.map((voto) => voto.matcherEffect)).toEqual([
+        'concordancia',
+        'discordancia',
+        'discordancia',
+      ]);
     });
   });
 });

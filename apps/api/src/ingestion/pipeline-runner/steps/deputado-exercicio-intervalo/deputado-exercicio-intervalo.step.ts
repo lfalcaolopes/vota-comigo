@@ -21,6 +21,10 @@ export function createDeputadoExercicioIntervaloStep(
     scope: 'single',
     source: 'derived',
     async run(context: IngestionStepContext): Promise<StepRunResult> {
+      context.reporter?.log(
+        '[deputado_exercicio_intervalo] carregando histórico parlamentar…',
+      );
+
       const deputados = await repository.loadDeputadosComHistorico();
 
       // Sem histórico não há eventos de entrada/saída; pular em vez de
@@ -32,12 +36,25 @@ export function createDeputadoExercicioIntervaloStep(
         return emptyResult();
       }
 
+      context.reporter?.log(
+        `[deputado_exercicio_intervalo] ${deputados.length} deputado(s) com histórico`,
+      );
+      context.reporter?.log(
+        `[deputado_exercicio_intervalo] calculando intervalos de ${deputados.length} deputado(s)…`,
+      );
+
       const rows = toDeputadoExercicioIntervaloRows(deputados);
       const deputadosComIntervalo = new Set(rows.map((row) => row.deputadoId));
 
       context.reporter?.log(
         `[deputado_exercicio_intervalo] ${rows.length} intervalo(s) de ${deputadosComIntervalo.size} deputado(s) de ${deputados.length} com histórico`,
       );
+
+      if (!context.dryRun) {
+        context.reporter?.log(
+          `[deputado_exercicio_intervalo] gravando ${rows.length} intervalo(s)…`,
+        );
+      }
 
       const refresh = context.dryRun
         ? { inserted: 0 }

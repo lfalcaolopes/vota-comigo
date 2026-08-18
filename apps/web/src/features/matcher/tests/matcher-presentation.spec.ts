@@ -5,14 +5,13 @@ import type {
 import { describe, expect, it } from "vitest";
 
 import {
-  SEM_BOM_MATCH_BANNER_BODY,
-  SEM_BOM_MATCH_BANNER_TITLE,
   formatPercentual,
   getInitials,
   toAlertaLabel,
   toAmostraComparavelLabel,
   toAtividadeLabel,
   toAtividadeTone,
+  toCopyContextLabel,
 } from "../lib/matcher-presentation";
 
 function makeDeputado(
@@ -74,7 +73,7 @@ describe("toAmostraComparavelLabel", () => {
       const label = toAmostraComparavelLabel(deputado, 10);
 
       // Assert
-      expect(label).toBe("8 de 10 votações comparáveis");
+      expect(label).toBe("8 das suas 10 respostas entraram na conta");
     });
   });
 
@@ -102,28 +101,28 @@ describe("toAmostraComparavelLabel", () => {
 
 describe("toAlertaLabel", () => {
   describe("when alerta is amostra_pequena", () => {
-    it("returns 'Amostra pequena'", () => {
+    it("returns 'Poucos votos em comum'", () => {
       // Arrange
       const alerta: AlertaMatcher = "amostra_pequena";
 
       // Act / Assert
-      expect(toAlertaLabel(alerta)).toBe("Amostra pequena");
+      expect(toAlertaLabel(alerta)).toBe("Poucos votos em comum");
     });
   });
 });
 
 describe("toAtividadeLabel", () => {
   describe("when emAtividade is true", () => {
-    it("returns 'Em atividade'", () => {
+    it("returns 'Em exercício'", () => {
       // Act / Assert
-      expect(toAtividadeLabel(true)).toBe("Em atividade");
+      expect(toAtividadeLabel(true)).toBe("Em exercício");
     });
   });
 
   describe("when emAtividade is false", () => {
-    it("returns 'Mandato encerrado'", () => {
+    it("returns 'Fora de exercício'", () => {
       // Act / Assert
-      expect(toAtividadeLabel(false)).toBe("Mandato encerrado");
+      expect(toAtividadeLabel(false)).toBe("Fora de exercício");
     });
   });
 });
@@ -195,18 +194,54 @@ describe("getInitials", () => {
   });
 });
 
-describe("SEM_BOM_MATCH_BANNER_TITLE", () => {
-  it("is a non-empty string", () => {
-    // Act / Assert
-    expect(typeof SEM_BOM_MATCH_BANNER_TITLE).toBe("string");
-    expect(SEM_BOM_MATCH_BANNER_TITLE.length).toBeGreaterThan(0);
-  });
-});
+describe("toCopyContextLabel", () => {
+  describe("when the escopo is estadual", () => {
+    it("names the state the recorte came from", () => {
+      // Act / Assert
+      expect(
+        toCopyContextLabel({
+          totalProposicoes: 12,
+          escopo: "estadual",
+          siglaUf: "SP",
+        }),
+      ).toBe("12 propostas · São Paulo");
+    });
 
-describe("SEM_BOM_MATCH_BANNER_BODY", () => {
-  it("is a non-empty string", () => {
-    // Act / Assert
-    expect(typeof SEM_BOM_MATCH_BANNER_BODY).toBe("string");
-    expect(SEM_BOM_MATCH_BANNER_BODY.length).toBeGreaterThan(0);
+    it("keeps only the proposicoes when the uf is unknown", () => {
+      // Act / Assert
+      expect(
+        toCopyContextLabel({
+          totalProposicoes: 12,
+          escopo: "estadual",
+          siglaUf: null,
+        }),
+      ).toBe("12 propostas");
+    });
+  });
+
+  describe("when the escopo is nacional", () => {
+    it("names the whole country instead of the uf of the user", () => {
+      // Act / Assert
+      expect(
+        toCopyContextLabel({
+          totalProposicoes: 12,
+          escopo: "nacional",
+          siglaUf: "SP",
+        }),
+      ).toBe("12 propostas · Brasil");
+    });
+  });
+
+  describe("when a single proposicao generated the recorte", () => {
+    it("keeps the noun singular", () => {
+      // Act / Assert
+      expect(
+        toCopyContextLabel({
+          totalProposicoes: 1,
+          escopo: "estadual",
+          siglaUf: "RJ",
+        }),
+      ).toBe("1 proposta · Rio de Janeiro");
+    });
   });
 });

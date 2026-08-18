@@ -12,6 +12,11 @@ import { describe, expect, it, vi } from "vitest";
 
 import { StepComparativo } from "../components/comparativo/step-comparativo";
 
+const EMENTA_LONGA =
+  "Reforma constitucional da previdência que cria um novo regime de " +
+  "capitalização, altera regras de idade mínima e tempo de contribuição e " +
+  "estabelece regras de transição.";
+
 function proposicao(
   externalIdProposicao: number,
   overrides: Partial<ProposicaoCard> = {},
@@ -75,7 +80,6 @@ function detalhe(
 ): MatcherDeputadoDetalhe {
   return {
     siglaUf: "SP",
-    cidade: null,
     totalProposicoesSelecionadas: 3,
     totalPosicoesComputaveis: 3,
     deputado: {
@@ -129,6 +133,8 @@ function perfil(
       dataFim: "2023-01-31",
     },
     legislaturaFinalPeriodo: null,
+    defaultYear: null,
+    validYearRange: null,
     resumoPresencaDisponivel: true,
     resumoPresenca: {
       percentualPresenca: 82.4,
@@ -153,19 +159,23 @@ function perfil(
 function render(props: {
   deputados?: MatcherDeputadoResumo[];
   detalhes?: MatcherDeputadoDetalhe[];
+  escopo?: "estadual" | "nacional";
   perfis?: DeputadoPerfil[];
   posicoes?: PosicaoMatcher[];
+  siglaUf?: "SP" | null;
   status?: "idle" | "loading" | "error";
 }): string {
   return renderToStaticMarkup(
     createElement(StepComparativo, {
       deputados: props.deputados ?? [deputado(20), deputado(10)],
       detalhes: props.detalhes ?? [],
+      escopo: props.escopo ?? "estadual",
       perfis: props.perfis ?? [perfil(20), perfil(10)],
       posicoes: props.posicoes ?? [
         { externalIdProposicao: 1, posicao: "aprovar" },
         { externalIdProposicao: 2, posicao: "rejeitar" },
       ],
+      siglaUf: props.siglaUf === undefined ? "SP" : props.siglaUf,
       status: props.status ?? "idle",
       onBack: vi.fn(),
       onRetry: vi.fn(),
@@ -174,6 +184,27 @@ function render(props: {
 }
 
 describe("StepComparativo", () => {
+  describe("when the user wants to take the comparativo away as text", () => {
+    it("offers the copy gesture once the comparativo is loaded", () => {
+      // Arrange / Act
+      const html = render({
+        status: "idle",
+        detalhes: [detalhe(20, [voto(1)]), detalhe(10, [voto(1)])],
+      });
+
+      // Assert
+      expect(html).toContain("Copiar lista de deputados");
+    });
+
+    it("does not offer it while the comparativo is still loading", () => {
+      // Arrange / Act
+      const html = render({ status: "loading" });
+
+      // Assert
+      expect(html).not.toContain("Copiar lista de deputados");
+    });
+  });
+
   describe("when comparativo detalhes are loading", () => {
     it("shows the back action and skeleton without rendering deputado columns", () => {
       // Arrange / Act
@@ -247,21 +278,56 @@ describe("StepComparativo", () => {
       expect(html).toContain("Ementa 1");
       expect(html).toContain("Você");
       expect(html).toContain("Sim");
-      expect(html).toContain("Alinhado");
+      expect(html).toContain("Votou como você");
       expect(html).toContain("Não");
-      expect(html).toContain("Divergente");
+      expect(html).toContain("Votou diferente");
       expect(html).toContain("PL 2/2024");
       expect(html).toContain("Abstenção");
       expect(html).toContain("Fora de exercício");
-      expect(html).toContain("Fora do cálculo");
+      expect(html).toContain("Fora da conta");
       expect(html).toContain("Sua posição");
-      expect(html).not.toContain("A favor da aprovação");
-      expect(html).not.toContain("Contra a aprovação");
+      expect(html).not.toContain("Deveria ser aprovada");
+      expect(html).not.toContain("Não deveria ser aprovada");
       expect(html).not.toContain("Votação");
       expect(html).not.toContain("1 jun 2024");
       expect(html).not.toContain("Placar");
       expect(html).not.toContain("300 sim");
       expect(html).not.toContain("Votação 1");
+    });
+
+    it("gives the proposicao summary a full row band instead of the narrow label column", () => {
+      // Arrange / Act
+      const html = render({
+        status: "idle",
+        deputados: [deputado(20)],
+        detalhes: [detalhe(20, [voto(1)])],
+      });
+
+      // Assert
+      expect(html).toContain("col-[1/-1]");
+      expect(html).toContain("max-w-[65ch]");
+      expect(html.indexOf("Ementa 1")).toBeLessThan(
+        html.indexOf("Votou como você"),
+      );
+    });
+
+    it("offers an expand control when the summary does not fit the clamp", () => {
+      // Arrange / Act
+      const html = render({
+        status: "idle",
+        deputados: [deputado(20)],
+        detalhes: [
+          detalhe(20, [
+            voto(1, {
+              proposicao: proposicao(1, { ementa: EMENTA_LONGA }),
+            }),
+          ]),
+        ],
+      });
+
+      // Assert
+      expect(html).toContain(EMENTA_LONGA);
+      expect(html).toContain("Ver mais");
     });
 
     it("shows deputado headers from perfil with profile links opening in a new tab", () => {
@@ -276,10 +342,11 @@ describe("StepComparativo", () => {
       // Assert
       expect(html).toContain("Deputado 20");
       expect(html).toContain("PP · SP");
-      expect(html).toContain("Em atividade");
+      expect(html).toContain("Em exercício");
       expect(html).toContain('href="/deputados/20"');
       expect(html).toContain('target="_blank"');
       expect(html).toContain('rel="noopener noreferrer"');
+      expect(html).toContain("abre em nova aba");
     });
 
     it("keeps the label column sticky so the reading anchor stays visible while scrolling horizontally", () => {
@@ -321,7 +388,6 @@ describe("StepComparativo", () => {
       expect(html).not.toContain(
         "Role na horizontal para ver todos os deputados.",
       );
-      expect(html).not.toContain('role="status"');
     });
 
     it("does not render profile details outside the comparativo scope", () => {
@@ -345,7 +411,7 @@ describe("StepComparativo", () => {
       expect(html).not.toContain("103 de 125 votações em exercício");
       expect(html).not.toContain("22 ausências sem motivo conhecido");
       expect(html).not.toContain(
-        "votações de plenário em que o voto de cada deputado fica registrado",
+        "Votações de plenário com voto registrado, entre as propostas que acompanhamos.",
       );
       expect(html).not.toContain("Presença indisponível");
       expect(html).not.toContain("Nome Civil 20");

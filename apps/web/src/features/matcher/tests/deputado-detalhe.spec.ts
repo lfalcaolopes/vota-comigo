@@ -12,11 +12,11 @@ import { DeputadoDetalhe } from "../components/detalhe/deputado-detalhe";
 import { DeputadoCard } from "../components/resultado/deputado-card";
 import { StepResultado } from "../components/resultado/step-resultado";
 import { initMatcherState, matcherReducer } from "../lib/matcher-state";
+import { RESULTADO_FILTROS_PADRAO } from "../lib/resultado-filtros";
 
 function detalhe(): MatcherDeputadoDetalhe {
   return {
     siglaUf: "PE",
-    cidade: null,
     totalProposicoesSelecionadas: 3,
     totalPosicoesComputaveis: 3,
     deputado: {
@@ -82,6 +82,8 @@ function perfil(
     externalIdLegislaturaFinal: null,
     legislaturaInicialPeriodo: null,
     legislaturaFinalPeriodo: null,
+    defaultYear: null,
+    validYearRange: null,
     resumoPresencaDisponivel: false,
     resumoPresenca: null,
     historicoPartidarioDisponivel: false,
@@ -92,7 +94,6 @@ function perfil(
 function resultado(deputados: MatcherDeputadoResumo[]) {
   return {
     siglaUf: "PE" as const,
-    cidade: null,
     totalProposicoesSelecionadas: 3,
     totalPosicoesComputaveis: 3,
     escopo: "estadual" as const,
@@ -102,7 +103,6 @@ function resultado(deputados: MatcherDeputadoResumo[]) {
     total: deputados.length,
     limit: 20,
     offset: 0,
-    semBomMatch: false,
   };
 }
 
@@ -113,9 +113,7 @@ describe("DeputadoDetalhe", () => {
       const html = renderToStaticMarkup(
         createElement(DeputadoDetalhe, {
           detalhe: detalhe(),
-          detalheDeputadoId: 220593,
           status: "idle",
-          onBack: () => {},
           onRetry: () => {},
         }),
       );
@@ -124,6 +122,20 @@ describe("DeputadoDetalhe", () => {
       expect(html).toContain('href="/deputados/220593"');
       expect(html).toContain('target="_blank"');
       expect(html).toContain("Ver perfil do deputado");
+    });
+
+    it("does not expose a return button", () => {
+      // Act
+      const html = renderToStaticMarkup(
+        createElement(DeputadoDetalhe, {
+          detalhe: detalhe(),
+          status: "idle",
+          onRetry: () => {},
+        }),
+      );
+
+      // Assert
+      expect(html).not.toContain("Voltar ao resultado");
     });
   });
 });
@@ -136,12 +148,24 @@ describe("DeputadoCard", () => {
         createElement(DeputadoCard, {
           deputado: resumo(),
           totalPosicoesComputaveis: 3,
-          onOpen: () => {},
         }),
       );
 
       // Assert
       expect(html).not.toContain("/deputados/");
+    });
+
+    it("links to the contextual detail route", () => {
+      // Act
+      const html = renderToStaticMarkup(
+        createElement(DeputadoCard, {
+          deputado: resumo(),
+          totalPosicoesComputaveis: 3,
+        }),
+      );
+
+      // Assert
+      expect(html).toContain('href="/matcher/resultado/220593"');
     });
 
     it("does not expose selection controls in normal mode", () => {
@@ -150,13 +174,12 @@ describe("DeputadoCard", () => {
         createElement(DeputadoCard, {
           deputado: resumo(),
           totalPosicoesComputaveis: 3,
-          onOpen: () => {},
         }),
       );
 
       // Assert
       expect(html).not.toContain('type="checkbox"');
-      expect(html).toContain("Compatibilidade");
+      expect(html).toContain("Concordância");
     });
   });
 
@@ -172,7 +195,6 @@ describe("DeputadoCard", () => {
           },
           deputado: resumo(),
           totalPosicoesComputaveis: 3,
-          onOpen: () => {},
         }),
       );
 
@@ -198,16 +220,16 @@ describe("StepResultado", () => {
       // Act
       const html = renderToStaticMarkup(
         createElement(StepResultado, {
-          apenasEmAtividade: false,
           escopo: "estadual",
+          filtros: RESULTADO_FILTROS_PADRAO,
+          partidos: [],
           hasMore: false,
-          onApenasEmAtividadeChange: () => {},
-          onBack: () => {},
+          onApplyFiltros: () => {},
+          onToggleFiltroConcordancia: () => {},
           onCancelComparativoSelection: () => {},
           onEscopoChange: () => {},
           onLoadMore: () => {},
           onOpenComparativo: () => {},
-          onOpenDetalhe: () => {},
           onRetry: () => {},
           onStartComparativoSelection: () => {},
           onToggleComparativoDeputado: () => {},
@@ -219,14 +241,14 @@ describe("StepResultado", () => {
 
       // Assert
       expect(html).toContain("Filtros");
+      expect(html).toContain("Escopo dos resultados");
       expect(html).toContain("Comparar deputados");
       expect(html.indexOf("Comparar deputados")).toBeLessThan(
         html.indexOf("Filtros"),
       );
-      expect(html.indexOf("Filtros")).toBeLessThan(
-        html.indexOf("Apenas em atividade"),
-      );
+      expect(html).not.toContain("Apenas em atividade");
       expect(html).not.toContain("Selecionar Maria da Silva para comparação");
+      expect(html).not.toContain(">Voltar<");
     });
   });
 
@@ -254,16 +276,16 @@ describe("StepResultado", () => {
       // Act
       const html = renderToStaticMarkup(
         createElement(StepResultado, {
-          apenasEmAtividade: false,
           escopo: "estadual",
+          filtros: RESULTADO_FILTROS_PADRAO,
+          partidos: [],
           hasMore: false,
-          onApenasEmAtividadeChange: () => {},
-          onBack: () => {},
+          onApplyFiltros: () => {},
+          onToggleFiltroConcordancia: () => {},
           onCancelComparativoSelection: () => {},
           onEscopoChange: () => {},
           onLoadMore: () => {},
           onOpenComparativo: () => {},
-          onOpenDetalhe: () => {},
           onRetry: () => {},
           onStartComparativoSelection: () => {},
           onToggleComparativoDeputado: () => {},

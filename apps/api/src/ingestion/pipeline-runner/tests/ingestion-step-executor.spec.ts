@@ -36,6 +36,7 @@ function baseConfig(overrides: Partial<IngestionPipelineRunnerConfig> = {}) {
     strict: false,
     debug: false,
     refetchHistorico: false,
+    refetchSigepa: false,
     ...overrides,
   };
 }
@@ -73,7 +74,12 @@ function createDeps(
     sourceExists: () => true,
     sourcePathFor(entry) {
       const dataset = entry.dataset ?? entry.stepName;
-      const suffix = entry.scope === 'annual' ? `-${entry.year}` : '';
+      const suffix =
+        entry.scope === 'annual'
+          ? `-${entry.year}`
+          : entry.legislatura !== undefined
+            ? `-L${entry.legislatura}`
+            : '';
 
       return `data/raw/${dataset}/${dataset}${suffix}.csv`;
     },
@@ -120,6 +126,55 @@ describe('ingestion step executor', () => {
     );
   });
 
+  describe('when executing an annual API step', () => {
+    it('carries the planned year into the step context', async () => {
+      // Arrange
+      const seen: (number | undefined)[] = [];
+      const step: IngestionStep = {
+        name: 'deputado_gasto_cota_sigepa',
+        scope: 'annual',
+        source: 'api',
+        async run(context: IngestionStepContext) {
+          seen.push(context.year);
+
+          return emptyResult();
+        },
+      };
+      const executor = createIngestionStepExecutor(createDeps());
+
+      // Act
+      await executor.execute(
+        { stepName: step.name, scope: 'annual', year: 2025 },
+        step,
+      );
+
+      // Assert
+      expect(seen).toEqual([2025]);
+    });
+
+    it('leaves the year undefined for a single-scope API step', async () => {
+      // Arrange
+      const seen: (number | undefined)[] = [];
+      const step: IngestionStep = {
+        name: 'deputado_historico',
+        scope: 'single',
+        source: 'api',
+        async run(context: IngestionStepContext) {
+          seen.push(context.year);
+
+          return emptyResult();
+        },
+      };
+      const executor = createIngestionStepExecutor(createDeps());
+
+      // Act
+      await executor.execute({ stepName: step.name, scope: 'single' }, step);
+
+      // Assert
+      expect(seen).toEqual([undefined]);
+    });
+  });
+
   describe('when executing derived steps', () => {
     it('provides scoped years and opens arbitrary annual datasets', async () => {
       // Arrange
@@ -160,6 +215,52 @@ describe('ingestion step executor', () => {
       );
       expect(deps.opened).toEqual([
         'data/raw/votacoesVotos/votacoesVotos-2024.csv',
+      ]);
+    });
+
+    it('opens datasets scoped by legislatura', async () => {
+      // Arrange
+      const deps = createDeps({
+        sourceExists: (path) => path.includes('orgaosDeputados-L57'),
+      });
+      const step: IngestionStep = {
+        name: 'deputado_orgao',
+        scope: 'single',
+        source: 'derived',
+        async run(context) {
+          expect(
+            context.readLegislaturaDataset?.('orgaosDeputados', 56),
+          ).toBeUndefined();
+
+          const source = context.readLegislaturaDataset?.(
+            'orgaosDeputados',
+            57,
+          );
+          expect(source).toBeDefined();
+
+          let read = 0;
+          for await (const row of source!()) {
+            expect(row.record).toEqual({ id: '1' });
+            read += 1;
+          }
+
+          return emptyResult({ read });
+        },
+      };
+      const executor = createIngestionStepExecutor(deps);
+
+      // Act
+      const result = await executor.execute(
+        { stepName: 'deputado_orgao', scope: 'single' },
+        step,
+      );
+
+      // Assert
+      expect(result.summary).toEqual(
+        expect.objectContaining({ stepName: 'deputado_orgao', read: 1 }),
+      );
+      expect(deps.opened).toEqual([
+        'data/raw/orgaosDeputados/orgaosDeputados-L57.csv',
       ]);
     });
   });

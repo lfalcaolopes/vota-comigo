@@ -2,4 +2,6 @@
 export * from "./proposicoes";
 export * from "./matcher";
 export * from "./exercicio";
+export * from "./cota";
 export * from "./deputados";
+export * from "./comparativo-deputados";

@@ -1,5 +1,7 @@
 # Fluxo do matcher no front é wizard client-side com estado efêmero
 
+**Superado pelo ADR 020.** Teste com usuários reais mostrou que a consequência aceita abaixo — refresh ou navegação para fora de `/matcher` reinicia o fluxo — não é aceitável: o botão voltar do navegador descartava todo o progresso do usuário. O registro abaixo permanece para explicar por que o corte original foi feito assim.
+
 O front do matcher (MVP-2) é um wizard client-side numa rota única `/matcher`, com o estado do fluxo — UF e cidade, proposições selecionadas, posições declaradas, resultado e detalhe aberto — mantido em memória por um `useReducer` na feature `matcher`. O detalhe de um deputado é uma sub-view do mesmo cliente e re-submete o mesmo corpo da execução para `POST /matcher/deputados/:externalIdDeputado`. Diferente do feed e do detalhe de proposição, que são renderizados no servidor a partir de rotas GET, a tela de resultado do matcher não é renderizada no servidor nem é compartilhável por URL no MVP-2.
 
 A decisão decorre do contrato: o matcher é POST-only e o corpo carrega a entrada inteira do usuário (`siglaUf`, `escopo`, `cidade`, `posicoes[]`). Não há recurso identificável por URL para fazer SSR ou link compartilhável de um resultado, e compartilhamento é escopo explícito do MVP-6. Manter o estado em memória, sem URL nem storage, mantém a entrega mínima e coerente com esse corte.

@@ -1,12 +1,45 @@
 {
   "ano": 2017,
   "items": {
+    "2122125": {
+      "sourceHash": "8fddc97197383e563c068a92106380c9d509f58c9dcada83953c5ca115737d94",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Formaliza a inclusão de duas procuradorias e das respectivas carreiras na estrutura da Advocacia-Geral da União e organiza cargos e atribuições internas.",
+      "resumoDetalhe": "- Inclui a Procuradoria-Geral Federal (que atua junto a autarquias e fundações públicas) e a Procuradoria-Geral do Banco Central (que atua no Banco Central) como órgãos de direção superior da Advocacia-Geral da União e incorpora as carreiras de Procurador Federal e de Procurador do Banco Central à AGU.\n- Organiza a estrutura interna da AGU, com órgãos de direção, procuradorias regionais e locais, consultorias jurídicas, corregedoria, a secretaria que cuida dos processos no Supremo Tribunal Federal e órgãos de apoio.\n- Define funções do Advogado-Geral da União e do Vice-Advogado-Geral, como representar a União nos tribunais, supervisionar tecnicamente os órgãos, chamar para si qualquer assunto jurídico da instituição e convocar seus integrantes, e prevê que o Vice seja nomeado pelo Presidente da República.\n- Estabelece regras sobre lotação e composição das carreiras, detalha atribuições das consultorias jurídicas (como examinar editais e contratos e orientar os órgãos assessorados), cria uma câmara técnica para resolver controvérsias entre as procuradorias e transforma um cargo de direção em Vice-Advogado-Geral.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
+    "2122682": {
+      "sourceHash": "fd902723ee6dfea9d853065f9a1ab3c6c28558d97f948029556ea2e19f77e046",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Torna os Tribunais de Contas órgãos permanentes e essenciais ao controle externo e proíbe a extinção dos tribunais de contas municipais onde existam.",
+      "resumoDetalhe": "- Declara os Tribunais de Contas instituições permanentes e essenciais ao controle externo da administração pública.\n- Aplica as mesmas regras, quando for o caso, à organização, composição e fiscalização dos Tribunais de Contas dos Estados e do Distrito Federal, e aos Tribunais e Conselhos de Contas dos Municípios.\n- Exige que o controle externo das câmaras municipais seja feito com o auxílio dos Tribunais ou Conselhos de Contas estaduais ou municipais e proíbe a extinção desses órgãos onde já existam.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
+    "2123843": {
+      "sourceHash": "504d612c3b649d27e743b652096468b913ee572d3a552e64a881bce8c3de4503",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Declara que práticas esportivas que usam animais não são cruéis quando forem manifestações culturais registradas como patrimônio cultural brasileiro, e determina que sejam regulamentadas por lei que assegure o bem-estar dos animais.",
+      "resumoDetalhe": "- Define que práticas esportivas que utilizem animais não são consideradas cruéis quando forem manifestações culturais registradas como bem imaterial do patrimônio cultural brasileiro.\n- Exige que essas práticas sejam regulamentadas por uma lei específica que assegure o bem-estar dos animais envolvidos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:09:19.792Z",
+      "reviewedAt": "2026-08-16T19:05:00.000Z"
+    },
     "2124451": {
       "sourceHash": "db218ea1a5fb45a9757ee8a05db7ba806a8b1040424b3113e9a3968a99aaeca7",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Cria um Regime de Recuperação Fiscal para estados e Distrito Federal que troca ajuda federal por um plano de ajuste e limites ao gasto.",
-      "resumoDetalhe": "- institui um Regime de Recuperação Fiscal que só pode ser acessado se o estado aprovar uma lei com um Plano de Recuperação que reconheça o desequilíbrio das contas e detalhe medidas e prazos para ajustar receitas e despesas\n- exige que o estado comprove sua situação fiscal e encaminhe o Plano ao Ministério da Fazenda, que avaliará e emitirá parecer; a entrada no Regime depende da homologação pelo Presidente da República e da posse de um Conselho de Supervisão\n- cria um Conselho de Supervisão composto por três membros para monitorar a execução do Plano, emitir relatórios e recomendações, requisitar informações e propor ações quando houver risco ou desvio\n- impõe vedações durante o Regime, como proibição de aumentos de remuneração e de criação de despesas contínuas, restrição a concursos e contratações, limitação de convênios e transferência de repasses mensais (duodécimos, isto é, repasses mensais aos Poderes), e autoriza medidas federais como redução temporária dos pagamentos da dívida com a União e operações de crédito específicas garantidas pela União",
+      "resumoDetalhe": "- Institui um Regime de Recuperação Fiscal que só pode ser acessado se o estado aprovar uma lei com um Plano de Recuperação que reconheça o desequilíbrio das contas e detalhe medidas e prazos para ajustar receitas e despesas.\n- Exige que o estado comprove sua situação fiscal e encaminhe o Plano ao Ministério da Fazenda, que avaliará e emitirá parecer; a entrada no Regime depende da homologação pelo Presidente da República e da posse de um Conselho de Supervisão.\n- Cria um Conselho de Supervisão composto por três membros para monitorar a execução do Plano, emitir relatórios e recomendações, requisitar informações e propor ações quando houver risco ou desvio.\n- Impõe vedações durante o Regime, como proibição de aumentos de remuneração e de criação de despesas contínuas, restrição a concursos e contratações, limitação de convênios e transferência de repasses mensais (duodécimos, isto é, repasses mensais aos Poderes), e autoriza medidas federais como redução temporária dos pagamentos da dívida com a União e operações de crédito específicas garantidas pela União.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-06-25T22:43:30.565Z",
@@ -17,11 +50,22 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Estabelece regras para pesquisas clínicas com pessoas e cria um sistema nacional de ética para avaliar e fiscalizar essas pesquisas.",
-      "resumoDetalhe": "- institui princípios e regras para a realização de pesquisas clínicas com seres humanos, exigindo análise ética prévia, garantia de consentimento livre e esclarecido e proteção da dignidade, segurança e privacidade dos participantes\n- institui o Sistema Nacional de Ética em Pesquisa Clínica com Seres Humanos e organiza comitês de ética (CEPs), definindo suas atribuições, composição, credenciamento, avaliação de protocolos e atuação como instância de fiscalização e recurso\n- define responsabilidades do patrocinador e do investigador, incluindo controles de qualidade, monitoramento, obrigação de registrar e tornar públicos dados da pesquisa, notificar reações adversas e garantir indenização e assistência a participantes em caso de dano\n- regula o uso, armazenamento e possível transferência de material biológico e de dados obtidos na pesquisa, estabelece regras para continuidade do tratamento pós-pesquisa quando necessário e exige transparência sobre resultados e alterações no estudo",
+      "resumoDetalhe": "- Institui princípios e regras para a realização de pesquisas clínicas com seres humanos, exigindo análise ética prévia, garantia de consentimento livre e esclarecido e proteção da dignidade, segurança e privacidade dos participantes.\n- Institui o Sistema Nacional de Ética em Pesquisa Clínica com Seres Humanos e organiza comitês de ética (CEPs), definindo suas atribuições, composição, credenciamento, avaliação de protocolos e atuação como instância de fiscalização e recurso.\n- Define responsabilidades do patrocinador e do investigador, incluindo controles de qualidade, monitoramento, obrigação de registrar e tornar públicos dados da pesquisa, notificar reações adversas e garantir indenização e assistência a participantes em caso de dano.\n- Regula o uso, armazenamento e possível transferência de material biológico e de dados obtidos na pesquisa, estabelece regras para continuidade do tratamento pós-pesquisa quando necessário e exige transparência sobre resultados e alterações no estudo.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T17:19:37.817Z",
       "reviewedAt": "2026-07-07T21:11:34.396Z"
+    },
+    "2127797": {
+      "sourceHash": "0cfe1cb8e91b0ac2ef8c1a99800f8a5b1efb051ec90faad653069682e88489b6",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Transforma a Autoridade Pública Olímpica na Autoridade de Governança do Legado Olímpico (AGLO) e estabelece suas funções, estrutura e regras para uso e gestão das instalações do legado.",
+      "resumoDetalhe": "- Cria a AGLO como autarquia federal temporária vinculada ao Ministério do Esporte, definindo que ela deve viabilizar, manter, administrar e permitir o uso das instalações esportivas do legado olímpico, elaborar plano de utilização e buscar modelos de gestão sustentável.\n- Organiza a administração da AGLO com Presidente, Diretor-Executivo e Diretores responsáveis pelo planejamento, orçamento e prestação de contas; sucede a antiga Autoridade Pública Olímpica, recebe seu patrimônio e cargos, e prevê a extinção da AGLO após a definição da destinação de longo prazo do legado.\n- Permite que a AGLO funcione com servidores requisitados e cedidos de outros órgãos, preservando os direitos deles, e prevê opção de regime de remuneração para quem ocupar seus cargos.\n- Define de onde vem o dinheiro da AGLO, somando verbas do orçamento a receitas próprias obtidas com o uso das instalações, e autoriza a cessão temporária das áreas para a realização de eventos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:33:03.984Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2127803": {
       "sourceHash": "fa94d814031033a3435999598a1a7092105139e501a98a15affb5b1cd21dac61",
@@ -34,16 +78,60 @@
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
     },
+    "2132523": {
+      "sourceHash": "be8d9d8561421249b3d77ed69e9900adf45abdb4ac5fe2b42952c943b665bfae",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Exige que os registros de nascimento e de casamento tragam a naturalidade e outros dados pessoais, e que o nascimento seja registrado com o número da Declaração de Nascido Vivo, documento que identifica o recém-nascido.",
+      "resumoDetalhe": "- Exige que as certidões de nascimento tragam a data do registro, a data do nascimento por extenso e a naturalidade, que o registro anote o número da Declaração de Nascido Vivo, salvo em registro feito fora do prazo, e que sejam anotadas as testemunhas quando o parto ocorrer sem assistência médica.\n- Permite escolher como naturalidade o município do nascimento ou o município onde a mãe morava na data do nascimento, desde que no país, ficando a opção com quem faz o registro; na adoção iniciada antes do registro, também vale o município de residência do adotante.\n- Inclui no registro de casamento a anotação de dados pessoais dos cônjuges, como nomes, nacionalidade, naturalidade, data de nascimento, profissão e endereço.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
     "2132524": {
       "sourceHash": "0f72359c8b5cf63e3123e9f4dc4fc8449158a9e01883c6dc652150d43fe9dfe4",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Institui a Taxa de Longo Prazo (TLP) para remunerar recursos de fundos públicos aplicados em financiamentos por bancos oficiais.",
-      "resumoDetalhe": "- institui a Taxa de Longo Prazo (TLP) como referência de remuneração para os recursos do Fundo de Participação PIS-Pasep, do Fundo de Amparo ao Trabalhador e do Fundo da Marinha Mercante aplicados por instituições financeiras oficiais, sendo a TLP composta pela variação do IPCA (índice de inflação medido pelo IBGE) e por uma taxa de juros prefixada\n- define que a taxa prefixada será apurada mensalmente a partir da curva de juros das Notas do Tesouro e terá um fator de ajuste que converirá para um valor de referência ao longo de um período gradual; o texto também relaciona a TLP com a Taxa de Juros de Longo Prazo (TJLP), explicando sua interação\n- determina obrigações ao BNDES e às instituições financeiras oficiais quanto ao recolhimento, prestação de contas e separação dos saldos por modalidade de remuneração, e prevê limites e periodicidade para os repasses aos fundos\n- proíbe, a partir da data prevista na medida, a contratação de operações com referência à TJLP, salvo exceções descritas para certas operações já iniciadas, operações de hedge, projetos de infraestrutura e modalidades específicas do BNDES, e autoriza repactuação de contratos entre União e BNDES para adequar remunerações",
+      "resumoDetalhe": "- Institui a Taxa de Longo Prazo (TLP) como referência de remuneração para os recursos do Fundo de Participação PIS-Pasep, do Fundo de Amparo ao Trabalhador e do Fundo da Marinha Mercante aplicados por instituições financeiras oficiais, sendo a TLP composta pela variação do IPCA (índice de inflação medido pelo IBGE) e por uma taxa de juros prefixada.\n- Define que a taxa prefixada será apurada mensalmente a partir da curva de juros das Notas do Tesouro e terá um fator de ajuste que converirá para um valor de referência ao longo de um período gradual; o texto também relaciona a TLP com a Taxa de Juros de Longo Prazo (TJLP), explicando sua interação.\n- Determina obrigações ao BNDES e às instituições financeiras oficiais quanto ao recolhimento, prestação de contas e separação dos saldos por modalidade de remuneração, e prevê limites e periodicidade para os repasses aos fundos.\n- Proíbe, a partir da data prevista na medida, a contratação de operações com referência à TJLP, salvo exceções descritas para certas operações já iniciadas, operações de hedge, projetos de infraestrutura e modalidades específicas do BNDES, e autoriza repactuação de contratos entre União e BNDES para adequar remunerações.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T21:37:36.257Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2138678": {
+      "sourceHash": "5f29e5a7926a1120ac154096ac4bed9f31e54fd54ba9073bddb4b80e13069ec1",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza aditivo único para mudar o cronograma de pagamentos das outorgas (as taxas pagas pelas empresas) em contratos de parceria aeroportuária, desde que cumpridas condições específicas.",
+      "resumoDetalhe": "- Autoriza celebrar, uma única vez, aditivo que altera o cronograma de pagamentos das outorgas em contratos de parceria do setor aeroportuário assinados até uma data limite, observada a regulamentação do Ministério dos Transportes, Portos e Aviação Civil.\n- Exige que o interessado se manifeste dentro do prazo fixado, que não haja processo em andamento para cancelar o contrato por descumprimento e que ele esteja em dia com as outorgas vencidas até a assinatura do aditivo.\n- Determina que o contratado antecipe parte das contribuições fixas, que a reprogramação preserve o valor das outorgas originalmente assumidas em termos atuais, que o saldo reprogramado fique limitado ao que foi antecipado e que o aumento de cada parcela respeite um teto.\n- Estabelece que o cumprimento dessas condições não altera as demais cláusulas do contrato de parceria, considerando mantido o seu equilíbrio econômico-financeiro, isto é, a relação entre custos e ganhos combinada no início.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
+    "2138679": {
+      "sourceHash": "450466c1c9c76937690152608102e3f580f4988d291686d20f5046bd19fbf2f2",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria um programa para quitar e parcelar débitos não tributários com autarquias e fundações públicas federais e com a Procuradoria-Geral Federal, mediante adesão do devedor.",
+      "resumoDetalhe": "- Institui o Programa de Regularização de Débitos não Tributários (PRD) para autarquias, fundações públicas federais e a Procuradoria-Geral Federal, permitindo a quitação ou o parcelamento de dívidas não tributárias, inclusive as que estão em disputa, mediante requerimento de adesão.\n- Estabelece modalidades de pagamento com entrada e parcelamento, oferecendo descontos nos juros e na multa conforme a opção escolhida, e fixa a existência de valores mínimos para cada prestação distintos para pessoa física e pessoa jurídica.\n- Exige que, para incluir débitos em discussão administrativa ou judicial, o devedor desista dos recursos e das ações relativas a esses débitos e renuncie a alegações; determina a conversão automática de depósitos vinculados em pagamento definitivo ou em renda e mantém as garantias prestadas e as restrições já existentes sobre bens do devedor.\n- Determina a exclusão do devedor do programa e a cobrança imediata do saldo em casos de falta de pagamento ou atos que indiquem fraude patrimonial, e obriga autarquias, fundações e a Procuradoria a adaptar seus sistemas e procedimentos; exige também que o Poder Executivo estime e inclua na lei orçamentária a renúncia fiscal decorrente dos benefícios, ou seja, a receita que o governo deixa de arrecadar.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:09:19.792Z",
+      "reviewedAt": "2026-08-16T19:05:00.000Z"
+    },
+    "2144465": {
+      "sourceHash": "1fd1c5aa1d52545b988437aaa4b8ac805301fc72277db9e66cdb140c02b97c04",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Reorganiza o Fies, definindo regras de financiamento estudantil, criando um fundo garantidor privado com participação da União e fixando responsabilidades para cobrança e repasses.",
+      "resumoDetalhe": "- Institui regras para concessão de financiamento a estudantes de cursos superiores não gratuitos, definindo como será contratado o valor do curso, as garantias exigidas e a participação das instituições de ensino no risco.\n- Cria o FG-Fies (Fundo Garantidor do Fies, um fundo privado para garantir os créditos do programa) e disciplina sua gestão, seu estatuto e a forma de participação da União e das mantenedoras de ensino.\n- Obriga o desconto de parte da dívida direto no salário, feito pelo empregador, atribui a ele a responsabilidade pelo repasse e prevê multas e mecanismos de cobrança quando o repasse não acontecer.\n- Destina recursos de fundos regionais e constitucionais ao financiamento estudantil em modalidade específica, e organiza agentes operadores e critérios para uso desses recursos.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:10:38.605Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
     },
     "2147241": {
       "sourceHash": "e933d5cd6203ce3f9778f15759e337816ef7b745e0f3aa77d58291700609f4ed",
@@ -61,22 +149,55 @@
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Cria um regime tributário especial para atividades de exploração, desenvolvimento e produção de petróleo e gás, com deduções fiscais e suspensão de tributos na importação.",
-      "resumoDetalhe": "- Autoriza a dedução, para fins de imposto de renda e CSLL, das despesas aplicadas nas atividades de exploração e produção de petróleo e gás, prevê exaustão e exaustão acelerada de ativos formados por gastos de desenvolvimento, e disciplina a depreciação de máquinas e equipamentos usados nessas atividades.\n- Limita a redução do imposto de renda retido na fonte sobre pagamentos relacionados a afretamento ou aluguel de embarcações quando esses contratos forem executados com empresas vinculadas, estabelecendo diferentes percentuais conforme o tipo da embarcação, regras de conversão de moeda, e tratamento para casos de repactuação, variação cambial e destinatários em jurisdições com tributação favorecida.\n- Institui regime especial de importação com suspensão do pagamento de tributos federais para bens destinados às atividades de exploração, desenvolvimento e produção de petróleo e gás, condiciona a aplicação a relação de bens específica, e prevê que a suspensão se converta posteriormente em isenção ou em alíquota zero, com obrigação de recolher tributos se o bem não for usado conforme previsto.\n- Autoriza suspensão de tributos na importação ou na aquisição interna de matérias‑primas, produtos intermediários e embalagens quando destinados ao processo produtivo de bens para as atividades de petróleo e gás, prevê conversão da suspensão em isenção ou alíquota zero quando o produto final for corretamente destinado, estabelece medidas de controle, penalidades e possibilidade de prorrogação de prazo em casos excepcionais.",
+      "resumoDetalhe": "- Autoriza a dedução, para fins de imposto de renda e CSLL, das despesas aplicadas nas atividades de exploração e produção de petróleo e gás, prevê exaustão e exaustão acelerada de ativos formados por gastos de desenvolvimento, e disciplina a depreciação de máquinas e equipamentos usados nessas atividades.\n- Limita a redução do imposto de renda retido na fonte sobre pagamentos relacionados a afretamento ou aluguel de embarcações quando esses contratos forem executados com empresas vinculadas, estabelecendo diferentes percentuais conforme o tipo da embarcação, regras de conversão de moeda, e tratamento para casos de repactuação, variação cambial e destinatários em jurisdições com tributação favorecida.\n- Institui regime especial de importação com suspensão do pagamento de tributos federais para bens destinados às atividades de exploração, desenvolvimento e produção de petróleo e gás, condiciona a aplicação a relação de bens específica, e prevê que a suspensão se converta posteriormente em isenção ou em alíquota zero, com obrigação de recolher tributos se o bem não for usado conforme previsto.\n- Autoriza suspensão de tributos na importação ou na aquisição interna de matérias-primas, produtos intermediários e embalagens quando destinados ao processo produtivo de bens para as atividades de petróleo e gás, prevê conversão da suspensão em isenção ou alíquota zero quando o produto final for corretamente destinado, estabelece medidas de controle, penalidades e possibilidade de prorrogação de prazo em casos excepcionais.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:12:46.007Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2149303": {
+      "sourceHash": "a5aa95e8a58e25a6124b1614db07881811a127884f3f92d25d93b5db2057703a",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova o Protocolo de Adesão da Bolívia ao Mercosul e exige aprovação do Congresso para mudanças nesse acordo e para compromissos que pesem no patrimônio do país.",
+      "resumoDetalhe": "- Aprova o texto do Protocolo de Adesão da Bolívia ao Mercosul, celebrado em Brasília.\n- Submete ao Congresso Nacional atos que alterem esse Protocolo e ajustes complementares que tragam custos pesados ao patrimônio do país.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
+    "2149785": {
+      "sourceHash": "591efcdfce24e21ceb6ee3928761e307611b3952a13414e731a4570688b1ad82",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Estabelece a composição do Conselho Nacional de Assistência Social com vinte membros e representação igualitária entre governo, entidades de assistência, trabalhadores e usuários.",
+      "resumoDetalhe": "- Define a composição do Conselho Nacional de Assistência Social em partes iguais entre o governo e três grupos da sociedade civil: usuários, trabalhadores e entidades de assistência social, estes escolhidos em fórum próprio sob fiscalização do Ministério Público Federal.\n- Estabelece que as conferências de assistência social nas esferas municipal, estadual, do Distrito Federal e nacional sejam formadas por delegados com repartição igualitária entre governo, entidades sociais, usuários e trabalhadores.\n- Determina que os Conselhos de Assistência Social nos âmbitos estadual, municipal e do Distrito Federal observem a mesma paridade entre esses segmentos na sua composição.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
     },
     "2157806": {
       "sourceHash": "95b703a27f61e0fd817277fc2e813e00986c1dfed67ae8f084a23ab557efde49",
       "generationStatus": "generated",
       "reviewStatus": "approved",
       "resumoCard": "Regula serviços de vídeo por demanda no Brasil, exigindo credenciamento pela Ancine e fixando regras sobre catálogo, contribuição, acessibilidade e sanções.",
-      "resumoDetalhe": "- Define e regula a provisão de conteúdo audiovisual por demanda, exige credenciamento pela Ancine para operar, impõe obrigação de prestar informações à agência e autoriza a Ancine a mediar conflitos e fiscalizar práticas anti‑concorrenciais.\n- Estabelece regras para o catálogo das plataformas, exigindo uma cota progressiva de obras de produtoras brasileiras com parte dessa cota reservada a produtoras brasileiras independentes, e exclui microempresas e empresas optantes pelo Simples Nacional (regime tributário para micro e pequenas empresas) de algumas obrigações.\n- Determina a cobrança de contribuição calculada sobre a receita bruta das provedoras com alíquotas progressivas, permite descontar parcela da contribuição para compra de direitos ou investimento em produções independentes brasileiras e destina parte dos recursos arrecadados a produtoras de determinadas regiões do país, segundo critérios da Ancine.\n- Exige que provedores exibam a classificação indicativa dos conteúdos e ofereçam meio eletrônico de bloqueio por faixa etária, obriga a oferta de legendas, audiodescrição e LIBRAS conforme regulamento, e prevê sanções pela Ancine em caso de descumprimento, como advertência, multa, suspensão temporária ou cancelamento do credenciamento, aplicadas segundo critérios de proporcionalidade.",
+      "resumoDetalhe": "- Define e regula a provisão de conteúdo audiovisual por demanda, exige credenciamento pela Ancine para operar, impõe obrigação de prestar informações à agência e autoriza a Ancine a mediar conflitos e fiscalizar práticas anti-concorrenciais.\n- Estabelece regras para o catálogo das plataformas, exigindo uma cota progressiva de obras de produtoras brasileiras com parte dessa cota reservada a produtoras brasileiras independentes, e exclui microempresas e empresas optantes pelo Simples Nacional (regime tributário para micro e pequenas empresas) de algumas obrigações.\n- Determina a cobrança de contribuição calculada sobre a receita bruta das provedoras com alíquotas progressivas, permite descontar parcela da contribuição para compra de direitos ou investimento em produções independentes brasileiras e destina parte dos recursos arrecadados a produtoras de determinadas regiões do país, segundo critérios da Ancine.\n- Exige que provedores exibam a classificação indicativa dos conteúdos e ofereçam meio eletrônico de bloqueio por faixa etária, obriga a oferta de legendas, audiodescrição e LIBRAS conforme regulamento, e prevê sanções pela Ancine em caso de descumprimento, como advertência, multa, suspensão temporária ou cancelamento do credenciamento, aplicadas segundo critérios de proporcionalidade.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:12:46.007Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2158716": {
+      "sourceHash": "773a6ccd7bf12c2da20ebd98f6d6118849d9bfe679660111ec78089750734596",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Cria as polícias penais federal, estaduais e distrital e define regras básicas sobre sua organização e ingresso.",
+      "resumoDetalhe": "- Cria as polícias penais federal, estaduais e distrital e as reconhece como parte das forças de segurança.\n- Vincula cada polícia penal ao órgão que administra o sistema prisional do respectivo governo e atribui a elas a segurança dos estabelecimentos penais e outras funções a serem definidas por lei específica de iniciativa do Executivo.\n- Determina que o preenchimento das vagas nas polícias penais ocorra apenas por concurso público ou pela transformação dos cargos dos atuais agentes penitenciários ou cargos equivalentes.\n- Estabelece regras específicas para o Distrito Federal: o governo federal organiza e mantém as polícias no Distrito Federal, pode prestar assistência financeira ao Distrito Federal por meio de fundo, e lei federal vai regular a utilização dessas polícias pelo governo do Distrito Federal; além disso, subordina as polícias militares, os corpos de bombeiros militares, as polícias civis e as polícias penais estaduais e distrital aos governadores.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:09:19.792Z",
+      "reviewedAt": "2026-08-16T19:05:00.000Z"
     },
     "2160860": {
       "sourceHash": "9732789fb84ccbfaa1ed8ce06722e8cb3af6281ba002a4a45144b520ab1857d5",
@@ -89,6 +210,50 @@
       "generatedAt": "2026-06-25T22:43:30.565Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
     },
+    "2162116": {
+      "sourceHash": "83190be1caef5b33473905a1e9831f4154e2b87ffae3ba0217bb092d96c8f56e",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Garante na Constituição que a União reserve recursos mínimos para financiar o Sistema Único de Assistência Social (SUAS).",
+      "resumoDetalhe": "- Cria na Constituição o Sistema Único de Assistência Social (SUAS) como um sistema descentralizado e participativo para organizar a assistência social.\n- Exige que a União aplique, anualmente, um percentual mínimo da sua receita corrente líquida para financiar o SUAS, assegurando verba específica para o funcionamento do sistema.\n- Determina que eventual diferença entre o valor calculado para aplicação e a receita efetivamente realizada seja ajustada no início do exercício seguinte, com acréscimos ou deduções na aplicação.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:10:38.605Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2162802": {
+      "sourceHash": "5e139146ff78da6b359fd91abeee0184c1f82dbe305e556b2b443c020152cfef",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Prevê que instituição de ensino que negar matrícula a alunos, inclusive a alunos com deficiência, tenha suspenso o credenciamento, a autorização para funcionar.",
+      "resumoDetalhe": "- Estabelece que a recusa de matrícula por parte de instituição de ensino, inclusive quando se trata de aluno com deficiência, importará em suspensão do credenciamento (ou seja, perda temporária da autorização para funcionar).\n- Determina que a suspensão será aplicada na forma prevista pelo regulamento do sistema de ensino (ou seja, segundo regras que as autoridades educacionais definirem).",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
+    "2164132": {
+      "sourceHash": "6713817ddc0ed2a33468fbe72b230c34ebb649bb99885c8f1906226c5517fadf",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Aprova o texto da Convenção Interamericana contra o racismo, a discriminação racial e outras formas de intolerância.",
+      "resumoDetalhe": "- Aprova o texto da Convenção Interamericana que trata de racismo, discriminação racial e formas correlatas de intolerância, adotada na Guatemala pela Assembleia Geral da Organização dos Estados Americanos.\n- Submete ao Congresso Nacional qualquer ato que revise a convenção ou qualquer ajuste que crie custos ou obrigações difíceis para o patrimônio do país, exigindo aprovação legislativa.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
+    "2164134": {
+      "sourceHash": "73bdaebd05513589e374fdb7185dafd48354ce545d6c07d1bfe35c7c006ff209",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza o conselho que administra o Fundo de Garantia do Tempo de Serviço (FGTS) a contratar com a Caixa uma dívida sem prazo para vencer, que serve para reforçar o capital do banco.",
+      "resumoDetalhe": "- Autoriza o Conselho Curador do FGTS a, por resolução, contratar dívida subordinada — que só é paga depois das demais dívidas — com caráter perpétuo, sem data para vencer, seguindo regra do Conselho Monetário Nacional, tendo a Caixa como agente financeiro.\n- Destina essa contratação a compor o capital principal do agente financeiro, ou seja, o dinheiro próprio que o banco precisa ter como base de suas operações.\n- Aponta, na justificativa, que esse tipo de título não tem garantias ligadas a ele e que a remuneração deixa de ser devida quando não há lucro nem recursos na reserva de lucros.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
     "2164234": {
       "sourceHash": "8a8cb386688a235fc7fa394b5e54d457150510397b2889790a03d36de2a87e0e",
       "generationStatus": "generated",
@@ -100,6 +265,17 @@
       "generatedAt": "2026-06-26T02:30:38.288Z",
       "reviewedAt": "2026-06-26T19:32:07.000Z"
     },
+    "2164336": {
+      "sourceHash": "cb14e8dcd05c7575b69dfc1ec66fdaa8a10acc437dbf3626e915f233a6738855",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza o Exército a executar preferencialmente obras e serviços de engenharia sem licitação pública (sem concorrência entre empresas) em casos específicos.",
+      "resumoDetalhe": "- Atribui ao Exército preferência para executar obras e serviços de engenharia e autoriza que ele os realize sem licitação pública (ou seja, sem fazer a concorrência entre empresas) em casos específicos.\n- Define os casos que justificam essa preferência: obras paralisadas ou abandonadas, grandes obras de infraestrutura de transporte, obras de geração e transmissão de energia e outras obras públicas de valor elevado.\n- Determina que o Poder Executivo federal destine os recursos financeiros necessários e providencie o treinamento para formar soldados especialistas que executem essas obras.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T19:24:43.485Z",
+      "reviewedAt": "2026-08-16T22:10:00.000Z"
+    },
     "2165194": {
       "sourceHash": "53d28134979eb591a1be1a001a02da06277aa26d3e65ba7256ea64ab343dd346",
       "generationStatus": "generated",
@@ -110,6 +286,28 @@
       "promptVersion": "v3",
       "generatedAt": "2026-07-07T22:22:36.991Z",
       "reviewedAt": "2026-07-07T23:39:36.860Z"
+    },
+    "2166464": {
+      "sourceHash": "6bed7d82bb08d8aff28aa6cdb48ea9c8a330389e31e4b120929b3eda0aa98389",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Autoriza governos a cederem direitos sobre créditos tributários e não tributários a investidores, com regras para a operação e acesso a informações pela administração tributária.",
+      "resumoDetalhe": "- Autoriza a União, os Estados, o Distrito Federal e os Municípios a venderem, por meio de lei específica, o direito de receber dívidas de impostos e de outras cobranças a empresas privadas ou a fundos de investimento, inclusive quando essas dívidas já estiverem inscritas em dívida ativa (a lista oficial de quem deve ao poder público).\n- Determina que a venda não muda a dívida em si, preservando sua natureza, suas garantias e as regras de correção, juros, multas e prazos, e mantém com o poder público a tarefa de cobrar na Justiça, sem transferir ao comprador a relação com quem deve.\n- Proíbe que banco controlado pelo governo que vende os créditos seja o comprador principal ou negocie esses créditos depois, embora possa prestar serviços na montagem da operação, e trata a venda como alienação definitiva de patrimônio público, com parte do dinheiro obtido destinada à previdência e o restante a investimentos.\n- Autoriza a administração tributária a pedir informações de cadastro e de patrimônio dos contribuintes a órgãos e empresas e a compartilhar bases de dados com outras administrações, e prevê que o protesto extrajudicial da dívida interrompa a prescrição, o prazo depois do qual a cobrança não pode mais ser feita.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T06:10:38.605Z",
+      "reviewedAt": "2026-08-16T13:35:14.000Z"
+    },
+    "2166595": {
+      "sourceHash": "b6eabde2a2e243707aaa56651fe7af2a2260af18c9e212a75b74ebb52ac55e55",
+      "generationStatus": "generated",
+      "reviewStatus": "approved",
+      "resumoCard": "Torna válidos os atos administrativos praticados nos primeiros anos do Estado do Tocantins que geraram efeitos favoráveis, salvo prova de má-fé.",
+      "resumoDetalhe": "- Torna válidos os atos administrativos praticados no Estado do Tocantins no período inicial de sua instalação, mesmo quando tiverem algum defeito jurídico, se deles tiverem surgido efeitos favoráveis para os destinatários.\n- Estabelece que essa validação só ocorre após o decurso de um prazo contado da data do ato, salvo quando ficar comprovada má-fé.",
+      "model": "openai/gpt-5-mini",
+      "promptVersion": "v3",
+      "generatedAt": "2026-08-16T16:09:19.792Z",
+      "reviewedAt": "2026-08-16T19:05:00.000Z"
     },
     "2166600": {
       "sourceHash": "e43b9d308aa324d77f8ccb8fe7c67666c8440d13dc1066fc9f65e80b16fde7be",

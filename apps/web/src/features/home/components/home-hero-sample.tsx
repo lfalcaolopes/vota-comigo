@@ -27,7 +27,7 @@ const exemplos: ExemploResultado[] = [
 export function HomeHeroSample() {
   return (
     <figure
-      aria-label="Exemplo de como um resultado de compatibilidade aparece"
+      aria-label="Exemplo de como um resultado de concordância aparece"
       className="grid gap-4 rounded-lg border border-border bg-surface p-5"
     >
       <figcaption className="flex items-center justify-between gap-3">
@@ -53,7 +53,7 @@ export function HomeHeroSample() {
             </div>
             <div className="flex shrink-0 flex-col items-end">
               <p className="text-lg leading-none font-[680] tabular-nums text-ink">
-                <span className="sr-only">Compatibilidade </span>
+                <span className="sr-only">Concordância </span>
                 {item.percentual}
               </p>
               <p className="mt-1 text-xs text-muted">{item.amostra}</p>
@@ -63,7 +63,7 @@ export function HomeHeroSample() {
       </ul>
 
       <p className="text-xs leading-normal text-muted">
-        Todo percentual aparece com a amostra de votações considerada
+        Todo percentual vem com as votações que entraram na conta.
       </p>
     </figure>
   );
