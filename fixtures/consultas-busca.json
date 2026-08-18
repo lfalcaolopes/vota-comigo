@@ -1,0 +1,486 @@
+[
+  {
+    "esperadosLabels": ["PL 6579/2013 (596844)"],
+    "consulta": "saidinha de presos",
+    "esperados": [596844],
+    "nota": "popular | seguranca-justica | par popular de 'saída temporária de presos'",
+    "certeza": ["PL 6579/2013 (596844)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 6579/2013 (596844)"],
+    "consulta": "saída temporária de presos",
+    "esperados": [596844],
+    "nota": "tecnico | seguranca-justica | par técnico de 'saidinha de presos'; divergência entre os dois isola apelido vs. ementa",
+    "certeza": ["PL 6579/2013 (596844)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PEC 171/1993 (14493)"],
+    "consulta": "redução da maioridade penal",
+    "esperados": [14493],
+    "nota": "popular | seguranca-justica",
+    "certeza": ["PEC 171/1993 (14493)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 10372/2018 (2178170)"],
+    "consulta": "excludente de ilicitude",
+    "esperados": [2178170],
+    "nota": "tecnico | seguranca-justica",
+    "certeza": ["PL 10372/2018 (2178170)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 5582/2025 (2579832)"],
+    "consulta": "PL Antifacção",
+    "esperados": [2579832],
+    "nota": "apelido | seguranca-justica | matéria de 2025; testa cobertura da janela de ingestão",
+    "certeza": ["PL 5582/2025 (2579832)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PEC 18/2025 (2500080)"],
+    "consulta": "PEC da Segurança Pública",
+    "esperados": [2500080],
+    "nota": "apelido | seguranca-justica",
+    "certeza": ["PEC 18/2025 (2500080)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 3723/2019 (2209381)", "PL 3715/2019 (2210523)"],
+    "consulta": "posse e porte de armas",
+    "esperados": [2209381, 2210523],
+    "nota": "popular | armas",
+    "certeza": ["PL 3723/2019 (2209381)", "PL 3715/2019 (2210523)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": [
+      "PL 4149/2004 (264726)",
+      "PL 3723/2019 (2209381)",
+      "PL 3715/2019 (2210523)"
+    ],
+    "consulta": "Estatuto do Desarmamento",
+    "esperados": [264726, 2209381, 2210523],
+    "nota": "tecnico | armas | nome de lei alterada, não de proposição alteradora",
+    "certeza": [
+      "PL 4149/2004 (264726)",
+      "PL 3723/2019 (2209381)",
+      "PL 3715/2019 (2210523)"
+    ],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 3723/2019 (2209381)"],
+    "consulta": "colecionador atirador caçador",
+    "esperados": [2209381],
+    "nota": "popular | armas | jargão de nicho; provavelmente ausente de qualquer ementa",
+    "certeza": [],
+    "talvez": ["PL 3723/2019 (2209381)"],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PDL 3/2025 (2482078)"],
+    "consulta": "aborto",
+    "esperados": [2482078],
+    "nota": "popular | aborto | termo isolado de alta ambiguidade; mede ordenação, não recall",
+    "certeza": ["PDL 3/2025 (2482078)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PDL 3/2025 (2482078)"],
+    "consulta": "aborto legal em caso de estupro",
+    "esperados": [2482078],
+    "nota": "linguagem_natural | aborto",
+    "certeza": ["PDL 3/2025 (2482078)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 3179/2012 (534328)"],
+    "consulta": "ensino domiciliar",
+    "esperados": [534328],
+    "nota": "tecnico | educacao-cultura | par técnico de 'homeschooling'",
+    "certeza": ["PL 3179/2012 (534328)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 3179/2012 (534328)"],
+    "consulta": "homeschooling",
+    "esperados": [534328],
+    "nota": "popular | educacao-cultura | estrangeirismo; par popular de 'ensino domiciliar'",
+    "certeza": ["PL 3179/2012 (534328)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["MPV 1075/2021 (2310615)"],
+    "consulta": "cotas raciais em universidades",
+    "esperados": [2310615],
+    "nota": "popular | educacao-cultura",
+    "certeza": [],
+    "talvez": ["MPV 1075/2021 (2310615)"],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 490/2007 (345311)"],
+    "consulta": "marco temporal",
+    "esperados": [345311],
+    "nota": "tecnico | meio-ambiente-terra | curto e ambíguo fora do contexto indígena",
+    "certeza": ["PL 490/2007 (345311)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 2159/2021 (257161)"],
+    "consulta": "PL da Devastação",
+    "esperados": [257161],
+    "nota": "apelido | meio-ambiente-terra | caso canônico de alias: deve ser encontrável, título exibido deve ser o descritivo",
+    "certeza": ["PL 2159/2021 (257161)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 2159/2021 (257161)"],
+    "consulta": "licenciamento ambiental",
+    "esperados": [257161],
+    "nota": "tecnico | meio-ambiente-terra | par neutro de 'PL da Devastação'; devem convergir no mesmo resultado",
+    "certeza": ["PL 2159/2021 (257161)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 490/2007 (345311)"],
+    "consulta": "demarcação de terras indígenas",
+    "esperados": [345311],
+    "nota": "tecnico | meio-ambiente-terra",
+    "certeza": ["PL 490/2007 (345311)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 709/2023 (2349493)", "PL 4357/2023 (2386051)"],
+    "consulta": "invasão de terras MST",
+    "esperados": [2349493, 2386051],
+    "nota": "popular | meio-ambiente-terra",
+    "certeza": ["PL 709/2023 (2349493)"],
+    "talvez": ["PL 4357/2023 (2386051)"],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 1087/2025 (2487436)"],
+    "consulta": "isenção do imposto de renda até 5 mil",
+    "esperados": [2487436],
+    "nota": "linguagem_natural | economia-tributacao",
+    "certeza": ["PL 1087/2025 (2487436)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": [
+      "PL 2337/2021 (2288389)",
+      "PL 4173/2023 (2383287)",
+      "PL 1087/2025 (2487436)"
+    ],
+    "consulta": "taxação dos super-ricos",
+    "esperados": [2288389, 2383287, 2487436],
+    "nota": "popular | economia-tributacao",
+    "certeza": ["PL 4173/2023 (2383287)", "PL 1087/2025 (2487436)"],
+    "talvez": ["PL 2337/2021 (2288389)"],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 914/2024 (2422697)"],
+    "consulta": "taxa das blusinhas",
+    "esperados": [2422697],
+    "nota": "apelido | economia-tributacao | apelido de emenda dentro de projeto maior; testa granularidade da matéria",
+    "certeza": ["PL 914/2024 (2422697)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": [
+      "PEC 293/2004 (259094)",
+      "PEC 31/2007 (347421)",
+      "PEC 45/2019 (2196833)",
+      "PLP 68/2024 (2430143)",
+      "PLP 108/2024 (2438459)"
+    ],
+    "consulta": "reforma tributária",
+    "esperados": [259094, 347421, 2196833, 2430143, 2438459],
+    "nota": "tecnico | economia-tributacao | múltiplos turnos e retorno do Senado; bom teste da colapsagem de sub-votações",
+    "certeza": [
+      "PEC 293/2004 (259094)",
+      "PEC 31/2007 (347421)",
+      "PEC 45/2019 (2196833)",
+      "PLP 68/2024 (2430143)",
+      "PLP 108/2024 (2438459)"
+    ],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PEC 221/2019 (2233802)"],
+    "consulta": "fim da escala 6x1",
+    "esperados": [2233802],
+    "nota": "popular | economia-tributacao",
+    "certeza": ["PEC 221/2019 (2233802)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": [
+      "MPV 672/2015 (1150196)",
+      "MPV 1021/2020 (2268414)",
+      "MPV 1091/2021 (2313736)",
+      "MPV 1172/2023 (2359135)"
+    ],
+    "consulta": "aumento do salário mínimo",
+    "esperados": [1150196, 2268414, 2313736, 2359135],
+    "nota": "popular | economia-tributacao",
+    "certeza": [
+      "MPV 672/2015 (1150196)",
+      "MPV 1021/2020 (2268414)",
+      "MPV 1091/2021 (2313736)",
+      "MPV 1172/2023 (2359135)"
+    ],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PEC 6/2019 (2192459)"],
+    "consulta": "reforma da previdência",
+    "esperados": [2192459],
+    "nota": "tecnico | previdencia-estado",
+    "certeza": ["PEC 6/2019 (2192459)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["MPV 1031/2021 (2270789)"],
+    "consulta": "privatização da Eletrobras",
+    "esperados": [2270789],
+    "nota": "popular | previdencia-estado",
+    "certeza": ["MPV 1031/2021 (2270789)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 591/2021 (2270894)"],
+    "consulta": "privatização dos Correios",
+    "esperados": [2270894],
+    "nota": "popular | previdencia-estado"
+  },
+  {
+    "esperadosLabels": ["PEC 15/2022 (2329218)"],
+    "consulta": "PEC Kamikaze",
+    "esperados": [2329218],
+    "nota": "apelido | previdencia-estado | segundo caso canônico de alias carregado",
+    "certeza": ["PEC 15/2022 (2329218)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PEC 3/2021 (2270800)"],
+    "consulta": "PEC da Impunidade",
+    "esperados": [2270800],
+    "nota": "apelido | instituicoes-mandato | matéria de origem do projeto; par carregado de 'PEC 3/2021'",
+    "certeza": ["PEC 3/2021 (2270800)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PEC 3/2021 (2270800)"],
+    "consulta": "PEC 3/2021",
+    "esperados": [2270800],
+    "nota": "sigla | instituicoes-mandato | par formal de 'PEC da Impunidade'",
+    "certeza": ["PEC 3/2021 (2270800)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PEC 3/2021 (2270800)"],
+    "consulta": "PEC da Blindagem",
+    "esperados": [2270800],
+    "nota": "apelido | instituicoes-mandato",
+    "certeza": ["PEC 3/2021 (2270800)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PEC 3/2021 (2270800)"],
+    "consulta": "foro privilegiado",
+    "esperados": [2270800],
+    "nota": "popular | instituicoes-mandato",
+    "certeza": ["PEC 3/2021 (2270800)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": [
+      "PEC 18/2021 (2293703)",
+      "PEC 9/2023 (2352476)",
+      "PL 4438/2023 (2387066)"
+    ],
+    "consulta": "fundo eleitoral",
+    "esperados": [2293703, 2352476, 2387066],
+    "nota": "popular | instituicoes-mandato",
+    "certeza": [],
+    "talvez": [
+      "PEC 18/2021 (2293703)",
+      "PEC 9/2023 (2352476)",
+      "PL 4438/2023 (2387066)"
+    ],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PEC 135/2019 (2220292)"],
+    "consulta": "voto impresso auditável",
+    "esperados": [2220292],
+    "nota": "popular | instituicoes-mandato",
+    "certeza": ["PEC 135/2019 (2220292)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 3224/2024 (2453934)"],
+    "consulta": "adultização de crianças na internet",
+    "esperados": [2453934],
+    "nota": "popular | internet-plataformas",
+    "certeza": [],
+    "talvez": ["PL 3224/2024 (2453934)"],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 2162/2023 (2358548)"],
+    "consulta": "anistia 8 de janeiro",
+    "esperados": [2358548],
+    "nota": "popular | anistia-responsabilizacao",
+    "certeza": ["PL 2162/2023 (2358548)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 2162/2023 (2358548)"],
+    "consulta": "PL da Dosimetria",
+    "esperados": [2358548],
+    "nota": "apelido | anistia-responsabilizacao",
+    "certeza": ["PL 2162/2023 (2358548)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PDL 3/2025 (2482078)"],
+    "consulta": "PDL 3/2025",
+    "esperados": [2482078],
+    "nota": "sigla | anistia-responsabilizacao | CONTROLE POSITIVO: matéria com votação nominal individual confirmada na base",
+    "certeza": ["PDL 3/2025 (2482078)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 2162/2023 (2358548)"],
+    "consulta": "urgência para o projeto de anistia",
+    "esperados": [2358548],
+    "nota": "linguagem_natural | anistia-responsabilizacao | requerimento de urgência é votação procedimental; testa distinção mérito vs. procedimento",
+    "certeza": ["PL 2162/2023 (2358548)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PEC 6/2019 (2192459)"],
+    "consulta": "previdencia",
+    "esperados": [2192459],
+    "nota": "ruido | controle | sem acento; deve retornar o mesmo que 'reforma da previdência'",
+    "certeza": ["PEC 6/2019 (2192459)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PEC 3/2021 (2270800)"],
+    "consulta": "PEC3/2021",
+    "esperados": [2270800],
+    "nota": "ruido | controle | sigla sem espaço; deve retornar o mesmo que 'PEC 3/2021'",
+    "certeza": ["PEC 3/2021 (2270800)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PDL 3/2025 (2482078)"],
+    "consulta": "aborrto",
+    "esperados": [2482078],
+    "nota": "ruido | controle | erro de digitação; mede tolerância a typo",
+    "certeza": ["PDL 3/2025 (2482078)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": [
+      "PEC 182/2007 (373327)",
+      "PEC 125/2011 (531331)",
+      "PL 2522/2015 (1594917)",
+      "PEC 282/2016 (2118401)",
+      "PL 5029/2019 (2187087)",
+      "PEC 135/2019 (2220292)",
+      "PEC 18/2020 (2256130)",
+      "PLP 112/2021 (2292163)",
+      "PEC 18/2021 (2293703)",
+      "PL 783/2021 (2293710)",
+      "PEC 9/2023 (2352476)",
+      "PL 4438/2023 (2387066)",
+      "PLP 192/2023 (2387067)"
+    ],
+    "consulta": "eleitoral",
+    "esperados": [
+      373327, 531331, 1594917, 2118401, 2187087, 2220292, 2256130, 2292163,
+      2293703, 2293710, 2352476, 2387066, 2387067
+    ],
+    "nota": "ruido | controle | genérico demais; mede teto de resultados e sanidade da ordenação",
+    "certeza": [
+      "PEC 182/2007 (373327)",
+      "PEC 125/2011 (531331)",
+      "PL 2522/2015 (1594917)",
+      "PEC 282/2016 (2118401)",
+      "PL 5029/2019 (2187087)",
+      "PEC 135/2019 (2220292)",
+      "PEC 18/2020 (2256130)",
+      "PLP 112/2021 (2292163)",
+      "PEC 18/2021 (2293703)",
+      "PL 783/2021 (2293710)",
+      "PEC 9/2023 (2352476)",
+      "PL 4438/2023 (2387066)",
+      "PLP 192/2023 (2387067)"
+    ],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PEC 6/2019 (2192459)"],
+    "consulta": "quem votou contra a reforma da previdência",
+    "esperados": [2192459],
+    "nota": "linguagem_natural | controle | pergunta, não termo; verificar degradação",
+    "certeza": ["PEC 6/2019 (2192459)"],
+    "talvez": [],
+    "achoQueNao": []
+  },
+  {
+    "esperadosLabels": ["PL 3855/2019 (2080604)", "PEC 3/2021 (2270800)"],
+    "consulta": "impunidade",
+    "esperados": [2080604, 2270800],
+    "nota": "ruido | controle | fragmento de alias sem contexto",
+    "certeza": ["PL 3855/2019 (2080604)", "PEC 3/2021 (2270800)"],
+    "talvez": [],
+    "achoQueNao": []
+  }
+]
