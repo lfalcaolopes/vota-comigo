@@ -85,7 +85,7 @@ jobs:
             --allow-unauthenticated \
             --min-instances=0 \
             --port=8080 \
-            --set-secrets DATABASE_URL=app-db-url:latest \
+            --set-secrets DATABASE_URL=app-db-url:latest,OPENROUTER_API_KEY=openrouter-api-key:latest \
             --set-env-vars "^##^NODE_ENV=production##WEB_ORIGIN=${{ vars.WEB_ORIGIN }}" \
             --quiet
 
