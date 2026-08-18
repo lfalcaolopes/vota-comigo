@@ -48,6 +48,8 @@ pnpm download:csvs -- --dataset=ceap --from=2015 --to=2026
 
 Ao fim, `apps/api/data/raw/` volta a ter uma subpasta por conjunto de arquivos.
 
+Confira o resultado antes de seguir. A Câmara regera os arquivos da cota todo dia, inclusive os de anos fechados, e uma geração ruim entrega arquivos truncados sem nenhum erro de download — ver [camara-csv-downloader.md](./camara-csv-downloader.md#geração-diária-e-arquivos-truncados) para o que conferir e como reagir.
+
 > A janela 2015 a 2026 é a usada hoje. Se você precisar de outra, troque os anos nos dois comandos e mantenha os mesmos anos no passo 4.
 
 ## 4. Ingestão principal
@@ -88,7 +90,7 @@ pnpm ingest -- --only=deputado_gasto_cota_sigepa --from=2025 --to=2026 --debug
 
 Como no passo 5, depende da API e precisa ser repetido até o comando reportar que nada está pendente.
 
-Este passo também grava a categoria `998 — PASSAGEM AÉREA - SIGEPA` em `cota_categoria`. O arquivo da Câmara não traz mais essa categoria em ano nenhum, então numa base nova ela só existe se o passo rodar. Sem ela, o perfil de qualquer deputado com passagem aérea reposta responde erro em vez da página.
+Este passo também grava a categoria `998 — PASSAGEM AÉREA - SIGEPA` em `cota_categoria`. O dump traz essa categoria de junho de 2019 a julho de 2025, mas não em 2026 — uma base cuja janela não alcance os anos com 998 nunca aprende a descrição pelo passo do CSV, e o perfil de qualquer deputado com passagem aérea reposta responde erro em vez da página. Rodar este passo garante a categoria em qualquer janela.
 
 ## 8. Fechar os cálculos e os resumos
 

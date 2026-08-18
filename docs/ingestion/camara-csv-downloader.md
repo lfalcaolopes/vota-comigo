@@ -96,6 +96,37 @@ O ZIP é baixado para `{arquivo}.zip.tmp`, tem a assinatura conferida, o CSV esp
 
 Subpasta por dataset evita uma pasta plana com centenas de arquivos quando a janela cobre 25 anos. As informações mais atualizadas sobre os arquivos estão em <https://dadosabertos.camara.leg.br/swagger/api.html?tab=staticfile>.
 
+#### Geração diária e arquivos truncados
+
+Os arquivos da cota **não são um arquivo morto**. A Câmara regera todos eles diariamente, inclusive os de anos fechados há uma década:
+
+```
+$ curl -sI https://www.camara.leg.br/cotas/Ano-2019.csv.zip | grep -i last-modified
+last-modified: Tue, 18 Aug 2026 06:27:44 GMT
+```
+
+A consequência prática é que um defeito no export da Câmara atinge a série histórica inteira no mesmo dia, e qualquer rebaixa posterior o traz junto. Foi o que aconteceu em **17 de agosto de 2026**: a geração daquela manhã veio truncada em todos os anos de 2015 a 2026. `Ano-2023.csv` chegou com 173.798 linhas e R$ 201,5 mi em vez das 232.008 linhas e R$ 247,0 mi corretas — sem a categoria `998` inteira, e com dois terços da `999` faltando. O download não falhou: assinatura do ZIP válida, extração limpa, arquivo íntegro. Só menor.
+
+O download seguinte, em 18 de agosto, veio correto. O episódio dura o que durar a geração ruim do lado da fonte.
+
+Nada no downloader detecta isso, e nada na ingestão detecta também: os invariantes de `deputado_gasto_cota` só checam consistência interna do arquivo, e um arquivo pela metade é internamente consistente. **Confira o resultado de toda rebaixa da cota** comparando o total por ano contra a execução anterior:
+
+```bash
+for y in $(seq 2015 2026); do
+  awk -F'";"' -v Y=$y 'NR>1{n++; s+=$20+0; if($9=="998") n8++}
+    END{printf "%s  %8d linhas  R$ %14.2f  998=%d
+", Y, n, s, n8+0}'     apps/api/data/raw/ceap/Ano-$y.csv
+done
+```
+
+Referências para o que é normal:
+
+- o total anual fica entre **R$ 210 mi e R$ 252 mi** de 2015 a 2025; 2026 é parcial;
+- a categoria `998` existe de **junho de 2019 a julho de 2025** e em nenhum outro ponto da série — ausência fora dessa faixa é esperada, ausência dentro dela é arquivo ruim;
+- antes de 2019 a aviação está na `999`, com R$ 48 mi a R$ 55 mi por ano; a partir de 2020 a `999` desaba porque a SIGEPA assume.
+
+Uma queda relevante contra a execução anterior não deve ser ingerida. Rebaixe no dia seguinte.
+
 ---
 
 ## Flags

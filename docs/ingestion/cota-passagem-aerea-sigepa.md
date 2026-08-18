@@ -26,8 +26,8 @@ Ponto operacional para quem consumir `limiteMensalCota`: o portal aplica o valor
 
 O teto real de parte dos deputados excede a tabela por UF em um valor fixo, nacional, não proporcional à UF — o mesmo valor absoluto aparece em AC, RR, DF, RJ, MG, BA, SC e SP.
 
-| Adicional mensal | Proporção |
-| ---------------- | --------- |
+| Adicional mensal | Proporção  |
+| ---------------- | ---------- |
 | R$ 1.353,04      | 3 unidades |
 | R$ 902,02        | 2 unidades |
 | R$ 451,02        | 1 unidade  |
@@ -42,20 +42,20 @@ Foram observados também créditos avulsos grandes e isolados no denominador (um
 
 Totais do tipo por mês, apurados sobre os dumps anuais:
 
-| Ano  | Jan–Jul                          | Ago–Dez                         |
-| ---- | -------------------------------- | ------------------------------- |
-| 2024 | R$ 2,1 mi a R$ 3,9 mi por mês    | R$ 2,2 mi a R$ 5,0 mi por mês   |
-| 2025 | R$ 2,4 mi a R$ 4,7 mi por mês    | apenas estornos negativos       |
-| 2026 | zero em todo o arquivo           | —                               |
+| Ano  | Jan–Jul                       | Ago–Dez                       |
+| ---- | ----------------------------- | ----------------------------- |
+| 2024 | R$ 2,1 mi a R$ 3,9 mi por mês | R$ 2,2 mi a R$ 5,0 mi por mês |
+| 2025 | R$ 2,4 mi a R$ 4,7 mi por mês | apenas estornos negativos     |
+| 2026 | zero em todo o arquivo        | —                             |
 
 O encaixe com o portal é exato. Os totais mensais de um deputado batem ao centavo com o portal de janeiro a julho de 2025 e divergem de agosto em diante exatamente pela média histórica de SIGEPA daquele deputado.
 
 Impacto em 2026 (janeiro a julho):
 
-| Deputado      | Dump anual     | Portal         | Ausente |
-| ------------- | -------------- | -------------- | ------- |
-| Erika Hilton  | R$ 101.517,32  | R$ 267.245,93  | 62%     |
-| Alfredinho    | R$ 292.925,91  | R$ 326.217,37  | 10%     |
+| Deputado     | Dump anual    | Portal        | Ausente |
+| ------------ | ------------- | ------------- | ------- |
+| Erika Hilton | R$ 101.517,32 | R$ 267.245,93 | 62%     |
+| Alfredinho   | R$ 292.925,91 | R$ 326.217,37 | 10%     |
 
 No agregado, SIGEPA era 16% a 18% do total da cota. A distribuição é muito desigual: quem voa muito perde quase todo o gasto no dump, quem voa pouco quase não perde. Por isso a lacuna enviesa comparação entre deputados e mediana por UF no período afetado, não apenas o valor absoluto de um perfil.
 
@@ -64,14 +64,18 @@ Verificações feitas para descartar hipóteses mais simples:
 - Novo download do `Ano-2026.csv.zip` produz arquivo idêntico ao local — não é download desatualizado nem truncado.
 - O `Ano-2026.json.zip` tem a mesma lacuna (mesmo total truncado, SIGEPA zerado). CSV e JSON compartilham o pipeline de export; trocar de formato não resolve.
 
+**Reconfirmado em 18/08/2026, e uma armadilha no caminho.** A tabela acima foi reapurada sobre os dumps rebaixados naquele dia e não mudou: a `998` existe de junho de 2019 a julho de 2025, some a partir de agosto de 2025 deixando só estornos negativos, e não aparece em 2026. O corte de agosto de 2025 segue exato.
+
+A reapuração foi necessária porque a geração de **17/08/2026** dos dumps veio truncada em todos os anos — a `998` sumia da série inteira, e 2023 fechava em R$ 201,5 mi em vez de R$ 247,0 mi. Ingerido, esse dump fazia o perfil de 2023 exibir gasto 30% menor sem marcar o ano como incompleto, porque a janela da reposição corretamente não alcança 2023. **Um dump truncado imita esta lacuna e leva a concluir que ela é retroativa.** Antes de mexer na janela em `reposicao-sigepa.ts`, confirme que o dump em disco está íntegro; ver [camara-csv-downloader.md](./camara-csv-downloader.md#geração-diária-e-arquivos-truncados).
+
 ## Fonte de reposição
 
 `GET /deputados/{id}/despesas` traz SIGEPA normalmente e fecha com o portal:
 
-| Deputado, período         | API            | Portal         |
-| ------------------------- | -------------- | -------------- |
-| Erika Hilton, 2026 jan–jul| R$ 267.245,93  | R$ 267.245,93  |
-| Erika Hilton, 2025        | R$ 468.655,03  | R$ 468.659,33  |
+| Deputado, período          | API           | Portal        |
+| -------------------------- | ------------- | ------------- |
+| Erika Hilton, 2026 jan–jul | R$ 267.245,93 | R$ 267.245,93 |
+| Erika Hilton, 2025         | R$ 468.655,03 | R$ 468.659,33 |
 
 Duas armadilhas do endpoint:
 
@@ -96,7 +100,7 @@ Busca sob demanda seria defensável se o perfil passar a exibir **detalhe por do
 
 - A ausência de SIGEPA nos exports `Ano-{ano}.csv` e `Ano-{ano}.json` é defeito do lado da Câmara e vale reportar.
 - A janela afetada começa em agosto de 2025 conforme observado hoje. Se a correção do lado da fonte for retroativa apenas em parte, a data de corte precisa ser reavaliada em vez de assumida.
-- A doc mediu apenas a categoria `998`. Falta confirmar na ingestão que a `999` (passagem aérea — RPA) continua presente no dump dentro da janela.
+- ~~A doc mediu apenas a categoria `998`. Falta confirmar na ingestão que a `999` (passagem aérea — RPA) continua presente no dump dentro da janela.~~ Confirmado em 18/08/2026: a `999` está presente na janela, com 554 linhas e R$ 724.567,04 em 2025 e 122 linhas e R$ 154.276,70 em 2026. O volume é pequeno porque a `999` vinha caindo desde 2020, quando a SIGEPA assumiu a aviação — não é sintoma da lacuna. A reposição cobre só a `998`, e está certo assim.
 
 ## Desenho da reposição
 
