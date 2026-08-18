@@ -149,7 +149,7 @@ _Avoid_: Votadas recentemente.
 
 **Tema disponível no feed**: Tema oficial com texto público associado a pelo menos uma proposição computável pelo matcher, identificado publicamente pelo `externalCodTema` e rotulado pelo texto oficial do tema.
 
-**Busca no feed**: Recorte textual do feed de proposições por identificador legislativo ou ementa, sem busca por nome de tema, combinável com filtro de tema e modo de ordenação.
+**Busca no feed**: Recorte do feed de proposições por consulta livre, combinável com filtro de tema e modo de ordenação. Uma consulta que se resolve em identificador legislativo vira busca exata por sigla, número e ano; qualquer outra é ranqueada por proximidade semântica entre a consulta e o texto da proposição — ementa, palavras-chave e resumos de IA aprovados. Não há busca por nome de tema.
 
 **Sugestão inicial de proposições**: Lista inicial de proposições computáveis pelo matcher apresentada ao usuário a partir do feed de proposições no modo de ordenação padrão.
 
@@ -257,7 +257,8 @@ _Avoid_: Ano completo como sinônimo, já que a completude do dump e a da reposi
 - Sem filtro de tema selecionado, o **Feed de proposições** inclui **Proposições computáveis pelo matcher** com ou sem tema oficial associado.
 - Quando uma **Proposição computável pelo matcher** tem múltiplos **Temas disponíveis no feed**, ela aparece no filtro de qualquer um deles.
 - O **Feed de proposições** pode ser ordenado por **Proposições mais votadas em plenário** ou por **Proposições mais recentes**.
-- A **Busca no feed**, o filtro por **Tema disponível no feed** e o modo de ordenação do **Feed de proposições** podem ser combinados; busca e filtro reduzem o conjunto antes da ordenação e paginação.
+- A **Busca no feed**, o filtro por **Tema disponível no feed** e o modo de ordenação do **Feed de proposições** podem ser combinados; busca e filtro reduzem o conjunto antes da paginação.
+- Quando a **Busca no feed** ranqueia por proximidade semântica, é essa proximidade que ordena o resultado, e o modo de ordenação escolhido não se aplica àquela consulta.
 - O filtro por **Tema disponível no feed** não recalcula a métrica de **Proposições mais votadas em plenário**; ele apenas restringe o conjunto ordenado pelo volume total de votações nominais em plenário.
 - Os critérios ativos do **Feed de proposições** são estado público da URL para permitir compartilhamento, refresh e primeira renderização com o mesmo recorte.
 - A seleção de proposições do **Matcher** usa a mesma semântica de busca, filtro por tema e ordenação do **Feed de proposições**.

@@ -8,7 +8,17 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
 import { createProposicoesRepository } from '@/proposicoes/proposicoes.repository';
+import {
+  createQueryEmbedding,
+  disabledQueryEmbedding,
+  type QueryEmbedding,
+} from '@/proposicoes/service/query-embedding';
 import * as schema from '@/shared/database/schema';
+import { PROPOSICAO_EMBEDDING_DIM } from '@/shared/database/schema';
+import {
+  DEFAULT_EMBEDDING_MODEL,
+  createOpenrouterEmbeddingClient,
+} from '@/shared/embedding/openrouter-embedding-client';
 
 import { assertCorpusMatchesProduction } from './diagnostico-busca/corpus';
 import { loadConsultasFixture } from './diagnostico-busca/consultas-fixture';
@@ -64,10 +74,13 @@ async function run(): Promise<void> {
 
   try {
     const repository = createProposicoesRepository(db);
+    const queryEmbedding = createDiagnosticoQueryEmbedding();
 
     const consultas: ConsultaResultado[] = [];
     for (const fixture of fixtures) {
-      consultas.push(await runConsulta(db, repository, fixture));
+      consultas.push(
+        await runConsulta(db, repository, fixture, queryEmbedding),
+      );
     }
 
     const report = buildReport(consultas, url);
@@ -97,7 +110,7 @@ function buildReport(
       commitLimpo: readGit(['status', '--porcelain']) === '',
       banco: describeBanco(url),
       profundidade: PROFUNDIDADE,
-      ordenacao: `${ORDENACAO} (volume_votacoes_plenario desc, sem relevancia textual)`,
+      ordenacao: `${ORDENACAO} (volume_votacoes_plenario desc; a busca semantica ordena por distancia cosseno e ignora este modo)`,
     },
     buscaConfig: buildBuscaConfig(),
     consultas,
@@ -151,4 +164,26 @@ function describeBanco(url: string): string {
 
 function toFileTimestamp(timestamp: string): string {
   return timestamp.replace(/[:.]/g, '-');
+}
+
+// Sem credencial o diagnostico mede a degradacao textual, nao a busca
+// semantica; a linha de plano de cada consulta registra qual dos dois rodou.
+function createDiagnosticoQueryEmbedding(): QueryEmbedding {
+  const apiKey = process.env['OPENROUTER_API_KEY'];
+  if (apiKey === undefined || apiKey === '') {
+    console.error(
+      'OPENROUTER_API_KEY ausente: o diagnostico roda no plano de tokens.',
+    );
+    return disabledQueryEmbedding;
+  }
+
+  const model =
+    process.env['OPENROUTER_EMBEDDING_MODEL'] || DEFAULT_EMBEDDING_MODEL;
+  return createQueryEmbedding({
+    client: createOpenrouterEmbeddingClient({
+      apiKey,
+      model,
+      dimensions: PROPOSICAO_EMBEDDING_DIM,
+    }),
+  });
 }

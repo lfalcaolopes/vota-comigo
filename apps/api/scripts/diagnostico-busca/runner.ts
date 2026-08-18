@@ -1,10 +1,12 @@
 import type { DrizzleDatabase } from '@/shared/database/client';
 import type { ProposicoesRepository } from '@/proposicoes/proposicoes.repository';
+import type { ProposicoesSearchPlan } from '@/proposicoes/rules/proposicoes-search';
 import {
-  toSearchPlan,
-  type ProposicoesSearchPlan,
-} from '@/proposicoes/rules/proposicoes-search';
+  resolveSearchPlan,
+  type QueryEmbedding,
+} from '@/proposicoes/service/query-embedding';
 import type { ProposicaoFeedItem } from '@/proposicoes/types/proposicoes.types';
+import { SEMANTIC_CANDIDATE_LIMIT } from '@/proposicoes/repository/proposicoes-search.condition';
 
 import { classifyAusencia } from './classificacao';
 import type { ConsultaFixture } from './consultas-fixture';
@@ -30,8 +32,9 @@ export async function runConsulta(
   db: DrizzleDatabase,
   repository: ProposicoesRepository,
   fixture: ConsultaFixture,
+  queryEmbedding: QueryEmbedding,
 ): Promise<ConsultaResultado> {
-  const plano = toSearchPlan(fixture.consulta);
+  const plano = await resolveSearchPlan(fixture.consulta, queryEmbedding);
 
   const page = await repository.loadProposicoesComputaveis({
     ordenacao: ORDENACAO,
@@ -157,6 +160,10 @@ function describePlano(plano: ProposicoesSearchPlan | null): string {
       ano === undefined ? null : `ano=${ano}`,
     ].filter((parte): parte is string => parte !== null);
     return `citacao (lookup exato, corpus ignorado): ${partes.join(' ')}`;
+  }
+
+  if (plano.kind === 'semantic') {
+    return `vetorial (distancia cosseno, top ${SEMANTIC_CANDIDATE_LIMIT})`;
   }
 
   return `tokens (AND, LIKE %token%): [${plano.tokens.join(', ')}]`;

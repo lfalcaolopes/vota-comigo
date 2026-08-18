@@ -19,6 +19,10 @@ import type {
 } from '../proposicoes.repository';
 import { PROPOSICOES_REPOSITORY } from '../proposicoes.repository';
 import { ProposicoesService } from '../proposicoes.service';
+import {
+  QUERY_EMBEDDING,
+  disabledQueryEmbedding,
+} from '../service/query-embedding';
 import { toProposicoesComputaveis } from '../rules/proposicoes-computaveis';
 
 type TestServer = Parameters<typeof request>[0];
@@ -164,6 +168,7 @@ async function buildApp(data: FakeData): Promise<INestApplication> {
     providers: [
       ProposicoesService,
       { provide: PROPOSICOES_REPOSITORY, useValue: fakeRepository(data) },
+      { provide: QUERY_EMBEDDING, useValue: disabledQueryEmbedding },
     ],
   }).compile();
 

@@ -6,7 +6,7 @@ import {
 import type { FeedOrdenacao } from '@vota-comigo/shared-types';
 
 import type { DrizzleDatabase } from '@/shared/database/client';
-import { toSearchCondition } from './repository/proposicoes-search.condition';
+import { toSearchSql } from './repository/proposicoes-search.condition';
 import type { ProposicoesSearchPlan } from './rules/proposicoes-search';
 import type {
   ProposicaoTemaRow,
@@ -16,6 +16,7 @@ import type {
 import {
   proposicao,
   proposicaoComputavel,
+  proposicaoEmbedding,
   proposicaoResumoIa,
   proposicaoTema,
   tema,
@@ -193,10 +194,12 @@ export function createProposicoesRepository(
             )
           : undefined;
 
-      const buscaCondition =
-        query.busca === undefined ? undefined : toSearchCondition(query.busca);
+      const busca =
+        query.busca === undefined
+          ? null
+          : toSearchSql(query.busca, tema === undefined ? {} : { tema });
 
-      const rows = await db
+      const base = db
         .select({
           externalIdProposicao: proposicao.externalIdProposicao,
           siglaTipo: proposicao.siglaTipo,
@@ -220,8 +223,25 @@ export function createProposicoesRepository(
           proposicaoResumoIa,
           eq(proposicaoResumoIa.proposicaoId, proposicao.id),
         )
-        .where(and(temaCondition, buscaCondition))
-        .orderBy(ordenacaoSql(query.ordenacao))
+        .$dynamic();
+
+      // A ordenacao por distancia precisa do vetor da linha; a subquery de
+      // candidatos ja garante que toda linha filtrada tem embedding.
+      const scoped =
+        busca?.orderBy == null
+          ? base
+          : base.innerJoin(
+              proposicaoEmbedding,
+              eq(proposicaoEmbedding.proposicaoId, proposicao.id),
+            );
+
+      const rows = await scoped
+        .where(and(temaCondition, busca?.where))
+        .orderBy(
+          ...(busca?.orderBy == null
+            ? [ordenacaoSql(query.ordenacao)]
+            : [busca.orderBy, DESEMPATE]),
+        )
         .limit(query.pagination.limit)
         .offset(query.pagination.offset);
 

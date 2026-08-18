@@ -83,11 +83,35 @@ describe('parseCitation', () => {
     });
   });
 
+  describe('when the tipo is glued to the numero', () => {
+    it('reads "PEC3/2021" as siglaTipo, numero and ano', () => {
+      // Arrange & Act
+      const result = parseCitation('PEC3/2021');
+
+      // Assert
+      expect(result).toEqual<Citation>({
+        siglaTipo: 'pec',
+        numero: '3',
+        ano: '2021',
+      });
+    });
+
+    it('reads "pl1234" as siglaTipo and numero', () => {
+      // Arrange & Act
+      const result = parseCitation('pl1234');
+
+      // Assert
+      expect(result).toEqual<Citation>({ siglaTipo: 'pl', numero: '1234' });
+    });
+  });
+
   describe('when the query is not a citation', () => {
     it.each([
       ['a single word', 'saude'],
       ['multiple alpha words', 'reforma tributaria 2021'],
       ['a single number', '1234'],
+      ['a token with more than one alpha run', 'pec3a'],
+      ['a token with punctuation between the runs', 'lei-14.133'],
     ])('returns null for %s', (_label, query) => {
       // Arrange & Act
       const result = parseCitation(query);
@@ -103,6 +127,19 @@ describe('toSearchPlan', () => {
     it('plans an exact lookup by identifier, not a text match', () => {
       // Arrange & Act
       const plan = toSearchPlan('PEC 3/2021');
+
+      // Assert
+      expect(plan).toEqual<ProposicoesSearchPlan>({
+        kind: 'citation',
+        citation: { siglaTipo: 'pec', numero: '3', ano: '2021' },
+      });
+    });
+  });
+
+  describe('when the citation glues the tipo to the numero', () => {
+    it('still plans an exact lookup', () => {
+      // Arrange & Act
+      const plan = toSearchPlan('PEC3/2021');
 
       // Assert
       expect(plan).toEqual<ProposicoesSearchPlan>({

@@ -40,6 +40,14 @@ import {
 import { createVotacaoProposicaoStep } from '../steps/votacao-proposicao/votacao-proposicao.step';
 import { createProposicaoComputavelRepository } from '../steps/proposicao-computavel/proposicao-computavel.repository';
 import { createProposicaoComputavelStep } from '../steps/proposicao-computavel/proposicao-computavel.step';
+import { createProposicaoEmbeddingRepository } from '../steps/proposicao-embedding/proposicao-embedding.repository';
+import { createProposicaoEmbeddingStep } from '../steps/proposicao-embedding/proposicao-embedding.step';
+import {
+  createOpenrouterEmbeddingClient,
+  DEFAULT_EMBEDDING_MODEL,
+  type EmbeddingClient,
+} from '@/shared/embedding/openrouter-embedding-client';
+import { PROPOSICAO_EMBEDDING_DIM } from '@/shared/database/schema';
 import { createDeputadoPresencaRepository } from '../steps/deputado-presenca/deputado-presenca.repository';
 import { createDeputadoPresencaStep } from '../steps/deputado-presenca/deputado-presenca.step';
 import { createDeputadoGastoCotaRepository } from '../steps/deputado-gasto-cota/deputado-gasto-cota.repository';
@@ -73,6 +81,7 @@ import {
   dryRunPartidoRepository,
   dryRunProposicaoDownloader,
   dryRunProposicaoComputavelRepository,
+  dryRunProposicaoEmbeddingRepository,
   dryRunDeputadoPresencaRepository,
   dryRunDeputadoExercicioIntervaloRepository,
   dryRunCotaMedianaUfRepository,
@@ -136,6 +145,12 @@ export function createIngestionSteps(
           proposicaoLookup: dryRunProposicaoLookup,
         }),
         createProposicaoComputavelStep(dryRunProposicaoComputavelRepository),
+        createProposicaoEmbeddingStep({
+          repository: dryRunProposicaoEmbeddingRepository,
+          client: dryRunEmbeddingClient,
+          model: resolveEmbeddingModel(),
+          dimensions: PROPOSICAO_EMBEDDING_DIM,
+        }),
         createTemaStep({
           repository: dryRunTemaRepository,
           fonteDerivada,
@@ -194,6 +209,12 @@ export function createIngestionSteps(
       proposicaoLookup: createProposicaoLookup(db),
     }),
     createProposicaoComputavelStep(createProposicaoComputavelRepository(db)),
+    createProposicaoEmbeddingStep({
+      repository: createProposicaoEmbeddingRepository(db),
+      client: createEmbeddingClient(resolveEmbeddingModel()),
+      model: resolveEmbeddingModel(),
+      dimensions: PROPOSICAO_EMBEDDING_DIM,
+    }),
     createTemaStep({
       repository: createTemaRepository(db),
       fonteDerivada,
@@ -237,3 +258,37 @@ export function createIngestionSteps(
     stepRunRepository: createIngestionStepRunRepository(db),
   });
 }
+
+function resolveEmbeddingModel(): string {
+  const model = process.env['OPENROUTER_EMBEDDING_MODEL'];
+  return model !== undefined && model !== '' ? model : DEFAULT_EMBEDDING_MODEL;
+}
+
+// Sem chave o passo rejeita cada lote com a causa, em vez de derrubar o
+// pipeline inteiro na composicao.
+function createEmbeddingClient(model: string): EmbeddingClient {
+  const apiKey = process.env['OPENROUTER_API_KEY'];
+  if (apiKey === undefined || apiKey === '') {
+    return {
+      embed: () =>
+        Promise.resolve({
+          ok: false,
+          reason: 'OPENROUTER_API_KEY não configurada',
+        }),
+    };
+  }
+
+  return createOpenrouterEmbeddingClient({
+    apiKey,
+    model,
+    dimensions: PROPOSICAO_EMBEDDING_DIM,
+  });
+}
+
+const dryRunEmbeddingClient: EmbeddingClient = {
+  embed: () => {
+    throw new Error(
+      'Cliente de embeddings acionado em dry-run. Nenhuma chamada deveria ocorrer.',
+    );
+  },
+};

@@ -4,6 +4,10 @@ import type {
   ProposicoesRepository,
 } from '../proposicoes.repository';
 import { ProposicoesService } from '../proposicoes.service';
+import {
+  disabledQueryEmbedding,
+  type QueryEmbedding,
+} from '../service/query-embedding';
 import { toProposicoesComputaveis } from '../rules/proposicoes-computaveis';
 
 function joinRow(
@@ -65,9 +69,10 @@ function fakeRepository(
 function createService(
   rows: readonly ProposicaoVotacaoJoinRow[],
   total?: number,
+  queryEmbedding: QueryEmbedding = disabledQueryEmbedding,
 ) {
   feedCalls.length = 0;
-  return new ProposicoesService(fakeRepository(rows, total));
+  return new ProposicoesService(fakeRepository(rows, total), queryEmbedding);
 }
 
 describe('ProposicoesService.feed', () => {
@@ -244,17 +249,20 @@ describe('ProposicoesService.temasDisponiveis', () => {
   describe('when deriving which temas are available', () => {
     it('uses the lean computable-id source, not the full computaveis payload', async () => {
       // Arrange
-      const service = new ProposicoesService({
-        loadProposicoesComputaveis: async () => {
-          throw new Error('should not load the full computaveis payload');
+      const service = new ProposicoesService(
+        {
+          loadProposicoesComputaveis: async () => {
+            throw new Error('should not load the full computaveis payload');
+          },
+          loadComputableExternalIds: async () => [1],
+          loadProposicaoDetalhe: async () => null,
+          loadProposicaoTemas: async () => [
+            { externalIdProposicao: 1, externalCodTema: 30, tema: 'Saúde' },
+            { externalIdProposicao: 2, externalCodTema: 10, tema: 'Educação' },
+          ],
         },
-        loadComputableExternalIds: async () => [1],
-        loadProposicaoDetalhe: async () => null,
-        loadProposicaoTemas: async () => [
-          { externalIdProposicao: 1, externalCodTema: 30, tema: 'Saúde' },
-          { externalIdProposicao: 2, externalCodTema: 10, tema: 'Educação' },
-        ],
-      });
+        disabledQueryEmbedding,
+      );
 
       // Act
       const result = await service.temasDisponiveis();
@@ -326,6 +334,74 @@ describe('ProposicoesService.feed with text query', () => {
       expect(result.total).toBe(4);
       expect(result.limit).toBe(2);
       expect(result.offset).toBe(1);
+    });
+  });
+
+  describe('when the query embedding resolves', () => {
+    it('asks the repository for a semantic match instead of tokens', async () => {
+      // Arrange
+      const embedding = [0.1, 0.2, 0.3];
+      const service = createService(
+        [joinRow({ externalIdVotacao: '1-1' })],
+        4,
+        {
+          resolve: async () => embedding,
+        },
+      );
+
+      // Act
+      await service.feed(20, 0, 'mais-votadas', 34, 'aumento do salário');
+
+      // Assert
+      expect(feedCalls[0].busca).toEqual({ kind: 'semantic', embedding });
+      expect(feedCalls[0].tema).toBe(34);
+    });
+
+    it('keeps the citation path ahead of the embedding', async () => {
+      // Arrange
+      const embedded: string[] = [];
+      const service = createService(
+        [joinRow({ externalIdVotacao: '1-1' })],
+        4,
+        {
+          resolve: async (query) => {
+            embedded.push(query);
+            return [0.1, 0.2, 0.3];
+          },
+        },
+      );
+
+      // Act
+      await service.feed(20, 0, 'mais-votadas', undefined, 'PEC3/2021');
+
+      // Assert
+      expect(feedCalls[0].busca).toEqual({
+        kind: 'citation',
+        citation: { siglaTipo: 'pec', numero: '3', ano: '2021' },
+      });
+      expect(embedded).toEqual([]);
+    });
+  });
+
+  describe('when the embedding provider is unavailable', () => {
+    it('degrades to the token match instead of failing the search', async () => {
+      // Arrange
+      const service = createService(
+        [joinRow({ externalIdVotacao: '1-1' })],
+        4,
+        {
+          resolve: async () => null,
+        },
+      );
+
+      // Act
+      await service.feed(20, 0, 'mais-votadas', undefined, 'saúde pública');
+
+      // Assert
+      expect(feedCalls[0].busca).toEqual({
+        kind: 'tokens',
+        tokens: ['saude', 'publica'],
+      });
     });
   });
 

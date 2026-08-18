@@ -9,6 +9,7 @@ import type { LegislaturaRepository } from '../steps/legislaturas/legislaturas.r
 import type { PartidoRepository } from '../steps/partidos/partidos.repository.types';
 import type { ProposicaoRepository } from '../steps/proposicoes/proposicoes.repository.types';
 import type { ProposicaoComputavelRepository } from '../steps/proposicao-computavel/proposicao-computavel.repository.types';
+import type { ProposicaoEmbeddingRepository } from '../steps/proposicao-embedding/proposicao-embedding.repository.types';
 import type { DeputadoPresencaRepository } from '../steps/deputado-presenca/deputado-presenca.repository.types';
 import type { DeputadoExercicioIntervaloRepository } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.repository.types';
 import type { DeputadoGastoCotaRepository } from '../steps/deputado-gasto-cota/deputado-gasto-cota.repository.types';
@@ -83,6 +84,13 @@ export const dryRunProposicaoComputavelRepository: ProposicaoComputavelRepositor
   {
     loadCandidates: () => Promise.resolve([]),
     fullReplace: dryRunWriteGuard,
+  };
+
+export const dryRunProposicaoEmbeddingRepository: ProposicaoEmbeddingRepository =
+  {
+    loadSources: () => Promise.resolve([]),
+    upsert: dryRunWriteGuard,
+    deleteNaoComputaveis: dryRunWriteGuard,
   };
 
 export const dryRunProposicaoDownloader: DatasetDownloader = {

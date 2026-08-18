@@ -6,6 +6,7 @@ export type Citation = {
 
 export type ProposicoesSearchPlan =
   | { readonly kind: 'citation'; readonly citation: Citation }
+  | { readonly kind: 'semantic'; readonly embedding: readonly number[] }
   | { readonly kind: 'tokens'; readonly tokens: readonly string[] };
 
 export function toSearchPlan(query: string): ProposicoesSearchPlan | null {
@@ -36,12 +37,17 @@ export function parseCitation(query: string): Citation | null {
   const nums: string[] = [];
 
   for (const token of tokens) {
-    if (/^[a-z]+$/.test(token)) {
-      alphas.push(token);
-    } else if (/^\d+$/.test(token)) {
-      nums.push(token);
-    } else {
+    const runs = toAlphaNumericRuns(token);
+    if (runs === null) {
       return null;
+    }
+
+    for (const run of runs) {
+      if (/^\d+$/.test(run)) {
+        nums.push(run);
+      } else {
+        alphas.push(run);
+      }
     }
   }
 
@@ -62,4 +68,11 @@ export function parseCitation(query: string): Citation | null {
   }
 
   return null;
+}
+
+// tokenizeQuery corta em [\s/]+, entao "PEC3/2021" chega como "pec3": sigla e
+// numero colados sao uma citacao, e so um token todo alfanumerico se divide.
+function toAlphaNumericRuns(token: string): readonly string[] | null {
+  const runs = token.match(/[a-z]+|\d+/g);
+  return runs !== null && runs.join('') === token ? runs : null;
 }

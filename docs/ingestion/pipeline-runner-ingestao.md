@@ -88,9 +88,14 @@ Os passos rodam em ordem de dependência (chaves estrangeiras entre tabelas). A 
 | 6   | `proposicoes`                | único  | derivado | `data/raw/proposicoes/proposicoes-{ano}.csv` (anos derivados, baixados sob demanda) |
 | 7   | `votacao_proposicao`         | único  | derivado | `data/raw/votacoesProposicoes/votacoesProposicoes-{ano}.csv`                        |
 | 8   | `tema`                       | único  | derivado | `data/raw/proposicoesTemas/proposicoesTemas-{ano}.csv` (baixado sob demanda)        |
-| 9   | `deputado_historico`         | único  | API      | `GET /deputados/{id}/historico` (passo **manual**)                                  |
-| 10  | `deputado_gasto_cota_sigepa` | anual  | API      | `GET /deputados/{id}/despesas` (passo **manual**)                                   |
-| 11  | `sanity`                     | único  | banco    | lê placares já gravados para conferência                                            |
+| 9   | `proposicao_embedding`       | único  | derivado | lê o corpus já gravado e chama `POST /embeddings` do OpenRouter                      |
+| 10  | `deputado_historico`         | único  | API      | `GET /deputados/{id}/historico` (passo **manual**)                                  |
+| 11  | `deputado_gasto_cota_sigepa` | anual  | API      | `GET /deputados/{id}/despesas` (passo **manual**)                                   |
+| 12  | `sanity`                     | único  | banco    | lê placares já gravados para conferência                                            |
+
+> A tabela lista os passos principais; a lista completa e a ordem real de execução estão em `plan/ingestion-step-descriptors.ts`.
+
+O passo `proposicao_embedding` roda depois de `proposicao_computavel` e vetoriza ementa, palavras-chave e os resumos de IA aprovados de cada proposição computável, para a busca semântica do feed. Ele só reembeda linhas cujo `source_hash` mudou, então em regime permanente processa dezenas de linhas. Exige `OPENROUTER_API_KEY`; sem ela cada lote é rejeitado com essa causa, sem derrubar os demais passos. Como o texto inclui o resumo aprovado, rode `import:resumos-ia` antes dele quando houver resumo novo.
 
 - **Escopo único** (`single`): processa um arquivo independentemente da janela `--from`/`--to` (ex.: legislaturas, deputados).
 - **Escopo anual** (`annual`): processa um arquivo por ano da janela.

@@ -7,6 +7,7 @@ import type {
   VotacaoDetalheRow,
 } from '../proposicoes.repository';
 import { ProposicoesService } from '../proposicoes.service';
+import { disabledQueryEmbedding } from '../service/query-embedding';
 
 function head(
   overrides: Partial<ProposicaoDetalheHead> = {},
@@ -83,7 +84,7 @@ function fakeRepository(
 }
 
 function createService(result: ProposicaoDetalheResult | null) {
-  return new ProposicoesService(fakeRepository(result));
+  return new ProposicoesService(fakeRepository(result), disabledQueryEmbedding);
 }
 
 describe('ProposicoesService.detalhe', () => {

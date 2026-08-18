@@ -5,7 +5,7 @@ import type {
   ProposicaoResumoIaProjection,
 } from '../types/proposicoes.types';
 
-function hasPublicCard(
+export function hasResumoIaPublico(
   resumoIa: ProposicaoResumoIaCardProjection | null,
 ): boolean {
   return (
@@ -19,7 +19,7 @@ function hasPublicCard(
 export function toResumoIaCardFields(
   resumoIa: ProposicaoResumoIaCardProjection | null,
 ): Pick<ProposicaoDetalhe, 'resumoIaDisponivel' | 'resumoIaCard'> {
-  if (resumoIa === null || !hasPublicCard(resumoIa)) {
+  if (resumoIa === null || !hasResumoIaPublico(resumoIa)) {
     return { resumoIaDisponivel: false, resumoIaCard: null };
   }
 
@@ -34,7 +34,7 @@ export function toResumoIaContractFields(
 > {
   if (
     resumoIa === null ||
-    !hasPublicCard(resumoIa) ||
+    !hasResumoIaPublico(resumoIa) ||
     resumoIa.resumoDetalhe === null
   ) {
     return {

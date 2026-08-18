@@ -10,6 +10,7 @@ import {
   CONDITION_SOURCE_PATH,
   RESUMO_IA_PUBLICO_DESCRICAO,
 } from './corpus';
+import { SEMANTIC_CANDIDATE_LIMIT } from '@/proposicoes/repository/proposicoes-search.condition';
 
 export type ResultadoTop = {
   readonly posicao: number;
@@ -60,6 +61,7 @@ export type DiagnosticoReport = {
     readonly resumoIaPublico: string;
     readonly indiceFts: string;
     readonly sondaMorfologica: string;
+    readonly leituraDasCategorias: string;
   };
   readonly consultas: readonly ConsultaResultado[];
   readonly resumo: {
@@ -72,8 +74,7 @@ export type DiagnosticoReport = {
 
 export function buildBuscaConfig(): DiagnosticoReport['buscaConfig'] {
   return {
-    implementacao:
-      'LIKE %token% sobre corpus concatenado, com acentuacao dobrada por translate() dos dois lados. Tokens da consulta sao combinados com AND. Consultas que viram citacao (sigla/numero/ano) ignoram o corpus e viram lookup exato.',
+    implementacao: `Citacao (sigla/numero/ano) vira lookup exato e ignora o corpus. Fora dela, a consulta e vetorizada e ranqueada por distancia cosseno sobre proposicao_embedding, com corte nos ${SEMANTIC_CANDIDATE_LIMIT} vizinhos mais proximos ja filtrados por tema e computavel. Sem vetor da consulta (provider indisponivel ou sem credencial) a busca degrada para LIKE %token% com AND, sobre o corpus concatenado e sem acento — que e o corpus descrito abaixo.`,
     fonte: CONDITION_SOURCE_PATH,
     corpusColunas: [...CORPUS_COLUNAS],
     corpusExpressao: CORPUS_DESCRICAO,
@@ -82,6 +83,8 @@ export function buildBuscaConfig(): DiagnosticoReport['buscaConfig'] {
       'Nenhum. Nao existe coluna tsvector nem indice GIN sobre proposicao, portanto nao ha stemmer nem lista de stopwords de producao a reusar.',
     sondaMorfologica:
       "to_tsvector('portuguese', <corpus>) @@ plainto_tsquery('portuguese', <token>) — usado somente como sonda de diagnostico para a categoria MORFOLOGICA, nao reflete o comportamento de producao.",
+    leituraDasCategorias:
+      'As categorias foram desenhadas para o filtro textual. Sob ranqueamento semantico, a proposicao esperada quase sempre passa no WHERE e cai fora do top por posicao, entao MORFOLOGICA e VOCABULARIO deixam de separar causas e a leitura util e RANKING.',
   };
 }
 
@@ -141,6 +144,7 @@ function cabecalhoMarkdown(report: DiagnosticoReport): readonly string[] {
     `- **Fonte**: ${buscaConfig.fonte}`,
     `- **Indice FTS**: ${buscaConfig.indiceFts}`,
     `- **Sonda morfologica**: ${buscaConfig.sondaMorfologica}`,
+    `- **Leitura das categorias**: ${buscaConfig.leituraDasCategorias}`,
     '',
     '### Corpus varrido',
     '',

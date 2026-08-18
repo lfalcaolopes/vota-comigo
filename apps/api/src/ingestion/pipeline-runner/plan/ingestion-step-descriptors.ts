@@ -22,6 +22,9 @@ export const ingestionStepDescriptors: readonly IngestionStepDescriptor[] = [
   { name: 'votacao_proposicao', scope: 'single', source: 'derived' },
   { name: 'proposicao_computavel', scope: 'single', source: 'derived' },
   { name: 'tema', scope: 'single', source: 'derived' },
+  // Depois de proposicao_computavel e do import dos resumos (CLI fora do
+  // runner): o texto embedado inclui o resumo aprovado.
+  { name: 'proposicao_embedding', scope: 'single', source: 'derived' },
   { name: 'deputado_historico', scope: 'single', source: 'api', manual: true },
   { name: 'deputado_presenca', scope: 'single', source: 'derived' },
   {
