@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const rascunho = {
-  version: 1,
+  version: 2,
   siglaUf: "SP",
   escopo: "estadual",
   selected: [1, 2, 3].map((externalIdProposicao) => ({
@@ -21,6 +21,7 @@ const rascunho = {
     { externalIdProposicao: 2, posicao: "rejeitar" },
     { externalIdProposicao: 3, posicao: "aprovar" },
   ],
+  externalIdProposicoesFiltroConcordancia: [],
 };
 
 function detalhe(externalIdDeputado: number) {
@@ -217,7 +218,7 @@ test.describe("comparativo de deputados do matcher", () => {
     // Assert
     await expect(page).toHaveURL(/\/matcher\/resultado$/);
     await expect(
-      page.getByRole("button", { name: "Comparar deputados" }),
+      page.getByRole("button", { name: "Escolher deputados para comparar" }),
     ).toBeVisible();
   });
 
@@ -246,10 +247,14 @@ test.describe("comparativo de deputados do matcher", () => {
     await page.goto("/matcher/resultado");
 
     // Act
-    await page.getByRole("button", { name: "Comparar deputados" }).click();
+    await page
+      .getByRole("button", { name: "Escolher deputados para comparar" })
+      .click();
     await page.getByText("Deputado 10", { exact: true }).first().click();
     await page.getByText("Deputado 20", { exact: true }).first().click();
-    await page.getByRole("button", { name: "Comparar", exact: true }).click();
+    await page
+      .getByRole("button", { name: "Comparar deputados", exact: true })
+      .click();
 
     // Assert
     await expect(page).toHaveURL(/\/matcher\/comparativo\/10,20$/);
@@ -263,7 +268,7 @@ test.describe("comparativo de deputados do matcher", () => {
     // Assert
     await expect(page).toHaveURL(/\/matcher\/resultado$/);
     await expect(
-      page.getByRole("button", { name: "Comparar deputados" }),
+      page.getByRole("button", { name: "Escolher deputados para comparar" }),
     ).toBeVisible();
     await expect(
       page.getByRole("checkbox", { name: /para comparação$/ }),
@@ -339,7 +344,7 @@ test.describe("comparativo de deputados do matcher", () => {
     // Assert
     await expect(page).toHaveURL(/\/matcher\/resultado$/);
     await expect(
-      page.getByRole("button", { name: "Comparar deputados" }),
+      page.getByRole("button", { name: "Escolher deputados para comparar" }),
     ).toBeVisible();
   });
 

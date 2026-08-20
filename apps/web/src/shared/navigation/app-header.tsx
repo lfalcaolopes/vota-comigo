@@ -38,6 +38,10 @@ const navItems: NavItem[] = [
 
 export function AppHeader() {
   const pathname = usePathname();
+  const isComparativoFlow =
+    pathname === "/matcher" ||
+    pathname.startsWith("/matcher/") ||
+    pathname.startsWith("/deputados/comparativo/");
   const menuId = useId();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isMounted, isVisible } = useMountTransition(
@@ -142,12 +146,14 @@ export function AppHeader() {
             </ul>
           </nav>
 
-          <div className="hidden items-center justify-end gap-4 md:flex">
-            <span aria-hidden="true" className="h-8 w-px bg-border" />
-            <ButtonLink href="/matcher" variant="primary">
-              Fazer comparação
-            </ButtonLink>
-          </div>
+          {!isComparativoFlow && (
+            <div className="hidden items-center justify-end gap-4 md:flex">
+              <span aria-hidden="true" className="h-8 w-px bg-border" />
+              <ButtonLink href="/matcher" variant="primary">
+                Fazer comparação
+              </ButtonLink>
+            </div>
+          )}
         </div>
 
         {isMounted && (
@@ -177,14 +183,16 @@ export function AppHeader() {
                   ))}
                 </ul>
               </nav>
-              <ButtonLink
-                className="w-full justify-center"
-                href="/matcher"
-                onClick={() => setIsMenuOpen(false)}
-                variant="primary"
-              >
-                Fazer comparação
-              </ButtonLink>
+              {!isComparativoFlow && (
+                <ButtonLink
+                  className="w-full justify-center"
+                  href="/matcher"
+                  onClick={() => setIsMenuOpen(false)}
+                  variant="primary"
+                >
+                  Fazer comparação
+                </ButtonLink>
+              )}
             </div>
           </div>
         )}
