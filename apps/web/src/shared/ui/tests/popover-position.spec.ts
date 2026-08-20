@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   anchoredPopoverPosition,
+  isAnchoredPopoverUsable,
   isTriggerMostlyHidden,
 } from "../popover-position";
 
@@ -237,6 +238,50 @@ describe("anchoredPopoverPosition", () => {
       // Assert
       expect(opened.flip).toBe(true);
       expect(scrolled.top).toBe(400 - GAP - 300);
+    });
+  });
+});
+
+describe("isAnchoredPopoverUsable", () => {
+  describe("when a tall panel has little room around its trigger", () => {
+    it("uses a viewport presentation instead", () => {
+      // Act
+      const result = isAnchoredPopoverUsable({
+        availableHeight: 420,
+        minimumHeight: 480,
+        panelHeight: 700,
+      });
+
+      // Assert
+      expect(result).toBe(false);
+    });
+  });
+
+  describe("when a tall panel has a comfortable selectable area", () => {
+    it("keeps the panel anchored", () => {
+      // Act
+      const result = isAnchoredPopoverUsable({
+        availableHeight: 480,
+        minimumHeight: 480,
+        panelHeight: 700,
+      });
+
+      // Assert
+      expect(result).toBe(true);
+    });
+  });
+
+  describe("when the panel is shorter than the minimum", () => {
+    it("keeps it anchored when its full content fits", () => {
+      // Act
+      const result = isAnchoredPopoverUsable({
+        availableHeight: 180,
+        minimumHeight: 320,
+        panelHeight: 180,
+      });
+
+      // Assert
+      expect(result).toBe(true);
     });
   });
 });

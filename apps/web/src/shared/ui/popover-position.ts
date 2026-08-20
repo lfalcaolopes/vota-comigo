@@ -18,6 +18,20 @@ export type PopoverPosition = {
 
 export type PopoverSizeLock = { maxHeight: number; flip: boolean };
 
+type AnchoredPopoverUsabilityInput = {
+  availableHeight: number;
+  minimumHeight: number;
+  panelHeight: number;
+};
+
+export function isAnchoredPopoverUsable({
+  availableHeight,
+  minimumHeight,
+  panelHeight,
+}: AnchoredPopoverUsabilityInput): boolean {
+  return availableHeight >= Math.min(panelHeight, minimumHeight);
+}
+
 type AnchoredPopoverInput = {
   align: PopoverAlign;
   gap: number;

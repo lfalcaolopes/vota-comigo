@@ -779,4 +779,25 @@ test.describe("filtros do resultado do matcher", () => {
       ).toHaveCount(0);
     });
   });
+
+  test.describe("adaptação à viewport", () => {
+    test("usa a apresentação da viewport quando falta altura para selecionar filtros", async ({
+      page,
+    }) => {
+      // Arrange
+      await page.setViewportSize({ width: 1267, height: 676 });
+      await page.route("http://localhost:3001/matcher?**", async (route) => {
+        await route.fulfill({ json: resultado });
+      });
+      await storeRascunho(page);
+      await page.goto("/matcher/resultado");
+      await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+
+      // Act
+      await abrirFiltros(page).click();
+
+      // Assert
+      await expect(painel(page)).toHaveAttribute("aria-modal", "true");
+    });
+  });
 });
