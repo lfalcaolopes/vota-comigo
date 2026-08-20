@@ -10,10 +10,12 @@ import { Throttle } from '@nestjs/throttler';
 
 import {
   deputadoFaixaEtariaSchema,
+  deputadoFeedSortSchema,
   deputadoSexoSchema,
   type DeputadoDiscursosResponse,
   type DeputadoCeapResponse,
   type DeputadoFaixaEtaria,
+  type DeputadoFeedSort,
   type DeputadoPerfil,
   type DeputadoOrgaosResponse,
   type DeputadoProposicoesAssinadasResponse,
@@ -128,6 +130,14 @@ function parseSexo(raw: string | undefined): DeputadoSexo | undefined {
   return parsed.data;
 }
 
+function parseSort(raw: string | undefined): DeputadoFeedSort {
+  const parsed = deputadoFeedSortSchema.safeParse(raw ?? 'nome');
+  if (!parsed.success) {
+    throw new BadRequestException('sort must be nome or menor-uso-cota');
+  }
+  return parsed.data;
+}
+
 function parseFaixasEtarias(
   raw: QueryParam,
 ): readonly DeputadoFaixaEtaria[] | undefined {
@@ -173,9 +183,11 @@ export class DeputadosController {
     @Query('partido') partidoParam?: QueryParam,
     @Query('sexo') sexoParam?: string,
     @Query('faixaEtaria') faixaEtariaParam?: QueryParam,
+    @Query('sort') sortParam?: string,
   ): Promise<DeputadosFeedResponse> {
     return this.service.feed(
       {
+        sort: parseSort(sortParam),
         q: (qParam ?? '').trim() || undefined,
         emAtividade: parseEmAtividade(emAtividadeParam),
         ufs: parseUfs(ufParam),

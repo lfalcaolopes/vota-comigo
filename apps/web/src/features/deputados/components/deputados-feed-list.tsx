@@ -24,6 +24,7 @@ type DeputadosFeedListProps = {
   onClearTudo: () => void;
   onIncluirForaDeExercicio?: () => void;
   selection?: DeputadosFeedListSelection;
+  showUsoCota?: boolean;
 };
 
 export function DeputadosFeedList({
@@ -36,6 +37,7 @@ export function DeputadosFeedList({
   onClearTudo,
   onIncluirForaDeExercicio,
   selection,
+  showUsoCota,
 }: DeputadosFeedListProps) {
   if (display === "loading") {
     return <SkeletonRows count={3} />;
@@ -108,6 +110,7 @@ export function DeputadosFeedList({
           return (
             <DeputadoRow
               card={card}
+              showUsoCota={showUsoCota}
               href={
                 selection ? undefined : `/deputados/${card.externalIdDeputado}`
               }

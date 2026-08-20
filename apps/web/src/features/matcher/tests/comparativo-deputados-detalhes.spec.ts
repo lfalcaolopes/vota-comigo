@@ -19,6 +19,11 @@ function detalhe(externalIdDeputado: number): MatcherDeputadoDetalhe {
       siglaUf: "SP",
       urlFoto: null,
       emAtividade: true,
+      usoCota: {
+        status: "indisponivel",
+        legislatura: null,
+        motivo: "fonte-incompleta",
+      },
     },
     metrics: {
       totalConcordancias: 2,

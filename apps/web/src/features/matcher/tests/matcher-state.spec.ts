@@ -52,6 +52,11 @@ function deputado(externalIdDeputado: number): MatcherDeputadoResumo {
     amostraComparavel: 10,
     scoreOrdenacaoPercentual: 80,
     alertas: [],
+    usoCota: {
+      status: "indisponivel",
+      legislatura: null,
+      motivo: "fonte-incompleta",
+    },
   };
 }
 

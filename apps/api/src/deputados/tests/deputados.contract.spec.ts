@@ -95,6 +95,11 @@ function card(overrides: Partial<DeputadoCardRow> = {}): DeputadoCardRow {
     siglaUf: 'SP',
     urlFoto: 'https://example.com/foto.jpg',
     emAtividade: true,
+    usoCota: {
+      status: 'indisponivel',
+      legislatura: null,
+      motivo: 'fonte-incompleta',
+    },
     ...overrides,
   };
 }
@@ -427,6 +432,11 @@ describe('GET /deputados/feed', () => {
             siglaUf: 'SP',
             urlFoto: 'https://example.com/foto.jpg',
             emAtividade: true,
+            usoCota: {
+              status: 'indisponivel',
+              legislatura: null,
+              motivo: 'fonte-incompleta',
+            },
           },
         ],
         total: 1,
@@ -480,6 +490,7 @@ describe('GET /deputados/feed query string translation', () => {
       expect(feedCalls).toEqual([
         {
           filters: {
+            sort: 'nome',
             q: undefined,
             emAtividade: undefined,
             ufs: undefined,
@@ -502,6 +513,18 @@ describe('GET /deputados/feed query string translation', () => {
 
       // Assert
       expect(feedCalls[0].pagination).toEqual({ limit: 5, offset: 40 });
+    });
+  });
+
+  describe('when sort is given', () => {
+    it('forwards menor-uso-cota to the repository', async () => {
+      // Act
+      await request(getTestServer(app)).get(
+        '/deputados/feed?sort=menor-uso-cota',
+      );
+
+      // Assert
+      expect(feedCalls[0].filters.sort).toBe('menor-uso-cota');
     });
   });
 
@@ -637,6 +660,18 @@ describe('GET /deputados/feed with invalid filters', () => {
       // Act
       const response = await request(getTestServer(app)).get(
         '/deputados/feed?uf=SP&uf=BRASIL',
+      );
+
+      // Assert
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe('when sort is not accepted by the feed', () => {
+    it('returns 400', async () => {
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/feed?sort=compatibilidade',
       );
 
       // Assert

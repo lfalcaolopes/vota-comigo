@@ -24,6 +24,11 @@ export function toMatcherDeputadoDetalhe(
       siglaUf: detalhe.siglaUf,
       urlFoto: detalhe.urlFoto,
       emAtividade: detalhe.emAtividade,
+      usoCota: detalhe.usoCota ?? {
+        status: 'indisponivel',
+        legislatura: null,
+        motivo: 'fonte-incompleta',
+      },
     },
     metrics: {
       ...detalhe.metrics,

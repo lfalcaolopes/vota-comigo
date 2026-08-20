@@ -1,7 +1,9 @@
 import type {
   ComparativoCota,
+  DeputadoFeedSort,
   DeputadoFaixaEtaria,
   DeputadoSexo,
+  UsoCotaResumo,
 } from '@vota-comigo/shared-types';
 
 import type { IntervaloExercicio } from '@/exercicio/types/exercicio.types';
@@ -146,9 +148,11 @@ export type DeputadoCardRow = {
   siglaUf: string | null;
   urlFoto: string | null;
   emAtividade: boolean;
+  usoCota: UsoCotaResumo;
 };
 
 export type DeputadosFeedFilters = {
+  readonly sort?: DeputadoFeedSort;
   readonly q?: string;
   readonly emAtividade?: boolean;
   readonly ufs?: readonly string[];

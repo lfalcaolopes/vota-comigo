@@ -5,6 +5,7 @@ import { Badge, CheckboxControl } from "@/shared/ui";
 import { joinClassNames } from "@/shared/ui/utils";
 
 import { DeputadoAvatar } from "./deputado-avatar";
+import { toDiasEmExercicioLabel, toUsoCotaPeriodoLabel } from "./presentation";
 
 type DeputadoRowSelection = {
   disabled: boolean;
@@ -16,10 +17,22 @@ type DeputadoRowProps = {
   card: DeputadoCard;
   href?: string;
   selection?: DeputadoRowSelection;
+  showUsoCota?: boolean;
 };
 
-export function DeputadoRow({ card, href, selection }: DeputadoRowProps) {
-  const content = <DeputadoRowContent card={card} selection={selection} />;
+export function DeputadoRow({
+  card,
+  href,
+  selection,
+  showUsoCota,
+}: DeputadoRowProps) {
+  const content = (
+    <DeputadoRowContent
+      card={card}
+      selection={selection}
+      showUsoCota={showUsoCota}
+    />
+  );
 
   if (selection) {
     return (
@@ -60,9 +73,11 @@ export function DeputadoRow({ card, href, selection }: DeputadoRowProps) {
 function DeputadoRowContent({
   card,
   selection,
+  showUsoCota,
 }: {
   card: DeputadoCard;
   selection?: DeputadoRowSelection;
+  showUsoCota?: boolean;
 }) {
   const nome = card.nomePublico ?? "Nome não informado";
 
@@ -95,6 +110,23 @@ function DeputadoRowContent({
             {card.siglaPartido ?? "Partido não informado"} ·{" "}
             {card.siglaUf ?? "UF não informada"}
           </p>
+          {showUsoCota ? (
+            card.usoCota?.status === "calculavel" ? (
+              <div className="mt-1 grid gap-0.5">
+                <p className="text-sm font-[650] text-ink">
+                  Uso da cota: {Math.round(card.usoCota.percentualTetoBase)}%
+                </p>
+                <p className="text-xs leading-normal text-muted">
+                  Período analisado: {toUsoCotaPeriodoLabel(card.usoCota)} ·{" "}
+                  {toDiasEmExercicioLabel(card.usoCota.diasEmExercicio)}
+                </p>
+              </div>
+            ) : (
+              <p className="mt-1 text-sm font-[650] text-ink">
+                Uso da cota indisponível
+              </p>
+            )
+          ) : null}
         </div>
 
         <Badge

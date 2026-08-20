@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const rascunho = {
-  version: 1,
+  version: 2,
   siglaUf: "SP",
   escopo: "estadual",
   selected: [1, 2, 3].map((externalIdProposicao) => ({

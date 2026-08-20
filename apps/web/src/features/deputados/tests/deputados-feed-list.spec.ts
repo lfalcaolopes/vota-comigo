@@ -14,6 +14,11 @@ function card(externalIdDeputado: number, nomePublico: string): DeputadoCard {
     siglaUf: "SP",
     urlFoto: null,
     emAtividade: true,
+    usoCota: {
+      status: "indisponivel",
+      legislatura: null,
+      motivo: "fonte-incompleta",
+    },
   };
 }
 

@@ -56,6 +56,11 @@ const feedResponse: DeputadosFeedResponse = {
       siglaUf: "SP",
       urlFoto: "https://example.com/foto.jpg",
       emAtividade: true,
+      usoCota: {
+        status: "indisponivel",
+        legislatura: null,
+        motivo: "fonte-incompleta",
+      },
     },
   ],
   total: 1,

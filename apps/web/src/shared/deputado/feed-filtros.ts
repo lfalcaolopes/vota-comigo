@@ -1,4 +1,5 @@
 import type {
+  DeputadoFeedSort,
   DeputadoFaixaEtaria,
   DeputadoSexo,
 } from "@vota-comigo/shared-types";
@@ -13,6 +14,7 @@ import {
 import { toEstadoLabel, toFaixaEtariaLabel, toSexoLabel } from "./presentation";
 
 export type DeputadoFeedFiltros = {
+  sort?: DeputadoFeedSort;
   incluirForaDeExercicio: boolean;
   ufs: readonly string[];
   partidos: readonly string[];
@@ -25,6 +27,7 @@ export type DeputadoFiltroId = keyof DeputadoFeedFiltros;
 export type DeputadoFiltroAtivo = FiltroAtivo<DeputadoFiltroId>;
 
 export const FILTROS_PADRAO: DeputadoFeedFiltros = {
+  sort: "nome",
   incluirForaDeExercicio: false,
   ufs: [],
   partidos: [],
@@ -36,6 +39,10 @@ export function descreverFiltrosAtivos(
   filtros: DeputadoFeedFiltros,
 ): readonly DeputadoFiltroAtivo[] {
   const ativos: DeputadoFiltroAtivo[] = [];
+
+  if ((filtros.sort ?? "nome") !== FILTROS_PADRAO.sort) {
+    ativos.push(toFiltroAtivo("sort", FILTRO_NOME.sort, "Menor uso da cota"));
+  }
 
   if (filtros.incluirForaDeExercicio) {
     ativos.push(
@@ -103,6 +110,7 @@ export function saoFiltrosIguais(
 ): boolean {
   return (
     a.incluirForaDeExercicio === b.incluirForaDeExercicio &&
+    (a.sort ?? "nome") === (b.sort ?? "nome") &&
     a.sexo === b.sexo &&
     saoSelecoesIguais(a.ufs, b.ufs) &&
     saoSelecoesIguais(a.partidos, b.partidos) &&
@@ -111,6 +119,7 @@ export function saoFiltrosIguais(
 }
 
 const FILTRO_NOME: Record<DeputadoFiltroId, string> = {
+  sort: "Ordenação",
   incluirForaDeExercicio: "Incluindo quem não está em exercício",
   ufs: "Estado",
   partidos: "Partido",

@@ -48,6 +48,11 @@ function deputado(externalIdDeputado: number): MatcherDeputadoResumo {
     amostraComparavel: 3,
     scoreOrdenacaoPercentual: 75,
     alertas: [],
+    usoCota: {
+      status: "indisponivel",
+      legislatura: null,
+      motivo: "fonte-incompleta",
+    },
   };
 }
 
@@ -89,6 +94,11 @@ function detalhe(
       siglaUf: "SP",
       urlFoto: null,
       emAtividade: true,
+      usoCota: {
+        status: "indisponivel",
+        legislatura: null,
+        motivo: "fonte-incompleta",
+      },
     },
     metrics: {
       totalConcordancias: 2,

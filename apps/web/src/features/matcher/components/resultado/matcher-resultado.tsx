@@ -35,6 +35,7 @@ export function MatcherResultado() {
     partido: searchParams.getAll("partido"),
     amostra: searchParams.get("amostra") ?? undefined,
     sexo: searchParams.get("sexo") ?? undefined,
+    sort: searchParams.get("sort") ?? undefined,
   });
   const requestedFiltersKey = toResultadoUrlStateKey(requestedFilters);
   const requestedFiltersRef = useRef<string | null>(null);

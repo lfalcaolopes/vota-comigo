@@ -23,6 +23,7 @@ import {
   cotaMedianaUf,
   deputado,
   deputadoCotaComparacao,
+  deputadoCotaUso,
   deputadoExercicioIntervalo,
   deputadoHistorico,
   deputadoOrgao,
@@ -39,6 +40,7 @@ import type {
   ComparativoCotaAno,
   CotaSemComparacaoMotivo,
   DeputadoFaixaEtaria,
+  UsoCotaIndisponivelMotivo,
 } from '@vota-comigo/shared-types';
 
 import { deriveIntervaloNascimento } from './rules/faixa-etaria';
@@ -295,7 +297,16 @@ export function createDeputadosRepository(
         );
       }
 
-      const ordenacao = normalizedColumn(nomePublico);
+      const ordenacaoNome = normalizedColumn(nomePublico);
+      const ordenacao =
+        filters.sort === 'menor-uso-cota'
+          ? [
+              sql`${deputadoCotaUso.status} = 'calculavel' desc nulls last`,
+              sql`${deputadoCotaUso.percentualTetoBase} asc nulls last`,
+              sql`${ordenacaoNome} asc nulls last`,
+              deputado.externalIdDeputado,
+            ]
+          : [sql`${ordenacaoNome} asc nulls last`, deputado.externalIdDeputado];
       const rows = await db
         .select({
           externalIdDeputado: deputado.externalIdDeputado,
@@ -305,13 +316,21 @@ export function createDeputadosRepository(
           siglaUf: snapshot.siglaUf,
           urlFoto: snapshot.urlFoto,
           emAtividade: sql<boolean>`${emAtividade}`,
+          usoCotaStatus: deputadoCotaUso.status,
+          usoCotaMotivo: deputadoCotaUso.motivo,
+          usoCotaLegislatura: deputadoCotaUso.legislatura,
+          percentualTetoBase: deputadoCotaUso.percentualTetoBase,
+          usoCotaPeriodStart: deputadoCotaUso.periodStart,
+          usoCotaCoberturaAte: deputadoCotaUso.coberturaAte,
+          usoCotaDiasEmExercicio: deputadoCotaUso.diasEmExercicio,
           total: sql<string>`count(*) over ()`,
         })
         .from(deputado)
         .leftJoin(snapshot, eq(snapshot.deputadoId, deputado.id))
         .leftJoin(partido, eq(partido.id, snapshot.partidoId))
+        .leftJoin(deputadoCotaUso, eq(deputadoCotaUso.deputadoId, deputado.id))
         .where(and(presencaRegistrada(deputado.id), ...conditions))
-        .orderBy(sql`${ordenacao} asc nulls last`, deputado.externalIdDeputado)
+        .orderBy(...ordenacao)
         .limit(pagination.limit)
         .offset(pagination.offset);
 
@@ -323,6 +342,27 @@ export function createDeputadosRepository(
         siglaUf: row.siglaUf,
         urlFoto: row.urlFoto,
         emAtividade: row.emAtividade,
+        usoCota:
+          row.usoCotaStatus === 'calculavel' &&
+          row.percentualTetoBase !== null &&
+          row.usoCotaLegislatura !== null &&
+          row.usoCotaPeriodStart !== null &&
+          row.usoCotaCoberturaAte !== null &&
+          row.usoCotaDiasEmExercicio !== null
+            ? {
+                status: 'calculavel',
+                percentualTetoBase: row.percentualTetoBase,
+                legislatura: row.usoCotaLegislatura,
+                periodStart: row.usoCotaPeriodStart,
+                coberturaAte: row.usoCotaCoberturaAte,
+                diasEmExercicio: row.usoCotaDiasEmExercicio,
+              }
+            : {
+                status: 'indisponivel',
+                legislatura: row.usoCotaLegislatura,
+                motivo: (row.usoCotaMotivo ??
+                  'fonte-incompleta') as UsoCotaIndisponivelMotivo,
+              },
       }));
 
       return { items, total: Number(rows.at(0)?.total ?? 0) };

@@ -1,5 +1,6 @@
 import {
   deputadoSexoSchema,
+  matcherSortSchema,
   MIN_POSICOES_COMPUTAVEIS,
 } from "@vota-comigo/shared-types";
 import type {
@@ -49,6 +50,7 @@ export type ResultadoSearchParams = {
   partido?: string | readonly string[];
   amostra?: string;
   sexo?: string;
+  sort?: string;
 };
 export type ResultadoUrlState = ResultadoFiltrosUrl & {
   escopo: EscopoMatcher;
@@ -66,6 +68,7 @@ export function parseResultadoUrlState(
 ): ResultadoUrlState {
   return {
     escopo: params.escopo === "nacional" ? "nacional" : "estadual",
+    sort: matcherSortSchema.safeParse(params.sort).data ?? "compatibilidade",
     apenasEmAtividade: params.atividade === "1",
     partidos: parsePartidos(params.partido),
     ocultarAmostraPequena: params.amostra === "1",
@@ -102,6 +105,9 @@ export function saoResultadoUrlStatesIguais(
 export function buildResultadoHref(state: ResultadoUrlState): ResultadoHref {
   const params = new URLSearchParams();
   if (state.escopo === "nacional") params.set("escopo", state.escopo);
+  if (state.sort !== undefined && state.sort !== "compatibilidade") {
+    params.set("sort", state.sort);
+  }
   if (state.apenasEmAtividade) params.set("atividade", "1");
   for (const sigla of [...state.partidos].sort())
     params.append("partido", sigla);

@@ -13,6 +13,11 @@ const card: DeputadoCard = {
   siglaUf: "SP",
   urlFoto: null,
   emAtividade: true,
+  usoCota: {
+    status: "indisponivel",
+    legislatura: null,
+    motivo: "fonte-incompleta",
+  },
 };
 
 function render(overrides: Partial<DeputadoCard> = {}): string {
@@ -20,6 +25,15 @@ function render(overrides: Partial<DeputadoCard> = {}): string {
     createElement(DeputadoRow, {
       card: { ...card, ...overrides },
       href: `/deputados/${card.externalIdDeputado}`,
+    }),
+  );
+}
+
+function renderComUsoCota(usoCota: DeputadoCard["usoCota"]): string {
+  return renderToStaticMarkup(
+    createElement(DeputadoRow, {
+      card: { ...card, usoCota },
+      showUsoCota: true,
     }),
   );
 }
@@ -101,6 +115,39 @@ describe("DeputadoRow", () => {
       // Assert
       expect(html).toContain("disabled");
       expect(html).toContain('aria-disabled="true"');
+    });
+  });
+
+  describe("when cota ordering is active", () => {
+    it("shows the rounded percentage, period, and days in office", () => {
+      // Act
+      const html = renderComUsoCota({
+        status: "calculavel",
+        percentualTetoBase: 71.6,
+        legislatura: 57,
+        periodStart: "2023-02-01",
+        coberturaAte: "2026-08-31",
+        diasEmExercicio: 1_184,
+      });
+
+      // Assert
+      expect(html).toContain("Uso da cota: 72%");
+      expect(html).toContain(
+        "Período analisado: fev/2023 – ago/2026 · 1.184 dias em exercício",
+      );
+    });
+
+    it("distinguishes unavailable use from zero", () => {
+      // Act
+      const html = renderComUsoCota({
+        status: "indisponivel",
+        legislatura: 57,
+        motivo: "sigepa-incompleto",
+      });
+
+      // Assert
+      expect(html).toContain("Uso da cota indisponível");
+      expect(html).not.toContain("Uso da cota: 0%");
     });
   });
 });

@@ -39,6 +39,7 @@ export const ingestionStepDescriptors: readonly IngestionStepDescriptor[] = [
     source: 'api',
     manual: true,
   },
+  { name: 'deputado_cota_uso', scope: 'single', source: 'derived' },
   // Depois dos intervalos: a mediana só considera quem exerceu o ano inteiro.
   { name: 'cota_mediana_uf', scope: 'single', source: 'derived' },
   // Depois da mediana: é ela o denominador da comparação de cada deputado.

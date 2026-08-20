@@ -26,6 +26,11 @@ function detalhe(): MatcherDeputadoDetalhe {
       siglaUf: "PE",
       urlFoto: null,
       emAtividade: true,
+      usoCota: {
+        status: "indisponivel",
+        legislatura: null,
+        motivo: "fonte-incompleta",
+      },
     },
     metrics: {
       totalConcordancias: 3,
@@ -53,6 +58,11 @@ function resumo(): MatcherDeputadoResumo {
     scoreOrdenacaoPercentual: 60,
     alertas: [],
     emAtividade: true,
+    usoCota: {
+      status: "indisponivel",
+      legislatura: null,
+      motivo: "fonte-incompleta",
+    },
   };
 }
 

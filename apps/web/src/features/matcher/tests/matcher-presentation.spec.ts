@@ -29,6 +29,11 @@ function makeDeputado(
     alertas: [],
     emAtividade: true,
     ...overrides,
+    usoCota: overrides.usoCota ?? {
+      status: "indisponivel",
+      legislatura: null,
+      motivo: "fonte-incompleta",
+    },
   };
 }
 

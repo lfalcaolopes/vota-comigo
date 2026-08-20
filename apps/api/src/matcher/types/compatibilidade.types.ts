@@ -7,6 +7,7 @@ import type {
   VotacaoReferenciaResumo,
   SiglaUf,
   VotoCategoria,
+  UsoCotaResumo,
 } from '@vota-comigo/shared-types';
 
 import type {
@@ -53,6 +54,7 @@ export type DeputadoResumoComputado = {
   alertas: readonly AlertaMatcher[];
   emAtividade: boolean;
   coberturaExercicio: number;
+  usoCota?: UsoCotaResumo;
 };
 
 export type CompatibilidadeResumidaResult = {
@@ -89,6 +91,7 @@ export type DeputadoDetalheComputado = {
     alertas: readonly AlertaMatcher[];
   };
   votos: readonly VotoDetalheComputado[];
+  usoCota?: UsoCotaResumo;
 };
 
 // linha do prefiltro DISTINCT ON: estado mais recente conhecido por deputado

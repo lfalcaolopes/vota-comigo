@@ -1,4 +1,4 @@
-import { sortRanking } from '../rules/ranking';
+import { sortRanking, sortRankingByUsoCota } from '../rules/ranking';
 import type { DeputadoResumoComputado } from '../types/compatibilidade.types';
 
 function deputado(
@@ -204,5 +204,58 @@ describe('sortRanking', () => {
       // Assert
       expect(ids(ordenados)).toEqual([100, 200]);
     });
+  });
+});
+
+describe('sortRankingByUsoCota', () => {
+  it('orders calculable percentages before unavailable results', () => {
+    // Arrange
+    const indisponivel = deputado({ externalIdDeputado: 1 });
+    const maior = deputado({
+      externalIdDeputado: 2,
+      usoCota: {
+        status: 'calculavel',
+        legislatura: 57,
+        percentualTetoBase: 80,
+        periodStart: '2023-02-01',
+        coberturaAte: '2026-08-31',
+        diasEmExercicio: 1_184,
+      },
+    });
+    const menor = deputado({
+      externalIdDeputado: 3,
+      usoCota: {
+        status: 'calculavel',
+        legislatura: 57,
+        percentualTetoBase: -2,
+        periodStart: '2023-02-01',
+        coberturaAte: '2026-08-31',
+        diasEmExercicio: 1_184,
+      },
+    });
+
+    // Act
+    const ordenados = sortRankingByUsoCota([indisponivel, maior, menor]);
+
+    // Assert
+    expect(ids(ordenados)).toEqual([3, 2, 1]);
+  });
+
+  it('preserves the compatibility ranking among unavailable results', () => {
+    // Arrange
+    const menor = deputado({
+      externalIdDeputado: 1,
+      scoreOrdenacaoPercentual: 20,
+    });
+    const maior = deputado({
+      externalIdDeputado: 2,
+      scoreOrdenacaoPercentual: 80,
+    });
+
+    // Act
+    const ordenados = sortRankingByUsoCota([menor, maior]);
+
+    // Assert
+    expect(ids(ordenados)).toEqual([2, 1]);
   });
 });

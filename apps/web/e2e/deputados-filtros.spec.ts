@@ -250,4 +250,48 @@ test.describe("painel de filtros da listagem de deputados", () => {
     await expect(abrirFiltros(page)).toHaveText("Filtros");
     await expect(page.getByText("Resultados para")).toBeVisible();
   });
+
+  test("persiste a ordenação por uso da cota ao carregar mais e recarregar", async ({
+    page,
+  }) => {
+    // Arrange
+    await page.goto("/deputados");
+    const consultas: string[] = [];
+    page.on("request", (request) => {
+      if (request.url().startsWith(`${apiBaseUrl}/deputados/feed`)) {
+        consultas.push(request.url());
+      }
+    });
+
+    // Act
+    await abrirFiltros(page).click();
+    await painel(page)
+      .getByRole("radio", { name: "Menor uso da cota" })
+      .check();
+    await painel(page).getByRole("button", { name: "Aplicar" }).click();
+
+    // Assert
+    await expect(page).toHaveURL(/sort=menor-uso-cota/);
+    await expect(
+      page.getByRole("link", { name: "Entenda o cálculo" }),
+    ).toBeVisible();
+    await expect(abrirFiltros(page)).toContainText("1");
+    await expect.poll(() => consultas.at(-1)).toContain("sort=menor-uso-cota");
+
+    // Act
+    await page.getByRole("button", { name: "Carregar mais" }).click();
+
+    // Assert
+    await expect.poll(() => consultas.at(-1)).toContain("offset=20");
+    expect(consultas.at(-1)).toContain("sort=menor-uso-cota");
+
+    // Act
+    await page.reload();
+    await abrirFiltros(page).click();
+
+    // Assert
+    await expect(
+      painel(page).getByRole("radio", { name: "Menor uso da cota" }),
+    ).toBeChecked();
+  });
 });

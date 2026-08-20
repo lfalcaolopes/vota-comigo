@@ -7,6 +7,7 @@ import type {
   EscopoMatcher,
   MatcherDeputadoResumo,
   MatcherResultado,
+  MatcherSort,
   PosicaoUsuarioMatcher,
   ProposicaoCard,
   SiglaUf,
@@ -40,6 +41,7 @@ export type MatcherState = {
   posicoes: Map<number, PosicaoUsuarioMatcher>;
   resultados: Record<EscopoMatcher, MatcherResultado | null>;
   escopo: EscopoMatcher;
+  sort?: MatcherSort;
   apenasEmAtividade: boolean;
   partidos: readonly string[];
   ocultarAmostraPequena: boolean;

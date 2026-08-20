@@ -5,6 +5,7 @@ import type {
   MatcherResultado,
   PartidoDisponivel,
 } from "@vota-comigo/shared-types";
+import Link from "next/link";
 import {
   Button,
   ErrorState,
@@ -139,12 +140,9 @@ export function StepResultado({
   ) : (
     <header className="flex flex-col gap-4 border-y border-border py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
       <div className="grid max-w-145 gap-1">
-        <h2 className="text-lg font-[680] text-ink">
-          Compare os deputados
-        </h2>
+        <h2 className="text-lg font-[680] text-ink">Compare os deputados</h2>
         <p className="text-sm text-muted">
-          Escolha 2 ou 3 deputados para comparar votos e diferenças lado a
-          lado.
+          Escolha 2 ou 3 deputados para comparar votos e diferenças lado a lado.
         </p>
       </div>
       <Button
@@ -257,9 +255,7 @@ export function StepResultado({
   return (
     <div
       className={
-        isSelectingComparativo
-          ? "grid gap-5 pb-28 sm:pb-0"
-          : "grid gap-5"
+        isSelectingComparativo ? "grid gap-5 pb-28 sm:pb-0" : "grid gap-5"
       }
     >
       {resultadoStatus}
@@ -276,7 +272,20 @@ export function StepResultado({
           </p>
         </header>
       ) : null}
-      <OrdenacaoDisclosure />
+      {filtros.sort === "menor-uso-cota" ? (
+        <p className="max-w-[75ch] text-sm leading-normal text-muted">
+          Ordenado pelo menor uso da cota no período analisado.{" "}
+          <Link
+            className="font-[650] text-info underline underline-offset-2"
+            href="/metodologia#ordenacao-uso-cota"
+          >
+            Entenda o cálculo
+          </Link>
+          . A concordância e a amostra continuam sendo as medidas principais.
+        </p>
+      ) : (
+        <OrdenacaoDisclosure />
+      )}
 
       <ul className="grid">
         {resultado!.deputados.map((deputado) => {
@@ -297,6 +306,7 @@ export function StepResultado({
                   : undefined
               }
               deputado={deputado}
+              showUsoCota={filtros.sort === "menor-uso-cota"}
               key={deputado.externalIdDeputado}
               totalPosicoesComputaveis={resultado!.totalPosicoesComputaveis}
             />

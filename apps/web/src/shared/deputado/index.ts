@@ -85,6 +85,8 @@ export {
   toAtividadeLabel,
   toAtividadeTone,
   toFaixaEtariaLabel,
+  toDiasEmExercicioLabel,
   toSexoLabel,
+  toUsoCotaPeriodoLabel,
   getInitials,
 } from "./presentation";

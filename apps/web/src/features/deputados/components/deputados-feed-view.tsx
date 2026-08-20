@@ -7,6 +7,7 @@ import type {
 } from "@vota-comigo/shared-types";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import Link from "next/link";
 
 import {
   buildComparativoDeputadosHref,
@@ -258,10 +259,24 @@ export function DeputadosFeedView({
         </div>
       ) : null}
 
+      {filtros.sort === "menor-uso-cota" ? (
+        <p className="max-w-[75ch] text-sm leading-normal text-muted">
+          Ordenado pelo menor uso da cota no período analisado.{" "}
+          <Link
+            className="font-[650] text-info underline underline-offset-2"
+            href="/metodologia#ordenacao-uso-cota"
+          >
+            Entenda o cálculo
+          </Link>
+          .
+        </p>
+      ) : null}
+
       <DeputadosFeedList
         canLoadMore={canLoadMore}
         display={display}
         items={items}
+        showUsoCota={filtros.sort === "menor-uso-cota"}
         onClearTudo={handleClearTudo}
         onIncluirForaDeExercicio={
           filtros.incluirForaDeExercicio
