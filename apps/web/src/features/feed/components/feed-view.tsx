@@ -128,9 +128,11 @@ export function FeedView({
         filtros={filtros}
         onApplyFiltros={handleApplyFiltros}
         onClearSearch={handleClearSearch}
+        onClearTudo={handleClearTudo}
         onDraftChange={setDraft}
         onSearch={handleSearch}
         query={query}
+        isLoading={status === "loading"}
         temas={temas}
       />
 

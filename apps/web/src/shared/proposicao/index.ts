@@ -15,7 +15,7 @@ export {
   type ProposicaoFiltroId,
 } from "./feed-filtros";
 export { ProposicaoFiltrosBar } from "./proposicao-filtros-bar";
-export { ProposicaoFiltrosPanel } from "./proposicao-filtros-panel";
+export { ProposicaoTemaControl } from "./proposicao-tema-control";
 export {
   buildFeedHref,
   buildFeedSearchParams,

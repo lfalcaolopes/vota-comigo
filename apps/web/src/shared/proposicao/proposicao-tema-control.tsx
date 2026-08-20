@@ -6,7 +6,7 @@ import { useId, useState } from "react";
 import { Chip } from "@/shared/ui";
 import { joinClassNames } from "@/shared/ui/utils";
 
-type SelecaoTemaControlProps = {
+type ProposicaoTemaControlProps = {
   temas: readonly TemaDisponivel[];
   activeTema: number | null;
   onSelect: (tema: number) => void;
@@ -17,7 +17,7 @@ type SelecaoTemaControlProps = {
   triggerClassName?: string;
 };
 
-export function SelecaoTemaControl({
+export function ProposicaoTemaControl({
   temas,
   activeTema,
   onSelect,
@@ -26,7 +26,7 @@ export function SelecaoTemaControl({
   panelClassName,
   spanToolbar = false,
   triggerClassName,
-}: SelecaoTemaControlProps) {
+}: ProposicaoTemaControlProps) {
   const listId = useId();
   const [isOpen, setIsOpen] = useState(false);
 

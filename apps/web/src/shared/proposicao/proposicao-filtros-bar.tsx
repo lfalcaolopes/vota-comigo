@@ -1,17 +1,16 @@
 "use client";
 
-import type { TemaDisponivel } from "@vota-comigo/shared-types";
+import type {
+  FeedOrdenacao,
+  TemaDisponivel,
+} from "@vota-comigo/shared-types";
 
-import { FiltrosAtivos } from "@/shared/ui";
+import { Button } from "@/shared/ui";
 
-import {
-  descreverFiltrosAtivos,
-  FILTROS_PADRAO,
-  removerFiltro,
-  type ProposicaoFeedFiltros,
-} from "./feed-filtros";
+import type { ProposicaoFeedFiltros } from "./feed-filtros";
+import { FeedOrdenacaoControl } from "./feed-ordenacao";
 import { FeedSearch } from "./feed-search";
-import { ProposicaoFiltrosPanel } from "./proposicao-filtros-panel";
+import { ProposicaoTemaControl } from "./proposicao-tema-control";
 
 type ProposicaoFiltrosBarProps = {
   draft: string;
@@ -21,6 +20,8 @@ type ProposicaoFiltrosBarProps = {
   query: string;
   filtros: ProposicaoFeedFiltros;
   onApplyFiltros: (filtros: ProposicaoFeedFiltros) => void;
+  onClearTudo: () => void;
+  isLoading?: boolean;
   temas: readonly TemaDisponivel[];
 };
 
@@ -32,33 +33,66 @@ export function ProposicaoFiltrosBar({
   query,
   filtros,
   onApplyFiltros,
+  onClearTudo,
+  isLoading = false,
   temas,
 }: ProposicaoFiltrosBarProps) {
+  function handleChangeOrdenacao(ordenacao: FeedOrdenacao) {
+    void onApplyFiltros({ ...filtros, ordenacao });
+  }
+
+  function handleSelectTema(cod: number) {
+    void onApplyFiltros({
+      ...filtros,
+      tema: filtros.tema === cod ? null : cod,
+    });
+  }
+
+  const filterPanelClassName = "order-last sm:basis-full sm:shrink-0";
+  const filterTriggerClassName =
+    "w-full [&>button]:w-full [&>button]:justify-center [&>span]:w-full sm:w-auto sm:[&>button]:w-auto sm:[&>span]:w-auto";
+
   return (
-    <div className="grid min-w-0 gap-3">
-      <div className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
-        <FeedSearch
-          className="min-w-0"
-          isSearching={query !== ""}
-          onChange={onDraftChange}
-          onClear={onClearSearch}
-          onSubmit={onSearch}
-          query={query}
-          value={draft}
-        />
-
-        <ProposicaoFiltrosPanel
-          filtros={filtros}
-          onApply={onApplyFiltros}
-          temas={temas}
-        />
-      </div>
-
-      <FiltrosAtivos
-        ativos={descreverFiltrosAtivos(filtros, temas)}
-        onClear={() => onApplyFiltros(FILTROS_PADRAO)}
-        onRemove={(id) => onApplyFiltros(removerFiltro(filtros, id))}
+    <div className="grid min-w-0 gap-4 sm:flex sm:flex-wrap sm:items-start sm:gap-2">
+      <FeedSearch
+        className="w-full sm:min-w-0 sm:flex-1"
+        isSearching={query !== ""}
+        onChange={onDraftChange}
+        onClear={onClearSearch}
+        onSubmit={onSearch}
+        query={query}
+        value={draft}
       />
+
+      <div className="grid min-w-0 gap-2 sm:contents">
+        <p className="text-sm font-[650] text-muted sm:hidden">Filtros</p>
+        <div className="grid min-w-0 grid-cols-2 gap-2 sm:contents">
+          <FeedOrdenacaoControl
+            className="col-span-full w-full sm:w-auto sm:shrink-0"
+            itemClassName="flex-1 sm:flex-none"
+            onChange={handleChangeOrdenacao}
+            value={filtros.ordenacao}
+          />
+
+          <ProposicaoTemaControl
+            activeTema={filtros.tema}
+            onSelect={handleSelectTema}
+            panelClassName={filterPanelClassName}
+            spanToolbar
+            temas={temas}
+            triggerClassName={filterTriggerClassName}
+          />
+
+          <Button
+            className="h-11 min-w-0 sm:hidden"
+            disabled={isLoading}
+            onClick={onClearTudo}
+            variant="secondary"
+          >
+            Limpar
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
