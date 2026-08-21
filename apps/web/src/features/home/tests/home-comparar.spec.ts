@@ -52,6 +52,15 @@ describe("fechamento da home", () => {
       expect(html).not.toContain("votos");
     });
 
+    it("não repete a ficha que a seção de deputados acabou de enumerar", () => {
+      // Arrange / Act
+      const html = render();
+
+      // Assert
+      expect(html).not.toContain("presença");
+      expect(html).not.toContain("comissões");
+    });
+
     it("manda para a lista onde a escolha acontece", () => {
       // Arrange / Act
       const html = render();

@@ -4,6 +4,7 @@ import { SITE_DESCRIPTION } from "@/shared/lib/site";
 import {
   HomeComparar,
   HomeCotaLegislatura,
+  HomeDeputados,
   HomeHero,
   HomeProposicoes,
 } from "@/features/home";
@@ -23,6 +24,7 @@ export default function Home() {
       <HomeHero />
       <HomeCotaLegislatura />
       <HomeProposicoes />
+      <HomeDeputados />
       <HomeComparar />
     </main>
   );

@@ -28,10 +28,10 @@ test.describe("home", () => {
       await page.goto("/");
 
       // Act
-      await page.getByRole("link", { name: "imposto de renda" }).click();
+      await page.getByRole("link", { name: "Porte de arma" }).click();
 
       // Assert
-      await expect(page).toHaveURL(/\/proposicoes\?q=imposto\+de\+renda/);
+      await expect(page).toHaveURL(/\/proposicoes\?q=porte\+de\+arma/);
     });
 
     test("leva dos gastos da cota à lista de deputados", async ({ page }) => {
@@ -62,6 +62,62 @@ test.describe("home", () => {
 
       // Assert
       await expect(page).toHaveURL(/\/proposicoes\/\d+/);
+    });
+
+    test("recorta a amostra pelo estado que a borda identificou", async ({
+      browser,
+    }) => {
+      // Arrange
+      const context = await browser.newContext({
+        extraHTTPHeaders: {
+          "x-vercel-ip-country": "BR",
+          "x-vercel-ip-country-region": "PE",
+        },
+      });
+      const page = await context.newPage();
+
+      // Act
+      await page.goto("/");
+      const secao = page.getByRole("region", {
+        name: /^Quem são os .*deputados em exercício$/,
+      });
+
+      // Assert
+      await expect(secao.getByText("Deputados de Pernambuco.")).toBeVisible();
+      await expect(secao.locator("article").first()).toContainText("· PE");
+      await expect(secao.getByRole("heading", { level: 2 })).toContainText(
+        /Quem são os \d{3} deputados em exercício/,
+      );
+      await context.close();
+    });
+
+    test("mostra o recorte nacional quando não há estado na borda", async ({
+      page,
+    }) => {
+      // Arrange / Act
+      await page.goto("/");
+      const secao = page.getByRole("region", {
+        name: /^Quem são os .*deputados em exercício$/,
+      });
+
+      // Assert
+      await expect(
+        secao.getByText("Deputados de todo o Brasil."),
+      ).toBeVisible();
+    });
+
+    test("abre o perfil de um deputado da amostra", async ({ page }) => {
+      // Arrange
+      await page.goto("/");
+      const secao = page.getByRole("region", {
+        name: /^Quem são os .*deputados em exercício$/,
+      });
+
+      // Act
+      await secao.locator("article a").first().click();
+
+      // Assert
+      await expect(page).toHaveURL(/\/deputados\/\d+/);
     });
   });
 

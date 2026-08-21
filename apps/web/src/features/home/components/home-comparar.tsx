@@ -36,9 +36,8 @@ export function HomeComparar() {
               Entre deputados
             </h3>
             <p className="max-w-[46ch] text-base leading-normal text-muted">
-              Dois ou três deputados lado a lado, com a presença registrada, as
-              propostas assinadas, as comissões e o gasto da cota parlamentar de
-              cada um.
+              Dois ou três deputados lado a lado, com os mesmos números do
+              perfil em colunas.
             </p>
             <div className="mt-auto flex flex-col sm:flex-row">
               <ButtonLink

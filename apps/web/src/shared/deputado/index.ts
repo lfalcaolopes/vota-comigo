@@ -104,6 +104,7 @@ export {
   toAtividadeTone,
   toFaixaEtariaLabel,
   toDiasEmExercicioLabel,
+  toEstadoLabel,
   toSexoLabel,
   toUsoCotaPeriodoLabel,
   getInitials,
