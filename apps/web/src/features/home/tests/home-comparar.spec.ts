@@ -41,7 +41,7 @@ describe("fechamento da home", () => {
       const html = render();
 
       // Assert
-      expect(html).toContain("Entre deputados");
+      expect(html).toContain("Pelos números de cada deputado");
     });
 
     it("não promete votos, que o comparativo entre deputados não mostra", () => {

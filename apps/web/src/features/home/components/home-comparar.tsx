@@ -14,7 +14,7 @@ export function HomeComparar() {
         <div className="grid gap-8 md:grid-cols-2 md:gap-10">
           <div className="flex flex-col gap-4">
             <h3 className="text-lg leading-snug font-[680] text-ink">
-              Pelas suas posições
+              Pela sua opinião sobre as propostas
             </h3>
             <p className="max-w-[46ch] text-base leading-normal text-muted">
               Leva poucos minutos, não exige cadastro e as respostas ficam no
@@ -33,7 +33,7 @@ export function HomeComparar() {
 
           <div className="flex flex-col gap-4">
             <h3 className="text-lg leading-snug font-[680] text-ink">
-              Entre deputados
+              Pelos números de cada deputado
             </h3>
             <p className="max-w-[46ch] text-base leading-normal text-muted">
               Dois ou três deputados lado a lado, com os mesmos números do
