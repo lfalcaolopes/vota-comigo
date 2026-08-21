@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { usoCotaResumoSchema } from "./uso-cota";
+
 const isoDateSchema = z.string().refine(isValidIsoDate);
 
 function isValidIsoDate(value: string): boolean {
@@ -432,6 +434,7 @@ export const deputadoCardSchema = z.object({
   siglaUf: z.string().nullable(),
   urlFoto: z.string().nullable(),
   emAtividade: z.boolean(),
+  usoCota: usoCotaResumoSchema,
 });
 
 export const deputadoFeedResponseSchema = z.object({

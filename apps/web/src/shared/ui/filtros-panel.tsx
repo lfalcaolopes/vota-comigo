@@ -9,6 +9,8 @@ import { Popover } from "./popover";
 import type { PopoverAlign } from "./popover-position";
 import { joinClassNames } from "./utils";
 
+const DEFAULT_MINIMUM_ANCHORED_HEIGHT = 480;
+
 type FiltrosPanelProps = {
   total: number;
   align?: PopoverAlign;
@@ -19,6 +21,7 @@ type FiltrosPanelProps = {
   isApplyDisabled: boolean;
   isLimparDisabled: boolean;
   className?: string;
+  minimumAnchoredHeight?: number;
   width?: number;
 };
 
@@ -32,6 +35,7 @@ export function FiltrosPanel({
   isApplyDisabled,
   isLimparDisabled,
   className,
+  minimumAnchoredHeight = DEFAULT_MINIMUM_ANCHORED_HEIGHT,
   width = 400,
 }: FiltrosPanelProps) {
   const panelId = useId();
@@ -82,6 +86,7 @@ export function FiltrosPanel({
         ariaLabelledBy={tituloId}
         id={panelId}
         isOpen={isOpen}
+        minimumAnchoredHeight={minimumAnchoredHeight}
         onClose={() => setIsOpen(false)}
         triggerRef={triggerRef}
         width={width}

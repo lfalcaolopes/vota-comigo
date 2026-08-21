@@ -1,7 +1,11 @@
 import type { MatcherDeputadoResumo } from "@vota-comigo/shared-types";
 import Link from "next/link";
 
-import { DeputadoAvatar } from "@/shared/deputado";
+import {
+  DeputadoAvatar,
+  toDiasEmExercicioLabel,
+  toUsoCotaPeriodoLabel,
+} from "@/shared/deputado";
 import { Badge, CheckboxControl } from "@/shared/ui";
 import { joinClassNames } from "@/shared/ui/utils";
 
@@ -17,6 +21,7 @@ import { buildResultadoDetalheHref } from "../../lib/matcher-route";
 type DeputadoCardProps = {
   deputado: MatcherDeputadoResumo;
   totalPosicoesComputaveis: number;
+  showUsoCota?: boolean;
   comparativoSelection?: {
     disabled: boolean;
     onToggle: (externalIdDeputado: number) => void;
@@ -28,6 +33,7 @@ export function DeputadoCard({
   comparativoSelection,
   deputado,
   totalPosicoesComputaveis,
+  showUsoCota,
 }: DeputadoCardProps) {
   const percentualLabel = formatPercentual(deputado.compatibilidadeBruta);
   const amostraLabel = toAmostraComparavelLabel(
@@ -87,6 +93,24 @@ export function DeputadoCard({
       </div>
 
       <p className="text-xs text-muted sm:hidden">{amostraLabel}</p>
+
+      {showUsoCota ? (
+        deputado.usoCota?.status === "calculavel" ? (
+          <div className="grid gap-0.5">
+            <p className="text-sm font-[650] text-ink">
+              Uso da cota: {Math.round(deputado.usoCota.percentualTetoBase)}%
+            </p>
+            <p className="text-xs leading-normal text-muted">
+              Período analisado: {toUsoCotaPeriodoLabel(deputado.usoCota)} ·{" "}
+              {toDiasEmExercicioLabel(deputado.usoCota.diasEmExercicio)}
+            </p>
+          </div>
+        ) : (
+          <p className="text-sm font-[650] text-ink">
+            Uso da cota indisponível
+          </p>
+        )
+      ) : null}
 
       <div className="flex flex-wrap gap-2">
         <Badge tone={atividadeTone}>

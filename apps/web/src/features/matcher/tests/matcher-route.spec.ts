@@ -204,6 +204,7 @@ describe("matcher route", () => {
       // Arrange
       const state = {
         escopo: "nacional" as const,
+        sort: "compatibilidade" as const,
         apenasEmAtividade: true,
         partidos: ["PSOL", "PT"],
         ocultarAmostraPequena: true,
@@ -220,10 +221,30 @@ describe("matcher route", () => {
         partido: search.getAll("partido"),
         amostra: search.get("amostra") ?? undefined,
         sexo: search.get("sexo") ?? undefined,
+        sort: search.get("sort") ?? undefined,
       });
 
       // Assert
       expect(lido).toEqual(state);
+    });
+  });
+
+  describe("when cota ordering is requested", () => {
+    it("persists it while omitting compatibility ordering", () => {
+      // Arrange / Act
+      const cota = buildResultadoHref({
+        ...RESULTADO_FILTROS_URL_PADRAO,
+        escopo: "estadual",
+        sort: "menor-uso-cota",
+      });
+      const compatibilidade = buildResultadoHref({
+        ...RESULTADO_FILTROS_URL_PADRAO,
+        escopo: "estadual",
+      });
+
+      // Assert
+      expect(cota).toBe("/matcher/resultado?sort=menor-uso-cota");
+      expect(compatibilidade).toBe("/matcher/resultado");
     });
   });
 

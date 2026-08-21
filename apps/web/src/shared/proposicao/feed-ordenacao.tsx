@@ -11,6 +11,7 @@ const ITEMS = Object.entries(ORDENACAO_LABEL).map(([id, label]) => ({
 
 type FeedOrdenacaoControlProps = {
   className?: string;
+  disabled?: boolean;
   itemClassName?: string;
   value: FeedOrdenacao;
   onChange: (value: FeedOrdenacao) => void;
@@ -18,6 +19,7 @@ type FeedOrdenacaoControlProps = {
 
 export function FeedOrdenacaoControl({
   className,
+  disabled = false,
   itemClassName,
   value,
   onChange,
@@ -26,6 +28,7 @@ export function FeedOrdenacaoControl({
     <SegmentedControl
       activeId={value}
       className={joinClassNames("h-11 flex-nowrap", className)}
+      disabled={disabled}
       itemClassName={joinClassNames("h-full !min-h-0", itemClassName)}
       items={ITEMS}
       label="Ordenação"

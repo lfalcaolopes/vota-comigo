@@ -4,6 +4,7 @@ import type {
   SiglaUf,
   VotacaoReferenciaPattern,
   VotoCategoria,
+  UsoCotaResumo,
 } from '@vota-comigo/shared-types';
 import {
   proposicaoResumoIaGenerationStatus,
@@ -23,6 +24,7 @@ import type {
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
   deputado,
+  deputadoCotaUso,
   deputadoExercicioIntervalo,
   deputadoHistorico,
   partido,
@@ -74,6 +76,9 @@ export type MatcherRepository = {
     siglaUf: SiglaUf,
     externalIdDeputado: number,
   ): Promise<DeputadoCompatibilidadeInput | null>;
+  loadUsoCota?(
+    deputadoIds: readonly string[],
+  ): Promise<ReadonlyMap<string, UsoCotaResumo>>;
 };
 
 async function loadRankedProposicoesComputaveis(
@@ -202,6 +207,47 @@ export function createMatcherRepository(
   db: DrizzleDatabase,
 ): MatcherRepository {
   return {
+    async loadUsoCota(deputadoIds) {
+      if (deputadoIds.length === 0) return new Map();
+      const rows = await db
+        .select({
+          deputadoId: deputadoCotaUso.deputadoId,
+          status: deputadoCotaUso.status,
+          motivo: deputadoCotaUso.motivo,
+          legislatura: deputadoCotaUso.legislatura,
+          percentualTetoBase: deputadoCotaUso.percentualTetoBase,
+          periodStart: deputadoCotaUso.periodStart,
+          coberturaAte: deputadoCotaUso.coberturaAte,
+          diasEmExercicio: deputadoCotaUso.diasEmExercicio,
+        })
+        .from(deputadoCotaUso)
+        .where(inArray(deputadoCotaUso.deputadoId, [...deputadoIds]));
+      return new Map(
+        rows.map((row): [string, UsoCotaResumo] => [
+          row.deputadoId,
+          row.status === 'calculavel' &&
+          row.legislatura !== null &&
+          row.percentualTetoBase !== null &&
+          row.periodStart !== null &&
+          row.coberturaAte !== null &&
+          row.diasEmExercicio !== null
+            ? {
+                status: 'calculavel',
+                legislatura: row.legislatura,
+                percentualTetoBase: row.percentualTetoBase,
+                periodStart: row.periodStart,
+                coberturaAte: row.coberturaAte,
+                diasEmExercicio: row.diasEmExercicio,
+              }
+            : {
+                status: 'indisponivel',
+                legislatura: row.legislatura,
+                motivo: (row.motivo ??
+                  'fonte-incompleta') as import('@vota-comigo/shared-types').UsoCotaIndisponivelMotivo,
+              },
+        ]),
+      );
+    },
     async loadExternalIdProposicoesComputaveis(externalIdProposicoes) {
       if (externalIdProposicoes.length === 0) {
         return new Set<number>();

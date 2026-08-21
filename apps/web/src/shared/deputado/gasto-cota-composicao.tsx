@@ -1,6 +1,9 @@
 import type { DeputadoCeapCategory } from "@vota-comigo/shared-types";
 
-import { formatGastoCotaAmount } from "./gasto-cota-presentation";
+import {
+  formatGastoCotaAmount,
+  formatGastoCotaParticipacao,
+} from "./gasto-cota-presentation";
 
 export function GastoCotaComposicao({
   categories,
@@ -28,7 +31,7 @@ export function GastoCotaComposicao({
               {formatGastoCotaAmount(category.amountUsedCents)}
             </span>
             <span className="tabular-nums text-muted">
-              {formatPercentualParte(
+              {formatGastoCotaParticipacao(
                 category.amountUsedCents,
                 totalAmountUsedCents,
               )}
@@ -38,16 +41,4 @@ export function GastoCotaComposicao({
       </ul>
     </details>
   );
-}
-
-function formatPercentualParte(
-  partAmountCents: number,
-  totalAmountCents: number,
-) {
-  if (totalAmountCents === 0) return "Participação indisponível";
-
-  return new Intl.NumberFormat("pt-BR", {
-    style: "percent",
-    maximumFractionDigits: 1,
-  }).format(partAmountCents / totalAmountCents);
 }

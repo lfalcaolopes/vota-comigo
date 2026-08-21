@@ -13,6 +13,7 @@ import type {
 } from "./popover-position";
 import {
   anchoredPopoverPosition,
+  isAnchoredPopoverUsable,
   isTriggerMostlyHidden,
 } from "./popover-position";
 import { joinClassNames } from "./utils";
@@ -21,6 +22,7 @@ export const POPOVER_TRANSITION_MS = 180;
 
 const VIEWPORT_GAP = 8;
 const DEFAULT_WIDTH = 320;
+const DEFAULT_MINIMUM_ANCHORED_HEIGHT = 320;
 const ANCHORED_QUERY = "(min-width: 40rem)";
 
 export type PopoverMobileMode = "sheet" | "centered";
@@ -36,6 +38,7 @@ type PopoverProps = {
   className?: string;
   id?: string;
   initialFocusRef?: RefObject<HTMLElement | null>;
+  minimumAnchoredHeight?: number;
   mobile?: PopoverMobileMode;
   width?: number;
 };
@@ -49,6 +52,7 @@ export function Popover({
   id,
   initialFocusRef,
   isOpen,
+  minimumAnchoredHeight = DEFAULT_MINIMUM_ANCHORED_HEIGHT,
   mobile = "sheet",
   onClose,
   triggerRef,
@@ -58,7 +62,8 @@ export function Popover({
     isOpen,
     POPOVER_TRANSITION_MS,
   );
-  const [isAnchored, setIsAnchored] = useState(false);
+  const [isAnchoredViewport, setIsAnchoredViewport] = useState(false);
+  const [hasAnchoredSpace, setHasAnchoredSpace] = useState(false);
   const [position, setPosition] = useState<PopoverPosition | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   // A pointer press outside already moved the user's attention elsewhere, so
@@ -85,9 +90,10 @@ export function Popover({
     const updatePosition = () => {
       const trigger = triggerRef.current;
       if (trigger === null) return;
-      const anchored = window.matchMedia(ANCHORED_QUERY).matches;
-      setIsAnchored(anchored);
-      if (!anchored) {
+      const anchoredViewport = window.matchMedia(ANCHORED_QUERY).matches;
+      setIsAnchoredViewport(anchoredViewport);
+      if (!anchoredViewport) {
+        setHasAnchoredSpace(false);
         setPosition(null);
         return;
       }
@@ -99,15 +105,26 @@ export function Popover({
         return;
       }
 
+      const panelHeight = panelRef.current?.scrollHeight ?? 0;
       const next = anchoredPopoverPosition({
         align,
         gap: VIEWPORT_GAP,
         locked: locked ?? undefined,
-        panelHeight: panelRef.current?.scrollHeight ?? 0,
+        panelHeight,
         panelWidth: width,
         trigger: rect,
         viewport,
       });
+      const usable = isAnchoredPopoverUsable({
+        availableHeight: next.maxHeight,
+        minimumHeight: minimumAnchoredHeight,
+        panelHeight,
+      });
+      setHasAnchoredSpace(usable);
+      if (!usable) {
+        setPosition(null);
+        return;
+      }
       locked = { flip: next.flip, maxHeight: next.maxHeight };
       setPosition(next);
     };
@@ -125,9 +142,18 @@ export function Popover({
       window.removeEventListener("resize", remeasure);
       window.removeEventListener("scroll", updatePosition, true);
     };
-    // isAnchored re-runs the measurement once the panel carries the classes of
-    // the mode it settled on, so the flip decision reads its real height.
-  }, [isMounted, isAnchored, align, width, triggerRef]);
+    // isAnchoredViewport re-runs the measurement once the panel carries the
+    // classes of the desktop mode, so the decision reads its real height.
+  }, [
+    isMounted,
+    isAnchoredViewport,
+    align,
+    minimumAnchoredHeight,
+    width,
+    triggerRef,
+  ]);
+
+  const isAnchored = isAnchoredViewport && hasAnchoredSpace;
 
   useEffect(() => {
     if (!isOpen || !isMounted) return;
@@ -196,14 +222,15 @@ export function Popover({
 
   if (!isMounted) return null;
 
-  const isSheet = !isAnchored && mobile === "sheet";
+  const isSheet = !isAnchoredViewport && mobile === "sheet";
 
   return createPortal(
     <>
       <div
         aria-hidden="true"
         className={joinClassNames(
-          "fixed inset-0 z-popover bg-ink/40 transition-opacity duration-[180ms] ease-standard sm:hidden",
+          "fixed inset-0 z-popover bg-ink/40 transition-opacity duration-[180ms] ease-standard",
+          isAnchored && "hidden",
           isVisible ? "opacity-100" : "opacity-0",
         )}
       />
@@ -218,7 +245,7 @@ export function Popover({
             "inset-x-0 bottom-0 max-h-[85vh] rounded-t-lg pb-[env(safe-area-inset-bottom)]",
           !isAnchored &&
             !isSheet &&
-            "top-1/2 left-1/2 max-h-[80vh] w-[calc(100vw-2rem)] max-w-90 -translate-x-1/2 -translate-y-1/2 rounded-lg",
+            "top-1/2 left-1/2 max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-lg",
           isVisible ? "opacity-100" : "opacity-0",
           isSheet && !isVisible && "motion-safe:translate-y-4",
           className,
@@ -234,7 +261,9 @@ export function Popover({
                 maxHeight: position.maxHeight,
                 width,
               }
-            : undefined
+            : !isSheet
+              ? { maxWidth: width }
+              : undefined
         }
         tabIndex={-1}
       >

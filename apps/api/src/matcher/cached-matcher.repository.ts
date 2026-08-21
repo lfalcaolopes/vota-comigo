@@ -65,6 +65,9 @@ export function createCachedMatcherRepository(
   );
 
   return {
+    loadUsoCota(deputadoIds) {
+      return inner.loadUsoCota?.(deputadoIds) ?? Promise.resolve(new Map());
+    },
     loadExternalIdProposicoesComputaveis(externalIdProposicoes) {
       return through(computaveisCache, idsKey(externalIdProposicoes), () =>
         inner.loadExternalIdProposicoesComputaveis(externalIdProposicoes),

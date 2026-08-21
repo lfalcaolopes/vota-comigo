@@ -16,7 +16,13 @@ import {
   saoFiltrosIguais,
   type DeputadoFeedFiltros,
 } from "@/shared/deputado";
-import { FiltroSecao, FiltrosPanel, Switch, toggleValor } from "@/shared/ui";
+import {
+  FiltroSecao,
+  FiltrosPanel,
+  Radio,
+  Switch,
+  toggleValor,
+} from "@/shared/ui";
 
 type DeputadosFiltrosPanelProps = {
   filtros: DeputadoFeedFiltros;
@@ -44,6 +50,36 @@ export function DeputadosFiltrosPanel({
       onOpen={() => setRascunho(filtros)}
       total={contarFiltrosAtivos(filtros)}
     >
+      <FiltroSecao titulo="Ordenação">
+        <div
+          className="grid gap-3"
+          role="radiogroup"
+          aria-label="Ordenação dos deputados"
+        >
+          <Radio
+            checked={rascunho.sort === "nome"}
+            label="Nome"
+            name="deputado-sort"
+            onChange={() =>
+              setRascunho((atual) => ({ ...atual, sort: "nome" }))
+            }
+          />
+          <div className="grid gap-1">
+            <Radio
+              checked={rascunho.sort === "menor-uso-cota"}
+              label="Menor uso da cota"
+              name="deputado-sort"
+              onChange={() =>
+                setRascunho((atual) => ({ ...atual, sort: "menor-uso-cota" }))
+              }
+            />
+            <p className="pl-7 text-sm leading-normal text-muted">
+              Percentual da cota usado no período analisado.
+            </p>
+          </div>
+        </div>
+      </FiltroSecao>
+
       <Switch
         checked={rascunho.incluirForaDeExercicio}
         className="min-h-11 justify-start"

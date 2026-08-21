@@ -52,6 +52,9 @@
   --z-index-popover: 50;
 
   --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  /* ease-out-quad: a curva de estado resolve 95% no primeiro quinto e a barra
+     longa parece nao ter animado. */
+  --ease-reveal: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
   --animate-skeleton: skeleton 1.4s var(--ease-standard) infinite;
 
@@ -92,6 +95,33 @@
   }
 }
 
+/* O tom de cada faixa vem da posição no DOM, não do componente: ancorado pelo
+   fim, a última faixa fica sempre branca contra o footer e a alternância se
+   reajusta quando uma seção não renderiza. */
+.vc-bands > section:nth-last-of-type(even) {
+  background-color: var(--color-surface-muted);
+}
+
+@keyframes reveal-bar {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* clip-path em vez de width ou scaleX: não dispara layout e não deforma o raio
+   das pontas da barra. */
+[data-reveal="pending"] .vc-reveal-bar {
+  clip-path: inset(0 100% 0 0);
+}
+
+[data-reveal="playing"] .vc-reveal-bar {
+  animation: reveal-bar var(--vc-reveal-duration, 3000ms) var(--ease-reveal)
+    var(--vc-reveal-delay, 0ms) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -104,5 +134,10 @@
 
   .vc-data-segment {
     transition: none !important;
+  }
+
+  [data-reveal] .vc-reveal-bar {
+    animation: none !important;
+    clip-path: none !important;
   }
 }

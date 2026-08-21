@@ -36,6 +36,11 @@ function toDeputadoResumo(
     scoreOrdenacaoPercentual: deputado.scoreOrdenacaoPercentual,
     alertas: [...deputado.alertas],
     emAtividade: deputado.emAtividade,
+    usoCota: deputado.usoCota ?? {
+      status: 'indisponivel',
+      legislatura: null,
+      motivo: 'fonte-incompleta',
+    },
   };
 }
 

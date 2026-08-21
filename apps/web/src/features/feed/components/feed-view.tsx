@@ -51,6 +51,7 @@ export function FeedView({
     clearSearch,
     applyFiltros,
     clearTudo,
+    applySuggestion,
     loadMore,
   } = useFeedState({
     items: initialItems,
@@ -108,6 +109,12 @@ export function FeedView({
     await clearTudo();
   }
 
+  async function handleSuggestSearch(termo: string) {
+    setDraft(termo);
+    replaceHref({ query: termo, filtros: FILTROS_PADRAO });
+    await applySuggestion(termo);
+  }
+
   const announcement =
     display === "loading"
       ? "Atualizando lista de propostas."
@@ -128,9 +135,11 @@ export function FeedView({
         filtros={filtros}
         onApplyFiltros={handleApplyFiltros}
         onClearSearch={handleClearSearch}
+        onClearTudo={handleClearTudo}
         onDraftChange={setDraft}
         onSearch={handleSearch}
         query={query}
+        isLoading={status === "loading"}
         temas={temas}
       />
 
@@ -141,6 +150,7 @@ export function FeedView({
         itemSearchParams={itemSearchParams}
         onClearTudo={handleClearTudo}
         onLoadMore={loadMore}
+        onSuggestSearch={handleSuggestSearch}
         status={status}
         total={total}
       />

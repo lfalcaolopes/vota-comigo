@@ -18,6 +18,7 @@ import type { DeputadoOrgaoRepository } from '../steps/deputado-orgao/deputado-o
 import type { DeputadoProposicaoAssinadaRepository } from '../steps/deputado-proposicao-assinada/deputado-proposicao-assinada.repository.types';
 import type { CotaMedianaUfRepository } from '../steps/cota-mediana-uf/cota-mediana-uf.repository.types';
 import type { DeputadoCotaComparacaoRepository } from '../steps/deputado-cota-comparacao/deputado-cota-comparacao.repository.types';
+import type { DeputadoCotaUsoRepository } from '../steps/deputado-cota-uso/deputado-cota-uso.repository.types';
 import type { SanityRepository } from '../steps/sanity/sanity.repository.types';
 import type {
   TemaLookup,
@@ -162,6 +163,13 @@ export const dryRunDeputadoCotaComparacaoRepository: DeputadoCotaComparacaoRepos
     loadMedianas: () => Promise.resolve([]),
     replaceAll: dryRunWriteGuard,
   };
+
+export const dryRunDeputadoCotaUsoRepository: DeputadoCotaUsoRepository = {
+  loadCoberturas: () => Promise.resolve([]),
+  loadLegislaturas: () => Promise.resolve([]),
+  loadDeputados: () => Promise.resolve([]),
+  replaceAll: dryRunWriteGuard,
+};
 
 export const dryRunSanityRepository: SanityRepository = {
   loadPlacares: dryRunReadGuard,

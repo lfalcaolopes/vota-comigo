@@ -1,4 +1,4 @@
-import type { DeputadoSexo } from "@vota-comigo/shared-types";
+import type { DeputadoSexo, MatcherSort } from "@vota-comigo/shared-types";
 
 import { toSexoLabel } from "@/shared/deputado";
 import {
@@ -11,6 +11,7 @@ import {
 // Os filtros que viajam no endereço (ADR 020) ficam separados porque a
 // concordância é o único que não pode entrar na URL (ADR 021).
 export type ResultadoFiltrosUrl = {
+  sort?: MatcherSort;
   apenasEmAtividade: boolean;
   partidos: readonly string[];
   ocultarAmostraPequena: boolean;
@@ -26,6 +27,7 @@ export type ResultadoFiltroId = keyof ResultadoFiltros;
 export type ResultadoFiltroAtivo = FiltroAtivo<ResultadoFiltroId>;
 
 export const RESULTADO_FILTROS_URL_PADRAO: ResultadoFiltrosUrl = {
+  sort: "compatibilidade",
   apenasEmAtividade: false,
   partidos: [],
   ocultarAmostraPequena: false,
@@ -38,6 +40,7 @@ export const RESULTADO_FILTROS_PADRAO: ResultadoFiltros = {
 };
 
 export const RESULTADO_FILTRO_NOME: Record<ResultadoFiltroId, string> = {
+  sort: "Ordenação",
   apenasEmAtividade: "Apenas em atividade",
   partidos: "Partido",
   ocultarAmostraPequena: "Ocultar amostra pequena",
@@ -51,6 +54,7 @@ export function toResultadoFiltrosUrl(
   filtros: ResultadoFiltrosUrl,
 ): ResultadoFiltrosUrl {
   return {
+    sort: filtros.sort ?? "compatibilidade",
     apenasEmAtividade: filtros.apenasEmAtividade,
     partidos: [...filtros.partidos],
     ocultarAmostraPequena: filtros.ocultarAmostraPequena,
@@ -73,6 +77,7 @@ export function toResultadoFiltros(
 // lugar só e todos os pontos de comparação acompanham.
 export function toResultadoFiltrosUrlKey(filtros: ResultadoFiltrosUrl): string {
   return [
+    `sort=${filtros.sort ?? "compatibilidade"}`,
     `atividade=${filtros.apenasEmAtividade}`,
     `partidos=${toSelecaoKey(filtros.partidos)}`,
     `amostra=${filtros.ocultarAmostraPequena}`,
@@ -99,6 +104,12 @@ export function descreverResultadoFiltrosAtivos(
 ): readonly ResultadoFiltroAtivo[] {
   const ativos: ResultadoFiltroAtivo[] = [];
   const marcadas = filtros.externalIdProposicoesFiltroConcordancia.length;
+
+  if ((filtros.sort ?? "compatibilidade") !== RESULTADO_FILTROS_PADRAO.sort) {
+    ativos.push(
+      toFiltroAtivo("sort", RESULTADO_FILTRO_NOME.sort, "Menor uso da cota"),
+    );
+  }
 
   if (filtros.apenasEmAtividade) {
     ativos.push(

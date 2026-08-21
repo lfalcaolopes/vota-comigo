@@ -27,6 +27,7 @@ export {
   Checkbox,
   CheckboxControl,
   Chip,
+  ChipLink,
   Radio,
   SegmentedControl,
   Switch,

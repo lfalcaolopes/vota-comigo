@@ -56,6 +56,8 @@ import { createCotaMedianaUfRepository } from '../steps/cota-mediana-uf/cota-med
 import { createCotaMedianaUfStep } from '../steps/cota-mediana-uf/cota-mediana-uf.step';
 import { createDeputadoCotaComparacaoRepository } from '../steps/deputado-cota-comparacao/deputado-cota-comparacao.repository';
 import { createDeputadoCotaComparacaoStep } from '../steps/deputado-cota-comparacao/deputado-cota-comparacao.step';
+import { createDeputadoCotaUsoRepository } from '../steps/deputado-cota-uso/deputado-cota-uso.repository';
+import { createDeputadoCotaUsoStep } from '../steps/deputado-cota-uso/deputado-cota-uso.step';
 import { createIngestionStepRunRepository } from '../run-record/ingestion-step-run.repository';
 import { createDeputadoExercicioIntervaloRepository } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.repository';
 import { createDeputadoExercicioIntervaloStep } from '../steps/deputado-exercicio-intervalo/deputado-exercicio-intervalo.step';
@@ -86,6 +88,7 @@ import {
   dryRunDeputadoExercicioIntervaloRepository,
   dryRunCotaMedianaUfRepository,
   dryRunDeputadoCotaComparacaoRepository,
+  dryRunDeputadoCotaUsoRepository,
   dryRunDeputadoGastoCotaRepository,
   dryRunGastoCotaSigepaDeps,
   dryRunProposicaoLookup,
@@ -163,6 +166,7 @@ export function createIngestionSteps(
           dryRunDeputadoExercicioIntervaloRepository,
         ),
         createDeputadoGastoCotaSigepaStep(dryRunGastoCotaSigepaDeps),
+        createDeputadoCotaUsoStep(dryRunDeputadoCotaUsoRepository),
         createCotaMedianaUfStep(dryRunCotaMedianaUfRepository),
         createDeputadoCotaComparacaoStep(
           dryRunDeputadoCotaComparacaoRepository,
@@ -245,6 +249,7 @@ export function createIngestionSteps(
       }),
       refetch: input.refetchSigepa,
     }),
+    createDeputadoCotaUsoStep(createDeputadoCotaUsoRepository(db)),
     createCotaMedianaUfStep(createCotaMedianaUfRepository(db)),
     createDeputadoCotaComparacaoStep(
       createDeputadoCotaComparacaoRepository(db),

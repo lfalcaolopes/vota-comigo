@@ -263,6 +263,11 @@ describe('MatcherService.execute', () => {
           scoreOrdenacaoPercentual: 20.65,
           alertas: ['amostra_pequena'],
           emAtividade: true,
+          usoCota: {
+            status: 'indisponivel',
+            legislatura: null,
+            motivo: 'fonte-incompleta',
+          },
         },
       ]);
     });

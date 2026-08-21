@@ -11,5 +11,6 @@ export function toDeputadoCard(row: DeputadoCardRow): DeputadoCard {
     siglaUf: row.siglaUf,
     urlFoto: row.urlFoto,
     emAtividade: row.emAtividade,
+    usoCota: row.usoCota,
   };
 }

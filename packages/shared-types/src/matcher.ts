@@ -6,6 +6,7 @@ import {
 } from "./proposicoes";
 import { deputadoSexoSchema } from "./deputados";
 import { deputadoVotacaoClassification } from "./exercicio";
+import { matcherSortSchema, usoCotaResumoSchema } from "./uso-cota";
 
 export const siglaUfEnum = z.enum([
   "AC",
@@ -89,6 +90,7 @@ export const matcherExecucaoRequestSchema = z.object({
     .array(z.number().int().positive())
     .max(MAX_POSICOES)
     .default([]),
+  sort: matcherSortSchema.default("compatibilidade"),
 });
 
 export const matcherExecucaoResumoSchema = z.object({
@@ -110,6 +112,7 @@ export const matcherDeputadoResumoSchema = z.object({
   scoreOrdenacaoPercentual: z.number().min(0).max(100),
   alertas: z.array(alertaMatcherEnum),
   emAtividade: z.boolean(),
+  usoCota: usoCotaResumoSchema,
 });
 
 export const matcherResultadoSchema = matcherExecucaoResumoSchema.extend({
@@ -161,9 +164,10 @@ export const matcherDeputadoDetalheSchema = matcherExecucaoResumoSchema.extend({
 export type SiglaUf = z.infer<typeof siglaUfEnum>;
 export type PosicaoUsuarioMatcher = z.infer<typeof posicaoUsuarioMatcherEnum>;
 export type PosicaoMatcher = z.infer<typeof posicaoMatcherSchema>;
-export type MatcherExecucaoRequest = z.infer<
-  typeof matcherExecucaoRequestSchema
->;
+export type MatcherExecucaoRequest = Omit<
+  z.infer<typeof matcherExecucaoRequestSchema>,
+  "sort"
+> & { sort?: z.infer<typeof matcherSortSchema> };
 export type MatcherExecucaoResumo = z.infer<typeof matcherExecucaoResumoSchema>;
 export type EscopoMatcher = z.infer<typeof escopoMatcherEnum>;
 export type MatcherCompletionEvent = z.infer<

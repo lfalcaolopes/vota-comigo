@@ -26,6 +26,11 @@ function detalhe(): MatcherDeputadoDetalhe {
       siglaUf: "PE",
       urlFoto: null,
       emAtividade: true,
+      usoCota: {
+        status: "indisponivel",
+        legislatura: null,
+        motivo: "fonte-incompleta",
+      },
     },
     metrics: {
       totalConcordancias: 3,
@@ -53,6 +58,11 @@ function resumo(): MatcherDeputadoResumo {
     scoreOrdenacaoPercentual: 60,
     alertas: [],
     emAtividade: true,
+    usoCota: {
+      status: "indisponivel",
+      legislatura: null,
+      motivo: "fonte-incompleta",
+    },
   };
 }
 
@@ -242,9 +252,16 @@ describe("StepResultado", () => {
       // Assert
       expect(html).toContain("Filtros");
       expect(html).toContain("Escopo dos resultados");
-      expect(html).toContain("Comparar deputados");
-      expect(html.indexOf("Comparar deputados")).toBeLessThan(
+      expect(html).toContain("Compare os deputados");
+      expect(html).toContain("Escolher deputados para comparar");
+      expect(html).toContain(
+        "Escolha 2 ou 3 deputados para comparar votos e diferenças lado a lado.",
+      );
+      expect(html.indexOf("Escolher deputados para comparar")).toBeGreaterThan(
         html.indexOf("Filtros"),
+      );
+      expect(html.indexOf("Escolher deputados para comparar")).toBeLessThan(
+        html.indexOf("Como ordenamos os resultados"),
       );
       expect(html).not.toContain("Apenas em atividade");
       expect(html).not.toContain("Selecionar Maria da Silva para comparação");
@@ -297,8 +314,12 @@ describe("StepResultado", () => {
 
       // Assert
       expect(html).toContain("Cancelar");
-      expect(html).toContain("Comparar");
-      expect(html).toContain("Você pode comparar até 3 deputados.");
+      expect(html).toContain("Comparar deputados");
+      expect(html).toContain("3 de 3 deputados selecionados");
+      expect(html).toContain(
+        "Limite atingido. Compare agora ou altere sua seleção.",
+      );
+      expect(html).not.toContain("Escolher deputados para comparar");
       expect(html).toContain('type="checkbox"');
     });
   });
@@ -315,10 +336,12 @@ describe("StepComparativo", () => {
             { ...resumo(), externalIdDeputado: 1, nome: "Deputado A" },
           ],
           detalhes: [],
+          escopo: "estadual",
           perfis: [perfil(2, "Deputada B"), perfil(1, "Deputado A")],
           onBack: () => {},
           onRetry: () => {},
           posicoes: [],
+          siglaUf: "SP",
           status: "idle",
         }),
       );

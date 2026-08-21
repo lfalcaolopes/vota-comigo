@@ -1,8 +1,10 @@
 import {
   deputadoFaixaEtariaSchema,
+  deputadoFeedSortSchema,
   deputadoSexoSchema,
   type DeputadoFaixaEtaria,
   type DeputadoSexo,
+  type DeputadoFeedSort,
 } from "@vota-comigo/shared-types";
 
 import { FILTROS_PADRAO, type DeputadoFeedFiltros } from "./feed-filtros";
@@ -16,6 +18,7 @@ export type DeputadosFeedSearchParams = {
   partido?: SearchParamValue;
   sexo?: string;
   faixaEtaria?: SearchParamValue;
+  sort?: string;
 };
 
 export type DeputadosFeedUrlState = DeputadoFeedFiltros & {
@@ -27,6 +30,7 @@ export function parseDeputadosFeedUrlState(
 ): DeputadosFeedUrlState {
   return {
     query: parseQueryParam(params.q),
+    sort: parseSortParam(params.sort),
     incluirForaDeExercicio: params.incluirForaDeExercicio === "true",
     ufs: parseLista(params.uf, parseUfParam),
     partidos: parseLista(params.partido, parsePartidoParam),
@@ -42,11 +46,14 @@ export function buildDeputadosFeedSearchParams({
   partidos,
   sexo,
   faixasEtarias,
+  sort,
 }: DeputadosFeedUrlState): URLSearchParams {
   const params = new URLSearchParams();
   const term = parseQueryParam(query ?? undefined);
 
   if (term !== null) params.set("q", term);
+  if (sort !== undefined && sort !== FILTROS_PADRAO.sort)
+    params.set("sort", sort);
   if (incluirForaDeExercicio) params.set("incluirForaDeExercicio", "true");
   for (const uf of ufs) params.append("uf", uf);
   for (const partido of partidos) params.append("partido", partido);
@@ -106,4 +113,9 @@ function parseSexoParam(raw: string | undefined): DeputadoSexo | null {
 function parseFaixaEtariaParam(raw: string): DeputadoFaixaEtaria | null {
   const parsed = deputadoFaixaEtariaSchema.safeParse(raw.trim());
   return parsed.success ? parsed.data : null;
+}
+
+function parseSortParam(raw: string | undefined): DeputadoFeedSort {
+  const parsed = deputadoFeedSortSchema.safeParse(raw);
+  return parsed.success ? parsed.data : "nome";
 }

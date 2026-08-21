@@ -70,7 +70,7 @@ const selected = [
 ];
 
 const rascunho = {
-  version: 1,
+  version: 2,
   siglaUf: "SP",
   escopo: "estadual",
   selected,
@@ -100,6 +100,14 @@ const resultado = {
       scoreOrdenacaoPercentual: 61,
       alertas: [],
       emAtividade: true,
+      usoCota: {
+        status: "calculavel",
+        percentualTetoBase: 72.4,
+        legislatura: 57,
+        periodStart: "2023-02-01",
+        coberturaAte: "2026-08-31",
+        diasEmExercicio: 1_184,
+      },
     },
   ],
   totalDeputadosAvaliados: 1,
@@ -708,6 +716,80 @@ test.describe("filtros do resultado do matcher", () => {
     });
   });
 
+  test.describe("ordenação por uso da cota", () => {
+    test("persiste na URL, no recarregamento e nas páginas adicionais", async ({
+      page,
+    }) => {
+      // Arrange
+      const requests: Array<{ sort?: string }> = [];
+      await page.route("http://localhost:3001/matcher?**", async (route) => {
+        const request = route.request().postDataJSON();
+        requests.push(request);
+        const offset = Number(
+          new URL(route.request().url()).searchParams.get("offset"),
+        );
+        await route.fulfill({
+          json:
+            offset === 0
+              ? { ...resultado, total: 21 }
+              : {
+                  ...resultado,
+                  deputados: [
+                    {
+                      ...resultado.deputados[0],
+                      externalIdDeputado: 11,
+                      nome: "Deputado da página seguinte",
+                    },
+                  ],
+                  total: 21,
+                  offset,
+                },
+        });
+      });
+      await storeRascunho(page);
+      await page.goto("/matcher/resultado");
+      await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+
+      // Act
+      await abrirFiltros(page).click();
+      await painel(page)
+        .getByRole("radio", { name: "Menor uso da cota" })
+        .check();
+      await aplicar(page).click();
+
+      // Assert
+      await expect(page).toHaveURL(/sort=menor-uso-cota/);
+      await expect(
+        page.getByRole("link", { name: "Entenda o cálculo" }),
+      ).toBeVisible();
+      await expect(page.getByText("Uso da cota: 72%")).toBeVisible();
+      await expect(
+        page.getByText(
+          "Período analisado: fev/2023 – ago/2026 · 1.184 dias em exercício",
+        ),
+      ).toBeVisible();
+      await expect.poll(() => requests.at(-1)?.sort).toBe("menor-uso-cota");
+
+      // Act
+      await page.getByRole("button", { name: "Carregar mais" }).click();
+
+      // Assert
+      await expect(page.getByText("Deputado da página seguinte")).toBeVisible();
+      expect(requests.at(-1)?.sort).toBe("menor-uso-cota");
+
+      // Act
+      await page.reload();
+      await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+
+      // Assert
+      await expect.poll(() => requests.at(-1)?.sort).toBe("menor-uso-cota");
+      await abrirFiltros(page).click();
+      await expect(
+        painel(page).getByRole("radio", { name: "Menor uso da cota" }),
+      ).toBeChecked();
+    });
+  });
+
   test.describe("contexto do painel", () => {
     test("oferece contexto apenas para posições computáveis sem buscar novos dados", async ({
       page,
@@ -777,6 +859,27 @@ test.describe("filtros do resultado do matcher", () => {
           name: "Deputados que votaram com você nas propostas marcadas",
         }),
       ).toHaveCount(0);
+    });
+  });
+
+  test.describe("adaptação à viewport", () => {
+    test("usa a apresentação da viewport quando falta altura para selecionar filtros", async ({
+      page,
+    }) => {
+      // Arrange
+      await page.setViewportSize({ width: 1267, height: 676 });
+      await page.route("http://localhost:3001/matcher?**", async (route) => {
+        await route.fulfill({ json: resultado });
+      });
+      await storeRascunho(page);
+      await page.goto("/matcher/resultado");
+      await expect(page.getByText("Deputada Exemplo")).toBeVisible();
+
+      // Act
+      await abrirFiltros(page).click();
+
+      // Assert
+      await expect(painel(page)).toHaveAttribute("aria-modal", "true");
     });
   });
 });

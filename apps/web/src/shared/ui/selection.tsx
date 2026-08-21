@@ -1,4 +1,6 @@
+import Link from "next/link";
 import type {
+  AnchorHTMLAttributes,
   ButtonHTMLAttributes,
   InputHTMLAttributes,
   ReactNode,
@@ -14,7 +16,7 @@ const chip =
 
 export function Chip({
   className,
-  selected = false,
+  selected,
   type = "button",
   ...props
 }: ChipProps) {
@@ -23,6 +25,24 @@ export function Chip({
       aria-pressed={selected}
       className={joinClassNames(chip, className)}
       type={type}
+      {...props}
+    />
+  );
+}
+
+type ChipLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
+  href: string;
+};
+
+export function ChipLink({ className, href, ...props }: ChipLinkProps) {
+  return (
+    <Link
+      className={joinClassNames(
+        chip,
+        "hover:border-border-strong hover:bg-surface-muted",
+        className,
+      )}
+      href={href}
       {...props}
     />
   );
@@ -74,7 +94,7 @@ const tabBar =
   "inline-flex max-w-full flex-wrap items-center gap-1 rounded-md border border-border bg-surface-muted p-1";
 
 const tabItem =
-  "min-h-9 rounded-sm border-0 bg-transparent px-3 py-1.5 text-sm font-[650] text-muted";
+  "min-h-9 rounded-sm border-0 bg-transparent px-3 py-1.5 text-sm font-[650] text-muted disabled:cursor-not-allowed disabled:opacity-55";
 
 type TabsProps = {
   activeId: string;
@@ -106,6 +126,7 @@ export function Tabs({ activeId, items, label }: TabsProps) {
 type SegmentedControlProps = {
   activeId: string;
   className?: string;
+  disabled?: boolean;
   itemClassName?: string;
   items: TabItem[];
   label: string;
@@ -115,6 +136,7 @@ type SegmentedControlProps = {
 export function SegmentedControl({
   activeId,
   className,
+  disabled = false,
   itemClassName,
   items,
   label,
@@ -134,6 +156,7 @@ export function SegmentedControl({
             "aria-pressed:bg-white aria-pressed:text-ink",
             itemClassName,
           )}
+          disabled={disabled}
           key={item.id}
           onClick={() => onSelect?.(item.id)}
           type="button"

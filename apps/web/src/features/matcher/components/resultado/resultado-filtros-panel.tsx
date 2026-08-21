@@ -13,6 +13,7 @@ import {
   Checkbox,
   FiltroSecao,
   FiltrosPanel,
+  Radio,
   Switch,
   toggleValor,
 } from "@/shared/ui";
@@ -58,6 +59,36 @@ export function ResultadoFiltrosPanel({
       onOpen={() => setRascunho(filtros)}
       total={contarResultadoFiltrosAtivos(filtros)}
     >
+      <FiltroSecao titulo="Ordenação">
+        <div
+          className="grid gap-3"
+          role="radiogroup"
+          aria-label="Ordenação dos resultados"
+        >
+          <Radio
+            checked={rascunho.sort === "compatibilidade"}
+            label="Compatibilidade"
+            name="matcher-sort"
+            onChange={() =>
+              setRascunho((atual) => ({ ...atual, sort: "compatibilidade" }))
+            }
+          />
+          <div className="grid gap-1">
+            <Radio
+              checked={rascunho.sort === "menor-uso-cota"}
+              label="Menor uso da cota"
+              name="matcher-sort"
+              onChange={() =>
+                setRascunho((atual) => ({ ...atual, sort: "menor-uso-cota" }))
+              }
+            />
+            <p className="pl-7 text-sm leading-normal text-muted">
+              Percentual da cota usado no período analisado.
+            </p>
+          </div>
+        </div>
+      </FiltroSecao>
+
       <Switch
         checked={rascunho.apenasEmAtividade}
         className="min-h-11 justify-start"

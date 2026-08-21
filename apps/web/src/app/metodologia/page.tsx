@@ -239,32 +239,82 @@ export default function MetodologiaPage() {
             </div>
           </Panel>
 
-          <Panel title="Gastos da cota parlamentar" titleAs="h3">
-            <div className="grid gap-3 leading-normal text-muted">
-              <p>
-                Os gastos vêm do arquivo de despesas da cota publicado pela
-                Câmara, por deputado e por ano. O que a cota é, como funciona o
-                teto por estado e por que o gasto de um mês pode passar do
-                limite mensal está explicado ao lado dos próprios números, no
-                perfil e no comparativo.
-              </p>
-              <p>
-                O que importa saber antes de comparar valores é o alcance dos
-                dados. A base cobre 2015 em diante, e o ano corrente aparece
-                sempre parcial, até o mês publicado pela Câmara. Passagens
-                aéreas emitidas pelo SIGEPA deixaram de constar nessa fonte a
-                partir de agosto de 2025, então o total exibido pode ficar
-                abaixo do informado pela Câmara; quando isso afeta o ano na
-                tela, o aviso aparece junto do valor.
-              </p>
-              <p>
-                Quem não exerceu o mandato durante o ano inteiro fica sem
-                comparação com a mediana do estado, porque um mandato de poucos
-                meses gasta menos por construção e a comparação diria mais sobre
-                o calendário do que sobre o gasto.
-              </p>
-            </div>
-          </Panel>
+          <div id="gastos-cota" className="scroll-mt-24">
+            <Panel title="Gastos da cota parlamentar" titleAs="h3">
+              <div className="grid gap-3 leading-normal text-muted">
+                <p>
+                  Os gastos vêm do arquivo de despesas da cota publicado pela
+                  Câmara, por deputado e por ano. O que a cota é, como funciona
+                  o teto por estado e por que o gasto de um mês pode passar do
+                  limite mensal está explicado ao lado dos próprios números, no
+                  perfil e no comparativo.
+                </p>
+                <p>
+                  O que importa saber antes de comparar valores é o alcance dos
+                  dados. A base cobre 2015 em diante, e o ano corrente aparece
+                  sempre parcial, até o mês publicado pela Câmara. Passagens
+                  aéreas emitidas pelo SIGEPA deixaram de constar nessa fonte a
+                  partir de agosto de 2025, então o total exibido pode ficar
+                  abaixo do informado pela Câmara; quando isso afeta o ano na
+                  tela, o aviso aparece junto do valor.
+                </p>
+                <p>
+                  Quem não exerceu o mandato durante o ano inteiro fica sem
+                  comparação com a mediana do estado, porque um mandato de
+                  poucos meses gasta menos por construção e a comparação diria
+                  mais sobre o calendário do que sobre o gasto.
+                </p>
+              </div>
+            </Panel>
+          </div>
+
+          <div id="ordenacao-uso-cota" className="scroll-mt-24">
+            <Panel title="Ordenação por menor uso da cota" titleAs="h3">
+              <div className="grid gap-3 leading-normal text-muted">
+                <p>
+                  Essa ordenação usa o percentual da cota consumido no último
+                  período de mandato analisado: 100 × gasto do período ÷ limite
+                  mensal de referência acumulado. Somamos gastos e limites antes
+                  da divisão, sem fazer média de percentuais anuais. Cada
+                  resultado informa as datas do período e quantos dias o
+                  deputado esteve efetivamente em exercício.
+                </p>
+                <p>
+                  O gasto segue a competência financeira informada pela Câmara
+                  em <code>numAno</code> e <code>numMes</code>, não a emissão do
+                  comprovante nem o pagamento da restituição. Débitos,
+                  cancelamentos e restituições de toda a legislatura entram até
+                  o último mês coberto, inclusive ajustes lançados em meses sem
+                  exercício.
+                </p>
+                <p>
+                  O limite mensal de referência soma uma vez cada mês tocado por
+                  um intervalo de exercício, usando a UF histórica daquele
+                  período e o limite vigente no primeiro dia do mês. Não há
+                  proporção por dia: a quantidade de dias aparece como contexto,
+                  mas não altera o limite do mês. O ano corrente termina no
+                  mesmo último mês coberto usado para o gasto; ausência de gasto
+                  só vale como zero quando a cobertura comprova que o período
+                  foi carregado.
+                </p>
+                <p>
+                  Passagens aéreas SIGEPA só entram quando a reposição do ano
+                  está completa. Se faltarem cobertura, intervalo confiável, UF,
+                  limite ou reposição, o uso fica indisponível e o deputado
+                  continua na lista depois dos resultados calculáveis.
+                </p>
+                <p>
+                  O limite mensal de referência é o valor regular definido para
+                  a UF e não contém adicionais ligados a alguns cargos e
+                  funções. Por isso um percentual acima de 100% não indica, por
+                  si só, irregularidade. Valores negativos também são
+                  preservados, pois restituições e cancelamentos podem superar
+                  os débitos do período. A métrica descreve uso da cota, não
+                  qualidade, produtividade ou desempenho parlamentar.
+                </p>
+              </div>
+            </Panel>
+          </div>
 
           <Panel title="Comparativo entre deputados" titleAs="h3">
             <div className="grid gap-3 leading-normal text-muted">

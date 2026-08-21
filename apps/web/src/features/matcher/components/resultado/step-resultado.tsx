@@ -5,6 +5,7 @@ import type {
   MatcherResultado,
   PartidoDisponivel,
 } from "@vota-comigo/shared-types";
+import Link from "next/link";
 import {
   Button,
   ErrorState,
@@ -90,6 +91,7 @@ export function StepResultado({
   );
   const hasFiltroConcordancia =
     filtros.externalIdProposicoesFiltroConcordancia.length > 0;
+  const selectedComparativoCount = state.selectedComparativoDeputados.length;
   // Um texto único atende aos recortes que apenas restringem o conjunto
   // exibido; a concordância mantém o diagnóstico próprio dela.
   const hasRecorte =
@@ -98,32 +100,59 @@ export function StepResultado({
     filtros.ocultarAmostraPequena ||
     filtros.sexo !== null;
   const display = resultadoDisplay(state);
-  const compareAction = isSelectingComparativo ? (
-    <div className="grid grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
+  const comparativoControls = isSelectingComparativo ? (
+    <section
+      aria-label="Seleção para comparação"
+      className="fixed inset-x-4 bottom-4 z-sticky grid w-auto gap-3 rounded-lg bg-white p-3 shadow-bar sm:sticky sm:inset-x-auto sm:bottom-auto sm:top-20 sm:w-full sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:border sm:border-border sm:p-4 sm:shadow-none"
+    >
+      <div className="grid gap-0.5">
+        <p className="font-[680] text-ink">
+          {selectedComparativoCount} de 3 deputados selecionados
+        </p>
+        <p className="text-sm text-muted">
+          {hasDeputadoLimit
+            ? "Limite atingido. Compare agora ou altere sua seleção."
+            : selectedComparativoCount === 0
+              ? "Selecione 2 ou 3 deputados na lista."
+              : selectedComparativoCount === 1
+                ? "Selecione pelo menos mais um deputado."
+                : "Pronto para comparar lado a lado."}
+        </p>
+      </div>
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
+        <Button
+          className="h-11 min-w-0 sm:h-auto"
+          onClick={onCancelComparativoSelection}
+          variant="ghost"
+        >
+          Cancelar
+        </Button>
+        <Button
+          className="h-11 min-w-0 sm:h-auto"
+          disabled={!canCompare}
+          onClick={onOpenComparativo}
+          variant="primary"
+        >
+          Comparar deputados
+        </Button>
+      </div>
+    </section>
+  ) : (
+    <header className="flex flex-col gap-4 border-y border-border py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+      <div className="grid max-w-145 gap-1">
+        <h2 className="text-lg font-[680] text-ink">Compare os deputados</h2>
+        <p className="text-sm text-muted">
+          Escolha 2 ou 3 deputados para comparar votos e diferenças lado a lado.
+        </p>
+      </div>
       <Button
-        className="h-11 min-w-0 sm:h-auto"
-        onClick={onCancelComparativoSelection}
-        variant="ghost"
-      >
-        Cancelar
-      </Button>
-      <Button
-        className="h-11 min-w-0 sm:h-auto"
-        disabled={!canCompare}
-        onClick={onOpenComparativo}
+        className="h-11 w-full min-w-0 sm:h-auto sm:w-auto sm:shrink-0 sm:px-5"
+        onClick={onStartComparativoSelection}
         variant="primary"
       >
-        Comparar
+        Escolher deputados para comparar
       </Button>
-    </div>
-  ) : (
-    <Button
-      className="h-11 w-full min-w-0 !border-border-strong sm:h-auto sm:w-auto sm:shrink-0 sm:px-5"
-      onClick={onStartComparativoSelection}
-      variant="secondary"
-    >
-      Comparar deputados
-    </Button>
+    </header>
   );
   const filterControls = (
     <div className="grid min-w-0 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2">
@@ -146,12 +175,7 @@ export function StepResultado({
   );
   const resultadoControls = (
     <div className="grid min-w-0 gap-3">
-      <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-4">
-        <div className="order-1 sm:order-2 sm:ml-auto">
-          {display === "results" ? compareAction : null}
-        </div>
-        <div className="order-2 sm:order-1">{filterControls}</div>
-      </div>
+      {filterControls}
       <FiltrosAtivos
         ativos={descreverResultadoFiltrosAtivos(filtros)}
         onClear={() => onApplyFiltros(RESULTADO_FILTROS_PADRAO)}
@@ -229,18 +253,14 @@ export function StepResultado({
   }
 
   return (
-    <div className="grid gap-5">
+    <div
+      className={
+        isSelectingComparativo ? "grid gap-5 pb-28 sm:pb-0" : "grid gap-5"
+      }
+    >
       {resultadoStatus}
       {resultadoControls}
-      {isSelectingComparativo ? (
-        <div className="text-sm text-muted">
-          {hasDeputadoLimit ? (
-            <p>Você pode comparar até 3 deputados.</p>
-          ) : (
-            <p>Selecione 2 ou 3 deputados para comparar.</p>
-          )}
-        </div>
-      ) : null}
+      {comparativoControls}
       {hasFiltroConcordancia ? (
         <header aria-live="polite" className="grid gap-1">
           <h2 className="text-base font-[680] text-ink">
@@ -252,7 +272,20 @@ export function StepResultado({
           </p>
         </header>
       ) : null}
-      <OrdenacaoDisclosure />
+      {filtros.sort === "menor-uso-cota" ? (
+        <p className="max-w-[75ch] text-sm leading-normal text-muted">
+          Ordenado pelo menor uso da cota no período analisado.{" "}
+          <Link
+            className="font-[650] text-info underline underline-offset-2"
+            href="/metodologia#ordenacao-uso-cota"
+          >
+            Entenda o cálculo
+          </Link>
+          . A concordância e a amostra continuam sendo as medidas principais.
+        </p>
+      ) : (
+        <OrdenacaoDisclosure />
+      )}
 
       <ul className="grid">
         {resultado!.deputados.map((deputado) => {
@@ -273,6 +306,7 @@ export function StepResultado({
                   : undefined
               }
               deputado={deputado}
+              showUsoCota={filtros.sort === "menor-uso-cota"}
               key={deputado.externalIdDeputado}
               totalPosicoesComputaveis={resultado!.totalPosicoesComputaveis}
             />

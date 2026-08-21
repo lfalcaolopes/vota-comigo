@@ -24,7 +24,7 @@ const exemplos: ExemploResultado[] = [
   },
 ];
 
-export function HomeHeroSample() {
+export function HomeResultadoSample() {
   return (
     <figure
       aria-label="Exemplo de como um resultado de concordância aparece"

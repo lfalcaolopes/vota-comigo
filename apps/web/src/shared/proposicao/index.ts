@@ -1,5 +1,7 @@
 export { detalhe, feed, temasDisponiveis } from "./queries";
 export { FeedSearch } from "./feed-search";
+export { FeedSearchSuggestions } from "./feed-search-suggestions";
+export { EMPTY_SEARCH_SUGGESTIONS, SEARCH_EXAMPLES } from "./search-examples";
 export { FeedTemaControl } from "./feed-tema";
 export { FeedOrdenacaoControl } from "./feed-ordenacao";
 export {
@@ -15,7 +17,7 @@ export {
   type ProposicaoFiltroId,
 } from "./feed-filtros";
 export { ProposicaoFiltrosBar } from "./proposicao-filtros-bar";
-export { ProposicaoFiltrosPanel } from "./proposicao-filtros-panel";
+export { ProposicaoTemaControl } from "./proposicao-tema-control";
 export {
   buildFeedHref,
   buildFeedSearchParams,

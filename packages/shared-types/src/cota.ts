@@ -17,3 +17,27 @@ export type CotaComparacaoStatus = z.infer<typeof cotaComparacaoStatusSchema>;
 export type CotaSemComparacaoMotivo = z.infer<
   typeof cotaSemComparacaoMotivoSchema
 >;
+
+const amountUsedCentsSchema = z.number().int().safe();
+
+export const cotaLegislaturaCategorySchema = z.object({
+  externalNumSubCota: z.number().int().nonnegative(),
+  description: z.string().min(1),
+  amountUsedCents: amountUsedCentsSchema,
+});
+
+export const cotaLegislaturaResponseSchema = z.object({
+  legislatura: z.number().int().positive(),
+  periodStart: z.iso.date(),
+  coberturaAte: z.iso.date(),
+  deputadoCount: z.number().int().nonnegative(),
+  totalAmountUsedCents: amountUsedCentsSchema,
+  categories: z.array(cotaLegislaturaCategorySchema),
+});
+
+export type CotaLegislaturaCategory = z.infer<
+  typeof cotaLegislaturaCategorySchema
+>;
+export type CotaLegislaturaResponse = z.infer<
+  typeof cotaLegislaturaResponseSchema
+>;

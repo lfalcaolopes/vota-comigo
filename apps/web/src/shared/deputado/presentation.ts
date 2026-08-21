@@ -50,7 +50,7 @@ const mesAnoFormatter = new Intl.DateTimeFormat("pt-BR", {
   year: "numeric",
 });
 
-function formatMesAno(iso: string): string {
+export function formatMesAno(iso: string): string {
   const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
   if (!match) return iso;
 
@@ -121,6 +121,13 @@ const diasFormatter = new Intl.NumberFormat("pt-BR");
 export function toDiasEmExercicioLabel(diasEmExercicio: number): string {
   const unidade = diasEmExercicio === 1 ? "dia" : "dias";
   return `${diasFormatter.format(diasEmExercicio)} ${unidade} em exercício`;
+}
+
+export function toUsoCotaPeriodoLabel(input: {
+  periodStart: string;
+  coberturaAte: string;
+}): string {
+  return `${formatMesAno(input.periodStart)} – ${formatMesAno(input.coberturaAte)}`;
 }
 
 export function toUltimaLegislaturaLabel(legislatura: number): string {

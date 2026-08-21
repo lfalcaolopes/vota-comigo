@@ -161,6 +161,24 @@ describe("buildDeputadosFeedSearchParams", () => {
     // Assert
     expect(params.toString()).toBe("sexo=F");
   });
+
+  it("persists only the non-default cota ordering", () => {
+    // Arrange / Act
+    const menorUso = buildDeputadosFeedSearchParams({
+      ...FILTROS_PADRAO,
+      query: null,
+      sort: "menor-uso-cota",
+    });
+    const nome = buildDeputadosFeedSearchParams({
+      ...FILTROS_PADRAO,
+      query: null,
+      sort: "nome",
+    });
+
+    // Assert
+    expect(menorUso.toString()).toBe("sort=menor-uso-cota");
+    expect(nome.toString()).toBe("");
+  });
 });
 
 describe("buildDeputadosFeedHref", () => {

@@ -48,3 +48,37 @@ export function sortRanking(
     compareRanking(a, b, siglaUfPrioritaria),
   );
 }
+
+export function sortRankingByUsoCota(
+  deputados: readonly DeputadoResumoComputado[],
+  siglaUfPrioritaria?: SiglaUf,
+): DeputadoResumoComputado[] {
+  const rankingNormal = sortRanking(deputados, siglaUfPrioritaria);
+  const posicaoNormal = new Map(
+    rankingNormal.map((deputado, index) => [
+      deputado.externalIdDeputado,
+      index,
+    ]),
+  );
+  return [...deputados].sort((a, b) => {
+    const calculavelA = a.usoCota?.status === 'calculavel';
+    const calculavelB = b.usoCota?.status === 'calculavel';
+    if (calculavelA !== calculavelB) return calculavelA ? -1 : 1;
+    if (calculavelA && calculavelB) {
+      const percentualA =
+        a.usoCota!.status === 'calculavel' ? a.usoCota!.percentualTetoBase : 0;
+      const percentualB =
+        b.usoCota!.status === 'calculavel' ? b.usoCota!.percentualTetoBase : 0;
+      if (percentualA !== percentualB) return percentualA - percentualB;
+      const nomeA = a.nomeEleitoral ?? a.nome ?? a.nomeCivil;
+      const nomeB = b.nomeEleitoral ?? b.nome ?? b.nomeCivil;
+      const porNome = compareNome(nomeA, nomeB);
+      if (porNome !== 0) return porNome;
+      return a.externalIdDeputado - b.externalIdDeputado;
+    }
+    return (
+      posicaoNormal.get(a.externalIdDeputado)! -
+      posicaoNormal.get(b.externalIdDeputado)!
+    );
+  });
+}

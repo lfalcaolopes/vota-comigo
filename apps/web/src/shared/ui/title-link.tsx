@@ -14,7 +14,7 @@ export function TitleLink({
   className,
   href,
 }: {
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
   href: string;
 }) {

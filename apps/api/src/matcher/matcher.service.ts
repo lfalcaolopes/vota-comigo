@@ -11,6 +11,7 @@ import type {
   MatcherExecucaoResumo,
   MatcherResultado,
   PosicaoMatcher,
+  UsoCotaResumo,
 } from '@vota-comigo/shared-types';
 
 import { MATCHER_REPOSITORY } from './matcher.repository';
@@ -28,7 +29,7 @@ import {
 import { passesFiltroConcordancia } from './rules/filtro-concordancia';
 import { validateExecucao } from './rules/matcher-execucao-validation';
 import type { Pagination } from './rules/pagination';
-import { sortRanking } from './rules/ranking';
+import { sortRanking, sortRankingByUsoCota } from './rules/ranking';
 import type {
   PosicaoComputavel,
   PosicaoComputavelValue,
@@ -136,23 +137,50 @@ export class MatcherService {
       deputados: deputadosConcordantes,
       totalPosicoesComputaveis: resumo.totalPosicoesComputaveis,
     });
+    const usoCotaByDeputadoId: ReadonlyMap<string, UsoCotaResumo> =
+      (await this.repository.loadUsoCota?.(
+        deputadosConcordantes.map((deputado) => deputado.deputadoId),
+      )) ?? new Map();
+    const deputadoIdByExternalId = new Map(
+      deputadosConcordantes.map((deputado) => [
+        deputado.externalIdDeputado,
+        deputado.deputadoId,
+      ]),
+    );
+    const resultadoComUsoCota = resultado.deputados.map((deputado) => {
+      const deputadoId = deputadoIdByExternalId.get(
+        deputado.externalIdDeputado,
+      );
+      return {
+        ...deputado,
+        usoCota: (deputadoId === undefined
+          ? undefined
+          : usoCotaByDeputadoId.get(deputadoId)) ?? {
+          status: 'indisponivel' as const,
+          legislatura: null,
+          motivo: 'fonte-incompleta' as const,
+        },
+      };
+    });
 
     // O recorte roda depois do cálculo: filtrar a entrada corromperia
     // totalDeputadosAvaliados e deputadosHistoricoIncompleto.
     const elegiveis = filtrarPorAmostraPequena(
       filtrarPorSexo(
         filtrarPorPartido(
-          filtrarPorAtividade(resultado.deputados, request.apenasEmAtividade),
+          filtrarPorAtividade(resultadoComUsoCota, request.apenasEmAtividade),
           request.partidos,
         ),
         request.sexo,
       ),
       request.ocultarAmostraPequena,
     );
-    const ordenados = sortRanking(
-      elegiveis,
-      request.escopo === 'nacional' ? request.siglaUf : undefined,
-    );
+    const siglaUfPrioritaria =
+      request.escopo === 'nacional' ? request.siglaUf : undefined;
+    const ordenados =
+      request.sort === 'menor-uso-cota'
+        ? sortRankingByUsoCota(elegiveis, siglaUfPrioritaria)
+        : sortRanking(elegiveis, siglaUfPrioritaria);
     const total = ordenados.length;
     const pagina = ordenados.slice(
       pagination.offset,
@@ -187,6 +215,14 @@ export class MatcherService {
       deputado,
       totalPosicoesComputaveis: resumo.totalPosicoesComputaveis,
     });
+
+    const usoCota: ReadonlyMap<string, UsoCotaResumo> =
+      (await this.repository.loadUsoCota?.([deputado.deputadoId])) ?? new Map();
+    detalhe.usoCota = usoCota.get(deputado.deputadoId) ?? {
+      status: 'indisponivel',
+      legislatura: null,
+      motivo: 'fonte-incompleta',
+    };
 
     return toMatcherDeputadoDetalhe(resumo, detalhe);
   }
