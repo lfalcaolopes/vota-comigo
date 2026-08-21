@@ -336,10 +336,12 @@ describe("StepComparativo", () => {
             { ...resumo(), externalIdDeputado: 1, nome: "Deputado A" },
           ],
           detalhes: [],
+          escopo: "estadual",
           perfis: [perfil(2, "Deputada B"), perfil(1, "Deputado A")],
           onBack: () => {},
           onRetry: () => {},
           posicoes: [],
+          siglaUf: "SP",
           status: "idle",
         }),
       );

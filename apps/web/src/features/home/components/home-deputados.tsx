@@ -48,7 +48,7 @@ export function DeputadosSection({
   siglaUf,
   total,
 }: {
-  children: ReactNode;
+  children?: ReactNode;
   siglaUf: string | null;
   total: number | null;
 }) {
