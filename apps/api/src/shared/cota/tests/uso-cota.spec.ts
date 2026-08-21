@@ -230,7 +230,7 @@ describe('uso da cota sobre o teto-base', () => {
       ['fonte-incompleta', { coberturas: [] }],
     ])('retorna %s', (motivo, overrides) => {
       // Arrange
-      const source = input(overrides as Partial<DeriveUsoCotaInput>);
+      const source = input(overrides);
 
       // Act
       const result = deriveUsoCota(source);

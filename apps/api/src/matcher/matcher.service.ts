@@ -11,6 +11,7 @@ import type {
   MatcherExecucaoResumo,
   MatcherResultado,
   PosicaoMatcher,
+  UsoCotaResumo,
 } from '@vota-comigo/shared-types';
 
 import { MATCHER_REPOSITORY } from './matcher.repository';
@@ -136,7 +137,7 @@ export class MatcherService {
       deputados: deputadosConcordantes,
       totalPosicoesComputaveis: resumo.totalPosicoesComputaveis,
     });
-    const usoCotaByDeputadoId =
+    const usoCotaByDeputadoId: ReadonlyMap<string, UsoCotaResumo> =
       (await this.repository.loadUsoCota?.(
         deputadosConcordantes.map((deputado) => deputado.deputadoId),
       )) ?? new Map();
@@ -215,7 +216,7 @@ export class MatcherService {
       totalPosicoesComputaveis: resumo.totalPosicoesComputaveis,
     });
 
-    const usoCota =
+    const usoCota: ReadonlyMap<string, UsoCotaResumo> =
       (await this.repository.loadUsoCota?.([deputado.deputadoId])) ?? new Map();
     detalhe.usoCota = usoCota.get(deputado.deputadoId) ?? {
       status: 'indisponivel',
