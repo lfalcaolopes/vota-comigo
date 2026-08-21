@@ -2,19 +2,15 @@ import type { ProposicaoCard } from "@vota-comigo/shared-types";
 import Link from "next/link";
 import { Suspense, type ReactNode } from "react";
 
-import { ProposicaoRow, buildFeedHref, feed } from "@/shared/proposicao";
+import {
+  ProposicaoRow,
+  SEARCH_EXAMPLES,
+  buildFeedHref,
+  feed,
+} from "@/shared/proposicao";
 import { Badge, ChipLink, SkeletonRows, SparklesIcon } from "@/shared/ui";
 
 const TOTAL_DESTAQUES = 3;
-
-const EXEMPLOS_BUSCA = [
-  "Trabalho 6x1",
-  "Porte de arma",
-  "Impunidade de deputados",
-  "Reforma da Previdência",
-  "Taxar os mais ricos",
-  "Cotas para negros",
-];
 
 function buscaHref(termo: string): string {
   return buildFeedHref("/proposicoes", {
@@ -58,7 +54,7 @@ export function ProposicoesSection({ children }: { children: ReactNode }) {
 
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             <span className="text-sm text-muted">Comece por:</span>
-            {EXEMPLOS_BUSCA.map((termo) => (
+            {SEARCH_EXAMPLES.map((termo) => (
               <ChipLink href={buscaHref(termo)} key={termo}>
                 {termo}
               </ChipLink>

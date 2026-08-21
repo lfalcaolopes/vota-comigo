@@ -16,7 +16,7 @@ const chip =
 
 export function Chip({
   className,
-  selected = false,
+  selected,
   type = "button",
   ...props
 }: ChipProps) {

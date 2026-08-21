@@ -1,5 +1,7 @@
 export { detalhe, feed, temasDisponiveis } from "./queries";
 export { FeedSearch } from "./feed-search";
+export { FeedSearchSuggestions } from "./feed-search-suggestions";
+export { EMPTY_SEARCH_SUGGESTIONS, SEARCH_EXAMPLES } from "./search-examples";
 export { FeedTemaControl } from "./feed-tema";
 export { FeedOrdenacaoControl } from "./feed-ordenacao";
 export {

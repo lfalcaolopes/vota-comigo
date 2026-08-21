@@ -23,6 +23,7 @@ export type FeedAction =
   | { type: "clearSearch" }
   | { type: "applyFiltros"; filtros: ProposicaoFeedFiltros }
   | { type: "clearTudo" }
+  | { type: "applySuggestion"; query: string }
   | { type: "loadMoreStart" }
   | { type: "loadMoreSuccess"; items: ProposicaoCard[]; total: number }
   | { type: "feedSuccess"; items: ProposicaoCard[]; total: number }
@@ -78,6 +79,14 @@ export function feedReducer(state: FeedState, action: FeedAction): FeedState {
       return {
         ...state,
         query: "",
+        filtros: FILTROS_PADRAO,
+        feed: emptyPage,
+        status: "loading",
+      };
+    case "applySuggestion":
+      return {
+        ...state,
+        query: action.query,
         filtros: FILTROS_PADRAO,
         feed: emptyPage,
         status: "loading",

@@ -1,6 +1,6 @@
 import type { ProposicaoCard } from "@vota-comigo/shared-types";
 
-import { ProposicaoRow } from "@/shared/proposicao";
+import { FeedSearchSuggestions, ProposicaoRow } from "@/shared/proposicao";
 import { Button, EmptyState, InlineMessage, SkeletonRows } from "@/shared/ui";
 
 import type { FeedDisplay, FeedStatus } from "@/shared/proposicao";
@@ -13,6 +13,7 @@ type FeedListProps = {
   canLoadMore: boolean;
   onLoadMore: () => void;
   onClearTudo: () => void;
+  onSuggestSearch: (termo: string) => void;
   itemSearchParams?: string;
 };
 
@@ -24,6 +25,7 @@ export function FeedList({
   canLoadMore,
   onLoadMore,
   onClearTudo,
+  onSuggestSearch,
   itemSearchParams = "",
 }: FeedListProps) {
   const itemSearchSuffix = itemSearchParams ? `?${itemSearchParams}` : "";
@@ -45,9 +47,12 @@ export function FeedList({
     return (
       <EmptyState
         action={
-          <Button onClick={onClearTudo} variant="secondary">
-            Limpar busca e filtros
-          </Button>
+          <>
+            <Button onClick={onClearTudo} variant="secondary">
+              Limpar busca e filtros
+            </Button>
+            <FeedSearchSuggestions onSelect={onSuggestSearch} />
+          </>
         }
         body="Nenhuma proposta combina com a busca e os filtros atuais. Tente remover um filtro ou buscar por outras palavras."
         title="Nenhuma proposta encontrada"

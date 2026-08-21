@@ -35,6 +35,7 @@ export type UseFeedState = {
   clearSearch: () => Promise<void>;
   applyFiltros: (filtros: ProposicaoFeedFiltros) => Promise<void>;
   clearTudo: () => Promise<void>;
+  applySuggestion: (query: string) => Promise<void>;
   loadMore: () => Promise<void>;
 };
 
@@ -106,6 +107,11 @@ export function useFeedState({
     await reload({ query: "", filtros: FILTROS_PADRAO });
   }
 
+  async function applySuggestion(query: string) {
+    dispatch({ type: "applySuggestion", query });
+    await reload({ query, filtros: FILTROS_PADRAO });
+  }
+
   async function loadMore() {
     if (state.status === "loading") return;
 
@@ -145,6 +151,7 @@ export function useFeedState({
     clearSearch,
     applyFiltros,
     clearTudo,
+    applySuggestion,
     loadMore,
   };
 }

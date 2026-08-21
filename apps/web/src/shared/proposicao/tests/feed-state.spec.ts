@@ -246,6 +246,30 @@ describe("feedReducer", () => {
     });
   });
 
+  describe("when applySuggestion is dispatched", () => {
+    it("searches the suggested term from a clean recorte", () => {
+      // Arrange
+      const state = initFeedState({
+        items: firstPage,
+        total: 50,
+        query: "porte de arma",
+        filtros: filtros({ ordenacao: "mais-recentes", tema: 37 }),
+      });
+
+      // Act
+      const next = feedReducer(state, {
+        type: "applySuggestion",
+        query: "Trabalho 6x1",
+      });
+
+      // Assert
+      expect(next.query).toBe("Trabalho 6x1");
+      expect(next.filtros).toEqual(FILTROS_PADRAO);
+      expect(next.feed.items).toEqual([]);
+      expect(next.status).toBe("loading");
+    });
+  });
+
   describe("when loadMoreStart is dispatched", () => {
     it("moves to loading without dropping the current items", () => {
       // Arrange
