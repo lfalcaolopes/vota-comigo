@@ -9,7 +9,7 @@ const temas: readonly TemaDisponivel[] = [
   { externalCodTema: 40, tema: "Educação" },
 ];
 
-function render(): string {
+function render(overrides: { query?: string } = {}): string {
   return renderToStaticMarkup(
     createElement(ProposicaoFiltrosBar, {
       draft: "",
@@ -21,8 +21,15 @@ function render(): string {
       onSearch: vi.fn(),
       query: "",
       temas,
+      ...overrides,
     }),
   );
+}
+
+function botoesDeOrdenacao(html: string): readonly string[] {
+  const inicio = html.indexOf('aria-label="Ordenação"');
+  const grupo = html.slice(inicio, html.indexOf("</div>", inicio));
+  return [...grupo.matchAll(/<button[^>]*>/g)].map(([tag]) => tag);
 }
 
 describe("barra de filtros de proposições", () => {
@@ -42,6 +49,33 @@ describe("barra de filtros de proposições", () => {
       expect(temas).toBeGreaterThan(ordenacao);
       expect(html).toContain(">Limpar</button>");
       expect(html).not.toContain('aria-haspopup="dialog"');
+    });
+  });
+  describe("quando uma busca está ativa", () => {
+    it("desabilita a ordenação, que a busca por relevância ignora", () => {
+      // Arrange
+      const html = render({ query: "trabalho 6x1" });
+
+      // Act
+      const botoes = botoesDeOrdenacao(html);
+
+      // Assert
+      expect(botoes).toHaveLength(2);
+      expect(botoes.every((botao) => botao.includes('disabled=""'))).toBe(true);
+    });
+  });
+
+  describe("quando não há busca", () => {
+    it("mantém a ordenação disponível", () => {
+      // Arrange
+      const html = render();
+
+      // Act
+      const botoes = botoesDeOrdenacao(html);
+
+      // Assert
+      expect(botoes).toHaveLength(2);
+      expect(botoes.some((botao) => botao.includes('disabled=""'))).toBe(false);
     });
   });
 });

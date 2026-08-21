@@ -94,7 +94,7 @@ const tabBar =
   "inline-flex max-w-full flex-wrap items-center gap-1 rounded-md border border-border bg-surface-muted p-1";
 
 const tabItem =
-  "min-h-9 rounded-sm border-0 bg-transparent px-3 py-1.5 text-sm font-[650] text-muted";
+  "min-h-9 rounded-sm border-0 bg-transparent px-3 py-1.5 text-sm font-[650] text-muted disabled:cursor-not-allowed disabled:opacity-55";
 
 type TabsProps = {
   activeId: string;
@@ -126,6 +126,7 @@ export function Tabs({ activeId, items, label }: TabsProps) {
 type SegmentedControlProps = {
   activeId: string;
   className?: string;
+  disabled?: boolean;
   itemClassName?: string;
   items: TabItem[];
   label: string;
@@ -135,6 +136,7 @@ type SegmentedControlProps = {
 export function SegmentedControl({
   activeId,
   className,
+  disabled = false,
   itemClassName,
   items,
   label,
@@ -154,6 +156,7 @@ export function SegmentedControl({
             "aria-pressed:bg-white aria-pressed:text-ink",
             itemClassName,
           )}
+          disabled={disabled}
           key={item.id}
           onClick={() => onSelect?.(item.id)}
           type="button"

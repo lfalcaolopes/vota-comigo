@@ -69,6 +69,7 @@ export function ProposicaoFiltrosBar({
         <div className="grid min-w-0 grid-cols-2 gap-2 sm:contents">
           <FeedOrdenacaoControl
             className="col-span-full w-full sm:w-auto sm:shrink-0"
+            disabled={query !== ""}
             itemClassName="flex-1 sm:flex-none"
             onChange={handleChangeOrdenacao}
             value={filtros.ordenacao}

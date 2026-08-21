@@ -8,10 +8,12 @@ import { Badge, ChipLink, SkeletonRows, SparklesIcon } from "@/shared/ui";
 const TOTAL_DESTAQUES = 3;
 
 const EXEMPLOS_BUSCA = [
+  "Trabalho 6x1",
   "Porte de arma",
-  "Imposto de renda",
-  "Desmatamento",
-  "Piso da enfermagem",
+  "Impunidade de deputados",
+  "Reforma da Previdência",
+  "Taxar os mais ricos",
+  "Cotas para negros",
 ];
 
 function buscaHref(termo: string): string {

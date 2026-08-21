@@ -112,6 +112,9 @@ describe('parseCitation', () => {
       ['a single number', '1234'],
       ['a token with more than one alpha run', 'pec3a'],
       ['a token with punctuation between the runs', 'lei-14.133'],
+      ['a single letter where a sigla belongs', '6x2020'],
+      ['a work shift written as digits around a letter', '6x1'],
+      ['an ano with fewer than four digits', 'pec 3/21'],
     ])('returns null for %s', (_label, query) => {
       // Arrange & Act
       const result = parseCitation(query);
@@ -158,6 +161,17 @@ describe('toSearchPlan', () => {
       expect(plan).toEqual<ProposicoesSearchPlan>({
         kind: 'tokens',
         tokens: ['saude', 'publica'],
+      });
+    });
+
+    it('keeps a work shift like 6x1 searchable instead of reading it as a citation', () => {
+      // Arrange & Act
+      const plan = toSearchPlan('6x1');
+
+      // Assert
+      expect(plan).toEqual<ProposicoesSearchPlan>({
+        kind: 'tokens',
+        tokens: ['6x1'],
       });
     });
 

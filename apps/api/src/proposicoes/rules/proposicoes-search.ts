@@ -52,22 +52,38 @@ export function parseCitation(query: string): Citation | null {
   }
 
   if (alphas.length === 1 && nums.length === 2) {
-    return {
-      siglaTipo: alphas[0],
-      numero: String(Number(nums[0])),
-      ano: nums[1],
-    };
+    return isSigla(alphas[0]) && isAno(nums[1])
+      ? {
+          siglaTipo: alphas[0],
+          numero: String(Number(nums[0])),
+          ano: nums[1],
+        }
+      : null;
   }
 
   if (alphas.length === 1 && nums.length === 1) {
-    return { siglaTipo: alphas[0], numero: String(Number(nums[0])) };
+    return isSigla(alphas[0])
+      ? { siglaTipo: alphas[0], numero: String(Number(nums[0])) }
+      : null;
   }
 
   if (alphas.length === 0 && nums.length === 2) {
-    return { numero: String(Number(nums[0])), ano: nums[1] };
+    return isAno(nums[1])
+      ? { numero: String(Number(nums[0])), ano: nums[1] }
+      : null;
   }
 
   return null;
+}
+
+// Sem esses pisos "6x1" vira a citacao da sigla "x", ano 1: a menor sigla real
+// e PL, e todo ano da Camara tem quatro digitos.
+function isSigla(value: string): boolean {
+  return value.length >= 2;
+}
+
+function isAno(value: string): boolean {
+  return /^\d{4}$/.test(value);
 }
 
 // tokenizeQuery corta em [\s/]+, entao "PEC3/2021" chega como "pec3": sigla e
