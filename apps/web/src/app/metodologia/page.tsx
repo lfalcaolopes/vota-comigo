@@ -239,32 +239,34 @@ export default function MetodologiaPage() {
             </div>
           </Panel>
 
-          <Panel title="Gastos da cota parlamentar" titleAs="h3">
-            <div className="grid gap-3 leading-normal text-muted">
-              <p>
-                Os gastos vêm do arquivo de despesas da cota publicado pela
-                Câmara, por deputado e por ano. O que a cota é, como funciona o
-                teto por estado e por que o gasto de um mês pode passar do
-                limite mensal está explicado ao lado dos próprios números, no
-                perfil e no comparativo.
-              </p>
-              <p>
-                O que importa saber antes de comparar valores é o alcance dos
-                dados. A base cobre 2015 em diante, e o ano corrente aparece
-                sempre parcial, até o mês publicado pela Câmara. Passagens
-                aéreas emitidas pelo SIGEPA deixaram de constar nessa fonte a
-                partir de agosto de 2025, então o total exibido pode ficar
-                abaixo do informado pela Câmara; quando isso afeta o ano na
-                tela, o aviso aparece junto do valor.
-              </p>
-              <p>
-                Quem não exerceu o mandato durante o ano inteiro fica sem
-                comparação com a mediana do estado, porque um mandato de poucos
-                meses gasta menos por construção e a comparação diria mais sobre
-                o calendário do que sobre o gasto.
-              </p>
-            </div>
-          </Panel>
+          <div id="gastos-cota" className="scroll-mt-24">
+            <Panel title="Gastos da cota parlamentar" titleAs="h3">
+              <div className="grid gap-3 leading-normal text-muted">
+                <p>
+                  Os gastos vêm do arquivo de despesas da cota publicado pela
+                  Câmara, por deputado e por ano. O que a cota é, como funciona
+                  o teto por estado e por que o gasto de um mês pode passar do
+                  limite mensal está explicado ao lado dos próprios números, no
+                  perfil e no comparativo.
+                </p>
+                <p>
+                  O que importa saber antes de comparar valores é o alcance dos
+                  dados. A base cobre 2015 em diante, e o ano corrente aparece
+                  sempre parcial, até o mês publicado pela Câmara. Passagens
+                  aéreas emitidas pelo SIGEPA deixaram de constar nessa fonte a
+                  partir de agosto de 2025, então o total exibido pode ficar
+                  abaixo do informado pela Câmara; quando isso afeta o ano na
+                  tela, o aviso aparece junto do valor.
+                </p>
+                <p>
+                  Quem não exerceu o mandato durante o ano inteiro fica sem
+                  comparação com a mediana do estado, porque um mandato de
+                  poucos meses gasta menos por construção e a comparação diria
+                  mais sobre o calendário do que sobre o gasto.
+                </p>
+              </div>
+            </Panel>
+          </div>
 
           <div id="ordenacao-uso-cota" className="scroll-mt-24">
             <Panel title="Ordenação por menor uso da cota" titleAs="h3">

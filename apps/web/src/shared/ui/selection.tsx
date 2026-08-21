@@ -1,4 +1,6 @@
+import Link from "next/link";
 import type {
+  AnchorHTMLAttributes,
   ButtonHTMLAttributes,
   InputHTMLAttributes,
   ReactNode,
@@ -23,6 +25,24 @@ export function Chip({
       aria-pressed={selected}
       className={joinClassNames(chip, className)}
       type={type}
+      {...props}
+    />
+  );
+}
+
+type ChipLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
+  href: string;
+};
+
+export function ChipLink({ className, href, ...props }: ChipLinkProps) {
+  return (
+    <Link
+      className={joinClassNames(
+        chip,
+        "hover:border-border-strong hover:bg-surface-muted",
+        className,
+      )}
+      href={href}
       {...props}
     />
   );

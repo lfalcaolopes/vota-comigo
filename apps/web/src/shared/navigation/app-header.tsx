@@ -20,11 +20,6 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
-    href: "/metodologia",
-    label: "Metodologia",
-    matches: (pathname) => pathname === "/metodologia",
-  },
-  {
     href: "/deputados",
     label: "Deputados",
     matches: (pathname) => pathname.startsWith("/deputados"),
@@ -33,6 +28,11 @@ const navItems: NavItem[] = [
     href: "/proposicoes",
     label: "Propostas",
     matches: (pathname) => pathname.startsWith("/proposicoes"),
+  },
+  {
+    href: "/metodologia",
+    label: "Metodologia",
+    matches: (pathname) => pathname === "/metodologia",
   },
 ];
 

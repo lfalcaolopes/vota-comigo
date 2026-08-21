@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 
 import { SITE_DESCRIPTION } from "@/shared/lib/site";
 import {
-  HomeComoFunciona,
-  HomeCta,
-  HomeEmVotacao,
+  HomeComparar,
+  HomeCotaLegislatura,
   HomeHero,
-  HomeTransparencia,
+  HomeProposicoes,
 } from "@/features/home";
 
 export const dynamic = "force-dynamic";
@@ -22,10 +21,9 @@ export default function Home() {
   return (
     <main className="min-h-screen w-full min-w-0 overflow-x-hidden bg-bg text-ink">
       <HomeHero />
-      <HomeComoFunciona />
-      <HomeEmVotacao />
-      <HomeTransparencia />
-      <HomeCta />
+      <HomeCotaLegislatura />
+      <HomeProposicoes />
+      <HomeComparar />
     </main>
   );
 }

@@ -148,12 +148,12 @@
       "sourceHash": "bf2fe32b96b2f9b222d8c300095a929b9a3a3988f5ff9f227a31025059fae4bb",
       "generationStatus": "generated",
       "reviewStatus": "approved",
-      "resumoCard": "Reforça prerrogativas dos parlamentares e impõe regras processuais que condicionam prisões, buscas e inelegibilidades à revisão por instância superior e à atuação das Casas.",
+      "resumoCard": "Restringe a prisão e o afastamento de deputados e senadores, exige controle do STF sobre buscas em suas casas ou no Congresso e determina que impedimentos para disputar eleições só valham após revisão da decisão.",
       "resumoDetalhe": "- Exige que inelegibilidades previstas em lei só produzam efeito após revisão por instância superior, isto é, só valem depois que outra instância confirmar a decisão.\n- Estende ao poder legislativo estadual as mesmas regras de prerrogativas e inviolabilidades previstas para os membros do Congresso Nacional.\n- Define que deputados e senadores são invioláveis por opiniões, palavras e votos, sujeitando-se apenas a sanção ética em caso de conduta incompatível com o decoro; prevê que crimes cometidos no exercício do mandato e ligados às funções sejam julgados pelo Supremo Tribunal Federal (STF).\n- Estabelece regras processuais específicas: prisão do parlamentar só em flagrante nos crimes que a Constituição considera sem possibilidade de fiança (inafiançáveis); parlamentar preso em flagrante deve ser encaminhado à sua Casa e permanecer sob sua guarda até decisão do plenário; prevê audiência com defesa e Ministério Público para decisão sobre a prisão e admite, a pedido do Ministério Público, conversão em prisão preventiva ou aplicação de medida cautelar diversa sem afastamento do cargo; veda o afastamento cautelar por decisão judicial; determina que buscas e apreensão nas dependências do Parlamento ou nas residências dos parlamentares sejam autorizadas e confirmadas pelo STF, sejam acompanhadas pela polícia legislativa quando no Congresso e que os materiais apreendidos não sejam examinados até a confirmação pelo Plenário do STF.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-06-26T00:14:28.123Z",
-      "reviewedAt": "2026-06-26T19:32:07.000Z"
+      "reviewedAt": "2026-08-21T05:32:25.000Z"
     },
     "2270894": {
       "sourceHash": "6b04e89d2ff40d226367343b51e4de45533f4287a0ebd065e755a07c33222fe3",

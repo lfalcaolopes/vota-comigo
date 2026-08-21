@@ -522,12 +522,12 @@
       "sourceHash": "3551a0d01d80ec8c78cad56953cee55433e7bb9225a0302445c9a07c4a11b74f",
       "generationStatus": "generated",
       "reviewStatus": "approved",
-      "resumoCard": "Estabelece jornada de trabalho de até oito horas por dia e trinta e seis horas por semana, com possibilidade de compensação por acordo coletivo, e entra em vigor após dez anos.",
+      "resumoCard": "Estabelece jornada de trabalho de até oito horas por dia e trinta e seis horas por semana, em proposta associada ao debate sobre a escala 6x1, com possibilidade de compensação por acordo coletivo, e entra em vigor após dez anos.",
       "resumoDetalhe": "- Estabelece um limite para a duração do trabalho diário e reduz a jornada semanal para um patamar menor.\n- Permite a compensação de horários e autoriza a redução da jornada por meio de acordo ou convenção coletiva de trabalho (negociação entre trabalhadores e empregadores).\n- Determina que a nova regra só passe a valer após um período de transição de vários anos contado a partir da publicação.",
       "model": "openai/gpt-5-mini",
       "promptVersion": "v3",
       "generatedAt": "2026-08-16T06:45:23.563Z",
-      "reviewedAt": "2026-08-16T13:35:14.000Z"
+      "reviewedAt": "2026-08-21T05:20:23.000Z"
     },
     "2234001": {
       "sourceHash": "20a440c11ef96c0270561700bf4dabe202b515860c467633af454b47ed980608",

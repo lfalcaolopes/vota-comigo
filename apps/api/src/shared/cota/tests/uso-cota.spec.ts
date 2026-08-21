@@ -302,8 +302,8 @@ describe('uso da cota sobre o teto-base', () => {
     });
   });
 
-  describe('quando o intervalo conhecido é estruturalmente inconsistente', () => {
-    it('classifica Fernando Mineiro sem inferir pelo volume de gastos', () => {
+  describe('quando o identificador pertence a um caso anteriormente corrigido', () => {
+    it('apura o uso normalmente a partir dos intervalos disponíveis', () => {
       // Arrange
       const source = input({ externalIdDeputado: 204445 });
 
@@ -312,8 +312,8 @@ describe('uso da cota sobre o teto-base', () => {
 
       // Assert
       expect(result).toMatchObject({
-        status: 'indisponivel',
-        motivo: 'intervalo-exercicio-inconsistente',
+        status: 'calculavel',
+        legislatura: 57,
       });
     });
   });

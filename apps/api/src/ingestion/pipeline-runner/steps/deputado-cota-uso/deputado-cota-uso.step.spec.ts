@@ -57,7 +57,7 @@ function repository(): DeputadoCotaUsoRepository & {
 }
 
 describe('deputado_cota_uso step', () => {
-  it('materializes one row per deputado and isolates the known integrity case', async () => {
+  it('materializes one row per deputado from the available intervals', async () => {
     // Arrange
     const repo = repository();
     const step = createDeputadoCotaUsoStep(
@@ -73,10 +73,7 @@ describe('deputado_cota_uso step', () => {
     expect(repo.replaced).toHaveLength(2);
     expect(repo.replaced?.[0]).toMatchObject({
       deputadoId: 'mineiro',
-      apuracao: {
-        status: 'indisponivel',
-        motivo: 'intervalo-exercicio-inconsistente',
-      },
+      apuracao: { status: 'calculavel', percentualTetoBase: 0 },
     });
     expect(repo.replaced?.[1]).toMatchObject({
       deputadoId: 'calculavel',

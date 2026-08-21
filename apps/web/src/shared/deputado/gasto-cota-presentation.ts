@@ -55,3 +55,15 @@ export function formatGastoCotaAmount(amountUsedCents: number): string {
   const centavos = digits.slice(-2);
   return `${signal}R$ ${reais},${centavos}`;
 }
+
+export function formatGastoCotaParticipacao(
+  partAmountCents: number,
+  totalAmountCents: number,
+): string {
+  if (totalAmountCents === 0) return "Participação indisponível";
+
+  return new Intl.NumberFormat("pt-BR", {
+    style: "percent",
+    maximumFractionDigits: 1,
+  }).format(partAmountCents / totalAmountCents);
+}

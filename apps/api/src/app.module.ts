@@ -6,6 +6,7 @@ import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
 
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ComparativoDeputadosModule } from './comparativo-deputados/comparativo-deputados.module';
+import { CotaModule } from './cota/cota.module';
 import { DeputadosModule } from './deputados/deputados.module';
 import { HealthModule } from './health/health.module';
 import { MatcherModule } from './matcher/matcher.module';
@@ -28,6 +29,7 @@ import { CacheControlInterceptor } from './shared/http/cache-control.interceptor
     MatcherModule,
     DeputadosModule,
     ComparativoDeputadosModule,
+    CotaModule,
     AnalyticsModule,
   ],
   providers: [

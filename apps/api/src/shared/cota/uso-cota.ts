@@ -10,13 +10,18 @@ import type { CoberturaCotaSigepa } from './ano-reposto';
 import { isAnoReposto } from './ano-reposto';
 import { limiteMensalCota } from './limite-mensal-cota';
 import {
+  deriveMesesCobertos,
+  enumerateMeses,
+  firstDayOfMonth,
+  lastDayOfMonth,
+} from './mes-cota';
+import {
   applyReposicaoSigepa,
   deriveSigepaDataStatus,
   type GastosCotaJson,
   type GastosSigepaJson,
 } from './reposicao-sigepa';
 
-const EXTERNAL_ID_DEPUTADO_INTERVALO_INCONSISTENTE = 204445;
 const DIA_EM_MILLIS = 24 * 60 * 60 * 1000;
 
 export type UsoCotaLegislatura = {
@@ -57,15 +62,7 @@ export type DeriveUsoCotaInput = {
   referencia: string;
 };
 
-type Mes = { year: number; month: number };
-
 export function deriveUsoCota(input: DeriveUsoCotaInput): UsoCotaApuracao {
-  if (
-    input.externalIdDeputado === EXTERNAL_ID_DEPUTADO_INTERVALO_INCONSISTENTE
-  ) {
-    return indisponivel('intervalo-exercicio-inconsistente', null);
-  }
-
   if (input.intervalosExercicio.length === 0) {
     return indisponivel('intervalo-exercicio-ausente', null);
   }
@@ -104,20 +101,15 @@ export function deriveUsoCota(input: DeriveUsoCotaInput): UsoCotaApuracao {
     );
   }
 
-  const mesesDaJanela = enumerateMonths(
+  const mesesDaJanela = enumerateMeses(
     legislatura.dataInicio,
     minDate(legislatura.dataFim, input.referencia),
   );
-  const mesesCobertos = mesesDaJanela.filter((mes) => {
-    const cobertura = coberturaByYear.get(mes.year);
-    return (
-      cobertura !== undefined && mes.month <= cobertura.coveredThroughMonth
-    );
+  const { meses: mesesCobertos, contigua } = deriveMesesCobertos({
+    mesesDaJanela,
+    coberturas: input.coberturas,
   });
-  const coberturaContigua = mesesCobertos.every(
-    (mes, index) => toOrdinal(mes) === toOrdinal(mesesDaJanela[index]!),
-  );
-  if (!coberturaContigua || mesesCobertos.length === 0) {
+  if (!contigua || mesesCobertos.length === 0) {
     return indisponivel('fonte-incompleta', legislatura.legislatura);
   }
 
@@ -210,7 +202,7 @@ export function deriveUsoCota(input: DeriveUsoCotaInput): UsoCotaApuracao {
         legislatura.legislatura,
       );
     }
-    const limite = limiteMensalCota([...ufs][0]!, mesInicio);
+    const limite = limiteMensalCota([...ufs][0], mesInicio);
     if (limite === null || limite <= 0) {
       return indisponivel('teto-base-ausente-ou-zero', legislatura.legislatura);
     }
@@ -262,36 +254,6 @@ function isIntervaloInconsistente(intervalo: IntervaloExercicio): boolean {
     (intervalo.closedAt !== null &&
       (!isDate(intervalo.closedAt) || intervalo.closedAt < intervalo.openedAt))
   );
-}
-
-function enumerateMonths(inicio: string, fim: string): Mes[] {
-  const first = toMonth(inicio);
-  const last = toMonth(fim);
-  const result: Mes[] = [];
-  for (
-    let ordinal = toOrdinal(first);
-    ordinal <= toOrdinal(last);
-    ordinal += 1
-  ) {
-    result.push({ year: Math.floor(ordinal / 12), month: (ordinal % 12) + 1 });
-  }
-  return result;
-}
-
-function toMonth(date: string): Mes {
-  return { year: Number(date.slice(0, 4)), month: Number(date.slice(5, 7)) };
-}
-
-function toOrdinal(mes: Mes): number {
-  return mes.year * 12 + mes.month - 1;
-}
-
-function firstDayOfMonth(mes: Mes): string {
-  return `${mes.year}-${String(mes.month).padStart(2, '0')}-01`;
-}
-
-function lastDayOfMonth(mes: Mes): string {
-  return new Date(Date.UTC(mes.year, mes.month, 0)).toISOString().slice(0, 10);
 }
 
 function intersects(

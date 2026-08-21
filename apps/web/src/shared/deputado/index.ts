@@ -80,6 +80,19 @@ export { DeputadoUfControl } from "./deputado-uf-control";
 export { DeputadoSexoControl } from "./deputado-sexo-control";
 export { DeputadoFaixaEtariaControl } from "./deputado-faixa-etaria-control";
 export {
+  deriveGastoCotaDistribuicao,
+  type GastoCotaSerie,
+} from "./gasto-cota-distribuicao";
+export {
+  applyGastoCotaPaleta,
+  type GastoCotaSerieComCor,
+} from "./gasto-cota-paleta";
+export { GastoCotaComposicao } from "./gasto-cota-composicao";
+export {
+  formatGastoCotaAmount,
+  formatGastoCotaParticipacao,
+} from "./gasto-cota-presentation";
+export {
   CARGO_DEPUTADO,
   nomePublicoLabel,
   toAtividadeLabel,
