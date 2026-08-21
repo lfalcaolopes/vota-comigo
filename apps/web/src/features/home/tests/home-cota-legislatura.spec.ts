@@ -122,6 +122,35 @@ describe("gastos da cota na home", () => {
     });
   });
 
+  describe("revelacao progressiva da secao", () => {
+    it("entrega as barras no estado final, sem depender de JS", () => {
+      // Arrange / Act
+      const html = render(cota);
+
+      // Assert
+      expect(html).toContain("width:38.69%");
+      expect(html).not.toContain("data-reveal");
+    });
+
+    it("publica duracao e escalonamento de cada barra no proprio markup", () => {
+      // Arrange / Act
+      const html = render(cota);
+
+      // Assert
+      expect(html).toContain("--vc-reveal-duration:3000ms");
+      expect(html).toContain("--vc-reveal-delay:0ms");
+      expect(html).toContain("--vc-reveal-delay:120ms");
+    });
+
+    it("mantem o total legivel por leitor de tela durante a contagem", () => {
+      // Arrange / Act
+      const html = render(cota);
+
+      // Assert
+      expect(html).toContain('<span class="sr-only">R$ 887.830.673,41</span>');
+    });
+  });
+
   describe("caminhos que a seção referencia", () => {
     it("leva à discriminação dentro do perfil de cada deputado", () => {
       // Arrange / Act

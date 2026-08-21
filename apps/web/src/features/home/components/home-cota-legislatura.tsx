@@ -1,17 +1,21 @@
 import type { CotaLegislaturaResponse } from "@vota-comigo/shared-types";
 import Link from "next/link";
-import { Suspense, type ReactNode } from "react";
+import { Suspense, type CSSProperties, type ReactNode } from "react";
 
 import { cotaLegislatura } from "@/shared/cota";
 import {
   applyGastoCotaPaleta,
   deriveGastoCotaDistribuicao,
+  deriveGastoCotaRevealTimeline,
   formatGastoCotaAmount,
   formatGastoCotaParticipacao,
   toUsoCotaPeriodoLabel,
+  type GastoCotaRevealStep,
   type GastoCotaSerieComCor,
 } from "@/shared/deputado";
 import { Skeleton } from "@/shared/ui";
+
+import { CotaRevealScope, CotaTotalReveal } from "./home-cota-reveal";
 
 const contagemFormatter = new Intl.NumberFormat("pt-BR");
 
@@ -33,14 +37,19 @@ export function CotaLegislaturaSection({
   const series = applyGastoCotaPaleta(
     deriveGastoCotaDistribuicao(cota.categories),
   );
+  // O total termina de contar quando a última barra para de crescer.
+  const timeline = deriveGastoCotaRevealTimeline(
+    series.map((serie) => serie.amountUsedCents),
+  );
 
   return (
     <SectionShell anoInicio={cota.periodStart.slice(0, 4)}>
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,21rem)_minmax(0,1fr)] lg:gap-12">
+      <CotaRevealScope className="grid gap-8 lg:grid-cols-[minmax(0,21rem)_minmax(0,1fr)] lg:gap-12">
         <div className="grid content-start gap-3">
-          <p className="text-[2rem] leading-none font-[730] tracking-[-0.02em] tabular-nums text-ink md:text-[2.25rem]">
-            {formatGastoCotaAmount(cota.totalAmountUsedCents)}
-          </p>
+          <CotaTotalReveal
+            durationMs={timeline.totalDurationMs}
+            totalAmountUsedCents={cota.totalAmountUsedCents}
+          />
           <p className="text-sm leading-normal text-muted">
             Período analisado: {toUsoCotaPeriodoLabel(cota)}
           </p>
@@ -57,16 +66,17 @@ export function CotaLegislaturaSection({
             Em que a cota parlamentar foi gasta
           </h3>
           <ol className="grid min-w-0 gap-4">
-            {series.map((serie) => (
+            {series.map((serie, index) => (
               <RubricaItem
                 key={serie.externalNumSubCota ?? "outras-despesas"}
                 serie={serie}
+                step={timeline.steps[index]}
                 totalAmountUsedCents={cota.totalAmountUsedCents}
               />
             ))}
           </ol>
         </div>
-      </div>
+      </CotaRevealScope>
 
       <div className="flex flex-wrap items-center justify-end gap-x-6 gap-y-2 text-sm font-[650]">
         <Link
@@ -82,9 +92,11 @@ export function CotaLegislaturaSection({
 
 function RubricaItem({
   serie,
+  step,
   totalAmountUsedCents,
 }: {
   serie: GastoCotaSerieComCor;
+  step: GastoCotaRevealStep;
   totalAmountUsedCents: number;
 }) {
   const participacao = formatGastoCotaParticipacao(
@@ -107,11 +119,18 @@ function RubricaItem({
         className="block h-1.5 w-full overflow-hidden rounded-full bg-border"
       >
         <span
-          className="block h-full rounded-full"
-          style={{
-            backgroundColor: serie.color,
-            width: toLarguraBarra(serie.amountUsedCents, totalAmountUsedCents),
-          }}
+          className="vc-reveal-bar block h-full rounded-full"
+          style={
+            {
+              backgroundColor: serie.color,
+              width: toLarguraBarra(
+                serie.amountUsedCents,
+                totalAmountUsedCents,
+              ),
+              "--vc-reveal-duration": `${step.durationMs}ms`,
+              "--vc-reveal-delay": `${step.delayMs}ms`,
+            } as CSSProperties
+          }
         />
       </span>
     </li>

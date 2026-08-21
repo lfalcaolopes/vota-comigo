@@ -87,6 +87,11 @@ export {
   applyGastoCotaPaleta,
   type GastoCotaSerieComCor,
 } from "./gasto-cota-paleta";
+export {
+  deriveGastoCotaRevealTimeline,
+  type GastoCotaRevealStep,
+  type GastoCotaRevealTimeline,
+} from "./gasto-cota-reveal";
 export { GastoCotaComposicao } from "./gasto-cota-composicao";
 export {
   formatGastoCotaAmount,
