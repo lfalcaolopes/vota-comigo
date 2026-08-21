@@ -95,6 +95,13 @@
   }
 }
 
+/* O tom de cada faixa vem da posição no DOM, não do componente: ancorado pelo
+   fim, a última faixa fica sempre branca contra o footer e a alternância se
+   reajusta quando uma seção não renderiza. */
+.vc-bands > section:nth-last-of-type(even) {
+  background-color: var(--color-surface-muted);
+}
+
 @keyframes reveal-bar {
   from {
     clip-path: inset(0 100% 0 0);

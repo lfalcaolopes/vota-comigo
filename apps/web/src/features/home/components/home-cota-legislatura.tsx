@@ -145,10 +145,7 @@ function SectionShell({
   children: ReactNode;
 }) {
   return (
-    <section
-      aria-labelledby="home-cota"
-      className="border-b border-border bg-surface-muted"
-    >
+    <section aria-labelledby="home-cota" className="border-b border-border">
       <div className="mx-auto grid w-full min-w-0 max-w-5xl gap-8 px-4 py-12 md:py-16">
         <h2
           className="max-w-[30ch] text-2xl leading-tight font-[700] tracking-[-0.01em] text-balance text-ink"

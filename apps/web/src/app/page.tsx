@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="min-h-screen w-full min-w-0 overflow-x-hidden bg-bg text-ink">
+    <main className="vc-bands min-h-screen w-full min-w-0 overflow-x-hidden bg-bg text-ink">
       <HomeHero />
       <HomeCotaLegislatura />
       <HomeProposicoes />
