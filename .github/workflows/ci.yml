@@ -109,7 +109,7 @@ jobs:
         with:
           node-version: 22.11.0
 
-      - run: npm install -g vercel@latest
+      - run: npm install -g vercel@59.3.0
 
       - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
       - run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
