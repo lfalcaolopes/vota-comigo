@@ -22,6 +22,17 @@ describe('validateEnv', () => {
       expect(env.SENTRY_DSN).toBeUndefined();
       expect(env.SENTRY_TRACES_SAMPLE_RATE).toBeUndefined();
     });
+
+    it('treats a blank DSN as absent', () => {
+      // Arrange
+      const config = baseEnv({ SENTRY_DSN: '' });
+
+      // Act
+      const env = validateEnv(config);
+
+      // Assert
+      expect(env.SENTRY_DSN).toBeUndefined();
+    });
   });
 
   describe('when Sentry vars are valid', () => {

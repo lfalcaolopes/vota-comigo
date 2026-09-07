@@ -1,13 +1,65 @@
+import type { Attribution } from "@vota-comigo/shared-types";
+
 export const FIRST_TOUCH_STORAGE_KEY = "vota-comigo:first-touch";
 
-export type FirstTouch = {
-  utmSource: string | null;
-  utmMedium: string | null;
-  utmCampaign: string | null;
-  utmContent: string | null;
+export type FirstTouch = Omit<Attribution, "referrer"> & {
   referrer: string;
   capturedAt: string;
 };
+
+const EMPTY_ATTRIBUTION: Attribution = {
+  utmSource: null,
+  utmMedium: null,
+  utmCampaign: null,
+  utmContent: null,
+  referrer: null,
+};
+
+function isNullableString(value: unknown): value is string | null {
+  return value === null || typeof value === "string";
+}
+
+export function readFirstTouchAttribution(): Attribution {
+  if (typeof window === "undefined") return { ...EMPTY_ATTRIBUTION };
+
+  let storedFirstTouch: string | null;
+
+  try {
+    storedFirstTouch = window.localStorage.getItem(FIRST_TOUCH_STORAGE_KEY);
+  } catch {
+    return { ...EMPTY_ATTRIBUTION };
+  }
+
+  if (storedFirstTouch === null) return { ...EMPTY_ATTRIBUTION };
+
+  try {
+    const value: unknown = JSON.parse(storedFirstTouch);
+    if (typeof value !== "object" || value === null) {
+      return { ...EMPTY_ATTRIBUTION };
+    }
+
+    const attribution = value as Record<string, unknown>;
+    if (
+      !isNullableString(attribution.utmSource) ||
+      !isNullableString(attribution.utmMedium) ||
+      !isNullableString(attribution.utmCampaign) ||
+      !isNullableString(attribution.utmContent) ||
+      !isNullableString(attribution.referrer)
+    ) {
+      return { ...EMPTY_ATTRIBUTION };
+    }
+
+    return {
+      utmSource: attribution.utmSource,
+      utmMedium: attribution.utmMedium,
+      utmCampaign: attribution.utmCampaign,
+      utmContent: attribution.utmContent,
+      referrer: attribution.referrer,
+    };
+  } catch {
+    return { ...EMPTY_ATTRIBUTION };
+  }
+}
 
 export function captureFirstTouch(): void {
   if (typeof window === "undefined") return;

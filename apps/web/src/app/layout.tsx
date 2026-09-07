@@ -66,7 +66,7 @@ export default function RootLayout({
         <FirstTouchCapture />
         <Script
           src="https://cloud.umami.is/script.js"
-          data-website-id="6f0afa25-ba92-48be-839a-53d32186032a"
+          data-website-id="e0275ca9-8678-4b71-b095-dfcb1f37dc80"
           strategy="afterInteractive"
         />
         <Analytics />

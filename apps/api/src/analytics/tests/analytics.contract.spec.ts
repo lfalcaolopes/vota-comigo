@@ -1,6 +1,9 @@
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { matcherCompletionEventSchema } from '@vota-comigo/shared-types';
+import {
+  matcherCompletionEventSchema,
+  matcherStartEventSchema,
+} from '@vota-comigo/shared-types';
 import request from 'supertest';
 
 import { AnalyticsController } from '../analytics.controller';
@@ -44,6 +47,15 @@ describe('matcherCompletionEventSchema', () => {
 
       // Assert
       expect(result.success).toBe(true);
+      expect(result.data).toEqual({
+        totalSelecionadas: 5,
+        totalRespondidas: 3,
+        utmSource: null,
+        utmMedium: null,
+        utmCampaign: null,
+        utmContent: null,
+        referrer: null,
+      });
     });
 
     it('rejects negative counts', () => {
@@ -70,13 +82,70 @@ describe('matcherCompletionEventSchema', () => {
   });
 });
 
+describe('matcherStartEventSchema', () => {
+  describe('when validating attribution', () => {
+    it('accepts nullable attribution fields', () => {
+      // Act
+      const result = matcherStartEventSchema.safeParse({
+        utmSource: 'whatsapp',
+        utmMedium: null,
+        utmCampaign: null,
+        utmContent: null,
+        referrer: null,
+      });
+
+      // Assert
+      expect(result.success).toBe(true);
+    });
+  });
+});
+
+describe('POST /analytics/matcher-start', () => {
+  let app: INestApplication;
+  let recordMatcherStart: jest.Mock;
+
+  beforeEach(async () => {
+    recordMatcherStart = jest.fn().mockResolvedValue(undefined);
+    app = await buildApp({
+      recordMatcherStart,
+      recordMatcherCompletion: jest.fn(),
+    });
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  describe('when the body is valid', () => {
+    it('returns 204 and records the start', async () => {
+      // Act
+      const response = await request(getTestServer(app))
+        .post('/analytics/matcher-start')
+        .send({ utmSource: 'whatsapp', utmMedium: 'social' });
+
+      // Assert
+      expect(response.status).toBe(204);
+      expect(recordMatcherStart).toHaveBeenCalledWith({
+        utmSource: 'whatsapp',
+        utmMedium: 'social',
+        utmCampaign: null,
+        utmContent: null,
+        referrer: null,
+      });
+    });
+  });
+});
+
 describe('POST /analytics/matcher-completion', () => {
   let app: INestApplication;
   let recordMatcherCompletion: jest.Mock;
 
   beforeEach(async () => {
     recordMatcherCompletion = jest.fn().mockResolvedValue(undefined);
-    app = await buildApp({ recordMatcherCompletion });
+    app = await buildApp({
+      recordMatcherStart: jest.fn(),
+      recordMatcherCompletion,
+    });
   });
 
   afterEach(async () => {
@@ -88,13 +157,26 @@ describe('POST /analytics/matcher-completion', () => {
       // Act
       const response = await request(getTestServer(app))
         .post('/analytics/matcher-completion')
-        .send({ totalSelecionadas: 6, totalRespondidas: 4 });
+        .send({
+          totalSelecionadas: 6,
+          totalRespondidas: 4,
+          utmSource: 'whatsapp',
+          utmMedium: 'social',
+          utmCampaign: null,
+          utmContent: null,
+          referrer: 'https://example.com/origem',
+        });
 
       // Assert
       expect(response.status).toBe(204);
       expect(recordMatcherCompletion).toHaveBeenCalledWith({
         totalSelecionadas: 6,
         totalRespondidas: 4,
+        utmSource: 'whatsapp',
+        utmMedium: 'social',
+        utmCampaign: null,
+        utmContent: null,
+        referrer: 'https://example.com/origem',
       });
     });
   });

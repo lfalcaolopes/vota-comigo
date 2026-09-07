@@ -10,7 +10,11 @@ const envSchema = z.object({
   OPENROUTER_API_KEY: z.string().optional(),
   OPENROUTER_MODEL: z.string().optional(),
   OPENROUTER_EMBEDDING_MODEL: z.string().optional(),
-  SENTRY_DSN: z.string().url().optional(),
+  SENTRY_DSN: z.preprocess(
+    (value) =>
+      typeof value === 'string' && value.trim() === '' ? undefined : value,
+    z.string().url().optional(),
+  ),
   SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).optional(),
 });
 

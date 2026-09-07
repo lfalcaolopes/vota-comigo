@@ -57,7 +57,17 @@ export const posicaoMatcherSchema = z.object({
 
 export const escopoMatcherEnum = z.enum(["estadual", "nacional"]);
 
-export const matcherCompletionEventSchema = z.object({
+export const attributionSchema = z.object({
+  utmSource: z.string().nullable().default(null),
+  utmMedium: z.string().nullable().default(null),
+  utmCampaign: z.string().nullable().default(null),
+  utmContent: z.string().nullable().default(null),
+  referrer: z.string().nullable().default(null),
+});
+
+export const matcherStartEventSchema = attributionSchema;
+
+export const matcherCompletionEventSchema = attributionSchema.extend({
   totalSelecionadas: z.number().int().min(0),
   totalRespondidas: z.number().int().min(0),
 });
@@ -170,6 +180,8 @@ export type MatcherExecucaoRequest = Omit<
 > & { sort?: z.infer<typeof matcherSortSchema> };
 export type MatcherExecucaoResumo = z.infer<typeof matcherExecucaoResumoSchema>;
 export type EscopoMatcher = z.infer<typeof escopoMatcherEnum>;
+export type Attribution = z.infer<typeof attributionSchema>;
+export type MatcherStartEvent = z.infer<typeof matcherStartEventSchema>;
 export type MatcherCompletionEvent = z.infer<
   typeof matcherCompletionEventSchema
 >;

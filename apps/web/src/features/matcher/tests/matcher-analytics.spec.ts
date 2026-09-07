@@ -3,12 +3,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const track = vi.fn();
 const apiPost = vi.fn();
+const readFirstTouchAttribution = vi.fn();
 
 vi.mock("@vercel/analytics", () => ({
   track: (...args: unknown[]) => track(...args),
 }));
 vi.mock("@/shared/lib/api-client", () => ({
   apiPost: (...args: unknown[]) => apiPost(...args),
+}));
+vi.mock("@/shared/analytics", () => ({
+  readFirstTouchAttribution: () => readFirstTouchAttribution(),
 }));
 
 import {
@@ -45,6 +49,14 @@ beforeEach(() => {
   track.mockReset();
   apiPost.mockReset();
   apiPost.mockResolvedValue(undefined);
+  readFirstTouchAttribution.mockReset();
+  readFirstTouchAttribution.mockReturnValue({
+    utmSource: null,
+    utmMedium: null,
+    utmCampaign: null,
+    utmContent: null,
+    referrer: null,
+  });
 });
 
 afterEach(() => {
@@ -75,7 +87,15 @@ describe("buildCompletionEvent", () => {
       const event = buildCompletionEvent(answered);
 
       // Assert
-      expect(event).toEqual({ totalSelecionadas: 3, totalRespondidas: 2 });
+      expect(event).toEqual({
+        totalSelecionadas: 3,
+        totalRespondidas: 2,
+        utmSource: null,
+        utmMedium: null,
+        utmCampaign: null,
+        utmContent: null,
+        referrer: null,
+      });
     });
 
     it('counts "nao_sei" as an answered proposta', () => {
@@ -119,31 +139,64 @@ describe("buildCompletionEvent", () => {
       const event = buildCompletionEvent(withStrayPosicao);
 
       // Assert
-      expect(event).toEqual({ totalSelecionadas: 3, totalRespondidas: 0 });
+      expect(event).toEqual({
+        totalSelecionadas: 3,
+        totalRespondidas: 0,
+        utmSource: null,
+        utmMedium: null,
+        utmCampaign: null,
+        utmContent: null,
+        referrer: null,
+      });
     });
   });
 });
 
 describe("trackMatcherStarted", () => {
-  it('emits the "matcher_started" Vercel event', () => {
+  it('emits the "matcher_started" event and posts attribution to the API', () => {
+    // Arrange
+    const attribution = {
+      utmSource: "whatsapp",
+      utmMedium: "social",
+      utmCampaign: null,
+      utmContent: null,
+      referrer: "https://example.com/origem",
+    };
+    readFirstTouchAttribution.mockReturnValue(attribution);
+
     // Act
     trackMatcherStarted();
 
     // Assert
     expect(track).toHaveBeenCalledWith("matcher_started");
+    expect(apiPost).toHaveBeenCalledWith(
+      "/analytics/matcher-start",
+      attribution,
+    );
   });
 });
 
 describe("trackMatcherCompleted", () => {
   it('emits "matcher_completed" with the event props and posts to the API', () => {
     // Arrange
-    const event = { totalSelecionadas: 5, totalRespondidas: 4 };
+    const event = {
+      totalSelecionadas: 5,
+      totalRespondidas: 4,
+      utmSource: "whatsapp",
+      utmMedium: "social",
+      utmCampaign: "eleicoes",
+      utmContent: null,
+      referrer: "https://example.com/origem",
+    };
 
     // Act
     trackMatcherCompleted(event);
 
     // Assert
-    expect(track).toHaveBeenCalledWith("matcher_completed", { ...event });
+    expect(track).toHaveBeenCalledWith("matcher_completed", {
+      totalSelecionadas: 5,
+      totalRespondidas: 4,
+    });
     expect(apiPost).toHaveBeenCalledWith(
       "/analytics/matcher-completion",
       event,
@@ -153,7 +206,15 @@ describe("trackMatcherCompleted", () => {
   it("swallows an API rejection instead of throwing into the caller", async () => {
     // Arrange
     apiPost.mockRejectedValue(new Error("api down"));
-    const event = { totalSelecionadas: 5, totalRespondidas: 4 };
+    const event = {
+      totalSelecionadas: 5,
+      totalRespondidas: 4,
+      utmSource: null,
+      utmMedium: null,
+      utmCampaign: null,
+      utmContent: null,
+      referrer: null,
+    };
 
     // Act / Assert
     expect(() => trackMatcherCompleted(event)).not.toThrow();

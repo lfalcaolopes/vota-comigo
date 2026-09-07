@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   captureFirstTouch,
   FIRST_TOUCH_STORAGE_KEY,
+  readFirstTouchAttribution,
 } from "../first-touch";
 
 type StorageStub = Pick<Storage, "getItem" | "setItem">;
@@ -152,6 +153,59 @@ describe("first-touch attribution", () => {
 
       // Assert
       expect(capture).not.toThrow();
+    });
+  });
+
+  describe("when reading attribution", () => {
+    it("returns the stored attribution fields", () => {
+      // Arrange
+      const storage: StorageStub = {
+        getItem: vi.fn(() =>
+          JSON.stringify({
+            utmSource: "whatsapp",
+            utmMedium: "social",
+            utmCampaign: null,
+            utmContent: "grupo-a",
+            referrer: "https://example.com/origem",
+            capturedAt: "2026-09-07T15:30:00.000Z",
+          }),
+        ),
+        setItem: vi.fn(),
+      };
+      stubBrowser({ storage });
+
+      // Act
+      const attribution = readFirstTouchAttribution();
+
+      // Assert
+      expect(attribution).toEqual({
+        utmSource: "whatsapp",
+        utmMedium: "social",
+        utmCampaign: null,
+        utmContent: "grupo-a",
+        referrer: "https://example.com/origem",
+      });
+    });
+
+    it("returns nullable fields when the stored value is invalid", () => {
+      // Arrange
+      const storage: StorageStub = {
+        getItem: vi.fn(() => "invalid-json"),
+        setItem: vi.fn(),
+      };
+      stubBrowser({ storage });
+
+      // Act
+      const attribution = readFirstTouchAttribution();
+
+      // Assert
+      expect(attribution).toEqual({
+        utmSource: null,
+        utmMedium: null,
+        utmCampaign: null,
+        utmContent: null,
+        referrer: null,
+      });
     });
   });
 });

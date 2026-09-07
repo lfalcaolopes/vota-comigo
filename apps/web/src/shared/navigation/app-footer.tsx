@@ -25,11 +25,16 @@ const groups: FooterGroup[] = [
   },
   {
     title: "Entender",
-    links: [{ href: "/metodologia", label: "Metodologia" }],
+    links: [
+      { href: "/metodologia", label: "Metodologia" },
+      { href: "/privacidade", label: "Privacidade" },
+    ],
   },
 ];
 
 export function AppFooter() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="border-t border-border bg-surface-muted text-ink">
       <div className="mx-auto w-full min-w-0 max-w-295 px-4 py-12 md:py-14">
@@ -72,7 +77,7 @@ export function AppFooter() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-border pt-6 md:mt-12">
+        <div className="mt-10 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between md:mt-12">
           <SourceLink
             href="https://dadosabertos.camara.leg.br/"
             rel="noreferrer"
@@ -80,6 +85,9 @@ export function AppFooter() {
           >
             Dados Abertos da Câmara dos Deputados
           </SourceLink>
+          <p className="text-sm leading-normal text-subtle">
+            © {currentYear} Quem Vota Comigo
+          </p>
         </div>
       </div>
     </footer>

@@ -1,4 +1,11 @@
-import { index, integer, pgTable, timestamp, uuid } from 'drizzle-orm/pg-core';
+import {
+  index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from 'drizzle-orm/pg-core';
 
 export const matcherCompletion = pgTable(
   'matcher_completion',
@@ -6,6 +13,11 @@ export const matcherCompletion = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
     totalSelecionadas: integer('total_selecionadas').notNull(),
     totalRespondidas: integer('total_respondidas').notNull(),
+    utmSource: text('utm_source'),
+    utmMedium: text('utm_medium'),
+    utmCampaign: text('utm_campaign'),
+    utmContent: text('utm_content'),
+    referrer: text('referrer'),
     completedAt: timestamp('completed_at', {
       withTimezone: true,
       mode: 'string',
