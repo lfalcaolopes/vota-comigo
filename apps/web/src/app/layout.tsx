@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 
+import { FirstTouchCapture } from "@/shared/analytics";
 import { AppFooter, AppHeader } from "@/shared/navigation";
 import { SITE_DESCRIPTION, SITE_NAME, siteUrl } from "@/shared/lib/site";
 
@@ -61,6 +63,12 @@ export default function RootLayout({
         <AppHeader />
         {children}
         <AppFooter />
+        <FirstTouchCapture />
+        <Script
+          src="https://cloud.umami.is/script.js"
+          data-website-id="6f0afa25-ba92-48be-839a-53d32186032a"
+          strategy="afterInteractive"
+        />
         <Analytics />
       </body>
     </html>
