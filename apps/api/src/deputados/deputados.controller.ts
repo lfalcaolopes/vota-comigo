@@ -21,6 +21,7 @@ import {
   type DeputadoProposicoesAssinadasResponse,
   type DeputadoSexo,
   type DeputadosFeedResponse,
+  type DeputadosDiscoveryResponse,
   type PartidosDisponiveisResponse,
   type UfsDisponiveisResponse,
 } from '@vota-comigo/shared-types';
@@ -157,6 +158,12 @@ function parseFaixasEtarias(
 @Controller('deputados')
 export class DeputadosController {
   constructor(private readonly service: DeputadosService) {}
+
+  @Get('discovery')
+  @CacheControl(CACHE_REFERENCE)
+  async discovery(): Promise<DeputadosDiscoveryResponse> {
+    return this.service.discovery();
+  }
 
   @Get('feed/ufs')
   @CacheControl(CACHE_REFERENCE)

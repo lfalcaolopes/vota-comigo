@@ -5,6 +5,7 @@ import {
   deputadoFeedResponseSchema,
   deputadoPerfilSchema,
   deputadoProposicoesAssinadasResponseSchema,
+  deputadosDiscoveryResponseSchema,
   partidosDisponiveisResponseSchema,
   ufsDisponiveisResponseSchema,
 } from '@vota-comigo/shared-types';
@@ -115,6 +116,17 @@ function fakeRepository(
   }),
 ): DeputadosRepository {
   return {
+    loadDeputadosDiscovery: async () => ({
+      items: [...byExternalId.values()].map((item) => ({
+        externalIdDeputado: item.externalIdDeputado,
+        nomePublico:
+          deriveSnapshotPublico(item.eventos)?.nomeEleitoral ??
+          item.nome ??
+          item.nomeCivil,
+        siglaUf: deriveSnapshotPublico(item.eventos)?.siglaUf ?? null,
+      })),
+      lastIngestedAt: '2026-09-08T12:00:00.000Z',
+    }),
     loadDeputadosFeed: async (filters, pagination) => {
       feedCalls.push({ filters, pagination });
       return feedPage;
@@ -463,6 +475,34 @@ describe('GET /deputados/feed', () => {
       expect(body.items).toHaveLength(1);
       await paged.close();
     });
+  });
+});
+
+describe('GET /deputados/discovery', () => {
+  it('returns the crawlable deputy identity list and ingestion timestamp', async () => {
+    // Arrange
+    const app = await buildApp(new Map([[220593, source()]]));
+
+    // Act
+    const response = await request(getTestServer(app)).get(
+      '/deputados/discovery',
+    );
+
+    // Assert
+    expect(response.status).toBe(200);
+    expect(
+      deputadosDiscoveryResponseSchema.parse(response.body as unknown),
+    ).toEqual({
+      items: [
+        {
+          externalIdDeputado: 220593,
+          nomePublico: 'Maria da Silva',
+          siglaUf: 'SP',
+        },
+      ],
+      lastIngestedAt: '2026-09-08T12:00:00.000Z',
+    });
+    await app.close();
   });
 });
 

@@ -31,6 +31,7 @@ import {
   deputadoGastoCota,
   deputadoGastoCotaSigepa,
   deputadoProposicaoAssinada,
+  ingestionStepRun,
   legislatura,
   orgao,
   partido,
@@ -61,6 +62,7 @@ import type {
   DeputadosFeedFilters,
   DeputadosFeedPage,
   DeputadosFeedPagination,
+  DeputadosDiscoverySource,
   DeputadoOrgaoSource,
   DeputadoPerfilSource,
   DeputadoProposicoesAssinadasSource,
@@ -75,6 +77,7 @@ export interface DeputadosRepository {
     filters: DeputadosFeedFilters,
     pagination: DeputadosFeedPagination,
   ): Promise<DeputadosFeedPage>;
+  loadDeputadosDiscovery(): Promise<DeputadosDiscoverySource>;
   loadUfsDisponiveis(): Promise<readonly string[]>;
   loadPartidosDisponiveis(siglaUf?: string): Promise<readonly string[]>;
   loadDeputadoPerfil(
@@ -240,6 +243,42 @@ export function createDeputadosRepository(
   }
 
   return {
+    async loadDeputadosDiscovery() {
+      const snapshot = snapshotPublico();
+      const nomePublico = sql<
+        string | null
+      >`coalesce(${snapshot.nomeEleitoral}, ${deputado.nome}, ${deputado.nomeCivil})`;
+
+      const [items, ingestion] = await Promise.all([
+        db
+          .select({
+            externalIdDeputado: deputado.externalIdDeputado,
+            nomePublico,
+            siglaUf: snapshot.siglaUf,
+          })
+          .from(deputado)
+          .leftJoin(snapshot, eq(snapshot.deputadoId, deputado.id))
+          .where(presencaRegistrada(deputado.id))
+          .orderBy(
+            asc(snapshot.siglaUf),
+            asc(normalizedColumn(nomePublico)),
+            asc(deputado.externalIdDeputado),
+          ),
+        db
+          .select({
+            lastIngestedAt: sql<
+              string | null
+            >`max(${ingestionStepRun.executedAt})`,
+          })
+          .from(ingestionStepRun),
+      ]);
+
+      return {
+        items,
+        lastIngestedAt: ingestion.at(0)?.lastIngestedAt ?? null,
+      };
+    },
+
     async loadDeputadosFeed(filters, pagination) {
       const snapshot = snapshotPublico();
 

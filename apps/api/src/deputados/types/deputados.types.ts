@@ -170,3 +170,14 @@ export type DeputadosFeedPage = {
   readonly items: readonly DeputadoCardRow[];
   readonly total: number;
 };
+
+export type DeputadoDiscoveryRow = {
+  externalIdDeputado: number;
+  nomePublico: string | null;
+  siglaUf: string | null;
+};
+
+export type DeputadosDiscoverySource = {
+  items: readonly DeputadoDiscoveryRow[];
+  lastIngestedAt: string | null;
+};

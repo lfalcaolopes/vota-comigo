@@ -15,6 +15,7 @@ import type {
   DeputadoOrgaosResponse,
   DeputadoProposicoesAssinadasResponse,
   DeputadosFeedResponse,
+  DeputadosDiscoveryResponse,
   PartidosDisponiveisResponse,
   UfsDisponiveisResponse,
 } from '@vota-comigo/shared-types';
@@ -68,6 +69,11 @@ export class DeputadosService {
       limit: pagination.limit,
       offset: pagination.offset,
     };
+  }
+
+  async discovery(): Promise<DeputadosDiscoveryResponse> {
+    const source = await this.repository.loadDeputadosDiscovery();
+    return { ...source, items: [...source.items] };
   }
 
   async ufsDisponiveis(): Promise<UfsDisponiveisResponse> {

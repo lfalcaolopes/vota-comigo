@@ -13,6 +13,7 @@ function fakeRepository(
   overrides: Partial<DeputadosRepository>,
 ): DeputadosRepository {
   return {
+    loadDeputadosDiscovery: async () => ({ items: [], lastIngestedAt: null }),
     loadDeputadosFeed: async () => {
       throw new Error('should not load the full feed payload');
     },

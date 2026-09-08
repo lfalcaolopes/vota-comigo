@@ -64,6 +64,7 @@ function createRepository(
   overrides: Partial<DeputadosRepository> = {},
 ): DeputadosRepository {
   return {
+    loadDeputadosDiscovery: async () => ({ items: [], lastIngestedAt: null }),
     loadDeputadosFeed: async () => ({ items: [], total: 0 }),
     loadUfsDisponiveis: async () => [],
     loadPartidosDisponiveis: async () => [],

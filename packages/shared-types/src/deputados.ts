@@ -444,6 +444,17 @@ export const deputadoFeedResponseSchema = z.object({
   offset: z.number(),
 });
 
+export const deputadoDiscoveryItemSchema = z.object({
+  externalIdDeputado: z.number().int().positive(),
+  nomePublico: z.string().nullable(),
+  siglaUf: z.string().nullable(),
+});
+
+export const deputadosDiscoveryResponseSchema = z.object({
+  items: z.array(deputadoDiscoveryItemSchema),
+  lastIngestedAt: z.string().datetime({ offset: true }).nullable(),
+});
+
 export const ufDisponivelSchema = z.object({
   siglaUf: z.string(),
 });
@@ -510,6 +521,10 @@ export type DeputadoSexo = z.infer<typeof deputadoSexoSchema>;
 export type DeputadoFaixaEtaria = z.infer<typeof deputadoFaixaEtariaSchema>;
 export type DeputadoCard = z.infer<typeof deputadoCardSchema>;
 export type DeputadosFeedResponse = z.infer<typeof deputadoFeedResponseSchema>;
+export type DeputadoDiscoveryItem = z.infer<typeof deputadoDiscoveryItemSchema>;
+export type DeputadosDiscoveryResponse = z.infer<
+  typeof deputadosDiscoveryResponseSchema
+>;
 export type UfDisponivel = z.infer<typeof ufDisponivelSchema>;
 export type UfsDisponiveisResponse = z.infer<
   typeof ufsDisponiveisResponseSchema

@@ -26,6 +26,10 @@ describe('GET /deputados/:externalIdDeputado/ceap', () => {
     it('responde o estado próprio pelo contrato público', async () => {
       // Arrange
       const repository: DeputadosRepository = {
+        loadDeputadosDiscovery: async () => ({
+          items: [],
+          lastIngestedAt: null,
+        }),
         loadDeputadosFeed: async () => ({ items: [], total: 0 }),
         loadUfsDisponiveis: async () => [],
         loadPartidosDisponiveis: async () => [],
