@@ -4,7 +4,22 @@ import type { MatcherCompletionEvent } from "@vota-comigo/shared-types";
 import { readFirstTouchAttribution } from "@/shared/analytics";
 import { apiPost } from "@/shared/lib/api-client";
 
-import { executionValidation, type MatcherState } from "./matcher-state";
+import {
+  executionValidation,
+  resultadoDisplay,
+  type MatcherState,
+} from "./matcher-state";
+
+export function shouldTrackMatcherCompletion(
+  pathname: string,
+  state: MatcherState,
+): boolean {
+  return (
+    pathname === "/matcher/resultado" &&
+    !state.hasTrackedCompletion &&
+    resultadoDisplay(state) === "results"
+  );
+}
 
 export function buildCompletionEvent(
   state: MatcherState,

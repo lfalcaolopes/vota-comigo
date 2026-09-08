@@ -5,17 +5,16 @@ import { useEffect, useRef } from "react";
 
 import {
   buildCompletionEvent,
+  shouldTrackMatcherCompletion,
   trackMatcherCompleted,
   trackMatcherStarted,
 } from "../lib/matcher-analytics";
-import { resultadoDisplay } from "../lib/matcher-state";
 import { useMatcher } from "./matcher-provider";
 
 export function MatcherRouteAnalytics() {
   const pathname = usePathname();
-  const { state } = useMatcher();
+  const { state, trackCompletion } = useMatcher();
   const hasTrackedStartRef = useRef(false);
-  const hasTrackedCompletionRef = useRef(false);
 
   useEffect(() => {
     if (hasTrackedStartRef.current) return;
@@ -25,15 +24,10 @@ export function MatcherRouteAnalytics() {
   }, [pathname]);
 
   useEffect(() => {
-    if (pathname !== "/matcher/resultado") {
-      hasTrackedCompletionRef.current = false;
-      return;
-    }
-    if (hasTrackedCompletionRef.current) return;
-    if (resultadoDisplay(state) !== "results") return;
-    hasTrackedCompletionRef.current = true;
+    if (!shouldTrackMatcherCompletion(pathname, state)) return;
+    trackCompletion();
     trackMatcherCompleted(buildCompletionEvent(state));
-  }, [pathname, state]);
+  }, [pathname, state, trackCompletion]);
 
   return null;
 }

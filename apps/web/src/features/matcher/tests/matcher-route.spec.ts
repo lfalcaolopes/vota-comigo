@@ -22,6 +22,7 @@ function emptyRascunho(): MatcherRascunho {
     selected: [],
     posicoes: new Map(),
     externalIdProposicoesFiltroConcordancia: [],
+    hasTrackedCompletion: false,
   };
 }
 

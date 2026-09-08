@@ -17,6 +17,7 @@ vi.mock("@/shared/analytics", () => ({
 
 import {
   buildCompletionEvent,
+  shouldTrackMatcherCompletion,
   trackMatcherCompleted,
   trackMatcherStarted,
 } from "../lib/matcher-analytics";
@@ -219,5 +220,105 @@ describe("trackMatcherCompleted", () => {
     // Act / Assert
     expect(() => trackMatcherCompleted(event)).not.toThrow();
     await Promise.resolve();
+  });
+});
+
+describe("matcher completion tracking", () => {
+  function completedState(): MatcherState {
+    const selected = [card(1), card(2), card(3)].reduce(
+      (state, proposicao) =>
+        matcherReducer(state, { type: "toggleProposicao", proposicao }),
+      initMatcherState([]),
+    );
+    const answered = [1, 2, 3].reduce(
+      (state, externalIdProposicao) =>
+        matcherReducer(state, {
+          type: "setPosicao",
+          externalIdProposicao,
+          posicao: "aprovar",
+        }),
+      selected,
+    );
+
+    return matcherReducer(answered, {
+      type: "runOk",
+      escopo: "estadual",
+      resultado: {
+        siglaUf: "SP",
+        totalProposicoesSelecionadas: 3,
+        totalPosicoesComputaveis: 3,
+        escopo: "estadual",
+        deputados: [
+          {
+            externalIdDeputado: 10,
+            nome: "Deputado 10",
+            partido: "PP",
+            siglaUf: "SP",
+            urlFoto: null,
+            emAtividade: true,
+            compatibilidadeBruta: 100,
+            amostraComparavel: 3,
+            scoreOrdenacaoPercentual: 100,
+            alertas: [],
+            usoCota: {
+              status: "indisponivel",
+              legislatura: null,
+              motivo: "fonte-incompleta",
+            },
+          },
+        ],
+        totalDeputadosAvaliados: 1,
+        deputadosHistoricoIncompleto: 0,
+        total: 1,
+        limit: 20,
+        offset: 0,
+      },
+    });
+  }
+
+  describe("when revisiting the result during the same matcher flow", () => {
+    it("tracks the completion only on the first result visit", () => {
+      // Arrange
+      const result = completedState();
+
+      // Act
+      const firstVisit = shouldTrackMatcherCompletion(
+        "/matcher/resultado",
+        result,
+      );
+      const tracked = matcherReducer(result, { type: "trackCompletion" });
+      const comparisonVisit = shouldTrackMatcherCompletion(
+        "/matcher/comparativo/10,20",
+        tracked,
+      );
+      const returnVisit = shouldTrackMatcherCompletion(
+        "/matcher/resultado",
+        tracked,
+      );
+
+      // Assert
+      expect(firstVisit).toBe(true);
+      expect(comparisonVisit).toBe(false);
+      expect(returnVisit).toBe(false);
+    });
+  });
+
+  describe("when starting another matcher flow", () => {
+    it("allows the new flow to track its own completion", () => {
+      // Arrange
+      const tracked = matcherReducer(completedState(), {
+        type: "trackCompletion",
+      });
+
+      // Act
+      const reset = matcherReducer(tracked, { type: "resetMatcher" });
+      const nextResult = completedState();
+
+      // Assert
+      expect(reset.hasTrackedCompletion).toBe(false);
+      expect(
+        shouldTrackMatcherCompletion("/matcher/resultado", nextResult),
+      ).toBe(true);
+    });
   });
 });

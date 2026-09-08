@@ -65,6 +65,7 @@ export function useMatcherState() {
       posicoes: state.posicoes,
       externalIdProposicoesFiltroConcordancia:
         state.externalIdProposicoesFiltroConcordancia,
+      hasTrackedCompletion: state.hasTrackedCompletion,
     };
 
     if (hasRascunhoEntries(rascunho)) {
@@ -75,6 +76,7 @@ export function useMatcherState() {
   }, [
     state.escopo,
     state.externalIdProposicoesFiltroConcordancia,
+    state.hasTrackedCompletion,
     state.isHydrated,
     state.posicoes,
     state.selected,
@@ -206,6 +208,10 @@ export function useMatcherState() {
     dispatch({ type: "cancelComparativoSelection" });
   }
 
+  function trackCompletion() {
+    dispatch({ type: "trackCompletion" });
+  }
+
   function resetMatcher() {
     resultadoRequestIdRef.current += 1;
     clearRascunho(window.sessionStorage);
@@ -236,6 +242,7 @@ export function useMatcherState() {
     startComparativoSelection,
     toggleComparativoDeputado,
     cancelComparativoSelection,
+    trackCompletion,
     resetMatcher,
   };
 }

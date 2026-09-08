@@ -40,6 +40,7 @@ describe("Rascunho de execução do matcher", () => {
         selected,
         posicoes,
         externalIdProposicoesFiltroConcordancia: [123],
+        hasTrackedCompletion: true,
       });
       const parsed = parseRascunho(serialized);
 
@@ -50,6 +51,7 @@ describe("Rascunho de execução do matcher", () => {
         selected,
         posicoes,
         externalIdProposicoesFiltroConcordancia: [123],
+        hasTrackedCompletion: true,
       });
     });
   });
@@ -63,6 +65,7 @@ describe("Rascunho de execução do matcher", () => {
         selected: [],
         posicoes: new Map<number, PosicaoUsuarioMatcher>(),
         externalIdProposicoesFiltroConcordancia: [],
+        hasTrackedCompletion: false,
       };
 
       // Act
@@ -80,6 +83,7 @@ describe("Rascunho de execução do matcher", () => {
         selected: [],
         posicoes: new Map<number, PosicaoUsuarioMatcher>(),
         externalIdProposicoesFiltroConcordancia: [],
+        hasTrackedCompletion: false,
       };
 
       // Act
@@ -99,6 +103,7 @@ describe("Rascunho de execução do matcher", () => {
         selected: [],
         posicoes: new Map<number, PosicaoUsuarioMatcher>(),
         externalIdProposicoesFiltroConcordancia: [],
+        hasTrackedCompletion: false,
       };
 
       // Act
@@ -116,6 +121,7 @@ describe("Rascunho de execução do matcher", () => {
         selected: [],
         posicoes: new Map<number, PosicaoUsuarioMatcher>(),
         externalIdProposicoesFiltroConcordancia: [],
+        hasTrackedCompletion: false,
       };
 
       // Act
@@ -181,6 +187,7 @@ describe("Rascunho de execução do matcher", () => {
         selected,
         posicoes: new Map([[123, "aprovar"]]),
         externalIdProposicoesFiltroConcordancia: [],
+        hasTrackedCompletion: false,
       });
     });
   });
@@ -249,6 +256,7 @@ describe("Rascunho de execução do matcher", () => {
         selected,
         posicoes: [{ externalIdProposicao: 123, posicao: "nao_sei" }],
         externalIdProposicoesFiltroConcordancia: [123],
+        hasTrackedCompletion: true,
       });
 
       // Act
@@ -268,6 +276,7 @@ describe("Rascunho de execução do matcher", () => {
         selected,
         posicoes: new Map<number, PosicaoUsuarioMatcher>([[123, "aprovar"]]),
         externalIdProposicoesFiltroConcordancia: [123],
+        hasTrackedCompletion: true,
         resultados: { estadual: { deputados: [] } },
         detalhe: { externalIdDeputado: 456 },
         comparativo: [456, 789],
@@ -285,6 +294,7 @@ describe("Rascunho de execução do matcher", () => {
         selected,
         posicoes: [{ externalIdProposicao: 123, posicao: "aprovar" }],
         externalIdProposicoesFiltroConcordancia: [123],
+        hasTrackedCompletion: true,
       });
     });
   });

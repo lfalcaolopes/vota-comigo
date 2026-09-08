@@ -28,6 +28,7 @@ describe("Persistência do rascunho de execução do matcher", () => {
         selected: [],
         posicoes: new Map<number, PosicaoUsuarioMatcher>(),
         externalIdProposicoesFiltroConcordancia: [],
+        hasTrackedCompletion: true,
       };
 
       // Act
@@ -58,6 +59,7 @@ describe("Persistência do rascunho de execução do matcher", () => {
         selected: [],
         posicoes: new Map(),
         externalIdProposicoesFiltroConcordancia: [],
+        hasTrackedCompletion: false,
       });
 
       // Act

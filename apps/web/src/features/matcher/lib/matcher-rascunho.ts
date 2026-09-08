@@ -20,6 +20,7 @@ export type MatcherRascunho = {
   selected: ProposicaoCard[];
   posicoes: Map<number, PosicaoUsuarioMatcher>;
   externalIdProposicoesFiltroConcordancia: number[];
+  hasTrackedCompletion: boolean;
 };
 
 export function hasRascunhoEntries(rascunho: MatcherRascunho): boolean {
@@ -47,6 +48,7 @@ const serializedRascunhoSchema = z
       .array(z.number().int().positive())
       .max(MAX_POSICOES)
       .default([]),
+    hasTrackedCompletion: z.boolean().default(false),
   })
   .strict()
   .superRefine((rascunho, context) => {
@@ -84,6 +86,7 @@ export function serializeRascunho(rascunho: MatcherRascunho): string {
     })),
     externalIdProposicoesFiltroConcordancia:
       rascunho.externalIdProposicoesFiltroConcordancia,
+    hasTrackedCompletion: rascunho.hasTrackedCompletion,
   });
 }
 
@@ -105,6 +108,7 @@ export function parseRascunho(raw: string): MatcherRascunho | null {
       ),
       externalIdProposicoesFiltroConcordancia:
         data.externalIdProposicoesFiltroConcordancia,
+      hasTrackedCompletion: data.hasTrackedCompletion,
     };
   } catch {
     return null;

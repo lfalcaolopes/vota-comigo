@@ -161,6 +161,7 @@ describe("matcherReducer", () => {
           selected,
           posicoes,
           externalIdProposicoesFiltroConcordancia: [2],
+          hasTrackedCompletion: true,
         },
       });
 
@@ -170,6 +171,7 @@ describe("matcherReducer", () => {
       expect(next.selected).toEqual(selected);
       expect(next.posicoes).toEqual(posicoes);
       expect(next.externalIdProposicoesFiltroConcordancia).toEqual([2]);
+      expect(next.hasTrackedCompletion).toBe(true);
       expect(next.isHydrated).toBe(true);
     });
   });
@@ -194,6 +196,7 @@ describe("matcherReducer", () => {
       expect(next.selected).toEqual([]);
       expect(next.posicoes).toEqual(new Map());
       expect(next.resultados).toEqual({ estadual: null, nacional: null });
+      expect(next.hasTrackedCompletion).toBe(false);
       expect(next.isHydrated).toBe(true);
     });
   });

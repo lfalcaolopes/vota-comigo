@@ -47,6 +47,7 @@ export type MatcherState = {
   ocultarAmostraPequena: boolean;
   sexo: DeputadoSexo | null;
   externalIdProposicoesFiltroConcordancia: number[];
+  hasTrackedCompletion: boolean;
   status: MatcherStatus;
   isSelectingComparativoDeputados: boolean;
   selectedComparativoDeputados: MatcherDeputadoResumo[];
@@ -65,6 +66,7 @@ export type MatcherAction =
   | { type: "runStart" }
   | { type: "runOk"; escopo: EscopoMatcher; resultado: MatcherResultado }
   | { type: "runError" }
+  | { type: "trackCompletion" }
   | { type: "setEscopo"; escopo: EscopoMatcher }
   | ({ type: "setResultadoFilters"; escopo: EscopoMatcher } & ResultadoFiltros)
   | {
@@ -88,6 +90,7 @@ export function initMatcherState(candidates: ProposicaoCard[]): MatcherState {
     escopo: "estadual",
     ...RESULTADO_FILTROS_PADRAO,
     externalIdProposicoesFiltroConcordancia: [],
+    hasTrackedCompletion: false,
     status: "idle",
     isSelectingComparativoDeputados: false,
     selectedComparativoDeputados: [],
@@ -172,6 +175,8 @@ export function matcherReducer(
       };
     case "runError":
       return { ...state, status: "error" };
+    case "trackCompletion":
+      return { ...state, hasTrackedCompletion: true };
     case "setEscopo":
       return { ...state, escopo: action.escopo };
     case "setResultadoFilters": {
