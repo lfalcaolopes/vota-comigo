@@ -134,6 +134,7 @@ Produção nunca ingere: ela recebe uma cópia do banco local.
 docker compose exec -T postgres pg_dump -U vota_comigo -d vota_comigo \
   --format=custom --no-owner --no-privileges \
   --exclude-table='public.matcher_completion' \
+  --exclude-table='public.matcher_start' \
   > /tmp/vota-comigo-$(date +%F).dump
 
 # Envia para produção
@@ -144,7 +145,7 @@ pg_restore --clean --if-exists --no-owner --no-privileges \
 
 Dois cuidados neste passo:
 
-- **`matcher_completion` fica de fora de propósito.** É a única tabela que produção escreve sozinha, e incluí-la no envio apagaria dados reais. Não remova o `--exclude-table`.
+- **`matcher_completion` e `matcher_start` ficam de fora de propósito.** São tabelas que produção escreve sozinha, e incluí-las no envio apagaria dados reais e recriaria as tabelas sem preservar os grants do papel da aplicação. Não remova os `--exclude-table`.
 - **Use a `DATABASE_URL` de `apps/api/.env.production.local`**, que é a conexão de dono. As outras variáveis do arquivo não têm permissão para escrever.
 
 Depois do restore, confirme que produção responde:
