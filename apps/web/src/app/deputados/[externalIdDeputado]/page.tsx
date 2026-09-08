@@ -22,8 +22,12 @@ type PageProps = {
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: PageProps): Promise<Metadata> {
-  const { externalIdDeputado: segment } = await params;
+  const [{ externalIdDeputado: segment }, { year }] = await Promise.all([
+    params,
+    searchParams,
+  ]);
   const externalIdDeputado = parseExternalIdDeputado(segment);
   if (externalIdDeputado === null) notFound();
 
@@ -36,6 +40,9 @@ export async function generateMetadata({
     const title = `${nome}${identificacao ? ` (${identificacao})` : ""} · ${externalIdDeputado}`;
     const description = `Veja a presença de ${nome} em votações nominais, o histórico partidário, as proposições assinadas e os gastos da cota parlamentar. Perfil ${externalIdDeputado} com dados oficiais da Câmara dos Deputados.`;
     const canonical = buildDeputadoHref(externalIdDeputado, nome);
+    if (`/deputados/${segment}` !== canonical) {
+      permanentRedirect(buildRedirectHref(canonical, year));
+    }
 
     return {
       title,
@@ -53,6 +60,16 @@ export async function generateMetadata({
     if (error instanceof NotFoundError) notFound();
     throw error;
   }
+}
+
+function buildRedirectHref(
+  canonicalPath: string,
+  year: string | string[] | undefined,
+): string {
+  const query = new URLSearchParams();
+  const selectedYear = Array.isArray(year) ? year[0] : year;
+  if (selectedYear !== undefined) query.set("year", selectedYear);
+  return `${canonicalPath}${query.size > 0 ? `?${query}` : ""}`;
 }
 
 export default async function DeputadoPerfilPage({
@@ -79,10 +96,7 @@ export default async function DeputadoPerfilPage({
   const nome = nomePublicoLabel(deputado);
   const canonicalPath = buildDeputadoHref(externalIdDeputado, nome);
   if (`/deputados/${segment}` !== canonicalPath) {
-    const query = new URLSearchParams();
-    const selectedYear = Array.isArray(year) ? year[0] : year;
-    if (selectedYear !== undefined) query.set("year", selectedYear);
-    permanentRedirect(`${canonicalPath}${query.size > 0 ? `?${query}` : ""}`);
+    permanentRedirect(buildRedirectHref(canonicalPath, year));
   }
 
   const initialYear = parseDeputadoPerfilYear(
