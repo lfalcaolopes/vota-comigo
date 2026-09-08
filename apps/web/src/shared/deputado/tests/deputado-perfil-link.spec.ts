@@ -6,7 +6,10 @@ import { DeputadoPerfilLink } from "../deputado-perfil-link";
 
 function render(externalIdDeputado: number): string {
   return renderToStaticMarkup(
-    createElement(DeputadoPerfilLink, { externalIdDeputado }),
+    createElement(DeputadoPerfilLink, {
+      externalIdDeputado,
+      nomePublico: "Maria da Silva",
+    }),
   );
 }
 
@@ -17,7 +20,7 @@ describe("DeputadoPerfilLink", () => {
       const html = render(220593);
 
       // Assert
-      expect(html).toContain('href="/deputados/220593"');
+      expect(html).toContain('href="/deputados/220593-maria-da-silva"');
     });
 
     it("opens the profile in a new tab without leaking the opener", () => {

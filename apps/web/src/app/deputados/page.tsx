@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import { DeputadosFeed } from "@/features/deputados";
 import {
+  DeputadosDirectory,
+  discovery,
   feed,
   partidosDisponiveis,
   parseDeputadosFeedUrlState,
@@ -24,12 +26,17 @@ export default async function DeputadosPage({
 }) {
   const { query, ...filtros } = parseDeputadosFeedUrlState(await searchParams);
 
-  const [{ items, total }, { items: ufs }, { items: partidos }] =
-    await Promise.all([
-      feed(20, 0, query, filtros),
-      ufsDisponiveis(),
-      partidosDisponiveis(),
-    ]);
+  const [
+    { items, total },
+    { items: ufs },
+    { items: partidos },
+    { items: deputados },
+  ] = await Promise.all([
+    feed(20, 0, query, filtros),
+    ufsDisponiveis(),
+    partidosDisponiveis(),
+    discovery(),
+  ]);
 
   return (
     <main className="min-h-screen w-full min-w-0 overflow-x-hidden bg-bg text-ink">
@@ -42,6 +49,7 @@ export default async function DeputadosPage({
           total={total}
           ufs={ufs}
         />
+        <DeputadosDirectory deputados={deputados} />
       </div>
     </main>
   );

@@ -45,6 +45,22 @@ describe("apiGet", () => {
         "http://localhost:3001/proposicoes/feed",
       );
     });
+
+    it("forwards cache settings when the caller provides them", async () => {
+      // Arrange
+      const fetchSpy = mockFetch({ ok: true, json: () => ({}) });
+      vi.stubGlobal("fetch", fetchSpy);
+      const init = { next: { revalidate: 86_400 } };
+
+      // Act
+      await apiGet("/deputados/discovery", init);
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "http://localhost:3001/deputados/discovery",
+        init,
+      );
+    });
   });
 
   describe("when the response is a 404", () => {

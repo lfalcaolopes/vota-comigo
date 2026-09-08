@@ -2,6 +2,7 @@ export {
   ceap,
   comparativoDeputados,
   discursos,
+  discovery,
   feed,
   orgaos,
   partidosDisponiveis,
@@ -74,7 +75,14 @@ export { DeputadoBreadcrumb } from "./deputado-breadcrumb";
 export { DeputadoAvatar } from "./deputado-avatar";
 export { AtividadeStatus } from "./atividade-status";
 export { DeputadoPerfilLink } from "./deputado-perfil-link";
+export {
+  buildDeputadoHref,
+  parseExternalIdDeputado,
+  toDeputadoSlug,
+} from "./deputado-url";
 export { DeputadoRow } from "./deputado-row";
+export { DeputadosDirectory } from "./deputados-directory";
+export { buildDeputadoJsonLd } from "./deputado-json-ld";
 export { DeputadoPartidoControl } from "./deputado-partido-control";
 export { DeputadoUfControl } from "./deputado-uf-control";
 export { DeputadoSexoControl } from "./deputado-sexo-control";

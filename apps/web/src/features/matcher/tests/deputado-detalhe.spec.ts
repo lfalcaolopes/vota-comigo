@@ -129,7 +129,7 @@ describe("DeputadoDetalhe", () => {
       );
 
       // Assert
-      expect(html).toContain('href="/deputados/220593"');
+      expect(html).toContain('href="/deputados/220593-maria-da-silva"');
       expect(html).toContain('target="_blank"');
       expect(html).toContain("Ver perfil do deputado");
     });

@@ -6,6 +6,7 @@ import type {
   DeputadoOrgaosResponse,
   DeputadoProposicoesAssinadasResponse,
   DeputadosFeedResponse,
+  DeputadosDiscoveryResponse,
   PartidosDisponiveisResponse,
   UfsDisponiveisResponse,
 } from "@vota-comigo/shared-types";
@@ -31,6 +32,12 @@ export function feed(
   params.set("offset", String(offset));
 
   return apiGet<DeputadosFeedResponse>(`/deputados/feed?${params.toString()}`);
+}
+
+export function discovery(): Promise<DeputadosDiscoveryResponse> {
+  return apiGet<DeputadosDiscoveryResponse>("/deputados/discovery", {
+    next: { revalidate: 86_400 },
+  });
 }
 
 export function ufsDisponiveis(): Promise<UfsDisponiveisResponse> {

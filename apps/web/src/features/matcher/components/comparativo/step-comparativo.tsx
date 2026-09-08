@@ -16,6 +16,7 @@ import {
   ComparativoDeputados,
   CopyDeputadosButton,
   DeputadoAvatar,
+  buildDeputadoHref,
   type DeputadoTextItem,
 } from "@/shared/deputado";
 import { nomePublicoLabel } from "@/shared/deputado/presentation";
@@ -227,7 +228,10 @@ function ComparativoDeputadoHeader({
           <div className="min-w-0">
             <TitleLink
               className="block line-clamp-2 text-sm font-[650]"
-              href={`/deputados/${deputado.deputado.externalIdDeputado}`}
+              href={buildDeputadoHref(
+                deputado.deputado.externalIdDeputado,
+                deputado.nome,
+              )}
             >
               {deputado.nome ?? "Sem nome"}
             </TitleLink>
@@ -396,7 +400,10 @@ function ComparativoMobileDeputadoVoto({
         <div className="min-w-0 flex-1">
           <TitleLink
             className="block line-clamp-2 text-sm font-[650] leading-snug"
-            href={`/deputados/${deputado.deputado.externalIdDeputado}`}
+            href={buildDeputadoHref(
+              deputado.deputado.externalIdDeputado,
+              deputado.nome,
+            )}
           >
             {deputado.nome ?? "Sem nome"}
           </TitleLink>

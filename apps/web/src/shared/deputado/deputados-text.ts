@@ -1,6 +1,7 @@
 import { SITE_NAME, siteUrl } from "@/shared/lib/site";
 
 import { formatData, formatPercentual, nomePublicoLabel } from "./presentation";
+import { buildDeputadoHref } from "./deputado-url";
 
 const TITULO = `${SITE_NAME} — deputados de interesse`;
 
@@ -35,7 +36,10 @@ function toCabecalho(contexto: string | null, salvoEm: Date): string {
 
 function toEntrada(deputado: DeputadoTextItem): string {
   const nome = nomePublicoLabel({ nomePublico: deputado.nome });
-  const href = `${siteUrl}/deputados/${deputado.externalIdDeputado}`;
+  const href = `${siteUrl}${buildDeputadoHref(
+    deputado.externalIdDeputado,
+    nome,
+  )}`;
 
   return `- ${nome}${toIdentificacao(deputado)}${toMetrica(deputado)}\n  ${href}`;
 }

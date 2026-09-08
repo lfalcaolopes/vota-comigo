@@ -151,7 +151,7 @@ describe("grade do comparativo de deputados", () => {
       const grid = buildComparativoDeputadosGrid(data);
 
       // Assert
-      expect(grid.columns[0].perfilHref).toBe("/deputados/2");
+      expect(grid.columns[0].perfilHref).toBe("/deputados/2-deputado-2");
     });
 
     it("rotula as métricas da janela sem sufixo de ano", () => {
@@ -241,7 +241,7 @@ describe("grade do comparativo de deputados", () => {
           tetoCents: 140_000_000,
         },
         link: {
-          href: "/deputados/1?year=2024#gastos",
+          href: "/deputados/1-deputado-1?year=2024#gastos",
           label: "Ver mais detalhes no perfil",
         },
         lacuna: false,
@@ -400,7 +400,7 @@ describe("grade do comparativo de deputados", () => {
 
       // Assert
       expect(rowById(grid, "cota").cells[0].link?.href).toBe(
-        "/deputados/1?year=2026#gastos",
+        "/deputados/1-deputado-1?year=2026#gastos",
       );
     });
   });
@@ -452,7 +452,7 @@ describe("grade do comparativo de deputados", () => {
       expect(rowById(grid, "cota").cells[0]).toMatchObject({
         value: "Sem gastos no período",
         link: {
-          href: "/deputados/1?year=2024#gastos",
+          href: "/deputados/1-deputado-1?year=2024#gastos",
           label: "Ver mais detalhes no perfil",
         },
       });

@@ -25,8 +25,9 @@ export class EmptyQueryError extends Error {
   }
 }
 
-export async function apiGet<T>(path: string): Promise<T> {
-  const res = await fetch(API_BASE_URL + path);
+export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
+  const url = API_BASE_URL + path;
+  const res = init === undefined ? await fetch(url) : await fetch(url, init);
 
   if (res.status === 404) {
     throw new NotFoundError();

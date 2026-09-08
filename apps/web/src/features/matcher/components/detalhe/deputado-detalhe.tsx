@@ -44,7 +44,10 @@ export function DeputadoDetalhe({
             </p>
           </div>
         </div>
-        <DeputadoPerfilLink externalIdDeputado={deputado.externalIdDeputado} />
+        <DeputadoPerfilLink
+          externalIdDeputado={deputado.externalIdDeputado}
+          nomePublico={deputado.nome}
+        />
       </div>
 
       <DetalheMetricas metrics={metrics} />

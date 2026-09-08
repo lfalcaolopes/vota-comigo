@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense, type ReactNode } from "react";
 
 import {
+  buildDeputadoHref,
   DeputadoRow,
   FILTROS_PADRAO,
   buildDeputadosFeedHref,
@@ -120,7 +121,7 @@ export function AmostraList({ items }: { items: readonly DeputadoCard[] }) {
       {items.map((card) => (
         <DeputadoRow
           card={card}
-          href={`/deputados/${card.externalIdDeputado}`}
+          href={buildDeputadoHref(card.externalIdDeputado, card.nomePublico)}
           key={card.externalIdDeputado}
           showUsoCota
         />

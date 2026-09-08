@@ -1,6 +1,6 @@
 import type { DeputadoCard } from "@vota-comigo/shared-types";
 
-import { DeputadoRow } from "@/shared/deputado";
+import { DeputadoRow, buildDeputadoHref } from "@/shared/deputado";
 import { Button, EmptyState, InlineMessage, SkeletonRows } from "@/shared/ui";
 
 import type {
@@ -112,7 +112,9 @@ export function DeputadosFeedList({
               card={card}
               showUsoCota={showUsoCota}
               href={
-                selection ? undefined : `/deputados/${card.externalIdDeputado}`
+                selection
+                  ? undefined
+                  : buildDeputadoHref(card.externalIdDeputado, card.nomePublico)
               }
               key={card.externalIdDeputado}
               selection={

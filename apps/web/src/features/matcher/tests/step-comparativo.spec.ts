@@ -353,7 +353,7 @@ describe("StepComparativo", () => {
       expect(html).toContain("Deputado 20");
       expect(html).toContain("PP · SP");
       expect(html).toContain("Em exercício");
-      expect(html).toContain('href="/deputados/20"');
+      expect(html).toContain('href="/deputados/20-deputado-20"');
       expect(html).toContain('target="_blank"');
       expect(html).toContain('rel="noopener noreferrer"');
       expect(html).toContain("abre em nova aba");

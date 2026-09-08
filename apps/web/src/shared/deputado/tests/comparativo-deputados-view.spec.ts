@@ -149,7 +149,7 @@ describe("ComparativoDeputadosView", () => {
       expect(html).toContain("Propostas assinadas");
       expect(html).toContain("Comissões e órgãos");
       expect(html).toContain("Gasto da cota parlamentar");
-      expect(html).toContain('href="/deputados/1"');
+      expect(html).toContain('href="/deputados/1-deputado-1"');
       expect(html).toContain('target="_blank"');
       expect(html).toContain("abre em nova aba");
     });
@@ -202,7 +202,7 @@ describe("ComparativoDeputadosView", () => {
       });
 
       // Assert
-      expect(html).toContain('href="/deputados/1?year=2024#gastos"');
+      expect(html).toContain('href="/deputados/1-deputado-1?year=2024#gastos"');
       expect(html).toContain("Ver mais detalhes no perfil");
       expect(html).not.toContain("2023 · 110%");
     });

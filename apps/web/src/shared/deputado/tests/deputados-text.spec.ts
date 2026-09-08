@@ -50,10 +50,10 @@ describe("buildDeputadosText", () => {
           "Salvo em 15/08/2026 · 12 propostas · São Paulo",
           "",
           "- Fulana de Tal (PT-SP) — 83% de concordância",
-          `  ${siteUrl}/deputados/204521`,
+          `  ${siteUrl}/deputados/204521-fulana-de-tal`,
           "",
           "- Beltrano Silva (PSOL-RJ) — 79% de concordância",
-          `  ${siteUrl}/deputados/178903`,
+          `  ${siteUrl}/deputados/178903-beltrano-silva`,
         ].join("\n"),
       );
     });
@@ -87,7 +87,7 @@ describe("buildDeputadosText", () => {
           "Salvo em 15/08/2026",
           "",
           "- Fulana de Tal (PT-SP)",
-          `  ${siteUrl}/deputados/204521`,
+          `  ${siteUrl}/deputados/204521-fulana-de-tal`,
         ].join("\n"),
       );
     });
@@ -165,7 +165,7 @@ describe("buildDeputadosText", () => {
 
       // Assert
       expect(texto).toContain(
-        `${siteUrl}/deputados/204521\n\n- Beltrano Silva`,
+        `${siteUrl}/deputados/204521-fulana-de-tal\n\n- Beltrano Silva`,
       );
       expect(texto).not.toMatch(/\n\n\n/);
     });

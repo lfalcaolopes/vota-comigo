@@ -52,7 +52,7 @@ describe("listagem de deputados", () => {
       const html = render();
 
       // Assert
-      expect(html).toContain('href="/deputados/220593"');
+      expect(html).toContain('href="/deputados/220593-maria-da-silva"');
       expect(html).not.toContain('type="checkbox"');
     });
   });
@@ -67,7 +67,7 @@ describe("listagem de deputados", () => {
       });
 
       // Assert
-      expect(html).not.toContain('href="/deputados/220593"');
+      expect(html).not.toContain('href="/deputados/220593-maria-da-silva"');
       expect(html).toContain(
         'aria-label="Selecionar Maria da Silva para comparação"',
       );

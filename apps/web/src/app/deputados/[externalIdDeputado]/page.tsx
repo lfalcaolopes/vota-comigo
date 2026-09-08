@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 
 import { NotFoundError } from "@/shared/lib/api-client";
 import {
   DeputadoBreadcrumb,
   DeputadoPerfil,
+  buildDeputadoHref,
+  buildDeputadoJsonLd,
   nomePublicoLabel,
   parseDeputadoPerfilYear,
+  parseExternalIdDeputado,
   perfil,
 } from "@/shared/deputado";
 
@@ -20,18 +23,35 @@ type PageProps = {
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const { externalIdDeputado } = await params;
+  const { externalIdDeputado: segment } = await params;
+  const externalIdDeputado = parseExternalIdDeputado(segment);
+  if (externalIdDeputado === null) notFound();
 
   try {
-    const deputado = await perfil(Number(externalIdDeputado));
+    const deputado = await perfil(externalIdDeputado);
+    const nome = nomePublicoLabel(deputado);
+    const siglaPartido = deputado.snapshotPublico?.siglaPartido;
+    const siglaUf = deputado.snapshotPublico?.siglaUf;
+    const identificacao = [siglaPartido, siglaUf].filter(Boolean).join("-");
+    const title = `${nome}${identificacao ? ` (${identificacao})` : ""} · ${externalIdDeputado}`;
+    const description = `Veja a presença de ${nome} em votações nominais, o histórico partidário, as proposições assinadas e os gastos da cota parlamentar. Perfil ${externalIdDeputado} com dados oficiais da Câmara dos Deputados.`;
+    const canonical = buildDeputadoHref(externalIdDeputado, nome);
+
     return {
-      title: nomePublicoLabel(deputado),
+      title,
+      description,
+      alternates: { canonical },
+      openGraph: {
+        type: "profile",
+        locale: "pt_BR",
+        title,
+        description,
+        url: canonical,
+      },
     };
   } catch (error) {
-    if (error instanceof NotFoundError) {
-      notFound();
-    }
-    return { title: "Deputado" };
+    if (error instanceof NotFoundError) notFound();
+    throw error;
   }
 }
 
@@ -39,14 +59,16 @@ export default async function DeputadoPerfilPage({
   params,
   searchParams,
 }: PageProps) {
-  const [{ externalIdDeputado }, { year }] = await Promise.all([
+  const [{ externalIdDeputado: segment }, { year }] = await Promise.all([
     params,
     searchParams,
   ]);
+  const externalIdDeputado = parseExternalIdDeputado(segment);
+  if (externalIdDeputado === null) notFound();
 
   let deputado;
   try {
-    deputado = await perfil(Number(externalIdDeputado));
+    deputado = await perfil(externalIdDeputado);
   } catch (error) {
     if (error instanceof NotFoundError) {
       notFound();
@@ -54,17 +76,33 @@ export default async function DeputadoPerfilPage({
     throw error;
   }
 
+  const nome = nomePublicoLabel(deputado);
+  const canonicalPath = buildDeputadoHref(externalIdDeputado, nome);
+  if (`/deputados/${segment}` !== canonicalPath) {
+    const query = new URLSearchParams();
+    const selectedYear = Array.isArray(year) ? year[0] : year;
+    if (selectedYear !== undefined) query.set("year", selectedYear);
+    permanentRedirect(`${canonicalPath}${query.size > 0 ? `?${query}` : ""}`);
+  }
+
   const initialYear = parseDeputadoPerfilYear(
     year,
     deputado.defaultYear,
     deputado.validYearRange,
   );
+  const jsonLd = buildDeputadoJsonLd(deputado);
 
   return (
     <main className="min-h-screen w-full min-w-0 overflow-x-hidden bg-bg text-ink">
       <div className="mx-auto grid w-full min-w-0 max-w-256 gap-8 px-4 pt-8 pb-16 md:pt-12">
         <DeputadoBreadcrumb perfil={deputado} />
         <DeputadoPerfil initialYear={initialYear} perfil={deputado} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          }}
+          type="application/ld+json"
+        />
       </div>
     </main>
   );

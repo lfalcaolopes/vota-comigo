@@ -21,6 +21,7 @@ import {
   toPresencaAmostrasLabel,
   toUltimaLegislaturaLabel,
 } from "./presentation";
+import { buildDeputadoHref } from "./deputado-url";
 
 export const RECORTE_PRESENCA_COMPARATIVO =
   "Considera as votações de plenário da legislatura mostrada na coluna.";
@@ -136,7 +137,13 @@ export function buildComparativoDeputadosGrid(
         hint: null,
         help: COTA_PARLAMENTAR_HELP,
         cells: response.items.map((item) =>
-          toRowCell(item, () => toCotaCell(item.cota, item.externalIdDeputado)),
+          toRowCell(item, () =>
+            toCotaCell(
+              item.cota,
+              item.externalIdDeputado,
+              nomePublicoLabel(item),
+            ),
+          ),
         ),
       },
     ],
@@ -241,7 +248,10 @@ function toColumn(item: ComparativoDeputado): ComparativoDeputadosColumn {
   return {
     externalIdDeputado: item.externalIdDeputado,
     nome: nomePublicoLabel(item),
-    perfilHref: `/deputados/${item.externalIdDeputado}`,
+    perfilHref: buildDeputadoHref(
+      item.externalIdDeputado,
+      nomePublicoLabel(item),
+    ),
     siglaPartido: item.snapshotPublico?.siglaPartido ?? "—",
     siglaUf: item.snapshotPublico?.siglaUf ?? "—",
     urlFoto: item.snapshotPublico?.urlFoto ?? null,
@@ -394,12 +404,13 @@ function toOrgaosCell(
 function toCotaCell(
   cota: ComparativoCota | null,
   externalIdDeputado: number,
+  nomePublico: string,
 ): CellContent {
   if (cota === null) {
     return { value: "Fora do período coberto", detail: null, lacuna: true };
   }
 
-  const link = toCotaPerfilLink(cota, externalIdDeputado);
+  const link = toCotaPerfilLink(cota, externalIdDeputado, nomePublico);
 
   if (cota.status === "sem-comparacao") {
     return {
@@ -529,12 +540,16 @@ function toCotaTotalLabel(
 function toCotaPerfilLink(
   cota: ComparativoCota,
   externalIdDeputado: number,
+  nomePublico: string,
 ): ComparativoDeputadosCellLink | null {
   const ultimoAno = cota.anos.at(-1);
   if (ultimoAno === undefined) return null;
 
   return {
-    href: `/deputados/${externalIdDeputado}?year=${ultimoAno.year}#gastos`,
+    href: `${buildDeputadoHref(
+      externalIdDeputado,
+      nomePublico,
+    )}?year=${ultimoAno.year}#gastos`,
     label: "Ver mais detalhes no perfil",
   };
 }
