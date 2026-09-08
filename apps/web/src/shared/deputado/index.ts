@@ -69,6 +69,7 @@ export {
 } from "./use-comparativo-deputados";
 export { usePartidosDisponiveis } from "./use-partidos-disponiveis";
 export { DeputadoPerfil } from "./deputado-perfil";
+export { DeputadoPerfilScrollReset } from "./deputado-perfil-scroll-reset";
 export { parseDeputadoPerfilYear } from "./deputado-perfil-year-url";
 export { DeputadoPerfilSkeleton } from "./deputado-perfil-skeleton";
 export { DeputadoBreadcrumb } from "./deputado-breadcrumb";

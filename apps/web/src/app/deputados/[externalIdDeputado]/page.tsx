@@ -5,6 +5,7 @@ import { NotFoundError } from "@/shared/lib/api-client";
 import {
   DeputadoBreadcrumb,
   DeputadoPerfil,
+  DeputadoPerfilScrollReset,
   buildDeputadoHref,
   buildDeputadoJsonLd,
   nomePublicoLabel,
@@ -108,6 +109,7 @@ export default async function DeputadoPerfilPage({
 
   return (
     <main className="min-h-screen w-full min-w-0 overflow-x-hidden bg-bg text-ink">
+      <DeputadoPerfilScrollReset />
       <div className="mx-auto grid w-full min-w-0 max-w-256 gap-8 px-4 pt-8 pb-16 md:pt-12">
         <DeputadoBreadcrumb perfil={deputado} />
         <DeputadoPerfil initialYear={initialYear} perfil={deputado} />
