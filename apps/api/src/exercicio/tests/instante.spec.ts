@@ -1,4 +1,4 @@
-import { toEpochMillis } from '../rules/instante';
+import { toEpochMillis, toIsoUtc } from '../rules/instante';
 
 describe('toEpochMillis', () => {
   describe('when the value comes from a Postgres timestamptz column', () => {
@@ -70,6 +70,60 @@ describe('toEpochMillis', () => {
 
       // Assert
       expect(epoch).toBeNull();
+    });
+  });
+});
+
+describe('toIsoUtc', () => {
+  describe('when the value comes from a Postgres timestamptz column', () => {
+    it('normalizes the space-separated format into ISO 8601', () => {
+      // Arrange
+      const timestamptz = '2026-08-21 05:51:47.06+00';
+
+      // Act
+      const iso = toIsoUtc(timestamptz);
+
+      // Assert
+      expect(iso).toBe('2026-08-21T05:51:47.060Z');
+    });
+  });
+
+  describe('when the value carries a non-UTC offset', () => {
+    it('shifts the instant to UTC instead of keeping the local offset', () => {
+      // Arrange
+      const timestamptz = '2026-08-21 02:51:47-03';
+
+      // Act
+      const iso = toIsoUtc(timestamptz);
+
+      // Assert
+      expect(iso).toBe('2026-08-21T05:51:47.000Z');
+    });
+  });
+
+  describe('when the value is already ISO 8601', () => {
+    it('keeps the same instant', () => {
+      // Arrange
+      const iso8601 = '2026-08-21T05:51:47.060Z';
+
+      // Act
+      const iso = toIsoUtc(iso8601);
+
+      // Assert
+      expect(iso).toBe('2026-08-21T05:51:47.060Z');
+    });
+  });
+
+  describe('when the value is not a parseable instant', () => {
+    it('returns null instead of an Invalid Date that would reach the contract', () => {
+      // Arrange
+      const invalido = 'sem data';
+
+      // Act
+      const iso = toIsoUtc(invalido);
+
+      // Assert
+      expect(iso).toBeNull();
     });
   });
 });

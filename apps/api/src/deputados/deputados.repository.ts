@@ -16,6 +16,7 @@ import {
 } from 'drizzle-orm';
 import { alias, type PgColumn } from 'drizzle-orm/pg-core';
 
+import { toIsoUtc } from '@/exercicio/rules/instante';
 import type { DrizzleDatabase } from '@/shared/database/client';
 import {
   cotaCategoria,
@@ -273,9 +274,11 @@ export function createDeputadosRepository(
           .from(ingestionStepRun),
       ]);
 
+      const executedAt = ingestion.at(0)?.lastIngestedAt ?? null;
+
       return {
         items,
-        lastIngestedAt: ingestion.at(0)?.lastIngestedAt ?? null,
+        lastIngestedAt: executedAt === null ? null : toIsoUtc(executedAt),
       };
     },
 

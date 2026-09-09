@@ -478,6 +478,36 @@ describe('GET /deputados/feed', () => {
   });
 });
 
+async function buildDiscoveryApp(
+  lastIngestedAt: string | null,
+): Promise<INestApplication> {
+  const moduleRef = await Test.createTestingModule({
+    controllers: [DeputadosController],
+    providers: [
+      DeputadosService,
+      {
+        provide: CAMARA_PAGINATED_CLIENT,
+        useValue: {
+          fetchAll: async () => {
+            throw new Error('should not call the Câmara');
+          },
+        },
+      },
+      {
+        provide: DEPUTADOS_REPOSITORY,
+        useValue: {
+          ...fakeRepository(new Map([[220593, source()]])),
+          loadDeputadosDiscovery: async () => ({ items: [], lastIngestedAt }),
+        },
+      },
+    ],
+  }).compile();
+
+  const app = moduleRef.createNestApplication();
+  await app.init();
+  return app;
+}
+
 describe('GET /deputados/discovery', () => {
   it('returns the crawlable deputy identity list and ingestion timestamp', async () => {
     // Arrange
@@ -503,6 +533,23 @@ describe('GET /deputados/discovery', () => {
       lastIngestedAt: '2026-09-08T12:00:00.000Z',
     });
     await app.close();
+  });
+
+  describe('quando o repositório devolve um instante fora do contrato', () => {
+    it('falha em vez de servir uma data que o Google recusa no sitemap', async () => {
+      // Arrange
+      const app = await buildDiscoveryApp('2026-08-21 05:51:47.06+00');
+
+      // Act
+      const response = await request(getTestServer(app)).get(
+        '/deputados/discovery',
+      );
+
+      // Assert
+      expect(response.status).toBe(500);
+      expect(response.text).not.toContain('2026-08-21 05:51:47.06+00');
+      await app.close();
+    });
   });
 });
 

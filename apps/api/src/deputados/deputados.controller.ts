@@ -12,6 +12,7 @@ import {
   deputadoFaixaEtariaSchema,
   deputadoFeedSortSchema,
   deputadoSexoSchema,
+  deputadosDiscoveryResponseSchema,
   type DeputadoDiscursosResponse,
   type DeputadoCeapResponse,
   type DeputadoFaixaEtaria,
@@ -162,7 +163,12 @@ export class DeputadosController {
   @Get('discovery')
   @CacheControl(CACHE_REFERENCE)
   async discovery(): Promise<DeputadosDiscoveryResponse> {
-    return this.service.discovery();
+    // Consumido por robôs de indexação, que aceitam qualquer coisa em silêncio:
+    // uma resposta fora do contrato precisa falhar aqui, não virar <lastmod>
+    // inválido no sitemap.
+    return deputadosDiscoveryResponseSchema.parse(
+      await this.service.discovery(),
+    );
   }
 
   @Get('feed/ufs')
