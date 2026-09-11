@@ -24,6 +24,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${siteUrl}/deputados/diretorio`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
       url: `${siteUrl}/proposicoes`,
       lastModified,
       changeFrequency: "daily",

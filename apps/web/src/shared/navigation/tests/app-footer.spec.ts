@@ -15,6 +15,16 @@ describe("rodapé da aplicação", () => {
     });
   });
 
+  describe("na seção Navegar", () => {
+    it("oferece acesso ao diretório completo de deputados", () => {
+      // Act
+      const html = renderToStaticMarkup(createElement(AppFooter));
+
+      // Assert
+      expect(html).toContain('href="/deputados/diretorio"');
+    });
+  });
+
   describe("na seção Entender", () => {
     it("oferece acesso à metodologia e à privacidade", () => {
       // Act
