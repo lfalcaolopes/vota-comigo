@@ -14,9 +14,7 @@ export function HomeHero() {
               Veja quais deputados votam como você.
             </h1>
             <p className="max-w-[54ch] text-lg leading-normal text-pretty text-muted">
-              O Quem Vota Comigo compara suas posições com os votos que os
-              deputados federais registraram nas votações da Câmara. A mesma
-              fonte mostra o que cada mandato gastou.
+              Compare suas posições com os votos registrados na Câmara.
             </p>
           </div>
 

@@ -8,7 +8,7 @@ export function HomeComparar() {
           className="max-w-[60ch] text-2xl leading-tight font-[700] tracking-[-0.01em] text-balance text-ink md:text-3xl"
           id="home-comparar"
         >
-          Escolha por onde começar
+          Compare antes de escolher
         </h2>
 
         <div className="grid gap-8 md:grid-cols-2 md:gap-10">

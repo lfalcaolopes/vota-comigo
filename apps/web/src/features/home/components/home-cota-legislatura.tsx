@@ -17,8 +17,6 @@ import { Skeleton } from "@/shared/ui";
 
 import { CotaRevealScope, CotaTotalReveal } from "./home-cota-reveal";
 
-const contagemFormatter = new Intl.NumberFormat("pt-BR");
-
 export function HomeCotaLegislatura() {
   return (
     <Suspense fallback={<CotaLegislaturaSkeleton />}>
@@ -43,7 +41,7 @@ export function CotaLegislaturaSection({
   );
 
   return (
-    <SectionShell anoInicio={cota.periodStart.slice(0, 4)}>
+    <SectionShell>
       <CotaRevealScope className="grid gap-8 lg:grid-cols-[minmax(0,21rem)_minmax(0,1fr)] lg:gap-12">
         <div className="grid content-start gap-3">
           <CotaTotalReveal
@@ -53,12 +51,6 @@ export function CotaLegislaturaSection({
           <p className="text-sm leading-normal text-muted">
             Período analisado: {toUsoCotaPeriodoLabel(cota)}
           </p>
-          <p className="text-sm leading-normal text-muted">
-            Deputados considerados:{" "}
-            {contagemFormatter.format(cota.deputadoCount)} (titulares e
-            suplentes)
-          </p>
-          <CotaDefinicao />
         </div>
 
         <div className="grid min-w-0 gap-4">
@@ -137,37 +129,25 @@ function RubricaItem({
   );
 }
 
-function SectionShell({
-  anoInicio,
-  children,
-}: {
-  anoInicio: string | null;
-  children: ReactNode;
-}) {
+function SectionShell({ children }: { children: ReactNode }) {
   return (
     <section aria-labelledby="home-cota" className="border-b border-border">
       <div className="mx-auto grid w-full min-w-0 max-w-5xl gap-8 px-4 py-12 md:py-16">
-        <h2
-          className="max-w-[30ch] text-2xl leading-tight font-[700] tracking-[-0.01em] text-balance text-ink"
-          id="home-cota"
-        >
-          Quanto os deputados gastaram de cota parlamentar
-          {anoInicio === null ? null : ` desde ${anoInicio}`}
-        </h2>
+        <div className="grid max-w-[60ch] gap-3">
+          <h2
+            className="text-2xl leading-tight font-[700] tracking-[-0.01em] text-balance text-ink"
+            id="home-cota"
+          >
+            O uso da cota parlamentar
+          </h2>
+          <p className="text-base leading-normal text-muted">
+            Quem você escolhe também decide como usar esses recursos públicos.
+          </p>
+        </div>
 
         {children}
       </div>
     </section>
-  );
-}
-
-function CotaDefinicao() {
-  return (
-    <p className="text-base leading-normal text-muted">
-      Todo deputado tem um valor mensal para bancar o mandato: passagem aérea,
-      aluguel de escritório, combustível, divulgação. É a cota parlamentar, paga
-      com dinheiro público e declarada despesa por despesa.
-    </p>
   );
 }
 
@@ -193,7 +173,7 @@ async function loadCota(): Promise<CotaLegislaturaResponse | null> {
 
 function CotaLegislaturaSkeleton() {
   return (
-    <SectionShell anoInicio={null}>
+    <SectionShell>
       <div
         aria-label="Carregando os gastos da cota parlamentar"
         className="grid gap-8 lg:grid-cols-[minmax(0,21rem)_minmax(0,1fr)] lg:gap-12"
@@ -202,7 +182,6 @@ function CotaLegislaturaSkeleton() {
         <div className="grid content-start gap-3">
           <Skeleton className="h-9 w-[15rem] max-w-full rounded-md" />
           <Skeleton className="h-3 w-[12rem] max-w-full rounded-full" />
-          <CotaDefinicao />
         </div>
         <div className="grid min-w-0 gap-4">
           {Array.from({ length: 6 }, (_, index) => (

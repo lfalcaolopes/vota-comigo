@@ -20,12 +20,9 @@ import { toUfDoVisitante } from "../lib/uf-do-visitante";
 const TAMANHO_AMOSTRA = 3;
 const ESTADOS_EXEMPLO = ["SP", "MG", "RJ", "BA", "RS"] as const;
 
-const contagemFormatter = new Intl.NumberFormat("pt-BR");
-
 type Amostra = {
   items: readonly DeputadoCard[];
   siglaUf: string | null;
-  total: number | null;
 };
 
 function estadoHref(siglaUf: string): string {
@@ -47,11 +44,9 @@ export function HomeDeputados() {
 export function DeputadosSection({
   children,
   siglaUf,
-  total,
 }: {
   children?: ReactNode;
   siglaUf: string | null;
-  total: number | null;
 }) {
   return (
     <section
@@ -65,14 +60,11 @@ export function DeputadosSection({
               className="text-2xl leading-tight font-[700] tracking-[-0.01em] text-balance text-ink"
               id="home-deputados"
             >
-              Quem são os{" "}
-              {total === null ? null : `${contagemFormatter.format(total)} `}
-              deputados em exercício
+              Conheça os deputados além dos votos
             </h2>
             <p className="text-base leading-normal text-muted">
-              Cada deputado tem uma página com o que o mandato registrou:
-              presença nas votações, propostas assinadas, comissões que integra
-              e o gasto da cota parlamentar.
+              Consulte presença, propostas assinadas, comissões e uso da cota
+              parlamentar.
             </p>
           </div>
 
@@ -83,6 +75,7 @@ export function DeputadosSection({
                 {toEstadoLabel(siglaUf)}
               </ChipLink>
             ))}
+            <ChipLink href="/deputados">Outros</ChipLink>
           </div>
         </div>
 
@@ -131,49 +124,36 @@ export function AmostraList({ items }: { items: readonly DeputadoCard[] }) {
 }
 
 async function AmostraLoaded() {
-  const { items, siglaUf, total } = await loadAmostra();
+  const { items, siglaUf } = await loadAmostra();
 
   return (
-    <DeputadosSection siglaUf={siglaUf} total={total}>
+    <DeputadosSection siglaUf={siglaUf}>
       <AmostraList items={items} />
     </DeputadosSection>
   );
 }
 
-// O título conta a Câmara inteira e a janela do dia percorre só o recorte do
-// visitante, então os dois totais são buscados à parte quando há estado.
 async function loadAmostra(): Promise<Amostra> {
   try {
     const siglaUf = await loadUfDoVisitante();
     const filtros =
       siglaUf === null ? FILTROS_PADRAO : { ...FILTROS_PADRAO, ufs: [siglaUf] };
 
-    const [primeira, total] = await Promise.all([
-      feed(TAMANHO_AMOSTRA, 0, null, filtros),
-      siglaUf === null ? null : loadTotalNacional(),
-    ]);
+    const primeira = await feed(TAMANHO_AMOSTRA, 0, null, filtros);
     const offset = toOffsetAmostraDiaria(
       toDiaIndex(new Date()),
       primeira.total,
       TAMANHO_AMOSTRA,
     );
-    const amostra = {
-      siglaUf,
-      total: total ?? primeira.total,
-    };
+    const amostra = { siglaUf };
 
     if (offset === 0) return { ...amostra, items: primeira.items };
 
     const { items } = await feed(TAMANHO_AMOSTRA, offset, null, filtros);
     return { ...amostra, items };
   } catch {
-    return { items: [], siglaUf: null, total: null };
+    return { items: [], siglaUf: null };
   }
-}
-
-async function loadTotalNacional(): Promise<number> {
-  const { total } = await feed(1, 0);
-  return total;
 }
 
 // A sigla chega pela borda junto da requisição, então só entra na consulta
@@ -200,7 +180,7 @@ function recorteLabel(siglaUf: string | null): string {
 
 function AmostraSkeleton() {
   return (
-    <DeputadosSection siglaUf={null} total={null}>
+    <DeputadosSection siglaUf={null}>
       <div className="grid min-w-0 border-t border-border pt-1">
         <SkeletonRows count={TAMANHO_AMOSTRA} />
       </div>

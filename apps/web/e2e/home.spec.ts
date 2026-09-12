@@ -38,7 +38,7 @@ test.describe("home", () => {
       // Arrange
       await page.goto("/");
       const secao = page.getByRole("region", {
-        name: /^Quanto os deputados gastaram de cota parlamentar/,
+        name: "O uso da cota parlamentar",
       });
 
       // Act
@@ -50,11 +50,28 @@ test.describe("home", () => {
       await expect(page).toHaveURL(/\/deputados$/);
     });
 
+    test("apresenta os gastos antes do convite final", async ({ page }) => {
+      // Arrange / Act
+      await page.goto("/");
+      const secoes = page.locator("main > section");
+
+      // Assert
+      await expect(secoes.nth(2)).toHaveAccessibleName(
+        "Conheça os deputados além dos votos",
+      );
+      await expect(secoes.nth(3)).toHaveAccessibleName(
+        "O uso da cota parlamentar",
+      );
+      await expect(secoes.nth(4)).toHaveAccessibleName(
+        "Compare antes de escolher",
+      );
+    });
+
     test("abre uma proposta em destaque a partir da home", async ({ page }) => {
       // Arrange
       await page.goto("/");
       const secao = page.getByRole("region", {
-        name: "Quais propostas os deputados votaram",
+        name: "Os deputados votam propostas. Esses votos entram na comparação.",
       });
 
       // Act
@@ -79,15 +96,12 @@ test.describe("home", () => {
       // Act
       await page.goto("/");
       const secao = page.getByRole("region", {
-        name: /^Quem são os .*deputados em exercício$/,
+        name: "Conheça os deputados além dos votos",
       });
 
       // Assert
       await expect(secao.getByText("Deputados de Pernambuco.")).toBeVisible();
       await expect(secao.locator("article").first()).toContainText("· PE");
-      await expect(secao.getByRole("heading", { level: 2 })).toContainText(
-        /Quem são os \d{3} deputados em exercício/,
-      );
       await context.close();
     });
 
@@ -97,7 +111,7 @@ test.describe("home", () => {
       // Arrange / Act
       await page.goto("/");
       const secao = page.getByRole("region", {
-        name: /^Quem são os .*deputados em exercício$/,
+        name: "Conheça os deputados além dos votos",
       });
 
       // Assert
@@ -110,7 +124,7 @@ test.describe("home", () => {
       // Arrange
       await page.goto("/");
       const secao = page.getByRole("region", {
-        name: /^Quem são os .*deputados em exercício$/,
+        name: "Conheça os deputados além dos votos",
       });
 
       // Act

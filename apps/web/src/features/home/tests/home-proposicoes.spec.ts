@@ -9,6 +9,19 @@ function renderSection(): string {
 }
 
 describe("entrada de propostas na home", () => {
+  describe("papel na comparação", () => {
+    it("liga os votos das propostas à comparação no título", () => {
+      // Arrange / Act
+      const html = renderSection();
+
+      // Assert
+      expect(html).toContain(
+        "Os deputados votam propostas. Esses votos entram na comparação.",
+      );
+      expect(html).not.toContain("A comparação sai daqui");
+    });
+  });
+
   describe("busca por assunto", () => {
     it("referencia a busca em vez de embutir um segundo campo na home", () => {
       // Arrange / Act

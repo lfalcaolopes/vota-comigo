@@ -38,19 +38,12 @@ export function ProposicoesSection({ children }: { children: ReactNode }) {
     >
       <div className="mx-auto grid w-full min-w-0 max-w-5xl gap-10 px-4 py-12 md:py-16">
         <div className="grid min-w-0 gap-5">
-          <div className="grid max-w-[60ch] gap-3">
-            <h2
-              className="text-2xl leading-tight font-[700] tracking-[-0.01em] text-balance text-ink"
-              id="home-propostas"
-            >
-              Quais propostas os deputados votaram
-            </h2>
-            <p className="text-base leading-normal text-muted">
-              A comparação sai daqui: para cada proposta, o site usa a votação
-              que decidiu o mérito. Na lista dá para procurar pelo assunto, pelo
-              nome ou pelo número.
-            </p>
-          </div>
+          <h2
+            className="max-w-[60ch] text-2xl leading-tight font-[700] tracking-[-0.01em] text-balance text-ink"
+            id="home-propostas"
+          >
+            Os deputados votam propostas. Esses votos entram na comparação.
+          </h2>
 
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             <span className="text-sm text-muted">Comece por:</span>

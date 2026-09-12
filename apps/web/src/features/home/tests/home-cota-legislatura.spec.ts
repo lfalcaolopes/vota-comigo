@@ -74,28 +74,26 @@ describe("gastos da cota na home", () => {
       expect(html).toContain("fev/2023 – ago/2026");
     });
 
-    it("diz quantos deputados foram considerados, no formato do período", () => {
+    it("não interrompe o total com a contagem e a definição da cota", () => {
       // Arrange / Act
       const html = render(cota);
 
       // Assert
-      expect(html).toContain("Deputados considerados: 860");
-      expect(html).toContain("titulares e suplentes");
+      expect(html).not.toContain("Deputados considerados");
+      expect(html).not.toContain("Todo deputado tem um valor mensal");
     });
   });
 
-  describe("recorte no título", () => {
-    it("deriva o ano de início do dado, sem cravar", () => {
-      // Arrange
-      const outraJanela = { ...cota, periodStart: "2019-02-01" };
-
-      // Act
-      const atual = render(cota);
-      const anterior = render(outraJanela);
+  describe("papel na narrativa", () => {
+    it("liga o uso da cota à escolha de um deputado", () => {
+      // Arrange / Act
+      const html = render(cota);
 
       // Assert
-      expect(atual).toContain("desde 2023");
-      expect(anterior).toContain("desde 2019");
+      expect(html).toContain("O uso da cota parlamentar");
+      expect(html).toContain(
+        "Quem você escolhe também decide como usar esses recursos públicos.",
+      );
     });
   });
 

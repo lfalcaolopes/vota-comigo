@@ -4,40 +4,31 @@ import { describe, expect, it } from "vitest";
 
 import { AmostraList, DeputadosSection } from "../components/home-deputados";
 
-function renderSection(
-  total: number | null = 513,
-  siglaUf: string | null = null,
-): string {
+function renderSection(siglaUf: string | null = null): string {
   return renderToStaticMarkup(
-    createElement(DeputadosSection, { siglaUf, total }, null),
+    createElement(DeputadosSection, { siglaUf }, null),
   );
 }
 
 describe("entrada de deputados na home", () => {
-  describe("tamanho da Câmara", () => {
-    it("conta os deputados a partir do dado, não de um número cravado", () => {
+  describe("papel na narrativa", () => {
+    it("apresenta os dados disponíveis além dos votos", () => {
       // Arrange / Act
-      const html = renderSection(511);
+      const html = renderSection();
 
       // Assert
-      expect(html).toContain("511 deputados");
-      expect(html).not.toContain("513");
-    });
-
-    it("omite a contagem quando a lista não pôde ser carregada", () => {
-      // Arrange / Act
-      const html = renderSection(null);
-
-      // Assert
-      expect(html).toContain("deputados em exercício");
-      expect(html).not.toMatch(/\d{3} deputados/);
+      expect(html).toContain("Conheça os deputados além dos votos");
+      expect(html).toContain("presença");
+      expect(html).toContain("propostas assinadas");
+      expect(html).toContain("comissões");
+      expect(html).toContain("uso da cota parlamentar");
     });
   });
 
   describe("recorte da amostra", () => {
     it("nomeia o estado dos deputados que está mostrando", () => {
       // Arrange / Act
-      const html = renderSection(513, "PE");
+      const html = renderSection("PE");
 
       // Assert
       expect(html).toContain("Deputados de Pernambuco");
@@ -45,7 +36,7 @@ describe("entrada de deputados na home", () => {
 
     it("diz que o recorte é nacional quando não há estado identificado", () => {
       // Arrange / Act
-      const html = renderSection(513, null);
+      const html = renderSection(null);
 
       // Assert
       expect(html).toContain("Deputados de todo o Brasil");
@@ -53,7 +44,7 @@ describe("entrada de deputados na home", () => {
 
     it("não explica de onde veio o estado", () => {
       // Arrange / Act
-      const html = renderSection(513, "SP");
+      const html = renderSection("SP");
 
       // Assert
       expect(html).not.toContain("acesso");
@@ -68,6 +59,14 @@ describe("entrada de deputados na home", () => {
 
       // Assert
       expect(html).toContain('href="/deputados?uf=SP"');
+    });
+
+    it("leva de Outros para a lista sem filtro de estado", () => {
+      // Arrange / Act
+      const html = renderSection();
+
+      // Assert
+      expect(html).toMatch(/<a[^>]*href="\/deputados"[^>]*>Outros<\/a>/);
     });
 
     it("não embute um segundo campo de busca na home", () => {
@@ -86,7 +85,7 @@ describe("entrada de deputados na home", () => {
       const html = renderToStaticMarkup(
         createElement(
           DeputadosSection,
-          { siglaUf: null, total: 513 },
+          { siglaUf: null },
           createElement("p", null, "amostra-da-home"),
         ),
       );

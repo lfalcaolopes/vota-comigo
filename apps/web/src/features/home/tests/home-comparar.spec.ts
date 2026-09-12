@@ -9,6 +9,16 @@ function render(): string {
 }
 
 describe("fechamento da home", () => {
+  describe("convite final", () => {
+    it("convida a comparar antes da escolha", () => {
+      // Arrange / Act
+      const html = render();
+
+      // Assert
+      expect(html).toContain("Compare antes de escolher");
+    });
+  });
+
   describe("comparação pelas posições", () => {
     it("leva ao fluxo de comparação", () => {
       // Arrange / Act
