@@ -97,6 +97,22 @@ export const campaignLinks = [
     utmContent: "grupo-trabalho",
   },
   {
+    code: "EeYL6X",
+    destinationPath: "/",
+    utmSource: "whatsapp",
+    utmMedium: "group",
+    utmCampaign: "eleicoes2026",
+    utmContent: "grupos-esposa",
+  },
+  {
+    code: "xCrNSr",
+    destinationPath: "/",
+    utmSource: "whatsapp",
+    utmMedium: "group",
+    utmCampaign: "eleicoes2026",
+    utmContent: "grupos-mae",
+  },
+  {
     code: "8bpZbf",
     destinationPath: "/",
     utmSource: "whatsapp",
@@ -119,6 +135,14 @@ export const campaignLinks = [
     utmMedium: "bio",
     utmCampaign: "eleicoes2026",
     utmContent: "bio-insta",
+  },
+  {
+    code: "PaBVeZ",
+    destinationPath: "/",
+    utmSource: "instagram",
+    utmMedium: "bio",
+    utmCampaign: "eleicoes2026",
+    utmContent: "bio-pessoal-instagram",
   },
   {
     code: "dnf1n9",
@@ -263,6 +287,14 @@ export const campaignLinks = [
     utmMedium: "bio",
     utmCampaign: "eleicoes2026",
     utmContent: "bio-x",
+  },
+  {
+    code: "L14fQK",
+    destinationPath: "/",
+    utmSource: "x",
+    utmMedium: "bio",
+    utmCampaign: "eleicoes2026",
+    utmContent: "bio-pessoal-x",
   },
   {
     code: "9VuKrt",

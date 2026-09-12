@@ -59,7 +59,7 @@ describe("campaign short links", () => {
       const uniqueUtmContents = new Set(utmContents);
 
       // Assert
-      expect(campaignLinks).toHaveLength(44);
+      expect(campaignLinks).toHaveLength(48);
       expect(uniqueCodes.size).toBe(codes.length);
       expect(uniqueUtmContents.size).toBe(utmContents.length);
       expect(
