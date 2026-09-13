@@ -143,25 +143,8 @@ export function DeputadosFeedView({
     await clearTudo();
   }
 
-  const compareAction = isSelectingComparativo ? (
-    <div className="grid grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
-      <Button
-        className="h-11 min-w-0 sm:h-auto"
-        onClick={cancelComparativoSelection}
-        variant="ghost"
-      >
-        Cancelar
-      </Button>
-      <Button
-        className="h-11 min-w-0 sm:h-auto"
-        disabled={!canCompare}
-        onClick={openComparativo}
-        variant="primary"
-      >
-        Comparar
-      </Button>
-    </div>
-  ) : (
+  const selectedComparativoCount = selectedComparativo.length;
+  const compareAction = isSelectingComparativo ? null : (
     <Button
       className="h-11 w-full min-w-0 !border-border-strong sm:h-auto sm:w-auto sm:shrink-0 sm:px-5"
       onClick={startComparativoSelection}
@@ -170,6 +153,44 @@ export function DeputadosFeedView({
       Comparar deputados
     </Button>
   );
+  const comparativoControls = isSelectingComparativo ? (
+    <section
+      aria-label="Seleção para comparação"
+      className="fixed inset-x-4 bottom-4 z-sticky grid w-auto gap-3 rounded-lg bg-white p-3 shadow-bar sm:sticky sm:inset-x-auto sm:bottom-auto sm:top-20 sm:w-full sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:border sm:border-border sm:p-4 sm:shadow-none"
+    >
+      <div className="grid gap-0.5">
+        <p className="font-[680] text-ink">
+          {selectedComparativoCount} de 3 deputados selecionados
+        </p>
+        <p className="text-sm text-muted">
+          {hasDeputadoLimit
+            ? "Limite atingido. Compare agora ou altere sua seleção."
+            : selectedComparativoCount === 0
+              ? "Selecione 2 ou 3 deputados na lista."
+              : selectedComparativoCount === 1
+                ? "Selecione pelo menos mais um deputado."
+                : "Pronto para comparar lado a lado."}
+        </p>
+      </div>
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
+        <Button
+          className="h-11 min-w-0 sm:h-auto"
+          onClick={cancelComparativoSelection}
+          variant="ghost"
+        >
+          Cancelar
+        </Button>
+        <Button
+          className="h-11 min-w-0 sm:h-auto"
+          disabled={!canCompare}
+          onClick={openComparativo}
+          variant="primary"
+        >
+          Comparar deputados
+        </Button>
+      </div>
+    </section>
+  ) : null;
 
   const announcement =
     display === "loading"
@@ -181,14 +202,22 @@ export function DeputadosFeedView({
           : `Lista atualizada: ${total} deputados encontrados.`;
 
   return (
-    <div className="grid min-w-0 gap-7">
+    <div
+      className={
+        isSelectingComparativo
+          ? "grid min-w-0 gap-7 pb-28 sm:pb-0"
+          : "grid min-w-0 gap-7"
+      }
+    >
       <p aria-atomic="true" className="sr-only" role="status">
         {announcement}
       </p>
 
       <div className="grid min-w-0 gap-3">
         <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-4">
-          <div className="order-1 sm:order-2 sm:ml-auto">{compareAction}</div>
+          {compareAction !== null ? (
+            <div className="order-1 sm:order-2 sm:ml-auto">{compareAction}</div>
+          ) : null}
           <div className="order-2 grid min-w-0 gap-2 sm:order-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
             <form
               className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
@@ -249,15 +278,7 @@ export function DeputadosFeedView({
         />
       </div>
 
-      {isSelectingComparativo ? (
-        <div className="text-sm text-muted">
-          {hasDeputadoLimit ? (
-            <p>Você pode comparar até 3 deputados.</p>
-          ) : (
-            <p>Selecione 2 ou 3 deputados para comparar.</p>
-          )}
-        </div>
-      ) : null}
+      {comparativoControls}
 
       {filtros.sort === "menor-uso-cota" ? (
         <p className="max-w-[75ch] text-sm leading-normal text-muted">
