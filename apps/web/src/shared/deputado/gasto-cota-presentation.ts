@@ -56,6 +56,25 @@ export function formatGastoCotaAmount(amountUsedCents: number): string {
   return `${signal}R$ ${reais},${centavos}`;
 }
 
+const DESCRIPTION_ACRONYMS = new Set(["SIGEPA", "RPA"]);
+
+// A Câmara publica as rubricas em caixa alta, com ponto final e vírgula soltos.
+export function formatGastoCotaDescription(description: string): string {
+  const sentence = description
+    .trim()
+    .replace(/\s+,/g, ",")
+    .replace(/,(?=\S)/g, ", ")
+    .replace(/\.$/, "")
+    .split(/\s+/)
+    .map((word) =>
+      DESCRIPTION_ACRONYMS.has(word) ? word : word.toLocaleLowerCase("pt-BR"),
+    )
+    .join(" ")
+    .replace(/distrito federal/g, "Distrito Federal");
+
+  return sentence.charAt(0).toLocaleUpperCase("pt-BR") + sentence.slice(1);
+}
+
 export function formatGastoCotaParticipacao(
   partAmountCents: number,
   totalAmountCents: number,

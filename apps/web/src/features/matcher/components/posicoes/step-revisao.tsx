@@ -4,6 +4,7 @@ import type {
   PosicaoUsuarioMatcher,
   ProposicaoCard,
 } from "@vota-comigo/shared-types";
+import Link from "next/link";
 
 import { ProposicoesSelecionadasList } from "@/shared/proposicao";
 import { Button } from "@/shared/ui";
@@ -74,6 +75,19 @@ export function StepRevisao({
           <strong className="font-[720] text-ink">{pendencia.contagem}</strong>
         </p>
       ) : null}
+
+      <p className="rounded-md border border-border bg-surface-muted px-4 py-3 text-xs leading-normal text-muted">
+        Suas posições políticas serão enviadas somente para calcular esta
+        comparação. Ao selecionar “Ver resultado”, você consente com esse uso.
+        Elas não serão mantidas como histórico no servidor. Consulte o{" "}
+        <Link
+          className="rounded-sm font-[650] text-info underline decoration-info/35 underline-offset-[0.18em] hover:decoration-info"
+          href="/privacidade#dados"
+        >
+          aviso de privacidade
+        </Link>
+        .
+      </p>
 
       <div className="flex flex-wrap items-center gap-3">
         <Button className="lg:hidden" onClick={onBack}>

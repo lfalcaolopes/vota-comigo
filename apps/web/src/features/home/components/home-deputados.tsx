@@ -1,6 +1,5 @@
 import type { DeputadoCard } from "@vota-comigo/shared-types";
 import { headers } from "next/headers";
-import Link from "next/link";
 import { Suspense, type ReactNode } from "react";
 
 import {
@@ -60,40 +59,37 @@ export function DeputadosSection({
               className="text-2xl leading-tight font-[700] tracking-[-0.01em] text-balance text-ink"
               id="home-deputados"
             >
-              Conheça os deputados além dos votos
+              {tituloLabel(siglaUf)}
             </h2>
             <p className="text-base leading-normal text-muted">
-              Consulte presença, propostas assinadas, comissões e uso da cota
-              parlamentar.
+              Abra o perfil para ver presença, propostas assinadas, comissões e
+              uso da cota parlamentar.
             </p>
           </div>
 
           <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <span className="text-sm text-muted">Comece por um estado:</span>
-            {ESTADOS_EXEMPLO.map((siglaUf) => (
-              <ChipLink href={estadoHref(siglaUf)} key={siglaUf}>
-                {toEstadoLabel(siglaUf)}
-              </ChipLink>
-            ))}
-            <ChipLink href="/deputados">Outros</ChipLink>
+            <span className="w-full text-sm text-muted sm:w-auto">
+              {siglaUf === null ? "Escolha seu estado:" : "Ver outro estado:"}
+            </span>
+            {ESTADOS_EXEMPLO.filter((sigla) => sigla !== siglaUf).map(
+              (sigla) => (
+                <ChipLink href={estadoHref(sigla)} key={sigla}>
+                  {toEstadoLabel(sigla)}
+                </ChipLink>
+              ),
+            )}
+            <ChipLink href="/deputados">Todos os estados</ChipLink>
           </div>
         </div>
 
         <div className="grid min-w-0 gap-6">
-          <p className="text-sm leading-normal text-muted">
-            {recorteLabel(siglaUf)}
-          </p>
+          {siglaUf === null ? (
+            <p className="text-sm leading-normal text-muted">
+              Deputados de todo o Brasil.
+            </p>
+          ) : null}
 
           {children}
-
-          <div className="flex flex-wrap items-center justify-end gap-x-6 gap-y-2 text-sm font-[650]">
-            <Link
-              className="text-primary underline-offset-2 hover:underline"
-              href="/deputados"
-            >
-              Ver todos os deputados
-            </Link>
-          </div>
         </div>
       </div>
     </section>
@@ -173,9 +169,9 @@ async function loadUfDoVisitante(): Promise<string | null> {
   );
 }
 
-function recorteLabel(siglaUf: string | null): string {
-  if (siglaUf === null) return "Deputados de todo o Brasil.";
-  return `Deputados de ${toEstadoLabel(siglaUf)}.`;
+function tituloLabel(siglaUf: string | null): string {
+  if (siglaUf === null) return "Quem representa o seu estado na Câmara";
+  return `Quem representa ${toEstadoLabel(siglaUf)} na Câmara`;
 }
 
 function AmostraSkeleton() {

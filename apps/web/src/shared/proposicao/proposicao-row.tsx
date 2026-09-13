@@ -15,17 +15,29 @@ import {
 type ProposicaoRowProps = {
   card: ProposicaoCard;
   href?: string;
+  showResumoIaBadgeOnMobile?: boolean;
+  topic?: string;
 };
 
-export function ProposicaoRow({ card, href }: ProposicaoRowProps) {
+export function ProposicaoRow({
+  card,
+  href,
+  showResumoIaBadgeOnMobile = true,
+  topic,
+}: ProposicaoRowProps) {
   if (href) {
     return (
       <article className="border-b border-border">
         <Link
-          className="-mx-2 grid gap-2 rounded-md px-2 py-4 transition-[background-color] duration-[180ms] ease-standard hover:bg-surface focus-visible:bg-surface"
+          className="-mx-2 grid gap-2 rounded-md px-2 py-4 transition-[background-color] duration-[180ms] ease-standard hover:bg-surface focus-visible:bg-surface active:bg-surface"
           href={href}
         >
-          <ProposicaoRowContent card={card} expansivel={false} />
+          <ProposicaoRowContent
+            card={card}
+            expansivel={false}
+            showResumoIaBadgeOnMobile={showResumoIaBadgeOnMobile}
+            topic={topic}
+          />
         </Link>
       </article>
     );
@@ -33,7 +45,12 @@ export function ProposicaoRow({ card, href }: ProposicaoRowProps) {
 
   return (
     <article className="grid gap-2 border-b border-border py-4">
-      <ProposicaoRowContent card={card} expansivel />
+      <ProposicaoRowContent
+        card={card}
+        expansivel
+        showResumoIaBadgeOnMobile={showResumoIaBadgeOnMobile}
+        topic={topic}
+      />
     </article>
   );
 }
@@ -41,9 +58,13 @@ export function ProposicaoRow({ card, href }: ProposicaoRowProps) {
 function ProposicaoRowContent({
   card,
   expansivel,
+  showResumoIaBadgeOnMobile,
+  topic,
 }: {
   card: ProposicaoCard;
   expansivel: boolean;
+  showResumoIaBadgeOnMobile: boolean;
+  topic?: string;
 }) {
   const identificador = toIdentificadorLegislativo(card);
   const ultimaVotacao = formatShortDate(card.dataUltimaVotacao);
@@ -51,18 +72,26 @@ function ProposicaoRowContent({
   const textoResumo = toTextoResumo(card);
   const resumoIa = isResumoIaCard(card);
   const clampClassName = resumoIa
-    ? "sm:line-clamp-2"
+    ? "line-clamp-3 sm:line-clamp-2"
     : "line-clamp-4 sm:line-clamp-2";
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <p className="font-mono text-sm font-[650] tracking-[-0.01em] text-ink">
-          {identificador ?? "Proposta sem número"}
-        </p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+          <p className="font-mono text-sm font-[650] tracking-[-0.01em] text-ink">
+            {identificador ?? "Proposta sem número"}
+          </p>
+          {topic ? <Badge tone="info">{topic}</Badge> : null}
+        </div>
 
         {resumoIa ? (
-          <Badge className="shrink-0" tone="neutral">
+          <Badge
+            className={
+              showResumoIaBadgeOnMobile ? "shrink-0" : "shrink-0 max-sm:hidden"
+            }
+            tone="neutral"
+          >
             <SparklesIcon
               aria-hidden="true"
               className="size-3.5 shrink-0 text-primary"
@@ -125,7 +154,7 @@ function MetaItem({
     <div
       className={`flex min-w-0 items-baseline gap-2${className ? ` ${className}` : ""}`}
     >
-      <dt className="text-xs text-subtle">{label}</dt>
+      <dt className="text-xs text-muted">{label}</dt>
       <dd
         className={
           mono

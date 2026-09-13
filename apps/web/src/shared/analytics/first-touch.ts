@@ -2,8 +2,7 @@ import type { Attribution } from "@vota-comigo/shared-types";
 
 export const FIRST_TOUCH_STORAGE_KEY = "vota-comigo:first-touch";
 
-export type FirstTouch = Omit<Attribution, "referrer"> & {
-  referrer: string;
+export type FirstTouch = Attribution & {
   capturedAt: string;
 };
 
@@ -17,6 +16,18 @@ const EMPTY_ATTRIBUTION: Attribution = {
 
 function isNullableString(value: unknown): value is string | null {
   return value === null || typeof value === "string";
+}
+
+function sanitizeReferrer(value: string | null): string | null {
+  if (value === null || value === "") return value;
+
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    return `${url.origin}${url.pathname}`;
+  } catch {
+    return null;
+  }
 }
 
 export function readFirstTouchAttribution(): Attribution {
@@ -54,7 +65,7 @@ export function readFirstTouchAttribution(): Attribution {
       utmMedium: attribution.utmMedium,
       utmCampaign: attribution.utmCampaign,
       utmContent: attribution.utmContent,
-      referrer: attribution.referrer,
+      referrer: sanitizeReferrer(attribution.referrer),
     };
   } catch {
     return { ...EMPTY_ATTRIBUTION };
@@ -80,7 +91,7 @@ export function captureFirstTouch(): void {
     utmMedium: searchParams.get("utm_medium"),
     utmCampaign: searchParams.get("utm_campaign"),
     utmContent: searchParams.get("utm_content"),
-    referrer: document.referrer,
+    referrer: sanitizeReferrer(document.referrer),
     capturedAt: new Date().toISOString(),
   };
 

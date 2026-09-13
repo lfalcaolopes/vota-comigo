@@ -14,7 +14,8 @@ export function HomeHero() {
               Veja quais deputados votam como você.
             </h1>
             <p className="max-w-[54ch] text-lg leading-normal text-pretty text-muted">
-              Compare suas posições com os votos registrados na Câmara.
+              Escolha as propostas, diga como votaria e veja quem votou
+              parecido. Sem cadastro.
             </p>
           </div>
 

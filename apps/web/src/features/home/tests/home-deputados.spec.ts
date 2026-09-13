@@ -12,12 +12,12 @@ function renderSection(siglaUf: string | null = null): string {
 
 describe("entrada de deputados na home", () => {
   describe("papel na narrativa", () => {
-    it("apresenta os dados disponíveis além dos votos", () => {
+    it("convida a abrir o perfil e diz o que ele mostra", () => {
       // Arrange / Act
       const html = renderSection();
 
       // Assert
-      expect(html).toContain("Conheça os deputados além dos votos");
+      expect(html).toContain("Abra o perfil");
       expect(html).toContain("presença");
       expect(html).toContain("propostas assinadas");
       expect(html).toContain("comissões");
@@ -26,20 +26,32 @@ describe("entrada de deputados na home", () => {
   });
 
   describe("recorte da amostra", () => {
-    it("nomeia o estado dos deputados que está mostrando", () => {
+    it("nomeia no título quem representa o estado identificado", () => {
       // Arrange / Act
       const html = renderSection("PE");
 
       // Assert
-      expect(html).toContain("Deputados de Pernambuco");
+      expect(html).toContain("Quem representa Pernambuco na Câmara");
+      expect(html).not.toContain("Deputados de todo o Brasil");
     });
 
-    it("diz que o recorte é nacional quando não há estado identificado", () => {
+    it("diz que o recorte é nacional e pede o estado quando não há um identificado", () => {
       // Arrange / Act
       const html = renderSection(null);
 
       // Assert
+      expect(html).toContain("Quem representa o seu estado na Câmara");
       expect(html).toContain("Deputados de todo o Brasil");
+      expect(html).toContain("Escolha seu estado:");
+    });
+
+    it("oferece outros estados sem repetir o identificado", () => {
+      // Arrange / Act
+      const html = renderSection("SP");
+
+      // Assert
+      expect(html).toContain("Ver outro estado:");
+      expect(html).not.toContain('href="/deputados?uf=SP"');
     });
 
     it("não explica de onde veio o estado", () => {
@@ -61,12 +73,14 @@ describe("entrada de deputados na home", () => {
       expect(html).toContain('href="/deputados?uf=SP"');
     });
 
-    it("leva de Outros para a lista sem filtro de estado", () => {
+    it("leva de todos os estados para a lista sem filtro de estado", () => {
       // Arrange / Act
       const html = renderSection();
 
       // Assert
-      expect(html).toMatch(/<a[^>]*href="\/deputados"[^>]*>Outros<\/a>/);
+      expect(html).toMatch(
+        /<a[^>]*href="\/deputados"[^>]*>Todos os estados<\/a>/,
+      );
     });
 
     it("não embute um segundo campo de busca na home", () => {
@@ -80,8 +94,8 @@ describe("entrada de deputados na home", () => {
   });
 
   describe("caminho para a lista completa", () => {
-    it("oferece a lista completa depois da amostra", () => {
-      // Arrange
+    it("deixa a lista completa para o chip e o fecho da home, sem link depois da amostra", () => {
+      // Arrange / Act
       const html = renderToStaticMarkup(
         createElement(
           DeputadosSection,
@@ -90,13 +104,9 @@ describe("entrada de deputados na home", () => {
         ),
       );
 
-      // Act
-      const amostra = html.indexOf("amostra-da-home");
-      const listaCompleta = html.indexOf("Ver todos os deputados");
-
       // Assert
-      expect(amostra).toBeGreaterThan(-1);
-      expect(listaCompleta).toBeGreaterThan(amostra);
+      expect(html).toContain("amostra-da-home");
+      expect(html).not.toContain("Ver todos os deputados");
     });
   });
 

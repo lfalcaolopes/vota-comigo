@@ -74,6 +74,14 @@ describe("gastos da cota na home", () => {
       expect(html).toContain("fev/2023 – ago/2026");
     });
 
+    it("diz que o total soma todos os deputados", () => {
+      // Arrange / Act
+      const html = render(cota);
+
+      // Assert
+      expect(html).toContain("Soma de todos os deputados");
+    });
+
     it("não interrompe o total com a contagem e a definição da cota", () => {
       // Arrange / Act
       const html = render(cota);
@@ -90,10 +98,10 @@ describe("gastos da cota na home", () => {
       const html = render(cota);
 
       // Assert
-      expect(html).toContain("O uso da cota parlamentar");
       expect(html).toContain(
-        "Quem você escolhe também decide como usar esses recursos públicos.",
+        "Cada deputado também decide como gastar a cota parlamentar",
       );
+      expect(html).not.toContain("Quem você escolhe também decide");
     });
   });
 
@@ -103,7 +111,8 @@ describe("gastos da cota na home", () => {
       const html = render(cota);
 
       // Assert
-      expect(html).toContain("DIVULGAÇÃO DA ATIVIDADE PARLAMENTAR.");
+      expect(html).toContain("Divulgação da atividade parlamentar");
+      expect(html).not.toContain("DIVULGAÇÃO DA ATIVIDADE PARLAMENTAR.");
       expect(html).toContain("R$ 343.465.022,12");
       expect(html).toContain("38,7%");
     });

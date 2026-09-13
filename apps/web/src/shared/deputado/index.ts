@@ -104,6 +104,7 @@ export {
 export { GastoCotaComposicao } from "./gasto-cota-composicao";
 export {
   formatGastoCotaAmount,
+  formatGastoCotaDescription,
   formatGastoCotaParticipacao,
 } from "./gasto-cota-presentation";
 export {

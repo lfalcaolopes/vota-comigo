@@ -13,11 +13,13 @@ export function feed(
   ordenacao: FeedOrdenacao = "mais-votadas",
   tema?: number,
   q?: string,
+  init?: RequestInit,
 ): Promise<ProposicoesFeedResponse> {
   const temaParam = tema !== undefined ? `&tema=${tema}` : "";
   const qParam = q !== undefined ? `&q=${encodeURIComponent(q)}` : "";
   return apiGet<ProposicoesFeedResponse>(
     `/proposicoes/feed?limit=${limit}&offset=${offset}&ordenacao=${ordenacao}${temaParam}${qParam}`,
+    init,
   );
 }
 

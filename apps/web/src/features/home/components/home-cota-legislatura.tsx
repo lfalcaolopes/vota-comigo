@@ -8,6 +8,7 @@ import {
   deriveGastoCotaDistribuicao,
   deriveGastoCotaRevealTimeline,
   formatGastoCotaAmount,
+  formatGastoCotaDescription,
   formatGastoCotaParticipacao,
   toUsoCotaPeriodoLabel,
   type GastoCotaRevealStep,
@@ -49,7 +50,7 @@ export function CotaLegislaturaSection({
             totalAmountUsedCents={cota.totalAmountUsedCents}
           />
           <p className="text-sm leading-normal text-muted">
-            Período analisado: {toUsoCotaPeriodoLabel(cota)}
+            Soma de todos os deputados, {toUsoCotaPeriodoLabel(cota)}
           </p>
         </div>
 
@@ -70,9 +71,9 @@ export function CotaLegislaturaSection({
         </div>
       </CotaRevealScope>
 
-      <div className="flex flex-wrap items-center justify-end gap-x-6 gap-y-2 text-sm font-[650]">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm font-[650] sm:justify-end">
         <Link
-          className="text-primary underline-offset-2 hover:underline"
+          className="inline-flex min-h-11 items-center text-primary underline-offset-2 hover:underline"
           href="/deputados"
         >
           Ver o gasto de cada deputado
@@ -100,7 +101,7 @@ function RubricaItem({
     <li className="grid min-w-0 gap-1.5">
       <div className="grid min-w-0 gap-x-4 gap-y-1 sm:grid-cols-[minmax(0,1fr)_max-content] sm:items-baseline">
         <span className="min-w-0 text-sm leading-snug text-ink">
-          {serie.description}
+          {formatGastoCotaDescription(serie.description)}
         </span>
         <span className="text-sm tabular-nums text-muted">
           {formatGastoCotaAmount(serie.amountUsedCents)} · {participacao}
@@ -133,17 +134,12 @@ function SectionShell({ children }: { children: ReactNode }) {
   return (
     <section aria-labelledby="home-cota" className="border-b border-border">
       <div className="mx-auto grid w-full min-w-0 max-w-5xl gap-8 px-4 py-12 md:py-16">
-        <div className="grid max-w-[60ch] gap-3">
-          <h2
-            className="text-2xl leading-tight font-[700] tracking-[-0.01em] text-balance text-ink"
-            id="home-cota"
-          >
-            O uso da cota parlamentar
-          </h2>
-          <p className="text-base leading-normal text-muted">
-            Quem você escolhe também decide como usar esses recursos públicos.
-          </p>
-        </div>
+        <h2
+          className="max-w-[40ch] text-2xl leading-tight font-[700] tracking-[-0.01em] text-balance text-ink"
+          id="home-cota"
+        >
+          Cada deputado também decide como gastar a cota parlamentar
+        </h2>
 
         {children}
       </div>

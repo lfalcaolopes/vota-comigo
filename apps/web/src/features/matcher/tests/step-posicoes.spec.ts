@@ -147,6 +147,20 @@ describe("StepPosicoes", () => {
     });
   });
 
+  describe("before processing political positions", () => {
+    it("presents the specific purpose and a link to the privacy notice", () => {
+      // Act
+      const html = renderStep([card()], { index: 0, view: "revisao" });
+
+      // Assert
+      expect(html).toContain(
+        "Suas posições políticas serão enviadas somente para calcular esta comparação.",
+      );
+      expect(html).toContain("você consente com esse uso");
+      expect(html).toContain('href="/privacidade#dados"');
+    });
+  });
+
   describe("while the proposition detail is loading", () => {
     it("shows a skeleton and hides the answer options", () => {
       // Act

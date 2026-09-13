@@ -359,13 +359,14 @@ export default function MetodologiaPage() {
                 sem ficarem registradas lá.
               </p>
               <p>
-                Do uso da comparação, guardamos apenas duas contagens sem dono:
-                quantas proposições foram selecionadas e quantas foram
-                respondidas, com a data. Nenhuma posição declarada, nenhum
-                estado informado, nenhum endereço de IP e nenhum identificador
-                que permita reconhecer você depois. Também usamos medição de
-                audiência agregada para saber quais páginas são acessadas, sem
-                perfil individual.
+                Do uso da comparação, guardamos registros sem identificador de
+                início e conclusão. Na conclusão, entram duas contagens: quantas
+                proposições foram selecionadas e quantas foram respondidas.
+                Também podem entrar a origem do primeiro acesso, parâmetros de
+                campanha e a data. Nenhuma posição declarada, nenhum estado
+                informado, nenhum endereço de IP e nenhum identificador que
+                permita reconhecer você depois. A medição de audiência mostra
+                quais páginas são acessadas sem criar perfil individual.
               </p>
             </div>
           </Panel>

@@ -3,7 +3,53 @@ import { describe, expect, it } from "vitest";
 import {
   formatGastoCotaCompacto,
   formatGastoCotaCompactoDistinto,
+  formatGastoCotaDescription,
 } from "../gasto-cota-presentation";
+
+describe("nome da rubrica da cota", () => {
+  describe("quando a Câmara publica em caixa alta", () => {
+    it("escreve em caixa de frase sem o ponto final", () => {
+      // Arrange / Act
+      const label = formatGastoCotaDescription(
+        "DIVULGAÇÃO DA ATIVIDADE PARLAMENTAR.",
+      );
+
+      // Assert
+      expect(label).toBe("Divulgação da atividade parlamentar");
+    });
+
+    it("preserva as siglas do sistema de passagens", () => {
+      // Arrange / Act / Assert
+      expect(formatGastoCotaDescription("PASSAGEM AÉREA - SIGEPA")).toBe(
+        "Passagem aérea - SIGEPA",
+      );
+      expect(formatGastoCotaDescription("PASSAGEM AÉREA - RPA")).toBe(
+        "Passagem aérea - RPA",
+      );
+    });
+
+    it("corrige a vírgula solta e mantém o nome próprio", () => {
+      // Arrange / Act
+      const label = formatGastoCotaDescription(
+        "HOSPEDAGEM ,EXCETO DO PARLAMENTAR NO DISTRITO FEDERAL.",
+      );
+
+      // Assert
+      expect(label).toBe(
+        "Hospedagem, exceto do parlamentar no Distrito Federal",
+      );
+    });
+  });
+
+  describe("quando o nome já vem em caixa de frase", () => {
+    it("não altera o texto", () => {
+      // Arrange / Act / Assert
+      expect(formatGastoCotaDescription("Outras despesas")).toBe(
+        "Outras despesas",
+      );
+    });
+  });
+});
 
 describe("valor compacto do gasto da cota", () => {
   describe("quando o valor cabe em milhares ou milhões", () => {

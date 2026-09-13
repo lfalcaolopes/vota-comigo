@@ -67,6 +67,29 @@ describe("DeputadoRow", () => {
       expect(html).toContain("Em exercício");
       expect(html).not.toContain("Nome civil");
     });
+
+    it("shows that the row opens the profile with a chevron only", () => {
+      // Arrange / Act
+      const html = render();
+
+      // Assert
+      expect(html).toContain("-rotate-90");
+      expect(html).not.toContain("Ver perfil");
+    });
+  });
+
+  describe("when the row has no profile link", () => {
+    it("does not promise a profile", () => {
+      // Arrange / Act
+      const html = renderComUsoCota({
+        status: "indisponivel",
+        legislatura: 57,
+        motivo: "sigepa-incompleto",
+      });
+
+      // Assert
+      expect(html).not.toContain("-rotate-90");
+    });
   });
 
   describe("when snapshot fields are missing", () => {
@@ -98,6 +121,7 @@ describe("DeputadoRow", () => {
         'aria-label="Selecionar Maria da Silva para comparação"',
       );
       expect(html).not.toContain("<a ");
+      expect(html).not.toContain("-rotate-90");
     });
 
     it("marks the selected deputado", () => {
@@ -132,9 +156,8 @@ describe("DeputadoRow", () => {
 
       // Assert
       expect(html).toContain("Uso da cota: 72%");
-      expect(html).toContain(
-        "Período analisado: fev/2023 – ago/2026 · 1.184 dias em exercício",
-      );
+      expect(html).toContain("fev/2023 – ago/2026 · 1.184 dias em exercício");
+      expect(html).not.toContain("Período analisado");
     });
 
     it("distinguishes unavailable use from zero", () => {

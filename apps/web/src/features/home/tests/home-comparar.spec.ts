@@ -43,18 +43,29 @@ describe("fechamento da home", () => {
       // Assert
       expect(html).not.toContain("quem votou como você");
     });
-  });
 
-  describe("comparação entre deputados", () => {
-    it("nomeia o segundo modo de comparar", () => {
+    it("lembra o resultado que o hero mostrou como exemplo", () => {
       // Arrange / Act
       const html = render();
 
       // Assert
-      expect(html).toContain("Pelos números de cada deputado");
+      expect(html).toContain("as votações que entraram na conta");
+    });
+  });
+
+  describe("caminho para os perfis", () => {
+    it("fica abaixo da comparação, como caminho secundário", () => {
+      // Arrange / Act
+      const html = render();
+
+      // Assert
+      expect(html.indexOf('href="/deputados"')).toBeGreaterThan(
+        html.indexOf('href="/matcher"'),
+      );
+      expect(html).toContain("Ver perfis dos deputados");
     });
 
-    it("não promete votos, que o comparativo entre deputados não mostra", () => {
+    it("não promete votos no convite aos perfis", () => {
       // Arrange / Act
       const html = render();
 

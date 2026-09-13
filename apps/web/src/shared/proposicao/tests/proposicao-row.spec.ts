@@ -33,6 +33,30 @@ function render(proposicao: ProposicaoCard, href?: string): string {
 }
 
 describe("ProposicaoRow", () => {
+  describe("assunto da proposta", () => {
+    it("shows the topic tag when one is given", () => {
+      // Arrange / Act
+      const html = renderToStaticMarkup(
+        createElement(ProposicaoRow, {
+          card: card(),
+          href: "/proposicoes/42",
+          topic: "Porte de arma",
+        }),
+      );
+
+      // Assert
+      expect(html).toContain("Porte de arma");
+    });
+
+    it("omits the tag when there is no topic", () => {
+      // Arrange / Act
+      const html = render(card(), "/proposicoes/42");
+
+      // Assert
+      expect(html).not.toContain("bg-info-soft");
+    });
+  });
+
   describe("resumo de proposicao por IA", () => {
     it("shows the card resumo when it is available", () => {
       // Arrange
@@ -60,6 +84,27 @@ describe("ProposicaoRow", () => {
       const html = render(proposicao);
 
       // Assert
+      expect(html).toContain("Resumo por IA");
+    });
+
+    it("leaves the IA badge to the surrounding list on phones when asked", () => {
+      // Arrange
+      const proposicao = card({
+        resumoIaDisponivel: true,
+        resumoIaCard: "Resumo curto aprovado.",
+      });
+
+      // Act
+      const html = renderToStaticMarkup(
+        createElement(ProposicaoRow, {
+          card: proposicao,
+          href: "/proposicoes/42",
+          showResumoIaBadgeOnMobile: false,
+        }),
+      );
+
+      // Assert
+      expect(html).toContain("max-sm:hidden");
       expect(html).toContain("Resumo por IA");
     });
 

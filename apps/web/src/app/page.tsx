@@ -23,8 +23,8 @@ export default function Home() {
     <main className="vc-bands min-h-screen w-full min-w-0 overflow-x-hidden bg-bg text-ink">
       <HomeHero />
       <HomeProposicoes />
-      <HomeDeputados />
       <HomeCotaLegislatura />
+      <HomeDeputados />
       <HomeComparar />
     </main>
   );

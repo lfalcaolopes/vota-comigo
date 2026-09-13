@@ -2,7 +2,12 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { ProposicoesSection } from "../components/home-proposicoes";
+import type { ProposicaoCard } from "@vota-comigo/shared-types";
+
+import {
+  DestaquesList,
+  ProposicoesSection,
+} from "../components/home-proposicoes";
 
 function renderSection(): string {
   return renderToStaticMarkup(createElement(ProposicoesSection, null, null));
@@ -10,15 +15,26 @@ function renderSection(): string {
 
 describe("entrada de propostas na home", () => {
   describe("papel na comparação", () => {
-    it("liga os votos das propostas à comparação no título", () => {
+    it("apresenta as propostas como as perguntas que o visitante vai responder", () => {
       // Arrange / Act
       const html = renderSection();
 
       // Assert
       expect(html).toContain(
-        "Os deputados votam propostas. Esses votos entram na comparação.",
+        "Você responde sobre as mesmas propostas que os deputados votaram",
       );
       expect(html).not.toContain("A comparação sai daqui");
+    });
+  });
+
+  describe("selo de resumo por IA", () => {
+    it("aponta o texto oficial sem explicar o selo em frase longa", () => {
+      // Arrange / Act
+      const html = renderSection();
+
+      // Assert
+      expect(html).toContain("O texto oficial fica a um clique.");
+      expect(html).not.toContain("Onde aparece este selo");
     });
   });
 
@@ -37,7 +53,26 @@ describe("entrada de propostas na home", () => {
       const html = renderSection();
 
       // Assert
-      expect(html).toContain("Porte de arma");
+      expect(html).toContain("Cotas para negros");
+    });
+
+    it("oferece os assuntos depois dos destaques, sem mandar começar por eles", () => {
+      // Arrange
+      const html = renderToStaticMarkup(
+        createElement(
+          ProposicoesSection,
+          null,
+          createElement("p", null, "destaques-da-home"),
+        ),
+      );
+
+      // Act
+      const destaques = html.indexOf("destaques-da-home");
+      const assuntos = html.indexOf("Buscar por assunto:");
+
+      // Assert
+      expect(assuntos).toBeGreaterThan(destaques);
+      expect(html).not.toContain("Comece por");
     });
 
     it("não anuncia que entende linguagem comum", () => {
@@ -55,7 +90,7 @@ describe("entrada de propostas na home", () => {
       const html = renderSection();
 
       // Assert
-      expect(html).toContain('href="/proposicoes?q=porte+de+arma"');
+      expect(html).toContain('href="/proposicoes?q=cotas+para+negros"');
     });
   });
 
@@ -77,6 +112,59 @@ describe("entrada de propostas na home", () => {
       // Assert
       expect(destaques).toBeGreaterThan(-1);
       expect(listaCompleta).toBeGreaterThan(destaques);
+    });
+  });
+
+  describe("assuntos para buscar", () => {
+    it("não oferece busca pelos assuntos que se resumem a uma proposta só", () => {
+      // Arrange / Act
+      const html = renderSection();
+
+      // Assert
+      expect(html).not.toContain(">Trabalho 6x1<");
+      expect(html).not.toContain(">Reforma da Previdência<");
+      expect(html).not.toContain(">Porte de arma<");
+      expect(html).toContain(">Cotas para negros<");
+    });
+
+    it("oferece licenciamento ambiental como assunto com várias propostas", () => {
+      // Arrange / Act
+      const html = renderSection();
+
+      // Assert
+      expect(html).toContain('href="/proposicoes?q=licenciamento+ambiental"');
+    });
+  });
+
+  describe("assunto de cada destaque", () => {
+    it("marca a proposta com o assunto que a trouxe", () => {
+      // Arrange
+      const card = {
+        externalIdProposicao: 2233802,
+        siglaTipo: "PEC",
+        numero: 221,
+        ano: 2019,
+        ementa: "Reduz a jornada de trabalho.",
+        resumoIaDisponivel: false,
+        resumoIaCard: null,
+        dataApresentacao: "2019-12-03",
+        volumeVotacoesPlenario: 3,
+        dataUltimaVotacao: "2026-05-27",
+      } as unknown as ProposicaoCard;
+
+      // Act
+      const html = renderToStaticMarkup(
+        createElement(DestaquesList, {
+          items: [
+            { card, topic: "Trabalho 6x1" },
+            { card: { ...card, externalIdProposicao: 1 }, topic: null },
+          ],
+        }),
+      );
+
+      // Assert
+      expect(html.match(/Trabalho 6x1/g) ?? []).toHaveLength(1);
+      expect(html).toContain('href="/proposicoes/2233802"');
     });
   });
 

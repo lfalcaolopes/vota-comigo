@@ -12,13 +12,13 @@ type ExemploResultado = {
 const exemplos: ExemploResultado[] = [
   {
     nome: "Deputada A",
-    contexto: "Partido · UF",
+    contexto: "São Paulo",
     percentual: "91%",
     amostra: "11 de 12 votações",
   },
   {
     nome: "Deputado B",
-    contexto: "Partido · UF",
+    contexto: "Bahia",
     percentual: "75%",
     amostra: "9 de 12 votações",
   },
@@ -34,7 +34,9 @@ export function HomeResultadoSample() {
         <span className="text-sm font-[650] text-ink">
           Como o resultado aparece
         </span>
-        <Badge tone="neutral">Exemplo</Badge>
+        <Badge className="shrink-0" tone="neutral">
+          Exemplo
+        </Badge>
       </figcaption>
 
       <ul className="grid">

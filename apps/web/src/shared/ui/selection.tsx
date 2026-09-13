@@ -51,11 +51,11 @@ export function ChipLink({ className, href, ...props }: ChipLinkProps) {
 export type BadgeTone = "neutral" | "info" | "success" | "warning" | "danger";
 
 const badgeTones: Record<BadgeTone, string> = {
-  neutral: "border-border bg-surface-muted text-muted",
-  info: "bg-info-soft text-info",
-  success: "bg-success-soft text-success",
-  warning: "bg-warning-soft text-warning-strong",
-  danger: "bg-danger-soft text-danger",
+  neutral: "border-border bg-white text-muted",
+  info: "border-transparent bg-info-soft text-info",
+  success: "border-transparent bg-success-soft text-success",
+  warning: "border-transparent bg-warning-soft text-warning-strong",
+  danger: "border-transparent bg-danger-soft text-danger",
 };
 
 type BadgeProps = {
@@ -75,7 +75,7 @@ export function Badge({
     <span
       aria-label={ariaLabel}
       className={joinClassNames(
-        "inline-flex max-w-full min-h-7 items-center gap-1 rounded-full border border-transparent px-2.5 py-1 text-xs font-[680] leading-[1.2] [overflow-wrap:anywhere]",
+        "inline-flex max-w-full min-h-7 items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-[680] leading-[1.2] [overflow-wrap:anywhere]",
         badgeTones[tone],
         className,
       )}

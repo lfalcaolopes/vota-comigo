@@ -28,17 +28,19 @@ test.describe("home", () => {
       await page.goto("/");
 
       // Act
-      await page.getByRole("link", { name: "Porte de arma" }).click();
+      await page
+        .getByRole("link", { name: "Cotas para negros", exact: true })
+        .click();
 
       // Assert
-      await expect(page).toHaveURL(/\/proposicoes\?q=porte\+de\+arma/);
+      await expect(page).toHaveURL(/\/proposicoes\?q=cotas\+para\+negros/);
     });
 
     test("leva dos gastos da cota à lista de deputados", async ({ page }) => {
       // Arrange
       await page.goto("/");
       const secao = page.getByRole("region", {
-        name: "O uso da cota parlamentar",
+        name: "Cada deputado também decide como gastar a cota parlamentar",
       });
 
       // Act
@@ -50,17 +52,19 @@ test.describe("home", () => {
       await expect(page).toHaveURL(/\/deputados$/);
     });
 
-    test("apresenta os gastos antes do convite final", async ({ page }) => {
+    test("fecha com os deputados do estado logo antes do convite final", async ({
+      page,
+    }) => {
       // Arrange / Act
       await page.goto("/");
       const secoes = page.locator("main > section");
 
       // Assert
       await expect(secoes.nth(2)).toHaveAccessibleName(
-        "Conheça os deputados além dos votos",
+        "Cada deputado também decide como gastar a cota parlamentar",
       );
       await expect(secoes.nth(3)).toHaveAccessibleName(
-        "O uso da cota parlamentar",
+        /^Quem representa .* na Câmara$/,
       );
       await expect(secoes.nth(4)).toHaveAccessibleName(
         "Compare antes de escolher",
@@ -71,7 +75,7 @@ test.describe("home", () => {
       // Arrange
       await page.goto("/");
       const secao = page.getByRole("region", {
-        name: "Os deputados votam propostas. Esses votos entram na comparação.",
+        name: "Você responde sobre as mesmas propostas que os deputados votaram",
       });
 
       // Act
@@ -96,11 +100,11 @@ test.describe("home", () => {
       // Act
       await page.goto("/");
       const secao = page.getByRole("region", {
-        name: "Conheça os deputados além dos votos",
+        name: "Quem representa Pernambuco na Câmara",
       });
 
       // Assert
-      await expect(secao.getByText("Deputados de Pernambuco.")).toBeVisible();
+      await expect(secao).toBeVisible();
       await expect(secao.locator("article").first()).toContainText("· PE");
       await context.close();
     });
@@ -111,7 +115,7 @@ test.describe("home", () => {
       // Arrange / Act
       await page.goto("/");
       const secao = page.getByRole("region", {
-        name: "Conheça os deputados além dos votos",
+        name: "Quem representa o seu estado na Câmara",
       });
 
       // Assert
@@ -124,7 +128,7 @@ test.describe("home", () => {
       // Arrange
       await page.goto("/");
       const secao = page.getByRole("region", {
-        name: "Conheça os deputados além dos votos",
+        name: /^Quem representa .* na Câmara$/,
       });
 
       // Act

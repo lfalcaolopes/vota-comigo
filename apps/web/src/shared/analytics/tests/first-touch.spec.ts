@@ -42,7 +42,7 @@ describe("first-touch attribution", () => {
       stubBrowser({
         search:
           "?utm_source=whatsapp&utm_medium=social&utm_campaign=eleicoes&utm_content=grupo-a",
-        referrer: "https://example.com/origem",
+        referrer: "https://example.com/origem?convite=pessoal#trecho",
         storage,
       });
 
@@ -83,6 +83,22 @@ describe("first-touch attribution", () => {
         utmContent: null,
         referrer: "",
       });
+    });
+
+    it("discards a referrer that is not an HTTP address", () => {
+      // Arrange
+      const storage: StorageStub = {
+        getItem: vi.fn(() => null),
+        setItem: vi.fn(),
+      };
+      stubBrowser({ referrer: "not-a-url", storage });
+
+      // Act
+      captureFirstTouch();
+
+      // Assert
+      const storedValue = vi.mocked(storage.setItem).mock.calls[0]?.[1];
+      expect(JSON.parse(storedValue ?? "")).toMatchObject({ referrer: null });
     });
   });
 
@@ -166,7 +182,7 @@ describe("first-touch attribution", () => {
             utmMedium: "social",
             utmCampaign: null,
             utmContent: "grupo-a",
-            referrer: "https://example.com/origem",
+            referrer: "https://example.com/origem?convite=pessoal#trecho",
             capturedAt: "2026-09-07T15:30:00.000Z",
           }),
         ),

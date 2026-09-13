@@ -222,7 +222,7 @@ function Brand() {
       href="/"
     >
       <BrandMark />
-      <span className="hidden min-w-0 truncate text-xl font-[720] leading-tight tracking-[-0.02em] md:block">
+      <span className="min-w-0 truncate text-base font-[720] leading-tight tracking-[-0.02em] md:text-xl">
         Quem Vota Comigo
       </span>
     </Link>
