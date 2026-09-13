@@ -25,6 +25,7 @@ export function UmamiScript() {
     <Script
       src="https://cloud.umami.is/script.js"
       data-website-id="e0275ca9-8678-4b71-b095-dfcb1f37dc80"
+      data-domains="www.quemvotacomigo.com.br,quemvotacomigo.com.br"
       data-do-not-track="true"
       data-exclude-hash="true"
       data-before-send="umamiBeforeSend"
