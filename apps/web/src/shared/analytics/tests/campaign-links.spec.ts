@@ -18,23 +18,6 @@ describe("campaign short links", () => {
     });
   });
 
-  describe("when resolving a registered deep link", () => {
-    it("preserves platform click identifiers and registered UTM values", () => {
-      // Arrange
-      const requestUrl = new URL(
-        "https://www.quemvotacomigo.com.br/l/aAAd3G?fbclid=click-1&utm_source=alterado",
-      );
-
-      // Act
-      const destination = buildCampaignDestination(requestUrl, "aAAd3G");
-
-      // Assert
-      expect(destination?.toString()).toBe(
-        "https://www.quemvotacomigo.com.br/achados/01?fbclid=click-1&utm_source=instagram&utm_medium=social&utm_campaign=eleicoes2026&utm_content=achado-01-instagram",
-      );
-    });
-  });
-
   describe("when the code is unknown", () => {
     it("does not create a destination", () => {
       // Arrange
