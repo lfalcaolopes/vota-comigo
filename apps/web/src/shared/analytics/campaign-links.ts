@@ -122,7 +122,7 @@ export const campaignLinks = [
   },
   {
     code: "aAAd3G",
-    destinationPath: "/achados/01",
+    destinationPath: "/",
     utmSource: "instagram",
     utmMedium: "social",
     utmCampaign: "eleicoes2026",
