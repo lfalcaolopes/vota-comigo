@@ -40,7 +40,10 @@ const SIGLAS_UF = [
   "to",
   "zz",
 ];
-const CONCURRENCY = 48;
+const CONCURRENCY = 12;
+// A cold instance would otherwise fetch every counted municipality at once; the rest come next minute.
+const MAX_MUNICIPIOS_PER_REFRESH = 1500;
+const FRESH_MS = 60_000;
 
 type TseCandidato = { n: string; nmu: string; vap: string };
 type TseResultado = {
@@ -140,11 +143,18 @@ async function refreshParciais(): Promise<void> {
   const abrangencias = await mapWithConcurrency(SIGLAS_UF, (siglaUf) =>
     fetchTse<TseAbrangencia>(
       `${siglaUf}/${siglaUf}-e00${SEGUNDO_TURNO}-ab.json`,
-    ).then((ab) => ({ siglaUf, ab })),
+    )
+      .then((ab) => ({ siglaUf, ab }))
+      .catch((error: unknown) => {
+        console.error(`apuracao: abrangência ${siglaUf} falhou`, error);
+        return null;
+      }),
   );
 
-  const changed = abrangencias.flatMap(({ siglaUf, ab }) =>
-    ab.abr
+  const changed = abrangencias.flatMap((abrangencia) => {
+    if (!abrangencia) return [];
+    const { siglaUf, ab } = abrangencia;
+    return ab.abr
       .filter((municipio) => municipio.tpabr === "mun")
       .map((municipio) => ({
         siglaUf,
@@ -152,22 +162,50 @@ async function refreshParciais(): Promise<void> {
         key: `${siglaUf}${municipio.cdabr}`,
         st: Number(municipio.s.st),
       }))
-      .filter(({ key, st }) => st > 0 && parcialCache.get(key)?.st !== st),
-  );
-
-  await mapWithConcurrency(changed, async ({ siglaUf, cdabr, key, st }) => {
-    try {
-      const resultado = await fetchTse<TseResultado>(
-        `${siglaUf}/${siglaUf}${cdabr}-c0001-e00${SEGUNDO_TURNO}-u.json`,
-      );
-      parcialCache.set(key, { st, parcial: toParcial(resultado) });
-    } catch {
-      // keep the previous parcial; the next refresh retries this municipality
-    }
+      .filter(({ key, st }) => st > 0 && parcialCache.get(key)?.st !== st);
   });
+
+  await mapWithConcurrency(
+    changed.slice(0, MAX_MUNICIPIOS_PER_REFRESH),
+    async ({ siglaUf, cdabr, key, st }) => {
+      try {
+        const resultado = await fetchTse<TseResultado>(
+          `${siglaUf}/${siglaUf}${cdabr}-c0001-e00${SEGUNDO_TURNO}-u.json`,
+        );
+        parcialCache.set(key, { st, parcial: toParcial(resultado) });
+      } catch {
+        // keep the previous parcial; the next refresh retries this municipality
+      }
+    },
+  );
 }
 
-export async function loadApuracaoSnapshot(): Promise<ApuracaoSnapshot> {
+let lastGood: { snapshot: ApuracaoSnapshot; at: number } | null = null;
+let inFlight: Promise<ApuracaoSnapshot> | null = null;
+
+// One refresh per instance at a time; on failure, serve the last good snapshot instead of failing.
+export function loadApuracaoSnapshot(): Promise<ApuracaoSnapshot> {
+  if (lastGood && Date.now() - lastGood.at < FRESH_MS) {
+    return Promise.resolve(lastGood.snapshot);
+  }
+  inFlight ??= buildApuracaoSnapshot()
+    .then((snapshot) => {
+      lastGood = { snapshot, at: Date.now() };
+      return snapshot;
+    })
+    .catch((error: unknown) => {
+      console.error("apuracao: leitura do TSE falhou", error);
+      if (!lastGood) throw error;
+      lastGood = { ...lastGood, at: Date.now() };
+      return lastGood.snapshot;
+    })
+    .finally(() => {
+      inFlight = null;
+    });
+  return inFlight;
+}
+
+async function buildApuracaoSnapshot(): Promise<ApuracaoSnapshot> {
   await refreshParciais();
   const [brasil, abrangenciaUfs] = await Promise.all([
     fetchTse<TseResultado>(`br/br-c0001-e00${SEGUNDO_TURNO}-u.json`),
