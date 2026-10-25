@@ -16,6 +16,7 @@ type NavItem = {
   href: string;
   label: string;
   matches: (pathname: string) => boolean;
+  live?: boolean;
 };
 
 const navItems: NavItem[] = [
@@ -33,6 +34,12 @@ const navItems: NavItem[] = [
     href: "/metodologia",
     label: "Metodologia",
     matches: (pathname) => pathname === "/metodologia",
+  },
+  {
+    href: "/laboratorio/apuracao",
+    label: "Apuração",
+    matches: (pathname) => pathname.startsWith("/laboratorio/apuracao"),
+    live: true,
   },
 ];
 
@@ -140,6 +147,7 @@ export function AppHeader() {
                 <li className="shrink-0" key={item.href}>
                   <NavLink active={item.matches(pathname)} href={item.href}>
                     {item.label}
+                    {item.live ? <LiveDot /> : null}
                   </NavLink>
                 </li>
               ))}
@@ -177,7 +185,10 @@ export function AppHeader() {
                         href={item.href}
                         onClick={() => setIsMenuOpen(false)}
                       >
-                        {item.label}
+                        <span className="inline-flex items-center">
+                          {item.label}
+                          {item.live ? <LiveDot /> : null}
+                        </span>
                       </MobileNavLink>
                     </li>
                   ))}
@@ -278,6 +289,22 @@ function MobileNavLink({
     >
       {children}
     </Link>
+  );
+}
+
+function LiveDot() {
+  return (
+    <span className="relative ml-1.5 inline-flex size-2">
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 animate-ping rounded-full bg-danger opacity-60 motion-reduce:animate-none"
+      />
+      <span
+        aria-hidden="true"
+        className="relative inline-flex size-2 rounded-full bg-danger"
+      />
+      <span className="sr-only">ao vivo</span>
+    </span>
   );
 }
 

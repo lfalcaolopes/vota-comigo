@@ -235,6 +235,23 @@ _Avoid_: Passagem aérea como sinônimo da categoria SIGEPA — a categoria RPA 
 **Ano reposto**: Ano cuja reposição de passagem aérea SIGEPA cobre todos os deputados elegíveis e foi apurada contra a cobertura do dado da cota vigente. Um dump posterior que avance a cobertura devolve o ano à condição de não reposto.
 _Avoid_: Ano completo como sinônimo, já que a completude do dump e a da reposição são condições separadas.
 
+### Laboratório: apuração presidencial
+
+**Laboratório**: Seção do site para experimentos fora do escopo de transparência do mandato, sinalizada como experimental.
+
+**Apuração**: Contagem oficial dos votos de uma eleição pelo TSE, publicada em parciais durante a noite do turno.
+
+**Turno**: Cada rodada de votação de uma eleição; o segundo turno presidencial opõe os dois candidatos mais votados no primeiro.
+
+**Município**: Unidade da apuração com resultado parcial próprio publicado pelo TSE, identificada pelo código TSE do município.
+
+**Urnas apuradas**: Percentual de seções eleitorais já totalizadas na apuração.
+
+**Projeção da apuração**: Estimativa do resultado final do turno a partir da apuração parcial, que completa cada município ainda não totalizado com o seu resultado no turno anterior ajustado pela variação entre turnos.
+
+**Variação entre turnos**: Diferença entre a fatia de um candidato no turno atual e no turno anterior, medida apenas nos municípios já apurados.
+_Avoid_: Swing.
+
 ## Relationships
 
 - Uma **Legislatura** contém múltiplos **Deputados** com **Mandatos**.

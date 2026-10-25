@@ -26,6 +26,27 @@ describe("cabeçalho da aplicação", () => {
     });
   });
 
+  describe("durante a apuração", () => {
+    it("leva à projeção ao vivo pela navegação principal", () => {
+      // Act
+      const html = render("/");
+
+      // Assert
+      expect(html).toContain('href="/laboratorio/apuracao"');
+      expect(html).toContain("ao vivo");
+    });
+
+    it("marca o item como página atual na projeção", () => {
+      // Act
+      const html = render("/laboratorio/apuracao");
+
+      // Assert
+      expect(html).toMatch(
+        /aria-current="page"[^>]*href="\/laboratorio\/apuracao"|href="\/laboratorio\/apuracao"[^>]*aria-current="page"/,
+      );
+    });
+  });
+
   describe("dentro do matcher", () => {
     it("remove o CTA global", () => {
       // Act
