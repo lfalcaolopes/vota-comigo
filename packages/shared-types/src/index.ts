@@ -6,3 +6,4 @@ export * from "./cota";
 export * from "./deputados";
 export * from "./comparativo-deputados";
 export * from "./uso-cota";
+export * from "./apuracao";

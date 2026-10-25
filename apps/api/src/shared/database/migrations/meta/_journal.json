@@ -183,6 +183,13 @@
       "when": 1788794310627,
       "tag": "0025_useful_thunderbird",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1792966222297,
+      "tag": "0026_graceful_the_stranger",
+      "breakpoints": true
     }
   ]
 }

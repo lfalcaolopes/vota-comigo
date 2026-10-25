@@ -7,7 +7,7 @@ import type {
 import { projectApuracao } from "./projecao-apuracao";
 
 const TSE_BASE = "https://resultados.tse.jus.br/oficial/ele2026";
-const SEGUNDO_TURNO = "6258";
+export const SEGUNDO_TURNO = "6258";
 const NUMERO_A = "13";
 const NUMERO_B = "22";
 const SIGLAS_UF = [

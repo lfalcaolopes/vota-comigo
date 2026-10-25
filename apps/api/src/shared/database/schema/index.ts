@@ -27,3 +27,4 @@ export * from './deputado-orgao';
 export * from './proposicao-tipo';
 export * from './deputado-proposicao-assinada';
 export * from './proposicao-embedding';
+export * from './apuracao-snapshot';
