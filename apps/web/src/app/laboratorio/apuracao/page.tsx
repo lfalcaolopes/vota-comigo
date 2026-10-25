@@ -24,10 +24,7 @@ export default function ApuracaoPage() {
             Projeção da apuração do segundo turno
           </h1>
           <p className="text-base leading-normal text-muted">
-            Capitais e alguns estados terminam a apuração antes, então a parcial
-            oficial engana no começo da noite. A projeção completa cada
-            município ainda não apurado com o resultado dele no primeiro turno,
-            corrigido pela variação já vista nos municípios apurados.
+            Estimativa do resultado final, recalculada a cada parcial do TSE.
           </p>
         </header>
 
@@ -38,21 +35,27 @@ export default function ApuracaoPage() {
         />
 
         <Panel title="Como ler" titleAs="h2">
-          <div className="grid gap-3 text-sm leading-normal text-muted">
-            <p>
-              É uma estimativa, não um resultado. Com poucas urnas apuradas, ela
-              muda bastante; fica mais estável depois de uns 10% das urnas.
-            </p>
-            <p>
-              Supomos que cada município terá o mesmo comparecimento do primeiro
-              turno e comparamos só os dois candidatos do segundo turno, sem
-              brancos e nulos. A variação de cada estado é puxada para a média
-              nacional enquanto o estado tem poucos votos apurados.
-            </p>
-            <p>
-              Este experimento fica fora do escopo principal do site, que trata
-              do mandato dos deputados federais.
-            </p>
+          <div className="grid gap-4 text-sm leading-normal text-muted">
+            <ul className="grid list-disc gap-2 pl-5">
+              <li>É uma estimativa, não um resultado.</li>
+              <li>
+                Capitais e alguns estados terminam de apurar antes, por isso a
+                parcial oficial engana no começo da noite.
+              </li>
+              <li>
+                Cada município ainda não apurado recebe o resultado do 1º turno,
+                corrigido pela variação já vista nos apurados. Estados com
+                poucos votos apurados seguem mais a variação nacional.
+              </li>
+              <li>
+                Supomos o mesmo comparecimento do 1º turno e contamos só os dois
+                candidatos, sem brancos e nulos.
+              </li>
+              <li>
+                Experimento fora do escopo principal do site, que trata do
+                mandato dos deputados federais.
+              </li>
+            </ul>
             <SourceLink
               href="https://resultados.tse.jus.br/"
               rel="noopener noreferrer"

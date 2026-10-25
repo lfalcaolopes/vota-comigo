@@ -102,7 +102,6 @@ function UfDetalhe({
   variacaoEntreTurnos: number;
 }) {
   const remaining = Math.max(uf.expectedVotos - uf.countedVotos, 0);
-  const lider = uf.shareA >= 0.5 ? nomeA : nomeB;
   const semApuracao = isSemApuracao(uf);
 
   return (
@@ -110,14 +109,9 @@ function UfDetalhe({
       aria-live="polite"
       className="grid gap-4 rounded-lg border border-border bg-surface p-4"
     >
-      <div className="grid gap-1">
-        <p className="text-lg leading-snug font-[680] text-ink">
-          {formatUfNome(uf.siglaUf)}
-        </p>
-        <p className="text-sm text-muted">
-          {lider} à frente {semApuracao ? "na estimativa" : "na projeção"}
-        </p>
-      </div>
+      <p className="text-lg leading-snug font-[680] text-ink">
+        {formatUfNome(uf.siglaUf)}
+      </p>
       {semApuracao ? (
         <p className="flex gap-2.5 rounded-md bg-surface-muted p-3 text-sm leading-normal text-ink">
           <HatchSwatch />
@@ -193,8 +187,7 @@ export function UfMapa({
           Quem lidera a projeção em cada estado
         </h2>
         <p className="text-sm leading-normal text-muted">
-          Quanto mais forte a cor, maior a vantagem. Toque em um estado para ver
-          os números.
+          Toque em um estado para ver os números.
         </p>
       </div>
 
@@ -372,37 +365,30 @@ export function UfMapa({
             </h3>
             <ul className="grid">
               {remainingRanking.map((uf) => {
-                const apuradas = urnasApuradasByUf[uf.siglaUf] ?? 0;
                 const isSelected = uf.siglaUf === selectedSigla;
                 return (
                   <li key={uf.siglaUf}>
                     <button
                       aria-pressed={isSelected}
                       className={joinClassNames(
-                        "grid w-full gap-1.5 rounded-md px-2 py-2 text-left transition-colors duration-[180ms] ease-standard hover:bg-surface-muted",
+                        "flex w-full items-center justify-between gap-3 rounded-md px-2 py-2 text-left text-sm transition-colors duration-[180ms] ease-standard hover:bg-surface-muted",
                         isSelected && "bg-surface-muted",
                       )}
                       onClick={() => setChosenUf(uf.siglaUf)}
                       type="button"
                     >
-                      <span className="flex items-center justify-between gap-3 text-sm">
-                        <span className="inline-flex min-w-0 items-center gap-2 font-[650] text-ink">
-                          <LeaderMark
-                            hatched={isSemApuracao(uf)}
-                            shareA={uf.shareA}
-                          />
-                          <span className="truncate">
-                            {formatUfNome(uf.siglaUf)}
-                          </span>
-                        </span>
-                        <span className="shrink-0 text-muted tabular-nums">
-                          faltam {formatVotosCompact(uf.remainingVotos)}
+                      <span className="inline-flex min-w-0 items-center gap-2 font-[650] text-ink">
+                        <LeaderMark
+                          hatched={isSemApuracao(uf)}
+                          shareA={uf.shareA}
+                        />
+                        <span className="truncate">
+                          {formatUfNome(uf.siglaUf)}
                         </span>
                       </span>
-                      <ProgressBar
-                        label={`${formatPercent(apuradas / 100)} das urnas apuradas em ${formatUfNome(uf.siglaUf)}`}
-                        value={apuradas}
-                      />
+                      <span className="shrink-0 text-muted tabular-nums">
+                        faltam {formatVotosCompact(uf.remainingVotos)}
+                      </span>
                     </button>
                   </li>
                 );

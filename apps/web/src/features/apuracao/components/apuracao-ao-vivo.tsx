@@ -26,12 +26,16 @@ import { UfMapa } from "./uf-mapa";
 
 function StatusLine({
   tseUpdatedAt,
-  secondsToRefresh,
+  urnasApuradas,
 }: {
   tseUpdatedAt: string;
-  secondsToRefresh: number;
+  urnasApuradas: number;
 }) {
   const hora = tseUpdatedAt.split(" ")[1]?.slice(0, 5) ?? tseUpdatedAt;
+  const urnasLabel = urnasApuradas.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
   return (
     <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
       <span className="inline-flex items-center gap-2 font-[650] text-ink">
@@ -44,10 +48,8 @@ function StatusLine({
         </span>
         Ao vivo
       </span>
-      <span>Última parcial do TSE às {hora}</span>
-      <span aria-live="off" className="tabular-nums">
-        Nova leitura em {secondsToRefresh} s
-      </span>
+      <span className="tabular-nums">{urnasLabel}% das urnas apuradas</span>
+      <span>Parcial do TSE às {hora}</span>
     </p>
   );
 }
@@ -200,7 +202,7 @@ export function ApuracaoAoVivo({
   mapaWidth,
   mapaHeight,
 }: ApuracaoAoVivoProps) {
-  const { snapshot, failed, history, secondsToRefresh } = useApuracaoSnapshot();
+  const { snapshot, failed, history } = useApuracaoSnapshot();
 
   if (!snapshot) {
     return failed ? (
@@ -224,8 +226,8 @@ export function ApuracaoAoVivo({
     <div className="grid gap-10">
       <div className="grid gap-4">
         <StatusLine
-          secondsToRefresh={secondsToRefresh}
           tseUpdatedAt={snapshot.tseUpdatedAt}
+          urnasApuradas={snapshot.urnasApuradas}
         />
         {failed ? (
           <InlineMessage
@@ -240,8 +242,6 @@ export function ApuracaoAoVivo({
           oficialShareA={snapshot.oficialShareA}
           projecaoShareA={snapshot.projecao.shareA}
           urnasApuradas={snapshot.urnasApuradas}
-          votosA={snapshot.candidatoA.votos}
-          votosB={snapshot.candidatoB.votos}
         />
       </div>
 

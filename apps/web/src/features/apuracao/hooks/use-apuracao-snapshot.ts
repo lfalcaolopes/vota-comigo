@@ -16,14 +16,11 @@ export function useApuracaoSnapshot() {
   const [snapshot, setSnapshot] = useState<ApuracaoSnapshot | null>(null);
   const [failed, setFailed] = useState(false);
   const [history, setHistory] = useState<ApuracaoHistoryPoint[]>([]);
-  const [nextRefreshAt, setNextRefreshAt] = useState(() => Date.now());
-  const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
-      setNextRefreshAt(Date.now() + REFRESH_MS);
       try {
         const response = await fetch("/laboratorio/apuracao/dados");
         if (!response.ok) throw new Error(String(response.status));
@@ -50,15 +47,11 @@ export function useApuracaoSnapshot() {
 
     load();
     const refresh = setInterval(load, REFRESH_MS);
-    const tick = setInterval(() => setNow(Date.now()), 1000);
     return () => {
       cancelled = true;
       clearInterval(refresh);
-      clearInterval(tick);
     };
   }, []);
 
-  const secondsToRefresh = Math.max(0, Math.ceil((nextRefreshAt - now) / 1000));
-
-  return { snapshot, failed, history, secondsToRefresh };
+  return { snapshot, failed, history };
 }
