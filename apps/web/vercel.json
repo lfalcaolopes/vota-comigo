@@ -3,5 +3,8 @@
     "deploymentEnabled": {
       "master": false
     }
-  }
+  },
+  "regions": [
+    "gru1"
+  ]
 }

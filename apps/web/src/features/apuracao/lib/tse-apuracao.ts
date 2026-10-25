@@ -40,9 +40,10 @@ const SIGLAS_UF = [
   "to",
   "zz",
 ];
-const CONCURRENCY = 12;
+const CONCURRENCY = 6;
 // A cold instance would otherwise fetch every counted municipality at once; the rest come next minute.
-const MAX_MUNICIPIOS_PER_REFRESH = 1500;
+const MAX_MUNICIPIOS_PER_REFRESH = 400;
+const RATE_LIMIT_BACKOFF_MS = 90_000;
 const FRESH_MS = 60_000;
 
 type TseCandidato = { n: string; nmu: string; vap: string };
@@ -89,11 +90,23 @@ const parcialCache = new Map<
   { st: number; parcial: ParcialMunicipio }
 >();
 
+class TseRateLimitedError extends Error {}
+
+// TSE answers 429 to bursts; once it does, stop asking until the backoff ends.
+let rateLimitedUntil = 0;
+
 async function fetchTse<T>(path: string): Promise<T> {
+  if (Date.now() < rateLimitedUntil) {
+    throw new TseRateLimitedError(`TSE em espera até ${rateLimitedUntil}`);
+  }
   const response = await fetch(`${TSE_BASE}/${SEGUNDO_TURNO}/dados/${path}`, {
     cache: "no-store",
     signal: AbortSignal.timeout(15_000),
   });
+  if (response.status === 429) {
+    rateLimitedUntil = Date.now() + RATE_LIMIT_BACKOFF_MS;
+    throw new TseRateLimitedError(`TSE 429 em ${path}`);
+  }
   if (!response.ok) throw new Error(`TSE ${response.status} em ${path}`);
   return (await response.json()) as T;
 }
@@ -146,6 +159,7 @@ async function refreshParciais(): Promise<void> {
     )
       .then((ab) => ({ siglaUf, ab }))
       .catch((error: unknown) => {
+        if (error instanceof TseRateLimitedError) throw error;
         console.error(`apuracao: abrangência ${siglaUf} falhou`, error);
         return null;
       }),
@@ -173,7 +187,8 @@ async function refreshParciais(): Promise<void> {
           `${siglaUf}/${siglaUf}${cdabr}-c0001-e00${SEGUNDO_TURNO}-u.json`,
         );
         parcialCache.set(key, { st, parcial: toParcial(resultado) });
-      } catch {
+      } catch (error) {
+        if (error instanceof TseRateLimitedError) throw error;
         // keep the previous parcial; the next refresh retries this municipality
       }
     },
@@ -185,7 +200,8 @@ let inFlight: Promise<ApuracaoSnapshot> | null = null;
 
 // One refresh per instance at a time; on failure, serve the last good snapshot instead of failing.
 export function loadApuracaoSnapshot(): Promise<ApuracaoSnapshot> {
-  if (lastGood && Date.now() - lastGood.at < FRESH_MS) {
+  const isRateLimited = Date.now() < rateLimitedUntil;
+  if (lastGood && (isRateLimited || Date.now() - lastGood.at < FRESH_MS)) {
     return Promise.resolve(lastGood.snapshot);
   }
   inFlight ??= buildApuracaoSnapshot()
