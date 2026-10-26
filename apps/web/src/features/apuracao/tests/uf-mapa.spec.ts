@@ -16,56 +16,50 @@ function render() {
       ufs: [
         {
           siglaUf: "sp",
-          shareA: 0.46,
-          expectedVotos: 25_000_000,
-          countedVotos: 5_000_000,
+          urnasApuradas: 99.99,
+          votosA: 12_116_838,
+          votosB: 14_137_519,
+          shareA: 0.4615,
         },
         {
           siglaUf: "ba",
+          urnasApuradas: 99.8,
+          votosA: 6_480_000,
+          votosB: 2_520_000,
           shareA: 0.72,
-          expectedVotos: 9_000_000,
-          countedVotos: 8_000_000,
-        },
-        {
-          siglaUf: "rr",
-          shareA: 0.3,
-          expectedVotos: 300_000,
-          countedVotos: 0,
         },
         {
           siglaUf: "zz",
-          shareA: 0.56,
-          expectedVotos: 300_000,
-          countedVotos: 0,
+          urnasApuradas: 96.97,
+          votosA: 194_563,
+          votosB: 168_210,
+          shareA: 0.5363,
         },
       ],
-      urnasApuradasByUf: { sp: 20, ba: 88.5 },
-      variacaoEntreTurnos: 0.037,
     }),
   );
 }
 
 describe("mapa de estados da apuração", () => {
   describe("ao abrir", () => {
-    it("mostra o estado com mais votos por apurar no painel de detalhe", () => {
+    it("mostra São Paulo no painel de detalhe com os votos de cada candidato", () => {
       // Act
       const html = render();
 
       // Assert
-      expect(html).toContain("faltam 20 mi votos");
       expect(html).toMatch(/<p[^>]*>São Paulo<\/p>/);
+      expect(html).toContain("12,1 mi votos");
+      expect(html).toContain("14,1 mi votos");
     });
   });
 
   describe("para leitores de tela", () => {
-    it("descreve quem lidera e quanto do estado foi apurado sem depender da cor", () => {
+    it("descreve quem venceu em cada estado sem depender da cor", () => {
       // Act
       const html = render();
 
       // Assert
-      expect(html).toContain(
-        "Bahia: Lula à frente com 72,0% na projeção; 88,5% das urnas apuradas",
-      );
+      expect(html).toContain("Bahia: Lula venceu com 72,0%");
     });
 
     it("mantém o exterior acessível fora do mapa", () => {
@@ -73,28 +67,7 @@ describe("mapa de estados da apuração", () => {
       const html = render();
 
       // Assert
-      expect(html).toContain(
-        "Exterior: Lula à frente com 56,0% na projeção; 0,0% das urnas apuradas",
-      );
-    });
-  });
-
-  describe("estado sem urnas apuradas", () => {
-    it("aparece hachurado no mapa e explicado na legenda", () => {
-      // Act
-      const html = render();
-
-      // Assert
-      expect(html).toContain('fill="url(#uf-sem-apuracao)"');
-      expect(html).toContain("Sem urnas apuradas: estimativa pelo 1º turno");
-    });
-
-    it("hachura só os estados ainda sem votos apurados", () => {
-      // Act
-      const html = render();
-
-      // Assert
-      expect(html.match(/fill="url\(#uf-sem-apuracao\)"/g)).toHaveLength(1);
+      expect(html).toContain("Exterior: Lula venceu com 53,6%");
     });
   });
 

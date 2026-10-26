@@ -1,7 +1,3 @@
-import type { ProjecaoUf } from "./projecao-apuracao";
-
-export const URNAS_MINIMAS_LIDERANCA = 5;
-
 const UF_NOMES: Record<string, string> = {
   ac: "Acre",
   al: "Alagoas",
@@ -55,16 +51,6 @@ export function toMapaFillColor(fill: MapaFill): string {
   return `color-mix(in oklch, var(--color-series-${fill.series}) ${fill.mix}%, var(--color-white))`;
 }
 
-export function rankByRemainingVotos(ufs: ProjecaoUf[], limit: number) {
-  return ufs
-    .map((uf) => ({
-      ...uf,
-      remainingVotos: Math.max(uf.expectedVotos - uf.countedVotos, 0),
-    }))
-    .sort((a, b) => b.remainingVotos - a.remainingVotos)
-    .slice(0, limit);
-}
-
 export function formatUfLabel(siglaUf: string): string {
   return siglaUf === "zz" ? "Exterior" : siglaUf.toUpperCase();
 }
@@ -92,27 +78,25 @@ export function formatVotosCompact(votos: number): string {
   return votos.toLocaleString("pt-BR");
 }
 
-export function formatPontos(shareA: number): string {
-  const pontos = Math.abs(shareA - 0.5) * 200;
+export function formatPontos(pontos: number): string {
   const value = pontos.toLocaleString("pt-BR", {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   });
-  return `${value} ${pontos >= 0.95 && pontos < 1.05 ? "ponto" : "pontos"}`;
+  return `${value} ${Math.abs(Number(pontos.toFixed(1))) < 2 ? "ponto" : "pontos"}`;
 }
 
-export function describeLideranca(
+export function formatUrnas(urnasApuradas: number): string {
+  return formatPercent(urnasApuradas / 100, 0);
+}
+
+export function describeVencedor(
   shareA: number,
   nomeA: string,
   nomeB: string,
-  urnasApuradas: number,
 ): string {
-  if (urnasApuradas < URNAS_MINIMAS_LIDERANCA) {
-    return "Projeção ainda instável, com menos de 5% das urnas apuradas";
-  }
-  if (Math.abs(shareA - 0.5) < 0.0005) return "Empate na projeção";
-  const lider = shareA > 0.5 ? nomeA : nomeB;
-  return `${lider} lidera a projeção por ${formatPontos(shareA)}`;
+  const vencedor = shareA >= 0.5 ? nomeA : nomeB;
+  return `${vencedor} venceu com ${formatPercent(Math.max(shareA, 1 - shareA))} dos votos válidos`;
 }
 
 export function formatNomeCandidato(nome: string): string {
@@ -125,24 +109,4 @@ export function formatNomeCandidato(nome: string): string {
         : part,
     )
     .join(" ");
-}
-
-export function isSemApuracao(uf: ProjecaoUf): boolean {
-  return uf.countedVotos === 0;
-}
-
-export function describeEstimativaSemApuracao(
-  variacaoEntreTurnos: number,
-  nomeA: string,
-  nomeB: string,
-): string {
-  if (Math.abs(variacaoEntreTurnos) < 0.0005) {
-    return "Nenhuma urna apurada ainda. Estimativa: resultado do 1º turno, sem ajuste, porque ainda não há variação medida no país.";
-  }
-  const favorecido = variacaoEntreTurnos > 0 ? nomeA : nomeB;
-  const pontos = (Math.abs(variacaoEntreTurnos) * 100).toLocaleString("pt-BR", {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  });
-  return `Nenhuma urna apurada ainda. Estimativa: resultado do 1º turno + variação de ${pontos} pontos a favor de ${favorecido}, medida no resto do país.`;
 }

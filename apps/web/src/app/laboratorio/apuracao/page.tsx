@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 
 import {
-  ApuracaoAoVivo,
   buildUfShapes,
   MAPA_HEIGHT,
   MAPA_WIDTH,
+  ResultadoView,
 } from "@/features/apuracao";
 import { Panel, SourceLink } from "@/shared/ui";
 
 export const metadata: Metadata = {
-  title: "Projeção da apuração",
+  title: "Resultado do segundo turno",
   description:
-    "Projeção ao vivo do resultado final do segundo turno presidencial de 2026, calculada a partir da apuração parcial do TSE.",
+    "Resultado do segundo turno presidencial de 2026 por estado, com a projeção que esta página fez durante a apuração do TSE.",
 };
 
 export default function ApuracaoPage() {
@@ -21,14 +21,11 @@ export default function ApuracaoPage() {
         <header className="grid max-w-[68ch] gap-4">
           <p className="text-sm font-[650] text-primary">Laboratório</p>
           <h1 className="text-3xl leading-tight font-[720] tracking-[-0.02em] text-balance text-ink">
-            Projeção da apuração do segundo turno
+            Resultado do segundo turno
           </h1>
-          <p className="text-base leading-normal text-muted">
-            Estimativa do resultado final, recalculada a cada parcial do TSE.
-          </p>
         </header>
 
-        <ApuracaoAoVivo
+        <ResultadoView
           mapaHeight={MAPA_HEIGHT}
           mapaWidth={MAPA_WIDTH}
           shapes={buildUfShapes()}
@@ -37,19 +34,13 @@ export default function ApuracaoPage() {
         <Panel title="Como ler" titleAs="h2">
           <div className="grid gap-4 text-sm leading-normal text-muted">
             <ul className="grid list-disc gap-2 pl-5">
-              <li>É uma estimativa, não um resultado.</li>
               <li>
-                Capitais e alguns estados terminam de apurar antes, por isso a
-                parcial oficial engana no começo da noite.
+                As porcentagens contam só os votos nos dois candidatos, sem
+                brancos e nulos.
               </li>
               <li>
-                Cada município ainda não apurado recebe o resultado do 1º turno,
-                corrigido pela variação já vista nos apurados. Estados com
-                poucos votos apurados seguem mais a variação nacional.
-              </li>
-              <li>
-                Supomos o mesmo comparecimento do 1º turno e contamos só os dois
-                candidatos, sem brancos e nulos.
+                Os números são a última leitura do TSE guardada por esta página.
+                O resultado oficial é o publicado pelo TSE.
               </li>
               <li>
                 Experimento fora do escopo principal do site, que trata do

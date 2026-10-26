@@ -1,0 +1,184 @@
+{
+  "tseUpdatedAt": "25/10/2026 21:39:30",
+  "urnasApuradas": 99.9,
+  "candidatoA": {
+    "numero": "13",
+    "nome": "LULA",
+    "votos": 64174591
+  },
+  "candidatoB": {
+    "numero": "22",
+    "nome": "FLAVIO BOLSONARO",
+    "votos": 59791534
+  },
+  "ufs": [
+    {
+      "siglaUf": "ac",
+      "urnasApuradas": 100,
+      "votosA": 144513,
+      "votosB": 287715
+    },
+    {
+      "siglaUf": "al",
+      "urnasApuradas": 100,
+      "votosA": 1152621,
+      "votosB": 744140
+    },
+    {
+      "siglaUf": "ap",
+      "urnasApuradas": 100,
+      "votosA": 222968,
+      "votosB": 198674
+    },
+    {
+      "siglaUf": "am",
+      "urnasApuradas": 98.34,
+      "votosA": 1127731,
+      "votosB": 965031
+    },
+    {
+      "siglaUf": "ba",
+      "urnasApuradas": 99.59,
+      "votosA": 6454358,
+      "votosB": 2595993
+    },
+    {
+      "siglaUf": "ce",
+      "urnasApuradas": 99.91,
+      "votosA": 4032313,
+      "votosB": 1818609
+    },
+    {
+      "siglaUf": "df",
+      "urnasApuradas": 100,
+      "votosA": 825224,
+      "votosB": 979542
+    },
+    {
+      "siglaUf": "es",
+      "urnasApuradas": 100,
+      "votosA": 1001965,
+      "votosB": 1294504
+    },
+    {
+      "siglaUf": "go",
+      "urnasApuradas": 100,
+      "votosA": 1585555,
+      "votosB": 2345334
+    },
+    {
+      "siglaUf": "ma",
+      "urnasApuradas": 99.8,
+      "votosA": 2801934,
+      "votosB": 1228599
+    },
+    {
+      "siglaUf": "mt",
+      "urnasApuradas": 99.99,
+      "votosA": 694067,
+      "votosB": 1350912
+    },
+    {
+      "siglaUf": "ms",
+      "urnasApuradas": 100,
+      "votosA": 628973,
+      "votosB": 927892
+    },
+    {
+      "siglaUf": "mg",
+      "urnasApuradas": 99.69,
+      "votosA": 6329646,
+      "votosB": 6230929
+    },
+    {
+      "siglaUf": "pa",
+      "urnasApuradas": 99.94,
+      "votosA": 2688870,
+      "votosB": 2199459
+    },
+    {
+      "siglaUf": "pb",
+      "urnasApuradas": 99.99,
+      "votosA": 1793862,
+      "votosB": 865159
+    },
+    {
+      "siglaUf": "pr",
+      "urnasApuradas": 100,
+      "votosA": 2566504,
+      "votosB": 4291444
+    },
+    {
+      "siglaUf": "pe",
+      "urnasApuradas": 99.78,
+      "votosA": 4108399,
+      "votosB": 1829705
+    },
+    {
+      "siglaUf": "pi",
+      "urnasApuradas": 100,
+      "votosA": 1653989,
+      "votosB": 525859
+    },
+    {
+      "siglaUf": "rj",
+      "urnasApuradas": 99.99,
+      "votosA": 4565286,
+      "votosB": 5168902
+    },
+    {
+      "siglaUf": "rn",
+      "urnasApuradas": 100,
+      "votosA": 1413596,
+      "votosB": 737409
+    },
+    {
+      "siglaUf": "rs",
+      "urnasApuradas": 100,
+      "votosA": 2824552,
+      "votosB": 3874378
+    },
+    {
+      "siglaUf": "ro",
+      "urnasApuradas": 100,
+      "votosA": 294446,
+      "votosB": 674382
+    },
+    {
+      "siglaUf": "rr",
+      "urnasApuradas": 100,
+      "votosA": 83505,
+      "votosB": 219675
+    },
+    {
+      "siglaUf": "sc",
+      "urnasApuradas": 100,
+      "votosA": 1418314,
+      "votosB": 3220071
+    },
+    {
+      "siglaUf": "se",
+      "urnasApuradas": 100,
+      "votosA": 989041,
+      "votosB": 433354
+    },
+    {
+      "siglaUf": "sp",
+      "urnasApuradas": 99.99,
+      "votosA": 12117290,
+      "votosB": 14137931
+    },
+    {
+      "siglaUf": "to",
+      "urnasApuradas": 100,
+      "votosA": 442962,
+      "votosB": 467916
+    },
+    {
+      "siglaUf": "zz",
+      "urnasApuradas": 96.97,
+      "votosA": 194563,
+      "votosB": 168210
+    }
+  ]
+}

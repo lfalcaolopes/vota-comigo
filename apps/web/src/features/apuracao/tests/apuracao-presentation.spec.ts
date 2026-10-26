@@ -1,48 +1,47 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  describeEstimativaSemApuracao,
-  describeLideranca,
+  describeVencedor,
   formatNomeCandidato,
+  formatPontos,
+  formatUrnas,
   formatVotosCompact,
-  rankByRemainingVotos,
   toMapaFill,
 } from "../lib/apuracao-presentation";
 
 describe("apresentação da apuração", () => {
-  describe("frase de liderança", () => {
-    it("diz quem lidera e a diferença em pontos", () => {
+  describe("frase do vencedor", () => {
+    it("diz quem venceu e com quanto dos votos válidos", () => {
       // Act
-      const frase = describeLideranca(0.5243, "Lula", "Flávio Bolsonaro", 12);
+      const frase = describeVencedor(0.51769, "Lula", "Flavio Bolsonaro");
 
       // Assert
-      expect(frase).toBe("Lula lidera a projeção por 4,9 pontos");
+      expect(frase).toBe("Lula venceu com 51,8% dos votos válidos");
     });
 
-    it("nomeia o outro candidato quando ele está à frente", () => {
+    it("nomeia o outro candidato quando ele vence", () => {
       // Act
-      const frase = describeLideranca(0.47, "Lula", "Flávio Bolsonaro", 12);
+      const frase = describeVencedor(0.47, "Lula", "Flavio Bolsonaro");
 
       // Assert
-      expect(frase).toBe("Flávio Bolsonaro lidera a projeção por 6,0 pontos");
+      expect(frase).toBe("Flavio Bolsonaro venceu com 53,0% dos votos válidos");
     });
+  });
 
-    it("não aponta liderança antes de 5% das urnas apuradas", () => {
-      // Act
-      const frase = describeLideranca(0.5243, "Lula", "Flávio Bolsonaro", 4.9);
-
-      // Assert
-      expect(frase).toBe(
-        "Projeção ainda instável, com menos de 5% das urnas apuradas",
-      );
+  describe("diferença em pontos", () => {
+    it("usa o singular abaixo de dois pontos e o plural a partir deles", () => {
+      // Act / Assert
+      expect(formatPontos(0.45)).toBe("0,5 ponto");
+      expect(formatPontos(1)).toBe("1,0 ponto");
+      expect(formatPontos(3.54)).toBe("3,5 pontos");
     });
+  });
 
-    it("usa o singular para uma diferença de um ponto", () => {
-      // Act
-      const frase = describeLideranca(0.505, "Lula", "Flávio Bolsonaro", 12);
-
-      // Assert
-      expect(frase).toBe("Lula lidera a projeção por 1,0 ponto");
+  describe("urnas apuradas", () => {
+    it("arredonda para o percentual inteiro", () => {
+      // Act / Assert
+      expect(formatUrnas(80.75)).toBe("81%");
+      expect(formatUrnas(9.1)).toBe("9%");
     });
   });
 
@@ -65,76 +64,6 @@ describe("apresentação da apuração", () => {
       // Assert
       expect(trinta).toEqual({ series: "b", mix: 100, isDark: true });
       expect(quarenta.mix).toBe(100);
-    });
-  });
-
-  describe("onde ainda faltam votos", () => {
-    it("ordena os estados pelo volume de votos ainda não apurados", () => {
-      // Arrange
-      const ufs = [
-        { siglaUf: "rr", shareA: 0.3, expectedVotos: 300, countedVotos: 0 },
-        {
-          siglaUf: "sp",
-          shareA: 0.45,
-          expectedVotos: 25_000,
-          countedVotos: 20_000,
-        },
-        {
-          siglaUf: "ba",
-          shareA: 0.7,
-          expectedVotos: 9_000,
-          countedVotos: 1_000,
-        },
-      ];
-
-      // Act
-      const ranking = rankByRemainingVotos(ufs, 2);
-
-      // Assert
-      expect(ranking.map((uf) => [uf.siglaUf, uf.remainingVotos])).toEqual([
-        ["ba", 8_000],
-        ["sp", 5_000],
-      ]);
-    });
-  });
-
-  describe("estimativa de estado sem urnas apuradas", () => {
-    it("explica que vem do 1º turno ajustado pela variação do resto do país", () => {
-      // Act
-      const texto = describeEstimativaSemApuracao(
-        0.0367,
-        "Lula",
-        "Flavio Bolsonaro",
-      );
-
-      // Assert
-      expect(texto).toBe(
-        "Nenhuma urna apurada ainda. Estimativa: resultado do 1º turno + variação de 3,7 pontos a favor de Lula, medida no resto do país.",
-      );
-    });
-
-    it("nomeia o outro candidato quando a variação o favorece", () => {
-      // Act
-      const texto = describeEstimativaSemApuracao(
-        -0.021,
-        "Lula",
-        "Flavio Bolsonaro",
-      );
-
-      // Assert
-      expect(texto).toContain("2,1 pontos a favor de Flavio Bolsonaro");
-    });
-
-    it("diz que não há ajuste quando nenhuma urna foi apurada no país", () => {
-      // Act
-      const texto = describeEstimativaSemApuracao(
-        0,
-        "Lula",
-        "Flavio Bolsonaro",
-      );
-
-      // Assert
-      expect(texto).toContain("sem ajuste");
     });
   });
 

@@ -26,17 +26,17 @@ describe("cabeçalho da aplicação", () => {
     });
   });
 
-  describe("durante a apuração", () => {
-    it("leva à projeção ao vivo pela navegação principal", () => {
+  describe("depois da apuração", () => {
+    it("leva ao resultado pela navegação principal sem o selo de ao vivo", () => {
       // Act
       const html = render("/");
 
       // Assert
       expect(html).toContain('href="/laboratorio/apuracao"');
-      expect(html).toContain("ao vivo");
+      expect(html).not.toContain("ao vivo");
     });
 
-    it("marca o item como página atual na projeção", () => {
+    it("marca o item como página atual no resultado", () => {
       // Act
       const html = render("/laboratorio/apuracao");
 

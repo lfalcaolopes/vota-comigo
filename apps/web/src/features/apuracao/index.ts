@@ -1,5 +1,3 @@
-export { ApuracaoAoVivo } from "./components/apuracao-ao-vivo";
+export { ProjecaoHistoryView } from "./components/projecao-history-view";
+export { ResultadoView } from "./components/resultado-view";
 export { buildUfShapes, MAPA_HEIGHT, MAPA_WIDTH } from "./lib/mapa-ufs";
-export { recordApuracaoSnapshot } from "./lib/snapshot-apuracao";
-export { loadApuracaoSnapshot } from "./lib/tse-apuracao";
-export type { ApuracaoSnapshot } from "./lib/tse-apuracao";
