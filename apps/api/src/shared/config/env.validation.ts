@@ -16,7 +16,6 @@ const envSchema = z.object({
     z.string().url().optional(),
   ),
   SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).optional(),
-  APURACAO_SNAPSHOT_TOKEN: z.string().min(32).optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

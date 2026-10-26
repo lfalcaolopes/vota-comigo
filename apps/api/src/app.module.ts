@@ -5,7 +5,6 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
 
 import { AnalyticsModule } from './analytics/analytics.module';
-import { ApuracaoModule } from './apuracao/apuracao.module';
 import { ComparativoDeputadosModule } from './comparativo-deputados/comparativo-deputados.module';
 import { CotaModule } from './cota/cota.module';
 import { DeputadosModule } from './deputados/deputados.module';
@@ -32,7 +31,6 @@ import { CacheControlInterceptor } from './shared/http/cache-control.interceptor
     ComparativoDeputadosModule,
     CotaModule,
     AnalyticsModule,
-    ApuracaoModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: SentryGlobalFilter },
